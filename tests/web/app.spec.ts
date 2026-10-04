@@ -1,6 +1,6 @@
 /**
- * @file Exercises board editing and play, navigation protection, responsive layouts, and offline
- * browser behavior.
+ * @file Exercises board editing and play, safe modal dismissal, navigation protection, responsive
+ * layouts, and offline browser behavior.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -30,6 +30,79 @@ async function leaveBoard(page: Page) {
   await page.getByRole('button', { name: 'Leave board', exact: true }).click();
 }
 test.beforeEach(async ({ page }) => { await setupSpeech(page); await openExistingLibrary(page); });
+
+test.describe('outside modal dismissal', () => {
+  test.use({ hasTouch: true });
+  async function capture(page: Page, name: string, width: number) {
+    const directory = 'artifacts/screenshots/modal-outside-dismiss';
+    await mkdir(directory, { recursive: true });
+    await page.screenshot({ path: `${directory}/${name}-${width}.png`, animations: 'disabled' });
+  }
+  for (const viewport of [{ width: 390, height: 700 }, { width: 1180, height: 900 }]) {
+    test(`outside taps keep play active at ${viewport.width}px`, async ({ page, context }) => {
+      await page.setViewportSize(viewport);
+      await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
+      const cow = page.getByRole('button', { name: 'Cow', exact: true });
+      const tile = (await cow.boundingBox())!;
+      const control = page.getByTestId('parent-control');
+      const session = await context.newCDPSession(page);
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const bounds = (await control.boundingBox())!;
+        await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2, id: 1 }] });
+        await expect(control).toHaveText('Release to continue', { timeout: 3500 });
+        await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        const heading = page.getByRole('heading', { name: 'Leave this board?', exact: true });
+        await heading.tap();
+        await expect(heading).toBeVisible();
+        if (attempt === 0) await capture(page, 'leave-dialog', viewport.width);
+        // This spot is on a tile behind the scrim, outside the dialog at both sizes.
+        await page.touchscreen.tap(tile.x + 20, tile.y + 20);
+        await expect(heading).toHaveCount(0);
+        await expect(page.getByTestId('play-board')).toBeVisible();
+        await expect(control).toHaveText('Hold to unlock');
+        expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
+        if (attempt === 0) await capture(page, 'still-playing', viewport.width);
+      }
+      await cow.tap();
+      expect(await page.evaluate(() => (window as any).__spoken.map((s: any) => s.text))).toEqual(['Cow']);
+      await leaveBoard(page);
+      await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+    });
+
+    test(`outside taps cancel editing and deletion at ${viewport.width}px`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+      await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+      await page.getByRole('heading', { name: 'Edit tile', exact: true }).tap();
+      const label = page.getByRole('textbox', { name: 'Words on the tile', exact: true });
+      await label.tap();
+      await label.fill('Unsaved change');
+      await capture(page, 'tile-dialog', viewport.width);
+      await page.getByTestId('modal-backdrop').tap({ position: { x: 4, y: 4 } });
+      await expect(label).toHaveCount(0);
+      await capture(page, 'tile-dismissed', viewport.width);
+      await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+      await expect(label).toHaveValue('Cow');
+      await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
+
+      await page.getByRole('button', { name: 'Delete board', exact: true }).click();
+      await page.getByRole('heading', { name: 'Delete Farmyard friends?', exact: true }).tap();
+      await page.getByTestId('modal-backdrop').tap({ position: { x: 4, y: 4 } });
+      await expect(page.getByRole('heading', { name: 'Delete Farmyard friends?', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
+
+      await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+      await page.getByRole('heading', { name: 'Edit with AI', exact: true }).tap();
+      await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsent edit');
+      await capture(page, 'ai-dialog', viewport.width);
+      await page.getByTestId('modal-backdrop').tap({ position: { x: 4, y: 4 } });
+      await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
+      await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
+      await capture(page, 'ai-dismissed', viewport.width);
+    });
+  }
+});
 
 test('device language profile persists offline and drives French/Spanish board setup without changing fixed cards', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
@@ -236,6 +309,8 @@ test('unlock readiness matches release at the boundary and cancelled holds reset
 
 test('another touch cancels the ready unlock state without leaving stale feedback', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
+  // Let the initial board layout finish before freezing timers; layout resets the hold gesture.
+  await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
   await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));
