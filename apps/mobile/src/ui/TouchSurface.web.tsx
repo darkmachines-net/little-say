@@ -1,7 +1,13 @@
+/** @file Maps browser board pointer and keyboard input to accessible tile activation. */
+
 import React, { useEffect, useRef } from 'react';
 import { BoardTouchController } from '@little-say/core';
 import type { TouchSurfaceProps } from './TouchSurface';
 import { TileFace } from './TileFace';
+/**
+ * Render positioned tile controls with captured pointer gestures and keyboard activation, preventing
+ * board dragging and selection from disrupting play.
+ */
 export function TouchSurface({ tiles, rects, playingId, tappedId, pendingId, onActivate, onContact }: TouchSurfaceProps) {
   const root = useRef<HTMLDivElement>(null);
   const values = useRef({ rects, onActivate, onContact }); values.current = { rects, onActivate, onContact };

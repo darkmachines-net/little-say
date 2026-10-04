@@ -1,3 +1,5 @@
+/** @file Imports local tile photos through the platform picker and normalizes them for durable storage. */
+
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator, SaveFormat, type ImageRef } from 'expo-image-manipulator';
@@ -7,6 +9,10 @@ import { saveAsset } from '../data/storage';
 
 export type TilePhoto = Extract<Tile['illustration'], { kind: 'photo' }>;
 
+/**
+ * Open the image picker with native cropping where supported, resize large photos, and save a JPEG
+ * locally. Return null when selection is cancelled.
+ */
 export async function chooseTilePhoto(): Promise<TilePhoto | null> {
   const picked = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ['images'], allowsMultipleSelection: false,

@@ -1,3 +1,8 @@
+/**
+ * @file Runs billable AI proposal evaluations for multilingual boards and prints results and timing
+ * to standard output.
+ */
+
 import { starterLibrary } from '../tests/fixtures/library';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';

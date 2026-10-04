@@ -1,3 +1,5 @@
+/** @file Persists browser library, photos, and speech in IndexedDB and manages reusable blob URLs. */
+
 import { openDB } from 'idb';
 import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
 import { downloadAudio } from './audioDownload';
@@ -6,26 +8,31 @@ const database = openDB('little-say', 2, { upgrade(db, oldVersion) {
   if (oldVersion < 2) db.createObjectStore('speech');
 } });
 const urls = new Map<string, string>();
+/** Read and validate the browser library, returning null on first use and rejecting invalid saved data. */
 export async function loadLibrary(): Promise<Library | null> {
   const value = await (await database).get('state', 'library');
   return value ? migrateLibrary(value) : null;
 }
+/** Validate and replace the library, resolving only when the IndexedDB transaction completes. */
 export async function saveLibrary(value: Library): Promise<void> {
   const db = await database;
   const tx = db.transaction('state', 'readwrite');
   await tx.store.put(migrateLibrary(value), 'library');
   await tx.done;
 }
+/** Fetch a selected image URI and store its blob under the local photo ID. */
 export async function saveAsset(id: string, uri: string): Promise<void> {
   const blob = await (await fetch(uri)).blob();
   await (await database).put('photos', blob, id);
 }
+/** Return a reusable blob URL for a stored photo, or null when no photo exists for the ID. */
 export async function assetUri(id: string): Promise<string | null> {
   if (urls.has(id)) return urls.get(id)!;
   const blob = await (await database).get('photos', id) as Blob | undefined;
   if (!blob) return null;
   const uri = URL.createObjectURL(blob); urls.set(id, uri); return uri;
 }
+/** Delete unreferenced photo blobs and revoke their cached object URLs. */
 export async function pruneAssets(keep: Set<string>): Promise<void> {
   const db = await database;
   for (const id of await db.getAllKeys('photos')) if (!keep.has(String(id))) {
@@ -34,6 +41,7 @@ export async function pruneAssets(keep: Set<string>): Promise<void> {
     urls.delete(String(id));
   }
 }
+/** Ask the browser to retain origin storage; return false when the persistence API is unavailable. */
 export async function requestPersistence(): Promise<boolean> { return navigator.storage?.persist ? navigator.storage.persist() : false; }
 
 const audioUrls = new Map<string, string>();
@@ -42,6 +50,7 @@ function audioAsset(id: string, blob: Blob): SpeechAsset {
   if (!uri) { uri = URL.createObjectURL(blob); audioUrls.set(id, uri); }
   return { id, uri };
 }
+/** Restore valid cached speech blobs as playable object URLs indexed by speech key. */
 export async function loadSpeechAssets(): Promise<Record<string, SpeechAsset>> {
   const db = await database;
   const assets: Record<string, SpeechAsset> = {};
@@ -51,6 +60,7 @@ export async function loadSpeechAssets(): Promise<Record<string, SpeechAsset>> {
   }
   return assets;
 }
+/** Validate and download a speech clip, persist its blob, and return a reusable playable object URL. */
 export async function saveSpeechAsset(key: string, id: string, url: string): Promise<SpeechAsset> {
   speechAssetIdSchema.parse(id);
   const bytes = await downloadAudio(url);

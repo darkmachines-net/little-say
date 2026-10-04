@@ -1,3 +1,8 @@
+/**
+ * @file Guides device language selection and review of generated starter boards before entering the
+ * library.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { Check, ChevronLeft, WandSparkles } from 'lucide-react-native';
@@ -9,6 +14,10 @@ import { Button, Field, Notice } from './components';
 import { styles, theme } from './theme';
 import { Brand } from './Brand';
 
+/**
+ * Resume saved setup progress, generate starter drafts for the chosen languages, and commit the
+ * parent-approved result through onCommit.
+ */
 export function FirstTimeSetup({ library, onCommit }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void> }) {
   const setup = library.setup!;
   const [profile, setProfile] = useState(() => getLanguageProfile(library.settings));

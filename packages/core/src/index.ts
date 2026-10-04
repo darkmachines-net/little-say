@@ -1,3 +1,5 @@
+/** @file Exposes the platform-independent domain schemas and board, speech, gesture, and setup helpers. */
+
 export * from './schema';
 export * from './interaction';
 export * from './languages';

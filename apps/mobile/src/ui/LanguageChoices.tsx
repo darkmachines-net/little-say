@@ -1,9 +1,12 @@
+/** @file Provides reusable language choices with preferred-language ordering and custom tags. */
+
 import { useState } from 'react';
 import { View } from 'react-native';
 import { canonicalLanguage, languageName, languageSchema, languages } from '@little-say/core';
 import { Button, Field, Notice } from './components';
 import { styles } from './theme';
 
+/** Render single or multiple language selection, optionally allowing a validated custom language tag. */
 export function LanguageChoices({ selected, preferred, onChoose, label, multiple = false, disabled = false, customInput = true, initiallyExpanded = false }: {
   selected: string[]; preferred: string[]; onChoose: (tag: string) => void; label: string; multiple?: boolean; disabled?: boolean; customInput?: boolean; initiallyExpanded?: boolean;
 }) {

@@ -1,3 +1,9 @@
+/** @file Validates downloaded speech clips before they enter platform storage. */
+
+/**
+ * Fetch WAV bytes with a 30-second timeout; reject failed responses, unexpected content types, or
+ * invalid size and container markers.
+ */
 export async function downloadAudio(url: string): Promise<Uint8Array> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 30000);

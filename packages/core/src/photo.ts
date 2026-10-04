@@ -1,3 +1,5 @@
+/** @file Shares normalized photo crop geometry and pan/pinch gesture state across platforms. */
+
 export const MAX_PHOTO_ZOOM = 6;
 export type PhotoCrop = { zoom: number; x: number; y: number };
 export type PhotoSize = { width: number; height: number };
@@ -12,6 +14,10 @@ export function photoGeometry(source: PhotoSize, frame: PhotoSize, crop: PhotoCr
   return { width, height, left: (frame.width - width) / 2 + crop.x * (width - frame.width) / 2, top: (frame.height - height) / 2 + crop.y * (height - frame.height) / 2 };
 }
 
+/**
+ * Apply a pixel drag to normalized crop offsets, clamping movement to the image overflow so no blank
+ * edge is exposed.
+ */
 export function panPhoto(source: PhotoSize, frame: PhotoSize, crop: PhotoCrop, dx: number, dy: number): PhotoCrop {
   const image = photoGeometry(source, frame, crop);
   return { ...crop, x: image.width - frame.width > 0.001 ? clamp(crop.x + 2 * dx / (image.width - frame.width), -1, 1) : 0, y: image.height - frame.height > 0.001 ? clamp(crop.y + 2 * dy / (image.height - frame.height), -1, 1) : 0 };
@@ -30,8 +36,14 @@ export function zoomPhoto(source: PhotoSize, frame: PhotoSize, crop: PhotoCrop, 
 /** Rebases when a finger joins/leaves, avoiding jumps between pan and pinch. */
 export class PhotoGesture {
   private start: { points: PhotoPoint[]; crop: PhotoCrop } | null = null;
+  /** Bind source-image and frame dimensions used to translate pointer movement into crop changes. */
   constructor(private source: PhotoSize, private frame: PhotoSize) {}
+  /** Discard the current gesture baseline so the next contact starts from the supplied crop. */
   reset() { this.start = null; }
+  /**
+   * Update a crop from up to two frame-relative pointer positions, rebasing when the contact count
+   * changes to avoid jumps.
+   */
   move(crop: PhotoCrop, points: PhotoPoint[]): PhotoCrop {
     const next = points.slice(0, 2);
     if (!next.length) { this.reset(); return crop; }

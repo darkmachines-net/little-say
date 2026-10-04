@@ -1,7 +1,12 @@
+/** @file Keeps unlock readiness and release handling on the same timed gesture state. */
+
 import { useEffect, useRef, useState } from 'react';
 import { ParentExitGesture, type ParentHoldState, type Point } from '@little-say/core';
 
-/** The label and release check share one gesture and one monotonic clock. */
+/**
+ * Expose hold state and contact handlers using one gesture and monotonic clock for both the label
+ * and release check. Cancel the hold when cancelToken changes and clear timers on unmount.
+ */
 export function useParentHold(cancelToken: number) {
   const gesture = useRef(new ParentExitGesture()).current;
   const contacts = useRef(new Set<number | string>());

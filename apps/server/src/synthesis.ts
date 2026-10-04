@@ -1,16 +1,27 @@
+/**
+ * @file Generates bounded WAV speech through OpenAI Realtime and checks the spoken transcript before
+ * caching.
+ */
+
 import OpenAI from 'openai';
 import { OpenAIRealtimeWS } from 'openai/realtime/ws';
 import { type SpeechInput } from '@little-say/core';
 
 export const MAX_SPEECH_BYTES = 960044; // At most 20 seconds of 24 kHz mono PCM.
+/** Resolve the model, voice, and output format identity used to distinguish cached pronunciations. */
 export function speechProfile(env: NodeJS.ProcessEnv) {
   return { model: env.OPENAI_SPEECH_MODEL || 'gpt-realtime-2.1-mini', voice: env.OPENAI_SPEECH_VOICE || 'marin', version: 1, format: 'wav-24000-mono' };
 }
 export type SpeechProfile = ReturnType<typeof speechProfile>;
+/**
+ * Compare nonempty requested text and transcript after Unicode, case, punctuation, symbol, and
+ * whitespace normalization.
+ */
 export function transcriptMatches(text: string, transcript: string) {
   const normalized = (value: string) => value.normalize('NFKC').toLocaleLowerCase().replace(/[\p{P}\p{S}\s]/gu, '');
   return normalized(text).length > 0 && normalized(text) === normalized(transcript);
 }
+/** Wrap 24 kHz mono signed 16-bit PCM in a WAV header; reject empty, misaligned, or oversized audio. */
 export function pcmToWav(pcm: Buffer): Buffer {
   if (!pcm.length || pcm.length % 2 || pcm.length + 44 > MAX_SPEECH_BYTES) throw new Error('Invalid speech audio.');
   const header = Buffer.alloc(44);
@@ -21,6 +32,10 @@ export function pcmToWav(pcm: Buffer): Buffer {
   return Buffer.concat([header, pcm]);
 }
 
+/**
+ * Return a speech generator or null without an API key. Each request owns and closes its connection,
+ * rejecting timeout, oversized output, or a mismatched transcript.
+ */
 export function openAISynthesis(env: NodeJS.ProcessEnv, profile: SpeechProfile) {
   const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim();
   if (!apiKey) return null;

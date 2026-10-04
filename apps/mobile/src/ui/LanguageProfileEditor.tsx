@@ -1,3 +1,5 @@
+/** @file Edits device language preferences and the default language used for new content. */
+
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { languageName, languageProfileSchema, type LanguageProfile } from '@little-say/core';
@@ -5,6 +7,7 @@ import { LanguageChoices } from './LanguageChoices';
 import { Button, Notice } from './components';
 import { styles } from './theme';
 
+/** Report valid profile changes while keeping the default language inside the selected set. */
 export function LanguageProfileEditor({ value, onChange, disabled = false, expanded = false }: { value: LanguageProfile; onChange: (profile: LanguageProfile) => void; disabled?: boolean; expanded?: boolean }) {
   const [error, setError] = useState('');
   const toggle = (tag: string) => {

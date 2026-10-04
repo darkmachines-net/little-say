@@ -1,7 +1,13 @@
+/** @file Connects library loading and serialized durable writes to React state. */
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type Library, newLibrary } from '@little-say/core';
 import * as storage from './storage';
 
+/**
+ * Load the local library without silently resetting failures. Expose optimistic edits,
+ * save-before-display commits, retry, and pending-write flushing.
+ */
 export function useLibrary() {
   const [library, setLibrary] = useState<Library | null>(null);
   const [error, setError] = useState('');

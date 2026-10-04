@@ -1,3 +1,8 @@
+/**
+ * @file Exercises board editing and play, navigation protection, responsive layouts, and offline
+ * browser behavior.
+ */
+
 import { test, expect, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';

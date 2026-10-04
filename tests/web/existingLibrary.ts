@@ -1,3 +1,5 @@
+/** @file Seeds an existing browser library so scenarios can bypass first-use setup intentionally. */
+
 import { starterLibrary } from '../fixtures/library';
 import { expect, type Page } from '@playwright/test';
 

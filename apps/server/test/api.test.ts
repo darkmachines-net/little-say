@@ -1,3 +1,8 @@
+/**
+ * @file Exercises API validation, origins, concurrency, transcription limits, and optional static web
+ * serving.
+ */
+
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createServer } from '../src/app';

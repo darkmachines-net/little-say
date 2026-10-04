@@ -1,10 +1,20 @@
+/** @file Builds reproducible native release environments and rejects conflicting EAS variables. */
+
 import { createHash } from 'node:crypto';
 import { assert, safeEnvironment } from './common';
 import type { Profile } from './native-contract';
 
+/**
+ * Create a scrubbed release environment with dotenv disabled, CI enabled, and the selected update
+ * channel.
+ */
 export function releaseEnvironment(profile: Profile) {
   return { ...safeEnvironment(), EXPO_NO_DOTENV: '1', LITTLE_SAY_CHANNEL: profile, CI: '1' };
 }
+/**
+ * Reject unreadable or conflicting EAS variables and return the merged environment plus a stable hash
+ * for native compatibility checks.
+ */
 export function validateExpoEnvironment(profile: Profile, variables: { name: string; value: string; visibility: string; type: string }[]) {
   const values: Record<string, string> = {};
   for (const variable of variables) {

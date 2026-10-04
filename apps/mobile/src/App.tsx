@@ -1,3 +1,8 @@
+/**
+ * @file Coordinates library persistence, board navigation, playback previews, and parent editing
+ * actions.
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Platform, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -132,4 +137,8 @@ function Application() {
     {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => !audio.asset(t) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => { setSoundCheck(null); setSettingsOpen(true); }}>Check parent settings</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
   </View>;
 }
+/**
+ * Mount the app with safe-area support and the library-driven setup, dashboard, editor, and play
+ * screens.
+ */
 export default function App() { return <SafeAreaProvider><SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}><Application /></SafeAreaView></SafeAreaProvider>; }

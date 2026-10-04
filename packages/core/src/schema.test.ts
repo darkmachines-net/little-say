@@ -1,3 +1,8 @@
+/**
+ * @file Verifies durable data validation, AI proposal constraints, photo retention, and safe board
+ * revision changes.
+ */
+
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { applyProposal, boardContext, migrateLibrary, validateGeneratedBoard, type GeneratedBoard } from './schema';

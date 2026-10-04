@@ -1,3 +1,5 @@
+/** @file Composes the compact board editor and its tile, language, AI, and audio actions. */
+
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
@@ -11,6 +13,10 @@ import { Button, Confirm, Notice } from './components';
 import { styles, theme } from './theme';
 import { type SpeechLibrary } from '../services/speechLibrary';
 
+/**
+ * Show the editable board preview and contextual controls, delegating durable changes, undo, and
+ * playback to the parent.
+ */
 export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onApply, onConsent, onUndo, canUndo, onPreview, saving }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges) => void; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onApply: (proposal: BoardProposal) => Promise<void>; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [editing, setEditing] = useState<Tile | null>(null);

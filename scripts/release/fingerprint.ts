@@ -1,3 +1,8 @@
+/**
+ * @file Prints an Expo native fingerprint for one platform, excluding generated native directories and
+ * including release metadata.
+ */
+
 import { createFingerprintAsync } from '@expo/fingerprint';
 import { mobile, readJson, root } from './common';
 import { resolve } from 'node:path';

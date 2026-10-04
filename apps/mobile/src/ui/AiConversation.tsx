@@ -1,3 +1,8 @@
+/**
+ * @file Hosts parent AI conversations with voice input, editable board drafts, and explicit apply
+ * controls.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowUp, Mic, Plus, ShieldCheck, Square, X } from 'lucide-react-native';
@@ -32,6 +37,10 @@ function Working({ label }: { label: string }) {
   </View>;
 }
 
+/**
+ * Render a creation or editing conversation that preserves the source board until Apply, supports
+ * follow-up prompts, and cancels outstanding work when dismissed.
+ */
 export function AiConversation({ settings, board, onApply, onConsent, onClose, onManual }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal) => Promise<void>; onConsent: () => Promise<void>; onClose: () => void; onManual?: () => void }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
   const [source] = useState(board);

@@ -1,3 +1,5 @@
+/** @file Adds install metadata, brand assets, and an offline service worker to the exported web app. */
+
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { generateSW } from 'workbox-build';
 

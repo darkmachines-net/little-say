@@ -1,3 +1,8 @@
+/**
+ * @file Verifies recent-board spotlight ordering and persistent favorite actions in the browser
+ * library.
+ */
+
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';

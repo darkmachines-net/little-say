@@ -1,3 +1,5 @@
+/** @file Exercises language-first onboarding, generated starter drafts, retries, and setup persistence. */
+
 import { expect, test, type Page } from '@playwright/test';
 import { type ProposalRequest, type StarterTopic } from '../../packages/core/src/schema';
 

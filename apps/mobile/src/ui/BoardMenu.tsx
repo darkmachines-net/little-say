@@ -1,3 +1,5 @@
+/** @file Provides dashboard overflow actions for board deletion and missing speech generation. */
+
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { AudioLines, Trash2 } from 'lucide-react-native';
@@ -6,6 +8,10 @@ import { type SpeechLibrary } from '../services/speechLibrary';
 import { Button, Notice, Sheet } from './components';
 import { styles } from './theme';
 
+/**
+ * Show board actions, offering audio preparation only when clips are missing and requiring confirmation
+ * before deletion.
+ */
 export function BoardMenu({ board, settings, audio, onConsent, onDelete, onClose }: {
   board: Board; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; onDelete: () => void; onClose: () => void;
 }) {

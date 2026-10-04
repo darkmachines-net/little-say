@@ -1,3 +1,5 @@
+/** @file Centralizes brand colors, tile palettes, and reusable app layout and typography styles. */
+
 import { StyleSheet } from 'react-native';
 import colors from '../../assets/brand/colors.json';
 

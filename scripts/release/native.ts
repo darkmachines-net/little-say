@@ -1,3 +1,8 @@
+/**
+ * @file Orchestrates local native configuration, signed builds, artifact retention, submission, and
+ * guarded OTA publication.
+ */
+
 import { randomUUID } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

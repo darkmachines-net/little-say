@@ -1,3 +1,8 @@
+/**
+ * @file Exercises generated-audio controls, language-specific clips, and fallback behavior in the
+ * browser.
+ */
+
 import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { pcmToWav } from '../../apps/server/src/synthesis';

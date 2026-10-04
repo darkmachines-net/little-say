@@ -1,6 +1,15 @@
+/**
+ * @file Resolves Expo branding, native versions, server origin, and OTA settings from the release
+ * contract.
+ */
+
 const release = require('../../native-release.json');
 const colors = require('./assets/brand/colors.json');
 
+/**
+ * Merge the base Expo config with release metadata and the selected update channel; reject unknown
+ * channels.
+ */
 module.exports = ({ config }) => {
   const channel = process.env.LITTLE_SAY_CHANNEL || 'internal';
   if (!['internal', 'production'].includes(channel)) throw new Error('Unknown update channel.');

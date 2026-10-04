@@ -1,3 +1,5 @@
+/** @file Defines the compact default emoji palette shown before searching the full Unicode catalog. */
+
 export const commonEmojiKeywords = [
   ['🐄','cow farm animal'], ['🐑','sheep lamb farm animal'], ['🐴','horse pony farm animal'], ['🐷','pig farm animal'], ['🐔','chicken hen farm animal'], ['🦆','duck farm animal'], ['🐐','goat farm animal'], ['🐕','dog puppy pet animal'], ['🐈','cat kitten pet animal'], ['🐰','rabbit bunny animal'], ['🐸','frog animal'], ['🦋','butterfly insect'], ['🐝','bee insect'], ['🦁','lion animal'], ['🐘','elephant animal'], ['🐻','bear animal'], ['🐟','fish animal'], ['🐢','turtle animal'],
   ['👵','grandma grandmother family'], ['👴','grandpa grandfather family'], ['👩','mom mother woman family'], ['👨','dad father man family'], ['👶','baby family'], ['🧒','child kid family'], ['❤️','love heart'], ['👋','hello goodbye wave'], ['🙋','me help hand'], ['👍','yes good'], ['🛑','stop no'], ['➕','more plus'],

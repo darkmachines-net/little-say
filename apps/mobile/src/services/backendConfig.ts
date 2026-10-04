@@ -1,3 +1,6 @@
+/** @file Defines backend URL validation and precedence independently of platform globals. */
+
+/** Trim trailing slashes and reject non-HTTP URLs, embedded credentials, queries, or fragments. */
 export function normalizeBackendUrl(value: string) {
   const cleaned = value.trim().replace(/\/+$/, '');
   const parsed = new URL(cleaned);
@@ -5,6 +8,10 @@ export function normalizeBackendUrl(value: string) {
   return cleaned;
 }
 
+/**
+ * Prefer a validated development URL over the saved address, then use the platform fallback; throw if
+ * none is available.
+ */
 export function resolveBackendUrl(configured: string, developmentUrl: string, webOrigin?: string) {
   // A saved deployment address must never silently divert a local development session.
   if (developmentUrl.trim()) return normalizeBackendUrl(developmentUrl);

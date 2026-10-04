@@ -1,3 +1,8 @@
+/**
+ * @file Checks locally built Android artifacts against the signing credential and native release
+ * identity.
+ */
+
 import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -5,6 +10,10 @@ import { resolve } from 'node:path';
 import { assert, run, safeEnvironment } from './common';
 import type { NativeRelease } from './native-contract';
 
+/**
+ * Use installed Java and Android SDK tools to verify APK/AAB signatures and the APK package/version,
+ * cleaning temporary certificate files on exit.
+ */
 export function verifyAndroidArtifacts(directory: string, key: { keystorePath: string; keystorePassword: string; keyAlias: string }, release: NativeRelease) {
   const sdk = process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT;
   assert(sdk, 'Set ANDROID_HOME to the Android SDK.');

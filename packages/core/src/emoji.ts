@@ -1,3 +1,5 @@
+/** @file Searches the generated Unicode emoji catalog by glyph, name, and keywords. */
+
 import data from './data/emoji-catalog.json';
 import { commonEmojiKeywords } from './emoji-favorites';
 

@@ -1,3 +1,5 @@
+/** @file Binds speech storage and backend synthesis to library changes and connectivity recovery. */
+
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
 import { boardAudioTiles, speechKey, speechResponseSchema, type Library } from '@little-say/core';
@@ -5,6 +7,11 @@ import { loadSpeechAssets, saveSpeechAsset } from '../data/storage';
 import { ApiError, apiFetch, backendUrl } from './api';
 import { SpeechLibrary } from './speechLibrary';
 
+/**
+ * Keep a subscribed SpeechLibrary instance and prepare missing language variants when consent and
+ * automatic audio are enabled; retry transient capacity failures and resume on foreground or
+ * reconnection.
+ */
 export function useSpeechLibrary(library: Library | null) {
   const reference = useRef<SpeechLibrary | null>(null);
   if (!reference.current) reference.current = new SpeechLibrary({

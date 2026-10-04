@@ -1,9 +1,18 @@
+/**
+ * @file Configures and deploys published server digests to a local Docker context with health
+ * verification and rollback.
+ */
+
 import { existsSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { assert, fail, machineRoot, parseArgs, readJson, root, run, safeEnvironment, writeJson } from './common';
 
 export interface Deployment { context: string; image: string; serverUrl: string; envFile: string; project: string; }
 const file = resolve(machineRoot, 'server.json');
+/**
+ * Reject unsafe or incomplete Docker target settings, server origins, and environment files inside the
+ * checkout.
+ */
 export function validateDeployment(config: Deployment) {
   assert(/^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/.test(config.context), 'Choose an existing Docker context name.');
   assert(/^ghcr\.io\/[a-z0-9_.-]+\/[a-z0-9_.-]+$/.test(config.image), 'Use ghcr.io/owner/repository without a tag.');
@@ -14,6 +23,7 @@ export function validateDeployment(config: Deployment) {
   const path = config.envFile.replaceAll('\\', '/').toLowerCase();
   assert(!path.startsWith(`${root.replaceAll('\\', '/').toLowerCase()}/`), 'Keep the deployment environment file outside the checkout.');
 }
+/** Combine an image repository with a validated SHA-256 digest; mutable tags are not accepted. */
 export function immutableImage(image: string, digest: string) {
   assert(/^sha256:[a-f0-9]{64}$/.test(digest), 'Pass --digest sha256:<64 hex characters> from the GitHub publication summary. Tags are not deployment inputs.');
   return `${image}@${digest}`;
@@ -35,6 +45,10 @@ async function main() {
   if (args['dry-run']) { console.log(`Would deploy ${image}\nDocker context: ${config.context}\nCompose project: ${config.project}\nExpected health: ${config.serverUrl}/api/health, version ${args.version}\nEnvironment: ${config.envFile}\nSpeech cache: ${config.project}_speech-cache (preserved)`); return; }
   await deployImage(config, image, args.version);
 }
+/**
+ * Pull and deploy an image, verify its labels and public health, and write a receipt. On deployment
+ * failure, attempt to restore the previous image while preserving the speech cache.
+ */
 export async function deployImage(config: Deployment, image: string, version: string, io = { run, fetch, receipt: resolve(machineRoot, 'last-server-deployment.json') }) {
   const docker = (params: string[], capture = false, env = safeEnvironment()) => io.run('docker', ['--context', config.context, ...params], { capture, env });
   const compose = (params: string[], selectedImage: string, capture = false) => docker(['compose', '--project-name', config.project, '--file', resolve(root, 'deploy/compose.yaml'), '--env-file', config.envFile, ...params], capture, { ...safeEnvironment(), LITTLE_SAY_SERVER_IMAGE: selectedImage, LITTLE_SAY_SERVER_ENV_FILE: config.envFile });

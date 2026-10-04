@@ -1,8 +1,14 @@
+/** @file Defines shared parent-facing buttons, fields, notices, dialogs, and confirmations. */
+
 import { type ReactNode } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
 import { X, AlertCircle, type LucideIcon } from 'lucide-react-native';
 import { theme, styles } from './theme';
 
+/**
+ * Render a touch-sized action with optional icon and busy feedback; busy or disabled actions cannot be
+ * pressed.
+ */
 export function Button({ children, onPress, icon: Icon, kind = 'primary', disabled = false, busy = false, compact = false, accessibilityLabel, testID }: { children?: ReactNode; onPress: () => void; icon?: LucideIcon; kind?: 'primary' | 'secondary' | 'ghost' | 'danger'; disabled?: boolean; busy?: boolean; compact?: boolean; accessibilityLabel?: string; testID?: string }) {
   const color = kind === 'primary' ? 'white' : kind === 'danger' ? theme.red : theme.accent;
   return <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={accessibilityLabel ?? (typeof children === 'string' ? children : undefined)} accessibilityState={{ disabled: disabled || busy, busy }} disabled={disabled || busy} onPress={onPress} style={({ pressed }) => [{ minHeight: 50, paddingHorizontal: compact ? 12 : 20, paddingVertical: 11, borderRadius: 15, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, backgroundColor: kind === 'primary' ? theme.accent : kind === 'secondary' ? theme.accentSoft : kind === 'danger' ? '#FAEBE8' : 'transparent', borderWidth: kind === 'secondary' ? 1 : 0, borderColor: theme.accentSoft, opacity: disabled || busy ? 0.5 : pressed ? 0.75 : 1 }, compact && { minWidth: 44 }]}>
@@ -10,12 +16,18 @@ export function Button({ children, onPress, icon: Icon, kind = 'primary', disabl
     {children ? <Text style={{ fontSize: 15, color, fontWeight: '700' }}>{children}</Text> : null}
   </Pressable>;
 }
+/**
+ * Pair a visible label with an accessible text input while preserving caller-provided input props and
+ * styles.
+ */
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
   return <View style={{ gap: 0 }}><Text style={styles.label}>{label}</Text><TextInput accessibilityLabel={label} placeholderTextColor={theme.muted} {...props} style={[styles.field, props.style]} /></View>;
 }
+/** Present an accessible alert message with an optional recovery action. */
 export function Notice({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return <View accessibilityRole="alert" style={{ padding: 14, backgroundColor: '#FFF0E4', borderRadius: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}><AlertCircle size={19} color={theme.clay} /><View style={{ flex: 1, gap: 8 }}><Text style={{ color: '#855137', fontSize: 14, lineHeight: 21 }}>{children}</Text>{action}</View></View>;
 }
+/** Present a responsive modal with scrollable content, a close action, and an optional fixed footer. */
 export function Sheet({ title, subtitle, onClose, children, footer, wide = false }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
   const { width, height } = useWindowDimensions();
   return <Modal transparent animationType="fade" visible onRequestClose={onClose} statusBarTranslucent>
@@ -28,6 +40,10 @@ export function Sheet({ title, subtitle, onClose, children, footer, wide = false
     </View>
   </Modal>;
 }
+/**
+ * Present an explicit confirmation action and a cancel path, optionally styling the action as
+ * destructive.
+ */
 export function Confirm({ title, message, confirmLabel, onConfirm, onClose, danger = false }: { title: string; message: string; confirmLabel: string; onConfirm: () => void; onClose: () => void; danger?: boolean }) {
   return <Sheet title={title} onClose={onClose}><Text style={styles.body}>{message}</Text><View style={[styles.row, { justifyContent: 'flex-end', flexWrap: 'wrap' }]}><Button kind="ghost" onPress={onClose}>Keep it</Button><Button kind={danger ? 'danger' : 'primary'} onPress={onConfirm}>{confirmLabel}</Button></View></Sheet>;
 }

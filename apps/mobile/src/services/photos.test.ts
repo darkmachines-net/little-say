@@ -1,3 +1,5 @@
+/** @file Verifies native picker cropping, web selection, photo normalization, and local saving. */
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { chooseTilePhoto } from './photos';
 

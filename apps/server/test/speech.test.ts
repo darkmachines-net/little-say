@@ -1,3 +1,8 @@
+/**
+ * @file Verifies synthesis transcript checks, WAV encoding, durable cache behavior, and speech API
+ * responses.
+ */
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';

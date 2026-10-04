@@ -1,3 +1,5 @@
+/** @file Collects device language, speech, backend, storage, and platform-specific parent settings. */
+
 import { useState } from 'react';
 import Constants from 'expo-constants';
 import { Linking, Platform, Pressable, Text, View } from 'react-native';
@@ -10,6 +12,10 @@ import { Button, Field, Notice, Sheet } from './components';
 import { styles, theme } from './theme';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
 
+/**
+ * Edit settings in a local draft, preview voices, and save through the supplied callback; show
+ * navigation-lock instructions only on applicable native platforms.
+ */
 export function ParentSettings({ settings, languages, voices, onSave, onPreview, onClose }: { settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
   const [url, setUrl] = useState(settings.backendUrl);
   const [selected, setSelected] = useState(settings.voices);

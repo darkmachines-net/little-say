@@ -1,3 +1,5 @@
+/** @file Verifies backend address validation and development override precedence. */
+
 import { describe, expect, it } from 'vitest';
 import { resolveBackendUrl } from './backendConfig';
 

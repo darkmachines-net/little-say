@@ -1,3 +1,8 @@
+/**
+ * @file Derives app icons, splash artwork, web favicons, and UI image scales from the mountain master
+ * asset.
+ */
+
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';

@@ -1,3 +1,5 @@
+/** @file Captures browser voice prompts while isolating recorder events and cleanup by session. */
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Session = {
@@ -10,6 +12,10 @@ type Session = {
 const cancelled = () => new Error('Recording cancelled.');
 const failed = () => new Error('The recording failed. Please try again.');
 
+/**
+ * Expose start, stop-to-FormData, and cleanup for one microphone session. Release tracks on
+ * cancellation or unmount and report asynchronous capture failures through onError.
+ */
 export function useRecording(onError?: (message: string) => void) {
   const session = useRef<Session | null>(null);
   const generation = useRef(0);

@@ -1,3 +1,5 @@
+/** @file Verifies searchable Unicode coverage, keyword matching, and common emoji ordering. */
+
 import { describe, expect, it } from 'vitest';
 import { emojiCatalog, searchEmoji } from './emoji';
 import { illustrationSchema } from './schema';

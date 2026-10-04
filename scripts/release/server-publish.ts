@@ -1,3 +1,8 @@
+/**
+ * @file Validates merged server releases, creates source tags, and resolves immutable image metadata
+ * for the GitHub publication workflow.
+ */
+
 import { appendFileSync } from 'node:fs';
 import { assert, fail, git, run } from './common';
 import { validateCommit } from './version';

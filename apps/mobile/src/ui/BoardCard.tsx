@@ -1,3 +1,5 @@
+/** @file Renders library board previews with play, edit, favorite, and overflow actions. */
+
 import { Platform, Pressable, Text, View } from 'react-native';
 import { Ellipsis, Heart, Pencil, Play } from 'lucide-react-native';
 import { languageName, type Board } from '@little-say/core';
@@ -5,6 +7,10 @@ import { Button } from './components';
 import { TileFace } from './TileFace';
 import { palettes, styles, theme } from './theme';
 
+/**
+ * Display a board entry, enlarging its preview when featured and routing each action through the
+ * supplied callbacks.
+ */
 export function BoardCard({ board, featured = false, favorite = false, wide = false, onPlay, onEdit, onMore, onFavorite }: {
   board: Board; featured?: boolean; favorite?: boolean; wide?: boolean; onPlay: () => void; onEdit: () => void; onMore: () => void; onFavorite: () => void;
 }) {

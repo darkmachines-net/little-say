@@ -1,6 +1,12 @@
+/** @file Adapts Expo audio players to the shared speech-driver contract. */
+
 import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { type SpeechDriver } from '@little-say/core';
 
+/**
+ * Create a native clip driver with a load timeout and silent-mode playback. Stop releases the owned
+ * player and suppresses late callbacks.
+ */
 export function audioPlayback(): SpeechDriver<string> {
   let cleanup: (() => void) | undefined;
   const stop = () => { const dispose = cleanup; cleanup = undefined; dispose?.(); };

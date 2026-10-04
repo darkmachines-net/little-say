@@ -1,3 +1,5 @@
+/** @file Verifies resumable setup, starter language completeness, and safe draft completion. */
+
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { configureSetup, finishSetup, newLibrary, saveStarterDraft, starterBoard } from './onboarding';

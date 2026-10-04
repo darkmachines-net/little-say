@@ -1,3 +1,5 @@
+/** @file Defines common language choices and resolves display names for custom language tags. */
+
 export const languages = [
   { tag: 'en-US', name: 'English' }, { tag: 'ru-RU', name: 'Russian' },
   { tag: 'es-ES', name: 'Spanish' }, { tag: 'fr-FR', name: 'French' },
@@ -10,6 +12,10 @@ export const languages = [
   { tag: 'tr-TR', name: 'Turkish' }, { tag: 'vi-VN', name: 'Vietnamese' },
   { tag: 'id-ID', name: 'Indonesian' }, { tag: 'he-IL', name: 'Hebrew' },
 ];
+/**
+ * Resolve a language display name from the bundled choices or Intl, falling back to the tag when
+ * necessary.
+ */
 export function languageName(tag: string): string {
   const known = languages.find(language => language.tag === tag);
   if (known) return known.name;

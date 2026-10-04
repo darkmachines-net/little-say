@@ -1,3 +1,8 @@
+/**
+ * @file Verifies fixed and board-following language resolution, translation freshness, and
+ * revision-safe application.
+ */
+
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { applyProposal, boardContext, migrateLibrary, playLanguagesSchema, reviseBoard, tileSource } from './schema';

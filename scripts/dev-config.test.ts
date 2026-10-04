@@ -1,3 +1,5 @@
+/** @file Verifies LAN selection, development environment precedence, and API key isolation from Expo. */
+
 import { afterEach, describe, expect, it } from 'vitest';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir, type NetworkInterfaceInfo } from 'node:os';

@@ -1,3 +1,8 @@
+/**
+ * @file Verifies speech cache restoration, synthesis deduplication, queue priority, retries, and
+ * obsolete job cancellation.
+ */
+
 import { starterLibrary } from '../../../../tests/fixtures/library';
 import { describe, expect, it, vi } from 'vitest';
 import { speechKey, migrateLibrary, type SpeechAsset } from '@little-say/core';

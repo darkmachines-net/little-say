@@ -1,3 +1,5 @@
+/** @file Verifies browser microphone cleanup, cancellation races, and recorder error recovery. */
+
 import { act, createElement } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

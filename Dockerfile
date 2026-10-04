@@ -1,3 +1,4 @@
+# Builds the web app and API into a non-root server image with a writable speech-cache mount.
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

@@ -1,3 +1,8 @@
+/**
+ * @file Uses the pinned EAS client to verify project ownership, read release variables, and obtain
+ * Android signing credentials.
+ */
+
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -17,10 +22,15 @@ function graphqlClient() {
   assert(accessToken || sessionSecret, 'Sign in with native:configure first.');
   return createGraphqlClient({ accessToken, sessionSecret });
 }
+/** Verify that the linked Expo project belongs to the configured owner and uses the Little Say slug. */
 export async function verifyExpoProject(release: NativeRelease) {
   const response = await graphqlClient().query('query Project($id: String!) { app { byId(appId: $id) { id fullName } } }', { id: release.expoProjectId }, { noRetry: true }).toPromise();
   assert(!response.error && response.data?.app?.byId?.id === release.expoProjectId && response.data.app.byId.fullName === `@${release.expoOwner}/little-say`, 'Linked Expo project must be owned by the configured account and have the little-say slug.');
 }
+/**
+ * Read reproducible project environment variables, including sensitive strings but excluding file
+ * contents; never log the returned values.
+ */
 export async function readExpoEnvironment(release: NativeRelease, environment: string): Promise<{ name: string; value: string; visibility: string; type: string }[]> {
   const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));
   const { EnvironmentVariablesQuery } = require(resolve(root, 'tools/eas-cli/node_modules/eas-cli/build/graphql/queries/EnvironmentVariablesQuery.js'));
@@ -28,6 +38,10 @@ export async function readExpoEnvironment(release: NativeRelease, environment: s
     return await EnvironmentVariablesQuery.byAppIdWithSensitiveAsync(graphqlClient(), { appId: release.expoProjectId, environment, includeFileContent: false });
   } catch { throw new Error('Could not read the linked project EAS environment. Check EAS authentication and project access.'); }
 }
+/**
+ * Download the app default Android keystore and write local EAS credentials into the supplied
+ * directory. Return the credentials path; the caller owns secure cleanup.
+ */
 export async function downloadAndroidCredentials(release: NativeRelease, directory: string) {
   const client = graphqlClient();
   const query = `query NativeCredentials($projectId: String!, $applicationIdentifier: String!) {

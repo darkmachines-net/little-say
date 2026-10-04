@@ -1,5 +1,11 @@
+/** @file Adapts browser audio elements to the shared speech-driver contract. */
+
 import { type SpeechDriver } from '@little-say/core';
 
+/**
+ * Create a clip driver that starts playback synchronously to retain user activation; stop detaches
+ * handlers and releases the audio source.
+ */
 export function audioPlayback(): SpeechDriver<string> {
   let cleanup: (() => void) | undefined;
   const stop = () => { const dispose = cleanup; cleanup = undefined; dispose?.(); };

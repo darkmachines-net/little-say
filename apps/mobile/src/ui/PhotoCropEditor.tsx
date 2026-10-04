@@ -1,3 +1,8 @@
+/**
+ * @file Combines photo gestures, zoom controls, and a tile preview using the same crop geometry as
+ * playback.
+ */
+
 import { useEffect } from 'react';
 import { ActivityIndicator, Platform, Text, View, useWindowDimensions } from 'react-native';
 import { RotateCcw } from 'lucide-react-native';
@@ -9,6 +14,10 @@ import { usePhotoSource } from './PhotoImage';
 import { PhotoZoom } from './PhotoZoom';
 import { palettes, styles, theme } from './theme';
 
+/**
+ * Load the selected photo, report whether it is ready, and emit crop changes while previewing the
+ * actual tile appearance.
+ */
 export function PhotoCropEditor({ tile, photo, onChange, onReady }: { tile: Tile; photo: TilePhoto; onChange: (photo: TilePhoto) => void; onReady: (ready: boolean) => void }) {
   const crop = photo;
   const { width, height } = useWindowDimensions();

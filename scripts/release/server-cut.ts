@@ -1,3 +1,8 @@
+/**
+ * @file Creates a version-only server release PR and attempts a policy-compliant merge for the
+ * GitHub cut-release workflow.
+ */
+
 import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';

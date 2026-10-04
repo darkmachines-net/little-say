@@ -1,3 +1,8 @@
+/**
+ * @file Verifies touch hit testing, latest-pending speech, parent exit timing, and responsive grid
+ * layout.
+ */
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BoardTouchController, LatestSpeechQueue, ParentExitGesture, gridLayout } from './interaction';
 const rects = [{ id: 'cow', x: 10, y: 10, width: 100, height: 100 }, { id: 'sheep', x: 130, y: 10, width: 100, height: 100 }];

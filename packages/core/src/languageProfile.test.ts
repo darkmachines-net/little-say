@@ -1,3 +1,5 @@
+/** @file Verifies device language defaults, board preference precedence, and profile validation. */
+
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { initialLanguageProfile, getLanguageProfile, newTileLanguage, profileLanguages, suggestedPlayLanguages } from './languageProfile';

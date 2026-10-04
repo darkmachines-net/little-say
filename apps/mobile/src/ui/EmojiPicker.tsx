@@ -1,3 +1,5 @@
+/** @file Provides searchable Unicode emoji selection with a compact set of suggested visuals. */
+
 import { useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { searchEmoji } from '@little-say/core';
@@ -5,6 +7,7 @@ import { Button, Field } from './components';
 import { styles, theme } from './theme';
 
 const PAGE_SIZE = 64;
+/** Show searchable emoji choices and report the chosen glyph without changing the tile directly. */
 export function EmojiPicker({ selected, onSelect }: { selected?: string; onSelect: (emoji: string) => void }) {
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE_SIZE);

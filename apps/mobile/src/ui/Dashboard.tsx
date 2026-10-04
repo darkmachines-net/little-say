@@ -1,3 +1,5 @@
+/** @file Organizes saved boards by recent use and favorites and exposes creation and parent settings. */
+
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { Plus, Settings as SettingsIcon } from 'lucide-react-native';
@@ -10,6 +12,10 @@ import { Button } from './components';
 import { theme, styles } from './theme';
 import { Brand, MountainMark } from './Brand';
 
+/**
+ * Spotlight the most recently played board, place favorites next, and present library actions and the
+ * AI creation dialog.
+ */
 export function Dashboard({ library, audio, onOpen, onPlay, onManual, onSettings, onApply, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onManual: () => void; onSettings: () => void; onApply: (proposal: BoardProposal) => Promise<void>; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [creating, setCreating] = useState(false);

@@ -1,9 +1,15 @@
+/** @file Captures native voice prompts with Expo audio and constructs compatible multipart uploads. */
+
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { useAudioRecorder, RecordingPresets, requestRecordingPermissionsAsync, setAudioModeAsync } from 'expo-audio';
 import * as FileSystem from 'expo-file-system/legacy';
 import { File } from 'expo-file-system';
 
+/**
+ * Manage microphone permission, recording, and FormData creation. Stop recording when the app
+ * backgrounds or the hook unmounts; native operation failures reject their promises.
+ */
 export function useRecording(_onError?: (message: string) => void) {
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const [recording, setRecording] = useState(false);

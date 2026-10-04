@@ -1,9 +1,15 @@
+/** @file Checks an iOS archive against signing, bundle identity, and Expo update settings on macOS. */
+
 import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { assert, run } from './common';
 import type { NativeRelease, Profile } from './native-contract';
 
+/**
+ * Extract and verify the single app in an IPA, including version and OTA project/runtime/channel;
+ * always remove temporary extracted files.
+ */
 export function verifyIosArtifact(file: string, release: NativeRelease, profile: Profile) {
   const temp = mkdtempSync(resolve(tmpdir(), 'little-say-ipa-'));
   try {

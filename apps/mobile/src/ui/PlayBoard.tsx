@@ -1,3 +1,8 @@
+/**
+ * @file Coordinates child playback, independent touch and speech feedback, board languages, and guarded
+ * exit.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
@@ -9,6 +14,10 @@ import { ParentControl } from './ParentControl';
 import { Button, Notice, Sheet } from './components';
 import { styles, theme } from './theme';
 
+/**
+ * Fit the board to the available screen, queue tile speech, and keep language and exit actions in the
+ * header. Stop playback when the app backgrounds, the web page hides, or the screen unmounts.
+ */
 export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChange, onExit }: { board: Board; settings: Settings; voices: Voice[]; audioAsset: (tile: Tile) => SpeechAsset | undefined; onLanguageChange: (language: string) => Promise<void>; onExit: () => Promise<void> }) {
   useKeepAwake('soundboard', { suppressDeactivateWarnings: true });
   const { width } = useWindowDimensions();

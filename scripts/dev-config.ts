@@ -1,3 +1,5 @@
+/** @file Resolves LAN development addresses and separates API secrets from the Expo process environment. */
+
 import { readFile, writeFile } from 'node:fs/promises';
 import { networkInterfaces, type NetworkInterfaceInfo } from 'node:os';
 import { isIPv4 } from 'node:net';
@@ -9,6 +11,10 @@ import { promisify } from 'node:util';
 type Environment = Record<string, string | undefined>;
 export type LanAddress = { name: string; address: string };
 
+/**
+ * List reachable non-loopback IPv4 candidates, preferring private physical-network interfaces over
+ * virtual adapters.
+ */
 export function lanAddresses(interfaces: Record<string, NetworkInterfaceInfo[] | undefined> = networkInterfaces()): LanAddress[] {
   return Object.entries(interfaces).flatMap(([name, entries]) => (entries ?? [])
     .filter(entry => entry.family === 'IPv4' && !entry.internal && !entry.address.startsWith('169.254.'))
@@ -25,6 +31,10 @@ function port(value: string | undefined, fallback: number, name: string) {
   if (!/^\d+$/.test(value) || Number(value) < 1024 || Number(value) > 65535) throw new Error(`${name} must be a port between 1024 and 65535.`);
   return Number(value);
 }
+/**
+ * Validate host and port overrides and derive device URLs and allowed origins from addresses assigned
+ * to this computer.
+ */
 export function developmentConfig(env: Environment, addresses = lanAddresses()) {
   const host = env.DEV_HOST?.trim() || addresses[0]?.address;
   if (!host) throw new Error('No LAN IPv4 address found. Connect to Wi-Fi/Ethernet, or set DEV_HOST in .env.');
@@ -40,7 +50,10 @@ export function developmentConfig(env: Environment, addresses = lanAddresses()) 
 }
 export type DevelopmentConfig = ReturnType<typeof developmentConfig>;
 
-/** File values never enter the launcher's global environment or Expo's environment. */
+/**
+ * Read .env then .env.local, with defined inherited values taking precedence. Return a separate
+ * environment without mutating the launcher; pass it through expoEnvironment before launching Expo.
+ */
 export async function loadDevelopmentEnv(root: string, inherited: Environment = process.env): Promise<Environment> {
   const fromFiles: Environment = {};
   for (const name of ['.env', '.env.local']) {
@@ -56,20 +69,33 @@ async function windowsUserApiKey(): Promise<string | undefined> {
     return stdout.trim() || undefined;
   } catch { throw new Error('Could not read AAC_OPENAI_KEY from the Windows user environment. Open a fresh terminal or configure it in the root .env.'); }
 }
+/**
+ * Use an existing API key or read the Windows user-level AAC_OPENAI_KEY as a fallback without changing
+ * the caller environment.
+ */
 export async function withDevelopmentApiKey(env: Environment, readUserKey = windowsUserApiKey): Promise<Environment> {
   if (env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim()) return env;
   const key = await readUserKey();
   return key ? { ...env, AAC_OPENAI_KEY: key } : env;
 }
+/** Create the root .env from its example only when absent; return whether a file was created. */
 export async function ensureDevelopmentEnv(root: string) {
   try {
     await writeFile(resolve(root, '.env'), await readFile(resolve(root, '.env.example')), { flag: 'wx', mode: 0o600 });
     return true;
   } catch (error) { if ((error as NodeJS.ErrnoException).code === 'EEXIST') return false; throw error; }
 }
+/**
+ * Build the API process environment with LAN binding, the selected port, and matching development
+ * origins.
+ */
 export function apiEnvironment(env: Environment, config: DevelopmentConfig): Environment {
   return { ...env, NODE_ENV: 'development', HOST: '0.0.0.0', PORT: String(config.apiPort), ALLOWED_ORIGINS: config.origins.join(',') };
 }
+/**
+ * Remove server secrets and inherited client overrides before injecting only the selected public API
+ * URL and Expo LAN host.
+ */
 export function expoEnvironment(inherited: Environment, config: DevelopmentConfig): Environment {
   const env = { ...inherited };
   for (const key of Object.keys(env)) {

@@ -1,3 +1,8 @@
+/**
+ * @file Verifies release version policy, retained native compatibility checks, environment isolation,
+ * and deployment rollback.
+ */
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

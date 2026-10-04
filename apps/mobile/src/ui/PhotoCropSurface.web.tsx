@@ -1,8 +1,14 @@
+/** @file Adapts browser pointer gestures to shared photo crop geometry. */
+
 import React, { useMemo, useRef } from 'react';
 import { PhotoGesture, panPhoto, zoomPhoto, type PhotoPoint } from '@little-say/core';
 import type { PhotoCropSurfaceProps } from './PhotoCropSurface';
 import { PhotoImage } from './PhotoImage';
 
+/**
+ * Render the square crop surface with captured pointers for drag and pinch input, releasing gesture
+ * state when contacts end.
+ */
 export function PhotoCropSurface({ source, size, crop, onChange }: PhotoCropSurfaceProps) {
   const gesture = useMemo(() => new PhotoGesture(source, { width: size, height: size }), [source, size]);
   const points = useRef(new Map<number, PhotoPoint>());

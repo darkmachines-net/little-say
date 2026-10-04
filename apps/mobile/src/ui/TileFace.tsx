@@ -1,3 +1,5 @@
+/** @file Shares card illustration and feedback rendering between previews and the play surface. */
+
 import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { ImageOff, Volume2 } from 'lucide-react-native';
@@ -5,6 +7,7 @@ import { type Tile } from '@little-say/core';
 import { PhotoImage, usePhotoSource } from './PhotoImage';
 import { palettes, theme } from './theme';
 
+/** Render the tile emoji or locally stored cropped photo, with a fallback when its image cannot load. */
 export function Illustration({ tile, size = 64 }: { tile: Tile; size?: number }) {
   const [frame, setFrame] = useState({ width: size, height: size });
   const assetId = tile.illustration.kind === 'photo' ? tile.illustration.assetId : null;
@@ -19,6 +22,10 @@ export function Illustration({ tile, size = 64 }: { tile: Tile; size?: number })
     </View>
   </View>;
 }
+/**
+ * Display the tile label and visual with separate playing, recently tapped, and pending speech
+ * feedback.
+ */
 export function TileFace({ tile, compact = false, size = 64, playing = false, tapped = false, pending = false }: { tile: Tile; compact?: boolean; size?: number; playing?: boolean; tapped?: boolean; pending?: boolean }) {
   const palette = palettes[tile.color];
   return <View style={{ flex: 1, backgroundColor: palette.background, borderRadius: compact ? 14 : 24, overflow: 'hidden', borderWidth: 2, borderColor: pending ? theme.pending : 'transparent', padding: compact ? 5 : 12, justifyContent: 'center', alignItems: 'center', gap: compact ? 1 : 8 }}>

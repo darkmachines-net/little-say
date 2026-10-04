@@ -1,8 +1,14 @@
+/**
+ * @file Provides a deterministic existing library for tests without depending on generated onboarding
+ * content.
+ */
+
 import { colors, type Board, type Library, type LanguageProfile } from '../../packages/core/src/schema';
 import { initialLanguageProfile } from '../../packages/core/src/languageProfile';
 
 // Representative existing-device content for tests and opt-in live evaluations.
 // Production first launch creates boards through the language-aware setup flow.
+/** Create a fresh sample library with stable board content for isolated test setup. */
 export function starterLibrary(languageProfile: LanguageProfile = initialLanguageProfile()): Library {
   const now = new Date().toISOString();
   const board = (id: string, title: string, entries: string[][]): Board => ({ id, title, revision: 0, createdAt: now, updatedAt: now,

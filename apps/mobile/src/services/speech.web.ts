@@ -1,10 +1,17 @@
+/** @file Supplies browser voices and cached-audio-first playback through Web Speech. */
+
 import { type Tile, type Settings, type SpeechAsset, LatestSpeechQueue } from '@little-say/core';
 import { hybridSpeech } from './hybridSpeech';
 import { audioPlayback } from './audioPlayback';
 export type Voice = { identifier: string; name: string; language: string; localService?: boolean };
+/** Read the browser voice list currently available; return an empty list when Web Speech is unavailable. */
 export async function getVoices(): Promise<Voice[]> {
   return (window.speechSynthesis?.getVoices() ?? []).map(v => ({ identifier: v.voiceURI, name: v.name, language: v.lang, localService: v.localService }));
 }
+/**
+ * Prefer the saved voice in the tile language, then exact-locale or base-language matches, favoring
+ * local voices when available.
+ */
 export function matchingVoice(tile: Pick<Tile, 'language'>, voices: Voice[], preferences: Settings['voices']) {
   const base = tile.language.split('-')[0].toLowerCase();
   return voices.find(v => v.identifier === preferences[tile.language] && v.language.split('-')[0].toLowerCase() === base)
@@ -12,6 +19,10 @@ export function matchingVoice(tile: Pick<Tile, 'language'>, voices: Voice[], pre
     ?? voices.find(v => v.language.split('-')[0].toLowerCase() === base && v.localService !== false)
     ?? voices.find(v => v.language.split('-')[0].toLowerCase() === base);
 }
+/**
+ * Create a queue that finishes the active word and retains only the newest pending tile, using cached
+ * audio before browser TTS. Call stop when leaving playback.
+ */
 export function speechQueue(voices: Voice[], preferences: Settings['voices'], change: (active: Tile | null, pending: Tile | null) => void, failure: (tile: Tile) => void, asset: (tile: Tile) => SpeechAsset | undefined = () => undefined) {
   return new LatestSpeechQueue<Tile>(hybridSpeech({
     speak(tile, done, error) {

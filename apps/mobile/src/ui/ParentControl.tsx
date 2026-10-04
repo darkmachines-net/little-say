@@ -1,8 +1,14 @@
+/** @file Connects native press gestures to the timed parent unlock control. */
+
 import { Text, View } from 'react-native';
 import { LockKeyhole } from 'lucide-react-native';
 import { useParentHold } from './useParentHold';
 import { theme } from './theme';
 export interface ParentControlProps { cancelToken: number; onExitRequest: () => void; }
+/**
+ * Show native hold-to-unlock feedback and request exit only on a ready release; cancelToken invalidates
+ * an in-progress hold.
+ */
 export function ParentControl({ cancelToken, onExitRequest }: ParentControlProps) {
   const hold = useParentHold(cancelToken);
   return <View testID="parent-control" accessible accessibilityRole="button" accessibilityLabel="Hold to unlock. Hold for two seconds and release." onAccessibilityTap={onExitRequest} accessibilityActions={[{ name: 'activate' }]} onAccessibilityAction={event => { if (event.nativeEvent.actionName === 'activate') onExitRequest(); }}

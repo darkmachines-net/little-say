@@ -1,3 +1,8 @@
+/**
+ * @file Caches speech by normalized input and synthesis profile with immutable audio files and bounded
+ * generation.
+ */
+
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -6,12 +11,23 @@ import { MAX_SPEECH_BYTES, type SpeechProfile } from './synthesis';
 
 const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === 'ENOENT';
-export class SpeechCacheError extends Error { constructor(message: string, readonly statusCode: number) { super(message); } }
+export class SpeechCacheError extends Error {
+  /** Associate a cache failure with the HTTP status the API should return. */
+  constructor(message: string, readonly statusCode: number) { super(message); }
+}
 export class SpeechCache {
   private pending = new Map<string, Promise<{ id: string; cacheHit: boolean }>>();
   private active = 0;
+  /**
+   * Configure persistent storage, synthesis identity, and concurrency; a null synthesizer permits cache
+   * reads without new generation.
+   */
   constructor(private directory: string, private profile: SpeechProfile, private synthesize: ((input: SpeechInput) => Promise<Buffer>) | null, private maxConcurrent = 2) {}
 
+  /**
+   * Read a digest-addressed WAV, returning null for invalid IDs, absent files, or failed content checks
+   * while propagating filesystem errors.
+   */
   async read(id: string): Promise<Buffer | null> {
     if (!speechAssetIdSchema.safeParse(id).success) return null;
     try {
@@ -21,6 +37,10 @@ export class SpeechCache {
     catch (error) { if (missing(error)) return null; throw error; }
   }
 
+  /**
+   * Resolve validated speech input from cache or synthesis, sharing same-key work. Regeneration skips
+   * stored pointers; disabled or saturated synthesis raises a status-bearing error.
+   */
   get(raw: SpeechInput, regenerate = false) {
     const input = speechInputSchema.parse(raw);
     const key = hash(JSON.stringify({ ...input, ...this.profile }));

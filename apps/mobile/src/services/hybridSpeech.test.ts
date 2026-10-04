@@ -1,3 +1,5 @@
+/** @file Verifies cached-audio fallback, completion, cancellation, and stale callback isolation. */
+
 import { starterLibrary } from '../../../../tests/fixtures/library';
 import { describe, expect, it, vi } from 'vitest';
 import { LatestSpeechQueue, type SpeechDriver, type Tile } from '@little-say/core';

@@ -1,3 +1,8 @@
+/**
+ * @file Runs browser scenarios against an isolated local server with AI credentials disabled and
+ * failure artifacts retained.
+ */
+
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/web', fullyParallel: false, workers: 1, timeout: 45000,

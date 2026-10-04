@@ -1,3 +1,5 @@
+/** @file Verifies native recording lifecycle and compatible multipart audio uploads. */
+
 import React, { act, useEffect } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

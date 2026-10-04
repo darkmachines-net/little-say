@@ -1,4 +1,17 @@
-# Run only if Windows blocks access from a device on your trusted private LAN.
+<#
+.SYNOPSIS
+Allows or removes trusted private-LAN access to the local API and Expo servers.
+.DESCRIPTION
+Use when Windows blocks device access during development. The rule is restricted
+to Node, the selected TCP ports, the Private profile, and the local subnet.
+Requires an elevated shell; supports -WhatIf before changing the firewall.
+.PARAMETER ApiPort
+TCP port used by the local API server.
+.PARAMETER ExpoPort
+TCP port used by the Expo development server.
+.PARAMETER Remove
+Remove the named development rule instead of creating or replacing it.
+#>
 [CmdletBinding(SupportsShouldProcess)]
 param(
   [ValidateRange(1024, 65535)][int]$ApiPort = 8788,

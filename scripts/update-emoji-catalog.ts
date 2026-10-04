@@ -1,3 +1,5 @@
+/** @file Rebuilds the checked-in emoji search catalog from Unicode emoji and CLDR annotations. */
+
 import { mkdir, writeFile } from 'node:fs/promises';
 
 // Pin data releases so normal app builds never depend on a network request.

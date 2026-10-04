@@ -1,3 +1,4 @@
+# Builds and runs the app locally with server-side AI settings and a persistent speech cache.
 services:
   little-say:
     build: .

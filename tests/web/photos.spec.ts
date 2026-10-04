@@ -1,3 +1,5 @@
+/** @file Exercises browser photo import and crop preview consistency through saving and playback. */
+
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';

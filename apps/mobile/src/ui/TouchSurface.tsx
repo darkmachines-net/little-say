@@ -1,9 +1,15 @@
+/** @file Maps native board contacts to tolerant start-or-end tile activation. */
+
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, View, type GestureResponderEvent } from 'react-native';
 import { BoardTouchController, type Tile, type TileRect } from '@little-say/core';
 import { TileFace } from './TileFace';
 
 export interface TouchSurfaceProps { tiles: Tile[]; rects: TileRect[]; playingId: string | null; tappedId: string | null; pendingId: string | null; onActivate: (id: string) => void; onContact: () => void; }
+/**
+ * Render tiles at measured rectangles and handle each native contact once, keeping touch feedback
+ * independent of playback state.
+ */
 export function TouchSurface({ tiles, rects, playingId, tappedId, pendingId, onActivate, onContact }: TouchSurfaceProps) {
   const root = useRef<View>(null);
   const origin = useRef({ x: 0, y: 0 });

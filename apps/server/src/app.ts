@@ -1,3 +1,8 @@
+/**
+ * @file Builds the Fastify API with input validation, origin checks, request limits, speech caching,
+ * and optional web hosting.
+ */
+
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
@@ -12,6 +17,10 @@ import release from '../../../release.json';
 
 export interface ServerOptions { provider: AiProvider | null; speechCache?: SpeechCache; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
 
+/**
+ * Construct and register a server with injected AI and speech services without opening a listening
+ * socket; the caller owns listen and close.
+ */
 export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];

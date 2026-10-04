@@ -1,3 +1,5 @@
+/** @file Edits a card draft with language variants, photo or emoji visuals, and speech generation. */
+
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowRight, Copy, Crop, ImagePlus, Trash2, Volume2 } from 'lucide-react-native';
@@ -11,6 +13,10 @@ import { PhotoCropEditor } from './PhotoCropEditor';
 import { LanguageChoices } from './LanguageChoices';
 import { palettes, styles, theme } from './theme';
 
+/**
+ * Stage card edits and previews in a dialog, exposing save, reorder, duplicate, delete, and
+ * per-language audio actions through the supplied callbacks.
+ */
 export function TileEditor({ tile, playLanguages = [], settings, audio, onConsent, canDelete, canDuplicate, onSave, onDelete, onDuplicate, onClose, onPreview, position, tileCount, onMove }: { tile: Tile; playLanguages?: string[]; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; canDelete: boolean; canDuplicate: boolean; onSave: (tile: Tile) => void; onDelete: () => void; onDuplicate: (tile: Tile) => void; onClose: () => void; onPreview: (tile: Tile) => void; position?: number; tileCount?: number; onMove?: (offset: number) => void }) {
   const [draft, setDraft] = useState(tile);
   const [error, setError] = useState('');

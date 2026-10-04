@@ -1,3 +1,5 @@
+/** @file Lets parents choose board play languages and prepare missing translated words. */
+
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { applyLanguageSetup, applyTranslations, canonicalLanguage, languageName, missingTranslations, profileLanguages, suggestedPlayLanguages, tileInLanguage, type Board, type BoardChanges, type Settings } from '@little-say/core';
@@ -6,6 +8,10 @@ import { Button, Notice, Sheet } from './components';
 import { styles } from './theme';
 import { LanguageChoices } from './LanguageChoices';
 
+/**
+ * Edit play languages and stage generated translations for review; apply prepared translations only
+ * if the source board revision still matches.
+ */
 export function BoardLanguages({ board, settings, onChange, onConsent, onClose }: { board: Board; settings: Settings; onChange: (changes: BoardChanges) => void; onConsent: () => Promise<void>; onClose: () => void }) {
   const [choosing, setChoosing] = useState(false);
   const [error, setError] = useState('');

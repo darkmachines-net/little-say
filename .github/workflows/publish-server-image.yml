@@ -1,3 +1,4 @@
+# Publishes and verifies multi-architecture GHCR images from a merged server release commit.
 name: Publish server image
 on:
   workflow_dispatch:

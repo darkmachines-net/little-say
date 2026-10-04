@@ -1,3 +1,8 @@
+/**
+ * @file Loads server environment, wires OpenAI and durable speech caching, and starts the HTTP
+ * listener.
+ */
+
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
 import { createServer } from './app';

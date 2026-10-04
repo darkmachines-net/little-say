@@ -1,3 +1,8 @@
+/**
+ * @file Launches or diagnoses the local API and Expo pair with a reachable LAN URL and isolated server
+ * credentials.
+ */
+
 import { spawn, type ChildProcess } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:net';

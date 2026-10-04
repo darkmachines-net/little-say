@@ -1,3 +1,5 @@
+/** @file Defines durable library and AI payload schemas and guards revision-safe board edits. */
+
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
 
@@ -61,6 +63,10 @@ export type Board = z.infer<typeof boardSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
 export type Library = z.infer<typeof librarySchema>;
 export type BoardChanges = Partial<Pick<Board, 'title' | 'tiles' | 'playLanguages' | 'translateLabels'>>;
+/**
+ * Create a normalized source signature that invalidates translations when label, spoken text, or
+ * language changes.
+ */
 export function tileSource(tile: Pick<Tile, 'label' | 'speech' | 'language'>) {
   return JSON.stringify([tile.label.trim().normalize('NFC'), tile.speech.trim().normalize('NFC'), Intl.getCanonicalLocales(tile.language)[0]]);
 }
@@ -109,10 +115,15 @@ export type ProposalRequest = z.infer<typeof proposalRequestSchema>;
 export type GeneratedBoard = z.infer<typeof generatedBoardSchema>;
 export type BoardProposal = z.infer<typeof proposalSchema>;
 
+/** Build AI-safe board context without local photo IDs, paths, or bytes, excluding stale translations. */
 export function boardContext(board: Board): BoardContext {
   return { id: board.id, title: board.title, revision: board.revision, playLanguages: board.playLanguages ?? [], tiles: board.tiles.map(t => ({ id: t.id, label: t.label, speech: t.speech, language: t.language, color: t.color, emoji: t.illustration.kind === 'emoji' ? t.illustration.emoji : null, hasPhoto: t.illustration.kind === 'photo', languageMode: t.languageMode, translations: t.translations?.filter(translation => translation.source === tileSource(t)).map(({ source, ...translation }) => translation) })) };
 }
 
+/**
+ * Validate a draft against the source board, rejecting invalid references and content; clarification
+ * replies return no tiles.
+ */
 export function validateGeneratedBoard(value: GeneratedBoard, context: BoardContext | null): GeneratedBoard {
   generatedBoardSchema.parse(value);
   if (!value.explanation.trim() || value.explanation.length > 1000) throw new Error('The board reply was empty or too long. Please try again.');
@@ -139,6 +150,10 @@ export function validateGeneratedBoard(value: GeneratedBoard, context: BoardCont
   return value;
 }
 
+/**
+ * Apply a validated proposal only to its original board revision, retaining matching photos and current
+ * translations while assigning IDs to new content.
+ */
 export function applyProposal(current: Board | null, envelope: BoardProposal, id: () => string, now = new Date().toISOString()): Board {
   if (current ? (envelope.boardId !== current.id || envelope.baseRevision !== current.revision) : (envelope.boardId !== null || envelope.baseRevision !== null)) throw new Error('This board changed while AI was working. Generate a new proposal to keep your latest edits.');
   const proposal = validateGeneratedBoard(envelope.proposal, current ? boardContext(current) : null);
@@ -161,10 +176,18 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
   });
 }
 
+/**
+ * Apply and validate board changes while incrementing the revision and updating the modification
+ * timestamp.
+ */
 export function reviseBoard(board: Board, changes: BoardChanges): Board {
   return boardSchema.parse({ ...board, ...changes, revision: board.revision + 1, updatedAt: new Date().toISOString() });
 }
 
+/**
+ * Validate the supported durable library format; reject unknown or corrupt data instead of silently
+ * resetting it.
+ */
 export function migrateLibrary(raw: unknown): Library {
   // v1 is the first durable format. Never reset unknown/corrupt data silently.
   return librarySchema.parse(raw);

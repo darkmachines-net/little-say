@@ -1,3 +1,5 @@
+/** @file Verifies native unlock feedback and release handling share the same readiness threshold. */
+
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { Text } from 'react-native';

@@ -1,3 +1,5 @@
+/** @file Verifies crop geometry, bounded movement, anchored zoom, and pan/pinch transitions. */
+
 import { describe, expect, it } from 'vitest';
 import { MAX_PHOTO_ZOOM, PhotoGesture, panPhoto, photoGeometry, zoomPhoto } from './photo';
 

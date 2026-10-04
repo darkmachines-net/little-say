@@ -1,3 +1,4 @@
+# Cuts a version-only server release from the default branch, then invokes image publication.
 name: Cut server release
 on:
   workflow_dispatch:

@@ -1,3 +1,8 @@
+/**
+ * @file Exercises conversational board creation and edits, including clarification, cancellation, and
+ * draft application.
+ */
+
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';
