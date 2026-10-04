@@ -21,8 +21,11 @@ export function useLibrary() {
     try {
       let value = await storage.loadLibrary();
       if (!value) { value = newLibrary(Intl.DateTimeFormat().resolvedOptions().locale); await storage.saveLibrary(value); }
-      const ids = new Set(value.boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'photo' ? [t.illustration.assetId] : [])));
+      // Prune only during initial load, before transient drafts and undo history exist.
+      const boards = [...value.boards, ...(value.setup?.drafts.map(draft => draft.board) ?? [])];
+      const ids = new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'photo' ? [t.illustration.assetId] : [])));
       await storage.pruneAssets(ids).catch(() => {});
+      await storage.prunePictures(new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'library' || t.illustration.kind === 'generated' ? [t.illustration.assetId] : [])))).catch(() => {});
       latest.current = value; setLibrary(value);
     } catch { setLoadError('Your saved boards could not be opened. They have not been reset. Check available device storage and try again.'); }
   }, []);

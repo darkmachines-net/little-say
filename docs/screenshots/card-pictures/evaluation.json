@@ -1,0 +1,51 @@
+{
+  "model": "gpt-image-2.5-flare",
+  "style": "color",
+  "generationAllowed": true,
+  "milliseconds": 60569,
+  "rejected": [],
+  "results": [
+    {
+      "label": "Dump truck",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "79c9b79cafe4eaca2b7a709d9338f139c7c6708ab3e9f3891370f47be0bd635a",
+      "milliseconds": 16126
+    },
+    {
+      "label": "Concrete truck",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "07bbdd22c27c0637e24b7b106fbe0d102596b6b5171ad91b7b48c22efa0ee5ff",
+      "milliseconds": 32238
+    },
+    {
+      "label": "Excavator",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "18e1b6018eba2d2b5f076e496ea93b4923c82813e0eecb1bad21b4b55aa18283",
+      "milliseconds": 15116
+    },
+    {
+      "label": "Bulldozer",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "9849be12e74c8ce955f1bc3cb236e9b821ccc0c11815bdfbdf0c720c7b6ab4d6",
+      "milliseconds": 42364
+    },
+    {
+      "label": "Crane truck",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "795f8f68d54f36a89261121fde9fa80b1c0ea9afdc10276eaffebb0a609ffd04",
+      "milliseconds": 30223
+    },
+    {
+      "label": "Road roller",
+      "state": "complete",
+      "kind": "generated",
+      "assetId": "d8b2213626097ba669d649b1092ffa1e8fff609cf9a1367dfee12190f2f31876",
+      "milliseconds": 47425
+    }
+  ]
+}

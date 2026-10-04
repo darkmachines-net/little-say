@@ -19,6 +19,7 @@ On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a tablet 
 
 - Choose preferred languages on first launch and optionally generate starter boards. Each device keeps its own boards, settings, photos and downloaded speech without an account.
 - **New board** and **Edit with AI** open a conversation for typed or spoken prompts. Review transcripts and drafts, refine them, then explicitly save. Manual editing supports 1–24 cards, searchable emoji, local photos and cropping.
+- **Picture settings** in a conversation and **Pictures** in the board editor choose automatic, library-only, generated, or emoji-only output. Matching detects inaccurate or ambiguous emoji, searches licensed illustrations, and optionally generates missing pictures in a consistent style. Cards offer **Picture options** to search, describe, replace or protect pictures. Automatic paid generation starts off. See [pictures, sources and configuration](docs/PICTURES.md).
 - The library spotlights the most recently used board and puts favorites immediately below it. Each board's **…** menu includes deletion and missing-audio generation.
 - Set a board's **Languages** to offer a toggle during play. Individual cards can follow that toggle or keep their own language, useful for family names. Review generated translations or edit them manually.
 - Playback accepts taps and swipes that start or end on a tile. It finishes the current utterance and keeps only the latest queued selection. Touch feedback and the speaking highlight are separate. Hold **Hold to unlock**, release when prompted, then confirm to leave.
@@ -40,6 +41,9 @@ OpenAI requests go through the backend using the following configuration. No sec
 | `OPENAI_TRANSCRIBE_MODEL` | `gpt-transcribe` |
 | `OPENAI_SPEECH_MODEL` | `gpt-realtime-2.1-mini` |
 | `OPENAI_SPEECH_VOICE` | `marin` |
+| `OPENAI_IMAGE_MODEL` | `gpt-image-2.5-flare` |
+| `AAC_IMAGE_GENERATION` | `true`; parents must also allow generation; `false` disables new generation |
+| `PICTURE_CACHE_DIR` | `../../.cache/pictures` from the server working directory; `/app/data/pictures` in Docker |
 | `SPEECH_CACHE_DIR` | `../../.cache/speech` from the server working directory; `/app/data/speech` in Docker |
 | `HOST` / `PORT` | `127.0.0.1` / `8787` outside Docker |
 | `ALLOWED_ORIGINS` | Local development origins; set explicitly for deployment |
@@ -49,6 +53,8 @@ AI consent covers parent prompts, necessary board text and explicit microphone r
 Generated speech is retained in a shared server cache and can contain family names or other private tile words. Cache identity includes text, language, model, voice and format. Identical requests reuse clips; regeneration preserves old clip URLs for other devices. Downloaded speech works offline. The cache has no automatic eviction. Parents should review generated words and pronunciation.
 
 ## Private server
+
+Illustration downloads and generated pictures use a separate server cache, including their concept descriptions and job metadata. Saved PNGs are also retained on the device for offline use. Personal photos remain local. The cache has no automatic eviction; see [picture privacy and storage](docs/PICTURES.md).
 
 For a source-built Docker deployment:
 

@@ -41,7 +41,7 @@ async function sameRegion(frame: Locator, expected: number[]) {
 }
 async function storedPhotos(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say', 2); r.onsuccess = () => resolve(r.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
     const library = await new Promise<any>(resolve => { const r = db.transaction('state').objectStore('state').get('library'); r.onsuccess = () => resolve(r.result); }); db.close();
     return library.boards[0].tiles.map((t: any) => ({ label: t.label, illustration: t.illustration }));
   });

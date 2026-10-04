@@ -36,7 +36,7 @@ describe('board languages', () => {
     expect(tileInLanguage(board.tiles[0], 'ru-RU')).toMatchObject({ id: board.tiles[0].id, label: 'Корова', speech: 'корова', language: 'ru-RU' });
     expect(tileInLanguage(board.tiles[1], 'ru-RU')).toEqual(board.tiles[1]);
     expect(tileInLanguage({ ...board.tiles[0], languageMode: 'fixed' }, 'ru-RU').language).toBe('en-US');
-    expect(migrateLibrary(starterLibrary())).toMatchObject({ version: 1 });
+    expect(migrateLibrary(starterLibrary())).toMatchObject({ version: 2 });
   });
   it('can switch speech only, persists the chosen language, and ignores a removed choice', () => {
     const board = bilingual(); board.translateLabels = false;

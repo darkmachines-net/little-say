@@ -473,7 +473,7 @@ test('board card menu confirms deletion and preserves other boards after reload'
 
 test('board card menu fills missing translated audio, continues when closed, retries failures, and hides when complete', async ({ page }) => {
   await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const request = store.get('library');
       request.onsuccess = () => {
@@ -527,7 +527,7 @@ test('board card menu fills missing translated audio, continues when closed, ret
 
 test('board audio retry fills only missing clips with automatic generation disabled', async ({ page }) => {
   await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const request = store.get('library');
       request.onsuccess = () => { const library = request.result; library.settings.aiConsent = true; library.settings.autoSpeech = false; library.boards[0].tiles = library.boards[0].tiles.slice(0, 2); store.put(library, 'library'); };
@@ -557,7 +557,7 @@ test('numbers 1–9 get a visible bilingual setup and switch speech while preser
   await page.getByRole('button', { name: 'Add device language Russian', exact: true }).click();
   await page.getByRole('button', { name: 'Save settings', exact: true }).click();
   await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const request = store.get('library');
       request.onsuccess = () => {
@@ -593,7 +593,7 @@ test('numbers 1–9 get a visible bilingual setup and switch speech while preser
   await expect(page.getByRole('heading', { name: 'Review board languages', exact: true })).toBeVisible();
   // Preparing translations does not enable a partly configured board before review.
   expect(await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     const board = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result.boards[0]); }); db.close();
     return { languages: board.playLanguages ?? [], fixed: board.tiles.every((tile: any) => tile.languageMode === 'fixed') };
   })).toEqual({ languages: [], fixed: true });

@@ -5,6 +5,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { Directory, File, Paths } from 'expo-file-system';
 import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
 import { downloadAudio } from './audioDownload';
+import { downloadPicture } from './pictureDownload';
+import { pictureAssetIdSchema } from '@little-say/core';
 
 const database = SQLite.openDatabaseAsync('little-say.db').then(async db => {
   await db.execAsync('PRAGMA journal_mode = WAL; CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY CHECK (id = 1), document TEXT NOT NULL); CREATE TABLE IF NOT EXISTS speech (key TEXT PRIMARY KEY, asset_id TEXT NOT NULL);');
@@ -34,6 +36,24 @@ export async function saveAsset(id: string, uri: string): Promise<void> {
 export async function assetUri(id: string): Promise<string | null> {
   const path = `${directory}${id}.jpg`;
   return (await FileSystem.getInfoAsync(path)).exists ? path : null;
+}
+
+/** Store a verified transparent PNG in its own directory before committing a board reference. */
+export async function savePictureAsset(id: string, url: string, signal?: AbortSignal): Promise<void> {
+  pictureAssetIdSchema.parse(id);
+  const folder = new Directory(Paths.document, 'tile-pictures'); folder.create({ intermediates: true, idempotent: true });
+  const file = new File(folder, `${id}.png`);
+  if (!file.exists) file.write(await downloadPicture(id, url, signal));
+}
+/** Resolve a saved illustration, independent of the JPEG photo/crop store. */
+export async function pictureUri(id: string): Promise<string | null> {
+  pictureAssetIdSchema.parse(id);
+  const file = new File(Paths.document, 'tile-pictures', `${id}.png`); return file.exists ? file.uri : null;
+}
+/** Prune only unreferenced illustration files; callers must include drafts and undo references. */
+export async function prunePictures(keep: Set<string>): Promise<void> {
+  const folder = new Directory(Paths.document, 'tile-pictures'); if (!folder.exists) return;
+  for (const file of folder.list()) if (file instanceof File && file.name.endsWith('.png') && !keep.has(file.name.slice(0, -4))) file.delete();
 }
 /** Delete stored photos whose IDs are absent from the retained set. */
 export async function pruneAssets(keep: Set<string>): Promise<void> {

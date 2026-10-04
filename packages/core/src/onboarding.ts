@@ -15,7 +15,7 @@ export const starterTopics: { id: StarterTopic; title: string; emoji: string; pr
 
 /** Create an empty library with setup pending and language preferences derived from the device locale. */
 export function newLibrary(locale?: string): Library {
-  return { version: 1, boards: [], settings: { backendUrl: '', voices: {}, activeBoardId: null, aiConsent: false, autoSpeech: true, languageProfile: initialLanguageProfile(locale) }, setup: { stage: 'languages', topics: starterTopics.map(topic => topic.id), drafts: [] } };
+  return { version: 2, boards: [], settings: { backendUrl: '', voices: {}, activeBoardId: null, aiConsent: false, autoSpeech: true, autoImages: false, languageProfile: initialLanguageProfile(locale) }, setup: { stage: 'languages', topics: starterTopics.map(topic => topic.id), drafts: [] } };
 }
 
 /** Build the six-card generation prompt for a supported starter topic. */

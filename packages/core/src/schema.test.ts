@@ -42,7 +42,7 @@ describe('safe local board proposals', () => {
   });
   it('preserves valid data and refuses unknown/corrupt storage without resetting it', () => {
     const library = starterLibrary(); expect(migrateLibrary(library)).toEqual(library);
-    expect(() => migrateLibrary({ ...library, version: 2 })).toThrow();
+    expect(() => migrateLibrary({ ...library, version: 3 })).toThrow();
     expect(() => migrateLibrary({ ...library, boards: [{ ...library.boards[0], tiles: [] }] })).toThrow();
   });
 });

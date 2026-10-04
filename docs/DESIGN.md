@@ -19,3 +19,9 @@ Little Say is a touch-first app for a family's boards. New devices start with la
 - The parent hold's readiness label and release validation must use the same gesture state and monotonic clock. Cancel its timer and reset feedback together on movement, extra touches, native cancellation, backgrounding, or board interaction. Never announce release readiness from an independent timer.
 
 Keep photos, user labels, and actual boards visually prominent. Add interface text only when it helps someone use the app.
+
+## Pictures
+
+Keep picture controls in parent flows: a compact conversation settings button, a board Pictures panel, and expandable card Picture options. Offer Automatic, Library only, Generated illustrations, and Emoji only, with simple color or black-and-white styles. Consistency is on by default. Keep photos and explicitly selected pictures stable until the parent includes them in a change.
+
+Prepare pictures in a reviewable draft with cancellable progress. Display unresolved cases plainly without substituting misleading generic symbols. Contain illustrations within the tile so identifying features stay visible; personal photos retain their existing crop treatment. Credits and provider information belong in parent controls. Child playback never starts picture generation or changes saved pictures. See [picture contracts](PICTURES.md).

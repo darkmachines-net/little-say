@@ -6,13 +6,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowUp, Mic, Plus, ShieldCheck, Square, X } from 'lucide-react-native';
-import { MAX_AI_TURNS, boardContext, getLanguageProfile, languageName, profileLanguages, tileSource, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings, type Tile } from '@little-say/core';
+import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { apiFetch, proposeBoard } from '../services/api';
 import { useRecording } from '../services/useRecording';
 import { Button, ModalBackdrop, Notice } from './components';
 import { TileFace } from './TileFace';
 import { theme, styles } from './theme';
 import { MountainMark } from './Brand';
+import { PicturePermission, PicturePreferences } from './PicturePreferences';
+import { prepareProposalPictures, proposalPreview } from '../services/pictures';
 
 function Working({ label }: { label: string }) {
   const pulse = useRef(new Animated.Value(0)).current;
@@ -48,6 +50,11 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<ConversationTurn[]>([]);
   const [draft, setDraft] = useState<BoardProposal | null>(null);
+  const [picturePolicy, setPicturePolicy] = useState(source?.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy);
+  const [pictureOptionsOpen, setPictureOptionsOpen] = useState(false);
+  const [allowPictures, setAllowPictures] = useState(Boolean(settings.autoImages && settings.aiConsent));
+  const [pictureMessage, setPictureMessage] = useState('');
+  const [pictureIssues, setPictureIssues] = useState<string[]>([]);
   const [clarifying, setClarifying] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [busy, setBusy] = useState<'generate' | 'transcribe' | 'microphone' | 'save' | null>(null);
@@ -67,6 +74,7 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
   const { width, height } = useWindowDimensions();
   const title = source ? 'Edit with AI' : 'New board';
   const atLimit = history.length >= MAX_AI_TURNS;
+  const picturesChanged = Boolean(draft?.proposal.picturePolicy && JSON.stringify(picturePolicy) !== JSON.stringify(draft.proposal.picturePolicy));
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
   useEffect(() => {
     if (!recording.recording) return;
@@ -88,18 +96,28 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
     if (!message || request.current || saving.current || atLimit) return;
     const controller = new AbortController(); request.current = controller;
     nearBottom.current = true;
-    setError(''); setBusy('generate'); setSubmitted(message); setPrompt('');
+    setError(''); setPictureMessage(''); setPictureIssues([]); setBusy('generate'); setSubmitted(message); setPrompt('');
     try {
       const response = await proposeBoard(settings.backendUrl, {
         prompt: message, board: source ? boardContext(source) : null, languageProfile: getLanguageProfile(settings),
-        conversation: { history, draft: draft?.proposal ?? null },
+        picturePolicy, pictureCapability: 1,
+        conversation: { history, draft: draft ? { ...draft.proposal, ...(draft.proposal.picturePolicy ? { picturePolicy } : {}) } : null },
       }, controller.signal);
       if (!live.current || request.current !== controller) return;
       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');
       validateGeneratedBoard(response.proposal, source ? boardContext(source) : null);
       setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);
       setClarifying(response.proposal.needsClarification);
-      if (!response.proposal.needsClarification) setDraft(response);
+      setSubmitted(null);
+      if (!response.proposal.needsClarification) {
+        setDraft(response);
+        if (response.proposal.picturePolicy) {
+          setPicturePolicy(response.proposal.picturePolicy);
+          const prepared = await prepareProposalPictures(source, response, { ...settings, aiConsent: true }, { signal: controller.signal, allowGeneration: allowPictures, progress: setPictureMessage }, draft);
+          if (!live.current || request.current !== controller) return;
+          setDraft(prepared.proposal); setPictureIssues(prepared.issues);
+        }
+      }
     } catch (e) {
       if (live.current && request.current === controller) { setError((e as Error).message); setPrompt(message); }
     } finally {
@@ -129,6 +147,17 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
     finally { if (request.current === controller) { await recording.cleanup(); if (live.current) { request.current = null; setBusy(null); } } }
   };
   finishRef.current = () => { void finish(); };
+  const updatePictures = async () => {
+    if (!draft || request.current) return;
+    const controller = new AbortController(); request.current = controller; setBusy('generate'); setPictureIssues([]);
+    try {
+      const preview = proposalPreview(source, draft);
+      const next = { ...draft, pictures: undefined, proposal: { ...draft.proposal, picturePolicy, tiles: draft.proposal.tiles.map((tile, index) => ({ ...tile, replacePicture: !preview.tiles[index].pictureOptions?.locked && preview.tiles[index].illustration.kind !== 'photo' })) } };
+      const prepared = await prepareProposalPictures(source, next, { ...settings, aiConsent: true }, { signal: controller.signal, allowGeneration: allowPictures, progress: setPictureMessage });
+      if (live.current && request.current === controller) { setDraft(prepared.proposal); setPictureIssues(prepared.issues); }
+    } catch (error) { if (!controller.signal.aborted) setError((error as Error).message); }
+    finally { if (request.current === controller) { request.current = null; setBusy(null); setPictureMessage(''); } }
+  };
   const apply = async () => {
     if (!draft || request.current || saving.current) return;
     saving.current = true; setBusy('save'); setError('');
@@ -164,19 +193,21 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
               <View style={{ alignSelf: 'flex-start', maxWidth: '96%', borderRadius: 18, borderBottomLeftRadius: 5, padding: 14, backgroundColor: theme.surface }}><Text accessibilityLiveRegion={index === history.length - 1 ? 'polite' : 'none'} style={styles.body}>{turn.reply}</Text></View>
             </View>)}
             {submitted && <View style={{ alignSelf: 'flex-end', maxWidth: '92%', borderRadius: 18, padding: 14, backgroundColor: theme.accentSoft }}><Text style={{ ...styles.body, color: theme.ink }}>{submitted}</Text></View>}
-            {busy && busy !== 'save' && <Working key={busy} label={busy === 'generate' ? 'Working on your draft…' : busy === 'transcribe' ? 'Transcribing your recording…' : 'Opening microphone…'} />}
+            <Button compact kind="secondary" disabled={Boolean(busy)} onPress={() => setPictureOptionsOpen(value => !value)}>{pictureOptionsOpen ? 'Hide picture settings' : 'Picture settings'}</Button>
+            {pictureOptionsOpen && <View style={{ gap: 12 }}><PicturePreferences value={picturePolicy} onChange={setPicturePolicy} disabled={Boolean(busy)} /><PicturePermission enabled={allowPictures} onChange={setAllowPictures} disabled={Boolean(busy)} />{draft && <Button disabled={Boolean(busy)} onPress={() => void updatePictures()}>Update draft pictures</Button>}</View>}
+            {pictureIssues.map((issue, index) => <Notice key={index}>{issue}</Notice>)}
+            {busy && busy !== 'save' && <Working key={busy} label={busy === 'generate' ? pictureMessage || 'Working on your draft…' : busy === 'transcribe' ? 'Transcribing your recording…' : 'Opening microphone…'} />}
             {draft && <View testID="ai-draft" style={{ padding: 12, borderRadius: 20, backgroundColor: theme.surface, gap: 10, opacity: busy === 'generate' ? 0.6 : 1 }}>
               <View style={{ gap: 3 }}><Text accessibilityRole="header" style={styles.title}>{draft.proposal.title}</Text><Text style={styles.small}>{draft.proposal.tiles.length} tiles · {clarifying || busy === 'generate' ? 'Previous draft' : 'Draft preview'}</Text></View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', margin: -3 }}>{draft.proposal.tiles.map((tile, index) => {
-                const previous = source?.tiles.find(t => t.id === tile.existingId);
-                const preview: Tile = { ...tile, id: `preview-${index}`, translations: tile.translations?.map(t => ({ ...t, source: tileSource(tile) })), illustration: previous?.illustration.kind === 'photo' ? previous.illustration : { kind: 'emoji', emoji: tile.emoji } };
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', margin: -3 }}>{draft.proposal.tiles.map((_tile, index) => {
+                const preview = proposalPreview(source, draft).tiles[index];
                 return <View key={index} style={{ width: width < 600 ? '33.3333%' : '25%', height: 96, padding: 3 }}><TileFace tile={preview} compact size={38} /></View>;
               })}</View>
             </View>}
           </ScrollView>
           <View style={{ padding: width < 600 ? 12 : 18, paddingTop: 12, gap: 10, backgroundColor: theme.surface, borderTopWidth: 1, borderColor: theme.line }}>
             {Boolean(error) && <Notice>{error}</Notice>}
-            {draft && !clarifying && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={[styles.small, { flex: 1 }]}>{prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting below.'}</Text><Button disabled={Boolean(busy) || recording.recording || Boolean(prompt.trim())} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
+            {draft && !clarifying && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={[styles.small, { flex: 1 }]}>{picturesChanged ? 'Update draft pictures to apply these settings.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting below.'}</Text><Button disabled={Boolean(busy) || recording.recording || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
             {atLimit ? <Text style={styles.body}>{draft && !clarifying ? 'Save this draft to continue in a new conversation.' : 'This conversation has reached its limit. Close it and start a new one.'}</Text> : <>
               <TextInput ref={input} accessibilityLabel="Message to AI" value={prompt} onChangeText={setPrompt} multiline maxLength={4000} editable={!busy && !recording.recording} placeholder={history.length ? 'Ask for a change or answer a question…' : source ? 'Add a goat, and keep everything else…' : 'A board with cow, sheep, horse…'} placeholderTextColor={theme.muted} style={[styles.field, { minHeight: 58, maxHeight: 112, textAlignVertical: 'top' }]} />
               <View style={[styles.row, { justifyContent: 'space-between' }]}>

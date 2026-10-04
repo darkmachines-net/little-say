@@ -25,6 +25,10 @@ This opt-in script makes billable backend model calls using the same key resolut
 
 ## Native and deployment checks
 
+Picture unit and browser tests cover ambiguity, opt-in generation, immutable downloads, source attribution, draft retention, and migration. `npm run eval:pictures -- --generate` is an opt-in billable six-vehicle evaluation that saves pictures and an HTML contact sheet under `artifacts/picture-evaluation/`; inspect the actual output for the required vehicle structures. Add `--line` for outline symbols. Automated model review is evidence to inspect, not a guarantee of semantic correctness. Native checks also include transparent PNG framing, offline restart and picture-save failures.
+
+After the color evaluation and a web build, `npx tsx scripts/capture-picture-evidence.ts` captures the saved construction board and editing controls in isolated tablet/phone browser sessions without further AI calls. The [picture evidence index](screenshots/card-pictures/README.md) distinguishes live generated assets, the emoji content comparison, automated checks, and physical-device follow-ups.
+
 Before distribution, exercise a signed native build on iPad and Android: tap/swipe/multitouch, unlock, system containment, selected-language pronunciation and offline voices, generated audio and volume/silent-mode behavior, microphone permissions, native photo cropping, background/restart recovery, and local save failures. Expo Go does not demonstrate standalone launcher/splash, signing, OTA or system-containment behavior.
 
 Validate server connectivity and HTTPS from the actual tablet. Native signing, store submission, OTA application, and server deployment need their configured targets and the checks in [the release guide](releases.md). Browser or unit-test success does not prove installation or rollout. Use `npm audit` for current dependency advisories rather than a checked-in audit snapshot.

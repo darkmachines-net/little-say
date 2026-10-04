@@ -3,9 +3,12 @@
 import { openDB } from 'idb';
 import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
 import { downloadAudio } from './audioDownload';
-const database = openDB('little-say', 2, { upgrade(db, oldVersion) {
+import { downloadPicture } from './pictureDownload';
+import { pictureAssetIdSchema } from '@little-say/core';
+const database = openDB('little-say', 3, { upgrade(db, oldVersion) {
   if (oldVersion < 1) { db.createObjectStore('state'); db.createObjectStore('photos'); }
   if (oldVersion < 2) db.createObjectStore('speech');
+  if (oldVersion < 3) db.createObjectStore('pictures');
 } });
 const urls = new Map<string, string>();
 /** Read and validate the browser library, returning null on first use and rejecting invalid saved data. */
@@ -31,6 +34,30 @@ export async function assetUri(id: string): Promise<string | null> {
   const blob = await (await database).get('photos', id) as Blob | undefined;
   if (!blob) return null;
   const uri = URL.createObjectURL(blob); urls.set(id, uri); return uri;
+}
+
+const pictureUrls = new Map<string, string>();
+/** Download a verified PNG before saving its local board reference; existing assets are reused. */
+export async function savePictureAsset(id: string, url: string, signal?: AbortSignal): Promise<void> {
+  pictureAssetIdSchema.parse(id);
+  const db = await database; if (await db.get('pictures', id)) return;
+  const bytes = await downloadPicture(id, url, signal);
+  await db.put('pictures', new Blob([bytes], { type: 'image/png' }), id);
+}
+/** Resolve a locally stored illustration to a reusable blob URL for offline rendering. */
+export async function pictureUri(id: string): Promise<string | null> {
+  pictureAssetIdSchema.parse(id);
+  if (pictureUrls.has(id)) return pictureUrls.get(id)!;
+  const blob = await (await database).get('pictures', id) as Blob | undefined; if (!blob) return null;
+  const uri = URL.createObjectURL(blob); pictureUrls.set(id, uri); return uri;
+}
+/** Prune unreferenced PNG blobs and revoke their URLs; retained IDs must include drafts and undo. */
+export async function prunePictures(keep: Set<string>): Promise<void> {
+  const db = await database;
+  for (const key of await db.getAllKeys('pictures')) if (!keep.has(String(key))) {
+    await db.delete('pictures', key);
+    const uri = pictureUrls.get(String(key)); if (uri) URL.revokeObjectURL(uri); pictureUrls.delete(String(key));
+  }
 }
 /** Delete unreferenced photo blobs and revoke their cached object URLs. */
 export async function pruneAssets(keep: Set<string>): Promise<void> {

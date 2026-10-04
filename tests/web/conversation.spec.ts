@@ -12,7 +12,7 @@ const proposal = (label = 'Cow') => ({ title: 'Animal words', explanation: `Here
 const envelope = (value = proposal()) => ({ boardId: null, baseRevision: null, proposal: value });
 async function saved(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say', 2); r.onsuccess = () => resolve(r.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
     const value = await new Promise<any>(resolve => { const r = db.transaction('state').objectStore('state').get('library'); r.onsuccess = () => resolve(r.result); }); db.close(); return value;
   });
 }

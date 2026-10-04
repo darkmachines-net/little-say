@@ -22,6 +22,7 @@ import { FirstTimeSetup } from './ui/FirstTimeSetup';
 import { Button, Notice, Sheet } from './ui/components';
 import { theme, styles } from './ui/theme';
 import { Brand } from './ui/Brand';
+import { defaultPicturePolicy } from '@little-say/core';
 
 function Application() {
   const store = useLibrary();
@@ -104,7 +105,7 @@ function Application() {
     const language = getLanguageProfile(settings).defaultLanguage;
     const word = firstWord(language);
     const playLanguages = profileLanguages(settings);
-    const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: playLanguages.length > 1 ? 'board' : 'fixed', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
+    const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, picturePolicy: settings.pictureDefaults ?? defaultPicturePolicy, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: playLanguages.length > 1 ? 'board' : 'fixed', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
     void store.change(current => ({ ...current, boards: [...current.boards, board] })).catch(() => {}); setSelectedId(board.id);
   };
   return <View style={styles.page}>

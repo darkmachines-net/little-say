@@ -11,6 +11,8 @@ import { requestPersistence } from '../data/storage';
 import { Button, Field, Notice, Sheet } from './components';
 import { styles, theme } from './theme';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
+import { defaultPicturePolicy } from '@little-say/core';
+import { PictureCredits, PicturePermission, PicturePreferences } from './PicturePreferences';
 
 /**
  * Edit settings in a local draft, preview voices, and save through the supplied callback; show
@@ -26,6 +28,8 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
   const [language, setLanguage] = useState(() => getLanguageProfile(settings).defaultLanguage);
   const [sample, setSample] = useState(() => firstWord(getLanguageProfile(settings).defaultLanguage).speech);
   const [voiceList, setVoiceList] = useState(false);
+  const [pictureDefaults, setPictureDefaults] = useState(settings.pictureDefaults ?? defaultPicturePolicy);
+  const [autoImages, setAutoImages] = useState(Boolean(settings.autoImages));
   const matches = voices.filter(v => v.language.split('-')[0] === language.split('-')[0]);
   const testConnection = async () => {
     setBusy(true); setError(''); setMessage('');
@@ -33,7 +37,7 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
     catch (e) { setError((e as Error).message); }
     finally { setBusy(false); }
   };
-  return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
+  return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults, autoImages, aiConsent: settings.aiConsent || autoImages }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
     <View style={{ gap: 14 }}>
       <View style={styles.row}><Globe size={20} color={theme.accent} /><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Languages on this device</Text></View>
@@ -62,6 +66,8 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
       <Field label="Voice test words" value={sample} onChangeText={setSample} maxLength={200} />
       <Button kind="ghost" icon={Volume2} disabled={!sample.trim()} onPress={() => { void onSave({ ...settings, voices: selected }).then(() => onPreview({ id: 'voice-test', label: 'Voice test', speech: sample.trim(), language, color: 'sage', illustration: { kind: 'emoji', emoji: '👋' } })).catch(() => setError('Could not save the selected voice.')); }}>Test selected voice</Button>
     </View>
+    <View style={styles.divider} />
+    <View style={{ gap: 12 }}><Text style={styles.title}>Pictures for new boards</Text><PicturePreferences value={pictureDefaults} onChange={setPictureDefaults} /><PicturePermission enabled={autoImages} onChange={setAutoImages} /><Text style={styles.small}>This permission allows automatic paid fallback when library pictures are insufficient. Existing boards keep their saved pictures. Turning this off keeps downloaded images.</Text><PictureCredits /></View>
     {(Platform.OS === 'ios' || Platform.OS === 'android') && <>
       <View style={styles.divider} />
       <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Lock the screen</Text><Text style={styles.body}>Our parent button needs a hold and a separate confirmation. To prevent system gestures from leaving the app, enable {Platform.OS === 'ios' ? 'Guided Access' : 'screen pinning'} before handing it over.</Text>{Platform.OS === 'ios' ? <Button kind="secondary" onPress={() => void Linking.openURL('https://support.apple.com/en-us/111795')}>Guided Access instructions</Button> : <Button kind="secondary" onPress={() => void Linking.openURL('https://support.google.com/android/answer/9455138?hl=en')}>Screen pinning instructions</Button>}</View>

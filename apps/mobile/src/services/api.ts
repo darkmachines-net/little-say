@@ -39,9 +39,14 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     throw error;
   } finally { clearTimeout(timeout); externalSignal?.removeEventListener('abort', cancel); }
 }
-/** Request and schema-check an AI board proposal without applying it to the saved library. */
+/** Negotiate picture support, then schema-check an AI proposal without applying it to the saved library. */
 export async function proposeBoard(url: string, request: ProposalRequest, signal?: AbortSignal): Promise<BoardProposal> {
-  const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request) }, signal);
+  let input = request;
+  if (request.pictureCapability) {
+    const health = await apiFetch(url, '/api/health', {}, signal);
+    if (health.pictures?.version !== 1) { const { pictureCapability: _capability, picturePolicy: _policy, ...legacy } = request; input = legacy; }
+  }
+  const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal);
   return proposalSchema.parse(response);
 }
 /**

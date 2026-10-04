@@ -1,0 +1,134 @@
+/** @file Exercises automatic picture drafts, permission gates, cancellation, manual library selection, and offline PNG persistence. */
+
+import { test, expect, type Page } from '@playwright/test';
+import sharp from 'sharp';
+import { createHash } from 'node:crypto';
+import { mkdir } from 'node:fs/promises';
+import { openExistingLibrary } from './existingLibrary';
+import { type BoardProposal, type PictureJobRequest, type ResolvedPicture } from '@little-say/core';
+
+const policy = { mode: 'auto' as const, style: 'color' as const, consistent: true };
+const labels = ['Dump truck', 'Concrete truck', 'Excavator', 'Bulldozer', 'Crane truck', 'Road roller'];
+const draft = (): BoardProposal => ({ boardId: null, baseRevision: null, proposal: { title: 'Construction vehicles', explanation: 'Six distinct construction vehicles.', needsClarification: false, picturePolicy: policy, tiles: labels.map((label, index) => ({ existingId: null, label, speech: label, language: 'en-US', emoji: index < 2 ? '🚚' : '🚜', color: 'sage' })) } });
+async function library(page: Page) {
+  return page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const value = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result); }); db.close(); return value;
+  });
+}
+async function mockPictures(page: Page, pending = false) {
+  const jobs: PictureJobRequest[] = []; const cancelled: string[] = [];
+  const images = await Promise.all(labels.map(async (_label, index) => {
+    const bytes = await sharp({ create: { width: 128, height: 128, channels: 4, background: ['#ea7730', '#8194df', '#85b083', '#cebe6e', '#dc98b9', '#84cdd8'][index] } }).png().toBuffer();
+    return { bytes, id: createHash('sha256').update(bytes).digest('hex') };
+  }));
+  await page.route('**/api/pictures/analyze', route => { const input = route.request().postDataJSON(); return route.fulfill({ json: { tiles: input.tiles.map((tile: any) => ({ id: tile.id, emoji: tile.emoji || '🚜', concept: { description: tile.label, features: ['distinct structure'], searchTerms: [tile.label], emojiAccurate: false } })) } }); });
+  await page.route('**/api/pictures/jobs', route => {
+    const input = route.request().postDataJSON() as PictureJobRequest; jobs.push(input);
+    const index = Math.max(0, labels.indexOf(input.concept.description));
+    return route.fulfill({ json: { id: input.requestId, draftId: input.draftId, tileId: input.tileId, state: pending ? 'working' : 'complete', result: pending ? undefined : { kind: 'generated', assetId: images[index].id, style: input.style, description: input.concept.description, model: 'mock' } } });
+  });
+  await page.route('**/api/pictures/jobs/*', route => { const id = route.request().url().split('/').at(-1)!; const input = jobs.find(job => job.requestId === id)!; return route.fulfill({ json: { id, draftId: input.draftId, tileId: input.tileId, state: 'working' } }); });
+  await page.route('**/api/pictures/jobs/*/cancel', route => { const id = route.request().url().split('/').at(-2)!; cancelled.push(id); return route.fulfill({ json: { id, draftId: 'cancelled', tileId: 'cancelled', state: 'cancelled' } }); });
+  await page.route('**/api/pictures/assets/*.png', route => {
+    const found = images.find(image => route.request().url().endsWith(`${image.id}.png`));
+    return found ? route.fulfill({ body: found.bytes, contentType: 'image/png' }) : route.fulfill({ status: 404 });
+  });
+  await page.route('**/api/pictures/review', route => route.fulfill({ json: { rejected: [] } }));
+  return { jobs, cancelled, images };
+}
+test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
+
+test('construction pictures are staged, permission-bound, saved offline, and retained in later text edits', async ({ page, context }) => {
+  const { jobs } = await mockPictures(page);
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: draft() }));
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Allow AI pictures', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Six construction vehicles, with clear pictures.');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(6);
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  expect(jobs).toHaveLength(6); expect(jobs.every(job => job.allowGeneration)).toBe(true);
+  expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
+  await mkdir('artifacts/screenshots', { recursive: true });
+  await page.screenshot({ path: 'artifacts/screenshots/pictures-draft.png' });
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  const stored = (await library(page)).boards.at(-1);
+  expect(new Set(stored.tiles.map((tile: any) => tile.illustration.assetId)).size).toBe(6);
+  expect((await library(page)).settings.autoImages).not.toBe(true);
+  await page.unroute('**/api/boards/propose');
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: { boardId: stored.id, baseRevision: stored.revision, proposal: { ...draft().proposal, title: 'Our vehicles', tiles: stored.tiles.map((tile: any) => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, color: tile.color, emoji: '' })) } } }));
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Rename the board only.');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  expect(jobs).toHaveLength(6);
+  expect((await library(page)).boards.at(-1).tiles.map((tile: any) => tile.illustration)).toEqual(stored.tiles.map((tile: any) => tile.illustration));
+  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await expect(page.getByTestId('card-picture')).toHaveCount(6);
+  await context.setOffline(true); await page.reload(); await expect(page.getByTestId('card-picture')).toHaveCount(6);
+  await expect(page.getByText('Picture unavailable', { exact: true })).toHaveCount(0);
+});
+
+test('stopping picture jobs cancels queued work and never saves a partial board', async ({ page }) => {
+  const { jobs, cancelled } = await mockPictures(page, true);
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: draft() }));
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Construction vehicles');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+  await expect.poll(() => jobs.length).toBe(2);
+  expect(jobs.every(job => !job.allowGeneration)).toBe(true);
+  await page.getByRole('button', { name: 'Stop request', exact: true }).click();
+  await expect.poll(() => cancelled.length).toBeGreaterThanOrEqual(2);
+  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
+});
+
+test('manual library selection needs no AI permission and saves attribution plus a protected offline picture', async ({ page, context }) => {
+  const { images, jobs } = await mockPictures(page);
+  const provenance = { library: 'mulberry', sourceId: 'cow', sourceUrl: 'https://mulberrysymbols.org/', author: 'Mulberry Symbols by Steve Lee', license: 'CC-BY-SA-4.0', modified: 'Rasterized with padding.' };
+  const picture: ResolvedPicture = { kind: 'library', assetId: images[0].id, style: 'color', provenance: provenance as any };
+  await page.route('**/api/pictures/search?*', route => route.fulfill({ json: { entries: [{ id: 'mulberry-cow', name: 'Cow picture', terms: ['cow'], style: 'color', provenance }] } }));
+  await page.route('**/api/pictures/library/*', route => route.fulfill({ json: { picture } }));
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture options', exact: true }).click();
+  await page.getByRole('button', { name: 'Search pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Cow picture', exact: true }).click();
+  await expect(page.getByText(/Mulberry Symbols by Steve Lee · CC-BY-SA-4.0/)).toBeVisible();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  const saved = (await library(page)).boards[0].tiles[0]; expect(saved.illustration).toEqual(picture); expect(saved.pictureOptions.locked).toBe(true); expect(jobs).toHaveLength(0);
+  await context.setOffline(true); await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await expect(page.getByTestId('card-picture')).toHaveCount(1);
+});
+
+test('board restyling previews changes, preserves a protected card, and supports returning to emoji', async ({ page }) => {
+  const { jobs } = await mockPictures(page);
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture options', exact: true }).click();
+  await page.getByRole('button', { name: 'Follow board pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Black and white', exact: true }).click();
+  await page.getByRole('button', { name: 'Allow AI pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
+  expect(jobs).toHaveLength(5); expect(jobs.every(job => job.style === 'line')).toBe(true);
+  expect((await library(page)).boards[0].tiles.every((tile: any) => tile.illustration.kind === 'emoji')).toBe(true);
+  await page.getByRole('button', { name: 'Apply pictures', exact: true }).click();
+  await expect(page.getByTestId('card-picture')).toHaveCount(5);
+  const saved = (await library(page)).boards[0];
+  expect(saved.picturePolicy.style).toBe('line'); expect(saved.tiles[0].illustration).toEqual({ kind: 'emoji', emoji: '🐄' });
+  await page.getByRole('button', { name: 'Pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
+  await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Apply pictures', exact: true }).click();
+  await expect(page.getByTestId('card-picture')).toHaveCount(0);
+  expect(jobs).toHaveLength(5);
+  expect((await library(page)).boards[0].picturePolicy.mode).toBe('emoji');
+});

@@ -8,7 +8,7 @@ export async function openExistingLibrary(page: Page) {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await page.evaluate(async library => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library');
       tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error);

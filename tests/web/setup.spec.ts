@@ -17,7 +17,7 @@ function fixture(request: ProposalRequest) {
 }
 async function readLibrary(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     const value = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result); });
     db.close(); return value;
   });

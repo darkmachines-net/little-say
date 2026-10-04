@@ -9,3 +9,4 @@ export * from './emoji';
 export * from './languageProfile';
 export * from './onboarding';
 export * from './photo';
+export * from './pictures';

@@ -5,15 +5,18 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { ImageOff, Volume2 } from 'lucide-react-native';
 import { type Tile } from '@little-say/core';
 import { PhotoImage, usePhotoSource } from './PhotoImage';
+import { PictureImage } from './PictureImage';
 import { palettes, theme } from './theme';
 
-/** Render the tile emoji or locally stored cropped photo, with a fallback when its image cannot load. */
+/** Render emoji, a full local illustration, or a cropped photo, with visible unresolved/missing states. */
 export function Illustration({ tile, size = 64 }: { tile: Tile; size?: number }) {
   const [frame, setFrame] = useState({ width: size, height: size });
   const assetId = tile.illustration.kind === 'photo' ? tile.illustration.assetId : null;
   const loaded = usePhotoSource(assetId);
   const [failedId, setFailedId] = useState<string | null>(null);
   if (tile.illustration.kind === 'emoji') return <Text accessible={false} style={{ fontSize: size, lineHeight: size * 1.25, textAlign: 'center' }}>{tile.illustration.emoji}</Text>;
+  if (tile.illustration.kind === 'library' || tile.illustration.kind === 'generated') return <PictureImage assetId={tile.illustration.assetId} />;
+  if (tile.illustration.kind === 'unresolved') return <View accessible={false} style={{ alignItems: 'center', gap: 6 }}><ImageOff size={Math.min(size, 36)} color={theme.muted} /><Text style={{ color: theme.muted, fontSize: 12 }}>Needs a picture</Text></View>;
   const crop = tile.illustration;
   const side = Math.max(0, Math.min(frame.width, frame.height));
   return <View accessible={false} onLayout={event => setFrame(event.nativeEvent.layout)} style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
