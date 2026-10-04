@@ -1,6 +1,6 @@
 /**
  * @file Verifies release version policy, retained native compatibility checks, environment isolation,
- * and deployment rollback.
+ * workflow publication wiring, and deployment rollback.
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -105,15 +105,27 @@ describe('publication boundary', () => {
     expect(immutableImage('ghcr.io/org/app', `sha256:${'a'.repeat(64)}`)).toBe(`ghcr.io/org/app@sha256:${'a'.repeat(64)}`);
     for (const input of ['latest', 'v0.1.0', 'sha256:abc', 'sha256:' + 'g'.repeat(64)]) expect(() => immutableImage('ghcr.io/org/app', input)).toThrow();
   });
-  it('uses manual server publication and propagates reusable-workflow permissions', () => {
+  it('cuts and publishes the exact merged commit in one manual workflow', () => {
     const workflow = (name: string) => parse(readFileSync(resolve(root, '.github/workflows', name), 'utf8'));
-    const cut = workflow('cut-server-release.yml'); const publish = workflow('publish-server-image.yml');
+    const cut = workflow('cut-server-release.yml');
     expect(Object.keys(cut.on)).toEqual(['workflow_dispatch']);
-    expect(Object.keys(publish.on).sort()).toEqual(['workflow_call', 'workflow_dispatch']);
-    expect(cut.jobs.publish.permissions.packages).toBe('write'); expect(publish.jobs.publish.permissions.packages).toBe('write');
-    expect(publish.concurrency['cancel-in-progress']).toBe(false);
-    expect(publish.jobs.publish.steps.find((s: any) => s.uses?.startsWith('docker/build-push-action')).with.platforms).toBe('linux/amd64,linux/arm64');
-    for (const file of ['ci.yml', 'cut-server-release.yml', 'publish-server-image.yml']) {
+    expect(Object.keys(cut.on.workflow_dispatch.inputs)).toEqual(['bump']);
+    expect(cut.jobs.publish.needs).toBe('prepare');
+    expect(cut.jobs.prepare.outputs.commit).toBe('${{ steps.cut.outputs.commit }}');
+    expect(cut.jobs.publish.permissions).toEqual({ contents: 'write', packages: 'write' });
+    expect(cut.concurrency['cancel-in-progress']).toBe(false);
+    const steps = cut.jobs.publish.steps;
+    const commit = '${{ needs.prepare.outputs.commit }}';
+    expect(steps.find((s: any) => s.uses?.startsWith('actions/checkout')).with.ref).toBe(commit);
+    expect(steps.find((s: any) => s.id === 'release').env.RELEASE_COMMIT).toBe(commit);
+    const build = steps.find((s: any) => s.uses?.startsWith('docker/build-push-action'));
+    expect(build.with.platforms).toBe('linux/amd64,linux/arm64');
+    expect(build.with.push).toBe(true);
+    expect(build.with.tags).toContain(`:sha-${commit}`);
+    expect(build.with.tags).toContain(':v${{ steps.release.outputs.version }}');
+    expect(build.with.labels).toContain(`org.opencontainers.image.revision=${commit}`);
+    expect(steps.find((s: any) => s.name === 'Read back publication').env.RELEASE_COMMIT).toBe(commit);
+    for (const file of ['ci.yml', 'cut-server-release.yml']) {
       const doc = workflow(file);
       expect(JSON.stringify(doc)).not.toMatch(/eas (build|submit|update)|server:deploy|EXPO_TOKEN|OPENAI_API_KEY|SELF_HOSTED/);
       for (const job of Object.values(doc.jobs) as any[]) for (const step of job.steps || []) if (step.uses) expect(step.uses).toMatch(/@[a-f0-9]{40}$/);
