@@ -1,24 +1,45 @@
-/** @file Provides consistent parent-facing picture modes, styles, and explicit image-generation permission. */
+/** @file Groups explained picture selectors and independent switches for board defaults, card overrides, and generation permission. */
 
-import { Linking, Text, View } from 'react-native';
-import { type PicturePolicy } from '@little-say/core';
+import { useState } from 'react';
+import { Linking, Switch, Text, View } from 'react-native';
+import { type PicturePolicy, type Tile } from '@little-say/core';
 import { Button } from './components';
-import { styles } from './theme';
+import { PictureChoiceField, type PictureChoice } from './PictureChoiceField';
+import { styles, theme } from './theme';
 
-export const pictureModes: [PicturePolicy['mode'], string][] = [['auto', 'Automatic'], ['library', 'Library only'], ['generated', 'Generated illustrations'], ['emoji', 'Emoji only']];
-export const pictureStyles: [PicturePolicy['style'], string][] = [['color', 'Simple color'], ['line', 'Black and white']];
+const pictureModes: readonly PictureChoice<PicturePolicy['mode']>[] = [
+  { value: 'auto', label: 'Automatic', description: 'Keep clear emoji. Find a library picture when needed, or generate one if allowed.' },
+  { value: 'library', label: 'Library only', description: 'Choose pictures from the free library. Never generate new images.' },
+  { value: 'generated', label: 'AI illustrations', description: 'Use AI-created pictures. Requires permission to use your paid API account.' },
+  { value: 'emoji', label: 'Emoji only', description: 'Use emoji, even when the closest match is approximate.' },
+];
+
+function PictureSwitch({ label, description, value, onChange, disabled = false }: { label: string; description: string; value: boolean; onChange: (value: boolean) => void; disabled?: boolean }) {
+  return <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 16, opacity: disabled ? 0.5 : 1 }}><View style={{ flex: 1, gap: 5 }}><Text style={[styles.label, { marginBottom: 0 }]}>{label}</Text><Text style={styles.small}>{description}</Text></View><View style={{ minHeight: 44, justifyContent: 'center' }}><Switch accessibilityLabel={label} accessibilityHint={description} value={value} onValueChange={onChange} disabled={disabled} trackColor={{ false: theme.line, true: theme.accent }} /></View></View>;
+}
 
 /** Edit draft picture preferences; these controls never start work or change saved pictures themselves. */
 export function PicturePreferences({ value, onChange, disabled = false }: { value: PicturePolicy; onChange: (value: PicturePolicy) => void; disabled?: boolean }) {
-  return <View style={{ gap: 10 }}>
-    <Text style={styles.label}>Picture source</Text><View style={styles.wrap}>{pictureModes.map(([mode, label]) => <Button key={mode} compact disabled={disabled} kind={value.mode === mode ? 'primary' : 'secondary'} onPress={() => onChange({ ...value, mode })}>{label}</Button>)}</View>
-    {value.mode !== 'emoji' && <><Text style={styles.label}>Illustration style</Text><View style={styles.wrap}>{pictureStyles.map(([style, label]) => <Button key={style} compact disabled={disabled} kind={value.style === style ? 'primary' : 'secondary'} onPress={() => onChange({ ...value, style })}>{label}</Button>)}</View><Button disabled={disabled} kind="secondary" onPress={() => onChange({ ...value, consistent: !value.consistent })}>{value.consistent ? 'Consistent pictures: on' : 'Consistent pictures: off'}</Button></>}
+  const [open, setOpen] = useState(false);
+  return <View style={{ gap: 20 }}>
+    <PictureChoiceField label="Picture source" value={value.mode} choices={pictureModes} expanded={open} onExpand={setOpen} disabled={disabled} onChange={mode => onChange({ ...value, mode, style: 'color' })} />
+    {value.mode !== 'emoji' && <PictureSwitch label="Keep pictures consistent" description="Use illustrations throughout when emoji cannot cover the board." value={value.consistent} disabled={disabled} onChange={consistent => onChange({ ...value, consistent, style: 'color' })} />}
+  </View>;
+}
+
+/** Make card overrides explicit, including the current inherited board choice and a separate protection switch. */
+export function CardPicturePreferences({ options, policy, onChange, disabled = false }: { options: NonNullable<Tile['pictureOptions']>; policy: PicturePolicy; onChange: (changes: Partial<NonNullable<Tile['pictureOptions']>>) => void; disabled?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const boardMode = pictureModes.find(choice => choice.value === policy.mode)!;
+  return <View style={{ gap: 20 }}>
+    <PictureSwitch label="Keep this picture" description="Protect this card from board-wide picture changes." value={options.locked} disabled={disabled} onChange={locked => onChange({ locked })} />
+    <PictureChoiceField<PicturePolicy['mode'] | 'board'> label="Picture source for this card" value={options.mode ?? 'board'} choices={[{ value: 'board', label: `Follow board · ${boardMode.label}`, description: boardMode.description }, ...pictureModes]} expanded={open} onExpand={setOpen} disabled={disabled} onChange={mode => onChange({ mode: mode === 'board' ? undefined : mode, style: undefined })} />
   </View>;
 }
 
 /** Disclose image costs and retention beside the permission control, without silently enabling generation. */
 export function PicturePermission({ enabled, onChange, disabled = false }: { enabled: boolean; onChange: (enabled: boolean) => void; disabled?: boolean }) {
-  return <View style={{ gap: 8 }}><Text style={styles.small}>AI pictures send concept descriptions and picture instructions to OpenAI through your server. Generation uses your server’s paid API account. Pictures and descriptions are cached on the server and downloaded for offline play. Personal photos stay on this device.</Text><Button kind="secondary" disabled={disabled} onPress={() => onChange(!enabled)}>{enabled ? 'AI pictures allowed' : 'Allow AI pictures'}</Button></View>;
+  return <View style={{ gap: 8, borderTopWidth: 1, borderColor: theme.line, paddingTop: 16 }}><PictureSwitch label="Allow AI pictures" description="New AI pictures use your server’s paid API account." value={enabled} disabled={disabled} onChange={onChange} /><Text style={styles.small}>Descriptions go to OpenAI. Pictures and descriptions are saved on your server, and pictures are downloaded for offline play. Personal photos stay on this device.</Text></View>;
 }
 
 /** Show source and license links in parent controls rather than covering children's cards with credits. */

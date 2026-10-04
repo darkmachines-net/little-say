@@ -44,7 +44,7 @@ test('construction pictures are staged, permission-bound, saved offline, and ret
   await page.route('**/api/boards/propose', route => route.fulfill({ json: draft() }));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Allow AI pictures', exact: true }).click();
+  await page.getByRole('switch', { name: 'Allow AI pictures', exact: true }).check();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Six construction vehicles, with clear pictures.');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
@@ -110,20 +110,20 @@ test('board restyling previews changes, preserves a protected card, and supports
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Picture options', exact: true }).click();
-  await page.getByRole('button', { name: 'Follow board pictures', exact: true }).click();
+  await page.getByRole('switch', { name: 'Keep this picture', exact: true }).check();
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await page.getByRole('button', { name: 'Pictures', exact: true }).click();
-  await page.getByRole('button', { name: 'Black and white', exact: true }).click();
-  await page.getByRole('button', { name: 'Allow AI pictures', exact: true }).click();
+  await page.getByRole('switch', { name: 'Allow AI pictures', exact: true }).check();
   await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
-  expect(jobs).toHaveLength(5); expect(jobs.every(job => job.style === 'line')).toBe(true);
+  expect(jobs).toHaveLength(5); expect(jobs.every(job => job.style === 'color')).toBe(true);
   expect((await library(page)).boards[0].tiles.every((tile: any) => tile.illustration.kind === 'emoji')).toBe(true);
   await page.getByRole('button', { name: 'Apply pictures', exact: true }).click();
   await expect(page.getByTestId('card-picture')).toHaveCount(5);
   const saved = (await library(page)).boards[0];
-  expect(saved.picturePolicy.style).toBe('line'); expect(saved.tiles[0].illustration).toEqual({ kind: 'emoji', emoji: '🐄' });
+  expect(saved.picturePolicy.style).toBe('color'); expect(saved.tiles[0].illustration).toEqual({ kind: 'emoji', emoji: '🐄' });
   await page.getByRole('button', { name: 'Pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
   await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
   await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
@@ -131,4 +131,43 @@ test('board restyling previews changes, preserves a protected card, and supports
   await expect(page.getByTestId('card-picture')).toHaveCount(0);
   expect(jobs).toHaveLength(5);
   expect((await library(page)).boards[0].picturePolicy.mode).toBe('emoji');
+});
+
+test('picture sources use a compact explained selector with keyboard dismissal and separate permission', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Pictures', exact: true }).click();
+  const source = page.getByRole('button', { name: 'Picture source: Automatic', exact: true });
+  await expect(source).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByRole('button', { name: 'Library only', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Illustration style', { exact: true })).toHaveCount(0);
+  await source.press('Enter');
+  await expect(source).toHaveAttribute('aria-expanded', 'true');
+  const labels = ['Automatic', 'Library only', 'AI illustrations', 'Emoji only'];
+  const boxes = await Promise.all(labels.map(label => page.getByRole('button', { name: label, exact: true }).boundingBox()));
+  expect(boxes.every((box, index) => box && box.x === boxes[0]!.x && box.width === boxes[0]!.width && (index === 0 || box.y >= boxes[index - 1]!.y + boxes[index - 1]!.height))).toBe(true);
+  await expect(page.getByText('Choose pictures from the free library. Never generate new images.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Library only', exact: true }).press('Escape');
+  await expect(source).toHaveAttribute('aria-expanded', 'false'); await expect(source).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
+  await source.click(); await page.getByRole('button', { name: 'Library only', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Picture source: Library only', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Emoji only', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('switch', { name: 'Allow AI pictures', exact: true })).not.toBeChecked();
+});
+
+test('card source choices show their inherited value and can return to following the board', async ({ page }) => {
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture options', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture source for this card: Follow board · Automatic', exact: true }).click();
+  await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  expect((await library(page)).boards[0].tiles[0].pictureOptions.mode).toBe('emoji');
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture options', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture source for this card: Emoji only', exact: true }).click();
+  await page.getByRole('button', { name: 'Follow board · Automatic', exact: true }).click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  expect((await library(page)).boards[0].tiles[0].pictureOptions.mode).toBeUndefined();
 });

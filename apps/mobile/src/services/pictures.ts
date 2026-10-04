@@ -46,7 +46,8 @@ function pause(signal?: AbortSignal): Promise<void> {
 
 /** Prepare a detached board draft; failures retain saved images and never mutate the supplied board. */
 export async function prepareBoardPictures(board: Board, settings: Settings, options: PictureWorkOptions = {}): Promise<{ board: Board; issues: string[] }> {
-  const policy = board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy;
+  // Old saved styles remain readable, but all newly prepared artwork uses the simple color presentation.
+  const policy: PicturePolicy = { ...(board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy), style: 'color' };
   const result: Board = { ...board, picturePolicy: policy, tiles: board.tiles.map(tile => ({ ...tile })) };
   const issues: string[] = [];
   const eligible = board.tiles.filter(tile => (!options.targetIds || options.targetIds.has(tile.id) || (options.expandConsistency && policy.consistent && tile.illustration.kind === 'emoji')) && ((!tile.pictureOptions?.locked && tile.illustration.kind !== 'photo') || (options.replaceProtected && options.targetIds?.has(tile.id))));
@@ -90,7 +91,7 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
       options.signal?.addEventListener('abort', cancel, { once: true });
       try {
         const mode = tile.pictureOptions?.mode ?? policy.mode;
-        let job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/jobs', json({ requestId: id, draftId, tileId: tile.id, concept: concepts.get(tile.id), style: tile.pictureOptions?.style ?? policy.style, mode: mode === 'emoji' ? 'auto' : mode, allowGeneration: Boolean(options.allowGeneration ?? settings.autoImages), regenerate: Boolean(options.regenerate), neighbors: board.tiles.filter(other => other.id !== tile.id).map(other => concepts.get(other.id)!.description) }), options.signal));
+        let job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/jobs', json({ requestId: id, draftId, tileId: tile.id, concept: concepts.get(tile.id), style: 'color', mode: mode === 'emoji' ? 'auto' : mode, allowGeneration: Boolean(options.allowGeneration ?? settings.autoImages), regenerate: Boolean(options.regenerate), neighbors: board.tiles.filter(other => other.id !== tile.id).map(other => concepts.get(other.id)!.description) }), options.signal));
         while (job.state === 'queued' || job.state === 'working') { await pause(options.signal); job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}`, {}, options.signal)); }
         if (job.id !== id || job.draftId !== draftId || job.tileId !== tile.id) throw new Error('This picture belongs to an older draft.');
         if (job.state !== 'complete' || !job.result) throw new Error(job.error || 'Picture work stopped.');

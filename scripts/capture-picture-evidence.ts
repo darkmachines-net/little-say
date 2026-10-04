@@ -1,6 +1,6 @@
 /**
  * @file Captures picture controls and saved construction boards in an isolated Chromium session.
- * Requires a web build and artifacts from eval:pictures --generate; never invokes paid APIs.
+ * Requires a web build and construction/animal artifacts from eval:pictures; never invokes paid APIs.
  */
 
 import { chromium, expect, type Page } from '@playwright/test';
@@ -8,16 +8,23 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
-import { pictureAssetIdSchema, type Library } from '@little-say/core';
+import { pictureAssetIdSchema, libraryPictureSchema, type Library } from '@little-say/core';
 import { createServer } from '../apps/server/src/app';
 import { starterLibrary } from '../tests/fixtures/library';
 
-const report = z.object({ model: z.string(), results: z.array(z.object({ label: z.string(), assetId: pictureAssetIdSchema })).length(6) }).parse(JSON.parse(await readFile('artifacts/picture-evaluation/color/report.json', 'utf8')));
+const reportSchema = z.object({ model: z.string(), results: z.array(z.object({ label: z.string(), assetId: pictureAssetIdSchema })).length(6) });
+const report = reportSchema.parse(JSON.parse(await readFile('artifacts/picture-evaluation/color/report.json', 'utf8')));
+const animalReport = reportSchema.extend({ emojis: z.array(z.string()).length(6), library: z.array(z.object({ label: z.string(), picture: libraryPictureSchema })).length(6) }).parse(JSON.parse(await readFile('artifacts/picture-evaluation/animals/report.json', 'utf8')));
 const images = await Promise.all(report.results.map(async (result, index) => {
   const bytes = await readFile(`artifacts/picture-evaluation/color/${index}.png`);
   if (createHash('sha256').update(bytes).digest('hex') !== result.assetId) throw new Error(`Evaluation picture ${index} failed its digest check.`);
   return { id: result.assetId, bytes: [...bytes] };
 }));
+for (const [index, result] of animalReport.results.entries()) for (const [file, id] of [[`${index}.png`, result.assetId], [`library-${index}.png`, animalReport.library[index].picture.assetId]]) {
+  const bytes = await readFile(`artifacts/picture-evaluation/animals/${file}`);
+  if (createHash('sha256').update(bytes).digest('hex') !== id) throw new Error(`Animal picture ${file} failed its digest check.`);
+  images.push({ id, bytes: [...bytes] });
+}
 const output = resolve('artifacts/screenshots/card-pictures');
 await mkdir(output, { recursive: true });
 const saved = starterLibrary();
@@ -68,6 +75,19 @@ try {
       await capture(page, `${emojiOnly ? 'emoji-comparison' : 'generated-board'}-${name}`);
       await context.close();
     }
+    for (const kind of ['emoji', 'library', 'generated'] as const) {
+      const context = await browser.newContext({ viewport: { width, height } });
+      const page = await context.newPage();
+      const value = structuredClone(saved);
+      value.boards[0].title = 'Animals';
+      value.boards[0].tiles = animalReport.results.map((result, index) => ({ ...value.boards[0].tiles[index], label: result.label, speech: result.label, illustration: kind === 'emoji' ? { kind, emoji: animalReport.emojis[index] } : kind === 'library' ? animalReport.library[index].picture : { kind, assetId: result.assetId, description: result.label, style: 'color', model: animalReport.model } }));
+      await seed(page, value);
+      await page.getByRole('button', { name: 'Play Animals', exact: true }).click();
+      await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
+      await expect(page.getByTestId('card-picture')).toHaveCount(kind === 'emoji' ? 0 : 6);
+      await capture(page, `animals-${kind}-${name}`);
+      await context.close();
+    }
     const context = await browser.newContext({ viewport: { width, height } });
     const page = await context.newPage();
     await seed(page, saved);
@@ -76,6 +96,10 @@ try {
     await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
     await expect(page.getByTestId('card-picture')).toHaveCount(12);
     await capture(page, `board-controls-${name}`);
+    await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Library only', exact: true })).toBeVisible();
+    await capture(page, `source-options-${name}`);
+    await page.getByRole('button', { name: 'Automatic', exact: true }).click();
     await page.getByRole('button', { name: 'Close Board pictures', exact: true }).click();
     await page.getByRole('button', { name: 'Edit tile Excavator', exact: true }).click();
     await page.getByRole('button', { name: 'Picture options', exact: true }).click();
@@ -85,9 +109,9 @@ try {
     await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
     await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
     await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Use library pictures in black and white. Keep the excavator picture.');
+    await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Use only library pictures. Keep the excavator picture.');
+    await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
     await page.getByRole('button', { name: 'Library only', exact: true }).click();
-    await page.getByRole('button', { name: 'Black and white', exact: true }).click();
     await capture(page, `prompt-controls-${name}`);
     await context.close();
   }

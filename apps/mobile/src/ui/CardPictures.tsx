@@ -5,7 +5,7 @@ import { Linking, Text, View } from 'react-native';
 import { defaultPicturePolicy, type Board, type CatalogEntry, type Settings, type Tile } from '@little-say/core';
 import { chooseLibraryPicture, prepareBoardPictures, searchLibraryPictures } from '../services/pictures';
 import { Button, Field, Notice } from './components';
-import { PicturePermission, pictureModes, pictureStyles } from './PicturePreferences';
+import { CardPicturePreferences, PicturePermission } from './PicturePreferences';
 import { PictureImage } from './PictureImage';
 import { styles } from './theme';
 
@@ -21,7 +21,6 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
   const current = useRef(tile); current.current = tile;
   useEffect(() => () => request.current?.abort(), []);
   const options = tile.pictureOptions ?? { locked: tile.illustration.kind === 'photo', instruction: '' };
-  const style = options.style ?? board.picturePolicy?.style ?? settings.pictureDefaults?.style ?? 'color';
   const updateOptions = (changes: Partial<typeof options>) => onChange({ ...tile, pictureOptions: { ...options, ...changes } });
   const work = async (operation: (controller: AbortController) => Promise<void>) => {
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
@@ -31,7 +30,7 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     finally { if (request.current === controller) { request.current = null; setBusy(false); onBusy(false); } }
   };
   const find = () => work(async controller => {
-    const entries = await searchLibraryPictures(settings.backendUrl, query, style, controller.signal); setResults(entries); setPreviews({});
+    const entries = await searchLibraryPictures(settings.backendUrl, query, 'color', controller.signal); setResults(entries); setPreviews({});
     setMessage(entries.length ? 'Choose the picture that shows the exact meaning.' : 'No library matches. Try another description or generate a picture.');
     // Two downloads at a time avoid flooding the server while making manual search usable without AI.
     let next = 0;
@@ -50,9 +49,7 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     setMessage(result.issues.join('\n') || 'Picture ready. Review it, then save the tile.');
   });
   return <View style={{ gap: 10 }}>
-    <Button kind="secondary" disabled={busy} onPress={() => updateOptions({ locked: !options.locked })}>{options.locked ? 'Keep this picture: on' : 'Follow board pictures'}</Button>
-    <Text style={styles.label}>Picture source for this card</Text><View style={styles.wrap}><Button compact disabled={busy} kind={!options.mode ? 'primary' : 'secondary'} onPress={() => updateOptions({ mode: undefined })}>Follow board</Button>{pictureModes.map(([mode, label]) => <Button key={mode} compact disabled={busy} kind={options.mode === mode ? 'primary' : 'secondary'} onPress={() => updateOptions({ mode })}>{label}</Button>)}</View>
-    <View style={styles.wrap}><Button compact disabled={busy} kind={!options.style ? 'primary' : 'secondary'} onPress={() => updateOptions({ style: undefined })}>Board style</Button>{pictureStyles.map(([value, label]) => <Button key={value} compact disabled={busy} kind={options.style === value ? 'primary' : 'secondary'} onPress={() => updateOptions({ style: value })}>{label}</Button>)}</View>
+    <CardPicturePreferences options={options} policy={board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy} onChange={updateOptions} disabled={busy} />
     <Field label="Describe this picture" editable={!busy} value={options.instruction} maxLength={500} onChangeText={instruction => updateOptions({ instruction })} placeholder="An excavator with tracks and a long digging arm" />
     <Field label="Search picture library" editable={!busy} value={query} maxLength={150} onChangeText={setQuery} />
     <Button disabled={busy || !query.trim()} kind="secondary" onPress={() => void find()}>Search pictures</Button>

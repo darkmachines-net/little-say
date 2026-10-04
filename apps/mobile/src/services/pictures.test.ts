@@ -68,4 +68,12 @@ describe('staged client pictures', () => {
     const result = await prepareProposalPictures(board, envelope, settings);
     expect(mocks.fetch).not.toHaveBeenCalled(); expect(result.proposal.pictures?.map(picture => picture.illustration)).toEqual(board.tiles.map(tile => tile.illustration));
   });
+  it('uses color for new pictures even when a saved board has legacy outline preferences', async () => {
+    board.picturePolicy = { ...defaultPicturePolicy, style: 'line' };
+    board.tiles[0].pictureOptions = { locked: false, instruction: '', style: 'line' };
+    const result = await prepareBoardPictures(board, settings, { restyle: true, allowGeneration: true });
+    expect(result.board.picturePolicy?.style).toBe('color');
+    const requests = mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs')).map(call => JSON.parse(call[2].body));
+    expect(requests).toHaveLength(2); expect(requests.every(request => request.style === 'color')).toBe(true);
+  });
 });
