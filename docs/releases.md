@@ -4,7 +4,7 @@ GitHub publishes the server image. A developer machine builds and submits native
 
 ## First-time setup
 
-1. Merge the app and release workflows into the repository's default branch before using the manual release actions.
+1. Merge the app and release workflow into the repository's default branch before using **Cut server release**.
 2. In GitHub **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. The workflow creates release PRs but does not approve reviews. Keep the default token permissions read-only: the jobs explicitly request `contents: write`, `pull-requests: write`, and `checks: write` for cutting a release, and `packages: write` for publication. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
 3. Create/link an Expo project with slug `little-say` in the intended account. Supply its owner, UUID, and the public HTTPS server origin:
 
@@ -33,20 +33,22 @@ Local iOS builds need macOS, Xcode and CocoaPods. Run `native:setup -- --platfor
 
 ## Cut a server release
 
-Ordinary feature commits do not bump or publish server versions. In GitHub Actions, run **Cut server release** on the default branch, choosing `patch`, `minor`, or `major`.
+Ordinary feature commits do not bump or publish server versions. In GitHub Actions, run **Cut server release** on the default branch, choosing `patch`, `minor`, or `major`. Its `prepare` and `publish` jobs handle the entire release; there is no separate publishing workflow to launch or commit SHA to enter.
 
 The workflow invokes `npm run release:cut`, which supplies `npm_execpath` for nested validation commands on the Ubuntu runner. This entry point requires GitHub Actions; do not launch `server-cut.ts` directly with Node.
 
 The action:
 
 1. Increments `release.json` and its root/server package and lockfile mirrors, leaving native versions unchanged.
-2. Validates the version-only commit with `npm run check`, pushes a release branch and records the same `check` result on that exact commit. This explicit check is needed because `GITHUB_TOKEN` pushes do not trigger normal PR workflows.
+2. Validates the version-only commit with `npm run check`, pushes a branch named `release/server-run-<run-id>` and records the same `check` result on that exact commit. The run ID lets retries find the same candidate. This explicit check is needed because `GITHUB_TOKEN` pushes do not trigger normal PR workflows.
 3. Creates a release PR and attempts a normal squash merge. Required reviews and other protection rules still apply.
 4. Publishes the merged release commit as a multi-platform (`linux/amd64`, `linux/arm64`) GHCR image, creates Git tag `vX.Y.Z`, and reads back the image digest.
 
 The image repository is `ghcr.io/<github-owner>/<github-repository>`. Tags are `vX.Y.Z`, `sha-<full-release-commit>`, and `latest`. Existing version/SHA tags are checked and reused, never rebuilt over. Recovering an older release cannot move `latest` backwards. Publication creates a Git tag and container image, not a GitHub Release object. No Expo or server deployment secrets are needed in GitHub.
 
-If a review, required workflow, or merge queue prevents an immediate merge, the action leaves the PR and its URL in the run summary. Complete the normal review/merge process, then run **Publish server image** on the default branch with the **full merged release commit SHA**. This is also the recovery action after a tag or image publishing failure. It verifies the commit is on the default branch and changes only the server version fields. Do not run Cut again for an already prepared release. Close an abandoned release PR before starting a replacement cut.
+If a review, required workflow, or merge queue prevents an immediate merge, the action leaves the PR and its URL in the run summary. Complete the normal review/merge process, then select **Re-run failed jobs** on that same **Cut server release** run. Preparation resumes its existing PR and passes the validated merged commit directly to publication. A closed, unmerged release PR is treated as abandoned; it is never silently replaced by a retry.
+
+After a tag or image publishing failure, select **Re-run failed jobs** on the original run to retry publication of the same commit. Re-running all jobs also reuses that run's release rather than bumping another version. Existing immutable image tags are verified and reused. Start a new workflow run only when you intend to prepare a new release; close any abandoned open release PR first. GitHub supports [re-running jobs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs) for 30 days after the original run.
 
 The GitHub repository/package must permit `GITHUB_TOKEN` to publish to its GHCR namespace. First publication may be private; set package visibility or give the deployment machine pull access as intended. Publication alone does not change a running server.
 
