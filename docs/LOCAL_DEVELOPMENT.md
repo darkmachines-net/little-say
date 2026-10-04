@@ -13,7 +13,7 @@ This project uses SDK 57; install its compatible [Expo Go version](https://expo.
 
 ## API key
 
-The backend uses **`AAC_OPENAI_KEY`**, with `OPENAI_API_KEY` as a fallback. Your Windows User variable is already supported: the launcher reads it even when the current terminal or Codex session predates that environment change. It never prints the key or writes it to disk.
+The backend uses **`AAC_OPENAI_KEY`**, with `OPENAI_API_KEY` as a fallback. On Windows, the launcher can read a User environment variable even when the current terminal predates that change. It never prints the key or writes it to disk.
 
 Alternatively, run `npm.cmd run dev:setup` and put `OPENAI_API_KEY` in the root `.env`. Setup creates that ignored file only if it is missing. `.env.local` can override `.env`; the current process environment takes precedence over both. An explicit key in the process/files takes precedence over the Windows User fallback. Restart the launcher after changing a key or environment setting.
 
@@ -27,7 +27,7 @@ Only the API process receives the resolved server environment. The Expo process 
 4. Starts Expo explicitly in **Expo Go / LAN** mode on port `8081`, advertising the same host address.
 5. Injects `http://<computer-LAN-IP>:8788` into the development app. No manual URL entry is needed.
 
-The development API uses port 8788 so the production Docker preview can continue using 8787. Browser requests are allowed from the exact localhost/LAN origins for these ports. Native Expo Go requests do not require browser CORS headers. The API remains an unauthenticated service for a trusted private network.
+The development API uses port 8788, separate from the production server's default 8787. Browser requests are allowed from the exact localhost/LAN origins for these ports. Native Expo Go requests do not require browser CORS headers. The API remains an unauthenticated service for a trusted private network.
 
 In a development build, the injected address overrides a saved deployment address. **Parent settings → Test connection** shows and tests the current address. It does not overwrite the saved address; production builds ignore the development injection and retain their normal settings/same-origin behavior.
 
@@ -44,12 +44,12 @@ Ctrl+C stops the launcher and both child process trees. Frontend edits use Fast 
 | `npm.cmd run dev:doctor` | Show selected addresses and check API/Metro connectivity; no model calls |
 | `npm.cmd run dev:server` | API only, useful in its own terminal |
 | `npm.cmd run dev:app` | Expo only, waiting for the separately running API |
-| `npm.cmd run eval:ai` | Five small **billable** live model checks using the same key resolution |
+| `npm.cmd run eval:ai` | Opt-in **billable** live model evaluations using the same key resolution |
 
 In `.env`, optional overrides are:
 
 ```dotenv
-DEV_HOST=192.168.0.195
+DEV_HOST=
 DEV_API_PORT=8788
 DEV_EXPO_PORT=8081
 ```
@@ -63,7 +63,7 @@ Leave `DEV_HOST` blank for detection. If set, it must be an IPv4 address current
 3. Open the Expo QR code. In Parent settings, run **Test connection**.
 4. Ask for six farm animals, review the draft, apply it, and play a tile.
 5. Ask to replace one animal. Check that the rest stay intact, then test undo.
-6. Use **Use your voice**, allow the microphone, stop recording, review the transcript, and submit it.
+6. Use **Voice prompt**, allow the microphone, stop recording, review the transcript, and submit it.
 7. In a board editor, watch the saved AI voice count increase without blocking editing. Open a tile and choose **Generate audio** or **Regenerate audio**, then **Listen to this tile**. Check an English word and a Russian word such as `бабушка` with `ru-RU`.
 8. After audio is saved, disconnect the tablet from Wi-Fi and play it again. Edit the spoken text or language to confirm an old clip is never played for new words; device TTS is the fallback until matching audio is prepared.
 

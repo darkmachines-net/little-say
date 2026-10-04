@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParentHold } from './useParentHold';
 import { theme } from './theme';
 import type { ParentControlProps } from './ParentControl';

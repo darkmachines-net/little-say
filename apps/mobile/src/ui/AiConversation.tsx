@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowUp, Mic, Plus, ShieldCheck, Square, X } from 'lucide-react-native';
 import { MAX_AI_TURNS, boardContext, getLanguageProfile, languageName, profileLanguages, tileSource, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings, type Tile } from '@little-say/core';
@@ -52,7 +52,7 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
   const transcript = useRef<ScrollView>(null);
   const input = useRef<TextInput>(null);
   const nearBottom = useRef(true);
-  const recording = useRecording();
+  const recording = useRecording(setError);
   const finishRef = useRef<() => void>(() => {});
   const { width, height } = useWindowDimensions();
   const title = source ? 'Edit with AI' : 'New board';

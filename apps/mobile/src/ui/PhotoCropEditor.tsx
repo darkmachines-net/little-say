@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { ActivityIndicator, Platform, Text, View, useWindowDimensions } from 'react-native';
 import { RotateCcw } from 'lucide-react-native';
 import { zoomPhoto, type Tile } from '@little-say/core';

@@ -1,5 +1,6 @@
+import { starterLibrary } from '../../../../tests/fixtures/library';
 import { describe, expect, it, vi } from 'vitest';
-import { LatestSpeechQueue, starterLibrary, type SpeechDriver, type Tile } from '@little-say/core';
+import { LatestSpeechQueue, type SpeechDriver, type Tile } from '@little-say/core';
 import { hybridSpeech } from './hybridSpeech';
 
 const tile = starterLibrary().boards[0].tiles[0];

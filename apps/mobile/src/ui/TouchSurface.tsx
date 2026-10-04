@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, View, type GestureResponderEvent } from 'react-native';
 import { BoardTouchController, type Tile, type TileRect } from '@little-say/core';
 import { TileFace } from './TileFace';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text, View } from 'react-native';
 import { LockKeyhole } from 'lucide-react-native';
 import { useParentHold } from './useParentHold';

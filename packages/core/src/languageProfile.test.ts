@@ -1,7 +1,7 @@
+import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { initialLanguageProfile, getLanguageProfile, newTileLanguage, profileLanguages, suggestedPlayLanguages } from './languageProfile';
 import { languageProfileSchema, migrateLibrary, proposalRequestSchema } from './schema';
-import { starterLibrary } from './starter';
 
 const profile = { languages: ['es-ES', 'fr-FR'], defaultLanguage: 'fr-FR' };
 describe('device language preferences', () => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 import { Ellipsis, Heart, Pencil, Play } from 'lucide-react-native';
 import { languageName, type Board } from '@little-say/core';

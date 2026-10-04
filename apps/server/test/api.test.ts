@@ -1,8 +1,9 @@
+import { starterLibrary } from '../../../tests/fixtures/library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createServer } from '../src/app';
 import release from '../../../release.json';
 import { type AiProvider } from '../src/provider';
-import { type GeneratedBoard, starterLibrary, boardContext } from '@little-say/core';
+import { type GeneratedBoard, boardContext } from '@little-say/core';
 import { fileURLToPath } from 'node:url';
 const draft: GeneratedBoard = { title: 'Farm', explanation: 'A cow to start with.', needsClarification: false, tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage' }] };
 const headers = { 'X-Little-Say': '1', 'content-type': 'application/json' };

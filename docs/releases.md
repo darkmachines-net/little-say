@@ -4,7 +4,7 @@ GitHub publishes the server image. A developer machine builds and submits native
 
 ## First-time setup
 
-1. Commit this checkout, set its GitHub `origin`, and push the default branch. This checkout did not have a commit or usable remote when the release tooling was added.
+1. Merge the app and release workflows into the repository's default branch before using the manual release actions.
 2. In GitHub **Settings → Actions → General**, allow Actions to create pull requests. The cut workflow needs `contents: write`, `pull-requests: write`, and `checks: write`; publication needs `packages: write`. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
 3. Create/link an Expo project with slug `little-say` in the intended account. Supply its owner, UUID, and the public HTTPS server origin:
 

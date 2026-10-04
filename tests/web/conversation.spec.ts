@@ -193,6 +193,34 @@ test('voice transcripts can be reviewed for follow-ups and closing releases the 
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
 
+test('a capture-time recorder error releases the microphone and lets the parent retry', async ({ page }) => {
+  await page.evaluate(() => {
+    (window as any).__stoppedTracks = 0;
+    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
+    class Recorder {
+      static isTypeSupported() { return true; }
+      state = 'inactive'; mimeType = 'audio/webm'; onerror: any;
+      constructor() { (window as any).__recorder = this; }
+      start() { this.state = 'recording'; }
+      stop() { this.state = 'inactive'; }
+    }
+    (window as any).MediaRecorder = Recorder;
+  });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Our family');
+  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
+  await page.evaluate(() => (window as any).__recorder.onerror(new Event('error')));
+  await expect(page.getByText('The recording failed. Please try again.', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(1);
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Our family');
+  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
+});
+
 test('the compact editor fits tablet orientations and keeps reordering in the tile dialog', async ({ page }) => {
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveCount(0);

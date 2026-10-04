@@ -1,7 +1,7 @@
+import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { applyProposal, boardContext, migrateLibrary, playLanguagesSchema, reviseBoard, tileSource } from './schema';
 import { applyLanguageSetup, applyTranslations, boardAudioTiles, boardPlayTiles, missingTranslations, selectedBoardLanguage, tileInLanguage, translationRequestSchema, validateTranslations } from './boardLanguages';
-import { starterLibrary } from './starter';
 
 function bilingual() {
   const board = starterLibrary().boards[0];

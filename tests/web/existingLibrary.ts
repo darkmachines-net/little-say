@@ -1,5 +1,5 @@
+import { starterLibrary } from '../fixtures/library';
 import { expect, type Page } from '@playwright/test';
-import { starterLibrary } from '../../packages/core/src/starter';
 
 /** Existing-user fixtures intentionally lack the new setup marker. */
 export async function openExistingLibrary(page: Page) {

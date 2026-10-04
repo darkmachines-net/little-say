@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { View, type GestureResponderEvent } from 'react-native';
 import { PhotoGesture, panPhoto, zoomPhoto, type PhotoCrop } from '@little-say/core';
 import { PhotoImage, type PhotoSource } from './PhotoImage';

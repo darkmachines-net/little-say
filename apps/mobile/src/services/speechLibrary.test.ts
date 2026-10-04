@@ -1,5 +1,6 @@
+import { starterLibrary } from '../../../../tests/fixtures/library';
 import { describe, expect, it, vi } from 'vitest';
-import { speechKey, starterLibrary, migrateLibrary, type SpeechAsset } from '@little-say/core';
+import { speechKey, migrateLibrary, type SpeechAsset } from '@little-say/core';
 import { SpeechLibrary, tileSpeech } from './speechLibrary';
 
 const tile = starterLibrary().boards[0].tiles[0];

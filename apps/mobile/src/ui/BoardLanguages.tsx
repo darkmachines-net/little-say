@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { applyLanguageSetup, applyTranslations, canonicalLanguage, languageName, missingTranslations, profileLanguages, suggestedPlayLanguages, tileInLanguage, type Board, type BoardChanges, type Settings } from '@little-say/core';
 import { prepareTranslations } from '../services/api';

@@ -1,5 +1,5 @@
-import React, { type ReactNode } from 'react';
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
+import { type ReactNode } from 'react';
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
 import { X, AlertCircle, type LucideIcon } from 'lucide-react-native';
 import { theme, styles } from './theme';
 

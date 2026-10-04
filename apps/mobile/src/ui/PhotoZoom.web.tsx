@@ -1,4 +1,3 @@
-import React from 'react';
 import { MAX_PHOTO_ZOOM } from '@little-say/core';
 import type { PhotoZoomProps } from './PhotoZoom';
 import { theme } from './theme';

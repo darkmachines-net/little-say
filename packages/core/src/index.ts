@@ -1,6 +1,6 @@
 export * from './schema';
 export * from './interaction';
-export * from './starter';
+export * from './languages';
 export * from './speech';
 export * from './boardLanguages';
 export * from './emoji';

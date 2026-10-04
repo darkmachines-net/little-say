@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowRight, Copy, Crop, ImagePlus, Trash2, Volume2 } from 'lucide-react-native';
 import { canonicalLanguage, colors, languageName, languageSchema, profileLanguages, tileInLanguage, tileSource, tileTranslation, tileSchema, type Tile, type Settings } from '@little-say/core';

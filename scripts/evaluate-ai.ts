@@ -1,9 +1,10 @@
+import { starterLibrary } from '../tests/fixtures/library';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { ZodError } from 'zod';
 import { loadDevelopmentEnv, withDevelopmentApiKey } from './dev-config';
 import { openAIProvider } from '../apps/server/src/provider';
-import { boardContext, starterBoard, starterPrompt, starterLibrary, validateGeneratedBoard, type GeneratedBoard, type ProposalRequest } from '@little-say/core';
+import { boardContext, starterBoard, starterPrompt, validateGeneratedBoard, type GeneratedBoard, type ProposalRequest } from '@little-say/core';
 const env = await withDevelopmentApiKey(await loadDevelopmentEnv(fileURLToPath(new URL('../', import.meta.url))));
 const provider = openAIProvider(env);
 if (!provider) { console.error('Set AAC_OPENAI_KEY or OPENAI_API_KEY to run the live evaluation. This script makes billable API requests.'); process.exit(1); }

@@ -21,5 +21,4 @@ export const styles = StyleSheet.create({
   label: { color: theme.ink, fontSize: 14, fontWeight: '700', marginBottom: 8 },
   field: { borderWidth: 1, borderColor: theme.line, borderRadius: 14, backgroundColor: theme.surface, color: theme.ink, paddingHorizontal: 15, paddingVertical: 13, fontSize: 16, minHeight: 50 },
   divider: { height: 1, backgroundColor: theme.line, marginVertical: 8 },
-  badge: { backgroundColor: theme.accentSoft, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center', gap: 6 },
 });

@@ -1,6 +1,6 @@
 # Little Say branding review
 
-Browser captures from the current Little Say implementation, taken on October 3, 2026. The library contains synthetic starter-board data; these are not family photos or private user content.
+Browser captures from the current Little Say implementation, refreshed on October 4, 2026. The library contains synthetic starter-board data; these are not family photos or private user content.
 
 | Screen | Viewport | Screenshot |
 | --- | --- | --- |
@@ -14,4 +14,4 @@ The mountain and golden trail appear in the shared header and board-creation dia
 
 The captures use Chromium and the production web build. Speech is stubbed, and the board-creation dialog is shown before sending a prompt. These images demonstrate layout, not live AI/audio quality or physical-device behavior. The separate offline check confirmed that the library mountain loads after a refresh without a network connection; installed native launcher and splash behavior still require a native build.
 
-The [brand source and prompts](../../../apps/mobile/assets/brand/README.md) and [validation record](../../../VALIDATION.md) describe the artwork and checks in more detail.
+The [brand assets](../../../apps/mobile/assets/brand/README.md) and [testing guide](../../testing.md) describe the artwork and checks in more detail.

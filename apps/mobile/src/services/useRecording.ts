@@ -4,7 +4,7 @@ import { useAudioRecorder, RecordingPresets, requestRecordingPermissionsAsync, s
 import * as FileSystem from 'expo-file-system/legacy';
 import { File } from 'expo-file-system';
 
-export function useRecording() {
+export function useRecording(_onError?: (message: string) => void) {
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const [recording, setRecording] = useState(false);
   const mounted = useRef(false);

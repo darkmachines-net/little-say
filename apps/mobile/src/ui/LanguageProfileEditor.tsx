@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { languageName, languageProfileSchema, type LanguageProfile } from '@little-say/core';
 import { LanguageChoices } from './LanguageChoices';

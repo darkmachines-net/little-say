@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { ImageOff, Volume2 } from 'lucide-react-native';
 import { type Tile } from '@little-say/core';

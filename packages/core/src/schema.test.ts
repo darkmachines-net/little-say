@@ -1,6 +1,6 @@
+import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { applyProposal, boardContext, migrateLibrary, validateGeneratedBoard, type GeneratedBoard } from './schema';
-import { starterLibrary } from './starter';
 const draft: GeneratedBoard = { title: 'Farm', explanation: 'A farm board.', needsClarification: false, tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage' }] };
 describe('safe local board proposals', () => {
   it('keeps a retained photo and mixed-language pronunciation, using new IDs only for replacements', () => {

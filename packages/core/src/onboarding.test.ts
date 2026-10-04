@@ -1,7 +1,7 @@
+import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { configureSetup, finishSetup, newLibrary, saveStarterDraft, starterBoard } from './onboarding';
 import { migrateLibrary, type BoardProposal } from './schema';
-import { starterLibrary } from './starter';
 
 const profile = { languages: ['fr-FR', 'es-ES'], defaultLanguage: 'fr-FR' };
 const proposal = (): BoardProposal => ({ boardId: null, baseRevision: null, proposal: { title: 'Animaux', explanation: 'Six animaux.', needsClarification: false, tiles: Array.from({ length: 6 }, (_, i) => ({ existingId: null, label: `Mot ${i}`, speech: `Mot ${i}`, language: 'fr-FR', emoji: '🐄', color: 'sage', languageMode: 'board', translations: [{ language: 'es-ES', label: `Palabra ${i}`, speech: `Palabra ${i}` }] })) } });

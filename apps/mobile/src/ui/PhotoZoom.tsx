@@ -1,4 +1,3 @@
-import React from 'react';
 import Slider from '@react-native-community/slider';
 import { MAX_PHOTO_ZOOM } from '@little-say/core';
 import { theme } from './theme';

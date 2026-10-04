@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image } from 'react-native';
 import { photoGeometry, type PhotoCrop, type PhotoSize } from '@little-say/core';
 import { assetUri } from '../data/storage';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { Plus, Settings as SettingsIcon } from 'lucide-react-native';
 import { type Board, type BoardProposal, type Library } from '@little-say/core';

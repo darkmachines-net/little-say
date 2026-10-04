@@ -206,9 +206,11 @@ test('swipes are forgiving, speech is bounded, and parent exit needs two deliber
 test('unlock readiness matches release at the boundary and cancelled holds reset immediately', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
+  // The measured grid's first layout cancels active holds. Let it finish before freezing time.
+  await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
   await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));
-  const down = async () => { const box = (await control.boundingBox())!; await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); return box; };
+  const down = async () => { const box = (await control.boundingBox())!; await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); await expect(control).toHaveText('Keep holding…'); return box; };
   await down(); await page.clock.runFor(1999);
   await expect(control).toHaveText('Keep holding…'); await page.mouse.up();
   await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Constants from 'expo-constants';
 import { Linking, Platform, Pressable, Text, View } from 'react-native';
 import { Check, Globe, Volume2, Wifi } from 'lucide-react-native';

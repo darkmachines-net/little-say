@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { Check, ChevronLeft, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { AudioLines, Trash2 } from 'lucide-react-native';
 import { boardAudioTiles, type Board, type Settings } from '@little-say/core';
