@@ -1,0 +1,28 @@
+/** @file Combines cached audio playback with system speech fallback under one cancellable driver. */
+
+import { type SpeechAsset, type SpeechDriver, type Tile } from '@little-say/core';
+
+/**
+ * Prefer cached clips and fall back to system TTS when missing or playback fails. One driver feeds
+ * the bounded queue for both sources; stop cancels both and invalidates late callbacks.
+ */
+export function hybridSpeech(system: SpeechDriver<Tile>, audio: SpeechDriver<string>, asset: (tile: Tile) => SpeechAsset | undefined): SpeechDriver<Tile> {
+  let generation = 0;
+  return {
+    speak(tile, done, failed) {
+      const attempt = ++generation;
+      let fallbackStarted = false;
+      const finish = () => { if (attempt === generation && !fallbackStarted) { audio.stop(); done(); } };
+      const fallback = () => {
+        if (attempt !== generation || fallbackStarted) return;
+        fallbackStarted = true; audio.stop();
+        try { system.speak(tile, () => { if (attempt === generation) done(); }, () => { if (attempt === generation) failed(); }); }
+        catch { if (attempt === generation) failed(); }
+      };
+      const clip = asset(tile);
+      if (!clip) { fallback(); return; }
+      try { audio.speak(clip.uri, finish, fallback); } catch { fallback(); }
+    },
+    stop() { generation++; audio.stop(); system.stop(); },
+  };
+}

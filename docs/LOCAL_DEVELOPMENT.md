@@ -1,0 +1,94 @@
+# Local development with Expo Go
+
+Run this from the repository root in a terminal on your computer:
+
+```powershell
+npm.cmd ci                 # first checkout only
+npm.cmd run dev
+```
+
+On macOS/Linux, use `npm` in place of `npm.cmd`. Keep the terminal open. Scan Expo's QR code using Expo Go on Android or the Camera app on iOS. The computer and device must be on the same reachable LAN; a wired computer and a Wi-Fi tablet are fine. There is no Docker, native build, or deployment step for this flow.
+
+This project uses SDK 57; install its compatible [Expo Go version](https://expo.dev/go). On physical iOS devices, the current Expo Go flow requires the CLI and Expo Go to be signed in to the same Expo account: run `npx.cmd expo login` from `apps/mobile`, then sign in on the device. This is an [Expo Go requirement](https://docs.expo.dev/get-started/start-developing/), not an account requirement in Little Say. Allow local-network and microphone access when requested.
+
+## API key
+
+The backend uses **`AAC_OPENAI_KEY`**, with `OPENAI_API_KEY` as a fallback. On Windows, the launcher can read a User environment variable even when the current terminal predates that change. It never prints the key or writes it to disk.
+
+Alternatively, run `npm.cmd run dev:setup` and put `OPENAI_API_KEY` in the root `.env`. Setup creates that ignored file only if it is missing. `.env.local` can override `.env`; the current process environment takes precedence over both. An explicit key in the process/files takes precedence over the Windows User fallback. Restart the launcher after changing a key or environment setting.
+
+Only the API process receives the resolved server environment. The Expo process has `AAC_OPENAI_KEY`, `OPENAI_*`, and inherited `EXPO_PUBLIC_*` values removed, with dotenv loading disabled. The only public value this launcher adds is `EXPO_PUBLIC_API_URL`. Never put a secret in an `EXPO_PUBLIC_*` variable.
+
+## What the launcher does
+
+1. Detects a LAN IPv4 address, preferring Wi-Fi/Ethernet over virtual/VPN adapters.
+2. Checks that both selected ports are free, without stopping an existing process.
+3. Starts the API in watch mode on `0.0.0.0:8788` and waits for its health endpoint.
+4. Starts Expo explicitly in **Expo Go / LAN** mode on port `8081`, advertising the same host address.
+5. Injects `http://<computer-LAN-IP>:8788` into the development app. No manual URL entry is needed.
+
+The development API uses port 8788, separate from the production server's default 8787. Browser requests are allowed from the exact localhost/LAN origins for these ports. Native Expo Go requests do not require browser CORS headers. The API remains an unauthenticated service for a trusted private network.
+
+In a development build, the injected address overrides a saved deployment address. **Parent settings → Test connection** shows and tests the current address. It does not overwrite the saved address; production builds ignore the development injection and retain their normal settings/same-origin behavior.
+
+Ctrl+C stops the launcher and both child process trees. Frontend edits use Fast Refresh; server source edits restart the API. Changing networks or `.env` requires restarting `npm run dev` and reloading the app.
+
+## Useful commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm.cmd run dev` | API + interactive Expo Go QR code |
+| `npm.cmd run dev:web` | Same setup, also open the development web app |
+| `npm.cmd run dev -- --clear` | Same setup, clear Metro's cache |
+| `npm.cmd run dev:setup` | Create optional root `.env` without replacing existing values |
+| `npm.cmd run dev:doctor` | Show selected addresses and check API/Metro connectivity; no model calls |
+| `npm.cmd run dev:server` | API only, useful in its own terminal |
+| `npm.cmd run dev:app` | Expo only, waiting for the separately running API |
+| `npm.cmd run eval:ai` | Opt-in **billable** live model evaluations using the same key resolution |
+
+In `.env`, optional overrides are:
+
+```dotenv
+DEV_HOST=
+DEV_API_PORT=8788
+DEV_EXPO_PORT=8081
+```
+
+Leave `DEV_HOST` blank for detection. If set, it must be an IPv4 address currently assigned to this computer. These `DEV_*` settings are independent of production `HOST`, `PORT`, and `ALLOWED_ORIGINS`. The root launcher is the supported way to start connected local development; a bare `expo start` does not inject the API URL.
+
+## Check the full flow
+
+1. Start `npm run dev`. The console should say **API ready. AI configured.**
+2. On the device's browser, open the printed `/api/health` link. It should show `"status":"ok"` and `"aiConfigured":true`.
+3. Open the Expo QR code. In Parent settings, run **Test connection**.
+4. Ask for six farm animals, review the draft, apply it, and play a tile.
+5. Ask to replace one animal. Check that the rest stay intact, then test undo.
+6. Use **Voice prompt**, allow the microphone, stop recording, review the transcript, and submit it.
+7. In a board editor, watch the saved AI voice count increase without blocking editing. Open a tile and choose **Generate audio** or **Regenerate audio**, then **Listen to this tile**. Check an English word and a Russian word such as `бабушка` with `ru-RU`.
+8. After audio is saved, disconnect the tablet from Wi-Fi and play it again. Edit the spoken text or language to confirm an old clip is never played for new words; device TTS is the fallback until matching audio is prepared.
+
+Generated audio is stored in the repository's ignored `.cache/speech` directory by default. Restarting `npm run dev` reuses it. `OPENAI_SPEECH_MODEL` and `OPENAI_SPEECH_VOICE` are optional server settings; the defaults are `gpt-realtime-2.1-mini` and `marin`. `SPEECH_CACHE_DIR` can point to another persistent directory. The Expo app receives only the backend URL and downloaded audio, never the key.
+
+The web app on `localhost:8081` also supports recording. A device browser using a plain LAN HTTP URL generally cannot access its microphone; use the native Expo Go app for this local voice test. Browser offline/service-worker behavior is tested against the built app, not Metro.
+
+## If the device cannot connect
+
+Run `npm run dev:doctor` while the launcher is running. A successful check on the computer does not prove another device can reach it. Check the printed health URL on the device first, then the Expo connection.
+
+- Wrong address: use the interface list in `dev:doctor` and set `DEV_HOST`. VPNs, Docker, and WSL can advertise unusable addresses.
+- Timeout from the device: confirm both devices use the same trusted network, allow Expo Go local-network permission, and avoid guest/client-isolated Wi-Fi.
+- Windows firewall: allow Node on your **Private** network when prompted. If needed, run the following once in an **Administrator PowerShell** from this repository. The helper adds only inbound Node TCP access for these ports, on the Private profile, from the local subnet. It does not change the network profile or disable the firewall.
+
+```powershell
+.\scripts\dev-firewall.ps1
+# If you changed ports:
+.\scripts\dev-firewall.ps1 -ApiPort 9000 -ExpoPort 9001
+# Remove the helper's rule afterward:
+.\scripts\dev-firewall.ps1 -Remove
+```
+
+The helper supports `-WhatIf`. No firewall rule is installed automatically. Mark your home network Private using Windows Settings if it is currently Public and you trust it.
+
+Expo's `--tunnel` tunnels the bundler only; it does not make this local API reachable. This launcher intentionally uses LAN mode so the bundle and API use one working network path.
+
+Expo Go includes this app's [SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/) and [audio](https://docs.expo.dev/versions/latest/sdk/audio/) modules. Its permission text, development menu, app identity, and system containment can differ from a standalone build. Test final child-mode containment and distribution behavior in a native build before the family pilot.
