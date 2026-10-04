@@ -36,7 +36,8 @@ jobs:
       - run: npm ci
       - name: Validate, create version PR, and merge when permitted
         id: cut
-        run: node --import tsx scripts/release/server-cut.ts
+        # npm supplies npm_execpath so nested validation resolves npm on the Ubuntu runner.
+        run: npm run release:cut
         env:
           GH_TOKEN: ${{ github.token }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}

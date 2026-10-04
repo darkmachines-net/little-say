@@ -5,7 +5,7 @@ GitHub publishes the server image. A developer machine builds and submits native
 ## First-time setup
 
 1. Merge the app and release workflows into the repository's default branch before using the manual release actions.
-2. In GitHub **Settings → Actions → General**, allow Actions to create pull requests. The cut workflow needs `contents: write`, `pull-requests: write`, and `checks: write`; publication needs `packages: write`. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
+2. In GitHub **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. The workflow creates release PRs but does not approve reviews. Keep the default token permissions read-only: the jobs explicitly request `contents: write`, `pull-requests: write`, and `checks: write` for cutting a release, and `packages: write` for publication. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
 3. Create/link an Expo project with slug `little-say` in the intended account. Supply its owner, UUID, and the public HTTPS server origin:
 
 ```powershell
@@ -34,6 +34,8 @@ Local iOS builds need macOS, Xcode and CocoaPods. Run `native:setup -- --platfor
 ## Cut a server release
 
 Ordinary feature commits do not bump or publish server versions. In GitHub Actions, run **Cut server release** on the default branch, choosing `patch`, `minor`, or `major`.
+
+The workflow invokes `npm run release:cut`, which supplies `npm_execpath` for nested validation commands on the Ubuntu runner. This entry point requires GitHub Actions; do not launch `server-cut.ts` directly with Node.
 
 The action:
 

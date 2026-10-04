@@ -23,6 +23,7 @@
     "eval:ai": "tsx scripts/evaluate-ai.ts",
     "emoji:update": "tsx scripts/update-emoji-catalog.ts",
     "release:check": "tsx scripts/release/version.ts check",
+    "release:cut": "tsx scripts/release/server-cut.ts",
     "release:prepare": "tsx scripts/release/version.ts prepare",
     "native:setup": "tsx scripts/release/native.ts setup",
     "native:configure": "tsx scripts/release/native.ts configure",
