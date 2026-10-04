@@ -1,0 +1,57 @@
+{
+  "name": "little-say-workspace",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "tsx scripts/dev.ts",
+    "dev:web": "tsx scripts/dev.ts --web",
+    "dev:server": "tsx scripts/dev.ts --server-only",
+    "dev:app": "tsx scripts/dev.ts --app-only",
+    "dev:setup": "tsx scripts/dev.ts --setup",
+    "dev:doctor": "tsx scripts/dev.ts --doctor",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json",
+    "test": "vitest run",
+    "test:web": "playwright test",
+    "build": "npm run build -w @little-say/server && npm run build:web -w @little-say/app",
+    "start": "npm run start -w @little-say/server",
+    "check": "npm run release:check && npm run typecheck && npm test && npm run build",
+    "eval:ai": "tsx scripts/evaluate-ai.ts",
+    "emoji:update": "tsx scripts/update-emoji-catalog.ts",
+    "release:check": "tsx scripts/release/version.ts check",
+    "release:prepare": "tsx scripts/release/version.ts prepare",
+    "native:setup": "tsx scripts/release/native.ts setup",
+    "native:configure": "tsx scripts/release/native.ts configure",
+    "native:build": "tsx scripts/release/native.ts build",
+    "native:install": "tsx scripts/release/native.ts install",
+    "native:submit": "tsx scripts/release/native.ts submit",
+    "ota:publish": "tsx scripts/release/native.ts ota",
+    "server:configure": "tsx scripts/release/deploy.ts configure",
+    "server:deploy": "tsx scripts/release/deploy.ts deploy",
+    "brand:assets": "node scripts/brand-assets.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "overrides": {
+    "esbuild": "^0.28.2",
+    "xcode": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "devDependencies": {
+    "@expo/fingerprint": "0.20.13",
+    "@expo/image-utils": "0.11.5",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^24.0.0",
+    "concurrently": "^9.2.0",
+    "tsx": "^4.20.0",
+    "typescript": "~6.0.3",
+    "vitest": "^4.0.0",
+    "yaml": "2.9.1"
+  }
+}

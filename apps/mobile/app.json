@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Little Say",
+    "slug": "little-say",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "scheme": "littlesay",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "net.darkmachines.littlesay" },
+    "android": { "package": "net.darkmachines.littlesay", "permissions": ["RECORD_AUDIO"], "allowBackup": false },
+    "web": { "bundler": "metro", "name": "Little Say", "shortName": "Little Say" },
+    "plugins": ["expo-sqlite", ["expo-image-picker", { "photosPermission": "Choose a photo to illustrate a soundboard tile.", "cameraPermission": false, "microphonePermission": "Record a parent prompt to create or edit a soundboard." }], ["expo-audio", { "microphonePermission": "Record a parent prompt to create or edit a soundboard.", "enableBackgroundRecording": false, "enableBackgroundPlayback": false }]]
+  }
+}
