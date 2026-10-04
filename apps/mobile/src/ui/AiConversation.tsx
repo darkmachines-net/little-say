@@ -9,7 +9,7 @@ import { ArrowUp, Mic, Plus, ShieldCheck, Square, X } from 'lucide-react-native'
 import { MAX_AI_TURNS, boardContext, getLanguageProfile, languageName, profileLanguages, tileSource, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, proposeBoard } from '../services/api';
 import { useRecording } from '../services/useRecording';
-import { Button, Notice } from './components';
+import { Button, ModalBackdrop, Notice } from './components';
 import { TileFace } from './TileFace';
 import { theme, styles } from './theme';
 import { MountainMark } from './Brand';
@@ -39,7 +39,8 @@ function Working({ label }: { label: string }) {
 
 /**
  * Render a creation or editing conversation that preserves the source board until Apply, supports
- * follow-up prompts, and cancels outstanding work when dismissed.
+ * follow-up prompts, and cancels outstanding work when dismissed by the close button or outside tap.
+ * Dismissal is disabled during an in-progress save or consent update.
  */
 export function AiConversation({ settings, board, onApply, onConsent, onClose, onManual }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal) => Promise<void>; onConsent: () => Promise<void>; onClose: () => void; onManual?: () => void }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
@@ -137,6 +138,7 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
   };
   return <Modal transparent animationType="fade" visible onRequestClose={close} statusBarTranslucent>
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : Platform.OS === 'android' ? 'height' : undefined} style={{ flex: 1, backgroundColor: theme.scrim, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 8 : 24 }}>
+      <ModalBackdrop onClose={close} />
       <View accessibilityViewIsModal testID="ai-conversation" style={{ width: '100%', maxWidth: 760, height: Math.min(860, height - (width < 600 ? 24 : 64)), maxHeight: '100%', backgroundColor: theme.background, borderRadius: 24, overflow: 'hidden' }}>
         <View style={[styles.row, { backgroundColor: theme.surface, padding: 16, borderBottomWidth: 1, borderColor: theme.line }]}>
           <MountainMark size={44} />

@@ -164,7 +164,7 @@ test('a failed save keeps the draft and retry creates exactly one board', async 
   expect((await saved(page)).boards).toHaveLength(4);
 });
 
-test('voice transcripts can be reviewed for follow-ups and closing releases the microphone', async ({ page }) => {
+for (const dismissal of ['close button', 'outside click']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
   await page.evaluate(() => {
     (window as any).__stoppedTracks = 0;
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
@@ -194,7 +194,9 @@ test('voice transcripts can be reviewed for follow-ups and closing releases the 
   expect(requests[1].conversation.history).toHaveLength(1);
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  if (dismissal === 'outside click') await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: 4 } });
+  else await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
 

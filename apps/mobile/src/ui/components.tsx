@@ -1,7 +1,7 @@
 /** @file Defines shared parent-facing buttons, fields, notices, dialogs, and confirmations. */
 
-import { type ReactNode } from 'react';
-import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
+import { useRef, type ReactNode } from 'react';
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
 import { X, AlertCircle, type LucideIcon } from 'lucide-react-native';
 import { theme, styles } from './theme';
 
@@ -27,11 +27,24 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
 export function Notice({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return <View accessibilityRole="alert" style={{ padding: 14, backgroundColor: '#FFF0E4', borderRadius: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}><AlertCircle size={19} color={theme.clay} /><View style={{ flex: 1, gap: 8 }}><Text style={{ color: '#855137', fontSize: 14, lineHeight: 21 }}>{children}</Text>{action}</View></View>;
 }
-/** Present a responsive modal with scrollable content, a close action, and an optional fixed footer. */
+/**
+ * Dismiss on outside taps on native and web. Render before the dialog as a sibling so content taps
+ * cannot trigger dismissal; the dialog's close button remains the keyboard and screen-reader action.
+ * Require a press to start here so the opening gesture's trailing browser click cannot close it.
+ */
+export function ModalBackdrop({ onClose }: { onClose: () => void }) {
+  const pressed = useRef(false);
+  return <Pressable testID="modal-backdrop" accessible={false} tabIndex={-1} importantForAccessibility="no" onPressIn={() => { pressed.current = true; }} onPress={() => { if (pressed.current) { pressed.current = false; onClose(); } }} style={StyleSheet.absoluteFill} />;
+}
+/**
+ * Present a responsive, scrollable modal with an optional fixed footer. Outside taps use the same
+ * cancellation path as the close button and system back action, without confirming or saving.
+ */
 export function Sheet({ title, subtitle, onClose, children, footer, wide = false }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
   const { width, height } = useWindowDimensions();
   return <Modal transparent animationType="fade" visible onRequestClose={onClose} statusBarTranslucent>
     <View style={{ flex: 1, backgroundColor: theme.scrim, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 12 : 30 }}>
+      <ModalBackdrop onClose={onClose} />
       <View accessibilityViewIsModal style={{ backgroundColor: theme.background, borderRadius: 24, width: '100%', maxWidth: wide ? 860 : 580, maxHeight: height - 48, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
         <View style={{ padding: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}><View style={{ flex: 1, gap: 6 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text>{Boolean(subtitle) && <Text style={styles.body}>{subtitle}</Text>}</View><Button icon={X} kind="ghost" compact onPress={onClose} accessibilityLabel={`Close ${title}`} /></View>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, gap: 20 }}>{children}</ScrollView>
