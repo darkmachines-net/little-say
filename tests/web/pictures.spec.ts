@@ -366,3 +366,26 @@ for (const [mode, label] of [['library', 'Library only'], ['emoji', 'Emoji only'
   await expect(page.getByRole('button', { name: /Picture source for this card: Follow board.*AI illustrations/ })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeEnabled();
 });
+
+for (const action of ['close', 'stop', 'apply'] as const) test(`saved tile edits survive automatic picture ${action}`, async ({ page }) => {
+  const value = await library(page); value.settings.aiConsent = true; value.settings.autoSpeech = false;
+  await page.evaluate(async value => { const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); }); await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(value, 'library'); tx.oncomplete = () => resolve(); }); db.close(); }, value);
+  await page.reload();
+  const { jobs, cancelled } = await mockPictures(page, action !== 'apply');
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Calf');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
+  await expect.poll(() => jobs.length).toBeGreaterThan(0);
+  if (action === 'apply') { await page.getByRole('button', { name: 'Apply pictures', exact: true }).click(); }
+  else { if (action === 'stop') await page.getByRole('button', { name: 'Stop pictures', exact: true }).click(); await page.getByRole('button', { name: 'Close Board pictures', exact: true }).click(); await expect.poll(() => cancelled.length).toBeGreaterThan(0); }
+  await expect(page.getByRole('button', { name: 'Edit tile Calf', exact: true })).toBeVisible();
+  await expect.poll(async () => (await library(page)).boards[0].tiles[0].label).toBe('Calf');
+  const saved = (await library(page)).boards[0];
+  expect(saved.tiles[0].speech).toBe('Calf');
+  expect(saved.revision).toBe(value.boards[0].revision + (action === 'apply' ? 2 : 1));
+  expect(saved.tiles[0].illustration.kind).toBe(action === 'apply' ? 'generated' : 'emoji');
+  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Calf', exact: true })).toBeVisible();
+});
