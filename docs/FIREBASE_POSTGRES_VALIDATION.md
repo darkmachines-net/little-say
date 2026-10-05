@@ -1,14 +1,14 @@
 # Firebase and Postgres validation
 
-Validated locally on Windows on 2026-10-04 using PostgreSQL 17, the Firebase Auth emulator, Chromium, Docker Compose, and the Pixel_10 Android emulator.
+Validated locally on Windows on 2026-10-04 using PostgreSQL 17, the Firebase Auth emulator, Chromium, Docker Compose, and the Pixel_10 Android emulator. Release metadata, types, unit tests, builds, integration tests, and browser checks were rerun on 2026-10-05 after combining the account and ChatGPT branch histories.
 
 ## Automated checks
 
 - Type checking, release metadata checks, unit tests, server/web builds, and Android bundle export pass.
 - 219 unit tests cover the existing application plus database configuration, secure credential persistence, unsupported native-module guards, secret scrubbing, cookie proxying, and deployment failure/rollback ordering.
 - 29 required integration tests run against real Postgres and Auth emulator services. These cover fresh/repeat migrations, account isolation, complete backups, restart persistence, competing revisions/quotas, deletion retries, resumable Apple confirmation, Firebase verification/reset/cookies/CSRF/revocation, provider linking/conflicts, and ChatGPT transaction/refresh/disconnect races. Missing services fail the suite.
-- The full 72-test Chromium suite passed. The final focused account run passed three tests, including an additional cross-tab identity/server-switching case (73 browser cases in total). Restore compares photo, illustration, and audio bytes and exercises offline conflict recovery and local-preserving sign-out.
-- CI supplies Postgres and runs the Auth emulator for integration and browser suites. The CI workflow itself has not been dispatched from this working tree.
+- The final full Chromium suite passed all 74 tests, including cross-tab identity/server switching and the inherited ChatGPT picture regression. Restore compares photo, illustration, and audio bytes and exercises offline conflict recovery and local-preserving sign-out.
+- CI supplies Postgres and runs the Auth emulator for integration and browser suites. This record describes local evidence; the PR check status reports CI results separately.
 
 ## Runtime checks
 

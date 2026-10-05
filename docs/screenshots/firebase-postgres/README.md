@@ -1,6 +1,6 @@
 # Firebase and Postgres account evidence
 
-Captured on 2026-10-04 against PostgreSQL 17 and the Firebase Auth emulator. All identities shown are test fixtures.
+Browser captures were refreshed on 2026-10-05 from application commit `4fc31c7` against PostgreSQL 17 and the Firebase Auth emulator. The native capture is from the 2026-10-04 runtime validation, before the inherited Settings label change. All identities shown are test fixtures.
 
 - `create-tablet.png`: Chromium tablet account creation with email/password and optional backup consent.
 - `restored-phone.png`: Chromium phone library after restoring the account backup, including local media.
