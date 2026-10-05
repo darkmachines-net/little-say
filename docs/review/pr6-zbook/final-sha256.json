@@ -1,0 +1,42 @@
+[
+  {
+    "file": "diff-composition.json",
+    "sha256": "2741ae6dd989c739d8dc1867386612fc2a47da6814c787efa73b307ad0be9f1c"
+  },
+  {
+    "file": "final-pr-body.html",
+    "sha256": "9edf577b2eaf4c753742bbb9d104d3befef67f6e3b9186943ccc4d60bb00ecf6"
+  },
+  {
+    "file": "final-pr-body.md",
+    "sha256": "82ac970508231478fffb3f2a4cfedcdcaa31bda0855d088a2da3f5e76a92acdd"
+  },
+  {
+    "file": "final-render-0.png",
+    "sha256": "427d3b61b2ece0df08b46b8875d982ff58d7b84399cf99fd5905bef6334501db"
+  },
+  {
+    "file": "final-render-1.png",
+    "sha256": "17cdf3bbfa1c1b987112c449e1f2725a2be452d01caf0629af653b2775af2ad9"
+  },
+  {
+    "file": "final-render-2.png",
+    "sha256": "38a3087fa4390f5fd04b674af3463e4e9bc7fdb5b4cc8fadeb5798b4a6deb815"
+  },
+  {
+    "file": "final-render-3.png",
+    "sha256": "414b8755d3fbd0a6eb520a2914e0488511296f6a2f7b92fad8c90ac0f9e99d5e"
+  },
+  {
+    "file": "final-render-readback.json",
+    "sha256": "c5e6426ebf72f18606786f63d277f513ce8cddd78743fb9270cc7dfefd338900"
+  },
+  {
+    "file": "final-state.json",
+    "sha256": "0e0fac73d74c9bc2ae88203bdb7441c43c0425e070005c605adaddcf345d906b"
+  },
+  {
+    "file": "hygiene-typecheck.log",
+    "sha256": "ba1d3dce2d533102c529ef3915ab27d240ef79e2a5c2f56cd4817594d3448c30"
+  }
+]

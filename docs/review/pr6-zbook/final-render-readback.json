@@ -1,0 +1,84 @@
+{
+  "checkedAtUtc": "2026-10-05T18:10:55.279Z",
+  "head": "38bfe7d8b94c0d781760a2cc5e898db04e7f9932",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "bodySha256": "82ac970508231478fffb3f2a4cfedcdcaa31bda0855d088a2da3f5e76a92acdd",
+  "bodyHtmlSha256": "9edf577b2eaf4c753742bbb9d104d3befef67f6e3b9186943ccc4d60bb00ecf6",
+  "scope": "Exact API-rendered body_html with authenticated repository image routing. Full authenticated GitHub-page layout unavailable: CUA kernel fails applying sandbox ACLs. Browser UI access not claimed.",
+  "loaded": [
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-ready-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-ready-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-fallback-390.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-fallback-390.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-home-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-home-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "images": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-ready-1280.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/before-ready-1280.png",
+      "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-ready-1280.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/after-ready-1280.png",
+      "sha256": "0c5e2c5d68b948a0663679ca27fc804c21977e12a616f5659fc4df86d8dff96b"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-fallback-390.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/before-fallback-390.png",
+      "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-fallback-390.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/after-fallback-390.png",
+      "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/before-home-1280.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/before-home-1280.png",
+      "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook/after-home-1280.png?raw=true",
+      "commit": "77dd5092a4e952f08a75da2351a6262e365a117b",
+      "path": "docs/review/pr6-zbook/after-home-1280.png",
+      "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0"
+    }
+  ]
+}

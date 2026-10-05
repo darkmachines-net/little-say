@@ -1,0 +1,114 @@
+{
+  "checkedAtUtc": "2026-10-05T18:12:05.731Z",
+  "host": "MCHARTIER_ZBOOK",
+  "worktree": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6",
+  "role": "sole implementation continuation",
+  "pr": "https://github.com/MChartier/little-say/pull/6",
+  "head": "38bfe7d8b94c0d781760a2cc5e898db04e7f9932",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "mergeBase": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "branch": "feat/automatic-card-pictures",
+  "bodySha256": "82ac970508231478fffb3f2a4cfedcdcaa31bda0855d088a2da3f5e76a92acdd",
+  "draft": true,
+  "labels": [],
+  "runtimeIdentities": [
+    {
+      "file": "apps",
+      "captured": "ab2955a0fe3159dd1becdd16bae23b1ee6ee6c68",
+      "final": "ab2955a0fe3159dd1becdd16bae23b1ee6ee6c68"
+    },
+    {
+      "file": "packages",
+      "captured": "7b2832a0d2caa65a9b55b7d90ccb4b7a2f14654e",
+      "final": "7b2832a0d2caa65a9b55b7d90ccb4b7a2f14654e"
+    },
+    {
+      "file": "tests",
+      "captured": "69cb63fe60092c8d34fbe1f88fd5d09bb278f937",
+      "final": "69cb63fe60092c8d34fbe1f88fd5d09bb278f937"
+    },
+    {
+      "file": "package.json",
+      "captured": "2fbbed6e876049d6bc6016e690d2ffa2fc49dd9d",
+      "final": "2fbbed6e876049d6bc6016e690d2ffa2fc49dd9d"
+    },
+    {
+      "file": "package-lock.json",
+      "captured": "697b58775e5ea435b263102d1426a68261ccf97d",
+      "final": "697b58775e5ea435b263102d1426a68261ccf97d"
+    },
+    {
+      "file": "Dockerfile",
+      "captured": "8a382ecc11b64d8fec8888daebbc277347e02b69",
+      "final": "8a382ecc11b64d8fec8888daebbc277347e02b69"
+    },
+    {
+      "file": "compose.yaml",
+      "captured": "cde151b54a48ac1ca4e6822e73db7fee877ec611",
+      "final": "cde151b54a48ac1ca4e6822e73db7fee877ec611"
+    },
+    {
+      "file": "deploy",
+      "captured": "911f23b42ae105ad58a914df49f3a0e1696cd898",
+      "final": "911f23b42ae105ad58a914df49f3a0e1696cd898"
+    },
+    {
+      "file": ".env.example",
+      "captured": "d9216e2cf459c8911d8bb673aa2b7b330d194511",
+      "final": "d9216e2cf459c8911d8bb673aa2b7b330d194511"
+    },
+    {
+      "file": "playwright.config.ts",
+      "captured": "fb4c73f55d4e89b47dc936ad1d8b963ffd1c6103",
+      "final": "fb4c73f55d4e89b47dc936ad1d8b963ffd1c6103"
+    },
+    {
+      "file": "scripts/evaluate-ai.ts",
+      "captured": "6dea4f5bb2e7828facf5f4109af81d3838eeda42",
+      "final": "6dea4f5bb2e7828facf5f4109af81d3838eeda42"
+    },
+    {
+      "file": "scripts/evaluate-pictures.ts",
+      "captured": "07015fe13ca3620ae817215e8be396e96dbd8d11",
+      "final": "07015fe13ca3620ae817215e8be396e96dbd8d11"
+    },
+    {
+      "file": "scripts/update-picture-catalog.ts",
+      "captured": "3e672eda2f8779e9a931e5eb6cd4e23eec8b5601",
+      "final": "3e672eda2f8779e9a931e5eb6cd4e23eec8b5601"
+    }
+  ],
+  "checks": [
+    {
+      "id": 111910557096,
+      "name": "check",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/MChartier/little-say/actions/runs/37353679118/job/111910557096"
+    }
+  ],
+  "engineeringReviews": [],
+  "reviewComments": [],
+  "reviewRequest": "https://github.com/MChartier/little-say/pull/6#issuecomment-6000278729",
+  "engineeringReviewStatus": "Requested once; no completed review returned at this check. Not treated as complete.",
+  "limitations": [
+    "Full authenticated GitHub page layout uninspected; exact API-rendered body and six images inspected.",
+    "Physical Android/iPad validation not executed.",
+    "No live paid AI evaluation repeated.",
+    "Independent readiness QA and coordinator receipt remain separate."
+  ],
+  "diffSummary": {
+    "before": {
+      "files": 136,
+      "added": 3745,
+      "removed": 185
+    },
+    "after": {
+      "files": 69,
+      "added": 2991,
+      "removed": 185
+    },
+    "removedOneOffFiles": 67,
+    "removedScreenshotBinaries": 57
+  }
+}
