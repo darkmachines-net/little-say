@@ -1,0 +1,58 @@
+npm notice run little-say-workspace@0.1.1 test:web
+npm notice run playwright test tests/web/pictures.spec.ts -g stopping picture jobs
+[WebServer] npm notice run little-say-workspace@0.1.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.1.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:27716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:27716) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 1 test using 1 worker
+
+(node:31512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] ΓÇ║ tests\web\pictures.spec.ts:140:1 ΓÇ║ stopping picture jobs cancels queued work and discards the partial preview without saving it (9.8s)
+
+
+  1) [chromium] ΓÇ║ tests\web\pictures.spec.ts:140:1 ΓÇ║ stopping picture jobs cancels queued work and discards the partial preview without saving it 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('textbox', { name: 'Message to AI', exact: true })
+    Expected: "Construction vehicles"
+    Received: ""
+    Timeout:  7000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('textbox', { name: 'Message to AI', exact: true }) with timeout 7000ms
+      - waiting for getByRole('textbox', { name: 'Message to AI', exact: true })
+        18 ├ù locator resolved to <textarea dir="auto" maxlength="4000" autocorrect="on" autocomplete="on" spellcheck="true" autocapitalize="sentences" aria-label="Message to AI" virtualkeyboardpolicy="auto" placeholder="Ask for a change or answer a questionΓÇª" class="css-11aywtz r-6taxm2 r-14lw9ot r-1kaaj8w r-t23y2h r-rs99b7 r-1d6cced r-ubezar r-ywh0we r-ubg91z"></textarea>
+           - unexpected value ""
+
+
+      155 |   await expect(page.getByTestId('ai-draft')).toHaveCount(0);
+      156 |   await expect(page.getByTestId('picture-active-animation')).toHaveCount(0);
+    > 157 |   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Construction vehicles');
+          |                                                                                   ^
+      158 |   await expect(page.getByTestId('ai-transcript').getByText('Six distinct construction vehicles.', { exact: true })).toHaveCount(0);
+      159 |   labels.forEach(label => ready.add(label));
+      160 |   await page.getByRole('button', { name: 'Send message', exact: true }).click();
+        at C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-pr6\tests\web\pictures.spec.ts:157:83
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-stopping-picture--84eaf-l-preview-without-saving-it-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\pictures-stopping-picture--84eaf-l-preview-without-saving-it-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-stopping-picture--84eaf-l-preview-without-saving-it-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\pictures-stopping-picture--84eaf-l-preview-without-saving-it-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  1 failed
+    [chromium] ΓÇ║ tests\web\pictures.spec.ts:140:1 ΓÇ║ stopping picture jobs cancels queued work and discards the partial preview without saving it 

@@ -1,0 +1,180 @@
+{
+  "capturedAtUtc": "2026-10-05T18:19:13.537Z",
+  "host": "MCHARTIER_ZBOOK",
+  "tool": "Playwright 1.63.0 screenshot; no pixel editing/cropping",
+  "browser": "153.0.8010.12",
+  "base": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+  "head": "252b863380ee1c76b80a901aafbee6dd92135946",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "proposal": "proposal.json",
+  "asset": {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537",
+    "source": "library-source.json"
+  },
+  "normalization": "Identical version-1 synthetic library (After migrates it), en-US locale, UTC, light theme, DPR 1, reduced motion, fixed Date, service workers blocked. No CSS or DOM hiding. AI replies and picture outcomes mocked; real pinned Mulberry PNG rasterized by production downloadCatalogPicture. Accurate cow/sheep emoji unchanged; dump-truck gap uses that retained library asset. No paid AI calls. Timers run; only settled states captured. Protocol picturePolicy added only for After request declaring pictureCapability=1.",
+  "runs": [
+    {
+      "name": "before",
+      "source": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "before-stopped-1280.png",
+          "sha256": "a14fc6d9cc41bac04d8786cf6c036b345cf3c872ed280c040003fb66925d65bd",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "stopped",
+          "observedAtUtc": "2026-10-05T18:19:14.912Z"
+        },
+        {
+          "file": "before-stopped-390.png",
+          "sha256": "f07b3eebad428662e2e530b46f16a0c105d06992e4ebcb4e55bd50f2d0eb2fb0",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "stopped",
+          "observedAtUtc": "2026-10-05T18:19:16.118Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "after-stopped-1280.png",
+          "sha256": "fa473c346c1ea52189a48b23133a3d4ae8baba8749e3514bab0aca85a7b602af",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "stopped",
+          "observedAtUtc": "2026-10-05T18:19:17.296Z"
+        },
+        {
+          "file": "after-stopped-390.png",
+          "sha256": "021b281f2874626b93123d6529332dd16a614442837e1a12bdd31f3a2484a0ba",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "stopped",
+          "observedAtUtc": "2026-10-05T18:19:18.419Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        }
+      ]
+    }
+  ],
+  "scope": "Supplemental review-fix comparison, not the main PR baseline. Before uses preserved production build originally captured from 4cdeb323, runtime-equivalent to reviewed hygiene head38bfe7d; every served hash checked against retained original manifest. After is current committed repair. Same picture job held pending, then Stop request; screenshots are genuine unedited browser pixels."
+}

@@ -1,0 +1,35 @@
+{
+  "boardId": null,
+  "baseRevision": null,
+  "proposal": {
+    "title": "Animals and a dump truck",
+    "explanation": "Here are cow, sheep, and a dump truck.",
+    "needsClarification": false,
+    "tiles": [
+      {
+        "existingId": null,
+        "label": "Cow",
+        "speech": "Cow",
+        "language": "en-US",
+        "emoji": "🐄",
+        "color": "sage"
+      },
+      {
+        "existingId": null,
+        "label": "Sheep",
+        "speech": "Sheep",
+        "language": "en-US",
+        "emoji": "🐑",
+        "color": "peach"
+      },
+      {
+        "existingId": null,
+        "label": "Dump truck",
+        "speech": "Dump truck",
+        "language": "en-US",
+        "emoji": "🚚",
+        "color": "sky"
+      }
+    ]
+  }
+}

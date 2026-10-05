@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "settings": {
+    "backendUrl": "",
+    "voices": {},
+    "activeBoardId": null,
+    "aiConsent": true,
+    "autoSpeech": false,
+    "languageProfile": {
+      "languages": [
+        "en-US"
+      ],
+      "defaultLanguage": "en-US"
+    }
+  },
+  "boards": [
+    {
+      "id": "starter-farm",
+      "title": "Farmyard friends",
+      "revision": 0,
+      "createdAt": "2026-10-05T18:00:00.000Z",
+      "updatedAt": "2026-10-05T18:00:00.000Z",
+      "tiles": [
+        {
+          "id": "starter-farm-0",
+          "label": "Cow",
+          "speech": "Cow",
+          "language": "en-US",
+          "color": "sage",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐄"
+          }
+        },
+        {
+          "id": "starter-farm-1",
+          "label": "Sheep",
+          "speech": "Sheep",
+          "language": "en-US",
+          "color": "peach",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐑"
+          }
+        },
+        {
+          "id": "starter-farm-2",
+          "label": "Horse",
+          "speech": "Horse",
+          "language": "en-US",
+          "color": "butter",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐴"
+          }
+        },
+        {
+          "id": "starter-farm-3",
+          "label": "Pig",
+          "speech": "Pig",
+          "language": "en-US",
+          "color": "sky",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐷"
+          }
+        },
+        {
+          "id": "starter-farm-4",
+          "label": "Chicken",
+          "speech": "Chicken",
+          "language": "en-US",
+          "color": "lilac",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐔"
+          }
+        },
+        {
+          "id": "starter-farm-5",
+          "label": "Duck",
+          "speech": "Duck",
+          "language": "en-US",
+          "color": "rose",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🦆"
+          }
+        }
+      ]
+    },
+    {
+      "id": "starter-everyday",
+      "title": "My little words",
+      "revision": 0,
+      "createdAt": "2026-10-05T18:00:00.000Z",
+      "updatedAt": "2026-10-05T18:00:00.000Z",
+      "tiles": [
+        {
+          "id": "starter-everyday-0",
+          "label": "More",
+          "speech": "More",
+          "language": "en-US",
+          "color": "sage",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "➕"
+          }
+        },
+        {
+          "id": "starter-everyday-1",
+          "label": "Water",
+          "speech": "Water",
+          "language": "en-US",
+          "color": "peach",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "💧"
+          }
+        },
+        {
+          "id": "starter-everyday-2",
+          "label": "Help",
+          "speech": "Help",
+          "language": "en-US",
+          "color": "butter",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🙋"
+          }
+        },
+        {
+          "id": "starter-everyday-3",
+          "label": "All done",
+          "speech": "All done",
+          "language": "en-US",
+          "color": "sky",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👋"
+          }
+        },
+        {
+          "id": "starter-everyday-4",
+          "label": "Eat",
+          "speech": "Eat",
+          "language": "en-US",
+          "color": "lilac",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🍽️"
+          }
+        },
+        {
+          "id": "starter-everyday-5",
+          "label": "Love you",
+          "speech": "Love you",
+          "language": "en-US",
+          "color": "rose",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "❤️"
+          }
+        }
+      ]
+    },
+    {
+      "id": "starter-family",
+      "title": "Our family",
+      "revision": 0,
+      "createdAt": "2026-10-05T18:00:00.000Z",
+      "updatedAt": "2026-10-05T18:00:00.000Z",
+      "tiles": [
+        {
+          "id": "starter-family-0",
+          "label": "Mama",
+          "speech": "Mama",
+          "language": "en-US",
+          "color": "sage",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👩"
+          }
+        },
+        {
+          "id": "starter-family-1",
+          "label": "Papa",
+          "speech": "Papa",
+          "language": "en-US",
+          "color": "peach",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👨"
+          }
+        },
+        {
+          "id": "starter-family-2",
+          "label": "Grandma",
+          "speech": "Grandma",
+          "language": "en-US",
+          "color": "butter",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👵"
+          }
+        },
+        {
+          "id": "starter-family-3",
+          "label": "Grandpa",
+          "speech": "Grandpa",
+          "language": "en-US",
+          "color": "sky",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👴"
+          }
+        },
+        {
+          "id": "starter-family-4",
+          "label": "Babushka",
+          "speech": "бабушка",
+          "language": "ru-RU",
+          "color": "lilac",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👵"
+          }
+        },
+        {
+          "id": "starter-family-5",
+          "label": "Dedushka",
+          "speech": "дедушка",
+          "language": "ru-RU",
+          "color": "rose",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "👴"
+          }
+        }
+      ]
+    }
+  ]
+}
