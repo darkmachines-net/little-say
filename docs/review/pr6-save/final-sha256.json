@@ -1,0 +1,42 @@
+[
+  {
+    "file": "final-diff-composition.json",
+    "sha256": "de723805e6554d4ef3f165853829ffc9cf0afba59a347f8f34b199a150305b51"
+  },
+  {
+    "file": "final-state.json",
+    "sha256": "da6c4b132a07cd0a6260e683adf3ac336573b1c1543d34ddcf9a8a0606d3e518"
+  },
+  {
+    "file": "review-disposition.md",
+    "sha256": "2979e00a34f7d7dabb6e7ae3acab484cff07784ed22c8059799c001c6ba4f6f9"
+  },
+  {
+    "file": "save-final-pr-body.html",
+    "sha256": "9195ac171f7924a683d782ed71f187d5050a5a3e57d1e940011407afd02acfcd"
+  },
+  {
+    "file": "save-final-pr-body.md",
+    "sha256": "fc9f10cca72562300dd4ec8eb6e0e977e91529c9b69c560d0a69d074ed0bb20e"
+  },
+  {
+    "file": "save-final-render-0.png",
+    "sha256": "d14f35bd80a7df38efb65742fb1d41e63a35dd9277ac885b4041648d811e594f"
+  },
+  {
+    "file": "save-final-render-1.png",
+    "sha256": "f1077085a517f7a872537dd346dba57114a3f9ebd5144527676930e685fbbda4"
+  },
+  {
+    "file": "save-final-render-2.png",
+    "sha256": "d0aa4fdd263a023ed24612caaf5dbbf22be80e0acbc98fb7a3545e5e55cbc094"
+  },
+  {
+    "file": "save-final-render-3.png",
+    "sha256": "ae78d4798ced1bfca2defcb66dbf26d58e73d64bcc32431479b0344b4078df95"
+  },
+  {
+    "file": "save-final-render-readback.json",
+    "sha256": "457e02b2b696c078a09691746262dce129c3f76a1da7006ad9dbf1f1d536ffa2"
+  }
+]
