@@ -1,0 +1,28 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run vitest run apps/server/test/pictures.test.ts --testNamePattern shared sources
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-05/task-5/little-say-pr6
+
+ Γ¥» apps/server/test/pictures.test.ts (15 tests | 1 failed | 14 skipped) 1126ms
+     ├ù releases stopped subscribers promptly while shared sources remain usable 1125ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/server/test/pictures.test.ts > shared catalog download cancellation > releases stopped subscribers promptly while shared sources remain usable
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ Γ¥» vi.waitFor.timeout apps/server/test/pictures.test.ts:216:56
+    214|       expect((await jobs.status(requests[2].requestId))?.state).toBe('ΓÇª
+    215|       await Promise.all(requests.slice(0, 2).map(request => jobs.canceΓÇª
+    216|       await vi.waitFor(() => expect(provider.generate).toHaveBeenCalleΓÇª
+       |                                                        ^
+    217|       expect((await finished(jobs, independent.requestId)).state).toBeΓÇª
+    218|       expect((await jobs.status(requests[2].requestId))?.state).toBe('ΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 skipped (15)
+   Start at  12:36:35
+   Duration  2.93s (transform 1.06s, setup 0ms, import 1.68s, tests 1.13s, environment 0ms)
+

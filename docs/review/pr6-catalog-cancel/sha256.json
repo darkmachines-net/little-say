@@ -1,0 +1,9 @@
+{
+  "before.log": "4d333ee111c4c7d6ad26c6707a2acaa4db665eaf4a22823da52e20fac2ad2711",
+  "cancellation-suite.log": "bac1fd5af37804326d2bc57398eef809b45fa8874d02958f3a036c8c7d0eae11",
+  "check.log": "2e48bc24326fc6d1f71c8dcd63a02243de5206834d256639f88f9bafa8cccfda",
+  "diff-composition.json": "3887ea153e0355938a36991b2fe1842f4e94c820f938a30d0355e8489167112a",
+  "prior-state.json": "9386ece695196e000c73c859aeff208e6f97f4d78867cf6d36067213f1681866",
+  "README.md": "6b4bdaee6b0b76bf263ffc97b89ad4ff982aeac0d3da20a65648aad936cbb3fd",
+  "source-impact.json": "4bf1a6cb88d2278ede500876bb5705d258bb2c84bf155af18e96452857205a60"
+}
