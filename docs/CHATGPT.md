@@ -4,6 +4,8 @@ Little Say can offer **Continue with ChatGPT** under **Parent settings → AI re
 
 ## Availability and activation
 
+Rollout is on hold until Little Say has its intended managed hosting, an approved OpenAI client with plan-usage permission, and a successful live OAuth/inference test. Keep `CHATGPT_ENABLED=false` until those conditions are met.
+
 This integration is prepared for an **approved, registered hosted OpenAI client**. It is disabled by default. OpenAI's [website sign-in guide](https://developers.openai.com/siwc/website) describes client provisioning, while the [plan-usage overview](https://developers.openai.com/siwc/token-sharing-open-source) directs remotely hosted apps to the interest form. An identity-only sign-in registration does not authorize inference. Confirm the hosted client's approval for `resource.invoke` and `chatgpt.tokens.use.direct` with OpenAI before enabling this feature. The open-source dynamic registration and loopback callback must not be substituted for hosted approval.
 
 Set these values in server secrets, never `EXPO_PUBLIC_*` variables:
@@ -16,7 +18,7 @@ Set these values in server secrets, never `EXPO_PUBLIC_*` variables:
 | `CHATGPT_REDIRECT_URI` | Exact registered `https://your-host/api/chatgpt/callback` |
 | `CHATGPT_ENCRYPTION_KEY` | Independent random 32-byte key, encoded as 64 hexadecimal characters |
 
-Generate the encryption key with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"` and place its output directly in your secret manager. Back up this key separately from the database. Losing or changing it invalidates access to stored sessions. Run one Little Say server process per ChatGPT database; token refresh is serialized within that process. Multi-replica deployments require distributed renewal coordination before using this implementation.
+Generate the encryption key with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"` and place its output directly in your secret manager. Back up this key separately from Postgres. Losing or changing it invalidates access to stored sessions. Postgres advisory locks coordinate token refresh and disconnection across server processes.
 
 The site, API, and callback must share one origin, listed in `ALLOWED_ORIGINS`. HTTPS is required in production. Register a separate loopback HTTP callback for non-production integration testing if OpenAI permits it for your hosted client. Expo's remote proxy cannot act as the production callback. Native apps continue to use server AI and do not share browser sessions.
 
