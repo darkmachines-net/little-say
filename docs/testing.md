@@ -13,6 +13,8 @@ npm run test:web
 
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. Selected [PR review screenshots](screenshots/little-say-branding/README.md) are retained separately.
 
+Account tests cover authenticated asset isolation, recovery/session revocation, complete-backup validation, revision conflicts, and durability after restarting SQLite. `tests/web/accounts.spec.ts` uses two isolated browser devices and the real API to restore photos, illustrations and downloaded speech byte-for-byte, merge offline edits, preserve boards after sign-out, and verify account-free setup makes no account request. Its separate database lives at `.cache/test-accounts.sqlite`; it never uses development account data. Review captures are under `artifacts/screenshots/accounts/`. Native SecureStore, reinstall recovery, and restored playback still need validation in new signed Android/iOS builds before distribution.
+
 ## Live AI evaluation
 
 ```sh

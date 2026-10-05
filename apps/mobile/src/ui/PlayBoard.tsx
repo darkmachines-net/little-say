@@ -34,7 +34,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   const compactLanguages = width < 700 || playLanguages.length > 3;
   const tiles = useMemo(() => board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false)), [board.tiles, board.translateLabels, language]);
   const untranslated = language ? board.tiles.filter(t => t.languageMode === 'board' && !hasTileLanguage(t, language)).length : 0;
-  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. A parent can check the volume and selected voice.'), audioAsset), [voices, settings.voices, audioAsset]);
+  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and selected voice in Settings.'), audioAsset), [voices, settings.voices, audioAsset]);
   useEffect(() => {
     const back = BackHandler.addEventListener('hardwareBackPress', () => true);
     const appState = AppState.addEventListener('change', state => { if (state !== 'active') { queue.stop(); clearTimeout(flashTimer.current); setFlash(null); setCancelToken(t => t + 1); setExit(false); } });
