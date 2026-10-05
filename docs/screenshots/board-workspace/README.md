@@ -17,7 +17,7 @@ The [previous phone conversation](https://github.com/MChartier/little-say/blob/d
 
 The [source comparison](../card-pictures/README.md) includes emoji, real Mulberry library pictures, and generated illustrations for the same six animal labels, plus the construction example and updated source selectors.
 
-Release metadata, TypeScript, 183 unit tests, production server/web builds, and all 62 Chromium scenarios passed. The final browser run includes the landing-page commit already merged into the PR branch.
+Release metadata, TypeScript, 191 unit tests, production server/web builds, and all 62 Chromium scenarios passed. The final browser run includes the landing-page commit already merged into the PR branch.
 
 ## Evidence boundaries and reproduction
 

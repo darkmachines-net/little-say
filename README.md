@@ -13,7 +13,9 @@ npm.cmd run dev
 
 On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a tablet on the same LAN. The launcher starts the API on port 8788 and Expo on 8081, and injects the backend URL. The key stays on the backend. Windows User environment variables are supported even when the current terminal has not inherited them.
 
-`npm run dev:web` opens the website; choose **Open web app** to enter the app at `/app`. `npm run dev:doctor` checks connectivity. See [local development](docs/LOCAL_DEVELOPMENT.md) for device setup and troubleshooting. Without a key, choose **Start without starter boards** and create boards manually.
+Choose `npm run dev:local` (also `npm run dev`) for full-stack changes, or `npm run dev:remote` for client changes against **https://littlesay.darkmachines.net**. Remote mode starts only Expo and needs no local API key. Stop the current session with Ctrl+C before switching modes; the selected backend overrides the saved app address for that development session.
+
+`npm run dev:web` opens the website with the local API; choose **Open web app** to enter `/app`. `npm run dev:web:remote` uses the deployed API through Expo's development proxy. `npm run dev:doctor` checks local connectivity; append `-- --remote` for the deployed backend. The same launchers are available as Codex environment actions. See [local development](docs/LOCAL_DEVELOPMENT.md) for commands, device setup and troubleshooting. Without a local key, choose **Start without starter boards** and create boards manually.
 
 ## Using the app
 

@@ -9,7 +9,10 @@
   ],
   "scripts": {
     "dev": "tsx scripts/dev.ts",
+    "dev:local": "tsx scripts/dev.ts --local",
+    "dev:remote": "tsx scripts/dev.ts --remote",
     "dev:web": "tsx scripts/dev.ts --web",
+    "dev:web:remote": "tsx scripts/dev.ts --remote --web",
     "dev:server": "tsx scripts/dev.ts --server-only",
     "dev:app": "tsx scripts/dev.ts --app-only",
     "dev:setup": "tsx scripts/dev.ts --setup",
