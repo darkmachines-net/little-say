@@ -32,7 +32,7 @@ saved.settings.autoSpeech = false;
 saved.boards = [{ ...saved.boards[0], id: 'construction-qa', title: 'Construction vehicles', picturePolicy: { mode: 'auto', style: 'color', consistent: true }, tiles: report.results.map((result, index) => ({ ...saved.boards[0].tiles[index], id: `vehicle-${index}`, label: result.label, speech: result.label, illustration: { kind: 'generated', assetId: result.assetId, description: result.label, style: 'color', model: report.model } })) }];
 
 async function seed(page: Page, value: Library) {
-  await page.goto(address);
+  await page.goto(new URL('/app', address).href);
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await page.evaluate(async ({ value, images }) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });

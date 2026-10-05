@@ -13,9 +13,11 @@ npm.cmd run dev
 
 On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a tablet on the same LAN. The launcher starts the API on port 8788 and Expo on 8081, and injects the backend URL. The key stays on the backend. Windows User environment variables are supported even when the current terminal has not inherited them.
 
-`npm run dev:web` opens the browser app; `npm run dev:doctor` checks connectivity. See [local development](docs/LOCAL_DEVELOPMENT.md) for device setup and troubleshooting. Without a key, choose **Start without starter boards** and create boards manually.
+`npm run dev:web` opens the website; choose **Open web app** to enter the app at `/app`. `npm run dev:doctor` checks connectivity. See [local development](docs/LOCAL_DEVELOPMENT.md) for device setup and troubleshooting. Without a key, choose **Start without starter boards** and create boards manually.
 
 ## Using the app
+
+The website homepage (`/`) introduces Little Say and its features, with **Coming soon** placeholders for the App Store and Google Play. **Open web app** enters the browser app at `/app`; existing boards remain in the same origin's storage. Installed web apps launch directly into the app. The homepage uses a separate web entry and is neither accessible nor bundled in native iOS/Android apps.
 
 - Choose preferred languages on first launch and optionally generate starter boards. Each device keeps its own boards, settings, photos and downloaded speech without an account.
 - **New board** and **Edit with AI** open a conversation for typed or spoken prompts. Review transcripts and drafts, refine them, then explicitly save. Manual editing supports 1–24 cards, searchable emoji, local photos and cropping.
