@@ -1,0 +1,21 @@
+{
+  "head": "250d9a055a2c437360227528919d702e8f6196f7",
+  "prior": "1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51",
+  "trees": [
+    {
+      "sha": "1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51",
+      "mobileTree": "2226a7a8b37f7725c9bff2d3c4a2622e01f5b446"
+    },
+    {
+      "sha": "250d9a055a2c437360227528919d702e8f6196f7",
+      "mobileTree": "2226a7a8b37f7725c9bff2d3c4a2622e01f5b446"
+    }
+  ],
+  "changedFiles": [
+    "apps/server/src/picture-jobs.ts",
+    "apps/server/src/picture-provider.ts",
+    "apps/server/test/pictures.test.ts"
+  ],
+  "mainEvidence": "7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/manifest.json",
+  "policyEvidence": "a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/manifest.json"
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "file": "README.md",
+    "sha256": "0d55a03ef3140687b6433189b9f7c6adc5e9dbbbdedf417621289499af420d7c"
+  },
+  {
+    "file": "selection-before.log",
+    "sha256": "32cff3ae2dd90ee7a8d9fbbb5ec9e9d92ca5cc9fa6a9ee3bf8438b9428640aed"
+  },
+  {
+    "file": "selection-check.log",
+    "sha256": "e277a9270587242777aba8ea1c8cd82e2722a4ae4cbe6e0d77536edd6507bfcc"
+  },
+  {
+    "file": "source-impact.json",
+    "sha256": "6b6749a11afcea37f5614a9b453ed43003d539a3d931d1e6be932097ae43e8ca"
+  }
+]
