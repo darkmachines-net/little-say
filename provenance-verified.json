@@ -1,0 +1,89 @@
+{
+  "records": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/manifest.json",
+      "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "sha256": "9858995a37dc7a5bc1c760366fb0d56e252e3e2824753f51efeece7b11741f6b"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/capture.ts",
+      "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "sha256": "b65a5a87077835eb00b7fc7c6a2b24caaf392027c62c67c69398bac2f9d3604a"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/library.json",
+      "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/proposal.json",
+      "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "sha256": "79ed9ab644da2e4cd2374f72d06e3d423d5eda7c17262b90829fbca4d0ece3d4"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/library-source.json",
+      "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "sha256": "7863b9e7a2e5373381c7161032d9aade727e562c636bb79e87ef1a2e0325fd6e"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/manifest.json",
+      "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+      "sha256": "e02b795136f06c01fd4cc73d159d01c287680e6210464a9b640b95e02a4620f5"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/privacy-manifest.json",
+      "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+      "sha256": "9b28fe0feca5fdc0ae85b81f81e92d71a5aafb5c7eebfbe34bef1f1e78914bdc"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/capture.ts",
+      "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+      "sha256": "cdf20a41e56ce56faf6bcaa4ee02f5120ce37d56487c4e7c4647b66ab57db745"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/privacy.ts",
+      "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+      "sha256": "7fc98328040a4ad59af8ac30bfca40959ad4c60e6e5a1680d1527b2de34e8635"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/library.json",
+      "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+      "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+    }
+  ],
+  "catalogEntries": 7931,
+  "mobileIdenticalTo": "b2b268e670c889dcda912eac822295278e3cf093",
+  "lockChanges": [
+    "apps/server",
+    "node_modules/@emnapi/runtime",
+    "node_modules/@img/colour",
+    "node_modules/@img/sharp-darwin-arm64",
+    "node_modules/@img/sharp-darwin-x64",
+    "node_modules/@img/sharp-freebsd-wasm32",
+    "node_modules/@img/sharp-libvips-darwin-arm64",
+    "node_modules/@img/sharp-libvips-darwin-x64",
+    "node_modules/@img/sharp-libvips-linux-arm",
+    "node_modules/@img/sharp-libvips-linux-arm64",
+    "node_modules/@img/sharp-libvips-linux-ppc64",
+    "node_modules/@img/sharp-libvips-linux-riscv64",
+    "node_modules/@img/sharp-libvips-linux-s390x",
+    "node_modules/@img/sharp-libvips-linux-x64",
+    "node_modules/@img/sharp-libvips-linuxmusl-arm64",
+    "node_modules/@img/sharp-libvips-linuxmusl-x64",
+    "node_modules/@img/sharp-linux-arm",
+    "node_modules/@img/sharp-linux-arm64",
+    "node_modules/@img/sharp-linux-ppc64",
+    "node_modules/@img/sharp-linux-riscv64",
+    "node_modules/@img/sharp-linux-s390x",
+    "node_modules/@img/sharp-linux-x64",
+    "node_modules/@img/sharp-linuxmusl-arm64",
+    "node_modules/@img/sharp-linuxmusl-x64",
+    "node_modules/@img/sharp-wasm32",
+    "node_modules/@img/sharp-webcontainers-wasm32",
+    "node_modules/@img/sharp-win32-arm64",
+    "node_modules/@img/sharp-win32-ia32",
+    "node_modules/@img/sharp-win32-x64",
+    "node_modules/sharp",
+    "node_modules/tslib"
+  ]
+}

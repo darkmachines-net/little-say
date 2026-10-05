@@ -1,0 +1,62 @@
+[
+  {
+    "name": "before-ready-1280.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-ready-1280.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+  },
+  {
+    "name": "after-ready-1280.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-ready-1280.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "67db134e3f5fab3888a07fe13a334c3693263026e742ff5b62098b37aaf7ae32"
+  },
+  {
+    "name": "before-fallback-390.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-fallback-390.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+  },
+  {
+    "name": "after-fallback-390.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-fallback-390.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d"
+  },
+  {
+    "name": "before-home-1280.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-home-1280.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462"
+  },
+  {
+    "name": "after-home-1280.png",
+    "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-home-1280.png?raw=true",
+    "commitSha": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+    "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0"
+  },
+  {
+    "name": "base-privacy.png",
+    "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/base-privacy.png?raw=true",
+    "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+    "sha256": "fe063ea2661d2fc653e378ad8c4cfe4c9762785e9c18b8dabf1773a52f0ce138"
+  },
+  {
+    "name": "after-privacy.png",
+    "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/after-privacy.png?raw=true",
+    "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+    "sha256": "6a9eb7481fedfb5025644db1556d6b9c8361507127f50b52e759d7f7f5091adf"
+  },
+  {
+    "name": "base-setup-phone.png",
+    "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/base-setup-phone.png?raw=true",
+    "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+    "sha256": "dd7b03977889d3834ecbefb9cd51a19650f752f6ef0277097e8fb238707ef5f2"
+  },
+  {
+    "name": "after-setup-phone.png",
+    "url": "https://github.com/MChartier/little-say/blob/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure/after-setup-phone.png?raw=true",
+    "commitSha": "c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb",
+    "sha256": "70915b9379bd92b7877063025809e377d9df2b122edfe4efe73368c7528efa00"
+  }
+]

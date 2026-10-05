@@ -1,0 +1,75 @@
+{
+  "createdAtUtc": "2026-10-05T20:17:12.721Z",
+  "files": [
+    {
+      "name": "focused-tests.log",
+      "sha256": "dbaf344800b2508703e2109708e38b2ad18cd5a224ed2f8ce3cdde107a7efb19",
+      "bytes": 1284
+    },
+    {
+      "name": "build.log",
+      "sha256": "ad1ce2c071e1492a4e3e718fe5b815d11f9509c4df1398c6645b0d9b4fddb120",
+      "bytes": 2156
+    },
+    {
+      "name": "browser-final.log",
+      "sha256": "bfc66c583ee21c4362cf9e1bf109c9c29028017bfe6420097044d3b22baf5a4d",
+      "bytes": 6271
+    },
+    {
+      "name": "playwright.config.ts",
+      "sha256": "b9976612c7c700259cae19faeaf3606e333c04729257bff84c48c0bd6edecff4",
+      "bytes": 588
+    },
+    {
+      "name": "provenance-verified.json",
+      "sha256": "ac710eac35a41f886dda8de0f83914d2e95d85927015ad33d48c89b0f6711fc2",
+      "bytes": 4479
+    },
+    {
+      "name": "images-verified.json",
+      "sha256": "ada1e6cf356c86955c41d2a0a30535c1d7ba8ce30cab3033dded4bc9b8437a07",
+      "bytes": 3404
+    },
+    {
+      "name": "github-access.json",
+      "sha256": "a3e44b000daab891a456bd910d1438c3298480d53b03bbca881ea9823e16c048",
+      "bytes": 1296
+    },
+    {
+      "name": "github-access.png",
+      "sha256": "978f6d0d77f3ddeebc778be2af899ff2ad1468af6e8e57b473bca01b398a3c4b",
+      "bytes": 161558
+    },
+    {
+      "name": "checks.json",
+      "sha256": "d3c9db0f0a37deb8edf5de221ada0edcb9c3e2769a57005504e1781c41805c51",
+      "bytes": 5091
+    },
+    {
+      "name": "ci.json",
+      "sha256": "df75c1ff0e2a5dc6bb4a8c88972ffc7d07644b94f33755c3b19e500b4129bbe0",
+      "bytes": 14542
+    },
+    {
+      "name": "ci-jobs.json",
+      "sha256": "7d82d17d14557e41b2b393ad87932c1291e3aaaa8cbb3ef04739641f2edb9c98",
+      "bytes": 3316
+    },
+    {
+      "name": "verify-provenance.cjs",
+      "sha256": "7a02a8e14ce3a0e78f5c2499239efb7a537fa3d66801734d3f7f350f599ce674",
+      "bytes": 2771
+    },
+    {
+      "name": "verify-images.cjs",
+      "sha256": "bdf042cb80190c0200caeca2911a45cba74a7be4db199e7b0d60a67995d8bb65",
+      "bytes": 1530
+    },
+    {
+      "name": "README.md",
+      "sha256": "3879779b2a39207ddc3092bfcae2d2b7eb3854e71149ec1fc40cb6e25313ab87",
+      "bytes": 2811
+    }
+  ]
+}
