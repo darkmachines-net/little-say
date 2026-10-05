@@ -1,0 +1,51 @@
+{
+  "comment": {
+    "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6001810313",
+    "html_url": "https://github.com/MChartier/little-say/pull/6#issuecomment-6001810313",
+    "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/6",
+    "id": 6001810313,
+    "node_id": "IC_kwDOU65Oyc8AAAABZbxbiQ",
+    "user": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?u=9b118f5eb3a1234c507641ebc3b8e5e9d6ab4313&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-05T19:48:24Z",
+    "updated_at": "2026-10-05T19:48:24Z",
+    "author_association": "OWNER",
+    "body": "## PR6 implementation checkpoint — writer idle\n\nReview fixes and focused-diff cleanup are published on MCHARTIER_ZBOOK. Head `2be85f0cb02cd5ba464f46c623b9b19cf5061231`; target master/base/merge-base `5d72992c77fbb09195518e257d799501b7db4d04`; exact API-decoded UTF-8 PR body SHA-256 `2fe5278a6f2294df4b46fa2016e05f469a143f0a054d82b65bfc50267e9628f2`. Draft preserved; no readiness label. Owned continuation/pr6-zbook worktree is clean. No further product writes are planned pending coordinator/QA feedback.\n\nThe final merge diff is 69 files (+3325/-189): 47 product/config/tooling, 16 maintained tests/fixtures, four maintained documents and two generated catalog/dependency files. Original evidence is retained on evidence/pr6-original-4cdeb323; iterative captures, fixtures, manifests and checks remain on evidence/pr6-final-zbook, never product merge targets.\n\nCurrent source passed npm run check (205 unit/server tests, type/release checks and builds) and all 16 picture-server tests. The 32 Chromium picture/conversation/setup scenarios passed at b2b268e670c889dcda912eac822295278e3cf093; final backend-only cancellation changes leave the entire mobile source tree identical. Codex review completed for 2be85f0 at 2026-10-05T19:43:00.360730Z with no findings. [Current CI](https://github.com/MChartier/little-say/actions/runs/37364731059/job/111947076004) remains queued with no steps started; this is not a CI pass.\n\nFinding 4187837634 is resolved by inline picture-data disclosure before first-run generation, conversation and picture controls, with initial phone-scroll visibility protected. [Exact master-to-final disclosure evidence](https://github.com/MChartier/little-say/tree/c5b713150eee315fc6ddb5ea62cb4ff071e5bbcb/docs/review/pr6-disclosure) records genuine captures and source/build/fixture identities. Finding 4187954192 is resolved by subscriber cancellation without aborting shared catalog downloads; [regression and local-check evidence](https://github.com/MChartier/little-say/tree/1fd973b318313dc1f1e524f7a1e71f245380d29b/docs/review/pr6-catalog-cancel) includes before failure, after success and applicability.\n\nI inspected all six sections of the exact API-rendered final body and all ten embedded images. Labels and five matched pairs load clearly. Full authenticated GitHub-page inspection remains unverified because browser UI initialization fails; independent QA must complete that gate. No physical Android/iPad or live paid-provider accuracy claim is made.\n\nPR13 remains untouched at 2b861a0e43cee0c2097c8356af50cba420246ce8. Coordinator should arrange parent-impact revalidation through its owner; this task does not reshape child branches. CI completion and fresh independent QA are still required. This implementation checkpoint is not a QA verdict, coordinator receipt or human approval.\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6001810313/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  },
+  "bodySha256": "7668c087cd2f2f848c3fe6eb91dea39f6fd9d7da2e7282b7e33127b2ac026529",
+  "checkedAtUtc": "2026-10-05T19:48:27.534Z"
+}
