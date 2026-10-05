@@ -5,8 +5,10 @@ import Constants from 'expo-constants';
 import { proposalSchema, translationEnvelopeSchema, type TranslationRequest, type BoardProposal, type ProposalRequest } from '@little-say/core';
 import { resolveBackendUrl } from './backendConfig';
 
-// Expo inlines this exact property access. It contains a URL, never a secret.
-export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__ ? process.env.EXPO_PUBLIC_API_URL || '' : '';
+// Expo inlines these exact property accesses. Remote web uses Metro's same-origin proxy; native goes directly.
+export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
+  ? (Platform.OS === 'web' && process.env.EXPO_PUBLIC_WEB_API_URL ? window.location.origin : process.env.EXPO_PUBLIC_API_URL || '')
+  : '';
 
 /** Resolve the development override, saved server, or platform default into the backend address. */
 export function backendUrl(configured: string) {

@@ -1,0 +1,26 @@
+# Starts Expo with a watched local API or the existing self-hosted API; commands run from the repository root.
+version = 1
+name = "Little Say development"
+
+[setup]
+script = ""
+
+[[actions]]
+name = "Expo + local backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --local"
+
+[[actions]]
+name = "Expo + self-hosted backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --remote"
+
+[[actions]]
+name = "Web + local backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --local --web"
+
+[[actions]]
+name = "Web + self-hosted backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --remote --web"

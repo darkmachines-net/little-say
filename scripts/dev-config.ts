@@ -1,4 +1,4 @@
-/** @file Resolves LAN development addresses and separates API secrets from the Expo process environment. */
+/** @file Selects local or self-hosted development, resolves LAN addresses, and isolates Expo from API secrets. */
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { networkInterfaces, type NetworkInterfaceInfo } from 'node:os';
@@ -10,6 +10,19 @@ import { promisify } from 'node:util';
 
 type Environment = Record<string, string | undefined>;
 export type LanAddress = { name: string; address: string };
+export type DevelopmentBackend = 'local' | 'remote';
+
+/** Validate launcher arguments before reading credentials or starting any services. */
+export function developmentOptions(args: string[]) {
+  const flags = new Set(args);
+  const supported = ['--local', '--remote', '--web', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help'];
+  const unknown = [...flags].filter(flag => !supported.includes(flag));
+  if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}. Use npm run dev -- --help.`);
+  if (['--server-only', '--app-only', '--setup', '--doctor'].filter(flag => flags.has(flag)).length > 1) throw new Error('Choose one launch mode.');
+  if (flags.has('--remote') && ['--local', '--server-only', '--setup'].some(flag => flags.has(flag))) throw new Error('--remote cannot be combined with --local, --server-only, or --setup.');
+  const backend: DevelopmentBackend = flags.has('--remote') ? 'remote' : 'local';
+  return { flags, backend, startApi: backend === 'local' && !flags.has('--app-only') };
+}
 
 /**
  * List reachable non-loopback IPv4 candidates, preferring private physical-network interfaces over
@@ -32,20 +45,27 @@ function port(value: string | undefined, fallback: number, name: string) {
   return Number(value);
 }
 /**
- * Validate host and port overrides and derive device URLs and allowed origins from addresses assigned
- * to this computer.
+ * Derive Expo LAN URLs and the selected API origin. Remote sessions ignore local API port settings;
+ * their optional override must be an HTTPS origin without credentials, a path, a query, or a fragment.
  */
-export function developmentConfig(env: Environment, addresses = lanAddresses()) {
+export function developmentConfig(env: Environment, addresses = lanAddresses(), backend: DevelopmentBackend = 'local') {
   const host = env.DEV_HOST?.trim() || addresses[0]?.address;
   if (!host) throw new Error('No LAN IPv4 address found. Connect to Wi-Fi/Ethernet, or set DEV_HOST in .env.');
   if (!isIPv4(host) || host === '0.0.0.0' || host.startsWith('127.') || host.startsWith('169.254.')) throw new Error('DEV_HOST must be this computer’s reachable LAN IPv4 address, not localhost, a URL, or 0.0.0.0.');
   if (!addresses.some(entry => entry.address === host)) throw new Error('DEV_HOST is not assigned to this computer. Run npm run dev:doctor to list current addresses, then update .env.');
-  const apiPort = port(env.DEV_API_PORT, 8788, 'DEV_API_PORT');
+  const apiPort = backend === 'local' ? port(env.DEV_API_PORT, 8788, 'DEV_API_PORT') : 8788;
   const expoPort = port(env.DEV_EXPO_PORT, 8081, 'DEV_EXPO_PORT');
-  if (apiPort === expoPort) throw new Error('DEV_API_PORT and DEV_EXPO_PORT must be different.');
-  const apiUrl = `http://${host}:${apiPort}`;
+  if (backend === 'local' && apiPort === expoPort) throw new Error('DEV_API_PORT and DEV_EXPO_PORT must be different.');
+  let apiUrl = `http://${host}:${apiPort}`;
+  if (backend === 'remote') {
+    const value = env.DEV_REMOTE_API_URL?.trim() || 'https://littlesay.darkmachines.net';
+    let url: URL;
+    try { url = new URL(value); } catch { throw new Error('DEV_REMOTE_API_URL must be an HTTPS origin.'); }
+    if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('DEV_REMOTE_API_URL must be an HTTPS origin without credentials, paths, queries, or fragments.');
+    apiUrl = url.origin;
+  }
   const webUrl = `http://${host}:${expoPort}`;
-  return { host, apiPort, expoPort, apiUrl, webUrl, expoUrl: `exp://${host}:${expoPort}`, addresses,
+  return { backend, host, apiPort, expoPort, apiUrl, webUrl, expoUrl: `exp://${host}:${expoPort}`, addresses,
     origins: [webUrl, `http://localhost:${expoPort}`, `http://127.0.0.1:${expoPort}`, apiUrl, `http://localhost:${apiPort}`, `http://127.0.0.1:${apiPort}`] };
 }
 export type DevelopmentConfig = ReturnType<typeof developmentConfig>;
@@ -90,16 +110,18 @@ export async function ensureDevelopmentEnv(root: string) {
  * origins.
  */
 export function apiEnvironment(env: Environment, config: DevelopmentConfig): Environment {
+  if (config.backend !== 'local') throw new Error('A remote development session must not start a local API.');
   return { ...env, NODE_ENV: 'development', HOST: '0.0.0.0', PORT: String(config.apiPort), ALLOWED_ORIGINS: config.origins.join(',') };
 }
 /**
- * Remove server secrets and inherited client overrides before injecting only the selected public API
- * URL and Expo LAN host.
+ * Remove server secrets and inherited client overrides, then inject the selected API URL and Expo
+ * LAN host. Remote web uses Metro's same-origin API proxy; native clients connect directly.
  */
 export function expoEnvironment(inherited: Environment, config: DevelopmentConfig): Environment {
   const env = { ...inherited };
   for (const key of Object.keys(env)) {
-    if (/^(AAC_OPENAI_KEY$|OPENAI_|EXPO_PUBLIC_|DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
+    if (/^(AAC_OPENAI_KEY$|OPENAI_|EXPO_PUBLIC_|DEV_|LITTLE_SAY_DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
   }
-  return { ...env, NODE_ENV: 'development', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: config.apiUrl, REACT_NATIVE_PACKAGER_HOSTNAME: config.host };
+  return { ...env, NODE_ENV: 'development', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: config.apiUrl, REACT_NATIVE_PACKAGER_HOSTNAME: config.host,
+    ...(config.backend === 'remote' ? { LITTLE_SAY_DEV_PROXY_URL: config.apiUrl, EXPO_PUBLIC_WEB_API_URL: config.webUrl } : {}) };
 }
