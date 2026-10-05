@@ -1,10 +1,12 @@
-# Optional account and sync evidence
+# Little Say account and sync evidence
 
-Captured October 4, 2026 from the production web build at application commit [`45a87f3`](https://github.com/MChartier/little-say/commit/45a87f3d6a5b114aeccf171a90458a630f54591e). The subsequent evidence commit adds only these screenshots and this index; application code is unchanged. Phone viewport: 390 × 844. Tablet viewport: 1180 × 900. All four captures were visually inspected after modal animations settled.
+Captured October 4, 2026 from the production web build at application commit [`f1ed210`](https://github.com/MChartier/little-say/commit/f1ed210f06f9bd90d1cd016f8b06a7b7ec48d504). The subsequent evidence commit refreshes only these screenshots and this index; application code is unchanged. Phone viewport: 390 × 844. Tablet viewport: 1180 × 900. All four captures were visually inspected after modal animations settled.
+
+The refreshed UI uses **Settings**, **Little Say account**, and **Create account**. Its explanation leads with saving soundboards and media for other devices and reinstalls, then makes clear that using Little Say without an account is supported.
 
 | State | Phone | Tablet |
 | --- | --- | --- |
-| Account remains optional | [Account choices](optional-phone.png) | — |
+| Account choices and local-only use | [Account choices](optional-phone.png) | — |
 | Create an account and enable uploads | — | [Account form and consent](create-tablet.png) |
 | Restored and synced on another device | [Restored account](restored-phone.png) | [Restored account](restored-tablet.png) |
 
