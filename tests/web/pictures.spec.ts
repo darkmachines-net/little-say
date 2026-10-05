@@ -339,3 +339,30 @@ test('missing library and disabled server generation keep a usable emoji board w
   await context.setOffline(true); await page.reload();
   for (const label of labels) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
 });
+
+for (const [mode, label] of [['library', 'Library only'], ['emoji', 'Emoji only']] as const) test(`migrated cards honor inherited ${label} and explicit overrides`, async ({ page }) => {
+  const value = await library(page);
+  value.settings.pictureDefaults = { ...policy, mode };
+  delete value.boards[0].picturePolicy;
+  const seed = async () => {
+    await page.evaluate(async value => {
+      const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
+      await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(value, 'library'); tx.oncomplete = () => resolve(); }); db.close();
+    }, value);
+    await page.reload();
+    await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+    await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+    await page.getByRole('button', { name: 'Picture options', exact: true }).click();
+  };
+  await seed();
+  const follow = page.getByRole('button', { name: new RegExp('Picture source for this card: Follow board.*' + label) });
+  await expect(follow).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeDisabled();
+  await follow.click();
+  await page.getByRole('button', { name: 'AI illustrations', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeEnabled();
+  value.boards[0].picturePolicy = { ...policy, mode: 'generated' };
+  await seed();
+  await expect(page.getByRole('button', { name: /Picture source for this card: Follow board.*AI illustrations/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeEnabled();
+});

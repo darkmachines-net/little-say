@@ -25,6 +25,21 @@ beforeEach(() => {
   });
 });
 describe('staged client pictures', () => {
+  for (const mode of ['library', 'emoji'] as const) it(`inherits ${mode} without generation unless the board explicitly overrides it`, async () => {
+    delete board.picturePolicy;
+    settings.pictureDefaults = { ...defaultPicturePolicy, mode };
+    const inherited = await prepareBoardPictures(board, settings, { restyle: true, regenerate: true });
+    const jobs = mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs'));
+    if (mode === 'emoji') expect(jobs).toHaveLength(0);
+    else { expect(jobs).toHaveLength(2); expect(jobs.every(call => !JSON.parse(call[2].body).allowGeneration)).toBe(true); }
+    expect(inherited.board.tiles.every(tile => tile.illustration.kind === 'emoji')).toBe(true);
+    mocks.fetch.mockClear();
+    board.picturePolicy = { ...defaultPicturePolicy, mode: 'generated' };
+    const explicit = await prepareBoardPictures(board, settings, { restyle: true, regenerate: true });
+    expect(explicit.board.tiles.every(tile => tile.illustration.kind === 'generated')).toBe(true);
+    expect(mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs')).every(call => JSON.parse(call[2].body).allowGeneration)).toBe(true);
+  });
+
   it('keeps accurate emoji without creating picture jobs, even with legacy consistency enabled', async () => {
     board.picturePolicy = { ...defaultPicturePolicy, consistent: true };
     const original = mocks.fetch.getMockImplementation()!;

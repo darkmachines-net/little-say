@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { PictureJobs } from '../src/picture-jobs';
-import { type PictureProvider } from '../src/picture-provider';
+import { openAIPictureProvider, type PictureProvider } from '../src/picture-provider';
 import { searchPictures, normalizePicture } from '../src/picture-catalog';
 import { createServer } from '../src/app';
 import { type PictureJobRequest } from '@little-say/core';
@@ -102,5 +102,49 @@ describe('trusted catalog and API', () => {
       expect(provider.generate).not.toHaveBeenCalled();
       expect((await app.inject('/api/pictures/assets/not-a-digest.png')).statusCode).toBe(404);
     } finally { await app.close(); }
+  });
+});
+
+describe('synchronous picture deadlines', () => {
+  for (const operation of ['analyze', 'review'] as const) it(`ends slow ${operation} before the client deadline and frees capacity for retry`, async () => {
+    let started!: () => void;
+    const fetching = new Promise<void>(resolve => { started = resolve; });
+    const concept = input().concept;
+    const output = operation === 'analyze' ? { tiles: [{ id: 'card', emoji: '🚚', concept }] } : { rejected: [] };
+    let calls = 0;
+    let aborted = false;
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => {
+      calls++;
+      if (calls === 1) return new Promise((_resolve, reject) => {
+        init.signal!.addEventListener('abort', () => { aborted = true; reject(new DOMException('Aborted', 'AbortError')); });
+        started();
+      });
+      return Promise.resolve(new Response(JSON.stringify({ id: 'response', status: 'completed', output: [{ type: 'message', role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: JSON.stringify(output), annotations: [] }] }] }), { headers: { 'Content-Type': 'application/json' } }));
+    }));
+    const provider = openAIPictureProvider({ OPENAI_API_KEY: 'test-key' })!;
+    const { jobs, png } = await service(provider);
+    vi.spyOn(jobs, 'read').mockResolvedValue(png);
+    const app = await createServer({ provider: null, pictures: jobs, maxConcurrent: 1 });
+    await app.ready();
+    const request = { method: 'POST' as const, url: '/api/pictures/' + operation, headers: { 'X-Little-Say': '1' }, payload: operation === 'analyze' ? { tiles: [{ id: 'card', label: 'truck', language: 'en-US', emoji: '🚚', instruction: '' }] } : { cards: [{ id: 'card', assetId: 'a'.repeat(64), concept }] } };
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      let completed = false;
+      const first = app.inject(request).then(response => { completed = true; return response; });
+      await fetching;
+      await vi.advanceTimersByTimeAsync(59000);
+      const withinClientDeadline = completed;
+      if (!completed) await vi.advanceTimersByTimeAsync(180000);
+      const response = await first;
+      expect(withinClientDeadline).toBe(true);
+      expect(aborted).toBe(true);
+      expect(response.statusCode).toBe(502);
+      expect(response.json().error).toMatch(/could not/);
+      expect(calls).toBe(1); // No hidden retry can prolong work or add provider cost.
+      const retry = await app.inject(request);
+      expect(retry.statusCode).toBe(200);
+      expect(retry.json()).toEqual(output);
+      expect(calls).toBe(2);
+    } finally { vi.useRealTimers(); vi.unstubAllGlobals(); await app.close(); }
   });
 });
