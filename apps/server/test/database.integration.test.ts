@@ -9,18 +9,18 @@ let database: Awaited<ReturnType<typeof testDatabase>>;
 beforeEach(async () => { database = await testDatabase(); });
 afterEach(async () => { await database?.close(); });
 
-it('initializes only the migration ledger and repeats migrations without duplicate versions', async () => {
+it('initializes the grant tables and migration ledger and repeats migrations without duplicate versions', async () => {
   await checkDatabase(database.pool);
   await migrateDatabase({ ...database.config, options: undefined }, database.schema);
   await checkDatabase(database.pool);
   const versions = await database.pool.query('SELECT name FROM pgmigrations ORDER BY id');
   expect(versions.rows.map(row => row.name)).toEqual(SCHEMA_VERSIONS);
   const tables = await database.pool.query('SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY tablename', [database.schema]);
-  expect(tables.rows.map(row => row.tablename)).toEqual(['pgmigrations']);
+  expect(tables.rows.map(row => row.tablename)).toEqual(['chatgpt_sessions', 'chatgpt_transactions', 'pgmigrations']);
 });
 
 it('rejects an unmigrated schema and becomes ready after explicit migration', async () => {
-  await database.pool.query('DROP TABLE pgmigrations');
+  await database.pool.query('DROP TABLE chatgpt_transactions, chatgpt_sessions, pgmigrations');
   await expect(checkDatabase(database.pool)).rejects.toThrow();
   await migrateDatabase(database.config, database.schema);
   await expect(checkDatabase(database.pool)).resolves.toBeUndefined();

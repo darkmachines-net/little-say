@@ -6,6 +6,7 @@ import { Linking, Platform, Pressable, Text, View } from 'react-native';
 import { Check, Globe, Volume2, Wifi } from 'lucide-react-native';
 import { firstWord, getLanguageProfile, languageName, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, developmentApiUrl } from '../services/api';
+import { ChatGptPanel } from './ChatGptPanel';
 import { type Voice } from '../services/speech';
 import { requestPersistence } from '../data/storage';
 import { Button, Field, Notice, Sheet } from './components';
@@ -38,6 +39,7 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
   };
   return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
+    {Platform.OS === 'web' && <><ChatGptPanel server={settings.backendUrl} /><View style={styles.divider} /></>}
     <View style={{ gap: 14 }}>
       <View style={styles.row}><Globe size={20} color={theme.accent} /><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Languages on this device</Text></View>
       <Text style={styles.body}>Choose up to six languages for new boards and quick setup. Existing boards keep their own languages.</Text>
