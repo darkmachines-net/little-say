@@ -1,4 +1,4 @@
-/** @file Groups explained picture selectors and independent switches for board defaults, card overrides, and generation permission. */
+/** @file Groups explained picture selectors and independent switches for board defaults, card overrides, and picture protection. */
 
 import { useState } from 'react';
 import { Linking, Switch, Text, View } from 'react-native';
