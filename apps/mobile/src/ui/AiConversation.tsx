@@ -123,9 +123,6 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       if (!live.current || request.current !== controller) return;
       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');
       validateGeneratedBoard(response.proposal, source ? boardContext(source) : null);
-      setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);
-      setClarifying(response.proposal.needsClarification);
-      setSubmitted(null);
       if (!response.proposal.needsClarification) {
         setDraft(response);
         if (response.proposal.picturePolicy) {
@@ -135,6 +132,10 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
           setDraft(prepared.proposal); setPictureIssues(prepared.issues);
         }
       }
+      // A stopped picture request discards the whole turn, including its conversation context.
+      setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);
+      setClarifying(response.proposal.needsClarification);
+      setSubmitted(null);
     } catch (e) {
       if (live.current && request.current === controller) { setError((e as Error).message); setPrompt(message); }
     } finally {
