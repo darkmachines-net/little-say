@@ -1,0 +1,42 @@
+[
+  {
+    "file": "final-diff-composition.json",
+    "sha256": "c811d3b9e30b8da2b584bdf36466c80daa2a74023d8d714701866c25ab08baaa"
+  },
+  {
+    "file": "final-state.json",
+    "sha256": "cdffc1e1ce9eec1b820b4a3ff33d999ef20a93ea7b1d98aa90ac994e34566bf0"
+  },
+  {
+    "file": "repaired-pr-body.html",
+    "sha256": "b911925bc0f474843ea53d02e2e6f87a901f2eafc0228afeae5932f3d8c35df7"
+  },
+  {
+    "file": "repaired-pr-body.md",
+    "sha256": "bcc6b20e2c7e45d33519381b58ae7fcaec18054c588cdcef7f2accc4501dc124"
+  },
+  {
+    "file": "repaired-render-0.png",
+    "sha256": "6777340bec564e3941efce6650397b9ab5758db61bef3661100837e165965a66"
+  },
+  {
+    "file": "repaired-render-1.png",
+    "sha256": "f645e1497ce933ec909a4cedd9f998ab29013d9a5d97a4fecaf7c079dcb9e087"
+  },
+  {
+    "file": "repaired-render-2.png",
+    "sha256": "991b5faeed00b2cf50ec9c896918aaff00b3d5769d86ba9a9a34201431a7050c"
+  },
+  {
+    "file": "repaired-render-3.png",
+    "sha256": "63e7865d76d86da572de8781deeed33ae6f46247b3cbed61098934e6875a3811"
+  },
+  {
+    "file": "repaired-render-readback.json",
+    "sha256": "d2c6b6fd73dd82be9fa004a3d86ac8b1283854fda9ed7a0781473c712e3a7dd2"
+  },
+  {
+    "file": "review-disposition.md",
+    "sha256": "df8b9adc68787b3e45390d5855ab34e7e4c3bc2f5e50d82afb1b8dc49a819d8d"
+  }
+]

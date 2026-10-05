@@ -1,0 +1,585 @@
+{
+  "checkedAtUtc": "2026-10-05T18:25:44.908Z",
+  "host": "MCHARTIER_ZBOOK",
+  "task": "01a10d30-f0f8-7529-8e14-cb54d10fb018",
+  "role": "sole implementation continuation",
+  "worktree": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6",
+  "pr": "https://github.com/MChartier/little-say/pull/6",
+  "head": "252b863380ee1c76b80a901aafbee6dd92135946",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "baseRef": "master",
+  "branch": "feat/automatic-card-pictures",
+  "mergeBase": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "bodySha256": "bcc6b20e2c7e45d33519381b58ae7fcaec18054c588cdcef7f2accc4501dc124",
+  "draft": true,
+  "labels": [],
+  "clean": true,
+  "primaryEvidence": "0a0ba8e02c47bef4130d461c1a2d238db7eb785d",
+  "preservedEvidence": [
+    "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+    "77dd5092a4e952f08a75da2351a6262e365a117b",
+    "1a5f8ff8257155e722b4434cd09146bb09540aa0"
+  ],
+  "validation": {
+    "check": "PASS: release metadata, TypeScript,194 tests, production server/web build",
+    "affectedBrowser": "PASS:21 picture/conversation scenarios; repeated cancellation and clean retry context",
+    "regression": "FAIL on pre-fix lost-prompt assertion; PASS after fix",
+    "priorBrowser": "65 scenarios passed on4cdeb323; unchanged unrelated flows reused",
+    "ci": "https://github.com/MChartier/little-say/actions/runs/37355066355/job/111915284772"
+  },
+  "engineeringReview": {
+    "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6000357930",
+    "html_url": "https://github.com/MChartier/little-say/pull/6#issuecomment-6000357930",
+    "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/6",
+    "id": 6000357930,
+    "node_id": "IC_kwDOU65Oyc8AAAABZaYyKg",
+    "user": {
+      "login": "chatgpt-codex-connector[bot]",
+      "id": 199175422,
+      "node_id": "BOT_kgDOC98s_g",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-05T18:13:21Z",
+    "updated_at": "2026-10-05T18:25:13Z",
+    "author_association": "NONE",
+    "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ✅ **Completed** <relative-time datetime=\"2026-10-05T18:25:12.003063Z\">2026-10-05T18:25:12.003063Z</relative-time> | `252b863` | Manual request |\n\n\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.\n\n</details>",
+    "reactions": {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6000357930/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": {
+      "id": 1144995,
+      "slug": "chatgpt-codex-connector",
+      "node_id": "A_kwHOAOQ6Gs4AEXij",
+      "owner": {
+        "login": "openai",
+        "id": 14957082,
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjE0OTU3MDgy",
+        "avatar_url": "https://avatars.githubusercontent.com/u/14957082?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/openai",
+        "html_url": "https://github.com/openai",
+        "followers_url": "https://api.github.com/users/openai/followers",
+        "following_url": "https://api.github.com/users/openai/following{/other_user}",
+        "gists_url": "https://api.github.com/users/openai/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/openai/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/openai/subscriptions",
+        "organizations_url": "https://api.github.com/users/openai/orgs",
+        "repos_url": "https://api.github.com/users/openai/repos",
+        "events_url": "https://api.github.com/users/openai/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/openai/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "name": "ChatGPT Codex Connector",
+      "description": "Bring ChatGPT and Codex to your GitHub repositories.",
+      "external_url": "https://www.chatgpt.com",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "created_at": "2025-02-14T01:37:05Z",
+      "updated_at": "2026-09-23T18:52:59Z",
+      "permissions": {
+        "actions": "write",
+        "checks": "read",
+        "contents": "write",
+        "emails": "read",
+        "issues": "write",
+        "metadata": "read",
+        "pull_requests": "write",
+        "statuses": "read",
+        "workflows": "write"
+      },
+      "events": [
+        "check_run",
+        "check_suite",
+        "commit_comment",
+        "issues",
+        "issue_comment",
+        "pull_request",
+        "pull_request_review",
+        "pull_request_review_comment",
+        "pull_request_review_thread",
+        "repository",
+        "status",
+        "sub_issues"
+      ]
+    },
+    "minimized": null,
+    "pin": null
+  },
+  "findings": [
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187248644",
+      "pull_request_review_id": 5418770905,
+      "id": 4187248644,
+      "node_id": "PRRC_kwDOU65Oyc75lFgE",
+      "diff_hunk": "@@ -88,18 +110,31 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o\n     if (!message || request.current || saving.current || atLimit) return;\n     const controller = new AbortController(); request.current = controller;\n     nearBottom.current = true;\n-    setError(''); setBusy('generate'); setSubmitted(message); setPrompt('');\n+    draftBeforeRequest.current = draft;\n+    const requestedPolicy = picturePolicy;\n+    setError(''); setPictureMessage(''); setPictureIssues([]); setTileStates({}); setBusy('generate'); setSubmitted(message); setPrompt('');\n     try {\n+      if (!await enableAi(controller)) return;\n       const response = await proposeBoard(settings.backendUrl, {\n         prompt: message, board: source ? boardContext(source) : null, languageProfile: getLanguageProfile(settings),\n-        conversation: { history, draft: draft?.proposal ?? null },\n+        picturePolicy, pictureCapability: 1,\n+        conversation: { history, draft: draft ? { ...draft.proposal, ...(draft.proposal.picturePolicy ? { picturePolicy } : {}) } : null },\n       }, controller.signal);\n       if (!live.current || request.current !== controller) return;\n       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');\n       validateGeneratedBoard(response.proposal, source ? boardContext(source) : null);\n       setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);\n       setClarifying(response.proposal.needsClarification);\n-      if (!response.proposal.needsClarification) setDraft(response);\n+      setSubmitted(null);",
+      "path": "apps/mobile/src/ui/AiConversation.tsx",
+      "commit_id": "38bfe7d8b94c0d781760a2cc5e898db04e7f9932",
+      "original_commit_id": "38bfe7d8b94c0d781760a2cc5e898db04e7f9932",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Roll back the turn when stopping picture work**\n\nWhen the user stops after the text proposal has returned but while pictures are still being prepared, this commits the prompt/reply to `history` and clears `submitted` before the cancellable phase finishes. `cancel()` then restores the previous draft but neither removes that history entry nor restores the prompt, so the transcript describes a discarded update and retrying requires retyping or sends duplicate context. Defer committing the turn until picture preparation completes, or explicitly roll back the history and prompt on cancellation.\n\nUseful? React with 👍 / 👎.",
+      "created_at": "2026-10-05T18:13:17Z",
+      "updated_at": "2026-10-05T18:13:17Z",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#discussion_r4187248644",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187248644"
+        },
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#discussion_r4187248644"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187248644/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "start_line": null,
+      "original_start_line": 126,
+      "start_side": "RIGHT",
+      "line": null,
+      "original_line": 128,
+      "side": "RIGHT",
+      "author_association": "NONE",
+      "original_position": 146,
+      "position": 1,
+      "subject_type": "line"
+    },
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786",
+      "pull_request_review_id": 5418891980,
+      "id": 4187352786,
+      "node_id": "PRRC_kwDOU65Oyc75le7S",
+      "diff_hunk": "@@ -0,0 +1,40 @@\n+/** @file Gives the board workspace a full-screen route with browser history and native state navigation. */\n+\n+import { useEffect, useState } from 'react';\n+import { Platform } from 'react-native';\n+\n+type DraftRoute = { boardId: string | null } | null;\n+\n+function currentRoute(): DraftRoute {\n+  if (Platform.OS !== 'web') return null;\n+  if (window.location.hash === '#boards/new') return { boardId: null };\n+  const match = /^#boards\\/([^/]+)\\/ai$/.exec(window.location.hash);\n+  try { return match ? { boardId: decodeURIComponent(match[1]) } : null; } catch { return null; }\n+}\n+\n+/** Open a dedicated workspace, restore its source on web reload, and let browser Back dismiss it. Unsaved drafts remain in memory. */\n+export function useBoardDraftRoute() {\n+  const [route, setRoute] = useState<DraftRoute>(currentRoute);\n+  useEffect(() => {\n+    if (Platform.OS !== 'web') return;\n+    const changed = () => setRoute(currentRoute());",
+      "path": "apps/mobile/src/services/useBoardDraftRoute.ts",
+      "commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "original_commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Block browser navigation while a draft save is pending**\n\nWhen a parent presses the browser Back button during `onApply`, this handler immediately clears the draft route and unmounts `AiConversation`, bypassing its `saving.current` guard. If the asynchronous storage write then fails, the error is no longer shown in the conversation and the unsaved draft cannot be retried, so browser history navigation needs to honor the same save-in-progress protection as the page Back button.\n\nUseful? React with 👍 / 👎.",
+      "created_at": "2026-10-05T18:25:08Z",
+      "updated_at": "2026-10-05T18:25:09Z",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352786",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786"
+        },
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352786"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "start_line": null,
+      "original_start_line": null,
+      "start_side": null,
+      "line": 20,
+      "original_line": 20,
+      "side": "RIGHT",
+      "author_association": "NONE",
+      "original_position": 20,
+      "position": 20,
+      "subject_type": "line"
+    },
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808",
+      "pull_request_review_id": 5418891980,
+      "id": 4187352808,
+      "node_id": "PRRC_kwDOU65Oyc75le7o",
+      "diff_hunk": "@@ -35,6 +37,24 @@ export async function assetUri(id: string): Promise<string | null> {\n   const path = `${directory}${id}.jpg`;\n   return (await FileSystem.getInfoAsync(path)).exists ? path : null;\n }\n+\n+/** Store a verified transparent PNG in its own directory before committing a board reference. */\n+export async function savePictureAsset(id: string, url: string, signal?: AbortSignal): Promise<void> {",
+      "path": "apps/mobile/src/data/storage.ts",
+      "commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "original_commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Update the storage file headers for picture persistence**\n\nAdding the exported PNG store, resolver, and pruning functions makes the file-level header inaccurate because it still says this module keeps only photo and speech files; the equivalent header in `storage.web.ts` likewise omits its new picture store. Update both platform headers so they describe the picture-asset responsibility introduced here.\n\nAGENTS.md reference: [AGENTS.md:L3-L6](https://github.com/MChartier/little-say/blob/252b863380ee1c76b80a901aafbee6dd92135946/AGENTS.md#L3-L6)\n\nUseful? React with 👍 / 👎.",
+      "created_at": "2026-10-05T18:25:08Z",
+      "updated_at": "2026-10-05T18:25:09Z",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352808",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808"
+        },
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352808"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "start_line": null,
+      "original_start_line": null,
+      "start_side": null,
+      "line": 42,
+      "original_line": 42,
+      "side": "RIGHT",
+      "author_association": "NONE",
+      "original_position": 15,
+      "position": 15,
+      "subject_type": "line"
+    }
+  ],
+  "resolvedFinding": {
+    "id": 4187248644,
+    "fix": "252b863380ee1c76b80a901aafbee6dd92135946",
+    "disposition": "https://github.com/MChartier/little-say/pull/6#issuecomment-6000520881"
+  },
+  "diff": {
+    "original": "136 files,+3745,-185",
+    "final": "69 files,+3009,-185",
+    "removed": "67 oneoff capture/archive files retained on evidence refs before cleanup"
+  },
+  "dependency": {
+    "child": 13,
+    "childPinnedHead": "2b861a0e43cee0c2097c8356af50cba420246ce8",
+    "impact": "Runtime cancellation repair requires same PR13 owner parent integration/assessment after this writer is idle; no child branches modified."
+  },
+  "limitations": [
+    "Full authenticated GitHub page layout unverified: browser kernel ACL initialization failure; API-rendered body and actual six embedded images inspected.",
+    "Browser-only; physical Android/iPad and live provider accuracy/latency not re-evaluated.",
+    "Independent readiness QA and coordinator receipt not performed; no readiness label, merge or deploy."
+  ],
+  "reviews": [
+    {
+      "id": 5418770905,
+      "node_id": "PRR_kwDOU65Oyc8AAAABQvvh2Q",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `38bfe7d8b9`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#pullrequestreview-5418770905",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "author_association": "NONE",
+      "_links": {
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#pullrequestreview-5418770905"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "submitted_at": "2026-10-05T18:13:17Z",
+      "commit_id": "38bfe7d8b94c0d781760a2cc5e898db04e7f9932"
+    },
+    {
+      "id": 5418891980,
+      "node_id": "PRR_kwDOU65Oyc8AAAABQv26zA",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "\n### 💡 Codex Review\n\nHere are some automated review suggestions for this pull request.\n\n**Reviewed commit:** `252b863380`\n    \n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>",
+      "state": "COMMENTED",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#pullrequestreview-5418891980",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "author_association": "NONE",
+      "_links": {
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#pullrequestreview-5418891980"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "submitted_at": "2026-10-05T18:25:08Z",
+      "commit_id": "252b863380ee1c76b80a901aafbee6dd92135946"
+    }
+  ],
+  "reviewRequestReactions": [],
+  "currentHeadFindings": [
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786",
+      "pull_request_review_id": 5418891980,
+      "id": 4187352786,
+      "node_id": "PRRC_kwDOU65Oyc75le7S",
+      "diff_hunk": "@@ -0,0 +1,40 @@\n+/** @file Gives the board workspace a full-screen route with browser history and native state navigation. */\n+\n+import { useEffect, useState } from 'react';\n+import { Platform } from 'react-native';\n+\n+type DraftRoute = { boardId: string | null } | null;\n+\n+function currentRoute(): DraftRoute {\n+  if (Platform.OS !== 'web') return null;\n+  if (window.location.hash === '#boards/new') return { boardId: null };\n+  const match = /^#boards\\/([^/]+)\\/ai$/.exec(window.location.hash);\n+  try { return match ? { boardId: decodeURIComponent(match[1]) } : null; } catch { return null; }\n+}\n+\n+/** Open a dedicated workspace, restore its source on web reload, and let browser Back dismiss it. Unsaved drafts remain in memory. */\n+export function useBoardDraftRoute() {\n+  const [route, setRoute] = useState<DraftRoute>(currentRoute);\n+  useEffect(() => {\n+    if (Platform.OS !== 'web') return;\n+    const changed = () => setRoute(currentRoute());",
+      "path": "apps/mobile/src/services/useBoardDraftRoute.ts",
+      "commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "original_commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Block browser navigation while a draft save is pending**\n\nWhen a parent presses the browser Back button during `onApply`, this handler immediately clears the draft route and unmounts `AiConversation`, bypassing its `saving.current` guard. If the asynchronous storage write then fails, the error is no longer shown in the conversation and the unsaved draft cannot be retried, so browser history navigation needs to honor the same save-in-progress protection as the page Back button.\n\nUseful? React with 👍 / 👎.",
+      "created_at": "2026-10-05T18:25:08Z",
+      "updated_at": "2026-10-05T18:25:09Z",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352786",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786"
+        },
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352786"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352786/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "start_line": null,
+      "original_start_line": null,
+      "start_side": null,
+      "line": 20,
+      "original_line": 20,
+      "side": "RIGHT",
+      "author_association": "NONE",
+      "original_position": 20,
+      "position": 20,
+      "subject_type": "line"
+    },
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808",
+      "pull_request_review_id": 5418891980,
+      "id": 4187352808,
+      "node_id": "PRRC_kwDOU65Oyc75le7o",
+      "diff_hunk": "@@ -35,6 +37,24 @@ export async function assetUri(id: string): Promise<string | null> {\n   const path = `${directory}${id}.jpg`;\n   return (await FileSystem.getInfoAsync(path)).exists ? path : null;\n }\n+\n+/** Store a verified transparent PNG in its own directory before committing a board reference. */\n+export async function savePictureAsset(id: string, url: string, signal?: AbortSignal): Promise<void> {",
+      "path": "apps/mobile/src/data/storage.ts",
+      "commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "original_commit_id": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Update the storage file headers for picture persistence**\n\nAdding the exported PNG store, resolver, and pruning functions makes the file-level header inaccurate because it still says this module keeps only photo and speech files; the equivalent header in `storage.web.ts` likewise omits its new picture store. Update both platform headers so they describe the picture-asset responsibility introduced here.\n\nAGENTS.md reference: [AGENTS.md:L3-L6](https://github.com/MChartier/little-say/blob/252b863380ee1c76b80a901aafbee6dd92135946/AGENTS.md#L3-L6)\n\nUseful? React with 👍 / 👎.",
+      "created_at": "2026-10-05T18:25:08Z",
+      "updated_at": "2026-10-05T18:25:09Z",
+      "html_url": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352808",
+      "pull_request_url": "https://api.github.com/repos/MChartier/little-say/pulls/6",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808"
+        },
+        "html": {
+          "href": "https://github.com/MChartier/little-say/pull/6#discussion_r4187352808"
+        },
+        "pull_request": {
+          "href": "https://api.github.com/repos/MChartier/little-say/pulls/6"
+        }
+      },
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/pulls/comments/4187352808/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "start_line": null,
+      "original_start_line": null,
+      "start_side": null,
+      "line": 42,
+      "original_line": 42,
+      "side": "RIGHT",
+      "author_association": "NONE",
+      "original_position": 15,
+      "position": 15,
+      "subject_type": "line"
+    }
+  ]
+}
