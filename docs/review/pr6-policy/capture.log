@@ -1,0 +1,185 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run tsx artifacts/pr6-policy/capture.ts
+(node:14464) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14464) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+{
+  "capturedAtUtc": "2026-10-05T18:49:28.556Z",
+  "host": "MCHARTIER_ZBOOK",
+  "tool": "Playwright 1.63.0 screenshot; no pixel editing/cropping",
+  "browser": "153.0.8010.12",
+  "base": "02cb85c5e4aaaae056ace73ef6fda591bd0bc500",
+  "head": "1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "proposal": "proposal.json",
+  "asset": {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537",
+    "source": "library-source.json"
+  },
+  "normalization": "Identical synthetic version1 library, with board picturePolicy absent and settings default selected per named state (library or emoji). en-US/UTC, fixed Date, light, DPR1, reduced motion, service workers blocked. Real browser scrolling positions the selector and generation button together. No DOM/CSS hiding or pixel edits. No AI or generation request occurs in this manual-options flow; retained truck asset and proposal are unused common-harness fixture artifacts.",
+  "runs": [
+    {
+      "name": "before",
+      "source": "02cb85c5e4aaaae056ace73ef6fda591bd0bc500",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-policy-dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "before-library-1280.png",
+          "sha256": "6b72a10d011e3142ae2c4b7487851f8fb177ac9acca151eb7f32fa79e1a8a13d",
+          "viewport": {
+            "width": 1280,
+            "height": 1000
+          },
+          "route": "/app",
+          "state": "library",
+          "observedAtUtc": "2026-10-05T18:49:29.816Z"
+        },
+        {
+          "file": "before-emoji-1280.png",
+          "sha256": "ec0145ebf862c8805eeb097cfd3fce745fc4c9c6a84c9278af3e5ad319293463",
+          "viewport": {
+            "width": 1280,
+            "height": 1000
+          },
+          "route": "/app",
+          "state": "emoji",
+          "observedAtUtc": "2026-10-05T18:49:30.950Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "after-library-1280.png",
+          "sha256": "6c231d5e2e26ee5cdc2122462004d504ff215ada827b9eab5a357b041543e459",
+          "viewport": {
+            "width": 1280,
+            "height": 1000
+          },
+          "route": "/app",
+          "state": "library",
+          "observedAtUtc": "2026-10-05T18:49:32.115Z"
+        },
+        {
+          "file": "after-emoji-1280.png",
+          "sha256": "aba050b65790ce3ae79aa69bea604adc6fa3b756954af18fdb539b66a663023b",
+          "viewport": {
+            "width": 1280,
+            "height": 1000
+          },
+          "route": "/app",
+          "state": "emoji",
+          "observedAtUtc": "2026-10-05T18:49:33.200Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        }
+      ]
+    }
+  ],
+  "scope": "Supplemental review-fix history, not primary baseline. Before02cb85c reviewed build copied before rebuilding and served hashes checked against7a0e75f primary manifest. Same migrated synthetic library without board picturePolicy and inherited Library only or Emoji only settings. Open Cow Picture options; matching1280x1000 viewport. No generation requested. UI pixels unedited."
+}

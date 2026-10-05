@@ -1,0 +1,101 @@
+npm notice run little-say-workspace@0.1.1 test:web
+npm notice run playwright test tests/web/pictures.spec.ts -g migrated cards honor
+[WebServer] npm notice run little-say-workspace@0.1.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.1.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:24252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:24252) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 2 tests using 1 worker
+
+(node:9116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Library only and explicit overrides (8.7s)
+(node:8784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Emoji only and explicit overrides (8.7s)
+
+
+  1) [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Library only and explicit overrides 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator:  getByRole('button', { name: 'Generate new picture', exact: true })
+    Expected: disabled
+    Received: enabled
+    Timeout:  7000ms
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('button', { name: 'Generate new picture', exact: true }) with timeout 7000ms
+      - waiting for getByRole('button', { name: 'Generate new picture', exact: true })
+        18 ├ù locator resolved to <button tabindex="0" role="button" type="button" aria-label="Generate new picture" class="css-g5y9jx r-1loqt21 r-1otgn73">ΓÇª</button>
+           - unexpected value "enabled"
+
+
+      358 |   const follow = page.getByRole('button', { name: new RegExp('Picture source for this card: Follow board.*' + label) });
+      359 |   await expect(follow).toBeVisible();
+    > 360 |   await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeDisabled();
+          |                                                                                         ^
+      361 |   await follow.click();
+      362 |   await page.getByRole('button', { name: 'AI illustrations', exact: true }).click();
+      363 |   await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeEnabled();
+        at C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-pr6\tests\web\pictures.spec.ts:360:89
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-migrated-cards-ho-18c1f-only-and-explicit-overrides-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\pictures-migrated-cards-ho-18c1f-only-and-explicit-overrides-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-migrated-cards-ho-18c1f-only-and-explicit-overrides-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\pictures-migrated-cards-ho-18c1f-only-and-explicit-overrides-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  2) [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Emoji only and explicit overrides 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator:  getByRole('button', { name: 'Generate new picture', exact: true })
+    Expected: disabled
+    Received: enabled
+    Timeout:  7000ms
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('button', { name: 'Generate new picture', exact: true }) with timeout 7000ms
+      - waiting for getByRole('button', { name: 'Generate new picture', exact: true })
+        18 ├ù locator resolved to <button tabindex="0" role="button" type="button" aria-label="Generate new picture" class="css-g5y9jx r-1loqt21 r-1otgn73">ΓÇª</button>
+           - unexpected value "enabled"
+
+
+      358 |   const follow = page.getByRole('button', { name: new RegExp('Picture source for this card: Follow board.*' + label) });
+      359 |   await expect(follow).toBeVisible();
+    > 360 |   await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeDisabled();
+          |                                                                                         ^
+      361 |   await follow.click();
+      362 |   await page.getByRole('button', { name: 'AI illustrations', exact: true }).click();
+      363 |   await expect(page.getByRole('button', { name: 'Generate new picture', exact: true })).toBeEnabled();
+        at C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-pr6\tests\web\pictures.spec.ts:360:89
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-migrated-cards-ho-f6b42-only-and-explicit-overrides-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\pictures-migrated-cards-ho-f6b42-only-and-explicit-overrides-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\pictures-migrated-cards-ho-f6b42-only-and-explicit-overrides-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\pictures-migrated-cards-ho-f6b42-only-and-explicit-overrides-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  2 failed
+    [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Library only and explicit overrides 
+    [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Emoji only and explicit overrides 

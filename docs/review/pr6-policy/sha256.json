@@ -1,0 +1,70 @@
+[
+  {
+    "file": "after-emoji-1280.png",
+    "sha256": "aba050b65790ce3ae79aa69bea604adc6fa3b756954af18fdb539b66a663023b"
+  },
+  {
+    "file": "after-library-1280.png",
+    "sha256": "6c231d5e2e26ee5cdc2122462004d504ff215ada827b9eab5a357b041543e459"
+  },
+  {
+    "file": "before-emoji-1280.png",
+    "sha256": "ec0145ebf862c8805eeb097cfd3fce745fc4c9c6a84c9278af3e5ad319293463"
+  },
+  {
+    "file": "before-library-1280.png",
+    "sha256": "6b72a10d011e3142ae2c4b7487851f8fb177ac9acca151eb7f32fa79e1a8a13d"
+  },
+  {
+    "file": "capture.log",
+    "sha256": "7c285c9587178a89c3ab5f7feef18fb124e49eae41bc670aaee8cb54f7b3243e"
+  },
+  {
+    "file": "capture.ts",
+    "sha256": "5dd64e483e43e6b33db9034932996f5344954b3b0e475b866a570d7ce67fd0dc"
+  },
+  {
+    "file": "deadline-after.log",
+    "sha256": "3bc0a09ce9cca28c31dbb58b76e4091caaa772a7be02b9aff7c12eb96cf1fdbf"
+  },
+  {
+    "file": "deadline-before.log",
+    "sha256": "8c050c861d4bc557c533864f5679a3d55bc95472e628ad8a59cfa81819846aa8"
+  },
+  {
+    "file": "library-source.json",
+    "sha256": "7863b9e7a2e5373381c7161032d9aade727e562c636bb79e87ef1a2e0325fd6e"
+  },
+  {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537"
+  },
+  {
+    "file": "library.json",
+    "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+  },
+  {
+    "file": "manifest.json",
+    "sha256": "e47e5b3e73bbe6c8e8a4d9e265b8a4fd6fdc166f0b321f7be72e41dfacd5937c"
+  },
+  {
+    "file": "policy-before.log",
+    "sha256": "2a7d27b1cc57741972dafc57385ba091768f49982691b0c46712eae040d7dfaa"
+  },
+  {
+    "file": "policy-browser.log",
+    "sha256": "ed7accf2152cb5ec5c12c25e70f18f48b31868b0ec2164188f51553325a42e8e"
+  },
+  {
+    "file": "policy-check.log",
+    "sha256": "44d45630a2caa5cc1882c229d2f01b2a59e78d771e670fe1aa727a6b11373edd"
+  },
+  {
+    "file": "proposal.json",
+    "sha256": "79ed9ab644da2e4cd2374f72d06e3d423d5eda7c17262b90829fbca4d0ece3d4"
+  },
+  {
+    "file": "README.md",
+    "sha256": "2ff958f9822cb7f189ae92a939821e49b6c91077283ce199254b021846008cf4"
+  }
+]

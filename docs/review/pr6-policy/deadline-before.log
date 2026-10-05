@@ -1,0 +1,40 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run vitest run apps/server/test/pictures.test.ts -t synchronous picture deadlines
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-05/task-5/little-say-pr6
+
+(node:14844) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14844) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+ Γ¥» apps/server/test/pictures.test.ts (11 tests | 2 failed | 9 skipped) 109ms
+     ├ù ends slow analyze before the client deadline and frees capacity for retry 98ms
+     ├ù ends slow review before the client deadline and frees capacity for retry 10ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/server/test/pictures.test.ts > synchronous picture deadlines > ends slow analyze before the client deadline and frees capacity for retry
+ FAIL  apps/server/test/pictures.test.ts > synchronous picture deadlines > ends slow review before the client deadline and frees capacity for retry
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ Γ¥» apps/server/test/pictures.test.ts:139:36
+    137|       if (!completed) await vi.advanceTimersByTimeAsync(180000);
+    138|       const response = await first;
+    139|       expect(withinClientDeadline).toBe(true);
+       |                                    ^
+    140|       expect(aborted).toBe(true);
+    141|       expect(response.statusCode).toBe(502);
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 skipped (11)
+   Start at  11:44:15
+   Duration  1.93s (transform 1.05s, setup 0ms, import 1.69s, tests 109ms, environment 0ms)
+
