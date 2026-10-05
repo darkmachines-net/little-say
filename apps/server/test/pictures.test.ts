@@ -1,4 +1,4 @@
-/** @file Verifies picture job idempotency, costs/consent gates, cancellation, restart recovery, validation, and catalog safety. */
+/** @file Verifies picture job idempotency, costs/consent gates, cancellation, restart recovery, validation, catalog safety, provider deadlines, and selection capacity. */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
@@ -16,11 +16,11 @@ const directories: string[] = [];
 const services: PictureJobs[] = [];
 afterEach(async () => { services.splice(0).forEach(service => service.close()); await Promise.all(directories.splice(0).map(directory => rm(directory, { recursive: true, force: true }))); });
 const input = (): PictureJobRequest => ({ requestId: randomUUID(), draftId: 'revision-1', tileId: 'mixer', concept: { description: 'concrete mixer truck', features: ['truck-mounted mixing drum'], searchTerms: ['concrete mixer truck'], emojiAccurate: false }, style: 'color', mode: 'generated', allowGeneration: true, regenerate: false, neighbors: ['dump truck'] });
-async function service(overrides: Partial<PictureProvider> = {}, enabled = true) {
+async function service(overrides: Partial<PictureProvider> = {}, enabled = true, concurrency = 2) {
   const directory = await mkdtemp(join(tmpdir(), 'little-say-pictures-')); directories.push(directory);
   const png = await sharp({ create: { width: 32, height: 32, channels: 4, background: '#ff7700' } }).png().toBuffer();
   const provider: PictureProvider = { model: 'test-model', analyze: vi.fn(), select: vi.fn(async () => 'generated'), generate: vi.fn(async () => png), review: vi.fn(async () => []), ...overrides };
-  const jobs = new PictureJobs(directory, provider, enabled); services.push(jobs);
+  const jobs = new PictureJobs(directory, provider, enabled, concurrency); services.push(jobs);
   // Validation-only API tests may finish before restore starts reading the cache; initialize before teardown can remove it.
   await jobs.status('none');
   return { jobs, provider, directory, png };
@@ -146,5 +146,55 @@ describe('synchronous picture deadlines', () => {
       expect(retry.json()).toEqual(output);
       expect(calls).toBe(2);
     } finally { vi.useRealTimers(); vi.unstubAllGlobals(); await app.close(); }
+  });
+});
+
+describe('selection cancellation', () => {
+  for (const mode of ['auto', 'generated'] as const) it(`aborts real SDK ${mode} selections and promptly runs queued work`, async () => {
+    const entry = searchPictures('cow', 'color')[0];
+    const aborts: boolean[] = [];
+    const release: (() => void)[] = [];
+    let calls = 0;
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => {
+      const index = calls++;
+      if (index < 2) return new Promise((_resolve, reject) => {
+        aborts[index] = false;
+        const stop = () => reject(new DOMException('Aborted', 'AbortError'));
+        release.push(stop);
+        init.signal!.addEventListener('abort', () => { aborts[index] = true; stop(); });
+      });
+      return Promise.resolve(new Response(JSON.stringify({ id: 'response', status: 'completed', output: [{ type: 'message', role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: JSON.stringify({ id: mode === 'auto' ? entry.id : 'generated' }), annotations: [] }] }] }), { headers: { 'Content-Type': 'application/json' } }));
+    }));
+    const real = openAIPictureProvider({ OPENAI_API_KEY: 'test-key' })!;
+    const { jobs, provider, png } = await service({ select: real.select });
+    const picture = { kind: 'library' as const, assetId: createHash('sha256').update(png).digest('hex'), style: entry.style, provenance: entry.provenance };
+    vi.spyOn(jobs, 'library').mockResolvedValue({ entry, picture, bytes: png });
+    const requests = [0, 1, 2].map(() => ({ ...input(), mode, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } }));
+    try {
+      for (const request of requests) await jobs.start(request);
+      await vi.waitFor(() => expect(calls).toBe(2));
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
+      await Promise.all(requests.slice(0, 2).map(request => jobs.cancel(request.requestId)));
+      await vi.waitFor(() => expect(aborts).toEqual([true, true]), { timeout: 1000 });
+      expect((await finished(jobs, requests[2].requestId)).state).toBe('complete');
+      expect(calls).toBe(3);
+      for (const request of requests.slice(0, 2)) { const stopped = await jobs.status(request.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined(); }
+      expect(provider.generate).toHaveBeenCalledTimes(mode === 'auto' ? 0 : 3);
+    } finally { jobs.close(); release.forEach(stop => stop()); vi.unstubAllGlobals(); }
+  });
+  it('does not cache a late selection from cancelled generated work', async () => {
+    let release!: (id: string) => void;
+    const pending = new Promise<string>(resolve => { release = resolve; });
+    const select = vi.fn().mockImplementationOnce(() => pending).mockResolvedValue('generated');
+    const { jobs } = await service({ select }, true, 1);
+    const first = input(), second = input();
+    await jobs.start(first);
+    await vi.waitFor(() => expect(select).toHaveBeenCalledTimes(1));
+    await jobs.start(second);
+    await jobs.cancel(first.requestId);
+    release('generated'); // A non-cooperative provider must not leak this abandoned result into reuse.
+    expect((await finished(jobs, second.requestId)).state).toBe('complete');
+    expect(select).toHaveBeenCalledTimes(2);
+    const stopped = await jobs.status(first.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined();
   });
 });

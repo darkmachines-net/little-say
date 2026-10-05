@@ -160,7 +160,8 @@ export class PictureJobs {
       const loaded = await Promise.allSettled(entries.map(entry => this.library(entry.id)));
       if (signal.aborted) throw new Error('Cancelled');
       const sources = loaded.flatMap(result => result.status === 'fulfilled' ? [result.value] : []);
-      const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors);
+      const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors, signal);
+      if (signal.aborted) throw new Error('Cancelled');
       const picture = sources.find(source => source.entry.id === selected)?.picture;
       if (picture) { await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture; }
     }
@@ -170,7 +171,8 @@ export class PictureJobs {
     if (signal.aborted) throw new Error('Cancelled');
     const bytes = await normalizePicture(await this.provider.generate(input.concept, input.style, signal));
     if (signal.aborted) throw new Error('Cancelled');
-    const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors);
+    const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors, signal);
+    if (signal.aborted) throw new Error('Cancelled');
     if (!chosen) return unresolved('The generated picture did not clearly represent this card. Try a more specific description.');
     const picture: ResolvedPicture = { kind: 'generated', assetId: await this.put(bytes), description: input.concept.description, style: input.style, model: this.provider.model };
     await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture;

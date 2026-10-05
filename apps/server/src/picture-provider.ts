@@ -11,8 +11,8 @@ export interface PictureProvider {
   model: string;
   /** Describe requested meanings in English for search while preserving language-independent distinctions. */
   analyze(request: PictureAnalysisRequest): Promise<z.infer<typeof pictureAnalysisSchema>>;
-  /** Inspect actual candidate pixels and choose only an accurate image; null means no suitable picture. */
-  select(concept: PictureConcept, candidates: PictureCandidate[], neighbors: string[]): Promise<string | null>;
+  /** Inspect actual candidate pixels with caller cancellation; null means no suitable picture. */
+  select(concept: PictureConcept, candidates: PictureCandidate[], neighbors: string[], signal: AbortSignal): Promise<string | null>;
   /** Generate one picture from a shared style brief; the caller owns cancellation and result validation. */
   generate(concept: PictureConcept, style: PicturePolicy['style'], signal: AbortSignal): Promise<Buffer>;
   /** Inspect a board's actual downloaded images and report cards that are inaccurate or visually ambiguous. */
@@ -44,12 +44,12 @@ export function openAIPictureProvider(env: NodeJS.ProcessEnv, metric?: (event: P
       if (!result || response.status !== 'completed' || result.tiles.length !== request.tiles.length || new Set(result.tiles.map(tile => tile.id)).size !== result.tiles.length || result.tiles.some(tile => !request.tiles.some(input => input.id === tile.id))) throw new Error('Incomplete picture descriptions.');
       return result;
     },
-    async select(concept, candidates, neighbors) {
+    async select(concept, candidates, neighbors, signal) {
       if (!candidates.length) return null;
       const started = Date.now();
       const content: OpenAI.Responses.ResponseInputContent[] = [{ type: 'input_text', text: JSON.stringify({ concept, neighbors }) }];
       for (const candidate of candidates) content.push({ type: 'input_text', text: JSON.stringify({ id: candidate.id, name: candidate.name }) }, image(candidate.bytes));
-      const result = await client.responses.parse({ model: boardModel, store: false, max_output_tokens: 300, input: [{ role: 'system', content: `${visualRules} Select the best candidate id, or null if none meet the requirement.` }, { role: 'user', content }], text: { format: zodTextFormat(selectionSchema, 'picture_selection') } });
+      const result = await client.responses.parse({ model: boardModel, store: false, max_output_tokens: 300, input: [{ role: 'system', content: `${visualRules} Select the best candidate id, or null if none meet the requirement.` }, { role: 'user', content }], text: { format: zodTextFormat(selectionSchema, 'picture_selection') } }, { signal });
       const id = result.output_parsed?.id;
       metric?.({ operation: 'select', milliseconds: Date.now() - started, inputTokens: result.usage?.input_tokens ?? 0, outputTokens: result.usage?.output_tokens ?? 0 });
       if (result.status !== 'completed' || !result.output_parsed || (id && !candidates.some(candidate => candidate.id === id))) throw new Error('Invalid picture selection.');
