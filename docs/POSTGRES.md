@@ -5,7 +5,7 @@ transaction helper, explicit migration runner and schema compatibility check for
 features that need shared storage. The current application does not open a pool
 or require a database at startup. Device SQLite/IndexedDB, media caches, HTTP
 health, development launchers and deployment behavior retain their existing
-contracts. Feature owners wire the shared infrastructure when adding storage.
+contracts. ChatGPT owns the pool until HTTP shutdown; later account work can share that lifecycle.
 
 ## Connection and ownership
 
