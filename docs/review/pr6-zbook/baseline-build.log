@@ -1,0 +1,49 @@
+npm notice run little-say-workspace@0.1.1 build
+npm notice run npm run build -w @little-say/server && npm run build:web -w @little-say/app
+npm notice run @little-say/server@0.1.1 build
+npm notice run tsup
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-base\apps\server\tsup.config.ts
+CLI Target: node22
+CLI Cleaning output folder
+ESM Build start
+ESM dist\index.js 33.40 KB
+ESM ΓÜí∩╕Å Build success in 307ms
+npm notice run @little-say/app@0.1.0 build:web
+npm notice run expo export --platform web && node scripts/build-pwa.mjs
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:18764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 3790ms apps\mobile\index.ts (2380 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (1):
+_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js (6.1MB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.3KB)
+metadata.json (49B)
+
+Exported: dist
+Offline shell: 12 assets (6321 KiB). Updates wait for parent action.

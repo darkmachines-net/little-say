@@ -1,0 +1,325 @@
+{
+  "capturedAtUtc": "2026-10-05T18:00:54.712Z",
+  "host": "MCHARTIER_ZBOOK",
+  "tool": "Playwright 1.63.0 screenshot; no pixel editing/cropping",
+  "browser": "153.0.8010.12",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "head": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "proposal": "proposal.json",
+  "asset": {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537",
+    "source": "library-source.json"
+  },
+  "normalization": "Identical version-1 synthetic library (After migrates it), en-US locale, UTC, light theme, DPR 1, reduced motion, fixed Date, service workers blocked. No CSS or DOM hiding. AI replies and picture outcomes mocked; real pinned Mulberry PNG rasterized by production downloadCatalogPicture. Accurate cow/sheep emoji unchanged; dump-truck gap uses that retained library asset. No paid AI calls. Timers run; only settled states captured. Protocol picturePolicy added only for After request declaring pictureCapability=1.",
+  "runs": [
+    {
+      "name": "before",
+      "source": "5d72992c77fbb09195518e257d799501b7db4d04",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-base\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "before-home-1280.png",
+          "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/",
+          "state": "home",
+          "observedAtUtc": "2026-10-05T18:00:55.504Z"
+        },
+        {
+          "file": "before-ready-1280.png",
+          "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "ready",
+          "observedAtUtc": "2026-10-05T18:00:56.243Z"
+        },
+        {
+          "file": "before-fallback-1280.png",
+          "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "fallback",
+          "observedAtUtc": "2026-10-05T18:00:56.992Z"
+        },
+        {
+          "file": "before-ready-390.png",
+          "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "ready",
+          "observedAtUtc": "2026-10-05T18:00:57.764Z"
+        },
+        {
+          "file": "before-fallback-390.png",
+          "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "fallback",
+          "observedAtUtc": "2026-10-05T18:00:58.497Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "after-home-1280.png",
+          "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/",
+          "state": "home",
+          "observedAtUtc": "2026-10-05T18:00:58.798Z"
+        },
+        {
+          "file": "after-ready-1280.png",
+          "sha256": "0c5e2c5d68b948a0663679ca27fc804c21977e12a616f5659fc4df86d8dff96b",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "ready",
+          "observedAtUtc": "2026-10-05T18:00:59.988Z"
+        },
+        {
+          "file": "after-fallback-1280.png",
+          "sha256": "28ede8f124a877e84c21a16127ad3c6b22fc4134d7dd9c41b6a8b2739849fcde",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "fallback",
+          "observedAtUtc": "2026-10-05T18:01:01.108Z"
+        },
+        {
+          "file": "after-ready-390.png",
+          "sha256": "af793a9de08dd3fef9d004ece11899101a850184dd3c17028778740b2eec117a",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "ready",
+          "observedAtUtc": "2026-10-05T18:01:02.178Z"
+        },
+        {
+          "file": "after-fallback-390.png",
+          "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "fallback",
+          "observedAtUtc": "2026-10-05T18:01:03.247Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b009df6d5321270c791161b4f193ef71087a7eafb100acc7b906dea6e2e5781d"
+        },
+        {
+          "path": "_expo/static/js/web/index-bfda84562dffef3bf2e7fc46883708f2.js",
+          "sha256": "7b786216bc52686ad847b200f8893eb7ab7d3b0cee96188dd6d47312d6bef8ea"
+        },
+        {
+          "path": "_expo/static/js/web/App-9eaeaecb0cb5693c7a0e9cfd03a7483f.js",
+          "sha256": "529e93606b6b5158ba9af9180fa27f837d8be404cc85f899422022f423207a59"
+        }
+      ]
+    }
+  ]
+}

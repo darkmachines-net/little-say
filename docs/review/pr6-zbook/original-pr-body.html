@@ -1,0 +1,89 @@
+<p dir="auto">Generic truck and tractor emoji can represent several different construction cards. Automatic picture selection now prioritizes a usable first draft: keep accurate emoji, use library artwork for gaps, and generate only what is still missing. This adds automatic picture selection from a licensed library and generated illustrations, with source controls in prompts, board settings, card settings, and defaults for new boards.</p>
+<p dir="auto">AI board creation and editing now use a full-page workspace. The conversation stays beside a persistent draft canvas on desktop/tablet and below it on phones. Pictures appear individually after download; active cards pulse, queued cards are labeled, and completed images remain visible during clarification. Back cancels outstanding work; saving remains explicit. Reload opens a fresh conversation for the route's source board.</p>
+<p dir="auto">New board starts the conversation directly. Build manually is a separate, quieter entry on the boards screen. Sending or recording starts immediately with an inline data-use explanation and no opt-in interstitial. Automatic includes generation only for gaps; legacy consistency preferences no longer promote the rest of the board. Completed drafts do not suggest AI illustrations. Parents can deliberately choose them through Picture settings; cancelling that change restores the usable draft. Library only and Emoji only avoid new generation. When a clearer picture is unavailable, the board keeps the best emoji or an existing saved picture and shows one concise summary. Source choices use an explained selector; there is no color/black-and-white style option. Header settings remain available during work, with changes applied on the next update. Progress counts only targeted cards; library lookup and image generation have distinct labels.</p>
+<p dir="auto">Photos and protected pictures remain intact during board-wide changes. Verified PNGs persist offline with source credits. The backend provides a pinned catalog, bounded durable jobs, cancellation, immutable assets, and visual review. Existing boards keep their appearance. <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/PICTURES.md">Picture contracts and configuration</a>.</p>
+<p dir="auto"><strong>Base:</strong> current master, including the development launchers from <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5703484415" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/7" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/7/hovercard" href="https://github.com/MChartier/little-say/pull/7">#7</a>. The landing-page change already merged into this branch (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5704554783" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/8" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/8/hovercard" href="https://github.com/MChartier/little-say/pull/8">#8</a>) is preserved.</p>
+<h3 dir="auto">Validation</h3>
+<ul dir="auto">
+<li>Release metadata, TypeScript, <strong>194 unit/service tests</strong>, and production server/web builds passed in an isolated PR copy.</li>
+<li><strong>64 Chromium scenarios passed</strong> on the preceding build. After removing unsolicited illustration suggestions, the rebuilt app passed all <strong>10 picture scenarios</strong>, including a six-animal board that produces zero image jobs and saves without an illustration prompt. Coverage includes out-of-order picture completion, two animation cycles, reduced motion, source changes during generation, cancellation after partial completion, reload/Back navigation, microphone cleanup, failed saves, offline fallback playback, protected pictures, keyboard source selection, and landing-page routing.</li>
+<li>Captured <strong>20 new before/after screenshots</strong> for entry points, direct first-send, emoji readiness and a single picture gap. Refreshed the 31 workspace and visualization/control comparisons. Captures check the SHA-256 identities of retained real picture assets and make no AI calls.</li>
+<li>Earlier live evaluations produced six construction and six animal illustrations with no final model-review rejections; six real Mulberry animal assets were also downloaded through the production library path. Reports and licensing are linked below. These outputs were visually inspected; automated review does not establish semantic correctness for every card.</li>
+</ul>
+<p dir="auto">Physical Android/iPad validation and deployment remain outstanding. Workspace screenshots use controlled proposal/job timing and failures with retained real PNGs; they demonstrate presentation, not live generation speed or automatic matching accuracy. Browser tests separately verify offline persistence. Unsaved conversation drafts remain in memory.</p>
+<h3 dir="auto">Fast first draft and clearer entry points</h3>
+<p dir="auto">Complete emoji and mixed-picture boards go straight to save or further conversation. <a href="https://github.com/MChartier/little-say/blob/bac81796235ecef4647f7584d6ecfac6a8b0d80e/docs/screenshots/creation-entry/after/emoji-ready-phone.png">The previous illustration suggestion</a> has been removed; deliberate source changes remain in Picture settings.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Before · interrupted first send</th>
+<th>After · ready with emoji</th>
+<th>After · only the gap gets an illustration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/before/first-send-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/before/first-send-phone.png?raw=true" alt="Previous first-send opt-in interruption" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/emoji-ready-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/emoji-ready-phone.png?raw=true" alt="Six-animal emoji draft ready to save without an illustration suggestion" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-ready-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-ready-phone.png?raw=true" alt="Three accurate animal emoji retained with one excavator illustration" width="230" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/boards-desktop.png">Separate manual entry</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/conversation-phone.png">Conversation suggestions</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-library-search-desktop.png">Library lookup for one gap</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-generating-desktop.png">Generating only that illustration</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/README.md">Evidence and reproduction</a></p>
+<p dir="auto">Account compatibility was checked against <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5704847816" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/9" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/9/hovercard" href="https://github.com/MChartier/little-say/pull/9">#9</a>'s snapshot schema: board picture policy and card source/protection choices survive the JSON round-trip. No persistent settings are added; device defaults remain local under that sync contract. <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5704847816" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/9" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/9/hovercard" href="https://github.com/MChartier/little-say/pull/9">#9</a> merged into its account stack base rather than master, so account implementation changes are not bundled into this PR.</p>
+<h3 dir="auto">Live draft canvas</h3>
+<p dir="auto"><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-desktop.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-desktop.png?raw=true" alt="Full-page workspace showing two pictures ready, two active, and two queued beside the conversation" width="960" style="max-width: 100%;"></a></p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Phone · pictures arriving</th>
+<th>Phone · usable fallback</th>
+<th>Tablet · complete draft</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-phone.png?raw=true" alt="Phone draft with individual picture progress" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/fallback-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/fallback-phone.png?raw=true" alt="Saveable emoji board with one fallback summary" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/ready-tablet.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/ready-tablet.png?raw=true" alt="Completed construction draft beside the tablet conversation" width="270" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><a href="https://github.com/MChartier/little-say/blob/deaa91286df82f1b2e9ee1677dc79aab78eddcc0/docs/screenshots/card-pictures/prompt-controls-phone.png">Previous modal flow</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/settings-during-work.png">Settings during generation</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/clarification-desktop.png">Clarification with a retained canvas</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/README.md">All workspace evidence and reproduction</a></p>
+<h3 dir="auto">All three visualization types</h3>
+<p dir="auto">Every column uses Cow, Sheep, Horse, Rabbit, Chicken, and Duck. Library symbols are actual Mulberry artwork explicitly selected for this rendering comparison; generated pictures are retained live evaluation outputs. These are content comparisons, not older-build screenshots.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Emoji</th>
+<th>Library images</th>
+<th>Generated images</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-emoji-tablet.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-emoji-tablet.png?raw=true" alt="Animal cards using emoji" width="235" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-library-tablet.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-library-tablet.png?raw=true" alt="Same animal cards using Mulberry symbols" width="235" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-generated-tablet.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-generated-tablet.png?raw=true" alt="Same animal cards using generated illustrations" width="235" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto">Mulberry Symbols by Steve Lee, CC BY-SA 4.0; original artwork unchanged, rasterized with transparent padding. <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/README.md">Phone comparisons, construction example, evaluation reports, original sources and license links</a>.</p>
+<h3 dir="auto">Source controls before and after</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Before · wrapping source/style buttons</th>
+<th>After · explained source field</th>
+<th>After · vertical choices</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/6a5e3fe06f349cbc3c283212b5b56bf236f7d465/docs/screenshots/card-pictures/board-controls-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/6a5e3fe06f349cbc3c283212b5b56bf236f7d465/docs/screenshots/card-pictures/board-controls-phone.png?raw=true" alt="Earlier wrapping source and style buttons" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/board-controls-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/board-controls-phone.png?raw=true" alt="Board source selector with generation included in Automatic" width="230" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/source-options-phone.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/source-options-phone.png?raw=true" alt="Explained source options in a vertical list" width="230" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/card-controls-phone.png">Card settings</a> · <a href="https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/prompt-controls-phone.png">Prompt settings</a>. Control captures show unsaved choices; the example prompt is composed but not submitted.</p>

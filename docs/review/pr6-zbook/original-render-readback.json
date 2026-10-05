@@ -1,0 +1,168 @@
+{
+  "checkedAtUtc": "2026-10-05T18:04:11.835Z",
+  "head": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "bodySha256": "4022e547dc79611d07df974a70f99163b0e6a025b8c53ca7d347a1d0a536b00b",
+  "bodyHtmlSha256": "eb3b276f65f5e5aa99d77697f4e299de8b63dd5f7015f8807daea484788154ce",
+  "scope": "Exact API-rendered body_html with authenticated repository image routing. Full authenticated GitHub-page layout unavailable: CUA kernel fails applying sandbox ACLs. Browser UI access not claimed.",
+  "loaded": [
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/before/first-send-phone.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/emoji-ready-phone.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-ready-phone.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-desktop.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-phone.png?raw=true",
+      "loaded": true,
+      "width": 430,
+      "height": 932
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/fallback-phone.png?raw=true",
+      "loaded": true,
+      "width": 430,
+      "height": 932
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/ready-tablet.png?raw=true",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-emoji-tablet.png?raw=true",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-library-tablet.png?raw=true",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-generated-tablet.png?raw=true",
+      "loaded": true,
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/6a5e3fe06f349cbc3c283212b5b56bf236f7d465/docs/screenshots/card-pictures/board-controls-phone.png?raw=true",
+      "loaded": true,
+      "width": 430,
+      "height": 932
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/board-controls-phone.png?raw=true",
+      "loaded": true,
+      "width": 430,
+      "height": 932
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/source-options-phone.png?raw=true",
+      "loaded": true,
+      "width": 430,
+      "height": 932
+    }
+  ],
+  "images": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/before/first-send-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/creation-entry/before/first-send-phone.png",
+      "sha256": "f0303da65b8c085bc25cced2b1937c9bbd5d6bbf7e772c8740ccb36585a97100"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/emoji-ready-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/creation-entry/after/emoji-ready-phone.png",
+      "sha256": "24bec89085acbe41811dcb3210a0e9e4b3c8f5a94d5e33e6a87ce5388fa5e51f"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/creation-entry/after/gap-ready-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/creation-entry/after/gap-ready-phone.png",
+      "sha256": "32f76c877a501942181eb35f50f3295f007956ab17a026ee352b2c0d633cfe2a"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-desktop.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/board-workspace/progress-desktop.png",
+      "sha256": "e4406044ac232e3c23fe510fe55c28de1cca1738b9426a89a5adf9240ae4968f"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/progress-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/board-workspace/progress-phone.png",
+      "sha256": "79135b69b38907f6eb8b9c867b73c1ca3e37048501f57ca459f629958291aee2"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/fallback-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/board-workspace/fallback-phone.png",
+      "sha256": "aeb2d91d6c97dca0642df6725ed3adf44c855fab00d8577a023677d85e782a95"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/board-workspace/ready-tablet.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/board-workspace/ready-tablet.png",
+      "sha256": "5bcb7cb2b8436a0f0cabd31d2cc45a9689df5354a9b6a62f67a82c839d51fee6"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-emoji-tablet.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/card-pictures/animals-emoji-tablet.png",
+      "sha256": "8a14437b737aed9301c8c753724ac288bc3be9c07d2ece417a4f83cf15442e69"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-library-tablet.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/card-pictures/animals-library-tablet.png",
+      "sha256": "7f0757ff3c8952bd68ef97034ca0b55bcc02475e7fca0d1c932691384104df04"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/animals-generated-tablet.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/card-pictures/animals-generated-tablet.png",
+      "sha256": "452a9768e3db331e49226eeaa05e74edcdb1650f0c1e21dafed8b5a46c409c6c"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/6a5e3fe06f349cbc3c283212b5b56bf236f7d465/docs/screenshots/card-pictures/board-controls-phone.png?raw=true",
+      "commit": "6a5e3fe06f349cbc3c283212b5b56bf236f7d465",
+      "path": "docs/screenshots/card-pictures/board-controls-phone.png",
+      "sha256": "66247d3b825ebc8c26b8883174fc2542ee237e0357e7401cc11bec1bb0d88e0c"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/board-controls-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/card-pictures/board-controls-phone.png",
+      "sha256": "a21c92f37772d5f63a68c6951eb0e96a6fb29c66f8093eb47328b6fb98f4b895"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4cdeb323fb8ebfa5247193e47cf73d56f025e007/docs/screenshots/card-pictures/source-options-phone.png?raw=true",
+      "commit": "4cdeb323fb8ebfa5247193e47cf73d56f025e007",
+      "path": "docs/screenshots/card-pictures/source-options-phone.png",
+      "sha256": "a21e7df3f88f037c4051c148ab8c877c2da5bca14342a4d95be7b0e3cb42876f"
+    }
+  ]
+}

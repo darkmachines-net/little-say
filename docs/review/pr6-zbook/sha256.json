@@ -1,0 +1,134 @@
+[
+  {
+    "file": "after-fallback-1280.png",
+    "sha256": "28ede8f124a877e84c21a16127ad3c6b22fc4134d7dd9c41b6a8b2739849fcde"
+  },
+  {
+    "file": "after-fallback-390.png",
+    "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d"
+  },
+  {
+    "file": "after-home-1280.png",
+    "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0"
+  },
+  {
+    "file": "after-ready-1280.png",
+    "sha256": "0c5e2c5d68b948a0663679ca27fc804c21977e12a616f5659fc4df86d8dff96b"
+  },
+  {
+    "file": "after-ready-390.png",
+    "sha256": "af793a9de08dd3fef9d004ece11899101a850184dd3c17028778740b2eec117a"
+  },
+  {
+    "file": "baseline-build.log",
+    "sha256": "385f175986e6588c38550fcb1b85865654282218f15610242522e9ee216b34d9"
+  },
+  {
+    "file": "baseline-source-tree.txt",
+    "sha256": "887cb1d6b2b000fd4ec7cda068e024354ee658ab970b733ea23474578226267c"
+  },
+  {
+    "file": "before-fallback-1280.png",
+    "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+  },
+  {
+    "file": "before-fallback-390.png",
+    "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+  },
+  {
+    "file": "before-home-1280.png",
+    "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462"
+  },
+  {
+    "file": "before-ready-1280.png",
+    "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+  },
+  {
+    "file": "before-ready-390.png",
+    "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+  },
+  {
+    "file": "browser-install.log",
+    "sha256": "dcbfcca4f1344bf9e017f1b21eb418cd6570b82c780f1de73201470fb0a4cedb"
+  },
+  {
+    "file": "capture.ts",
+    "sha256": "b74885898900d9166dd56e2529ffc741f46b948dd149f92100e9687adb0e446b"
+  },
+  {
+    "file": "check.log",
+    "sha256": "928311510e9af2771c8ddcf7e773cbce80e41088bfcaa1b7c88e09e0bb4edd9b"
+  },
+  {
+    "file": "library-source.json",
+    "sha256": "7863b9e7a2e5373381c7161032d9aade727e562c636bb79e87ef1a2e0325fd6e"
+  },
+  {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537"
+  },
+  {
+    "file": "library.json",
+    "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+  },
+  {
+    "file": "manifest.json",
+    "sha256": "c81ccc24172ac1bb615ef7ec7c4002c881bc4abf25a55f2cd70348e04adeed05"
+  },
+  {
+    "file": "original-merge-diff.txt",
+    "sha256": "bd48e7445117b33469ed3a8b240e2e362b6d16bc02f39944dd094f8715d2a46b"
+  },
+  {
+    "file": "original-pr-body.html",
+    "sha256": "eb3b276f65f5e5aa99d77697f4e299de8b63dd5f7015f8807daea484788154ce"
+  },
+  {
+    "file": "original-pr-body.md",
+    "sha256": "4022e547dc79611d07df974a70f99163b0e6a025b8c53ca7d347a1d0a536b00b"
+  },
+  {
+    "file": "original-render-0.png",
+    "sha256": "d742274063a70c904ef11712387106c01e08e11693cea1f8b5af17232d72bb99"
+  },
+  {
+    "file": "original-render-1.png",
+    "sha256": "86604398c790429fc7118e65760d477c38677d847106d6b4d41e81a214120639"
+  },
+  {
+    "file": "original-render-2.png",
+    "sha256": "8c8f1e8ca6fe052558fea8ab122e0be0b3168032cf4ec9d569de8b45405df31b"
+  },
+  {
+    "file": "original-render-3.png",
+    "sha256": "cce600ec0665834a454fcf19de429fb65341cc72068c39814dd5d742b3294c7d"
+  },
+  {
+    "file": "original-render-4.png",
+    "sha256": "bfbe6900ff116b849c58149a9f4d38d1b3a7a4f3c8206e735124c3102b6f9a7f"
+  },
+  {
+    "file": "original-render-readback.json",
+    "sha256": "8d91ec7e96ba537a808fea49ff0717ba876c1880246dfa879c6f87b0ffc0aaca"
+  },
+  {
+    "file": "original-source-tree.txt",
+    "sha256": "ddfbf201b74b5f2eb698559a9204a9bc6fe033ffe915355fab850dd75c0e5aa1"
+  },
+  {
+    "file": "proposal.json",
+    "sha256": "79ed9ab644da2e4cd2374f72d06e3d423d5eda7c17262b90829fbca4d0ece3d4"
+  },
+  {
+    "file": "render-pr.mjs",
+    "sha256": "7f807a0b30d6f12b11139d5d286577b0458fdf2d82ac6794634eed0e4d3c8d17"
+  },
+  {
+    "file": "web-tests-matched.log",
+    "sha256": "af191ed36f94c81770b8d40594f0d768ee5fbd1edc052fcc1e05d3a0c731e7e0"
+  },
+  {
+    "file": "web-tests.log",
+    "sha256": "eb2b2b3607f08eb6ced5d850b99eb099beea63fb927cec7451adc213f72cbd27"
+  }
+]
