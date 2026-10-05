@@ -37,7 +37,9 @@ try {
     let turns = 0;
     await page.route('**/api/boards/propose', route => {
       const added = ++turns > 1;
-      return route.fulfill({ json: { boardId: null, baseRevision: null, proposal: { title: added ? 'Animals and an excavator' : 'Farm animals', explanation: added ? 'The animals keep their emoji. I’m finding a clearer picture for the excavator.' : 'Here are three farm animals.', needsClarification: false, picturePolicy: { mode: 'auto', style: 'color', consistent: true }, tiles: (added ? ['Cow', 'Sheep', 'Horse', 'Excavator'] : ['Cow', 'Sheep', 'Horse']).map((label, index) => ({ existingId: null, label, speech: label, language: 'en-US', emoji: ['🐄', '🐑', '🐎', '🚜'][index], color: ['sage', 'peach', 'sky', 'butter'][index] })) } } });
+      const labels = added ? ['Cow', 'Sheep', 'Horse', 'Excavator'] : ['Cow', 'Sheep', 'Horse', 'Pig', 'Chicken', 'Goat'];
+      const emoji = added ? ['🐄', '🐑', '🐎', '🚜'] : ['🐄', '🐑', '🐎', '🐖', '🐔', '🐐'];
+      return route.fulfill({ json: { boardId: null, baseRevision: null, proposal: { title: added ? 'Animals and an excavator' : 'Farm animals', explanation: added ? 'The animals keep their emoji. I’m finding a clearer picture for the excavator.' : 'Here are six farm animals.', needsClarification: false, picturePolicy: { mode: 'auto', style: 'color', consistent: true }, tiles: labels.map((label, index) => ({ existingId: null, label, speech: label, language: 'en-US', emoji: emoji[index], color: ['sage', 'peach', 'sky', 'butter', 'rose', 'lilac'][index] })) } } });
     });
     let release!: () => void;
     const pending = new Promise<void>(resolve => { release = resolve; });
@@ -53,6 +55,7 @@ try {
     release();
     if (!before) {
       await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+      await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
       await capture(page, `emoji-ready-${name}`);
       const report = JSON.parse(await readFile('artifacts/picture-evaluation/color/report.json', 'utf8'));
       const index = report.results.findIndex((result: any) => result.label === 'Excavator');
@@ -64,7 +67,7 @@ try {
       await page.route('**/api/pictures/jobs/*', route => route.fulfill({ json: status() }));
       await page.route('**/api/pictures/assets/*.png', route => route.fulfill({ body: bytes, contentType: 'image/png' }));
       await page.route('**/api/pictures/review', route => route.fulfill({ json: { rejected: [] } }));
-      await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Add an excavator');
+      await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Keep cow, sheep and horse, and add an excavator');
       await page.getByRole('button', { name: 'Send message', exact: true }).click();
       await expect(page.getByText('Finding a picture', { exact: true })).toBeVisible();
       await capture(page, `gap-library-search-${name}`);

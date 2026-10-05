@@ -207,7 +207,6 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
           </View>)}
           {submitted && <View style={{ alignSelf: 'flex-end', maxWidth: '96%', borderRadius: 18, padding: 14, backgroundColor: theme.accentSoft }}><Text style={{ ...styles.body, color: theme.ink }}>{submitted}</Text></View>}
           {busy && busy !== 'save' && <Working key={busy} pictures={Boolean(pictureMessage)} label={busy === 'generate' ? pictureMessage || 'Working on your draft…' : busy === 'transcribe' ? 'Transcribing your recording…' : 'Opening microphone…'} />}
-          {draft && !clarifying && !busy && !recording.recording && !prompt.trim() && !picturesChanged && picturePolicy.mode === 'auto' && preview?.tiles.some(tile => !tile.pictureOptions?.locked && tile.illustration.kind !== 'generated' && tile.illustration.kind !== 'photo' && !tile.pictureOptions?.mode) && <View style={{ gap: 4 }}><Text style={styles.small}>You can save these pictures now. A matching set of AI illustrations is optional and takes longer.</Text><Button kind="ghost" compact onPress={() => void updatePictures({ ...picturePolicy, mode: 'generated' })}>Create matching AI illustrations</Button></View>}
         </ScrollView>
         <View style={{ padding: width < 600 ? 10 : 16, gap: 10, borderTopWidth: 1, borderColor: theme.line }}>
           {Boolean(error) && <Notice>{error}</Notice>}

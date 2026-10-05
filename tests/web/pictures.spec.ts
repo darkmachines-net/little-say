@@ -40,7 +40,26 @@ async function mockPictures(page: Page, pending = false) {
 }
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
 
-test('Automatic fills only a gap and offers matching illustrations after the board is ready', async ({ page }) => {
+test('a complete emoji board is ready to save without suggesting AI illustrations', async ({ page }) => {
+  const { jobs } = await mockPictures(page);
+  const proposal = draft();
+  const animals = ['Cow', 'Sheep', 'Horse', 'Pig', 'Chicken', 'Goat'];
+  proposal.proposal.title = 'Farm animals';
+  proposal.proposal.tiles = proposal.proposal.tiles.map((tile, index) => ({ ...tile, label: animals[index], speech: animals[index], emoji: ['🐄', '🐑', '🐎', '🐖', '🐔', '🐐'][index] }));
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: proposal }));
+  await page.route('**/api/pictures/analyze', route => { const input = route.request().postDataJSON(); return route.fulfill({ json: { tiles: input.tiles.map((tile: any) => ({ id: tile.id, emoji: tile.emoji, concept: { description: tile.label, features: [], searchTerms: [tile.label], emojiAccurate: true } })) } }); });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Six farm animals');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
+  await expect(page.getByText(/A matching set of AI illustrations/)).toHaveCount(0);
+  expect(jobs).toHaveLength(0);
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  expect((await library(page)).boards.at(-1).tiles.map((tile: any) => tile.label)).toEqual(animals);
+});
+
+test('Automatic fills only a gap and illustration changes remain available in Picture settings', async ({ page }) => {
   const { jobs } = await mockPictures(page);
   const proposal = draft();
   proposal.proposal.tiles = proposal.proposal.tiles.slice(0, 3).map((tile, index) => ({ ...tile, label: ['Cow', 'Sheep', 'Excavator'][index], speech: ['Cow', 'Sheep', 'Excavator'][index], emoji: ['🐄', '🐑', '🚜'][index] }));
@@ -53,6 +72,13 @@ test('Automatic fills only a gap and offers matching illustrations after the boa
   expect(jobs.map(job => job.concept.description)).toEqual(['Excavator']);
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
   await expect(page.getByTestId('ai-draft')).toContainText('🐄');
+  await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
+  const requestIllustrations = async () => {
+    await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
+    await page.getByRole('button', { name: 'AI illustrations', exact: true }).click();
+    await page.getByRole('button', { name: 'Update draft pictures', exact: true }).click();
+  };
   const held = new Map<string, PictureJobRequest>();
   const hold = async (route: import('@playwright/test').Route) => {
     const job = route.request().postDataJSON();
@@ -66,7 +92,7 @@ test('Automatic fills only a gap and offers matching illustrations after the boa
   };
   await page.route('**/api/pictures/jobs', hold);
   await page.route('**/api/pictures/jobs/*', poll);
-  await page.getByRole('button', { name: 'Create matching AI illustrations', exact: true }).click();
+  await requestIllustrations();
   await expect(page.getByText('Generating illustration', { exact: true }).first()).toBeVisible();
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
   await page.getByRole('button', { name: 'Stop request', exact: true }).click();
@@ -74,7 +100,7 @@ test('Automatic fills only a gap and offers matching illustrations after the boa
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
   await page.unroute('**/api/pictures/jobs', hold);
   await page.unroute('**/api/pictures/jobs/*', poll);
-  await page.getByRole('button', { name: 'Create matching AI illustrations', exact: true }).click();
+  await requestIllustrations();
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
   expect(jobs.slice(1).map(job => job.mode)).toEqual(['generated', 'generated', 'generated']);
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(3);

@@ -10,7 +10,7 @@ Parent settings defines the source defaults for new boards. Automatic includes g
 
 Picture instructions can be given in the message or in **Picture settings**, available from the page header even while work runs. Source changes during a request apply to the next update, never silently changing active jobs. Picture source is one labeled selector with descriptions; selecting a choice or pressing Escape restores keyboard focus. Picture protection uses a separate switch; the old consistency switch is no longer shown. There is no illustration-style selector: new picture work always requests simple color, while existing saved artwork remains intact.
 
-Once an Automatic draft is ready, **Create matching AI illustrations** offers an optional, slower follow-up. Saving is already available; no illustration work starts until this action is chosen. Protected photos and card source overrides remain respected.
+Completed drafts go straight to save or refinement without suggesting AI illustrations. Parents who want different artwork can choose **AI illustrations** in **Picture settings**, then **Update draft pictures**. Unresolved gaps retain the existing fallback summary. Protected photos and card source overrides remain respected.
 
 Use **Update draft pictures** after adjusting conversation controls. Board **Pictures** offers **Improve pictures** and **Restyle board**, with a preview and explicit apply. In each card, **Picture options** supports library search, picture descriptions, source overrides and generation. An inherited card source shows the current board choice. **Keep this picture** protects an individual choice. Library search and selection work without an OpenAI key.
 

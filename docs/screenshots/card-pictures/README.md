@@ -24,7 +24,7 @@ The emoji column retains the reported mapping: two generic trucks, three tractor
 
 ## Controls before and after
 
-The **before** links point to the earlier PR implementation at commit [6a5e3fe](https://github.com/MChartier/little-say/commit/6a5e3fe06f349cbc3c283212b5b56bf236f7d465). The current controls replace wrapping choices with one labeled source field and an explained vertical list. Independent settings use switches. There is no illustration-style selector; new picture work uses color. Automatic generates only for gaps after emoji and library choices. Matching illustrations are an optional follow-up, with no opt-in interstitial. Library only and Emoji only avoid new generation. Prompt settings open from the full-page workspace header; see [live canvas states and the previous modal](../board-workspace/README.md).
+The **before** links point to the earlier PR implementation at commit [6a5e3fe](https://github.com/MChartier/little-say/commit/6a5e3fe06f349cbc3c283212b5b56bf236f7d465). The current controls replace wrapping choices with one labeled source field and an explained vertical list. Independent settings use switches. There is no illustration-style selector; new picture work uses color. Automatic generates only for gaps after emoji and library choices. Picture settings offers deliberate illustration changes; completed drafts do not suggest them. There is no opt-in interstitial. Library only and Emoji only avoid new generation. Prompt settings open from the full-page workspace header; see [live canvas states and the previous modal](../board-workspace/README.md).
 
 | Viewport | Before: wrapping choices | After: collapsed selector | After: explained choices | Card controls | Prompt controls |
 | --- | --- | --- | --- | --- | --- |

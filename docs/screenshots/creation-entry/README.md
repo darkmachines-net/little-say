@@ -10,11 +10,13 @@ Captured October 4, 2026 in Chromium at 1280 × 900 (desktop) and 390 × 844 (ph
 | Accurate emoji are ready to save without image jobs | — | [Emoji ready](after/emoji-ready-desktop.png) | [Emoji ready](after/emoji-ready-phone.png) |
 | Only the excavator gap searches for a library picture | — | [Library search](after/gap-library-search-desktop.png) | [Library search](after/gap-library-search-phone.png) |
 | Only that gap generates an illustration after lookup fails | — | [Generating](after/gap-generating-desktop.png) | [Generating](after/gap-generating-phone.png) |
-| Usable mixed board; matching illustrations remain optional | — | [Ready](after/gap-ready-desktop.png) | [Ready](after/gap-ready-phone.png) |
+| Usable mixed board; no illustration suggestion | — | [Ready](after/gap-ready-desktop.png) | [Ready](after/gap-ready-phone.png) |
+
+[Previous illustration suggestion](https://github.com/MChartier/little-say/blob/bac81796235ecef4647f7584d6ecfac6a8b0d80e/docs/screenshots/creation-entry/after/emoji-ready-phone.png) shows the removed prompt. The current emoji-ready captures use six farm animals; both completed emoji and mixed boards now save without this suggestion.
 
 The excavator is a retained real image from the earlier [evaluation](../card-pictures/evaluation.json), verified against its SHA-256 digest before capture. Lookup and generation timing are controlled, so this demonstrates targeted work and status presentation, not live service latency or matching accuracy. [All three sources](../card-pictures/README.md) include actual library artwork alongside emoji and generated pictures.
 
-Validation: 194 unit/service tests, TypeScript, release checks, production builds, and 64 Chromium scenarios passed. The final layout and cancellation adjustments also passed the 20 conversation/picture scenarios. Coverage includes zero picture jobs for accurate emoji, retaining good pictures when another card has a gap, using a library match without generation, phase-aware feedback, and cancelling an optional illustration upgrade while keeping the original draft saveable. Physical-device validation remains outstanding.
+Previous full validation passed 194 unit/service tests and 64 Chromium scenarios. The latest no-suggestion refinement passed TypeScript, a production web build, and all 10 picture browser scenarios, including a six-animal emoji board that saves without any image jobs or illustration prompt. Coverage includes zero picture jobs for accurate emoji, retaining good pictures when another card has a gap, using a library match without generation, phase-aware feedback, and cancelling a settings-requested illustration change while keeping the original draft saveable. Physical-device validation remains outstanding.
 
 ```sh
 npm run build
