@@ -8,7 +8,7 @@ import { PictureChoiceField, type PictureChoice } from './PictureChoiceField';
 import { styles, theme } from './theme';
 
 const pictureModes: readonly PictureChoice<PicturePolicy['mode']>[] = [
-  { value: 'auto', label: 'Automatic', description: 'Keep clear emoji, find library pictures, or generate a clearer illustration. Use emoji if pictures are unavailable.' },
+  { value: 'auto', label: 'Automatic', description: 'Keep clear emoji. Fill gaps with library pictures, then generate only what is still missing.' },
   { value: 'library', label: 'Library only', description: 'Use free library pictures, with emoji when there is no good match. Never generate new images.' },
   { value: 'generated', label: 'AI illustrations', description: 'Create illustrations with your server’s AI service. Keep emoji if generation is unavailable.' },
   { value: 'emoji', label: 'Emoji only', description: 'Use emoji, even when the closest match is approximate.' },
@@ -23,7 +23,6 @@ export function PicturePreferences({ value, onChange, disabled = false }: { valu
   const [open, setOpen] = useState(false);
   return <View style={{ gap: 20 }}>
     <PictureChoiceField label="Picture source" value={value.mode} choices={pictureModes} expanded={open} onExpand={setOpen} disabled={disabled} onChange={mode => onChange({ ...value, mode, style: 'color' })} />
-    {value.mode !== 'emoji' && <PictureSwitch label="Keep pictures consistent" description="Use illustrations throughout when emoji cannot cover the board." value={value.consistent} disabled={disabled} onChange={consistent => onChange({ ...value, consistent, style: 'color' })} />}
   </View>;
 }
 

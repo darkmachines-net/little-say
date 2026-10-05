@@ -7,7 +7,7 @@ import { apiFetch, backendUrl } from './api';
 import { savePictureAsset } from '../data/storage';
 
 const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-export type PictureTileState = 'queued' | 'working' | 'ready' | 'fallback';
+export type PictureTileState = 'queued' | 'working' | 'finding' | 'generating' | 'ready' | 'fallback';
 export interface PictureWorkOptions {
   signal?: AbortSignal;
   targetIds?: Set<string>;
@@ -15,7 +15,6 @@ export interface PictureWorkOptions {
   regenerate?: boolean;
   forceIds?: Set<string>;
   replaceProtected?: boolean;
-  expandConsistency?: boolean;
   allowGeneration?: boolean;
   /** Report parent-facing progress without publishing draft changes to the saved board. */
   progress?: (message: string) => void;
@@ -71,10 +70,10 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
     const kept = keptIds.size ? 'Existing pictures were kept where replacements were unavailable.' : '';
     return { board: result, issues: [summary, kept, ...new Set(issues)].filter(Boolean) };
   };
-  const eligible = board.tiles.filter(tile => (!options.targetIds || options.targetIds.has(tile.id) || (options.expandConsistency && policy.consistent && tile.illustration.kind === 'emoji')) && ((!tile.pictureOptions?.locked && tile.illustration.kind !== 'photo') || (options.replaceProtected && options.targetIds?.has(tile.id))));
+  const eligible = board.tiles.filter(tile => (!options.targetIds || options.targetIds.has(tile.id)) && ((!tile.pictureOptions?.locked && tile.illustration.kind !== 'photo') || (options.replaceProtected && options.targetIds?.has(tile.id))));
   if (!eligible.length) return { board: result, issues };
   if (!settings.aiConsent) return { board: result, issues: ['Kept the current pictures. Use AI services or choose library pictures manually to improve them.'] };
-  options.progress?.('Checking picture meanings…');
+  options.progress?.('Choosing pictures for your cards…');
   let analysis: z.infer<typeof pictureAnalysisSchema>;
   try {
     analysis = pictureAnalysisSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/analyze', json({ tiles: board.tiles.map(tile => ({ id: tile.id, label: tile.label, language: tile.language, emoji: tile.illustration.kind === 'emoji' ? tile.illustration.emoji : '', instruction: tile.pictureOptions?.instruction ?? '' })) }), options.signal));
@@ -104,7 +103,8 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
   }
   const todo = eligible.filter(tile => (tile.pictureOptions?.mode ?? policy.mode) !== 'emoji' && targets.has(tile.id) && (options.restyle || options.regenerate || forceIds.has(tile.id) || tile.illustration.kind === 'emoji' || tile.illustration.kind === 'unresolved'));
   for (const tile of todo) options.tileProgress?.(tile.id, 'queued');
-  if (todo.length) options.progress?.(`Preparing pictures · 0 of ${todo.length}`);
+  const progress = (done: number) => options.progress?.(`Improving ${todo.length} ${todo.length === 1 ? 'card picture' : 'card pictures'} · ${done} of ${todo.length} ready`);
+  if (todo.length) progress(0);
   const draftId = Crypto.randomUUID(); let cursor = 0; let done = 0;
   const changed = new Set<string>();
   const worker = async () => {
@@ -116,7 +116,7 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
       try {
         const mode = tile.pictureOptions?.mode ?? policy.mode;
         let job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/jobs', json({ requestId: id, draftId, tileId: tile.id, concept: concepts.get(tile.id), style: 'color', mode: mode === 'emoji' ? 'auto' : mode, allowGeneration: allowGeneration && mode !== 'library', regenerate: Boolean(options.regenerate), neighbors: board.tiles.filter(other => other.id !== tile.id).map(other => concepts.get(other.id)!.description) }), options.signal));
-        while (job.state === 'queued' || job.state === 'working') { options.tileProgress?.(tile.id, job.state); await pause(options.signal); job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}`, {}, options.signal)); }
+        while (job.state === 'queued' || job.state === 'working') { options.tileProgress?.(tile.id, job.state === 'queued' ? 'queued' : job.phase ?? 'working'); await pause(options.signal); job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}`, {}, options.signal)); }
         if (job.id !== id || job.draftId !== draftId || job.tileId !== tile.id) throw new Error('This picture belongs to an older draft.');
         if (job.state !== 'complete' || !job.result) throw new Error(job.error || 'Picture work stopped.');
         const picture = job.result;
@@ -128,13 +128,13 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
       } catch (error) {
         if (options.signal?.aborted) { cancel(); throw error; }
         retain(tile, emoji.get(tile.id));
-      } finally { options.signal?.removeEventListener('abort', cancel); done++; options.progress?.(`Preparing pictures · ${done} of ${todo.length}`); if (!options.signal?.aborted) options.preview?.({ ...result, tiles: [...result.tiles] }); }
+      } finally { options.signal?.removeEventListener('abort', cancel); done++; progress(done); if (!options.signal?.aborted) options.preview?.({ ...result, tiles: [...result.tiles] }); }
     }
   };
   await Promise.all([worker(), worker()]);
   if (options.signal?.aborted) throw new Error('Picture work stopped.');
   if (changed.size) {
-    options.progress?.('Checking the pictures together…');
+    options.progress?.('Checking that the new pictures match your words…');
     const cards = result.tiles.flatMap(tile => (tile.illustration.kind === 'library' || tile.illustration.kind === 'generated') ? [{ id: tile.id, assetId: tile.illustration.assetId, concept: concepts.get(tile.id)! }] : []);
     try {
       const review = z.object({ rejected: z.array(z.string()) }).parse(await apiFetch(settings.backendUrl, '/api/pictures/review', json({ cards }), options.signal));
@@ -172,6 +172,6 @@ export async function prepareProposalPictures(source: Board | undefined, envelop
     }
     return tile;
   });
-  const prepared = await prepareBoardPictures(board, settings, { ...options, targetIds, forceIds, replaceProtected: true, expandConsistency: !source });
+  const prepared = await prepareBoardPictures(board, settings, { ...options, targetIds, forceIds, replaceProtected: true });
   return { proposal: { ...envelope, pictures: prepared.board.tiles.map((tile, index) => ({ index, illustration: tile.illustration, concept: tile.pictureConcept })) }, issues: prepared.issues };
 }

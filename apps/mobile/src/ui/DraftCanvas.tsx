@@ -29,10 +29,11 @@ export function DraftCanvas({ board, states, message, compact = false }: { board
     <ScrollView testID="ai-canvas-scroll" style={{ flex: 1 }} contentContainerStyle={{ padding: compact ? 9 : 17, paddingTop: 0 }}>
       {board ? <View style={{ gap: 8 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', margin: -4 }}>{board.tiles.map(tile => {
         const state = states[tile.id];
-        const label = state === 'working' ? 'Making picture' : state === 'queued' ? 'Queued' : state === 'ready' ? 'Ready' : state === 'fallback' ? tile.illustration.kind === 'emoji' ? 'Using emoji' : 'Kept picture' : '';
+        const active = state === 'working' || state === 'finding' || state === 'generating';
+        const label = state === 'finding' ? 'Finding a picture' : state === 'generating' ? 'Generating illustration' : active ? 'Improving picture' : state === 'queued' ? 'Queued' : state === 'ready' ? 'Ready' : state === 'fallback' ? tile.illustration.kind === 'emoji' ? 'Using emoji' : 'Kept picture' : '';
         return <View key={tile.id} testID={`draft-card-${tile.id}`} accessibilityLabel={`${tile.label}${label ? `: ${label}` : ''}`} style={{ width: '33.3333%', padding: 4 }}>
-          <View style={{ height: compact ? 86 : 150, borderRadius: 16, borderWidth: state === 'working' ? 2 : 0, borderColor: theme.accent }}><TileFace tile={tile} compact size={compact ? 40 : 72} /></View>
-          {label && <View style={{ minHeight: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>{state === 'working' ? <ActivePicture /> : state === 'queued' ? <Clock accessible={false} size={12} color={theme.muted} /> : state === 'ready' ? <Check accessible={false} size={12} color={theme.accent} /> : null}<Text style={{ color: theme.muted, fontSize: 11 }}>{label}</Text></View>}
+          <View style={{ height: compact ? 86 : 150, borderRadius: 16, borderWidth: active ? 2 : 0, borderColor: theme.accent }}><TileFace tile={tile} compact size={compact ? 40 : 72} /></View>
+          {label && <View style={{ minHeight: 25, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>{active ? <ActivePicture /> : state === 'queued' ? <Clock accessible={false} size={12} color={theme.muted} /> : state === 'ready' ? <Check accessible={false} size={12} color={theme.accent} /> : null}<Text style={{ color: theme.muted, fontSize: 11 }}>{label}</Text></View>}
         </View>;
       })}</View></View> : <View accessible={false} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 14 }}>{['#CCEFDF', '#FFDCC2', '#FFF0A9', '#CBEBFF', '#E2D8FF', '#FFD7E2'].map(color => <View key={color} style={{ width: '30%', height: compact ? 65 : 125, borderRadius: 16, backgroundColor: color, opacity: 0.45 }} />)}</View>}
     </ScrollView>

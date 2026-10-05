@@ -8,7 +8,7 @@ import { starterLibrary } from '../../../tests/fixtures/library';
 const concept = (description: string, emojiAccurate = true): PictureConcept => ({ description, emojiAccurate, features: [], searchTerms: [description] });
 const tile = (id: string, emoji: string, description: string, emojiAccurate = true) => ({ id, emoji, concept: concept(description, emojiAccurate), locked: false });
 describe('picture selection policy', () => {
-  it('promotes all automatic pictures when construction concepts share generic emoji', () => {
+  it('targets each construction gap when concepts share inaccurate generic emoji', () => {
     const cards = [tile('dump', '🚚', 'dump truck', false), tile('mixer', '🚚', 'concrete mixer truck', false), tile('excavator', '🚜', 'excavator', false), tile('dozer', '🚜', 'bulldozer', false), tile('crane', '🏗️', 'crane truck', false), tile('roller', '🚜', 'road roller', false)];
     expect([...pictureTargets(cards, defaultPicturePolicy)]).toEqual(cards.map(card => card.id));
   });
@@ -20,6 +20,7 @@ describe('picture selection policy', () => {
   it('keeps protected and emoji-only cards and supports mixed pictures', () => {
     const cards = [tile('a', '🐄', 'cow'), tile('b', '🚜', 'excavator', false), { ...tile('c', '🚜', 'bulldozer', false), locked: true }];
     expect([...pictureTargets(cards, { ...defaultPicturePolicy, consistent: false })]).toEqual(['b']);
+    expect([...pictureTargets(cards, { ...defaultPicturePolicy, consistent: true })]).toEqual(['b']);
     expect(pictureTargets(cards, { ...defaultPicturePolicy, mode: 'emoji' }).size).toBe(0);
     expect([...pictureTargets(cards, { ...defaultPicturePolicy, mode: 'library' })]).toEqual(['a', 'b']);
   });

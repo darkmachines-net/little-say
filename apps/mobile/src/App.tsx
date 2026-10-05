@@ -115,7 +115,7 @@ function Application() {
   if (draftRoute.route) {
     const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={accept} onConsent={consent} onClose={draftRoute.close} onManual={source ? undefined : () => { draftRoute.close(); manual(); }} />;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={accept} onAiUse={consent} onClose={draftRoute.close} />;
   }
   return <View style={styles.page}>
     <StatusBar style="dark" />
@@ -136,7 +136,7 @@ function Application() {
       const restored = { ...previous, revision: current.revision + 1, updatedAt: new Date().toISOString() };
       void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) })).catch(() => {});
       setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
-    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => setSettingsOpen(true)} onCompose={() => draftRoute.open()} onConsent={consent} onDelete={deleteBoard} onFavorite={id => {
+    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => setSettingsOpen(true)} onCompose={() => draftRoute.open()} onManual={manual} onConsent={consent} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);

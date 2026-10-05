@@ -13,9 +13,9 @@ import { Brand, MountainMark } from './Brand';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace.
+ * AI creation workspace, with a separate manual creation entry.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuBoard = library.boards.find(board => board.id === menuId);
@@ -36,7 +36,7 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>
-        <Button icon={Plus} onPress={onCompose}>New board</Button>
+        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>New board</Button><Button kind="ghost" compact onPress={onManual}>Build manually</Button></View>
       </View>
       {recent && card(recent, true)}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 }}>
