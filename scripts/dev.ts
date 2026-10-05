@@ -1,6 +1,6 @@
 /**
- * @file Launches or diagnoses the local API and Expo pair with a reachable LAN URL and isolated server
- * credentials.
+ * @file Launches or diagnoses Expo against a watched local API or the self-hosted backend, with
+ * reachable LAN URLs, isolated server credentials, and owned-process cleanup.
  */
 
 import { spawn, type ChildProcess } from 'node:child_process';
@@ -9,12 +9,10 @@ import { createServer } from 'node:net';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
-import { apiEnvironment, developmentConfig, ensureDevelopmentEnv, expoEnvironment, lanAddresses, loadDevelopmentEnv, withDevelopmentApiKey } from './dev-config';
+import { apiEnvironment, developmentConfig, developmentOptions, ensureDevelopmentEnv, expoEnvironment, lanAddresses, loadDevelopmentEnv, withDevelopmentApiKey } from './dev-config';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const require = createRequire(import.meta.url);
-const flags = new Set(process.argv.slice(2));
-const supported = ['--web', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help'];
 const children: ChildProcess[] = [];
 let stopping: Promise<void> | undefined;
 
@@ -49,8 +47,8 @@ async function assertPortFree(port: number, service: string) {
     socket.listen(port, '0.0.0.0', () => socket.close(error => error ? reject(error) : done()));
   });
 }
-async function health(url: string) {
-  const response = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(2000) });
+async function health(url: string, timeout = 2000) {
+  const response = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(timeout) });
   const data = await response.json() as { status?: string; aiConfigured?: boolean; version?: string };
   if (!response.ok || data.status !== 'ok' || typeof data.aiConfigured !== 'boolean' || !data.version) throw new Error('Not a Little Say API health response.');
   return data;
@@ -73,45 +71,45 @@ function start(label: string, args: string[], cwd: string, env: NodeJS.ProcessEn
   return child;
 }
 async function main() {
-  const unknown = [...flags].filter(flag => !supported.includes(flag));
-  if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}. Use npm run dev -- --help.`);
+  const { flags, backend, startApi } = developmentOptions(process.argv.slice(2));
+  const remote = backend === 'remote';
   if (flags.has('--help')) {
-    console.log('npm run dev [-- --clear]   API + Expo Go on your LAN\nnpm run dev:web            API + Expo browser app\nnpm run dev:server         API only\nnpm run dev:app            Expo Go only (API must already be running)\nnpm run dev:setup          Create .env without overwriting it\nnpm run dev:doctor         List addresses and check API/Metro connectivity\nSet DEV_HOST, DEV_API_PORT, DEV_EXPO_PORT in .env to override detection.');
+    console.log('npm run dev / dev:local    Local API + Expo Go on your LAN\nnpm run dev:remote         Expo Go + self-hosted API (no local backend/key needed)\nnpm run dev:web            Local API + Expo browser app\nnpm run dev:web:remote     Expo browser app + self-hosted API through a local proxy\nnpm run dev:server         Local API only\nnpm run dev:app            Expo Go only (local API must already be running)\nnpm run dev:setup          Create .env without overwriting it\nnpm run dev:doctor         Check local API/Metro connectivity; add -- --remote for self-hosted\nAppend -- --clear to clear Metro caches. Set DEV_HOST and DEV_EXPO_PORT in .env to override detection.\nDEV_API_PORT selects the local API port. DEV_REMOTE_API_URL overrides https://littlesay.darkmachines.net.');
     return;
   }
-  if (['--server-only', '--app-only', '--setup', '--doctor'].filter(flag => flags.has(flag)).length > 1) throw new Error('Choose one launch mode.');
-  if (await ensureDevelopmentEnv(root)) console.log('Created .env for optional local settings. The backend can use your AAC_OPENAI_KEY environment variable.');
-  const env = await withDevelopmentApiKey(await loadDevelopmentEnv(root));
+  if (!remote && await ensureDevelopmentEnv(root)) console.log('Created .env for optional local settings. The backend can use your AAC_OPENAI_KEY environment variable.');
+  const loaded = await loadDevelopmentEnv(root);
+  const env = startApi && !flags.has('--doctor') && !flags.has('--setup') ? await withDevelopmentApiKey(loaded) : loaded;
   const addresses = lanAddresses();
   if (flags.has('--doctor')) for (const address of addresses) console.log(`Interface: ${address.name} — ${address.address}`);
-  const config = developmentConfig(env, addresses);
-  console.log(`\nLittle Say local development\nAPI:      ${config.apiUrl}\nHealth:   ${config.apiUrl}/api/health\nExpo Go:  ${config.expoUrl}\nWeb:      http://localhost:${config.expoPort}\nAPI key:  ${(env.AAC_OPENAI_KEY || env.OPENAI_API_KEY)?.trim() ? 'configured (backend only)' : 'missing — set AAC_OPENAI_KEY or add OPENAI_API_KEY to .env, then restart'}\n`);
+  const config = developmentConfig(env, addresses, backend);
+  console.log(`\nLittle Say development (${remote ? 'self-hosted backend' : 'local backend'})\nAPI:      ${config.apiUrl}\nHealth:   ${config.apiUrl}/api/health\nExpo Go:  ${config.expoUrl}\nWeb:      http://localhost:${config.expoPort}\nAPI key:  ${remote ? 'managed on the self-hosted backend; no local key needed' : (env.AAC_OPENAI_KEY || env.OPENAI_API_KEY)?.trim() ? 'configured (backend only)' : 'missing — set AAC_OPENAI_KEY or add OPENAI_API_KEY to .env, then restart'}\n`);
   if (flags.has('--setup')) { console.log('Edit .env, then run npm run dev. Existing values are preserved.'); return; }
   if (flags.has('--doctor')) {
     let apiReady = false;
-    for (const url of [`http://127.0.0.1:${config.apiPort}`, config.apiUrl]) {
-      try { const data = await health(url); console.log(`PASS API ${url}: AI ${data.aiConfigured ? 'configured' : 'not configured'}`); apiReady = true; }
-      catch { console.log(`FAIL API ${url}: not reachable. Start npm run dev; check port and DEV_HOST.`); process.exitCode = 1; }
+    for (const url of remote ? [config.apiUrl] : [`http://127.0.0.1:${config.apiPort}`, config.apiUrl]) {
+      try { const data = await health(url, remote ? 10000 : 2000); console.log(`PASS API ${url}: AI ${data.aiConfigured ? 'configured' : 'not configured'}`); apiReady = true; }
+      catch { console.log(`FAIL API ${url}: not reachable. ${remote ? 'Check the self-hosted service, network access, and DEV_REMOTE_API_URL.' : 'Start npm run dev; check port and DEV_HOST.'}`); process.exitCode = 1; }
     }
     try {
       const response = await fetch(`${config.webUrl}/status`, { signal: AbortSignal.timeout(2000) });
       if (!response.ok || !(await response.text()).includes('packager-status:running')) throw new Error('Not Metro');
       console.log(`PASS Metro ${config.webUrl}`);
-    } catch { console.log('Metro is not reachable (expected when running only dev:server).'); }
+      if (remote) { await health(config.webUrl); console.log(`PASS web API proxy ${config.webUrl}/api/health`); }
+    } catch { console.log(remote ? 'Metro or its web API proxy is not reachable. Start npm run dev:remote.' : 'Metro is not reachable (expected when running only dev:server).'); if (remote) process.exitCode = 1; }
     if (apiReady) console.log(`On the device, open ${config.apiUrl}/api/health. It should show status: ok. This computer-only check cannot prove device/firewall reachability.`);
     console.log('Use the same trusted LAN. Allow Expo Go local-network access. If needed, see docs/LOCAL_DEVELOPMENT.md for the Windows firewall helper. No model calls were made.');
     return;
   }
   const serverOnly = flags.has('--server-only');
-  const appOnly = flags.has('--app-only');
-  if (!appOnly) await assertPortFree(config.apiPort, 'API');
+  if (startApi) await assertPortFree(config.apiPort, 'API');
   if (!serverOnly) await assertPortFree(config.expoPort, 'Expo');
-  if (!appOnly) start('API', [require.resolve('tsx/cli'), 'watch', 'src/index.ts'], resolve(root, 'apps/server'), apiEnvironment(env, config), false);
-  const ready = await waitForApi(config.apiUrl);
+  if (startApi) start('API', [require.resolve('tsx/cli'), 'watch', 'src/index.ts'], resolve(root, 'apps/server'), apiEnvironment(env, config), false);
+  const ready = remote ? await health(config.apiUrl, 10000).catch(() => { throw new Error(`Self-hosted API ${config.apiUrl} is unavailable or did not return Little Say health. Check the deployment/network or DEV_REMOTE_API_URL, then retry. No local backend was started.`); }) : await waitForApi(config.apiUrl);
   if (!ready || stopping) return;
   console.log(`API ready. AI ${ready.aiConfigured ? 'configured' : 'disabled until a key is added'}.`);
   if (serverOnly) { console.log('Run npm run dev:app in a second terminal. Ctrl+C stops the API.'); return; }
-  console.log('Scan the Expo QR code on a device on the same LAN. No server URL entry is needed in the app.\nCtrl+C stops both processes. Restart after changing .env or networks.\n');
+  console.log(`Scan the Expo QR code on a device on the same LAN. No server URL entry is needed in the app.\n${remote ? 'Browser API requests use an Expo development proxy. Ctrl+C stops Expo; the self-hosted backend keeps running.' : 'Ctrl+C stops the processes started by this launcher.'}\nStop this session before switching backend modes. Restart after changing .env or networks.\n`);
   start('Expo', [require.resolve('expo/bin/cli'), 'start', '--go', '--lan', '--port', String(config.expoPort), ...(flags.has('--web') ? ['--web'] : []), ...(flags.has('--clear') ? ['--clear'] : [])], resolve(root, 'apps/mobile'), expoEnvironment(process.env, config), true);
 }
 main().catch(async error => { console.error(`\n${(error as Error).message}`); await stop(1); });
