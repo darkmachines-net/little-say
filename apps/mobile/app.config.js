@@ -26,7 +26,7 @@ module.exports = ({ config }) => {
     },
     ios: { ...config.ios, buildNumber: release.iosBuildNumber },
     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },
-    plugins: [...(config.plugins || []), ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
+    plugins: [...(config.plugins || []), 'expo-secure-store', ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
     runtimeVersion: { policy: 'appVersion' },
     updates: projectId ? {
       url: `https://u.expo.dev/${projectId}`,

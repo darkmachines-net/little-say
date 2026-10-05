@@ -11,10 +11,13 @@ import { SpeechCache } from './speech-cache';
 import { openAISynthesis, speechProfile } from './synthesis';
 import { PictureJobs } from './picture-jobs';
 import { openAIPictureProvider } from './picture-provider';
+import { Accounts } from './accounts';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true });
 config({ quiet: true });
 const app = await createServer({
   provider: openAIProvider(process.env),
+  accounts: new Accounts(resolve(process.env.ACCOUNT_DB_PATH || '../../.cache/accounts/accounts.sqlite')),
+  secureCookies: process.env.NODE_ENV === 'production',
   pictures: new PictureJobs(resolve(process.env.PICTURE_CACHE_DIR || '../../.cache/pictures'), openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false'),
   speechCache: new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env))),
   origins: process.env.ALLOWED_ORIGINS?.split(',').map(value => value.trim()).filter(Boolean),

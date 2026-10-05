@@ -176,7 +176,7 @@ export function AiConversation({ settings, board, onApply, onConsent, onClose, o
         </View>
         {consent ? <ScrollView contentContainerStyle={{ padding: 24, gap: 20 }}>
           <ShieldCheck size={32} color={theme.accent} /><Text accessibilityRole="header" style={styles.title}>Use AI services?</Text>
-          <Text style={styles.body}>Your messages and board words go through your home server to OpenAI. Voice prompts also send your microphone recording for transcription. Photos stay on this device.</Text>
+          <Text style={styles.body}>Your messages and board words go through your home server to OpenAI. Voice prompts also send your microphone recording for transcription. Photos are not sent to AI. Optional account sync can back them up to your server.</Text>
           <Text style={styles.body}>Generated voices are saved on your server and device for reuse. You can turn automatic audio off in Parent settings. Microphone recordings aren’t retained by this app, and message content isn’t logged. OpenAI’s data retention policies still apply.</Text>
           {Boolean(error) && <Notice>{error}</Notice>}
           <Button busy={consenting} onPress={() => { setConsenting(true); void onConsent().then(() => { if (!live.current) return; setConsent(false); const action = pending.current; pending.current = null; action?.(); }).catch(() => { if (live.current) setError('Could not save this preference. Check device storage.'); }).finally(() => { if (live.current) setConsenting(false); }); }}>Continue with AI</Button>

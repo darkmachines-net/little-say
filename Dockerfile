@@ -1,4 +1,4 @@
-# Builds the web app and API into a non-root server image with writable speech and picture caches.
+# Builds the web app and API with writable speech, picture, and private account storage.
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -24,9 +24,10 @@ COPY --from=build /app/apps/server/dist ./server
 COPY --from=build /app/apps/mobile/dist ./web
 COPY --from=server-deps /app/node_modules ./node_modules
 COPY --from=build /app/apps/server/package.json ./package.json
-RUN mkdir -p /app/data/speech /app/data/pictures && chown node:node /app/data/speech /app/data/pictures
+RUN mkdir -p /app/data/speech /app/data/pictures /app/data/accounts && chown node:node /app/data/speech /app/data/pictures /app/data/accounts
 ENV SPEECH_CACHE_DIR=/app/data/speech
 ENV PICTURE_CACHE_DIR=/app/data/pictures
+ENV ACCOUNT_DB_PATH=/app/data/accounts/accounts.sqlite
 USER node
 EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=5s CMD node -e "fetch('http://127.0.0.1:8787/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
