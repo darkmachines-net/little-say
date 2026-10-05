@@ -25,6 +25,33 @@ beforeEach(() => {
   });
 });
 describe('staged client pictures', () => {
+  it('keeps accurate emoji without creating picture jobs, even with legacy consistency enabled', async () => {
+    board.picturePolicy = { ...defaultPicturePolicy, consistent: true };
+    const original = mocks.fetch.getMockImplementation()!;
+    mocks.fetch.mockImplementation(async (...args: any[]) => {
+      const result = await original(...args);
+      if (args[1].endsWith('/analyze')) result.tiles.forEach((tile: any) => { tile.concept.emojiAccurate = true; });
+      return result;
+    });
+    const result = await prepareBoardPictures(board, settings);
+    expect(result.board.tiles.map(tile => tile.illustration)).toEqual(board.tiles.map(tile => tile.illustration));
+    expect(mocks.fetch.mock.calls.map(call => call[1])).toEqual(['/api/pictures/analyze']);
+    expect(mocks.save).not.toHaveBeenCalled();
+  });
+  it('fills only the emoji gap and keeps good emoji and saved library artwork intact', async () => {
+    board = { ...starterLibrary().boards[0], picturePolicy: { ...defaultPicturePolicy, consistent: true }, tiles: starterLibrary().boards[0].tiles.slice(0, 3) };
+    board.tiles[1].illustration = { kind: 'library', assetId: 'c'.repeat(64), style: 'color', provenance: { library: 'mulberry', sourceId: 'sheep', sourceUrl: 'https://mulberrysymbols.org/', author: 'Steve Lee', license: 'CC-BY-SA-4.0', modified: '' } };
+    const original = mocks.fetch.getMockImplementation()!;
+    mocks.fetch.mockImplementation(async (...args: any[]) => {
+      const result = await original(...args);
+      if (args[1].endsWith('/analyze')) result.tiles[0].concept.emojiAccurate = true;
+      return result;
+    });
+    const result = await prepareBoardPictures(board, settings);
+    expect(result.board.tiles.map(tile => tile.illustration.kind)).toEqual(['emoji', 'library', 'generated']);
+    expect(result.board.tiles.slice(0, 2).map(tile => tile.illustration)).toEqual(board.tiles.slice(0, 2).map(tile => tile.illustration));
+    expect(mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs')).map(call => JSON.parse(call[2].body).tileId)).toEqual([board.tiles[2].id]);
+  });
   it('does not accept a generated result when image generation was not permitted', async () => {
     const result = await prepareBoardPictures(board, settings, { allowGeneration: false });
     expect(result.board.tiles.every(tile => tile.illustration.kind === 'emoji')).toBe(true);

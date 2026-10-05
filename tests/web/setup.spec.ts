@@ -103,7 +103,6 @@ test('offline setup can save a regional preference and start empty without Engli
   const saved = await readLibrary(page);
   expect(saved.setup).toBeUndefined(); expect(saved.boards).toEqual([]);
   expect(saved.settings.languageProfile).toEqual({ languages: ['es-MX'], defaultLanguage: 'es-MX' });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('button', { name: 'Build manually', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Hola', exact: true })).toBeVisible();
 });

@@ -28,6 +28,21 @@ async function service(overrides: Partial<PictureProvider> = {}, enabled = true)
 async function finished(jobs: PictureJobs, id: string) { await vi.waitFor(async () => expect(['complete', 'error', 'cancelled']).toContain((await jobs.status(id))?.state)); return (await jobs.status(id))!; }
 
 describe('durable picture jobs', () => {
+  it('uses a suitable library match without generating an illustration', async () => {
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    const { jobs, provider, png } = await service({ select: vi.fn(async (_concept, candidates) => { await pending; return candidates[0]?.id ?? null; }) });
+    const entry = searchPictures('cow', 'color')[0];
+    const picture = { kind: 'library' as const, assetId: createHash('sha256').update(png).digest('hex'), style: entry.style, provenance: entry.provenance };
+    vi.spyOn(jobs, 'library').mockResolvedValue({ entry, picture, bytes: png });
+    const request = { ...input(), mode: 'auto' as const, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } };
+    await jobs.start(request);
+    await vi.waitFor(() => expect(provider.select).toHaveBeenCalled());
+    expect(await jobs.status(request.requestId)).toMatchObject({ state: 'working', phase: 'finding' });
+    release();
+    expect((await finished(jobs, request.requestId)).result).toEqual(picture);
+    expect(provider.generate).not.toHaveBeenCalled();
+  });
   it('coalesces repeated request IDs, persists immutable assets, and rejects changed payloads', async () => {
     const { jobs, provider } = await service(); const request = input();
     await Promise.all([jobs.start(request), jobs.start(request)]);
@@ -54,6 +69,7 @@ describe('durable picture jobs', () => {
     // Start in order so the third request is queued regardless of filesystem write completion order.
     for (const request of requests) await jobs.start(request);
     await vi.waitFor(() => expect(generate).toHaveBeenCalledTimes(2));
+    expect((await jobs.status(requests[0].requestId))?.phase).toBe('generating');
     expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
     await jobs.cancel(requests[2].requestId); await jobs.cancel(requests[0].requestId); await jobs.cancel(requests[1].requestId);
     expect((await jobs.status(requests[2].requestId))?.state).toBe('cancelled'); expect(generate).toHaveBeenCalledTimes(2);

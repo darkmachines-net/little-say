@@ -41,7 +41,6 @@ for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and
   });
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm board');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
   await expect(page.getByText(/ChatGPT usage limit reached/)).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm board');
   await expect(page.getByRole('button', { name: 'Manage usage', exact: true })).toBeInViewport();
@@ -85,6 +84,29 @@ test('an expired cookie preserves the visitor billing choice and sends the fail-
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm board');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
   await expect(page.getByText('Reconnect ChatGPT in Parent settings. The server API key was not used.', { exact: true })).toBeVisible();
+});
+
+test('a ChatGPT draft remains saveable without offering unsupported picture generation', async ({ page }) => {
+  await page.route('**/api/chatgpt/status', route => route.fulfill({ json: { ...disconnected, selected: true, connected: true, planEnabled: true } }));
+  const pictureRequests: string[] = [];
+  await page.route('**/api/pictures/**', route => { pictureRequests.push(route.request().url()); return route.abort(); });
+  await page.route('**/api/boards/propose', route => {
+    const request = route.request().postDataJSON();
+    expect(route.request().headers()['x-little-say-ai']).toBe('chatgpt');
+    return route.fulfill({ json: { boardId: null, baseRevision: null, proposal: {
+      title: 'Animal words', explanation: 'Here is a cow.', needsClarification: false, playLanguages: ['en-US'], picturePolicy: request.picturePolicy,
+      tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage', languageMode: 'fixed', translations: [] }],
+    } } });
+  });
+  await openExistingLibrary(page);
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByText('Using ChatGPT plan', { exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A cow');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByTestId('ai-draft')).toContainText('Cow');
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Picture settings', exact: true })).toHaveCount(0);
+  expect(pictureRequests).toEqual([]);
 });

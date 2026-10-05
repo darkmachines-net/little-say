@@ -105,7 +105,7 @@ test('board creation does not wait for background audio and stale generation can
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Owl');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+
   await page.getByRole('button', { name: 'Use this board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Owl', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Edit tile Owl', exact: true }).click();

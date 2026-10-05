@@ -170,7 +170,6 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('button', { name: 'Save settings', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.reload();
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('button', { name: 'Build manually', exact: true }).click();
   await page.setViewportSize({ width: 540, height: 820 });
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
@@ -196,7 +195,7 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('One apple card');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+
   await page.getByRole('button', { name: 'Use this board', exact: true }).click();
   expect(generationRequests).toBe(1);
   await expect(page.getByRole('button', { name: 'Edit tile Manzana', exact: true })).toBeVisible();
@@ -627,7 +626,7 @@ test('AI proposal requires review, applies safely, and can be undone', async ({ 
   await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Replace horse with duckling');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+
   await expect(page.getByRole('heading', { name: 'Duck pond', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Duckling', exact: true })).toBeVisible();
@@ -664,7 +663,7 @@ test('24 tiles fit in both tablet orientations and remain keyboard accessible', 
   await page.route('**/api/boards/propose', route => route.fulfill({ json: { boardId: null, baseRevision: null, proposal: { title: 'All my words', explanation: '24 everyday words.', needsClarification: false, tiles } } }));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Create exactly 24 tiles');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click(); await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await page.getByRole('button', { name: 'Use this board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Add a tile', exact: true })).toHaveCount(0);
   for (const size of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }, { width: 1024, height: 768 }]) {
@@ -723,7 +722,7 @@ test('failed local writes are visible, retryable, and do not enter play prematur
 test('missing AI configuration retains the parent prompt and existing boards', async ({ page }) => {
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm with six animals');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click(); await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByText('AI is not configured yet.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();

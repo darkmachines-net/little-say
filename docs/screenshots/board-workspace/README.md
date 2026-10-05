@@ -9,7 +9,7 @@ Captured October 4, 2026 in Chromium from an isolated production build. Desktop:
 | Clarification with the current canvas retained | [Clarification](clarification-desktop.png) | [Clarification](clarification-tablet.png) | [Clarification](clarification-phone.png) |
 | Images unavailable; usable emoji fallback | [Fallback](fallback-desktop.png) | [Fallback](fallback-tablet.png) | [Fallback](fallback-phone.png) |
 
-[Picture settings during active generation](settings-during-work.png) shows the source control available and explains that changes apply to the next update. Generation has no separate permission switch. The existing AI-services consent still applies; Library only and Emoji only avoid new image generation.
+[Picture settings during active generation](settings-during-work.png) shows the source control available and explains that changes apply to the next update. Generation has no separate permission switch. Explicit AI actions start directly; Library only and Emoji only avoid new image generation.
 
 ## Compare the previous flow
 
@@ -17,7 +17,7 @@ The [previous phone conversation](https://github.com/MChartier/little-say/blob/d
 
 The [source comparison](../card-pictures/README.md) includes emoji, real Mulberry library pictures, and generated illustrations for the same six animal labels, plus the construction example and updated source selectors.
 
-Release metadata, TypeScript, 191 unit tests, production server/web builds, and all 62 Chromium scenarios passed. The final browser run includes the landing-page commit already merged into the PR branch.
+Release metadata, TypeScript, 194 unit tests, production server/web builds, and all 64 Chromium scenarios passed. The final browser run includes the landing-page commit already merged into the PR branch.
 
 ## Evidence boundaries and reproduction
 

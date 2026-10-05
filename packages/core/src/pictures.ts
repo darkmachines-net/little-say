@@ -6,7 +6,7 @@ export const pictureModeSchema = z.enum(['auto', 'library', 'generated', 'emoji'
 export const pictureStyleSchema = z.enum(['color', 'line']);
 export const picturePolicySchema = z.object({ mode: pictureModeSchema, style: pictureStyleSchema, consistent: z.boolean() });
 export type PicturePolicy = z.infer<typeof picturePolicySchema>;
-export const defaultPicturePolicy: PicturePolicy = { mode: 'auto', style: 'color', consistent: true };
+export const defaultPicturePolicy: PicturePolicy = { mode: 'auto', style: 'color', consistent: false };
 export const pictureOptionsSchema = z.object({ locked: z.boolean(), instruction: z.string().max(500), mode: pictureModeSchema.optional(), style: pictureStyleSchema.optional() });
 export const pictureConceptSchema = z.object({ description: z.string().min(1).max(300), features: z.array(z.string().min(1).max(100)).max(8), searchTerms: z.array(z.string().min(1).max(80)).min(1).max(6), emojiAccurate: z.boolean() });
 export type PictureConcept = z.infer<typeof pictureConceptSchema>;
@@ -30,15 +30,14 @@ export const pictureJobRequestSchema = z.object({
   neighbors: z.array(z.string().max(300)).max(23),
 });
 export type PictureJobRequest = z.infer<typeof pictureJobRequestSchema>;
-export const pictureJobSchema = z.object({ id: z.string().uuid(), draftId: z.string(), tileId: z.string(), state: z.enum(['queued', 'working', 'complete', 'cancelled', 'error']), result: resolvedPictureSchema.optional(), error: z.string().optional() });
+export const pictureJobSchema = z.object({ id: z.string().uuid(), draftId: z.string(), tileId: z.string(), state: z.enum(['queued', 'working', 'complete', 'cancelled', 'error']), phase: z.enum(['finding', 'generating']).optional(), result: resolvedPictureSchema.optional(), error: z.string().optional() });
 export type PictureJob = z.infer<typeof pictureJobSchema>;
 
 /** Normalize presentation selectors so visually identical emoji are compared together. */
 export function normalizedEmoji(value: string): string { return value.replace(/[\uFE0E\uFE0F]/g, '').normalize('NFC'); }
 
-/** Decide which unprotected cards need illustrations; consistency promotes the whole automatic set. */
+/** Decide which unprotected cards need illustrations; Automatic fills only gaps, including for legacy consistent=true preferences. */
 export function pictureTargets(tiles: { id: string; emoji: string; concept: PictureConcept; locked: boolean; mode?: PicturePolicy['mode'] }[], policy: PicturePolicy): Set<string> {
   const weak = new Set(tiles.filter(tile => !tile.concept.emojiAccurate || tiles.some(other => other.id !== tile.id && normalizedEmoji(other.emoji) === normalizedEmoji(tile.emoji) && other.concept.description.toLowerCase() !== tile.concept.description.toLowerCase())).map(tile => tile.id));
-  const promote = policy.consistent && tiles.some(tile => !tile.locked && (tile.mode ?? policy.mode) === 'auto' && weak.has(tile.id));
-  return new Set(tiles.filter(tile => !tile.locked && (tile.mode ?? policy.mode) !== 'emoji' && ((tile.mode ?? policy.mode) !== 'auto' || weak.has(tile.id) || promote)).map(tile => tile.id));
+  return new Set(tiles.filter(tile => !tile.locked && (tile.mode ?? policy.mode) !== 'emoji' && ((tile.mode ?? policy.mode) !== 'auto' || weak.has(tile.id))).map(tile => tile.id));
 }

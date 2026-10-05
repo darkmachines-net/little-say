@@ -131,7 +131,10 @@ export class PictureJobs {
   private async run(input: PictureJobRequest, stored: StoredJob, signal: AbortSignal) {
     try {
       stored.job = { ...stored.job, state: 'working' }; await this.persist(stored);
-      const result = await this.resolve(input, signal);
+      const result = await this.resolve(input, signal, async phase => {
+        if (signal.aborted) return;
+        stored.job = { ...stored.job, phase }; await this.persist(stored);
+      });
       if (signal.aborted) return;
       stored.job = { ...stored.job, state: 'complete', result }; await this.persist(stored);
     } catch {
@@ -140,7 +143,7 @@ export class PictureJobs {
       await this.persist(stored).catch(() => {});
     }
   }
-  private async resolve(input: PictureJobRequest, signal: AbortSignal): Promise<ResolvedPicture> {
+  private async resolve(input: PictureJobRequest, signal: AbortSignal, progress: (phase: 'finding' | 'generating') => Promise<void>): Promise<ResolvedPicture> {
     const unresolved = (reason: string): ResolvedPicture => ({ kind: 'unresolved', reason });
     if (!this.provider) return unresolved('Automatic matching needs AI. Search the library or choose an emoji or photo.');
     const key = hash(JSON.stringify({ concept: input.concept, style: input.style, mode: input.mode, neighbors: input.neighbors, model: this.provider.model, version: 1 }));
@@ -151,6 +154,8 @@ export class PictureJobs {
       } catch (error) { if (!missing(error) && !(error instanceof SyntaxError) && (error as Error).name !== 'ZodError') throw error; }
     }
     if (input.mode !== 'generated' && !input.regenerate) {
+      await progress('finding');
+      if (signal.aborted) throw new Error('Cancelled');
       const entries = [...new Map(input.concept.searchTerms.flatMap(term => searchPictures(term, input.style, 4)).map(entry => [entry.id, entry])).values()].slice(0, 6);
       const loaded = await Promise.allSettled(entries.map(entry => this.library(entry.id)));
       if (signal.aborted) throw new Error('Cancelled');
@@ -161,6 +166,8 @@ export class PictureJobs {
     }
     if (signal.aborted) throw new Error('Cancelled');
     if (input.mode === 'library' || !input.allowGeneration || !this.generationEnabled) return unresolved('No clear library match. Choose another picture or enable AI pictures.');
+    await progress('generating');
+    if (signal.aborted) throw new Error('Cancelled');
     const bytes = await normalizePicture(await this.provider.generate(input.concept, input.style, signal));
     if (signal.aborted) throw new Error('Cancelled');
     const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors);
