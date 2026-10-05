@@ -12,6 +12,17 @@ const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === 'E
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type StoredJob = { fingerprint: string; job: PictureJob };
 
+/** Release one cancelled subscriber without aborting catalog loads shared by other jobs. */
+function waitForShared<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const cancel = () => reject(new Error('Cancelled'));
+    const clean = () => signal.removeEventListener('abort', cancel);
+    signal.addEventListener('abort', cancel, { once: true });
+    work.then(value => { clean(); resolve(value); }, error => { clean(); reject(error); });
+    if (signal.aborted) { clean(); cancel(); }
+  });
+}
+
 export class PictureJobError extends Error {
   /** Preserve a safe message and HTTP status without exposing provider response bodies. */
   constructor(message: string, readonly statusCode: number) { super(message); }
@@ -157,7 +168,7 @@ export class PictureJobs {
       await progress('finding');
       if (signal.aborted) throw new Error('Cancelled');
       const entries = [...new Map(input.concept.searchTerms.flatMap(term => searchPictures(term, input.style, 4)).map(entry => [entry.id, entry])).values()].slice(0, 6);
-      const loaded = await Promise.allSettled(entries.map(entry => this.library(entry.id)));
+      const loaded = await waitForShared(Promise.allSettled(entries.map(entry => this.library(entry.id))), signal);
       if (signal.aborted) throw new Error('Cancelled');
       const sources = loaded.flatMap(result => result.status === 'fulfilled' ? [result.value] : []);
       const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors, signal);

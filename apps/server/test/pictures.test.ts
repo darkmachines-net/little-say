@@ -198,3 +198,38 @@ describe('selection cancellation', () => {
     const stopped = await jobs.status(first.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined();
   });
 });
+
+describe('shared catalog download cancellation', () => {
+  for (const outcome of ['resolve', 'reject'] as const) it(`releases stopped subscribers while shared sources ${outcome}`, async () => {
+    const releases: (() => void)[] = []; const signals: AbortSignal[] = [];
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="orange"/></svg>';
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => new Promise<Response>((resolve, reject) => { signals.push(init.signal!); releases.push(() => outcome === 'reject' ? reject(new Error('Source unavailable')) : resolve(new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } }))); })));
+    const { jobs, provider } = await service({ select: vi.fn(async (_concept, candidates) => candidates[0]?.id ?? null) });
+    const requests = [0, 1, 2].map(() => ({ ...input(), mode: 'auto' as const, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } }));
+    const independent = input();
+    try {
+      const cancelledBeforeStart = { ...requests[0], requestId: randomUUID() };
+      await jobs.cancel(cancelledBeforeStart.requestId);
+      expect((await jobs.start(cancelledBeforeStart)).state).toBe('cancelled');
+      expect(globalThis.fetch).not.toHaveBeenCalled();
+      for (const request of [...requests, independent]) await jobs.start(request);
+      const sources = searchPictures('cow', 'color', 4).length;
+      await vi.waitFor(() => expect(releases).toHaveLength(sources));
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
+      await Promise.all(requests.slice(0, 2).map(request => jobs.cancel(request.requestId)));
+      await vi.waitFor(() => expect(provider.generate).toHaveBeenCalledTimes(1), { timeout: 1000 });
+      expect((await finished(jobs, independent.requestId)).state).toBe('complete');
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('working');
+      expect(signals.every(signal => !signal.aborted)).toBe(true);
+      expect(releases).toHaveLength(sources); // The surviving subscriber shares each original download.
+      releases.forEach(release => release());
+      expect((await finished(jobs, requests[2].requestId)).result?.kind).toBe(outcome === 'resolve' ? 'library' : 'generated');
+      expect(provider.generate).toHaveBeenCalledTimes(outcome === 'resolve' ? 1 : 2);
+      for (const request of requests.slice(0, 2)) { const stopped = await jobs.status(request.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined(); }
+    } finally {
+      releases.forEach(release => release());
+      await finished(jobs, requests[2].requestId); await finished(jobs, independent.requestId);
+      jobs.close(); vi.unstubAllGlobals();
+    }
+  });
+});
