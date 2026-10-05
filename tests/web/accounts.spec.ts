@@ -58,13 +58,13 @@ test('accounts restore all asset types to a fresh device and merge offline confl
       }); db.close();
     }, { library, png, pictureId, audio: [...audio], audioId, speechKey });
     await page.reload();
-    await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await mkdir('artifacts/screenshots/accounts', { recursive: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.waitForTimeout(350); // Capture the optional account choice after the modal fade.
     await page.screenshot({ path: 'artifacts/screenshots/accounts/optional-phone.png' });
     await page.setViewportSize({ width: 1180, height: 900 });
-    await page.getByRole('button', { name: 'Create optional account', exact: true }).click();
+    await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await page.getByRole('textbox', { name: 'Account name', exact: true }).fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
@@ -104,23 +104,23 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await changeTitle(page, 'Edited on tablet'); await changeTitle(other, 'Edited on phone');
     await expect(other.getByRole('button', { name: 'Play Edited on phone', exact: true })).toBeVisible();
     await page.context().setOffline(false);
-    await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await second.setOffline(false);
-    await other.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(other.getByText(/Conflicting edits were kept/)).toBeVisible();
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
     await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
     await expect(other.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
-    await other.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Close Settings', exact: true }).click();
     await second.setOffline(true); await other.reload();
     await expect(other.getByRole('button', { name: 'Play Edited on tablet', exact: true })).toBeVisible();
     expect(await other.evaluate(() => localStorage.getItem('little-say-account'))).toBeNull();
   } finally { await second.close(); }
 });
 
-test('a parent can skip accounts and finish setup without an account request', async ({ page }) => {
+test('setup can be completed without an account or an account request', async ({ page }) => {
   const accountRequests: string[] = []; page.on('request', request => { if (request.url().includes('/api/account/')) accountRequests.push(request.url()); });
   await page.goto('/'); await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();

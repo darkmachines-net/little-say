@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and parent settings. */
+/** @file Organizes saved boards by recent use and favorites and exposes creation and settings. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -32,7 +32,7 @@ export function Dashboard({ library, audio, onOpen, onPlay, onManual, onSettings
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
       <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }]}>
         <Brand />
-        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Parent settings" /></View>
+        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></View>
       </View>
     </View>
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>

@@ -17,5 +17,5 @@ export function resolveBackendUrl(configured: string, developmentUrl: string, we
   if (developmentUrl.trim()) return normalizeBackendUrl(developmentUrl);
   if (configured.trim()) return normalizeBackendUrl(configured);
   if (webOrigin) return webOrigin;
-  throw new Error('Add your private server address in Parent settings to use AI. For local development, start the app with npm run dev.');
+  throw new Error('Add your private server address in Settings to use AI. For local development, start the app with npm run dev.');
 }

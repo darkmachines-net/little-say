@@ -10,7 +10,7 @@ describe('backend URL selection', () => {
   it('preserves normal builds and same-origin production web behavior', () => {
     expect(resolveBackendUrl(' https://private.example/ ', '', 'https://web.example')).toBe('https://private.example');
     expect(resolveBackendUrl('', '', 'https://web.example')).toBe('https://web.example');
-    expect(() => resolveBackendUrl('', '')).toThrow('Parent settings');
+    expect(() => resolveBackendUrl('', '')).toThrow('Settings');
   });
   it('rejects unsafe schemes, embedded credentials, and malformed URL configuration', () => {
     for (const url of ['javascript:alert(1)', 'https://user:password@example.com', 'https://example.com?key=secret', 'http://example.com#part']) expect(() => resolveBackendUrl('', url)).toThrow();

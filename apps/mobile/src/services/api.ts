@@ -33,7 +33,7 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
   if (externalSignal?.aborted) abort.abort();
   try {
     const response = await fetch(`${exactServer ? configured : backendUrl(configured)}${path}`, { ...init, signal: abort.signal, headers: { 'X-Little-Say': '1', ...init.headers } });
-    const data = await response.json().catch(() => { throw new Error('That server did not return a valid response. Check its address in Parent settings.'); });
+    const data = await response.json().catch(() => { throw new Error('That server did not return a valid response. Check its address in Settings.'); });
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
     return data;
   } catch (error) {

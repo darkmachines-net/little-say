@@ -1,6 +1,6 @@
 # Little Say
 
-A local-first AAC soundboard app for parents and toddlers, built with Expo, React Native, TypeScript and a Fastify backend. The friendly mountain identity draws on the Pacific Northwest's Little Si.
+A local-first AAC soundboard app for children and the people supporting them, built with Expo, React Native, TypeScript and a Fastify backend. The friendly mountain identity draws on the Pacific Northwest's Little Si.
 
 ## Run locally
 
@@ -19,15 +19,15 @@ Choose `npm run dev:local` (also `npm run dev`) for full-stack changes, or `npm 
 
 ## Using the app
 
-- Choose preferred languages on first launch and optionally generate starter boards. Each device keeps boards, settings, photos and downloaded speech locally. Accounts are optional; **Account & backup** in Parent settings enables backup and sync, and **Sign in or restore boards** is available during setup.
+- Choose preferred languages on first launch and optionally generate starter boards. Each device keeps boards, settings, photos and downloaded speech locally. Accounts are optional; **Little Say account** in Settings enables backup and sync, and **Sign in or restore boards** is available during setup.
 - **New board** and **Edit with AI** open a conversation for typed or spoken prompts. Review transcripts and drafts, refine them, then explicitly save. Manual editing supports 1–24 cards, searchable emoji, local photos and cropping.
 - **Picture settings** in a conversation and **Pictures** in the board editor choose automatic, library-only, generated, or emoji-only output. Matching detects inaccurate or ambiguous emoji, searches licensed illustrations, and optionally generates missing pictures in a consistent style. Cards offer **Picture options** to search, describe, replace or protect pictures. Automatic paid generation starts off. See [pictures, sources and configuration](docs/PICTURES.md).
 - The library spotlights the most recently used board and puts favorites immediately below it. Each board's **…** menu includes deletion and missing-audio generation.
 - Set a board's **Languages** to offer a toggle during play. Individual cards can follow that toggle or keep their own language, useful for family names. Review generated translations or edit them manually.
 - Playback accepts taps and swipes that start or end on a tile. It finishes the current utterance and keeps only the latest queued selection. Touch feedback and the speaking highlight are separate. Hold **Hold to unlock**, release when prompted, then confirm to leave.
-- Synthetic speech is prepared in the background and saved for offline playback. Tile editors support **Generate audio** and **Regenerate audio** for the selected text/language; board controls fill missing clips. Device TTS is the fallback. **Automatic AI audio** in Parent settings controls background generation.
+- Synthetic speech is prepared in the background and saved for offline playback. Tile editors support **Generate audio** and **Regenerate audio** for the selected text/language; board controls fill missing clips. Device TTS is the fallback. **Automatic AI audio** in Settings controls background generation.
 
-Photos use the platform picker/cropper on native and an in-app cropper on web. Later adjustments support dragging, pinch/slider zoom, and a preview matching the board framing. Photos stay on the device unless a parent enables account sync. Native adjustment starts from the system crop; choose the original again to recover cropped-out areas.
+Photos use the platform picker/cropper on native and an in-app cropper on web. Later adjustments support dragging, pinch/slider zoom, and a preview matching the board framing. Photos stay on the device unless you enable account sync. Native adjustment starts from the system crop; choose the original again to recover cropped-out areas.
 
 Use iOS Guided Access or Android screen pinning to restrict system navigation during play. The app cannot suppress operating-system gestures. Browser storage is tied to the URL's origin; development and production URLs have separate libraries. Without an account, uninstalling or clearing storage removes local boards and assets. With an account, sign in on the same server to restore the last successful backup. Wait for **All boards and assets are synced** before uninstalling; offline or failed changes have not been backed up. See [accounts and sync](docs/ACCOUNTS.md).
 
@@ -44,20 +44,20 @@ OpenAI requests go through the backend using the following configuration. No sec
 | `OPENAI_SPEECH_MODEL` | `gpt-realtime-2.1-mini` |
 | `OPENAI_SPEECH_VOICE` | `marin` |
 | `OPENAI_IMAGE_MODEL` | `gpt-image-2.5-flare` |
-| `AAC_IMAGE_GENERATION` | `true`; parents must also allow generation; `false` disables new generation |
+| `AAC_IMAGE_GENERATION` | `true`; you must also allow generation; `false` disables new generation |
 | `PICTURE_CACHE_DIR` | `../../.cache/pictures` from the server working directory; `/app/data/pictures` in Docker |
 | `SPEECH_CACHE_DIR` | `../../.cache/speech` from the server working directory; `/app/data/speech` in Docker |
 | `ACCOUNT_DB_PATH` | `../../.cache/accounts/accounts.sqlite` from the server working directory; `/app/data/accounts/accounts.sqlite` in Docker |
 | `HOST` / `PORT` | `127.0.0.1` / `8787` outside Docker |
 | `ALLOWED_ORIGINS` | Local development origins; set explicitly for deployment |
 
-AI consent covers parent prompts, necessary board text and explicit microphone recordings. Photo paths/content are excluded. Responses use Structured Outputs and `store: false`. The server does not retain microphone recordings or log prompts, transcripts, board text or provider error bodies. Provider retention follows [OpenAI's data policies](https://developers.openai.com/api/docs/guides/your-data).
+AI consent covers your prompts, necessary board text and explicit microphone recordings. Photo paths/content are excluded. Responses use Structured Outputs and `store: false`. The server does not retain microphone recordings or log prompts, transcripts, board text or provider error bodies. Provider retention follows [OpenAI's data policies](https://developers.openai.com/api/docs/guides/your-data).
 
-Generated speech is retained in a shared server cache and can contain family names or other private tile words. Cache identity includes text, language, model, voice and format. Identical requests reuse clips; regeneration preserves old clip URLs for other devices. Downloaded speech works offline. The cache has no automatic eviction. Parents should review generated words and pronunciation.
+Generated speech is retained in a shared server cache and can contain family names or other private tile words. Cache identity includes text, language, model, voice and format. Identical requests reuse clips; regeneration preserves old clip URLs for other devices. Downloaded speech works offline. The cache has no automatic eviction. Review generated words and pronunciation.
 
 ## Private server
 
-Illustration downloads and generated pictures use a separate server cache, including their concept descriptions and job metadata. Saved PNGs are also retained on the device for offline use. Personal photos remain local unless a parent enables account sync; account backups are separate from the AI caches. The cache has no automatic eviction; see [picture privacy and storage](docs/PICTURES.md).
+Illustration downloads and generated pictures use a separate server cache, including their concept descriptions and job metadata. Saved PNGs are also retained on the device for offline use. Personal photos remain local unless you enable account sync; account backups are separate from the AI caches. The cache has no automatic eviction; see [picture privacy and storage](docs/PICTURES.md).
 
 For a source-built Docker deployment:
 
@@ -67,11 +67,11 @@ Copy-Item .env.example .env
 docker compose up -d --build
 ```
 
-AI services remain available without accounts on a trusted private network. Account backups and their assets require authentication; adding accounts does not make the AI endpoints suitable for an open public service. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and use that URL in Parent settings; web uses its own origin. Browser microphone access needs HTTPS outside localhost. If binding to another host interface, restrict access to the trusted network.
+AI services remain available without accounts on a trusted private network. Account backups and their assets require authentication; adding accounts does not make the AI endpoints suitable for an open public service. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and use that URL in Settings; web uses its own origin. Browser microphone access needs HTTPS outside localhost. If binding to another host interface, restrict access to the trusted network.
 
 The container runs as a non-root user with a read-only filesystem. Its named `speech-cache`, `picture-cache`, and `account-data` volumes preserve cached assets and private account backups across replacements. Removing volumes deletes that data. Back up the account database as described in [accounts and sync](docs/ACCOUNTS.md); losing the server volume also loses the account backups.
 
-For a production web preview without Docker, run `npm run build` then `npm start` and open [localhost:8787](http://localhost:8787). Visit online once to cache the web shell before testing offline. Web updates wait for a parent's **Update now** action.
+For a production web preview without Docker, run `npm run build` then `npm start` and open [localhost:8787](http://localhost:8787). Visit online once to cache the web shell before testing offline. Web updates wait for the **Update now** action.
 
 ## Development and releases
 

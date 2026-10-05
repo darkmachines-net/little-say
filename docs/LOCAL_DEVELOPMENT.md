@@ -47,7 +47,7 @@ Only the local API process receives the resolved server environment. The Expo pr
 
 The development API uses port 8788, separate from the production server's default 8787. Browser requests are allowed from the exact localhost/LAN origins for these ports. Native Expo Go requests do not require browser CORS headers. The API remains an unauthenticated service for a trusted private network.
 
-In a development build, the injected address overrides a saved deployment address. **Parent settings → Test connection** shows and tests the current address. It does not overwrite the saved address; production builds ignore the development injection and retain their normal settings/same-origin behavior.
+In a development build, the injected address overrides a saved deployment address. **Settings → Test connection** shows and tests the current address. It does not overwrite the saved address; production builds ignore the development injection and retain their normal settings/same-origin behavior.
 
 Ctrl+C stops the launcher and both child process trees. Frontend edits use Fast Refresh; server source edits restart the API. Changing networks or `.env` requires restarting `npm run dev` and reloading the app.
 
@@ -83,7 +83,7 @@ Leave `DEV_HOST` blank for detection. If set, it must be an IPv4 address current
 
 1. Start `npm run dev`. The console should say **API ready. AI configured.**
 2. On the device's browser, open the printed `/api/health` link. It should show `"status":"ok"` and `"aiConfigured":true`.
-3. Open the Expo QR code. In Parent settings, run **Test connection**.
+3. Open the Expo QR code. In Settings, run **Test connection**.
 4. Ask for six farm animals, review the draft, apply it, and play a tile.
 5. Ask to replace one animal. Check that the rest stay intact, then test undo.
 6. Use **Voice prompt**, allow the microphone, stop recording, review the transcript, and submit it.
