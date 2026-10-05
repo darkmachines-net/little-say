@@ -1,0 +1,18 @@
+{
+  "id": "mulberry-982",
+  "name": "dumper truck",
+  "terms": [
+    "dumper truck",
+    "Transport Road",
+    "transport travel vehicle"
+  ],
+  "style": "color",
+  "provenance": {
+    "library": "mulberry",
+    "sourceId": "dumper_truck",
+    "sourceUrl": "https://raw.githubusercontent.com/mulberrysymbols/mulberry-symbols/9cbab9f400c5de44e2bc58839cca07294aadb086/EN/dumper_truck.svg",
+    "author": "Mulberry Symbols by Steve Lee",
+    "license": "CC-BY-SA-4.0",
+    "modified": "Rasterized and fitted to a transparent square; original artwork unchanged."
+  }
+}

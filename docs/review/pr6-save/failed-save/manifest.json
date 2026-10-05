@@ -1,0 +1,180 @@
+{
+  "capturedAtUtc": "2026-10-05T18:34:44.365Z",
+  "host": "MCHARTIER_ZBOOK",
+  "tool": "Playwright 1.63.0 screenshot; no pixel editing/cropping",
+  "browser": "153.0.8010.12",
+  "base": "252b863380ee1c76b80a901aafbee6dd92135946",
+  "head": "02cb85c5e4aaaae056ace73ef6fda591bd0bc500",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "proposal": "proposal.json",
+  "asset": {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537",
+    "source": "library-source.json"
+  },
+  "normalization": "Identical version-1 synthetic library (After migrates it), en-US locale, UTC, light theme, DPR 1, reduced motion, fixed Date, service workers blocked. No CSS or DOM hiding. AI replies and picture outcomes mocked; real pinned Mulberry PNG rasterized by production downloadCatalogPicture. Accurate cow/sheep emoji unchanged; dump-truck gap uses that retained library asset. No paid AI calls. Timers run; only settled states captured. Protocol picturePolicy added only for After request declaring pictureCapability=1.",
+  "runs": [
+    {
+      "name": "before",
+      "source": "252b863380ee1c76b80a901aafbee6dd92135946",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-save-dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "before-failed-save-1280.png",
+          "sha256": "04519f1aca26440856d5c2adda328068a8d29c7c3b4dfb1654e26c2ca0c8d48e",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "failed-save",
+          "observedAtUtc": "2026-10-05T18:34:45.692Z"
+        },
+        {
+          "file": "before-failed-save-390.png",
+          "sha256": "e1cefa48ea6f04945ad014e35c964485062e42cea17508383a3833c7f340426b",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "failed-save",
+          "observedAtUtc": "2026-10-05T18:34:46.780Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        },
+        {
+          "path": "index.html",
+          "sha256": "6ac52569f608e11c7f6b3028e7ef39ca46d72ab0483481ff8cfc3aa05b8eb434"
+        },
+        {
+          "path": "_expo/static/js/web/index-9cfdcf27a5b6db987d865ec65ae6af37.js",
+          "sha256": "48d0d76d6f544b03332f0cce4a14d65d56e162a5c6b584b3abde9dccad0b6790"
+        },
+        {
+          "path": "_expo/static/js/web/App-765f568dc4029e6d1ad4a6eaa837e680.js",
+          "sha256": "ee3f649ee44037f07215c69d52322668eb55fd075fa2cc471f4a72df82050963"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "02cb85c5e4aaaae056ace73ef6fda591bd0bc500",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "images": [
+        {
+          "file": "after-failed-save-1280.png",
+          "sha256": "473f9cbbc9a18cf57a5eff53a797f542198ee867c05b68bd8ec5d7f5ac117ae5",
+          "viewport": {
+            "width": 1280,
+            "height": 900
+          },
+          "route": "/app",
+          "state": "failed-save",
+          "observedAtUtc": "2026-10-05T18:34:47.957Z"
+        },
+        {
+          "file": "after-failed-save-390.png",
+          "sha256": "f3f40a03d5c405b9277c539f1eb93ce67116b52b54a618d11391e561614edfcf",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "route": "/app",
+          "state": "failed-save",
+          "observedAtUtc": "2026-10-05T18:34:49.013Z"
+        }
+      ],
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        },
+        {
+          "path": "index.html",
+          "sha256": "053886b60405e72b4650afbfe76fa826d56be9ab93672f4a0b2dc9d83ee35aa1"
+        },
+        {
+          "path": "_expo/static/js/web/index-677d3815c40515ebf948637164ae5696.js",
+          "sha256": "8462b87f327163302c3af928d4b7ac1b92dddadf38a63ca46e9741ba9d0218f1"
+        },
+        {
+          "path": "_expo/static/js/web/App-63f09575069752b9f6c7727e92410a3f.js",
+          "sha256": "c875a09f93e6cb712e955e0dbf518fe9cd7d811a4a18bdb23c371db9e894c437"
+        }
+      ]
+    }
+  ],
+  "scope": "Supplemental review-fix history, not primary baseline. Before252b863 production build copied before rebuilding and all served hashes verified against0a0ba8e evidence manifest. After current committed source. Actual IndexedDB transaction held pending, browser Back pressed, transaction aborted. Same fixture, completed picture draft and viewport; no edited pixels."
+}

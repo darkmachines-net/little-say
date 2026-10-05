@@ -1,0 +1,130 @@
+[
+  {
+    "file": "after-fallback-1280.png",
+    "sha256": "28ede8f124a877e84c21a16127ad3c6b22fc4134d7dd9c41b6a8b2739849fcde"
+  },
+  {
+    "file": "after-fallback-390.png",
+    "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d"
+  },
+  {
+    "file": "after-home-1280.png",
+    "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0"
+  },
+  {
+    "file": "after-ready-1280.png",
+    "sha256": "67db134e3f5fab3888a07fe13a334c3693263026e742ff5b62098b37aaf7ae32"
+  },
+  {
+    "file": "after-ready-390.png",
+    "sha256": "af793a9de08dd3fef9d004ece11899101a850184dd3c17028778740b2eec117a"
+  },
+  {
+    "file": "before-fallback-1280.png",
+    "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+  },
+  {
+    "file": "before-fallback-390.png",
+    "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+  },
+  {
+    "file": "before-home-1280.png",
+    "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462"
+  },
+  {
+    "file": "before-ready-1280.png",
+    "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+  },
+  {
+    "file": "before-ready-390.png",
+    "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+  },
+  {
+    "file": "capture.log",
+    "sha256": "7ff1af8aac3fa50b7f62bc50eecf3adcd372acec6dccbff9c18607c9002db200"
+  },
+  {
+    "file": "capture.ts",
+    "sha256": "b65a5a87077835eb00b7fc7c6a2b24caaf392027c62c67c69398bac2f9d3604a"
+  },
+  {
+    "file": "failed-save/after-failed-save-1280.png",
+    "sha256": "473f9cbbc9a18cf57a5eff53a797f542198ee867c05b68bd8ec5d7f5ac117ae5"
+  },
+  {
+    "file": "failed-save/after-failed-save-390.png",
+    "sha256": "f3f40a03d5c405b9277c539f1eb93ce67116b52b54a618d11391e561614edfcf"
+  },
+  {
+    "file": "failed-save/before-failed-save-1280.png",
+    "sha256": "04519f1aca26440856d5c2adda328068a8d29c7c3b4dfb1654e26c2ca0c8d48e"
+  },
+  {
+    "file": "failed-save/before-failed-save-390.png",
+    "sha256": "e1cefa48ea6f04945ad014e35c964485062e42cea17508383a3833c7f340426b"
+  },
+  {
+    "file": "failed-save/library-source.json",
+    "sha256": "7863b9e7a2e5373381c7161032d9aade727e562c636bb79e87ef1a2e0325fd6e"
+  },
+  {
+    "file": "failed-save/library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537"
+  },
+  {
+    "file": "failed-save/library.json",
+    "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+  },
+  {
+    "file": "failed-save/manifest.json",
+    "sha256": "5fcec4fa660deb9d368622908d73f3f5ca5e6b54609f5a3f45607d243a6f23a8"
+  },
+  {
+    "file": "failed-save/proposal.json",
+    "sha256": "79ed9ab644da2e4cd2374f72d06e3d423d5eda7c17262b90829fbca4d0ece3d4"
+  },
+  {
+    "file": "failed-save.log",
+    "sha256": "e807340e4cbac4ea3787a37e943ce04c07b28161f2119c2856c160bc42cd0312"
+  },
+  {
+    "file": "failed-save.ts",
+    "sha256": "c8ea7b752277ce4567fee36823856c47c210328b1fea0a289170fd0b5f2000d5"
+  },
+  {
+    "file": "library-source.json",
+    "sha256": "7863b9e7a2e5373381c7161032d9aade727e562c636bb79e87ef1a2e0325fd6e"
+  },
+  {
+    "file": "library-truck.png",
+    "sha256": "297f97e602aff00d07b9b089be9a52b619e691051d2a47cbe903695faf24c537"
+  },
+  {
+    "file": "library.json",
+    "sha256": "842372409ff72ec665b65e5ba3e441e3075a91c15c2e01d0699fd8ce268360f5"
+  },
+  {
+    "file": "manifest.json",
+    "sha256": "9858995a37dc7a5bc1c760366fb0d56e252e3e2824753f51efeece7b11741f6b"
+  },
+  {
+    "file": "proposal.json",
+    "sha256": "79ed9ab644da2e4cd2374f72d06e3d423d5eda7c17262b90829fbca4d0ece3d4"
+  },
+  {
+    "file": "README.md",
+    "sha256": "8eed214c65a5474dea15e0088b26c09d0ec7272c5702d4bd0365fb59c68ececb"
+  },
+  {
+    "file": "save-before.log",
+    "sha256": "cda86b0ecb6aa0882c8bb63b36d130410de77daba753541a5a013201a618528e"
+  },
+  {
+    "file": "save-browser.log",
+    "sha256": "8d0e57ed1af48ad928d6792efbc84bafc201462d30f791ef535cae081d1555b5"
+  },
+  {
+    "file": "save-check.log",
+    "sha256": "76f3e053f8660b3d8498741a7e904fcc39f927df975625d49c76f0b4167d7a69"
+  }
+]

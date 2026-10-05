@@ -1,0 +1,89 @@
+npm notice run little-say-workspace@0.1.1 test:web
+npm notice run playwright test tests/web/conversation.spec.ts -g browser history preserves
+[WebServer] npm notice run little-say-workspace@0.1.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.1.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:17752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:17752) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 2 tests using 1 worker
+
+(node:13308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through failure (8.3s)
+(node:27600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through success (8.4s)
+
+
+  1) [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through failure 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#boards/new"
+    Received: "#other"
+
+    Call Log:
+    - Timeout 7000ms exceeded while waiting on the predicate
+
+      224 |   await expect.poll(() => page.evaluate(() => Boolean((window as any).__releaseWrite))).toBe(true);
+      225 |   await page.goForward();
+    > 226 |   await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+          |                                                               ^
+      227 |   for (let attempt = 0; attempt < 2; attempt++) {
+      228 |     await page.goBack();
+      229 |     await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+        at C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-pr6\tests\web\conversation.spec.ts:226:63
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\conversation-browser-histo-cbaec--draft-save-through-failure-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\conversation-browser-histo-cbaec--draft-save-through-failure-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\conversation-browser-histo-cbaec--draft-save-through-failure-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\conversation-browser-histo-cbaec--draft-save-through-failure-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  2) [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through success 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "#boards/new"
+    Received: "#other"
+
+    Call Log:
+    - Timeout 7000ms exceeded while waiting on the predicate
+
+      224 |   await expect.poll(() => page.evaluate(() => Boolean((window as any).__releaseWrite))).toBe(true);
+      225 |   await page.goForward();
+    > 226 |   await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+          |                                                               ^
+      227 |   for (let attempt = 0; attempt < 2; attempt++) {
+      228 |     await page.goBack();
+      229 |     await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+        at C:\Users\MChar\Documents\Codex\2026-10-05\task-5\little-say-pr6\tests\web\conversation.spec.ts:226:63
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\conversation-browser-histo-6e1a3--draft-save-through-success-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\conversation-browser-histo-6e1a3--draft-save-through-success-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\conversation-browser-histo-6e1a3--draft-save-through-success-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\conversation-browser-histo-6e1a3--draft-save-through-success-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+  2 failed
+    [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through failure 
+    [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through success 
