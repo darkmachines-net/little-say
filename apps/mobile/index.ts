@@ -1,5 +1,5 @@
-/** @file Registers the shared app root with Expo for native and web entry points. */
+/** @file Registers Expo's platform-resolved entry so website content stays out of native bundles. */
 
 import { registerRootComponent } from 'expo';
-import App from './src/App';
+import App from './src/Entry';
 registerRootComponent(App);

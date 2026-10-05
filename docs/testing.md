@@ -13,6 +13,8 @@ npm run test:web
 
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. Selected [PR review screenshots](screenshots/little-say-branding/README.md) are retained separately.
 
+Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under ignored `artifacts/screenshots/landing/`; reviewed PR evidence is retained in [the website screenshot index](screenshots/website-landing/README.md). The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
+
 ## Live AI evaluation
 
 ```sh

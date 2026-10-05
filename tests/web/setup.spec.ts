@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
     } });
     Element.prototype.requestFullscreen = async () => {};
   });
-  await page.goto('/');
+  await page.goto('/app');
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 

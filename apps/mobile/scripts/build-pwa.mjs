@@ -5,8 +5,9 @@ import { generateSW } from 'workbox-build';
 
 const brand = new URL('../assets/brand/', import.meta.url);
 const colors = JSON.parse(await readFile(new URL('colors.json', brand), 'utf8'));
-const description = 'Create and play picture soundboards with spoken words.';
-const manifest = { id: '/', name: 'Little Say', short_name: 'Little Say', start_url: '/', scope: '/', display: 'standalone', background_color: colors.background, theme_color: colors.background, description, icons: [
+const description = 'Personal picture boards for little communicators. Create talking boards with photos, illustrations, and your family’s languages. Try Little Say on the web.';
+// Keep the existing install identity while sending new home-screen launches directly to the app.
+const manifest = { id: '/', name: 'Little Say', short_name: 'Little Say', start_url: '/app', scope: '/', display: 'standalone', background_color: colors.background, theme_color: colors.background, description, icons: [
   { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
   { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
   { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
