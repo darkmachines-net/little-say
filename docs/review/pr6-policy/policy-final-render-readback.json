@@ -1,0 +1,84 @@
+{
+  "checkedAtUtc": "2026-10-05T18:51:41.824Z",
+  "head": "1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51",
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "bodySha256": "7e7383d788ff2635b9226c6323308a561133ba1532abd1776d7fd9ed91ffab36",
+  "bodyHtmlSha256": "43bf61aeaf514ff3f6dd3a8512251ee8b621ed8620c06838f654f10997d77ef3",
+  "scope": "Exact API-rendered body_html with authenticated repository image routing. Full authenticated GitHub-page layout unavailable: CUA kernel fails applying sandbox ACLs. Browser UI access not claimed.",
+  "loaded": [
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-ready-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-ready-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-fallback-390.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-fallback-390.png?raw=true",
+      "loaded": true,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-home-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "src": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-home-1280.png?raw=true",
+      "loaded": true,
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "images": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-ready-1280.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/before-ready-1280.png",
+      "sha256": "a1f9882bd211ade67861f04b1d7570bc88353d9c20296f90e73912b34abd9b86"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-ready-1280.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/after-ready-1280.png",
+      "sha256": "67db134e3f5fab3888a07fe13a334c3693263026e742ff5b62098b37aaf7ae32"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-fallback-390.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/before-fallback-390.png",
+      "sha256": "9ba63ef5c47f05b6506da8e8c4888d85b86947ad38376c13d38a326239c2ec59"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-fallback-390.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/after-fallback-390.png",
+      "sha256": "50611901f40d1a501a1463f876663d85a902a30c50f71f9e117a57c62803046d"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/before-home-1280.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/before-home-1280.png",
+      "sha256": "11cd586d5ebe89a0287e1eb9c38b24ec11f1f23c8867ff3c140117efa293b462"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/7a0e75f01b51550c1027e640e67b118faceb2e65/docs/review/pr6-save/after-home-1280.png?raw=true",
+      "commit": "7a0e75f01b51550c1027e640e67b118faceb2e65",
+      "path": "docs/review/pr6-save/after-home-1280.png",
+      "sha256": "21d4b4278fba273fe5d772997a61d6daca3b25e943cd53043b6d4211eb7c73b0"
+    }
+  ]
+}

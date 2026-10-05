@@ -1,0 +1,42 @@
+[
+  {
+    "file": "final-diff-composition.json",
+    "sha256": "bea43e70db4764731e797c74a5cd1b9602a3a20e2cd3b525d92dd78944de4ca6"
+  },
+  {
+    "file": "final-state.json",
+    "sha256": "dfb7549840a51656194c50261ec31a99fb99d89cae1617fd4c6bab9e71af741e"
+  },
+  {
+    "file": "policy-final-pr-body.html",
+    "sha256": "43bf61aeaf514ff3f6dd3a8512251ee8b621ed8620c06838f654f10997d77ef3"
+  },
+  {
+    "file": "policy-final-pr-body.md",
+    "sha256": "7e7383d788ff2635b9226c6323308a561133ba1532abd1776d7fd9ed91ffab36"
+  },
+  {
+    "file": "policy-final-render-0.png",
+    "sha256": "f61a799d4553f79880aed063d1fac29bf058240b1020e2525e5826e815359ee3"
+  },
+  {
+    "file": "policy-final-render-1.png",
+    "sha256": "e5561d2f25d5aa31b2331d9bd1c33f4f172ba85ffd5bff28e7cae9ec175c9d51"
+  },
+  {
+    "file": "policy-final-render-2.png",
+    "sha256": "ada2225ff2279cb3526fccd4a7be96b848b6c0c99c709a75f00c5996d5159f8d"
+  },
+  {
+    "file": "policy-final-render-3.png",
+    "sha256": "51b6e135dc1d959fedbde3f2682c36a533a2015ff525e62d14a8ee4a72893b39"
+  },
+  {
+    "file": "policy-final-render-readback.json",
+    "sha256": "48470b3d42999700c8ea1b7be7b22cd4ebac56e49003321c7dd33c7fd7b0c448"
+  },
+  {
+    "file": "review-disposition.md",
+    "sha256": "25bd2a06df6458f99e074e5c7bb0ad7d37d83d24dda9dd2f559d920485b80d95"
+  }
+]

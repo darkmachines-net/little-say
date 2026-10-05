@@ -1,0 +1,15 @@
+Resolved findings 4187475399 and 4187475410 in 1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51. Synchronous OpenAI analysis/review now has a 50-second deadline, below the app's60-second limit, with retries still disabled. Controlled real-SDK/API tests confirm abort, safe502, freed capacity and successful200 retry. Card picture actions now use the same board/settings/default policy as the selector and execution. No consent or cost guard was weakened.
+
+Both defect regressions failed before repair. Full npm check passed198 tests, TypeScript, release metadata and builds;25 affected browser scenarios passed, including inherited Library only/Emoji only and explicit board/card overrides. [Current-head CI passed](https://github.com/MChartier/little-say/actions/runs/37358676179/job/111927480009). [Exact checks, provenance and main-evidence impact assessment](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/README.md).
+
+Supplemental review-fix pairs (not the main PR baseline): Before is actual02cb85c5e4aaaae056ace73ef6fda591bd0bc500, After is1e857c197f2a35a6cf4d59ce0f6b47335a6fcc51. Same migrated synthetic library without board policy, inherited mode, Cow editor,1280×1000/light/DPR1, and real scrolling. No generation was requested. All four actual image pixels were inspected. [Manifest](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/manifest.json), bound by evidence commit a1d42e70ff5dadea9c58d316848cda5c7e607f64.
+
+| Before: Library only still offers generation | After: inherited policy disables generation |
+| --- | --- |
+| ![Before Library only](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/before-library-1280.png?raw=true) | ![After Library only](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/after-library-1280.png?raw=true) |
+
+| Before: Emoji only still offers generation | After: inherited policy disables generation |
+| --- | --- |
+| ![Before Emoji only](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/before-emoji-1280.png?raw=true) | ![After Emoji only](https://github.com/MChartier/little-say/blob/a1d42e70ff5dadea9c58d316848cda5c7e607f64/docs/review/pr6-policy/after-emoji-1280.png?raw=true) |
+
+Main master-to-final captures remain applicable under the explicit source-impact assessment; older captures are not relabelled as current-source captures. The exact API-rendered final PR body and all six embedded images were inspected. Full authenticated GitHub-page layout remains unverified. Final review completion is tracked separately; no readiness claim or child branch modification.
