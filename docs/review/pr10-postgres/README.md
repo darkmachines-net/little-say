@@ -1,0 +1,13 @@
+# PR10 continuation evidence
+
+Purpose: genuine parent-to-child UI comparison for the optional ChatGPT grant flow. Owner: PR10 implementation continuation. Retain through human review and completion of the dependent stack. This evidence branch is never a product merge target.
+
+Before is PR13 816a4babae6904f12e8336cb02e0b1658f0fd97e. After is 0b9af0fc50fdff575bda7b1ce6574453d4c3d0e7. Separate clean checkouts were built with npm run build. Both local APIs had ChatGPT and external AI credentials disabled. Browser routes supply the same synthetic connected state and rejected-request response to both versions; the parent has no ChatGPT status consumer. This demonstrates client behavior, not live OAuth or paid inference.
+
+The settings pair shows the parent's language/server settings and the child's optional grant panel. The composer pair submits the same prompt and receives the same synthetic 429; the child identifies the selected plan and disables unsupported voice/picture actions while keeping the prompt. Both use 1180x900, scale1, light theme, fixed browser Date and the same seeded library. No UI was hidden and no pixels were edited. These two desktop pairs cover the consequential visual changes; phone behavior additionally passed the maintained390px scenario, without a phone screenshot pair.
+
+manifest.json binds source SHAs, actual served JavaScript bytes checked against build files, server/build digests, fixtures, browser version, times, and screenshot SHA256 values. capture.ts is the exact harness. For reproduction place it at artifacts/capture.ts in the After checkout, with the Before checkout in sibling little-say-before, npm ci and npm run build in each, then npx tsx artifacts/capture.ts. Imports tests/fixtures/library.ts from the immutable After source. Local port4187 is sequentially used by both processes and each is stopped after capture.
+
+Local checks: release metadata, all workspace types,215 unit tests, production server/web builds passed.20 Edge browser scenarios passed (ChatGPT and conversation files). PostgreSQL tests remain unverified: local Docker did not respond, and the suite refused missing explicit TEST_PGDATABASE/TEST_PGPASSWORD. CI owns its disposable PostgreSQL17 service; no test account or real grants were used. Live activation remains blocked.
+
+Original PR10 and all its embedded source/evidence are retained unchanged at7323a68dd4690171d86f82ac5e5dec3982d275ee on evidence/pr10-original-7323a68, with the same owner/lifetime. Original PR10 stays open/draft/unready. No history rewritten. New product history contains only the focused child change and no capture archives.

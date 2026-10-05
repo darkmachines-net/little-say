@@ -1,0 +1,718 @@
+{
+  "purpose": "Matched actual-parent-to-child UI evidence; synthetic data only",
+  "owner": "PR10 continuation",
+  "retention": "Through human review and stack completion; non-product evidence ref",
+  "clock": "2026-10-05T12:00:00Z",
+  "viewport": {
+    "width": 1180,
+    "height": 900
+  },
+  "deviceScaleFactor": 1,
+  "colorScheme": "light",
+  "normalization": "No UI hiding or pixel edits. Fresh context, service workers blocked, fixed browser Date; animations disabled only during screenshots.",
+  "sources": [
+    {
+      "name": "before",
+      "source": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
+      "browser": "154.0.4258.53",
+      "time": "2026-10-05T23:51:27.393Z",
+      "route": "/app",
+      "fixture": {
+        "version": 2,
+        "settings": {
+          "backendUrl": "",
+          "voices": {},
+          "activeBoardId": null,
+          "aiConsent": false,
+          "autoSpeech": true,
+          "languageProfile": {
+            "languages": [
+              "en-US"
+            ],
+            "defaultLanguage": "en-US"
+          }
+        },
+        "boards": [
+          {
+            "id": "starter-farm",
+            "title": "Farmyard friends",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-farm-0",
+                "label": "Cow",
+                "speech": "Cow",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐄"
+                }
+              },
+              {
+                "id": "starter-farm-1",
+                "label": "Sheep",
+                "speech": "Sheep",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐑"
+                }
+              },
+              {
+                "id": "starter-farm-2",
+                "label": "Horse",
+                "speech": "Horse",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐴"
+                }
+              },
+              {
+                "id": "starter-farm-3",
+                "label": "Pig",
+                "speech": "Pig",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐷"
+                }
+              },
+              {
+                "id": "starter-farm-4",
+                "label": "Chicken",
+                "speech": "Chicken",
+                "language": "en-US",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐔"
+                }
+              },
+              {
+                "id": "starter-farm-5",
+                "label": "Duck",
+                "speech": "Duck",
+                "language": "en-US",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🦆"
+                }
+              }
+            ]
+          },
+          {
+            "id": "starter-everyday",
+            "title": "My little words",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-everyday-0",
+                "label": "More",
+                "speech": "More",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "➕"
+                }
+              },
+              {
+                "id": "starter-everyday-1",
+                "label": "Water",
+                "speech": "Water",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "💧"
+                }
+              },
+              {
+                "id": "starter-everyday-2",
+                "label": "Help",
+                "speech": "Help",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🙋"
+                }
+              },
+              {
+                "id": "starter-everyday-3",
+                "label": "All done",
+                "speech": "All done",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👋"
+                }
+              },
+              {
+                "id": "starter-everyday-4",
+                "label": "Eat",
+                "speech": "Eat",
+                "language": "en-US",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🍽️"
+                }
+              },
+              {
+                "id": "starter-everyday-5",
+                "label": "Love you",
+                "speech": "Love you",
+                "language": "en-US",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "❤️"
+                }
+              }
+            ]
+          },
+          {
+            "id": "starter-family",
+            "title": "Our family",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-family-0",
+                "label": "Mama",
+                "speech": "Mama",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👩"
+                }
+              },
+              {
+                "id": "starter-family-1",
+                "label": "Papa",
+                "speech": "Papa",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👨"
+                }
+              },
+              {
+                "id": "starter-family-2",
+                "label": "Grandma",
+                "speech": "Grandma",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👵"
+                }
+              },
+              {
+                "id": "starter-family-3",
+                "label": "Grandpa",
+                "speech": "Grandpa",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👴"
+                }
+              },
+              {
+                "id": "starter-family-4",
+                "label": "Babushka",
+                "speech": "бабушка",
+                "language": "ru-RU",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👵"
+                }
+              },
+              {
+                "id": "starter-family-5",
+                "label": "Dedushka",
+                "speech": "дедушка",
+                "language": "ru-RU",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👴"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "status": {
+        "available": true,
+        "selected": true,
+        "connected": true,
+        "planEnabled": true,
+        "needsLogin": false,
+        "welcome": false,
+        "email": "parent@example.com"
+      },
+      "loadedBundles": [],
+      "build": [
+        {
+          "path": "apps/mobile/dist/apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "apps/mobile/dist/favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+        },
+        {
+          "path": "apps/mobile/dist/favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+        },
+        {
+          "path": "apps/mobile/dist/icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+        },
+        {
+          "path": "apps/mobile/dist/icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+        },
+        {
+          "path": "apps/mobile/dist/icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+        },
+        {
+          "path": "apps/mobile/dist/index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "apps/mobile/dist/manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+        },
+        {
+          "path": "apps/mobile/dist/metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+        },
+        {
+          "path": "apps/mobile/dist/sw.js",
+          "sha256": "e90c1e0cd2cd0ada0b8403790179054ea437468704bc5cb67b6297b5c72b9a78"
+        },
+        {
+          "path": "apps/mobile/dist/sw.js.map",
+          "sha256": "70525b2408352047a3fd4756cb805742032f7da2e98a2812cd8e4c397033122d"
+        },
+        {
+          "path": "apps/mobile/dist/workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+        },
+        {
+          "path": "apps/mobile/dist/workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        }
+      ],
+      "serverSha256": "ba699d9c09b6861d2959dfd2d2bea52f61bcf235032b9b70ae8ffb5ddc2fab85",
+      "captures": [
+        {
+          "state": "settings",
+          "file": "before-settings.png",
+          "sha256": "a64d8814549954aca49fca1ad539fdab50cc1a5c3cc315ef379675ed75070613"
+        },
+        {
+          "state": "limit",
+          "file": "before-limit.png",
+          "sha256": "a55034575c1ed3a9a881bb88f35d05ba9baf2fe9d1af3d4caf924bf6f017d136"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "0b9af0fc50fdff575bda7b1ce6574453d4c3d0e7",
+      "browser": "154.0.4258.53",
+      "time": "2026-10-05T23:51:30.319Z",
+      "route": "/app",
+      "fixture": {
+        "version": 2,
+        "settings": {
+          "backendUrl": "",
+          "voices": {},
+          "activeBoardId": null,
+          "aiConsent": false,
+          "autoSpeech": true,
+          "languageProfile": {
+            "languages": [
+              "en-US"
+            ],
+            "defaultLanguage": "en-US"
+          }
+        },
+        "boards": [
+          {
+            "id": "starter-farm",
+            "title": "Farmyard friends",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-farm-0",
+                "label": "Cow",
+                "speech": "Cow",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐄"
+                }
+              },
+              {
+                "id": "starter-farm-1",
+                "label": "Sheep",
+                "speech": "Sheep",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐑"
+                }
+              },
+              {
+                "id": "starter-farm-2",
+                "label": "Horse",
+                "speech": "Horse",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐴"
+                }
+              },
+              {
+                "id": "starter-farm-3",
+                "label": "Pig",
+                "speech": "Pig",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐷"
+                }
+              },
+              {
+                "id": "starter-farm-4",
+                "label": "Chicken",
+                "speech": "Chicken",
+                "language": "en-US",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🐔"
+                }
+              },
+              {
+                "id": "starter-farm-5",
+                "label": "Duck",
+                "speech": "Duck",
+                "language": "en-US",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🦆"
+                }
+              }
+            ]
+          },
+          {
+            "id": "starter-everyday",
+            "title": "My little words",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-everyday-0",
+                "label": "More",
+                "speech": "More",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "➕"
+                }
+              },
+              {
+                "id": "starter-everyday-1",
+                "label": "Water",
+                "speech": "Water",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "💧"
+                }
+              },
+              {
+                "id": "starter-everyday-2",
+                "label": "Help",
+                "speech": "Help",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🙋"
+                }
+              },
+              {
+                "id": "starter-everyday-3",
+                "label": "All done",
+                "speech": "All done",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👋"
+                }
+              },
+              {
+                "id": "starter-everyday-4",
+                "label": "Eat",
+                "speech": "Eat",
+                "language": "en-US",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "🍽️"
+                }
+              },
+              {
+                "id": "starter-everyday-5",
+                "label": "Love you",
+                "speech": "Love you",
+                "language": "en-US",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "❤️"
+                }
+              }
+            ]
+          },
+          {
+            "id": "starter-family",
+            "title": "Our family",
+            "revision": 0,
+            "createdAt": "2026-10-05T12:00:00Z",
+            "updatedAt": "2026-10-05T12:00:00Z",
+            "tiles": [
+              {
+                "id": "starter-family-0",
+                "label": "Mama",
+                "speech": "Mama",
+                "language": "en-US",
+                "color": "sage",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👩"
+                }
+              },
+              {
+                "id": "starter-family-1",
+                "label": "Papa",
+                "speech": "Papa",
+                "language": "en-US",
+                "color": "peach",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👨"
+                }
+              },
+              {
+                "id": "starter-family-2",
+                "label": "Grandma",
+                "speech": "Grandma",
+                "language": "en-US",
+                "color": "butter",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👵"
+                }
+              },
+              {
+                "id": "starter-family-3",
+                "label": "Grandpa",
+                "speech": "Grandpa",
+                "language": "en-US",
+                "color": "sky",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👴"
+                }
+              },
+              {
+                "id": "starter-family-4",
+                "label": "Babushka",
+                "speech": "бабушка",
+                "language": "ru-RU",
+                "color": "lilac",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👵"
+                }
+              },
+              {
+                "id": "starter-family-5",
+                "label": "Dedushka",
+                "speech": "дедушка",
+                "language": "ru-RU",
+                "color": "rose",
+                "illustration": {
+                  "kind": "emoji",
+                  "emoji": "👴"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "status": {
+        "available": true,
+        "selected": true,
+        "connected": true,
+        "planEnabled": true,
+        "needsLogin": false,
+        "welcome": false,
+        "email": "parent@example.com"
+      },
+      "loadedBundles": [],
+      "build": [
+        {
+          "path": "apps/mobile/dist/apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "apps/mobile/dist/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "apps/mobile/dist/favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+        },
+        {
+          "path": "apps/mobile/dist/favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+        },
+        {
+          "path": "apps/mobile/dist/icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+        },
+        {
+          "path": "apps/mobile/dist/icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+        },
+        {
+          "path": "apps/mobile/dist/icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+        },
+        {
+          "path": "apps/mobile/dist/index.html",
+          "sha256": "8912e0694170f9b469320d1ad51e96c1cccd3effdad394995a7f76ee6b787f57"
+        },
+        {
+          "path": "apps/mobile/dist/manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+        },
+        {
+          "path": "apps/mobile/dist/metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+        },
+        {
+          "path": "apps/mobile/dist/sw.js",
+          "sha256": "0c7cfb134e33f111ef212ed44c3879982fbb1758c16686bb9f7801b379eb0f96"
+        },
+        {
+          "path": "apps/mobile/dist/sw.js.map",
+          "sha256": "fae8a1166e2ea1fa07a4832f09397869c86dcbb23ce435413e10ea676687261f"
+        },
+        {
+          "path": "apps/mobile/dist/workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+        },
+        {
+          "path": "apps/mobile/dist/workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/js/web/App-3eccd9e493d2255d6c810f4d05ad9321.js",
+          "sha256": "610f98fda8b2ee2005428cd5c3d570dff47a2b3b9231c9f9cdf15769ff0fc00f"
+        },
+        {
+          "path": "apps/mobile/dist/_expo/static/js/web/index-9b508b14aa443b0542d83f1adb12b6f8.js",
+          "sha256": "76ec2010e09e3a84664a8227f9e560da1791566575d9fae6f10d76ec1ef525a6"
+        }
+      ],
+      "serverSha256": "c84aca206865ca3147539c592f03ee16db1b78756ce144cd43d2b3e2a43363b9",
+      "captures": [
+        {
+          "state": "settings",
+          "file": "after-settings.png",
+          "sha256": "5731b64cd3416cf498375dd31eca1671abe02e604cf3463cbea5cbf3d1174ace"
+        },
+        {
+          "state": "limit",
+          "file": "after-limit.png",
+          "sha256": "d699fe1905df95375ae90248f52fc6c4e14306c1390324940cc9e7ce778156f8"
+        }
+      ]
+    }
+  ],
+  "steps": "npm run build in each isolated checkout; npx tsx artifacts/capture.ts. Seed starterLibrary at fixed timestamps in fresh IndexedDB. Open Parent settings, capture. Close; New board; type A farm board; send mocked 429; capture. Same status and error routes supplied to both builds; baseline has no ChatGPT status consumer. Both actual servers keep activation off."
+}
