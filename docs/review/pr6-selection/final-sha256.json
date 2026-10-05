@@ -1,0 +1,42 @@
+[
+  {
+    "file": "final-diff-composition.json",
+    "sha256": "1d8a92cf835b2cd8db599f71caf723b06fe05abae3e0701c668766ac6b7f8ccc"
+  },
+  {
+    "file": "final-state.json",
+    "sha256": "162c55a34d99e4e2f9c118ae8c5a79e54232dab1861d014dcd45b3fc892e3c9d"
+  },
+  {
+    "file": "review-disposition.md",
+    "sha256": "baafae792f7f4ae8b96bfaae5d0b233e5ae6d1ac3b6af62bace89e6f1b10c345"
+  },
+  {
+    "file": "selection-final-pr-body.html",
+    "sha256": "7a5d75e136c76991d3430db5c383c9f1b230cced4957cea793760f91b4b3467f"
+  },
+  {
+    "file": "selection-final-pr-body.md",
+    "sha256": "139dec7998afcadf2f7fcedf40d294606eb2c0bf263e4b221f606d124c5c22f5"
+  },
+  {
+    "file": "selection-final-render-0.png",
+    "sha256": "8d76530fa8654a7687c5f83af475a0728f776f64f096ed88669b3a48e83d0294"
+  },
+  {
+    "file": "selection-final-render-1.png",
+    "sha256": "89947b417c840aee2603ae67569a7997fa782477fafb6b45c344f733c68537bf"
+  },
+  {
+    "file": "selection-final-render-2.png",
+    "sha256": "ada2225ff2279cb3526fccd4a7be96b848b6c0c99c709a75f00c5996d5159f8d"
+  },
+  {
+    "file": "selection-final-render-3.png",
+    "sha256": "9dbaa237ae85d1358b9d1233e6a8e70713601096f940de4aa1bfa7a34de1bbee"
+  },
+  {
+    "file": "selection-final-render-readback.json",
+    "sha256": "c95991119485e0c5fc2f652a7a28872559ecd56b7f9a6c7a45f6bf4ba5643491"
+  }
+]

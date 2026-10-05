@@ -1,0 +1,1272 @@
+{
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "head": "250d9a055a2c437360227528919d702e8f6196f7",
+  "original": {
+    "files": [
+      {
+        "file": ".env.example",
+        "added": "4",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "Dockerfile",
+        "added": "3",
+        "removed": "2",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "README.md",
+        "added": "11",
+        "removed": "3",
+        "category": "maintained documentation"
+      },
+      {
+        "file": "apps/mobile/index.ts",
+        "added": "2",
+        "removed": "2",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/scripts/build-pwa.mjs",
+        "added": "3",
+        "removed": "2",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/App.tsx",
+        "added": "13",
+        "removed": "3",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/Entry.tsx",
+        "added": "3",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/Entry.web.tsx",
+        "added": "17",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/data/pictureDownload.ts",
+        "added": "17",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/data/storage.ts",
+        "added": "20",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/data/storage.web.ts",
+        "added": "28",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/data/useLibrary.ts",
+        "added": "4",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/services/api.ts",
+        "added": "7",
+        "removed": "2",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/services/pictures.test.ts",
+        "added": "146",
+        "removed": "0",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "apps/mobile/src/services/pictures.ts",
+        "added": "177",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/services/useBoardDraftRoute.ts",
+        "added": "40",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/AiConversation.tsx",
+        "added": "118",
+        "removed": "76",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/BoardEditor.tsx",
+        "added": "16",
+        "removed": "7",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/BoardPictures.tsx",
+        "added": "47",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/CardPictures.tsx",
+        "added": "62",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/Dashboard.tsx",
+        "added": "5",
+        "removed": "8",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/DraftCanvas.tsx",
+        "added": "42",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+        "added": "4",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/ParentSettings.tsx",
+        "added": "6",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/PictureChoiceField.tsx",
+        "added": "33",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/PictureImage.tsx",
+        "added": "16",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/PicturePreferences.tsx",
+        "added": "47",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/TileEditor.tsx",
+        "added": "11",
+        "removed": "5",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/ui/TileFace.tsx",
+        "added": "4",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/website/LandingPage.web.tsx",
+        "added": "103",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/website/landing.css",
+        "added": "129",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/mobile/src/website/styles.d.ts",
+        "added": "3",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/package.json",
+        "added": "1",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/app.ts",
+        "added": "60",
+        "removed": "6",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/data/picture-catalog.json",
+        "added": "1",
+        "removed": "0",
+        "category": "generated dependencies/catalog"
+      },
+      {
+        "file": "apps/server/src/index.ts",
+        "added": "4",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/picture-catalog.ts",
+        "added": "50",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/picture-jobs.ts",
+        "added": "193",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/picture-provider.ts",
+        "added": "76",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/src/provider.ts",
+        "added": "20",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "apps/server/test/api.test.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "apps/server/test/pictures.test.ts",
+        "added": "106",
+        "removed": "0",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "compose.yaml",
+        "added": "6",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "deploy/compose.yaml",
+        "added": "4",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "docs/DESIGN.md",
+        "added": "12",
+        "removed": "4",
+        "category": "maintained documentation"
+      },
+      {
+        "file": "docs/PICTURES.md",
+        "added": "50",
+        "removed": "0",
+        "category": "maintained documentation"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/README.md",
+        "added": "31",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/clarification-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/clarification-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/clarification-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/fallback-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/fallback-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/fallback-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/progress-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/progress-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/progress-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/ready-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/ready-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/ready-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/board-workspace/settings-during-work.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/README.md",
+        "added": "57",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animal-evaluation.json",
+        "added": "243",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-emoji-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-emoji-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-generated-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-generated-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-library-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/animals-library-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/board-controls-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/board-controls-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/card-controls-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/card-controls-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/emoji-comparison-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/emoji-comparison-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/evaluation.json",
+        "added": "51",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/generated-board-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/generated-board-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/prompt-controls-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/prompt-controls-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/source-options-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/card-pictures/source-options-tablet.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/README.md",
+        "added": "26",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/boards-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/boards-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/conversation-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/conversation-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/emoji-ready-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/emoji-ready-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/first-send-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/first-send-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-generating-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-generating-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-library-search-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-library-search-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-ready-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/after/gap-ready-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/boards-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/boards-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/conversation-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/conversation-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/first-send-desktop.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/creation-entry/before/first-send-phone.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/README.md",
+        "added": "26",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/features-1440.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/features-390.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/home-1440.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/home-320.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/home-390.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/native-bundle-audit.json",
+        "added": "20",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/screenshots/website-landing/stores-390.png",
+        "added": "-",
+        "removed": "-",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "docs/testing.md",
+        "added": "8",
+        "removed": "0",
+        "category": "maintained documentation"
+      },
+      {
+        "file": "package-lock.json",
+        "added": "567",
+        "removed": "0",
+        "category": "generated dependencies/catalog"
+      },
+      {
+        "file": "package.json",
+        "added": "2",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "packages/core/src/boardLanguages.test.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "packages/core/src/index.ts",
+        "added": "1",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "packages/core/src/onboarding.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "packages/core/src/pictures.test.ts",
+        "added": "44",
+        "removed": "0",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "packages/core/src/pictures.ts",
+        "added": "43",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "packages/core/src/schema.test.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "packages/core/src/schema.ts",
+        "added": "34",
+        "removed": "12",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "scripts/capture-creation-entry-evidence.ts",
+        "added": "85",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "scripts/capture-picture-evidence.ts",
+        "added": "119",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "scripts/capture-workspace-evidence.ts",
+        "added": "92",
+        "removed": "0",
+        "category": "one-off evidence"
+      },
+      {
+        "file": "scripts/evaluate-ai.ts",
+        "added": "3",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "scripts/evaluate-pictures.ts",
+        "added": "61",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "scripts/update-picture-catalog.ts",
+        "added": "36",
+        "removed": "0",
+        "category": "product/configuration/maintained tooling"
+      },
+      {
+        "file": "tests/fixtures/library.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/app.spec.ts",
+        "added": "11",
+        "removed": "12",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/conversation.spec.ts",
+        "added": "50",
+        "removed": "17",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/existingLibrary.ts",
+        "added": "2",
+        "removed": "2",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/landing.spec.ts",
+        "added": "73",
+        "removed": "0",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/photos.spec.ts",
+        "added": "1",
+        "removed": "1",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/pictures.spec.ts",
+        "added": "324",
+        "removed": "0",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/recents.spec.ts",
+        "added": "2",
+        "removed": "2",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/setup.spec.ts",
+        "added": "2",
+        "removed": "3",
+        "category": "maintained tests/fixtures"
+      },
+      {
+        "file": "tests/web/speech.spec.ts",
+        "added": "2",
+        "removed": "2",
+        "category": "maintained tests/fixtures"
+      }
+    ],
+    "counts": {
+      "product/configuration/maintained tooling": {
+        "files": 47,
+        "added": 1579,
+        "removed": 135,
+        "binary": 0
+      },
+      "maintained documentation": {
+        "files": 4,
+        "added": 81,
+        "removed": 7,
+        "binary": 0
+      },
+      "maintained tests/fixtures": {
+        "files": 16,
+        "added": 767,
+        "removed": 43,
+        "binary": 0
+      },
+      "generated dependencies/catalog": {
+        "files": 2,
+        "added": 568,
+        "removed": 0,
+        "binary": 0
+      },
+      "one-off evidence": {
+        "files": 67,
+        "added": 750,
+        "removed": 0,
+        "binary": 57
+      }
+    }
+  },
+  "files": [
+    {
+      "file": ".env.example",
+      "added": "4",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "Dockerfile",
+      "added": "3",
+      "removed": "2",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "README.md",
+      "added": "11",
+      "removed": "3",
+      "category": "maintained documentation"
+    },
+    {
+      "file": "apps/mobile/index.ts",
+      "added": "2",
+      "removed": "2",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/scripts/build-pwa.mjs",
+      "added": "3",
+      "removed": "2",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/App.tsx",
+      "added": "13",
+      "removed": "3",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/Entry.tsx",
+      "added": "3",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/Entry.web.tsx",
+      "added": "17",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/data/pictureDownload.ts",
+      "added": "17",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/data/storage.ts",
+      "added": "21",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/data/storage.web.ts",
+      "added": "29",
+      "removed": "2",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/data/useLibrary.ts",
+      "added": "4",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/services/api.ts",
+      "added": "7",
+      "removed": "2",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/services/pictures.test.ts",
+      "added": "161",
+      "removed": "0",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "apps/mobile/src/services/pictures.ts",
+      "added": "177",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/services/useBoardDraftRoute.ts",
+      "added": "55",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/AiConversation.tsx",
+      "added": "119",
+      "removed": "76",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardEditor.tsx",
+      "added": "16",
+      "removed": "7",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardPictures.tsx",
+      "added": "47",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/CardPictures.tsx",
+      "added": "64",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/Dashboard.tsx",
+      "added": "5",
+      "removed": "8",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/DraftCanvas.tsx",
+      "added": "42",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+      "added": "4",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/ParentSettings.tsx",
+      "added": "6",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/PictureChoiceField.tsx",
+      "added": "33",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/PictureImage.tsx",
+      "added": "16",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/PicturePreferences.tsx",
+      "added": "47",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/TileEditor.tsx",
+      "added": "11",
+      "removed": "5",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/ui/TileFace.tsx",
+      "added": "4",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/website/LandingPage.web.tsx",
+      "added": "103",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/website/landing.css",
+      "added": "129",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/mobile/src/website/styles.d.ts",
+      "added": "3",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/package.json",
+      "added": "1",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/app.ts",
+      "added": "60",
+      "removed": "6",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/data/picture-catalog.json",
+      "added": "1",
+      "removed": "0",
+      "category": "generated dependencies/catalog"
+    },
+    {
+      "file": "apps/server/src/index.ts",
+      "added": "4",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/picture-catalog.ts",
+      "added": "50",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/picture-jobs.ts",
+      "added": "195",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/picture-provider.ts",
+      "added": "78",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/src/provider.ts",
+      "added": "20",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "apps/server/test/api.test.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "apps/server/test/pictures.test.ts",
+      "added": "200",
+      "removed": "0",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "compose.yaml",
+      "added": "6",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "deploy/compose.yaml",
+      "added": "4",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "docs/DESIGN.md",
+      "added": "12",
+      "removed": "4",
+      "category": "maintained documentation"
+    },
+    {
+      "file": "docs/PICTURES.md",
+      "added": "48",
+      "removed": "0",
+      "category": "maintained documentation"
+    },
+    {
+      "file": "docs/testing.md",
+      "added": "6",
+      "removed": "0",
+      "category": "maintained documentation"
+    },
+    {
+      "file": "package-lock.json",
+      "added": "567",
+      "removed": "0",
+      "category": "generated dependencies/catalog"
+    },
+    {
+      "file": "package.json",
+      "added": "2",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "packages/core/src/boardLanguages.test.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "packages/core/src/index.ts",
+      "added": "1",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "packages/core/src/onboarding.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "packages/core/src/pictures.test.ts",
+      "added": "44",
+      "removed": "0",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "packages/core/src/pictures.ts",
+      "added": "43",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "packages/core/src/schema.test.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "packages/core/src/schema.ts",
+      "added": "34",
+      "removed": "12",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "scripts/evaluate-ai.ts",
+      "added": "3",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "scripts/evaluate-pictures.ts",
+      "added": "61",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "scripts/update-picture-catalog.ts",
+      "added": "36",
+      "removed": "0",
+      "category": "product/configuration/maintained tooling"
+    },
+    {
+      "file": "tests/fixtures/library.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/app.spec.ts",
+      "added": "11",
+      "removed": "12",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/conversation.spec.ts",
+      "added": "100",
+      "removed": "17",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/existingLibrary.ts",
+      "added": "2",
+      "removed": "2",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/landing.spec.ts",
+      "added": "73",
+      "removed": "0",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/photos.spec.ts",
+      "added": "1",
+      "removed": "1",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/pictures.spec.ts",
+      "added": "368",
+      "removed": "0",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/recents.spec.ts",
+      "added": "2",
+      "removed": "2",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/setup.spec.ts",
+      "added": "2",
+      "removed": "3",
+      "category": "maintained tests/fixtures"
+    },
+    {
+      "file": "tests/web/speech.spec.ts",
+      "added": "2",
+      "removed": "2",
+      "category": "maintained tests/fixtures"
+    }
+  ]
+}
