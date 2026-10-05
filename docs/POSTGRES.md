@@ -47,7 +47,8 @@ produce a nonzero exit and a generic diagnostic without connection credentials.
 No migration runs automatically during build or ordinary application startup.
 
 Migrations use `node-pg-migrate`'s advisory lock, ordering check and single
-transaction. The initial `1760000000000_foundation.sql` records the foundation in
+transaction, then validate the exact resulting ledger before reporting success.
+The initial `1760000000000_foundation.sql` records the foundation in
 `pgmigrations` and creates no feature tables. Repeat migration runs are idempotent.
 Append new migration files and their names to `SCHEMA_VERSIONS` in the same order;
 never rewrite an applied migration or accept an unknown future history.

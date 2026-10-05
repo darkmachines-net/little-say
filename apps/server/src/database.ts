@@ -41,13 +41,16 @@ export async function transaction<T>(pool: pg.Pool, action: (client: PoolClient)
   finally { client.release(); }
 }
 
-/** Apply packaged SQL migrations with the migration library's advisory lock and transaction. */
+/** Apply locked, transactional SQL migrations and reject histories incompatible with this release. */
 export async function migrateDatabase(config: PoolConfig, schema = 'public') {
   await runner({ databaseUrl: config, dir: migrations, schema, migrationsTable: 'pgmigrations', direction: 'up', singleTransaction: true, checkOrder: true, log: () => {} });
+  const pool = new pg.Pool(config);
+  try { await checkDatabase(pool, schema); } finally { await pool.end(); }
 }
 
-/** Reject an unmigrated or incompatible schema without exposing database connection details. */
-export async function checkDatabase(pool: pg.Pool) {
-  const result = await pool.query('SELECT name FROM pgmigrations ORDER BY id');
+/** Check the exact ledger in the connection's search path, or an explicitly selected migration schema. */
+export async function checkDatabase(pool: pg.Pool, schema?: string) {
+  const table = schema === undefined ? 'pgmigrations' : `${pg.escapeIdentifier(schema)}.pgmigrations`;
+  const result = await pool.query(`SELECT name FROM ${table} ORDER BY id`);
   if (result.rows.length !== SCHEMA_VERSIONS.length || result.rows.some((row, index) => row.name !== SCHEMA_VERSIONS[index])) throw new Error('Postgres schema is incompatible. Run db:migrate with the selected server release.');
 }

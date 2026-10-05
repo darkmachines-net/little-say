@@ -11,7 +11,7 @@ afterEach(async () => { await database?.close(); });
 
 it('initializes only the migration ledger and repeats migrations without duplicate versions', async () => {
   await checkDatabase(database.pool);
-  await migrateDatabase(database.config, database.schema);
+  await migrateDatabase({ ...database.config, options: undefined }, database.schema);
   await checkDatabase(database.pool);
   const versions = await database.pool.query('SELECT name FROM pgmigrations ORDER BY id');
   expect(versions.rows.map(row => row.name)).toEqual(SCHEMA_VERSIONS);
@@ -44,6 +44,12 @@ it.each(['missing', 'future', 'legacy'])('rejects %s migration history', async v
   else if (variant === 'future') await database.pool.query("INSERT INTO pgmigrations (name, run_on) VALUES ('1760000000001_unknown', now())");
   else await database.pool.query("UPDATE pgmigrations SET name = '1760000000000_initial'");
   await expect(checkDatabase(database.pool)).rejects.toThrow('Postgres schema is incompatible');
+});
+
+it('refuses to report migration success for an unknown newer history and preserves that history', async () => {
+  await database.pool.query("INSERT INTO pgmigrations (name, run_on) VALUES ('1760000000001_unknown', now())");
+  await expect(migrateDatabase(database.config, database.schema)).rejects.toThrow('Postgres schema is incompatible');
+  expect((await database.pool.query('SELECT name FROM pgmigrations ORDER BY id')).rows.map(row => row.name)).toEqual([...SCHEMA_VERSIONS, '1760000000001_unknown']);
 });
 
 it('commits successful work, rolls back failed work, and releases the only connection for recovery', async () => {
