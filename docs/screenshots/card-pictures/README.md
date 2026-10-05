@@ -24,7 +24,7 @@ The emoji column retains the reported mapping: two generic trucks, three tractor
 
 ## Controls before and after
 
-The **before** links point to the earlier PR implementation at commit [6a5e3fe](https://github.com/MChartier/little-say/commit/6a5e3fe06f349cbc3c283212b5b56bf236f7d465). The current controls replace wrapping choices with one labeled source field and an explained vertical list. Independent settings use switches. There is no illustration-style selector; new picture work uses color.
+The **before** links point to the earlier PR implementation at commit [6a5e3fe](https://github.com/MChartier/little-say/commit/6a5e3fe06f349cbc3c283212b5b56bf236f7d465). The current controls replace wrapping choices with one labeled source field and an explained vertical list. Independent settings use switches. There is no illustration-style selector; new picture work uses color. Automatic includes generation after AI-services consent, with no separate permission toggle. Library only and Emoji only avoid new generation. Prompt settings open from the full-page workspace header; see [live canvas states and the previous modal](../board-workspace/README.md).
 
 | Viewport | Before: wrapping choices | After: collapsed selector | After: explained choices | Card controls | Prompt controls |
 | --- | --- | --- | --- | --- | --- |
@@ -35,9 +35,9 @@ Editing screenshots show unsaved controls. Apply remains disabled until picture 
 
 ## Validation and follow-up
 
-Release metadata, TypeScript, 179 feature-branch unit tests, and server/web production builds passed locally. The final full Chromium run passed all 53 scenarios using an isolated production-build copy. An earlier run hit a transient 404 while the shared build directory was being rebuilt; that failure did not recur in the isolated run. Browser coverage includes offline reload, permission enforcement, cancellation without a partial save, protected-card restyling, returning to emoji, manual library selection without AI consent, and picture retention through unrelated edits. The new selector checks cover mobile list layout, Enter/Escape, focus return, and inherited card sources. Legacy outline preferences are read compatibly, while new artwork requests use color.
+Release metadata, TypeScript, 183 feature-branch unit tests, and server/web production builds passed locally. The final isolated Chromium run passed all 62 scenarios. Browser coverage includes offline reload, source restrictions, generation by default, emoji fallback, cancellation without a partial save, protected-card restyling, returning to emoji, manual library selection without AI consent, and picture retention through unrelated edits. Selector checks cover mobile list layout, Enter/Escape, focus return, and inherited card sources. Workspace checks cover individual picture completion, queued and animated active cards, repeated cycles and reduced motion, settings during work, clarification, reload and Back navigation. Legacy outline preferences are read compatibly, while new artwork requests use color.
 
-The screenshot capture makes no AI calls and verifies the SHA-256 identity of every seeded PNG. Physical Android/iPad validation and deployment remain outstanding. The feature is stacked on [dialog-dismissal PR #5](https://github.com/MChartier/little-say/pull/5), base commit [3b39998](https://github.com/MChartier/little-say/commit/3b39998ff8c21f75283de6a8220d1ac0f8f8ec22).
+The screenshot capture makes no AI calls and verifies the SHA-256 identity of every seeded PNG. Physical Android/iPad validation and deployment remain outstanding. [Dialog-dismissal PR #5](https://github.com/MChartier/little-say/pull/5) has merged; this PR now targets master and preserves the landing-page commit merged into its branch.
 
 ## Library artwork credits
 

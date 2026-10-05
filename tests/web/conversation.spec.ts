@@ -23,6 +23,20 @@ async function send(page: Page, message: string, consent = false) {
 }
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
 
+test('editing routes survive reload and return to their source board without saving a draft', async ({ page }) => {
+  const original = (await saved(page)).boards[0];
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`#boards/${original.id}/ai$`));
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsaved message');
+  await page.reload();
+  await expect(page.getByTestId('ai-canvas')).toContainText('Farmyard friends');
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
+  await page.getByRole('button', { name: 'Back to board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
+  expect((await saved(page)).boards[0]).toEqual(original);
+});
+
 test('clarification, draft and refinement stay in one conversation until explicitly saved', async ({ page }) => {
   const requests: any[] = [];
   let release!: () => void;
@@ -114,7 +128,7 @@ test('stopping and retrying ignores late replies and does not duplicate conversa
   expect(requests[1].conversation.history).toEqual([]);
   await expect(page.getByText('A cow', { exact: true })).toHaveCount(1);
   await expect(page.getByTestId('ai-draft')).not.toContainText('Wrong late word');
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   expect((await saved(page)).boards).toHaveLength(3);
 });
 
@@ -139,13 +153,13 @@ test('failed follow-ups and clarification preserve the previous draft and small-
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByText('Which color?', { exact: true })).toBeVisible();
   expect(requests[2].conversation.history).toHaveLength(1);
-  await expect(page.getByTestId('ai-draft')).toContainText('Previous draft');
+  await expect(page.getByTestId('ai-draft')).toContainText('Waiting for your answer');
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toHaveCount(0);
   await send(page, 'Blue');
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
   expect(requests[3].conversation.history).toHaveLength(2);
   expect(requests[3].conversation.draft).toEqual(proposal());
-  for (const name of ['Use this board', 'Voice prompt', 'Send message', 'Close New board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+  for (const name of ['Use this board', 'Voice prompt', 'Send message', 'Back to boards']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
   await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-phone.png' });
 });
 
@@ -164,7 +178,7 @@ test('a failed save keeps the draft and retry creates exactly one board', async 
   expect((await saved(page)).boards).toHaveLength(4);
 });
 
-for (const dismissal of ['close button', 'outside click']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
+for (const dismissal of ['page back', 'browser back']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
   await page.evaluate(() => {
     (window as any).__stoppedTracks = 0;
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
@@ -194,8 +208,8 @@ for (const dismissal of ['close button', 'outside click']) test(`voice transcrip
   expect(requests[1].conversation.history).toHaveLength(1);
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  if (dismissal === 'outside click') await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: 4 } });
-  else await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  if (dismissal === 'browser back') await page.goBack();
+  else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
@@ -224,7 +238,7 @@ test('a capture-time recorder error releases the microphone and lets the parent 
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Our family');
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
 

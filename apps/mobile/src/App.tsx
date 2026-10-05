@@ -15,6 +15,8 @@ import { getVoices, matchingVoice, speechQueue, type Voice } from './services/sp
 import { useSpeechLibrary } from './services/useSpeechLibrary';
 import { initializeUpdates, applyUpdate } from './services/updates';
 import { Dashboard } from './ui/Dashboard';
+import { AiConversation } from './ui/AiConversation';
+import { useBoardDraftRoute } from './services/useBoardDraftRoute';
 import { BoardEditor } from './ui/BoardEditor';
 import { PlayBoard } from './ui/PlayBoard';
 import { ParentSettings } from './ui/ParentSettings';
@@ -26,8 +28,10 @@ import { defaultPicturePolicy } from '@little-say/core';
 
 function Application() {
   const store = useLibrary();
+  const draftRoute = useBoardDraftRoute();
   const audio = useSpeechLibrary(store.library);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  useEffect(() => { if (draftRoute.route?.boardId) setSelectedId(draftRoute.route.boardId); }, [draftRoute.route?.boardId]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [error, setError] = useState('');
@@ -108,6 +112,11 @@ function Application() {
     const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, picturePolicy: settings.pictureDefaults ?? defaultPicturePolicy, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: playLanguages.length > 1 ? 'board' : 'fixed', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
     void store.change(current => ({ ...current, boards: [...current.boards, board] })).catch(() => {}); setSelectedId(board.id);
   };
+  if (draftRoute.route) {
+    const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
+    if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={accept} onConsent={consent} onClose={draftRoute.close} onManual={source ? undefined : () => { draftRoute.close(); manual(); }} />;
+  }
   return <View style={styles.page}>
     <StatusBar style="dark" />
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
@@ -121,13 +130,13 @@ function Application() {
     }} onDelete={() => deleteBoard(selected.id)} onDuplicate={() => {
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
       void store.change(lib => ({ ...lib, boards: [...lib.boards, copy] })).catch(() => {}); setSelectedId(copy.id);
-    }} onApply={accept} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
+    }} onCompose={() => draftRoute.open(selected.id)} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
       const history = undo[selected.id] ?? []; const previous = history.at(-1); if (!previous) return;
       const current = store.current.current!.boards.find(b => b.id === selected.id)!;
       const restored = { ...previous, revision: current.revision + 1, updatedAt: new Date().toISOString() };
       void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) })).catch(() => {});
       setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
-    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onManual={manual} onSettings={() => setSettingsOpen(true)} onApply={accept} onConsent={consent} onDelete={deleteBoard} onFavorite={id => {
+    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => setSettingsOpen(true)} onCompose={() => draftRoute.open()} onConsent={consent} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);

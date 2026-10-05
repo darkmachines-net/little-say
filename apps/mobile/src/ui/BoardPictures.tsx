@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 import { defaultPicturePolicy, type Board, type Settings } from '@little-say/core';
 import { prepareBoardPictures } from '../services/pictures';
 import { Button, Notice, Sheet } from './components';
-import { PicturePermission, PicturePreferences } from './PicturePreferences';
+import { PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
 import { TileFace } from './TileFace';
 import { styles } from './theme';
 
@@ -14,7 +14,6 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
   const [source] = useState(board);
   const [draft, setDraft] = useState(board);
   const [policy, setPolicy] = useState(board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy);
-  const [allow, setAllow] = useState(Boolean(settings.autoImages && settings.aiConsent));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [issues, setIssues] = useState<string[]>([]);
@@ -28,7 +27,7 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
     setBusy(true); setIssues([]); setPrepared(false);
     try {
       if (!settings.aiConsent) await onConsent();
-      const result = await prepareBoardPictures({ ...source, picturePolicy: policy }, { ...settings, aiConsent: true }, { restyle, forceIds: changedTileId ? new Set([changedTileId]) : undefined, signal: controller.signal, allowGeneration: allow, progress: setMessage });
+      const result = await prepareBoardPictures({ ...source, picturePolicy: policy }, { ...settings, aiConsent: true }, { restyle, forceIds: changedTileId ? new Set([changedTileId]) : undefined, signal: controller.signal, progress: setMessage });
       if (request.current !== controller || controller.signal.aborted) return;
       setDraft(result.board); setIssues(result.issues); setPrepared(true);
     } catch (error) { if (!controller.signal.aborted) setIssues([(error as Error).message]); }
@@ -37,7 +36,7 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
   useEffect(() => { if (automatic && !started.current) { started.current = true; void prepare(false); } }, []);
   return <Sheet title="Board pictures" onClose={close} wide footer={<Button disabled={busy || !prepared} onPress={() => { if (currentRevision !== source.revision) { setIssues(['This board changed. Close and reopen Pictures to keep your latest edits.']); return; } onApply(draft, source.revision); onClose(); }}>Apply pictures</Button>}>
     <PicturePreferences value={policy} disabled={busy} onChange={value => { setPolicy(value); setPrepared(false); }} />
-    <PicturePermission enabled={allow} disabled={busy} onChange={value => { setAllow(value); setPrepared(false); }} />
+    <PictureGenerationInfo />
     <Text style={styles.small}>Improve pictures keeps suitable saved illustrations. Restyle board revisits all pictures that follow the board. Your photos and pictures marked “Keep this picture” stay in place.</Text>
     <View style={styles.wrap}><Button busy={busy} onPress={() => void prepare(false)}>Improve pictures</Button><Button disabled={busy} kind="secondary" onPress={() => void prepare(true)}>Restyle board</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
     {Boolean(message) && <Text accessibilityLiveRegion="polite" style={styles.small}>{message}</Text>}

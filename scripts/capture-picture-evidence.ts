@@ -108,8 +108,8 @@ try {
     await capture(page, `card-controls-${name}`);
     await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
     await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
-    await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
     await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Use only library pictures. Keep the excavator picture.');
+    await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
     await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
     await page.getByRole('button', { name: 'Library only', exact: true }).click();
     await capture(page, `prompt-controls-${name}`);

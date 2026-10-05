@@ -94,8 +94,8 @@ test.describe('outside modal dismissal', () => {
       await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
       await page.getByRole('heading', { name: 'Edit with AI', exact: true }).tap();
       await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsent edit');
-      await capture(page, 'ai-dialog', viewport.width);
-      await page.getByTestId('modal-backdrop').tap({ position: { x: 4, y: 4 } });
+      await capture(page, 'ai-workspace', viewport.width);
+      await page.getByRole('button', { name: 'Back to board', exact: true }).tap();
       await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
       await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
@@ -726,6 +726,6 @@ test('missing AI configuration retains the parent prompt and existing boards', a
   await page.getByRole('button', { name: 'Send message', exact: true }).click(); await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
   await expect(page.getByText('AI is not configured yet.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
 });

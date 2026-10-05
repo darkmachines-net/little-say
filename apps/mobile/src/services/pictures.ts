@@ -2,11 +2,12 @@
 
 import * as Crypto from 'expo-crypto';
 import { z } from 'zod';
-import { applyProposal, defaultPicturePolicy, pictureAnalysisSchema, pictureJobSchema, pictureTargets, resolvedPictureSchema, catalogEntrySchema, type Board, type BoardProposal, type PicturePolicy, type Settings, type Tile } from '@little-say/core';
+import { applyProposal, defaultPicturePolicy, pictureAnalysisSchema, pictureJobSchema, pictureTargets, resolvedPictureSchema, catalogEntrySchema, searchEmoji, type Board, type BoardProposal, type PicturePolicy, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, backendUrl } from './api';
 import { savePictureAsset } from '../data/storage';
 
 const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+export type PictureTileState = 'queued' | 'working' | 'ready' | 'fallback';
 export interface PictureWorkOptions {
   signal?: AbortSignal;
   targetIds?: Set<string>;
@@ -18,6 +19,10 @@ export interface PictureWorkOptions {
   allowGeneration?: boolean;
   /** Report parent-facing progress without publishing draft changes to the saved board. */
   progress?: (message: string) => void;
+  /** Publish detached in-progress previews; the caller must not save them before work completes. */
+  preview?: (board: Board) => void;
+  /** Report individual card work without treating queued jobs as active generation. */
+  tileProgress?: (tileId: string, state: PictureTileState) => void;
 }
 
 /** Download a resolved picture before its reference is eligible for a board save. */
@@ -50,9 +55,25 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
   const policy: PicturePolicy = { ...(board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy), style: 'color' };
   const result: Board = { ...board, picturePolicy: policy, tiles: board.tiles.map(tile => ({ ...tile })) };
   const issues: string[] = [];
+  // Source choices govern generation; the old default-off autoImages flag is no longer a second gate.
+  const allowGeneration = options.allowGeneration ?? true;
+  const fallbackIds = new Set<string>();
+  const keptIds = new Set<string>();
+  const bestEmoji = (tile: Tile, suggested?: string): Tile['illustration'] => ({ kind: 'emoji', emoji: suggested || (tile.illustration.kind === 'emoji' ? tile.illustration.emoji : searchEmoji(tile.label)[0]?.emoji ?? '💬') });
+  const retain = (tile: Tile, suggested?: string) => {
+    const existing = tile.illustration.kind !== 'emoji' && tile.illustration.kind !== 'unresolved';
+    (existing ? keptIds : fallbackIds).add(tile.id);
+    result.tiles = result.tiles.map(value => value.id === tile.id ? { ...value, illustration: existing ? tile.illustration : bestEmoji(tile, suggested) } : value);
+    options.tileProgress?.(tile.id, 'fallback');
+  };
+  const finish = () => {
+    const summary = fallbackIds.size ? `Using the closest emoji for ${fallbackIds.size} ${fallbackIds.size === 1 ? 'card' : 'cards'} where clearer pictures were unavailable. You can save this board and change pictures later.` : '';
+    const kept = keptIds.size ? 'Existing pictures were kept where replacements were unavailable.' : '';
+    return { board: result, issues: [summary, kept, ...new Set(issues)].filter(Boolean) };
+  };
   const eligible = board.tiles.filter(tile => (!options.targetIds || options.targetIds.has(tile.id) || (options.expandConsistency && policy.consistent && tile.illustration.kind === 'emoji')) && ((!tile.pictureOptions?.locked && tile.illustration.kind !== 'photo') || (options.replaceProtected && options.targetIds?.has(tile.id))));
   if (!eligible.length) return { board: result, issues };
-  if (!settings.aiConsent) return { board: result, issues: ['Automatic matching needs AI consent. You can choose pictures manually.'] };
+  if (!settings.aiConsent) return { board: result, issues: ['Kept the current pictures. Use AI services or choose library pictures manually to improve them.'] };
   options.progress?.('Checking picture meanings…');
   let analysis: z.infer<typeof pictureAnalysisSchema>;
   try {
@@ -60,7 +81,8 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
     if (analysis.tiles.length !== board.tiles.length || new Set(analysis.tiles.map(tile => tile.id)).size !== board.tiles.length || analysis.tiles.some(tile => !board.tiles.some(input => input.id === tile.id))) throw new Error('Incomplete picture meanings.');
   } catch (error) {
     if (options.signal?.aborted) throw error;
-    return { board: result, issues: [(error as Error).message] };
+    for (const tile of eligible) retain(tile);
+    return finish();
   }
   const concepts = new Map(analysis.tiles.map(tile => [tile.id, tile.concept]));
   const emoji = new Map(analysis.tiles.map(tile => [tile.id, tile.emoji]));
@@ -79,33 +101,34 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
   for (const tile of result.tiles) tile.pictureConcept = concepts.get(tile.id);
   for (const tile of result.tiles) if (eligible.some(value => value.id === tile.id) && (tile.pictureOptions?.mode ?? policy.mode) === 'emoji') {
     tile.illustration = { kind: 'emoji', emoji: emoji.get(tile.id)! };
-    if (!concepts.get(tile.id)!.emojiAccurate) issues.push(`${tile.label}: the closest emoji is approximate. Emoji-only mode keeps your choice.`);
   }
   const todo = eligible.filter(tile => (tile.pictureOptions?.mode ?? policy.mode) !== 'emoji' && targets.has(tile.id) && (options.restyle || options.regenerate || forceIds.has(tile.id) || tile.illustration.kind === 'emoji' || tile.illustration.kind === 'unresolved'));
+  for (const tile of todo) options.tileProgress?.(tile.id, 'queued');
+  if (todo.length) options.progress?.(`Preparing pictures · 0 of ${todo.length}`);
   const draftId = Crypto.randomUUID(); let cursor = 0; let done = 0;
   const changed = new Set<string>();
   const worker = async () => {
     while (cursor < todo.length && !options.signal?.aborted) {
       const tile = todo[cursor++]; const id = Crypto.randomUUID();
+      options.tileProgress?.(tile.id, 'working');
       const cancel = () => { void apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}/cancel`, json({})).catch(() => {}); };
       options.signal?.addEventListener('abort', cancel, { once: true });
       try {
         const mode = tile.pictureOptions?.mode ?? policy.mode;
-        let job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/jobs', json({ requestId: id, draftId, tileId: tile.id, concept: concepts.get(tile.id), style: 'color', mode: mode === 'emoji' ? 'auto' : mode, allowGeneration: Boolean(options.allowGeneration ?? settings.autoImages), regenerate: Boolean(options.regenerate), neighbors: board.tiles.filter(other => other.id !== tile.id).map(other => concepts.get(other.id)!.description) }), options.signal));
-        while (job.state === 'queued' || job.state === 'working') { await pause(options.signal); job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}`, {}, options.signal)); }
+        let job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, '/api/pictures/jobs', json({ requestId: id, draftId, tileId: tile.id, concept: concepts.get(tile.id), style: 'color', mode: mode === 'emoji' ? 'auto' : mode, allowGeneration: allowGeneration && mode !== 'library', regenerate: Boolean(options.regenerate), neighbors: board.tiles.filter(other => other.id !== tile.id).map(other => concepts.get(other.id)!.description) }), options.signal));
+        while (job.state === 'queued' || job.state === 'working') { options.tileProgress?.(tile.id, job.state); await pause(options.signal); job = pictureJobSchema.parse(await apiFetch(settings.backendUrl, `/api/pictures/jobs/${id}`, {}, options.signal)); }
         if (job.id !== id || job.draftId !== draftId || job.tileId !== tile.id) throw new Error('This picture belongs to an older draft.');
         if (job.state !== 'complete' || !job.result) throw new Error(job.error || 'Picture work stopped.');
         const picture = job.result;
         if (picture.kind === 'unresolved') throw new Error(picture.reason);
-        if (picture.kind === 'generated' && (mode === 'library' || !(options.allowGeneration ?? settings.autoImages))) throw new Error('This picture does not match your source permission.');
+        if (picture.kind === 'generated' && (mode === 'library' || !allowGeneration)) throw new Error('This picture does not match your source permission.');
         await storeResolvedPicture(settings.backendUrl, picture, options.signal);
         result.tiles = result.tiles.map(value => value.id === tile.id ? { ...value, illustration: picture } : value); changed.add(tile.id);
+        options.tileProgress?.(tile.id, 'ready');
       } catch (error) {
         if (options.signal?.aborted) { cancel(); throw error; }
-        const reason = (error as Error).message; issues.push(`${tile.label}: ${reason}`);
-        // Existing asset-backed pictures survive unsuccessful replacement attempts.
-        if (tile.illustration.kind === 'emoji' || tile.illustration.kind === 'unresolved') result.tiles = result.tiles.map(value => value.id === tile.id ? { ...value, illustration: { kind: 'unresolved', reason: reason.slice(0, 300) } } : value);
-      } finally { options.signal?.removeEventListener('abort', cancel); done++; options.progress?.(`Preparing pictures · ${done} of ${todo.length}`); }
+        retain(tile, emoji.get(tile.id));
+      } finally { options.signal?.removeEventListener('abort', cancel); done++; options.progress?.(`Preparing pictures · ${done} of ${todo.length}`); if (!options.signal?.aborted) options.preview?.({ ...result, tiles: [...result.tiles] }); }
     }
   };
   await Promise.all([worker(), worker()]);
@@ -118,12 +141,11 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
       if (review.rejected.some(id => !cards.some(card => card.id === id))) throw new Error('Invalid picture review.');
       for (const id of review.rejected) {
         const original = board.tiles.find(tile => tile.id === id)!;
-        issues.push(`${original.label}: this picture may be inaccurate or hard to distinguish.`);
-        if (changed.has(id)) result.tiles = result.tiles.map(tile => tile.id === id ? { ...tile, illustration: original.illustration.kind !== 'emoji' && original.illustration.kind !== 'unresolved' ? original.illustration : { kind: 'unresolved', reason: 'Choose a clearer, distinguishable picture.' } } : tile);
+        if (changed.has(id)) retain(original, emoji.get(id));
       }
     } catch (error) { if (options.signal?.aborted) throw error; issues.push('The final picture review was unavailable. Check each picture before saving.'); }
   }
-  return { board: result, issues };
+  return finish();
 }
 
 /** Build the exact preview used for applying an AI proposal, including staged picture overrides. */

@@ -46,7 +46,9 @@ export const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),
   autoSpeech: z.boolean().default(true),
-  pictureDefaults: picturePolicySchema.optional(), autoImages: z.boolean().optional(),
+  pictureDefaults: picturePolicySchema.optional(),
+  // Read older libraries losslessly; picture source now governs generation instead of this legacy flag.
+  autoImages: z.boolean().optional(),
   boardLanguages: z.record(z.string(), languageSchema).optional(),
   languageProfile: languageProfileSchema.optional(),
 });

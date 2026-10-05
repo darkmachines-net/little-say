@@ -20,7 +20,10 @@ async function service(overrides: Partial<PictureProvider> = {}, enabled = true)
   const directory = await mkdtemp(join(tmpdir(), 'little-say-pictures-')); directories.push(directory);
   const png = await sharp({ create: { width: 32, height: 32, channels: 4, background: '#ff7700' } }).png().toBuffer();
   const provider: PictureProvider = { model: 'test-model', analyze: vi.fn(), select: vi.fn(async () => 'generated'), generate: vi.fn(async () => png), review: vi.fn(async () => []), ...overrides };
-  const jobs = new PictureJobs(directory, provider, enabled); services.push(jobs); return { jobs, provider, directory, png };
+  const jobs = new PictureJobs(directory, provider, enabled); services.push(jobs);
+  // Validation-only API tests may finish before restore starts reading the cache; initialize before teardown can remove it.
+  await jobs.status('none');
+  return { jobs, provider, directory, png };
 }
 async function finished(jobs: PictureJobs, id: string) { await vi.waitFor(async () => expect(['complete', 'error', 'cancelled']).toContain((await jobs.status(id))?.state)); return (await jobs.status(id))!; }
 

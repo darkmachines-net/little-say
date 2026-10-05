@@ -5,7 +5,7 @@ import { Linking, Text, View } from 'react-native';
 import { defaultPicturePolicy, type Board, type CatalogEntry, type Settings, type Tile } from '@little-say/core';
 import { chooseLibraryPicture, prepareBoardPictures, searchLibraryPictures } from '../services/pictures';
 import { Button, Field, Notice } from './components';
-import { CardPicturePreferences, PicturePermission } from './PicturePreferences';
+import { CardPicturePreferences, PictureGenerationInfo } from './PicturePreferences';
 import { PictureImage } from './PictureImage';
 import { styles } from './theme';
 
@@ -14,7 +14,6 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
   const [query, setQuery] = useState(tile.label);
   const [results, setResults] = useState<CatalogEntry[]>([]);
   const [previews, setPreviews] = useState<Record<string, Tile['illustration']>>({});
-  const [allow, setAllow] = useState(Boolean(settings.autoImages && settings.aiConsent));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const request = useRef<AbortController | null>(null);
@@ -42,7 +41,7 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     const snapshot = current.current;
     const candidate = { ...snapshot, pictureOptions: { ...options, locked: false } };
     const draft = { ...board, picturePolicy: board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy, tiles: board.tiles.map(value => value.id === tile.id ? candidate : value) };
-    const result = await prepareBoardPictures(draft, { ...settings, aiConsent: true }, { signal: controller.signal, targetIds: new Set([tile.id]), replaceProtected: true, restyle: true, regenerate, allowGeneration: allow, progress: setMessage });
+    const result = await prepareBoardPictures(draft, { ...settings, aiConsent: true }, { signal: controller.signal, targetIds: new Set([tile.id]), replaceProtected: true, restyle: true, regenerate, progress: setMessage });
     if (controller.signal.aborted || current.current !== snapshot) return;
     const replacement = result.board.tiles.find(value => value.id === tile.id)!;
     onChange({ ...replacement, pictureOptions: { ...replacement.pictureOptions, instruction: options.instruction, locked: true } });
@@ -54,8 +53,8 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     <Field label="Search picture library" editable={!busy} value={query} maxLength={150} onChangeText={setQuery} />
     <Button disabled={busy || !query.trim()} kind="secondary" onPress={() => void find()}>Search pictures</Button>
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{results.map(entry => { const picture = previews[entry.id]; return <View key={entry.id} style={{ width: 132, gap: 4 }}>{picture && (picture.kind === 'library' || picture.kind === 'generated') && <View style={{ width: 120, height: 100 }}><PictureImage assetId={picture.assetId} /></View>}<Button compact kind="secondary" disabled={!picture || picture.kind === 'unresolved'} onPress={() => { request.current?.abort(); onChange({ ...current.current, illustration: picture!, pictureOptions: { ...options, locked: true } }); setResults([]); }}>{entry.name}</Button></View>; })}</View>
-    <PicturePermission enabled={allow} disabled={busy} onChange={setAllow} />
-    <View style={styles.wrap}><Button disabled={busy} onPress={() => void generate(false)}>Find best picture</Button><Button disabled={busy || !allow || (options.mode ?? board.picturePolicy?.mode) === 'library' || (options.mode ?? board.picturePolicy?.mode) === 'emoji'} kind="secondary" onPress={() => void generate(true)}>Generate new picture</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
+    <PictureGenerationInfo />
+    <View style={styles.wrap}><Button disabled={busy} onPress={() => void generate(false)}>Find best picture</Button><Button disabled={busy || (options.mode ?? board.picturePolicy?.mode) === 'library' || (options.mode ?? board.picturePolicy?.mode) === 'emoji'} kind="secondary" onPress={() => void generate(true)}>Generate new picture</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
     {Boolean(message) && <Notice>{message}</Notice>}
     {tile.illustration.kind === 'library' && <><Text style={styles.small}>{tile.illustration.provenance.author} · {tile.illustration.provenance.license}. {tile.illustration.provenance.modified}</Text><Button compact kind="ghost" onPress={() => { if (tile.illustration.kind === 'library') void Linking.openURL(tile.illustration.provenance.sourceUrl); }}>Original picture</Button></>}
     {tile.illustration.kind === 'generated' && <Text style={styles.small}>AI-generated illustration · {tile.illustration.model}</Text>}

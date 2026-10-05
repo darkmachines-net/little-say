@@ -8,9 +8,9 @@ import { PictureChoiceField, type PictureChoice } from './PictureChoiceField';
 import { styles, theme } from './theme';
 
 const pictureModes: readonly PictureChoice<PicturePolicy['mode']>[] = [
-  { value: 'auto', label: 'Automatic', description: 'Keep clear emoji. Find a library picture when needed, or generate one if allowed.' },
-  { value: 'library', label: 'Library only', description: 'Choose pictures from the free library. Never generate new images.' },
-  { value: 'generated', label: 'AI illustrations', description: 'Use AI-created pictures. Requires permission to use your paid API account.' },
+  { value: 'auto', label: 'Automatic', description: 'Keep clear emoji, find library pictures, or generate a clearer illustration. Use emoji if pictures are unavailable.' },
+  { value: 'library', label: 'Library only', description: 'Use free library pictures, with emoji when there is no good match. Never generate new images.' },
+  { value: 'generated', label: 'AI illustrations', description: 'Create illustrations with your server’s AI service. Keep emoji if generation is unavailable.' },
   { value: 'emoji', label: 'Emoji only', description: 'Use emoji, even when the closest match is approximate.' },
 ];
 
@@ -37,9 +37,9 @@ export function CardPicturePreferences({ options, policy, onChange, disabled = f
   </View>;
 }
 
-/** Disclose image costs and retention beside the permission control, without silently enabling generation. */
-export function PicturePermission({ enabled, onChange, disabled = false }: { enabled: boolean; onChange: (enabled: boolean) => void; disabled?: boolean }) {
-  return <View style={{ gap: 8, borderTopWidth: 1, borderColor: theme.line, paddingTop: 16 }}><PictureSwitch label="Allow AI pictures" description="New AI pictures use your server’s paid API account." value={enabled} disabled={disabled} onChange={onChange} /><Text style={styles.small}>Descriptions go to OpenAI. Pictures and descriptions are saved on your server, and pictures are downloaded for offline play. Personal photos stay on this device.</Text></View>;
+/** Explain the generation included in Automatic and how to choose a source that never generates images. */
+export function PictureGenerationInfo() {
+  return <Text style={styles.small}>Automatic and AI illustrations can use your server’s paid AI service. Choose Library only or Emoji only to avoid image generation. Pictures are downloaded for offline play.</Text>;
 }
 
 /** Show source and license links in parent controls rather than covering children's cards with credits. */
