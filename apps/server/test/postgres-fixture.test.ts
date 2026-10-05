@@ -1,4 +1,4 @@
-/** @file Ensures destructive fixture setup requires an explicitly named test database and never falls back to application credentials. */
+/** @file Verifies explicit test-database safeguards and failed-creation cleanup that drains pools without dropping unowned schemas. */
 import { afterEach, expect, it, vi } from 'vitest';
 import pg from 'pg';
 import { testDatabase } from './postgres-fixture';

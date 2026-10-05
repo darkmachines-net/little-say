@@ -1,4 +1,4 @@
-# Validates release metadata, types, unit tests, and production builds for source changes.
+# Validates release metadata, types, unit tests, PostgreSQL integration contracts, and production builds for source changes.
 name: Check
 on:
   pull_request:
