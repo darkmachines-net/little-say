@@ -1,0 +1,50 @@
+{
+  "comment": {
+    "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6001954640",
+    "html_url": "https://github.com/MChartier/little-say/pull/6#issuecomment-6001954640",
+    "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/6",
+    "id": 6001954640,
+    "node_id": "IC_kwDOU65Oyc8AAAABZb6PUA",
+    "user": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?u=9b118f5eb3a1234c507641ebc3b8e5e9d6ab4313&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-05T19:59:03Z",
+    "updated_at": "2026-10-05T19:59:03Z",
+    "author_association": "OWNER",
+    "body": "## PR6 CI infrastructure recovery\n\nAttempt 1 of run 37364731059 failed before executing any steps: GitHub's authenticated check annotation says, \"The job was not acquired by Runner of type hosted even after multiple attempts\". Job 111947076004 had runner_id 0, empty runner_name and zero steps. This identifies hosted-runner acquisition failure, not a code-test failure; the annotations contain no user-cancellation indication. The branch run inventory contained no active duplicate.\n\nFollowing the coordinator's explicit authorization, I requested exactly one rerun of the same run/head. Attempt 2 acquired a hosted runner and is now **success**. [Run and checks](https://github.com/MChartier/little-say/actions/runs/37364731059/attempts/2). No further rerun was requested.\n\nSource remains 2be85f0cb02cd5ba464f46c623b9b19cf5061231; master/base remains 5d72992c77fbb09195518e257d799501b7db4d04; exact PR body SHA-256 remains 2fe5278a6f2294df4b46fa2016e05f469a143f0a054d82b65bfc50267e9628f2. No source, PR description, billing, quotas, credentials, protections or CI gates changed; PR13 was untouched. Original and recovery API evidence is retained under docs/review/pr6-catalog-cancel on evidence/pr6-final-zbook. Full authenticated GitHub-page inspection and independent QA remain outstanding; no readiness is awarded. Writer is idle.\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6001954640/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  },
+  "bodySha256": "c6ecea05abcdea6740f7c9ee737e4e1457f5c56362d7a4a03e6a8e23e8ec89f2"
+}
