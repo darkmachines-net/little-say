@@ -142,13 +142,13 @@ export async function createServer(options: ServerOptions) {
   app.post('/api/boards/propose', { ...aiLimits, bodyLimit: 512 * 1024 }, async (request, reply) => {
     const parsed = proposalRequestSchema.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide a prompt and a valid board of up to 24 tiles.' });
-    if (!usesChatGpt(request) && !options.provider) return reply.code(503).send({ error: 'AI is not configured yet. Connect ChatGPT in Parent settings if available, or configure the server API key. You can still create boards manually.' });
+    if (!usesChatGpt(request) && !options.provider) return reply.code(503).send({ error: 'AI is not configured yet. Connect ChatGPT in Settings if available, or configure the server API key. You can still create boards manually.' });
     if (active >= maxConcurrent) return reply.code(429).send({ error: 'The server is working on another board. Please try again shortly.' });
     active++;
     const start = Date.now();
     try {
       const provider = usesChatGpt(request) ? await options.chatgpt?.provider(chatGptSession(request)) : options.provider;
-      if (!provider) throw new ChatGptError('Reconnect ChatGPT in Parent settings. The server API key was not used.', 401);
+      if (!provider) throw new ChatGptError('Reconnect ChatGPT in Settings. The server API key was not used.', 401);
       const proposal = validateGeneratedBoard(await provider.propose(parsed.data), parsed.data.board);
       app.log.info({ operation: 'propose', durationMs: Date.now() - start }, 'AI request completed');
       return { boardId: parsed.data.board?.id ?? null, baseRevision: parsed.data.board?.revision ?? null, proposal };
@@ -165,7 +165,7 @@ export async function createServer(options: ServerOptions) {
     active++;
     try {
       const provider = usesChatGpt(request) ? await options.chatgpt?.provider(chatGptSession(request)) : options.provider;
-      if (!provider?.translate) throw new ChatGptError('Reconnect ChatGPT in Parent settings. The server API key was not used.', 401);
+      if (!provider?.translate) throw new ChatGptError('Reconnect ChatGPT in Settings. The server API key was not used.', 401);
       return validateTranslations(parsed.data, await provider.translate(parsed.data));
     }
     catch (error) { if (error instanceof ChatGptError) throw error; return reply.code(502).send({ error: 'AI could not prepare all translations. Your board is unchanged. Please try again.' }); }

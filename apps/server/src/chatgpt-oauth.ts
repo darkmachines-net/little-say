@@ -39,7 +39,7 @@ export function chatGptRequestError(error: unknown): ChatGptError {
   const detail = (error ?? {}) as { code?: string; status?: number };
   if (detail.code === 'subscription_sharing_usage_limit_exceeded' || detail.status === 429) return new ChatGptError('ChatGPT usage limit reached. Open Manage usage to review your plan or app limit.', 429);
   if (detail.code === 'subscription_sharing_user_not_eligible') return new ChatGptError('This ChatGPT account or workspace is not eligible for plan usage.', 403);
-  if (detail.status === 401 || detail.code === 'subscription_sharing_invalid_user') return new ChatGptError('Reconnect ChatGPT in Parent settings to continue.', 401, true);
+  if (detail.status === 401 || detail.code === 'subscription_sharing_invalid_user') return new ChatGptError('Reconnect ChatGPT in Settings to continue.', 401, true);
   if (detail.status === 403) return new ChatGptError('ChatGPT did not authorize this request. Check the account and this app’s access in ChatGPT settings.', 403);
   return new ChatGptError('ChatGPT could not complete the request. Try again later. The server API key was not used.', 502);
 }
@@ -70,7 +70,7 @@ export function openAIChatGptOAuth(config: { clientId: string; clientSecret?: st
     const data = await response.json() as Record<string, unknown>;
     if (!response.ok) {
       const terminal = ['invalid_grant', 'invalid_refresh_token', 'token_expired', 'refresh_token_expired', 'refresh_token_invalidated', 'refresh_token_reused'].includes(String(data.error));
-      throw new ChatGptError(terminal ? 'Reconnect ChatGPT in Parent settings to continue.' : 'ChatGPT sign-in could not be completed. Try again later.', terminal ? 401 : 502, terminal);
+      throw new ChatGptError(terminal ? 'Reconnect ChatGPT in Settings to continue.' : 'ChatGPT sign-in could not be completed. Try again later.', terminal ? 401 : 502, terminal);
     }
     return tokenSchema.parse(data);
   };

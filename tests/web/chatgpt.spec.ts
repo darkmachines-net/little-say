@@ -7,10 +7,10 @@ import { openExistingLibrary } from './existingLibrary';
 const disconnected = { available: true, selected: false, connected: false, planEnabled: false, needsLogin: false, welcome: false };
 test('shows hosted availability honestly and keeps manual use available', async ({ page }) => {
   await openExistingLibrary(page);
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByText('ChatGPT connection has not been enabled on this server.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue with ChatGPT', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Settings', exact: true }).click();
   await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
 });
 
@@ -21,14 +21,14 @@ for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and
   await page.route('**/api/chatgpt/acknowledge', async route => { state = { ...state, welcome: false }; await route.fulfill({ json: { ok: true } }); });
   await page.route('**/api/chatgpt/disconnect', async route => { state = { ...state, ...disconnected }; await route.fulfill({ json: { revoked: true } }); });
   await openExistingLibrary(page);
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'You’re using your ChatGPT plan', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Got it', exact: true }).click();
   await page.getByRole('heading', { name: 'AI requests', exact: true }).evaluate(element => element.scrollIntoView({ block: 'start' }));
   await expect(page.getByText('parent@example.com', { exact: true })).toBeVisible();
   await mkdir('artifacts/screenshots/chatgpt', { recursive: true });
   await page.screenshot({ path: `artifacts/screenshots/chatgpt/settings-${width}.png`, animations: 'disabled' });
-  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Settings', exact: true }).click();
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await expect(page.getByText('Using ChatGPT plan', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toBeDisabled();
@@ -47,7 +47,7 @@ for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and
   expect(requests).toBe(1);
   await page.screenshot({ path: `artifacts/screenshots/chatgpt/limit-${width}.png`, animations: 'disabled' });
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'You’re using your ChatGPT plan', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Disconnect ChatGPT & use server AI', exact: true }).click();
   await expect(page.getByText('Using the server’s API key', { exact: true })).toBeVisible();
@@ -63,7 +63,7 @@ test('Continue with ChatGPT starts the approved authorization flow and returns t
     await route.fulfill({ status: 302, headers: { location: 'http://127.0.0.1:4175/app?chatgpt=connected' } });
   });
   await openExistingLibrary(page);
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Continue with ChatGPT', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'You’re using your ChatGPT plan', exact: true })).toBeVisible();
   await expect(page).toHaveURL(/\/app\?chatgpt=connected$/);
@@ -73,18 +73,18 @@ test('an expired cookie preserves the visitor billing choice and sends the fail-
   await page.route('**/api/chatgpt/status', route => route.fulfill({ json: disconnected }));
   await openExistingLibrary(page);
   await page.evaluate(() => localStorage.setItem(`little-say:chatgpt:${location.origin}`, 'true'));
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByText('ChatGPT selected — reconnect or allow plan usage', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue with ChatGPT', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Settings', exact: true }).click();
   await page.route('**/api/boards/propose', async route => {
     expect(route.request().headers()['x-little-say-ai']).toBe('chatgpt');
-    await route.fulfill({ status: 401, json: { error: 'Reconnect ChatGPT in Parent settings. The server API key was not used.' } });
+    await route.fulfill({ status: 401, json: { error: 'Reconnect ChatGPT in Settings. The server API key was not used.' } });
   });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm board');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByText('Reconnect ChatGPT in Parent settings. The server API key was not used.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Reconnect ChatGPT in Settings. The server API key was not used.', { exact: true })).toBeVisible();
 });
 
 test('a ChatGPT draft remains saveable without offering unsupported picture generation', async ({ page }) => {

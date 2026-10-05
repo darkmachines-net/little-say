@@ -58,7 +58,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
       }); db.close();
     }, { library, png, pictureId, audio: [...audio], audioId, speechKey });
     await page.reload();
-    await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('button', { name: 'Create optional account', exact: true }).click();
     await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
@@ -101,16 +101,16 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await changeTitle(page, 'Edited on tablet'); await changeTitle(other, 'Edited on phone');
     await expect(other.getByRole('button', { name: 'Play Edited on phone', exact: true })).toBeVisible();
     await page.context().setOffline(false);
-    await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await second.setOffline(false);
-    await other.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(other.getByText(/Conflicting edits were kept/)).toBeVisible();
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
     await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
     await expect(other.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
-    await other.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Close Settings', exact: true }).click();
     await second.setOffline(true); await other.reload();
     await expect(other.getByRole('button', { name: 'Play Edited on tablet', exact: true })).toBeVisible();
     expect(await other.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
@@ -139,13 +139,13 @@ test('cross-tab account changes and server switching never silently redirect a b
   await page.goto('/app');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await signIn(page, emails[0]);
   await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
   const other = await context.newPage();
   try {
     await other.goto('/app');
-    await other.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
     await signIn(other, emails[1]);
     await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
@@ -158,7 +158,7 @@ test('cross-tab account changes and server switching never silently redirect a b
     await other.route('https://different-server.invalid/**', route => route.abort());
     await other.getByLabel('Private server address', { exact: true }).fill('https://different-server.invalid');
     await other.getByRole('button', { name: 'Save settings', exact: true }).click();
-    await other.getByRole('button', { name: 'Parent settings', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await other.getByRole('button', { name: 'Sync now', exact: true }).click();
     await expect(other.getByText('This account belongs to a different server. Restore its server address or sign out before using another account.', { exact: true })).toBeVisible();
     expect(sent).toEqual([]);

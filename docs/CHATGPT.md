@@ -1,6 +1,6 @@
 # Visitor ChatGPT plan usage
 
-Little Say can offer **Continue with ChatGPT** under **Parent settings → AI requests** on its website. This is separate from Little Say accounts and backup consent. A connected visitor's board drafts and translations use their own OAuth access token; the server's API key remains the default for visitors who have not selected ChatGPT.
+Little Say can offer **Continue with ChatGPT** under **Settings → AI requests** on its website. This is separate from Little Say accounts and backup consent. A connected visitor's board drafts and translations use their own OAuth access token; the server's API key remains the default for visitors who have not selected ChatGPT.
 
 ## Availability and activation
 
@@ -24,7 +24,7 @@ The site, API, and callback must share one origin, listed in `ALLOWED_ORIGINS`. 
 
 ## Visitor behavior and billing
 
-- Connection opens OpenAI sign-in and returns to Parent settings. Save any changed settings before leaving. OAuth tokens never enter browser JavaScript or board backups.
+- Connection opens OpenAI sign-in and returns to Settings. Save any changed settings before leaving. OAuth tokens never enter browser JavaScript or board backups.
 - The first successful connection explains plan usage. The composer shows **Using ChatGPT plan** and links to [Manage usage](https://chatgpt.com/settings/usage).
 - Eligible text requests use the account's model catalog, preferring `OPENAI_BOARD_MODEL` only when listed, otherwise choosing its first visible model. An unavailable model or failed request produces an error, with no API-key fallback.
 - Missing plan consent, expired credentials, revocation, unavailable service, and usage limits stop ChatGPT requests. Reconnect or explicitly choose **Disconnect ChatGPT & use server AI** to change billing. A non-secret per-origin browser preference preserves that choice if cookies disappear.

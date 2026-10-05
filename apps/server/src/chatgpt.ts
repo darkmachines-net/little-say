@@ -95,18 +95,18 @@ export class ChatGptConnections {
   private async credentials(id: string): Promise<Session> {
     return this.locked(id, async db => {
       const session = await this.read(id, db);
-      if (!session) throw new ChatGptError('Reconnect ChatGPT in Parent settings. The server API key was not used.', 401);
-      if (!this.enabled(session)) throw new ChatGptError('Allow ChatGPT plan usage in Parent settings before sending AI requests.', 403);
+      if (!session) throw new ChatGptError('Reconnect ChatGPT in Settings. The server API key was not used.', 401);
+      if (!this.enabled(session)) throw new ChatGptError('Allow ChatGPT plan usage in Settings before sending AI requests.', 403);
       try {
         if (session.expiresAt <= Date.now() + 60000) {
-          if (!session.tokens.refresh_token) throw new ChatGptError('Reconnect ChatGPT in Parent settings to continue.', 401, true);
+          if (!session.tokens.refresh_token) throw new ChatGptError('Reconnect ChatGPT in Settings to continue.', 401, true);
           const tokens = await this.oauth.refresh(session.tokens.refresh_token);
           if (!tokens.access_token || !tokens.expires_in) throw new ChatGptError('ChatGPT could not renew this session. Try again later.');
           session.tokens = { ...session.tokens, ...tokens, id_token: undefined };
           session.expiresAt = Date.now() + tokens.expires_in * 1000;
           await this.save(id, session, db);
         }
-        if (!this.enabled(session)) throw new ChatGptError('ChatGPT plan permission is no longer enabled. Reconnect in Parent settings.', 403);
+        if (!this.enabled(session)) throw new ChatGptError('ChatGPT plan permission is no longer enabled. Reconnect in Settings.', 403);
         if (!session.model) {
           const models = await this.oauth.models(session.tokens.access_token!);
           const model = models.find(value => value.slug === this.config.preferredModel) ?? models[0];

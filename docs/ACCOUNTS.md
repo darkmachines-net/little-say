@@ -2,7 +2,7 @@
 
 Little Say works without an account. Guest boards, photos, illustrations and speech remain in the existing device library. Guest setup makes no account request. Firebase is used for identity only; no Firestore or Firebase Storage is involved.
 
-In **Parent settings → Account & backup**, choose email/password, Google, or Apple. Continuing explicitly connects this device's boards and assets to the selected server. Email/password users must verify their email before backup starts; password reset and verification use Firebase email actions. Local editing and playback remain available while verification or sign-in is pending. Expo Go supports guest and email flows; Google/Apple require a development or release build.
+In **Settings → Account & backup**, choose email/password, Google, or Apple. Continuing explicitly connects this device's boards and assets to the selected server. Email/password users must verify their email before backup starts; password reset and verification use Firebase email actions. Local editing and playback remain available while verification or sign-in is pending. Expo Go supports guest and email flows; Google/Apple require a development or release build.
 
 Signing in merges existing server boards into this device and uploads local boards, personal photos, illustrations and downloaded speech. Backups are visible to the server administrator and are not end-to-end encrypted. Device settings, consent, favorites, play history, drafts and undo history remain local. AI consent/billing is independent of account consent.
 

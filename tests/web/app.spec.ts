@@ -105,7 +105,7 @@ test.describe('outside modal dismissal', () => {
 });
 
 test('device language profile persists offline and drives French/Spanish board setup without changing fixed cards', async ({ page, context }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language Spanish', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language French', exact: true }).click();
@@ -118,12 +118,12 @@ test('device language profile persists offline and drives French/Spanish board s
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); await context.setOffline(true); await page.reload();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove device language French', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove device language Spanish', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Default language French', exact: true })).toHaveText('✓ French');
   await expect(page.getByRole('button', { name: 'Remove device language Russian', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Settings', exact: true }).click();
   await context.setOffline(false);
   const words: Record<string, [string, string]> = { Cow: ['Vache', 'Vaca'], Sheep: ['Mouton', 'Oveja'], Horse: ['Cheval', 'Caballo'], Pig: ['Cochon', 'Cerdo'], Chicken: ['Poulet', 'Pollo'], Duck: ['Canard', 'Pato'] };
   await page.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Test device voice fallback' } }));
@@ -145,7 +145,7 @@ test('device language profile persists offline and drives French/Spanish board s
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Vaca', lang: 'es-ES' });
   await leaveBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Remove device language French', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Default language Spanish', exact: true })).toHaveText('✓ Spanish');
   await page.getByRole('button', { name: 'Remove device language Spanish', exact: true }).click();
@@ -161,7 +161,7 @@ test('device language profile persists offline and drives French/Spanish board s
 });
 
 test('regional language preferences drive manual cards and AI requests', async ({ page }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('textbox', { name: 'Another device language tag', exact: true }).fill('es-mx');
   await page.getByRole('button', { name: 'Add language', exact: true }).click();
@@ -551,7 +551,7 @@ test('board audio retry fills only missing clips with automatic generation disab
 });
 
 test('numbers 1–9 get a visible bilingual setup and switch speech while preserving digit labels', async ({ page }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language Russian', exact: true }).click();
   await page.getByRole('button', { name: 'Save settings', exact: true }).click();
