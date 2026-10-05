@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { proposalSchema, translationEnvelopeSchema, type TranslationRequest, type BoardProposal, type ProposalRequest } from '@little-say/core';
 import { resolveBackendUrl } from './backendConfig';
+import { prefersChatGpt } from './aiBilling';
 
 // Expo inlines these exact property accesses. Remote web uses Metro's same-origin proxy; native goes directly.
 export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
@@ -22,16 +23,18 @@ export class ApiError extends Error {
 
 /**
  * Request backend JSON with the app header, a 60-second timeout, and optional external cancellation;
- * surface network and HTTP failures as errors.
+ * surface network and HTTP failures as errors. Origin-bound connection requests can bypass development
+ * address resolution so sessions are never redirected to a newly selected backend.
  */
-export async function apiFetch(configured: string, path: string, init: RequestInit = {}, externalSignal?: AbortSignal) {
+export async function apiFetch(configured: string, path: string, init: RequestInit = {}, externalSignal?: AbortSignal, exactServer = false) {
   const abort = new AbortController();
   const timeout = setTimeout(() => abort.abort(), 60000);
   const cancel = () => abort.abort();
   externalSignal?.addEventListener('abort', cancel, { once: true });
   if (externalSignal?.aborted) abort.abort();
   try {
-    const response = await fetch(`${backendUrl(configured)}${path}`, { ...init, signal: abort.signal, headers: { 'X-Little-Say': '1', ...init.headers } });
+    const server = exactServer ? configured : backendUrl(configured);
+    const response = await fetch(`${server}${path}`, { ...init, signal: abort.signal, headers: { 'X-Little-Say': '1', ...(prefersChatGpt(server) ? { 'X-Little-Say-AI': 'chatgpt' } : {}), ...init.headers } });
     const data = await response.json().catch(() => { throw new Error('That server did not return a valid response. Check its address in Parent settings.'); });
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
     return data;
