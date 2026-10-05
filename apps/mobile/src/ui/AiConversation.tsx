@@ -12,7 +12,7 @@ import { Button, Notice, Sheet } from './components';
 import { DraftCanvas } from './DraftCanvas';
 import { theme, styles } from './theme';
 import { MountainMark } from './Brand';
-import { PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
+import { PictureGenerationInfo, PicturePreferences, pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures, proposalPreview, type PictureTileState } from '../services/pictures';
 
 function Working({ label, pictures = false }: { label: string; pictures?: boolean }) {
@@ -199,7 +199,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
         <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current) transcript.current?.scrollToEnd({ animated: false }); }}>
           {!history.length && !submitted && <View style={{ gap: 16 }}>
             <Text style={styles.body}>{source ? 'What would you like to change? Your board will update alongside the conversation.' : 'What would you like on your board? Type a message or use the microphone.'}</Text>
-            <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording; photos aren’t sent to AI.</Text>
+            <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording. {pictureDataDisclosure}</Text>
             {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', 'Create six farm animal tiles including cow, sheep, and horse.'], ['🥣 Snack time', 'Create six things a toddler might ask for at snack time.'], ['👋 My family', 'Create six family tiles for mother, father, grandmother, grandfather, sister, and brother.']].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy) || recording.recording} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
           </View>}
           {history.map((turn, index) => <View key={index} style={{ gap: 14 }}>

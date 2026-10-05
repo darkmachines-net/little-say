@@ -14,6 +14,7 @@ import { Button, Field, Notice } from './components';
 import { styles, theme } from './theme';
 import { Brand } from './Brand';
 import { defaultPicturePolicy } from '@little-say/core';
+import { pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures } from '../services/pictures';
 
 /**
@@ -98,7 +99,7 @@ export function FirstTimeSetup({ library, onCommit }: { library: Library; onComm
         {working !== 'generating' && <View style={{ gap: 12 }}>
           <Button kind="ghost" disabled={Boolean(working)} onPress={() => setConnection(value => !value)}>Connection settings</Button>
           {connection && (developmentApiUrl ? <Field label="Development server address" value={developmentApiUrl} editable={false} /> : <Field label="Private server address" value={url} onChangeText={setUrl} autoCapitalize="none" autoCorrect={false} keyboardType="url" placeholder={Platform.OS === 'web' ? 'Automatic — this website’s server' : 'https://say.your-home-domain.com'} />)}
-          {missing.length > 0 && <Text style={styles.small}>Generation uses OpenAI through your server. Your language choices and board topics are sent to create the cards. Boards stay on this device. AI audio prepares in the background after setup; device speech works while clips are missing.</Text>}
+          {missing.length > 0 && <Text style={styles.small}>Generation uses OpenAI through your server. Your language choices and board topics are sent to create the cards. Boards stay on this device. Automatic may generate paid AI pictures. {pictureDataDisclosure} AI audio prepares in the background after setup; device speech works while clips are missing.</Text>}
         </View>}
       </>}
     </ScrollView>
