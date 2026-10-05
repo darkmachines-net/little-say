@@ -20,6 +20,8 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
   const current = useRef(tile); current.current = tile;
   useEffect(() => () => request.current?.abort(), []);
   const options = tile.pictureOptions ?? { locked: tile.illustration.kind === 'photo', instruction: '' };
+  const policy = board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy;
+  const mode = options.mode ?? policy.mode;
   const updateOptions = (changes: Partial<typeof options>) => onChange({ ...tile, pictureOptions: { ...options, ...changes } });
   const work = async (operation: (controller: AbortController) => Promise<void>) => {
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
@@ -40,7 +42,7 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     if (!settings.aiConsent) await onConsent();
     const snapshot = current.current;
     const candidate = { ...snapshot, pictureOptions: { ...options, locked: false } };
-    const draft = { ...board, picturePolicy: board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy, tiles: board.tiles.map(value => value.id === tile.id ? candidate : value) };
+    const draft = { ...board, picturePolicy: policy, tiles: board.tiles.map(value => value.id === tile.id ? candidate : value) };
     const result = await prepareBoardPictures(draft, { ...settings, aiConsent: true }, { signal: controller.signal, targetIds: new Set([tile.id]), replaceProtected: true, restyle: true, regenerate, progress: setMessage });
     if (controller.signal.aborted || current.current !== snapshot) return;
     const replacement = result.board.tiles.find(value => value.id === tile.id)!;
@@ -48,13 +50,13 @@ export function CardPictures({ tile, board, settings, onConsent, onChange, onBus
     setMessage(result.issues.join('\n') || 'Picture ready. Review it, then save the tile.');
   });
   return <View style={{ gap: 10 }}>
-    <CardPicturePreferences options={options} policy={board.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy} onChange={updateOptions} disabled={busy} />
+    <CardPicturePreferences options={options} policy={policy} onChange={updateOptions} disabled={busy} />
     <Field label="Describe this picture" editable={!busy} value={options.instruction} maxLength={500} onChangeText={instruction => updateOptions({ instruction })} placeholder="An excavator with tracks and a long digging arm" />
     <Field label="Search picture library" editable={!busy} value={query} maxLength={150} onChangeText={setQuery} />
     <Button disabled={busy || !query.trim()} kind="secondary" onPress={() => void find()}>Search pictures</Button>
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{results.map(entry => { const picture = previews[entry.id]; return <View key={entry.id} style={{ width: 132, gap: 4 }}>{picture && (picture.kind === 'library' || picture.kind === 'generated') && <View style={{ width: 120, height: 100 }}><PictureImage assetId={picture.assetId} /></View>}<Button compact kind="secondary" disabled={!picture || picture.kind === 'unresolved'} onPress={() => { request.current?.abort(); onChange({ ...current.current, illustration: picture!, pictureOptions: { ...options, locked: true } }); setResults([]); }}>{entry.name}</Button></View>; })}</View>
     <PictureGenerationInfo />
-    <View style={styles.wrap}><Button disabled={busy} onPress={() => void generate(false)}>Find best picture</Button><Button disabled={busy || (options.mode ?? board.picturePolicy?.mode) === 'library' || (options.mode ?? board.picturePolicy?.mode) === 'emoji'} kind="secondary" onPress={() => void generate(true)}>Generate new picture</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
+    <View style={styles.wrap}><Button disabled={busy} onPress={() => void generate(false)}>Find best picture</Button><Button disabled={busy || mode === 'library' || mode === 'emoji'} kind="secondary" onPress={() => void generate(true)}>Generate new picture</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
     {Boolean(message) && <Notice>{message}</Notice>}
     {tile.illustration.kind === 'library' && <><Text style={styles.small}>{tile.illustration.provenance.author} · {tile.illustration.provenance.license}. {tile.illustration.provenance.modified}</Text><Button compact kind="ghost" onPress={() => { if (tile.illustration.kind === 'library') void Linking.openURL(tile.illustration.provenance.sourceUrl); }}>Original picture</Button></>}
     {tile.illustration.kind === 'generated' && <Text style={styles.small}>AI-generated illustration · {tile.illustration.model}</Text>}

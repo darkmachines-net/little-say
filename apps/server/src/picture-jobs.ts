@@ -12,6 +12,17 @@ const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === 'E
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type StoredJob = { fingerprint: string; job: PictureJob };
 
+/** Release one cancelled subscriber without aborting catalog loads shared by other jobs. */
+function waitForShared<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const cancel = () => reject(new Error('Cancelled'));
+    const clean = () => signal.removeEventListener('abort', cancel);
+    signal.addEventListener('abort', cancel, { once: true });
+    work.then(value => { clean(); resolve(value); }, error => { clean(); reject(error); });
+    if (signal.aborted) { clean(); cancel(); }
+  });
+}
+
 export class PictureJobError extends Error {
   /** Preserve a safe message and HTTP status without exposing provider response bodies. */
   constructor(message: string, readonly statusCode: number) { super(message); }
@@ -157,10 +168,11 @@ export class PictureJobs {
       await progress('finding');
       if (signal.aborted) throw new Error('Cancelled');
       const entries = [...new Map(input.concept.searchTerms.flatMap(term => searchPictures(term, input.style, 4)).map(entry => [entry.id, entry])).values()].slice(0, 6);
-      const loaded = await Promise.allSettled(entries.map(entry => this.library(entry.id)));
+      const loaded = await waitForShared(Promise.allSettled(entries.map(entry => this.library(entry.id))), signal);
       if (signal.aborted) throw new Error('Cancelled');
       const sources = loaded.flatMap(result => result.status === 'fulfilled' ? [result.value] : []);
-      const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors);
+      const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors, signal);
+      if (signal.aborted) throw new Error('Cancelled');
       const picture = sources.find(source => source.entry.id === selected)?.picture;
       if (picture) { await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture; }
     }
@@ -170,7 +182,8 @@ export class PictureJobs {
     if (signal.aborted) throw new Error('Cancelled');
     const bytes = await normalizePicture(await this.provider.generate(input.concept, input.style, signal));
     if (signal.aborted) throw new Error('Cancelled');
-    const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors);
+    const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors, signal);
+    if (signal.aborted) throw new Error('Cancelled');
     if (!chosen) return unresolved('The generated picture did not clearly represent this card. Try a more specific description.');
     const picture: ResolvedPicture = { kind: 'generated', assetId: await this.put(bytes), description: input.concept.description, style: input.style, model: this.provider.model };
     await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture;

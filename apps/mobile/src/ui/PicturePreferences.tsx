@@ -36,9 +36,12 @@ export function CardPicturePreferences({ options, policy, onChange, disabled = f
   </View>;
 }
 
+/** Describe picture processing and retention before a parent starts AI picture work. */
+export const pictureDataDisclosure = 'AI picture matching and generation send card descriptions and library or generated picture pixels through your server to OpenAI. Pictures, concepts and job metadata remain in the server cache without automatic deletion. Personal photos stay on this device.';
+
 /** Explain the generation included in Automatic and how to choose a source that never generates images. */
 export function PictureGenerationInfo() {
-  return <Text style={styles.small}>Automatic and AI illustrations can use your server’s paid AI service. Choose Library only or Emoji only to avoid image generation. Pictures are downloaded for offline play.</Text>;
+  return <Text style={styles.small}>Automatic and AI illustrations can use your server’s paid AI service. Choose Library only or Emoji only to avoid image generation. Pictures are downloaded for offline play. {pictureDataDisclosure}</Text>;
 }
 
 /** Show source and license links in parent controls rather than covering children's cards with credits. */

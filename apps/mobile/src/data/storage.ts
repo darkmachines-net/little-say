@@ -1,4 +1,4 @@
-/** @file Persists the native library in SQLite and keeps photo and speech files in app document storage. */
+/** @file Persists the native library in SQLite and keeps photo, picture, and speech files in app document storage. */
 
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';

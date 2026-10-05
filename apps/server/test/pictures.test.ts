@@ -1,4 +1,4 @@
-/** @file Verifies picture job idempotency, costs/consent gates, cancellation, restart recovery, validation, and catalog safety. */
+/** @file Verifies picture job idempotency, costs/consent gates, cancellation, restart recovery, validation, catalog safety, provider deadlines, and selection capacity. */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { PictureJobs } from '../src/picture-jobs';
-import { type PictureProvider } from '../src/picture-provider';
+import { openAIPictureProvider, type PictureProvider } from '../src/picture-provider';
 import { searchPictures, normalizePicture } from '../src/picture-catalog';
 import { createServer } from '../src/app';
 import { type PictureJobRequest } from '@little-say/core';
@@ -16,11 +16,11 @@ const directories: string[] = [];
 const services: PictureJobs[] = [];
 afterEach(async () => { services.splice(0).forEach(service => service.close()); await Promise.all(directories.splice(0).map(directory => rm(directory, { recursive: true, force: true }))); });
 const input = (): PictureJobRequest => ({ requestId: randomUUID(), draftId: 'revision-1', tileId: 'mixer', concept: { description: 'concrete mixer truck', features: ['truck-mounted mixing drum'], searchTerms: ['concrete mixer truck'], emojiAccurate: false }, style: 'color', mode: 'generated', allowGeneration: true, regenerate: false, neighbors: ['dump truck'] });
-async function service(overrides: Partial<PictureProvider> = {}, enabled = true) {
+async function service(overrides: Partial<PictureProvider> = {}, enabled = true, concurrency = 2) {
   const directory = await mkdtemp(join(tmpdir(), 'little-say-pictures-')); directories.push(directory);
   const png = await sharp({ create: { width: 32, height: 32, channels: 4, background: '#ff7700' } }).png().toBuffer();
   const provider: PictureProvider = { model: 'test-model', analyze: vi.fn(), select: vi.fn(async () => 'generated'), generate: vi.fn(async () => png), review: vi.fn(async () => []), ...overrides };
-  const jobs = new PictureJobs(directory, provider, enabled); services.push(jobs);
+  const jobs = new PictureJobs(directory, provider, enabled, concurrency); services.push(jobs);
   // Validation-only API tests may finish before restore starts reading the cache; initialize before teardown can remove it.
   await jobs.status('none');
   return { jobs, provider, directory, png };
@@ -102,5 +102,134 @@ describe('trusted catalog and API', () => {
       expect(provider.generate).not.toHaveBeenCalled();
       expect((await app.inject('/api/pictures/assets/not-a-digest.png')).statusCode).toBe(404);
     } finally { await app.close(); }
+  });
+});
+
+describe('synchronous picture deadlines', () => {
+  for (const operation of ['analyze', 'review'] as const) it(`ends slow ${operation} before the client deadline and frees capacity for retry`, async () => {
+    let started!: () => void;
+    const fetching = new Promise<void>(resolve => { started = resolve; });
+    const concept = input().concept;
+    const output = operation === 'analyze' ? { tiles: [{ id: 'card', emoji: '🚚', concept }] } : { rejected: [] };
+    let calls = 0;
+    let aborted = false;
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => {
+      calls++;
+      if (calls === 1) return new Promise((_resolve, reject) => {
+        init.signal!.addEventListener('abort', () => { aborted = true; reject(new DOMException('Aborted', 'AbortError')); });
+        started();
+      });
+      return Promise.resolve(new Response(JSON.stringify({ id: 'response', status: 'completed', output: [{ type: 'message', role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: JSON.stringify(output), annotations: [] }] }] }), { headers: { 'Content-Type': 'application/json' } }));
+    }));
+    const provider = openAIPictureProvider({ OPENAI_API_KEY: 'test-key' })!;
+    const { jobs, png } = await service(provider);
+    vi.spyOn(jobs, 'read').mockResolvedValue(png);
+    const app = await createServer({ provider: null, pictures: jobs, maxConcurrent: 1 });
+    await app.ready();
+    const request = { method: 'POST' as const, url: '/api/pictures/' + operation, headers: { 'X-Little-Say': '1' }, payload: operation === 'analyze' ? { tiles: [{ id: 'card', label: 'truck', language: 'en-US', emoji: '🚚', instruction: '' }] } : { cards: [{ id: 'card', assetId: 'a'.repeat(64), concept }] } };
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      let completed = false;
+      const first = app.inject(request).then(response => { completed = true; return response; });
+      await fetching;
+      await vi.advanceTimersByTimeAsync(59000);
+      const withinClientDeadline = completed;
+      if (!completed) await vi.advanceTimersByTimeAsync(180000);
+      const response = await first;
+      expect(withinClientDeadline).toBe(true);
+      expect(aborted).toBe(true);
+      expect(response.statusCode).toBe(502);
+      expect(response.json().error).toMatch(/could not/);
+      expect(calls).toBe(1); // No hidden retry can prolong work or add provider cost.
+      const retry = await app.inject(request);
+      expect(retry.statusCode).toBe(200);
+      expect(retry.json()).toEqual(output);
+      expect(calls).toBe(2);
+    } finally { vi.useRealTimers(); vi.unstubAllGlobals(); await app.close(); }
+  });
+});
+
+describe('selection cancellation', () => {
+  for (const mode of ['auto', 'generated'] as const) it(`aborts real SDK ${mode} selections and promptly runs queued work`, async () => {
+    const entry = searchPictures('cow', 'color')[0];
+    const aborts: boolean[] = [];
+    const release: (() => void)[] = [];
+    let calls = 0;
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => {
+      const index = calls++;
+      if (index < 2) return new Promise((_resolve, reject) => {
+        aborts[index] = false;
+        const stop = () => reject(new DOMException('Aborted', 'AbortError'));
+        release.push(stop);
+        init.signal!.addEventListener('abort', () => { aborts[index] = true; stop(); });
+      });
+      return Promise.resolve(new Response(JSON.stringify({ id: 'response', status: 'completed', output: [{ type: 'message', role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: JSON.stringify({ id: mode === 'auto' ? entry.id : 'generated' }), annotations: [] }] }] }), { headers: { 'Content-Type': 'application/json' } }));
+    }));
+    const real = openAIPictureProvider({ OPENAI_API_KEY: 'test-key' })!;
+    const { jobs, provider, png } = await service({ select: real.select });
+    const picture = { kind: 'library' as const, assetId: createHash('sha256').update(png).digest('hex'), style: entry.style, provenance: entry.provenance };
+    vi.spyOn(jobs, 'library').mockResolvedValue({ entry, picture, bytes: png });
+    const requests = [0, 1, 2].map(() => ({ ...input(), mode, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } }));
+    try {
+      for (const request of requests) await jobs.start(request);
+      await vi.waitFor(() => expect(calls).toBe(2));
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
+      await Promise.all(requests.slice(0, 2).map(request => jobs.cancel(request.requestId)));
+      await vi.waitFor(() => expect(aborts).toEqual([true, true]), { timeout: 1000 });
+      expect((await finished(jobs, requests[2].requestId)).state).toBe('complete');
+      expect(calls).toBe(3);
+      for (const request of requests.slice(0, 2)) { const stopped = await jobs.status(request.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined(); }
+      expect(provider.generate).toHaveBeenCalledTimes(mode === 'auto' ? 0 : 3);
+    } finally { jobs.close(); release.forEach(stop => stop()); vi.unstubAllGlobals(); }
+  });
+  it('does not cache a late selection from cancelled generated work', async () => {
+    let release!: (id: string) => void;
+    const pending = new Promise<string>(resolve => { release = resolve; });
+    const select = vi.fn().mockImplementationOnce(() => pending).mockResolvedValue('generated');
+    const { jobs } = await service({ select }, true, 1);
+    const first = input(), second = input();
+    await jobs.start(first);
+    await vi.waitFor(() => expect(select).toHaveBeenCalledTimes(1));
+    await jobs.start(second);
+    await jobs.cancel(first.requestId);
+    release('generated'); // A non-cooperative provider must not leak this abandoned result into reuse.
+    expect((await finished(jobs, second.requestId)).state).toBe('complete');
+    expect(select).toHaveBeenCalledTimes(2);
+    const stopped = await jobs.status(first.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined();
+  });
+});
+
+describe('shared catalog download cancellation', () => {
+  for (const outcome of ['resolve', 'reject'] as const) it(`releases stopped subscribers while shared sources ${outcome}`, async () => {
+    const releases: (() => void)[] = []; const signals: AbortSignal[] = [];
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="orange"/></svg>';
+    vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => new Promise<Response>((resolve, reject) => { signals.push(init.signal!); releases.push(() => outcome === 'reject' ? reject(new Error('Source unavailable')) : resolve(new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } }))); })));
+    const { jobs, provider } = await service({ select: vi.fn(async (_concept, candidates) => candidates[0]?.id ?? null) });
+    const requests = [0, 1, 2].map(() => ({ ...input(), mode: 'auto' as const, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } }));
+    const independent = input();
+    try {
+      const cancelledBeforeStart = { ...requests[0], requestId: randomUUID() };
+      await jobs.cancel(cancelledBeforeStart.requestId);
+      expect((await jobs.start(cancelledBeforeStart)).state).toBe('cancelled');
+      expect(globalThis.fetch).not.toHaveBeenCalled();
+      for (const request of [...requests, independent]) await jobs.start(request);
+      const sources = searchPictures('cow', 'color', 4).length;
+      await vi.waitFor(() => expect(releases).toHaveLength(sources));
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
+      await Promise.all(requests.slice(0, 2).map(request => jobs.cancel(request.requestId)));
+      await vi.waitFor(() => expect(provider.generate).toHaveBeenCalledTimes(1), { timeout: 1000 });
+      expect((await finished(jobs, independent.requestId)).state).toBe('complete');
+      expect((await jobs.status(requests[2].requestId))?.state).toBe('working');
+      expect(signals.every(signal => !signal.aborted)).toBe(true);
+      expect(releases).toHaveLength(sources); // The surviving subscriber shares each original download.
+      releases.forEach(release => release());
+      expect((await finished(jobs, requests[2].requestId)).result?.kind).toBe(outcome === 'resolve' ? 'library' : 'generated');
+      expect(provider.generate).toHaveBeenCalledTimes(outcome === 'resolve' ? 1 : 2);
+      for (const request of requests.slice(0, 2)) { const stopped = await jobs.status(request.requestId); expect(stopped?.state).toBe('cancelled'); expect(stopped?.result).toBeUndefined(); }
+    } finally {
+      releases.forEach(release => release());
+      await finished(jobs, requests[2].requestId); await finished(jobs, independent.requestId);
+      jobs.close(); vi.unstubAllGlobals();
+    }
   });
 });

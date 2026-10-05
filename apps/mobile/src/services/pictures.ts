@@ -158,12 +158,13 @@ export async function prepareProposalPictures(source: Board | undefined, envelop
   let board = proposalPreview(source, envelope);
   const targetIds = new Set<string>();
   const forceIds = new Set<string>();
-  const signature = (tile: BoardProposal['proposal']['tiles'][number]) => JSON.stringify([tile.existingId, tile.label, tile.language, tile.pictureOptions, tile.replacePicture]);
+  const reused = new Set<number>();
+  const signature = (tile: BoardProposal['proposal']['tiles'][number]) => JSON.stringify([tile.existingId, tile.label, tile.language, tile.emoji, tile.pictureOptions, tile.replacePicture]);
   board.tiles = board.tiles.map((tile, index) => {
     const proposed = envelope.proposal.tiles[index];
-    const oldIndex = previous?.proposal.tiles.findIndex(old => signature(old) === signature(proposed)) ?? -1;
+    const oldIndex = previous?.proposal.tiles.findIndex((old, index) => !reused.has(index) && signature(old) === signature(proposed)) ?? -1;
     const old = previous?.pictures?.find(picture => picture.index === oldIndex);
-    if (old && JSON.stringify(previous?.proposal.picturePolicy) === JSON.stringify(envelope.proposal.picturePolicy)) return { ...tile, illustration: old.illustration, pictureConcept: old.concept };
+    if (old && JSON.stringify(previous?.proposal.picturePolicy) === JSON.stringify(envelope.proposal.picturePolicy)) { reused.add(oldIndex); return { ...tile, illustration: old.illustration, pictureConcept: old.concept }; }
     if (!proposed.existingId || proposed.replacePicture) {
       targetIds.add(tile.id);
       if (proposed.replacePicture) forceIds.add(tile.id);

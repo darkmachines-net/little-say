@@ -115,7 +115,7 @@ function Application() {
   if (draftRoute.route) {
     const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={accept} onAiUse={consent} onClose={draftRoute.close} />;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={proposal => draftRoute.save(() => accept(proposal))} onAiUse={consent} onClose={draftRoute.close} />;
   }
   return <View style={styles.page}>
     <StatusBar style="dark" />
@@ -127,6 +127,7 @@ function Application() {
       remember(current);
       const next = reviseBoard(current, changes);
       void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === next.id ? next : b) })).catch(() => {});
+      return next;
     }} onDelete={() => deleteBoard(selected.id)} onDuplicate={() => {
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
       void store.change(lib => ({ ...lib, boards: [...lib.boards, copy] })).catch(() => {}); setSelectedId(copy.id);

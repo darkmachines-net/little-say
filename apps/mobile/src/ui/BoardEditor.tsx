@@ -17,7 +17,7 @@ import { BoardPictures } from './BoardPictures';
  * Show the editable board preview and contextual controls, delegating durable changes, undo, and
  * playback to the parent.
  */
-export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges) => void; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean }) {
+export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [editing, setEditing] = useState<Tile | null>(null);
   const [title, setTitle] = useState(board.title);
@@ -83,8 +83,8 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
     {editing && <TileEditor key={editing.id} board={board} tile={editing} position={editingIndex} tileCount={board.tiles.length} onMove={reorder} playLanguages={board.playLanguages} settings={settings} audio={audio} onConsent={onConsent} canDelete={board.tiles.length > 1} canDuplicate={board.tiles.length < MAX_TILES} onClose={closeTile} onPreview={onPreview} onSave={tile => {
       const tiles = board.tiles.map(t => t.id === tile.id ? tile : t);
       const changedMeaning = tile.label !== editing.label || tile.language !== editing.language || JSON.stringify(tile.pictureOptions) !== JSON.stringify(editing.pictureOptions);
-      if (changedMeaning && !tile.pictureOptions?.locked && tile.illustration.kind !== 'photo' && settings.aiConsent) { setAutomaticPictures(true); setPictureTarget(tile.id); setPictures({ ...board, tiles }); }
-      else setTiles(tiles);
+      const saved = setTiles(tiles);
+      if (changedMeaning && !tile.pictureOptions?.locked && tile.illustration.kind !== 'photo' && settings.aiConsent) { setAutomaticPictures(true); setPictureTarget(tile.id); setPictures(saved); }
       closeTile();
     }} onDelete={() => { setTiles(board.tiles.filter(t => t.id !== editing.id)); closeTile(); }} onDuplicate={tile => { setTiles([...board.tiles, { ...tile, id: Crypto.randomUUID() }]); closeTile(); }} />}
     {pictures && <BoardPictures board={pictures} currentRevision={board.revision} automatic={automaticPictures} changedTileId={pictureTarget} settings={settings} onConsent={onConsent} onApply={(draft, revision) => { if (board.revision === revision) onChange({ tiles: draft.tiles, picturePolicy: draft.picturePolicy }); }} onClose={() => setPictures(null)} />}

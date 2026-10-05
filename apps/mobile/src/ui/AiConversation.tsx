@@ -12,7 +12,7 @@ import { Button, Notice, Sheet } from './components';
 import { DraftCanvas } from './DraftCanvas';
 import { theme, styles } from './theme';
 import { MountainMark } from './Brand';
-import { PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
+import { PictureGenerationInfo, PicturePreferences, pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures, proposalPreview, type PictureTileState } from '../services/pictures';
 
 function Working({ label, pictures = false }: { label: string; pictures?: boolean }) {
@@ -123,9 +123,6 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       if (!live.current || request.current !== controller) return;
       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');
       validateGeneratedBoard(response.proposal, source ? boardContext(source) : null);
-      setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);
-      setClarifying(response.proposal.needsClarification);
-      setSubmitted(null);
       if (!response.proposal.needsClarification) {
         setDraft(response);
         if (response.proposal.picturePolicy) {
@@ -135,6 +132,10 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
           setDraft(prepared.proposal); setPictureIssues(prepared.issues);
         }
       }
+      // A stopped picture request discards the whole turn, including its conversation context.
+      setHistory(old => [...old, { prompt: message, reply: response.proposal.explanation }]);
+      setClarifying(response.proposal.needsClarification);
+      setSubmitted(null);
     } catch (e) {
       if (live.current && request.current === controller) { setError((e as Error).message); setPrompt(message); }
     } finally {
@@ -195,10 +196,10 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
     </View></View>
     <View style={{ flex: 1, minHeight: 0, width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 8 : 18, gap: 16, flexDirection: sideBySide ? 'row' : 'column-reverse' }}>
       <View testID="ai-chat-panel" style={{ flex: sideBySide ? 0.85 : 1, minHeight: 0, minWidth: 0, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
-        <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current) transcript.current?.scrollToEnd({ animated: false }); }}>
+        <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current && (history.length > 0 || submitted || busy)) transcript.current?.scrollToEnd({ animated: false }); }}>
           {!history.length && !submitted && <View style={{ gap: 16 }}>
             <Text style={styles.body}>{source ? 'What would you like to change? Your board will update alongside the conversation.' : 'What would you like on your board? Type a message or use the microphone.'}</Text>
-            <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording; photos aren’t sent to AI.</Text>
+            <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording. {pictureDataDisclosure}</Text>
             {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', 'Create six farm animal tiles including cow, sheep, and horse.'], ['🥣 Snack time', 'Create six things a toddler might ask for at snack time.'], ['👋 My family', 'Create six family tiles for mother, father, grandmother, grandfather, sister, and brother.']].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy) || recording.recording} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
           </View>}
           {history.map((turn, index) => <View key={index} style={{ gap: 14 }}>

@@ -25,6 +25,38 @@ beforeEach(() => {
   });
 });
 describe('staged client pictures', () => {
+  it('reuses distinct same-label meanings after reordering without aliasing earlier pictures', async () => {
+    const tiles = ['🦇', '⚾'].map(emoji => ({ existingId: null, label: 'Bat', speech: 'Bat', language: 'en-US', emoji, color: 'sage' as const }));
+    const previous = { boardId: null, baseRevision: null, proposal: { title: 'Bats', explanation: 'Two meanings.', needsClarification: false, tiles }, pictures: tiles.map((tile, index) => ({ index, illustration: { kind: 'generated' as const, assetId: String(index + 1).repeat(64), style: 'color' as const, description: tile.emoji, model: 'test' }, concept: { description: tile.emoji, searchTerms: ['bat'], features: [], emojiAccurate: false } })) };
+    const result = await prepareProposalPictures(undefined, { ...previous, pictures: undefined, proposal: { ...previous.proposal, tiles: [...tiles].reverse() } }, settings, {}, previous);
+    expect(result.proposal.pictures?.map(picture => picture.illustration)).toEqual([...previous.pictures].reverse().map(picture => picture.illustration));
+    expect(result.proposal.pictures?.map(picture => picture.concept)).toEqual([...previous.pictures].reverse().map(picture => picture.concept));
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+  it('consumes each prior picture once and prepares added duplicate cards', async () => {
+    const tile = { existingId: null, label: 'Bat', speech: 'Bat', language: 'en-US', emoji: '🦇', color: 'sage' as const };
+    const previous = { boardId: null, baseRevision: null, proposal: { title: 'Bats', explanation: 'Two cards.', needsClarification: false, tiles: [tile, tile] }, pictures: [0, 1].map(index => ({ index, illustration: { kind: 'generated' as const, assetId: String(index + 1).repeat(64), style: 'color' as const, description: 'Bat', model: 'test' } })) };
+    const result = await prepareProposalPictures(undefined, { ...previous, pictures: undefined, proposal: { ...previous.proposal, tiles: [tile, tile, tile] } }, settings, {}, previous);
+    expect(result.proposal.pictures?.slice(0, 2).map(picture => picture.illustration)).toEqual(previous.pictures.map(picture => picture.illustration));
+    expect(mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs'))).toHaveLength(1);
+    expect(result.proposal.pictures?.[2].illustration).toMatchObject({ assetId: 'a'.repeat(64) });
+  });
+
+  for (const mode of ['library', 'emoji'] as const) it(`inherits ${mode} without generation unless the board explicitly overrides it`, async () => {
+    delete board.picturePolicy;
+    settings.pictureDefaults = { ...defaultPicturePolicy, mode };
+    const inherited = await prepareBoardPictures(board, settings, { restyle: true, regenerate: true });
+    const jobs = mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs'));
+    if (mode === 'emoji') expect(jobs).toHaveLength(0);
+    else { expect(jobs).toHaveLength(2); expect(jobs.every(call => !JSON.parse(call[2].body).allowGeneration)).toBe(true); }
+    expect(inherited.board.tiles.every(tile => tile.illustration.kind === 'emoji')).toBe(true);
+    mocks.fetch.mockClear();
+    board.picturePolicy = { ...defaultPicturePolicy, mode: 'generated' };
+    const explicit = await prepareBoardPictures(board, settings, { restyle: true, regenerate: true });
+    expect(explicit.board.tiles.every(tile => tile.illustration.kind === 'generated')).toBe(true);
+    expect(mocks.fetch.mock.calls.filter(call => call[1].endsWith('/jobs')).every(call => JSON.parse(call[2].body).allowGeneration)).toBe(true);
+  });
+
   it('keeps accurate emoji without creating picture jobs, even with legacy consistency enabled', async () => {
     board.picturePolicy = { ...defaultPicturePolicy, consistent: true };
     const original = mocks.fetch.getMockImplementation()!;
