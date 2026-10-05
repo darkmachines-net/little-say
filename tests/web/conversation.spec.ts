@@ -197,6 +197,56 @@ test('a failed save keeps the draft and retry creates exactly one board', async 
   expect((await saved(page)).boards).toHaveLength(4);
 });
 
+for (const outcome of ['failure', 'success'] as const) test(`browser history preserves a pending draft save through ${outcome}`, async ({ page }) => {
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: envelope() }));
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await send(page, 'Cow');
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  // Retain a same-document Forward destination while the current draft stays mounted.
+  await page.evaluate(() => { history.pushState({}, '', '#other'); history.back(); });
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+  await page.evaluate(() => {
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (...args: any[]) {
+      const result = put.apply(this, args as any);
+      if (this.name === 'state' && !(window as any).__heldWrite) {
+        (window as any).__heldWrite = true;
+        let hold = true;
+        const store = this;
+        const keepAlive = () => { if (hold) store.get('library').onsuccess = keepAlive; };
+        keepAlive();
+        (window as any).__releaseWrite = (fail: boolean) => { hold = false; if (fail) store.transaction.abort(); };
+      }
+      return result;
+    };
+  });
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => Boolean((window as any).__releaseWrite))).toBe(true);
+  await page.goForward();
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await page.goBack();
+    await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+    await expect(page.getByTestId('ai-draft')).toContainText('Cow');
+  }
+  await expect(page.getByRole('button', { name: 'Back to boards', exact: true })).toBeDisabled();
+  await page.evaluate(fail => (window as any).__releaseWrite(fail), outcome === 'failure');
+  if (outcome === 'failure') {
+    await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+    await expect(page.getByTestId('ai-conversation')).toContainText(/abort/i);
+    expect((await saved(page)).boards).toHaveLength(3);
+    await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  }
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+  expect((await saved(page)).boards).toHaveLength(4);
+  // Save protection ends: ordinary Back and Forward can dismiss and reopen a fresh workspace.
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await page.goBack();
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+  await page.goForward();
+  await expect(page.getByTestId('ai-conversation')).toBeVisible();
+});
+
 for (const dismissal of ['page back', 'browser back']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
   await page.evaluate(() => {
     (window as any).__stoppedTracks = 0;

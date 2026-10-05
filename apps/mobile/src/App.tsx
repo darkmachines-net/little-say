@@ -115,7 +115,7 @@ function Application() {
   if (draftRoute.route) {
     const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={accept} onAiUse={consent} onClose={draftRoute.close} />;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={proposal => draftRoute.save(() => accept(proposal))} onAiUse={consent} onClose={draftRoute.close} />;
   }
   return <View style={styles.page}>
     <StatusBar style="dark" />

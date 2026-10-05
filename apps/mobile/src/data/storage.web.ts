@@ -1,4 +1,4 @@
-/** @file Persists browser library, photos, and speech in IndexedDB and manages reusable blob URLs. */
+/** @file Persists browser library, photos, pictures, and speech in IndexedDB and manages reusable blob URLs. */
 
 import { openDB } from 'idb';
 import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
