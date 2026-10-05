@@ -1,0 +1,13 @@
+Resolved review findings4187698625,4187698640 and4187698651 at846311d3ba568630d3f014701a04f2142860abac (base/master5d72992c77fbb09195518e257d799501b7db4d04).
+
+Parent privacy now discloses actual card-description and picture-pixel processing by OpenAI, local downloaded pictures, and server picture/concept/job retention without automatic deletion. Personal photos remain local. Save tile writes through the existing board persistence path before optional picture preparation; the returned revised board is the apply baseline. Close/Stop keep saved words and original artwork. Picture reuse includes emoji meaning and consumes each prior picture once, preserving distinct same-label meanings and preparing added cards.
+
+Validation:203 unit/server tests and28 focused browser scenarios, TypeScript/release checks, build and current-head CI PASS. Two semantic regressions reproduced failures before repair. Three maintained save scenarios verify close, stop, apply and reload. The earlier attempted browser-before run had a wrong Close selector and is not counted as defect evidence; the corrected genuine reviewed-build capture below directly demonstrates the loss. Bounded holistic inspection covered related draft/edit/refinement/cancel/apply/save flows, overrides, protected photos, stale responses, revision and serialized-write boundaries. [Exact evidence and limitations](https://github.com/MChartier/little-say/blob/a003b18d6b91be1f35f7cf62994b0d8eb1819bff/docs/review/pr6-lifecycle/README.md).
+
+Supplemental review-fix comparison, not the main PR baseline: same synthetic board and Save Cow→Calf then Close Board pictures; reviewed250d9a reverted to Cow, current846 retains Calf. Both actual production builds,1280x1000, same fixture/time/theme. [Immutable capture manifest](https://github.com/MChartier/little-say/blob/a003b18d6b91be1f35f7cf62994b0d8eb1819bff/docs/review/pr6-lifecycle/manifest.json).
+
+| Reviewed Before250d9a | Repaired After846311d |
+| --- | --- |
+| ![Before: saved tile edit lost](https://github.com/MChartier/little-say/blob/a003b18d6b91be1f35f7cf62994b0d8eb1819bff/docs/review/pr6-lifecycle/reviewed-tile-close.png?raw=true) | ![After: saved Calf retained](https://github.com/MChartier/little-say/blob/a003b18d6b91be1f35f7cf62994b0d8eb1819bff/docs/review/pr6-lifecycle/after-tile-close.png?raw=true) |
+
+The final PR body uses master-to-final comparisons. Original and intermediate identities remain retained on evidence refs, never product merge targets. PR13 untouched; coordinator receives final idle checkpoint only after current review completes. Full authenticated GitHub-page inspection remains unavailable; independent QA and coordinator receipt are separate gates. No readiness/merge/deploy action.
