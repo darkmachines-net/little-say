@@ -89,6 +89,7 @@ async function main() {
     assert(!args['dry-run'], 'Use native:setup --check to inspect prerequisites.');
     assert(platform !== 'ios' || process.platform === 'darwin', 'Local iOS builds require a Mac. This command never queues a cloud build.');
     const remote = await remoteEnvironment(profile);
+    assert(platform !== 'ios' || /^com\.googleusercontent\.apps\./.test(remote.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME || ''), 'Set public LITTLE_SAY_GOOGLE_IOS_URL_SCHEME in the selected EAS environment before building iOS social authentication.');
     const hash = fingerprint(platform, remote.env);
     const config = machine();
     const previousFile = config.baselines[`${platform}:${profile}`];

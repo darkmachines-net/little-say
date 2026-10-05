@@ -1,0 +1,19 @@
+# Runs only the optional local-development database with a loopback port and its own persistent volume.
+services:
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: ${PGDATABASE:-little_say}
+      POSTGRES_USER: ${PGUSER:-little_say}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-little_say_dev}
+    ports:
+      - "127.0.0.1:${PGPORT:-5432}:5432"
+    volumes:
+      - development-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  development-postgres:

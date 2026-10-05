@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowUp, Mic, SlidersHorizontal, Square } from 'lucide-react-native';
 import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { apiFetch, proposeBoard } from '../services/api';
@@ -14,6 +14,7 @@ import { theme, styles } from './theme';
 import { MountainMark } from './Brand';
 import { PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
 import { prepareProposalPictures, proposalPreview, type PictureTileState } from '../services/pictures';
+import { useChatGpt } from '../services/useChatGpt';
 
 function Working({ label, pictures = false }: { label: string; pictures?: boolean }) {
   const pulse = useRef(new Animated.Value(0)).current;
@@ -45,6 +46,7 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * only an in-progress board save prevents leaving. onAiUse persists the legacy AI-enabled preference.
  */
 export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {
+  const chatgpt = useChatGpt(settings.backendUrl);
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
   const [source] = useState(board);
   const [prompt, setPrompt] = useState('');
@@ -130,6 +132,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
         setDraft(response);
         if (response.proposal.picturePolicy) {
           if (policyRef.current === requestedPolicy) setPicturePolicy(response.proposal.picturePolicy);
+          if (chatgpt.selected) return;
           const prepared = await prepareProposalPictures(source, response, { ...settings, aiConsent: true }, { signal: controller.signal, ...pictureCallbacks(controller, response) }, draft);
           if (!live.current || request.current !== controller) return;
           setDraft(prepared.proposal); setPictureIssues(prepared.issues);
@@ -191,7 +194,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       <Button kind="ghost" compact icon={ArrowLeft} disabled={busy === 'save'} accessibilityLabel={source ? 'Back to board' : 'Back to boards'} onPress={close} />
       {sideBySide && <MountainMark size={40} />}
       <View style={{ flex: 1, gap: 3 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text><Text numberOfLines={1} style={styles.small}>{source?.title ?? profileLanguages(settings).map(languageName).join(' · ')}</Text></View>
-      <Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>
+      {!chatgpt.selected && <Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>}
     </View></View>
     <View style={{ flex: 1, minHeight: 0, width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 8 : 18, gap: 16, flexDirection: sideBySide ? 'row' : 'column-reverse' }}>
       <View testID="ai-chat-panel" style={{ flex: sideBySide ? 0.85 : 1, minHeight: 0, minWidth: 0, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
@@ -209,12 +212,13 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
           {busy && busy !== 'save' && <Working key={busy} pictures={Boolean(pictureMessage)} label={busy === 'generate' ? pictureMessage || 'Working on your draft…' : busy === 'transcribe' ? 'Transcribing your recording…' : 'Opening microphone…'} />}
         </ScrollView>
         <View style={{ padding: width < 600 ? 10 : 16, gap: 10, borderTopWidth: 1, borderColor: theme.line }}>
+          {chatgpt.selected && <View style={{ gap: 4 }}><Text style={styles.small}>{chatgpt.status?.planEnabled ? 'Using ChatGPT plan' : 'ChatGPT selected — reconnect in Parent settings'}</Text><Text style={styles.small}>Board drafts and translations use your plan. AI audio, voice prompts, and automatic pictures are unavailable.</Text><Button compact kind="ghost" onPress={() => void Linking.openURL('https://chatgpt.com/settings/usage')}>Manage usage</Button></View>}
           {Boolean(error) && <Notice>{error}</Notice>}
           {atLimit ? <Text style={styles.body}>{draft && !clarifying ? 'Save this draft to continue in a new conversation.' : 'This conversation has reached its limit. Go back and start a new one.'}</Text> : <>
             <TextInput ref={input} accessibilityLabel="Message to AI" value={prompt} onChangeText={setPrompt} multiline maxLength={4000} editable={!busy && !recording.recording} placeholder={history.length ? 'Ask for a change or answer a question…' : source ? 'Add a goat, and keep everything else…' : 'A board with cow, sheep, horse…'} placeholderTextColor={theme.muted} style={[styles.field, { minHeight: 58, maxHeight: 112, textAlignVertical: 'top' }]} />
             <View style={[styles.row, { justifyContent: 'space-between' }]}>
-              <Button kind={recording.recording ? 'danger' : 'ghost'} icon={recording.recording ? Square : Mic} onPress={() => recording.recording ? void finish() : void start()} disabled={Boolean(busy)} compact>{recording.recording ? 'Stop · ' + seconds + 's / 60s' : 'Voice prompt'}</Button>
-              {busy && busy !== 'save' ? <Button compact kind="secondary" icon={Square} onPress={cancel}>Stop request</Button> : <Button compact icon={ArrowUp} onPress={() => void generate()} disabled={Boolean(busy) || !prompt.trim() || recording.recording}>Send message</Button>}
+              <Button kind={recording.recording ? 'danger' : 'ghost'} icon={recording.recording ? Square : Mic} onPress={() => recording.recording ? void finish() : void start()} disabled={Boolean(busy) || chatgpt.selected || chatgpt.loading} compact>{recording.recording ? 'Stop · ' + seconds + 's / 60s' : 'Voice prompt'}</Button>
+              {busy && busy !== 'save' ? <Button compact kind="secondary" icon={Square} onPress={cancel}>Stop request</Button> : <Button compact icon={ArrowUp} onPress={() => void generate()} disabled={Boolean(busy) || chatgpt.loading || !prompt.trim() || recording.recording}>Send message</Button>}
             </View>
           </>}
         </View>

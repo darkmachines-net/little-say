@@ -64,7 +64,7 @@ export function parseArgs(args: string[], allowed: string[]) {
  * and Node option overrides.
  */
 export function safeEnvironment(source: NodeJS.ProcessEnv = process.env) {
-  return Object.fromEntries(Object.entries(source).filter(([key]) => !/^(AAC_OPENAI_KEY|OPENAI_API_KEY|EXPO_PUBLIC_.*|LITTLE_SAY_CHANNEL|NODE_OPTIONS|EAS_BUILD_.*|EXPO_NO_DOTENV)$/i.test(key)));
+  return Object.fromEntries(Object.entries(source).filter(([key]) => !/^(AAC_OPENAI_KEY|OPENAI_API_KEY|CHATGPT_.*|PG.*|DATABASE_.*|FIREBASE_.*|GOOGLE_APPLICATION_CREDENTIALS|EXPO_PUBLIC_.*|LITTLE_SAY_CHANNEL|NODE_OPTIONS|EAS_BUILD_.*|EXPO_NO_DOTENV)$/i.test(key)));
 }
 /** Check whether the module URL corresponds to the script invoked by Node. */
 export function isMain(url: string) { return process.argv[1] && resolve(fileURLToPath(url)) === resolve(process.argv[1]); }

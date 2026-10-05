@@ -148,7 +148,7 @@ describe('publication boundary', () => {
     const operation = deployImage({ context: 'test-host', project: 'test-project', image: 'ghcr.io/org/app', serverUrl: 'https://example.invalid', envFile: resolve(directory, '.env') }, 'ghcr.io/org/app@sha256:' + 'a'.repeat(64), '0.1.1', { run: runner, fetch: fetcher, receipt });
     if (healthy) { await operation; expect(readJson(receipt).version).toBe('0.1.1'); }
     else await expect(operation).rejects.toThrow('Public health');
-    const ups = calls.filter(call => call.args.includes('up'));
+    const ups = calls.filter(call => call.args.includes('up') && call.args.includes('little-say'));
     expect(ups).toHaveLength(healthy ? 1 : 2);
     if (!healthy) expect(ups[1].image).toBe('old-image-id');
     expect(calls.some(call => call.args.includes('down') || call.args.includes('--volumes') || call.args.includes('build'))).toBe(false);

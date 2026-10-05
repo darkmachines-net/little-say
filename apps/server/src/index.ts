@@ -11,10 +11,26 @@ import { SpeechCache } from './speech-cache';
 import { openAISynthesis, speechProfile } from './synthesis';
 import { PictureJobs } from './picture-jobs';
 import { openAIPictureProvider } from './picture-provider';
+import { Accounts } from './accounts';
+import { chatGptConfig, ChatGptConnections } from './chatgpt';
+import { createDatabase, checkDatabase } from './database';
+import { FirebaseIdentity } from './firebase';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true });
 config({ quiet: true });
-const app = await createServer({
+const chatgpt = chatGptConfig(process.env);
+const database = createDatabase();
+try { await checkDatabase(database); } catch { await database.end(); throw new Error('Postgres is unavailable or its schema is incompatible. Check configuration and run db:migrate.'); }
+let auth: FirebaseIdentity | undefined;
+let app: Awaited<ReturnType<typeof createServer>> | undefined;
+try {
+  auth = new FirebaseIdentity();
+  app = await createServer({
+  database,
+  auth,
+  chatgpt: chatgpt ? new ChatGptConnections(chatgpt, database) : undefined,
   provider: openAIProvider(process.env),
+  accounts: new Accounts(database),
+  secureCookies: process.env.NODE_ENV === 'production',
   pictures: new PictureJobs(resolve(process.env.PICTURE_CACHE_DIR || '../../.cache/pictures'), openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false'),
   speechCache: new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env))),
   origins: process.env.ALLOWED_ORIGINS?.split(',').map(value => value.trim()).filter(Boolean),
@@ -22,4 +38,9 @@ const app = await createServer({
   logger: true,
 });
 await app.listen({ port: Number(process.env.PORT || 8787), host: process.env.HOST || '127.0.0.1' });
-for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, async () => { await app.close(); process.exit(0); });
+} catch {
+  if (app) await app.close();
+  else { await auth?.close(); await database.end(); }
+  throw new Error('Server startup failed. Check sanitized database, Firebase, and server configuration.');
+}
+for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, async () => { await app!.close(); process.exit(0); });

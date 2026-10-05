@@ -43,7 +43,7 @@ Library format v2 migrates v1 without changing board appearance. Native PNGs are
 
 `OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare`, using medium-quality 1024-square transparent PNG output. `AAC_IMAGE_GENERATION=false` disables new server-side generation. `PICTURE_CACHE_DIR` defaults to `.cache/pictures` for workspace development and `/app/data/pictures` in Docker, with its own persistent volume. Generation concurrency is two; the queue holds at most 48 pending cards. No model keys reach the client.
 
-Generated pictures and their concept descriptions, completed job metadata, and hashed cache keys remain in the private server cache with no automatic eviction. Personal photos and their paths are not uploaded. Requests and provider response bodies are not logged. The service inherits the app's private-network, unauthenticated deployment boundary. Do not expose it as a public image-generation endpoint.
+Generated pictures and their concept descriptions, completed job metadata, and hashed cache keys remain in the private server cache with no automatic eviction. Personal photos and their paths are excluded from AI requests. Optional [account sync](ACCOUNTS.md) uploads photos and saved illustrations to a separate authenticated backup without local paths. Requests and provider response bodies are not logged. Image-generation endpoints retain the app's private-network, unauthenticated deployment boundary. Do not expose them as a public image-generation service.
 
 ## Validation
 

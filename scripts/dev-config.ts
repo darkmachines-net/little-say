@@ -15,7 +15,7 @@ export type DevelopmentBackend = 'local' | 'remote';
 /** Validate launcher arguments before reading credentials or starting any services. */
 export function developmentOptions(args: string[]) {
   const flags = new Set(args);
-  const supported = ['--local', '--remote', '--web', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help'];
+  const supported = ['--local', '--remote', '--web', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help', '--dev-client'];
   const unknown = [...flags].filter(flag => !supported.includes(flag));
   if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}. Use npm run dev -- --help.`);
   if (['--server-only', '--app-only', '--setup', '--doctor'].filter(flag => flags.has(flag)).length > 1) throw new Error('Choose one launch mode.');
@@ -120,7 +120,7 @@ export function apiEnvironment(env: Environment, config: DevelopmentConfig): Env
 export function expoEnvironment(inherited: Environment, config: DevelopmentConfig): Environment {
   const env = { ...inherited };
   for (const key of Object.keys(env)) {
-    if (/^(AAC_OPENAI_KEY$|OPENAI_|EXPO_PUBLIC_|DEV_|LITTLE_SAY_DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
+    if (/^(AAC_OPENAI_KEY$|OPENAI_|CHATGPT_|PG|DATABASE_|FIREBASE_|GOOGLE_APPLICATION_CREDENTIALS$|EXPO_PUBLIC_|DEV_|LITTLE_SAY_DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
   }
   return { ...env, NODE_ENV: 'development', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: config.apiUrl, REACT_NATIVE_PACKAGER_HOSTNAME: config.host,
     ...(config.backend === 'remote' ? { LITTLE_SAY_DEV_PROXY_URL: config.apiUrl, EXPO_PUBLIC_WEB_API_URL: config.webUrl } : {}) };

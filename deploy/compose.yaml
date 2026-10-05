@@ -1,4 +1,4 @@
-# Runs a published server image with external configuration and persistent speech/picture caches.
+# Runs a published server image with external configuration, persistent caches, and private account backups.
 # Used only by the local server:deploy command. No source build runs on the host.
 services:
   little-say:

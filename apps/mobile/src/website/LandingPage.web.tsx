@@ -79,7 +79,7 @@ export default function LandingPage() {
           <article><span className="ls-feature-icon ls-sky" aria-hidden="true">Aa</span><h3>More than one way to say it.</h3><p>Create multilingual boards and switch languages during play. Personalize individual cards for family names and the words you use at home.</p></article>
           <article><span className="ls-feature-icon ls-butter" aria-hidden="true">☀</span><h3>Little hands, welcome.</h3><p>Big, colorful tiles respond to taps and swipes with spoken words. A hold-to-unlock parent control helps keep the focus on the board.</p></article>
           <article><span className="ls-feature-icon ls-sage" aria-hidden="true">♫</span><h3>Everyday words, on the go.</h3><p>Keep saved boards, pictures, and downloaded speech on your device for offline play. Creating AI content needs a connection; using prepared boards doesn’t.</p></article>
-          <article><span className="ls-feature-icon ls-rose" aria-hidden="true">♡</span><h3>Your family. Your choice.</h3><p>Start without an account and keep boards on your device. Build manually or choose AI help, with every draft yours to review before saving.</p></article>
+          <article><span className="ls-feature-icon ls-rose" aria-hidden="true">♡</span><h3>Your family. Your choice.</h3><p>Start without an account and keep boards on your device. Choose optional account backup and sync when you want to bring them to another device.</p></article>
         </div>
       </section>
 

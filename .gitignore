@@ -20,4 +20,7 @@ credentials.json
 *.ipa
 *.apk
 *.aab
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
 *.asc

@@ -1,0 +1,26 @@
+# Adds private, durable Postgres to either the source or published-image application stack.
+services:
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PGDATABASE:?Set PGDATABASE}
+      POSTGRES_USER: ${PGUSER:?Set PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD:?Set PGPASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  little-say:
+    environment:
+      PGHOST: postgres
+      PGPORT: '5432'
+      PGSSLMODE: disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+volumes:
+  postgres-data:

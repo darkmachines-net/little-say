@@ -1,21 +1,50 @@
 # Testing
 
+See [Firebase/Postgres validation](FIREBASE_POSTGRES_VALIDATION.md) for the completed local, Compose, browser, and Expo Go checks and the remaining real-provider/Cloud SQL validation.
+
 Run from the repository root with Node 24 (`npm.cmd`/`npx.cmd` on Windows):
 
 ```sh
 npm ci
 npm run check
 npx playwright install chromium
-npm run test:web
+npm run test:services
+npx firebase emulators:exec --only auth --project demo-little-say "npm run test:web"
 ```
 
-`check` validates release-version mirrors, TypeScript (including unused locals/parameters), unit/component/service tests, and server/web builds. GitHub runs this check for pull requests. Browser tests use the production web build from `check`, start a temporary API on port 4175, and use isolated device libraries. They run without an API key and mock AI, speech and microphone services where appropriate. Existing development processes and user boards are not used.
+`check` validates release-version mirrors, TypeScript (including unused locals/parameters), unit/component/service tests, and server/web builds. GitHub runs this check plus required Postgres/Auth-emulator integration and browser tests for pull requests. Browser tests use the production web build from `check`, start a temporary API on port 4175, and use isolated device libraries. They run without an API key and mock AI, speech and microphone services where appropriate. Existing development processes and user boards are not used.
 
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. Selected [PR review screenshots](screenshots/little-say-branding/README.md) are retained separately.
 
-Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under ignored `artifacts/screenshots/landing/`; reviewed PR evidence is retained in [the website screenshot index](screenshots/website-landing/README.md). The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
+Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under `artifacts/screenshots/landing/`. The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
+
+Account integration tests use real Postgres and the Firebase Auth emulator for owner isolation, cookie revocation/CSRF, complete-backup validation, concurrent revisions/quotas, verification/reset/deletion and persistence. `tests/web/accounts.spec.ts` uses two isolated browser devices and the real API to restore photos, illustrations and downloaded speech byte-for-byte, merge offline edits, preserve boards after sign-out, and verify account-free setup makes no account request. Each test creates its own generated schema inside an explicitly named test database; it never uses development account data. Review captures are under `artifacts/screenshots/accounts/`. Native SecureStore, reinstall recovery, and restored playback still need validation in new signed Android/iOS builds before distribution.
+
+
+## Required local test services
+
+Unit tests remain service-independent. Integration and browser tests fail if their required services are missing; they never silently skip. Set TEST_PGDATABASE to a database whose name ends in _test, TEST_PGUSER and TEST_PGPASSWORD. Optional TEST_PGHOST/TEST_PGPORT select its host/port. These never inherit application PG settings. PostgreSQL 17 is required for CI parity.
+
+For example, create an isolated local container on an available loopback port:
+
+```powershell
+docker run -d --name little-say-test-postgres -p 127.0.0.1:15432:5432 -e POSTGRES_USER=little_say_test -e POSTGRES_PASSWORD=little_say_test -e POSTGRES_DB=little_say_test postgres:17-bookworm
+$env:TEST_PGDATABASE='little_say_test'
+$env:TEST_PGUSER='little_say_test'
+$env:TEST_PGPASSWORD='little_say_test'
+$env:TEST_PGPORT='15432'
+$env:FIREBASE_AUTH_EMULATOR_HOST='127.0.0.1:9099'
+npm.cmd run test:services
+npx.cmd firebase emulators:exec --only auth --project demo-little-say "npm run test:web"
+```
+
+Do not run emulators:exec while another Auth emulator owns 9099; use npm run test:integration / test:web directly with an already-running local emulator. Fixtures drop only their own random schema. No real Firebase project, Google/Apple identity or OpenAI request is used.
+
+SecureStore adapter tests cover large records, concurrent writes, interruption before commit, and sign-out. Google/Apple production sign-in, linking and revocation require actual provider configuration and Android/iOS device tests. Native bundle export checks module resolution, not provider credentials or device behavior. Cloud SQL connectivity likewise needs a provisioned instance and its runtime identity; local Postgres is not evidence of a successful cloud connection.
 
 ## Live AI evaluation
+
+ChatGPT connection tests use mocked OpenAI endpoints and real test JWT signatures to check identity validation, one-use callbacks, encrypted storage, isolated visitor billing, renewal, and refusal to spend the server API key. `tests/web/chatgpt.spec.ts` checks browser settings and composer behavior without external sign-in. A real hosted OAuth round trip and ChatGPT-funded inference remain separate rollout checks requiring an approved client; see [ChatGPT configuration](CHATGPT.md).
 
 ```sh
 npm run eval:ai

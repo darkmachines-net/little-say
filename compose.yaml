@@ -1,4 +1,4 @@
-# Builds and runs the app locally with server-side AI settings and persistent speech/picture caches.
+# Builds and runs the app with server-side AI settings, persistent caches, and private account backups.
 services:
   little-say:
     build: .
@@ -7,6 +7,22 @@ services:
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:8787:8787"
     environment:
+      PGHOST: ${PGHOST:-127.0.0.1}
+      PGPORT: ${PGPORT:-5432}
+      PGDATABASE: ${PGDATABASE:?Set PGDATABASE}
+      PGUSER: ${PGUSER:?Set PGUSER}
+      PGPASSWORD: ${PGPASSWORD:?Set PGPASSWORD}
+      PGSSLMODE: ${PGSSLMODE:-verify-full}
+      PGPOOL_MAX: ${PGPOOL_MAX:-3}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:?Set the hosted Firebase project}
+      FIREBASE_API_KEY: ${FIREBASE_API_KEY:?Set the public Firebase API key}
+      FIREBASE_APP_ID: ${FIREBASE_APP_ID:?Set the public Firebase app ID}
+      FIREBASE_AUTH_DOMAIN: ${FIREBASE_AUTH_DOMAIN:-}
+      FIREBASE_AUTH_PROVIDERS: ${FIREBASE_AUTH_PROVIDERS:-password,google.com,apple.com}
+      FIREBASE_GOOGLE_WEB_CLIENT_ID: ${FIREBASE_GOOGLE_WEB_CLIENT_ID:-}
+      FIREBASE_GOOGLE_IOS_CLIENT_ID: ${FIREBASE_GOOGLE_IOS_CLIENT_ID:-}
+      FIREBASE_APPLE_SERVICE_ID: ${FIREBASE_APPLE_SERVICE_ID:-}
+      FIREBASE_APPLE_REDIRECT_URI: ${FIREBASE_APPLE_REDIRECT_URI:-}
       AAC_OPENAI_KEY: ${AAC_OPENAI_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_BOARD_MODEL: ${OPENAI_BOARD_MODEL:-gpt-6.1-sol}
@@ -16,6 +32,11 @@ services:
       OPENAI_SPEECH_VOICE: ${OPENAI_SPEECH_VOICE:-marin}
       SPEECH_CACHE_DIR: /app/data/speech
       PICTURE_CACHE_DIR: /app/data/pictures
+      CHATGPT_ENABLED: ${CHATGPT_ENABLED:-false}
+      CHATGPT_CLIENT_ID: ${CHATGPT_CLIENT_ID:-}
+      CHATGPT_CLIENT_SECRET: ${CHATGPT_CLIENT_SECRET:-}
+      CHATGPT_REDIRECT_URI: ${CHATGPT_REDIRECT_URI:-}
+      CHATGPT_ENCRYPTION_KEY: ${CHATGPT_ENCRYPTION_KEY:-}
       OPENAI_IMAGE_MODEL: ${OPENAI_IMAGE_MODEL:-gpt-image-2.5-flare}
       AAC_IMAGE_GENERATION: ${AAC_IMAGE_GENERATION:-true}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8787}

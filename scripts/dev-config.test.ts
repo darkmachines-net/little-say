@@ -50,7 +50,7 @@ describe('local development configuration', () => {
     expect(api.HOST).toBe('0.0.0.0'); expect(api.PORT).toBe('9000'); expect(api.OPENAI_API_KEY).toBe('backend-secret'); expect(api.ALLOWED_ORIGINS).not.toContain('*');
   });
   it('does not pass backend keys, public secret variables, or dotenv files to Expo', () => {
-    const env = { PATH: '/bin', AAC_OPENAI_KEY: 'app-secret', OPENAI_API_KEY: 'backend-secret', OPENAI_BOARD_MODEL: 'model', EXPO_PUBLIC_API_KEY: 'public-secret', EXPO_PUBLIC_API_URL: 'http://old-host', EXPO_PACKAGER_PROXY_URL: 'https://old-tunnel', EXPO_NO_CLIENT_ENV_VARS: '1' };
+    const env = { PATH: '/bin', AAC_OPENAI_KEY: 'app-secret', OPENAI_API_KEY: 'backend-secret', OPENAI_BOARD_MODEL: 'model', EXPO_PUBLIC_API_KEY: 'public-secret', EXPO_PUBLIC_API_URL: 'http://old-host', EXPO_PACKAGER_PROXY_URL: 'https://old-tunnel', EXPO_NO_CLIENT_ENV_VARS: '1', PGPASSWORD: 'database-secret', FIREBASE_ADMIN_KEY: 'admin-secret', GOOGLE_APPLICATION_CREDENTIALS: '/secret/admin.json', CHATGPT_ENCRYPTION_KEY: 'grant-secret' };
     const expo = expoEnvironment(env, developmentConfig({}, addresses));
     expect(expo.PATH).toBe('/bin'); expect(expo.EXPO_NO_DOTENV).toBe('1'); expect(expo.EXPO_PUBLIC_API_URL).toBe('http://192.168.1.20:8788'); expect(expo.REACT_NATIVE_PACKAGER_HOSTNAME).toBe('192.168.1.20');
     expect(JSON.stringify(expo)).not.toContain('secret'); expect(expo.OPENAI_BOARD_MODEL).toBeUndefined(); expect(expo.EXPO_PACKAGER_PROXY_URL).toBeUndefined(); expect(expo.EXPO_NO_CLIENT_ENV_VARS).toBeUndefined();

@@ -17,7 +17,7 @@ Choose one command at a time. `dev` remains an alias for the local full-stack fl
 
 `npm.cmd run dev:remote` checks `https://littlesay.darkmachines.net/api/health`, then starts Expo Go in LAN mode. It does not start a local backend, reserve its port, create `.env`, or look up a Windows User API key. The deployed server supplies its own credentials and model configuration. Health failures stop startup with a remote-specific error; the launcher never silently falls back to a different backend.
 
-Native clients connect directly to the HTTPS backend. For browser testing, use `npm.cmd run dev:web:remote` or press **w** in the remote Expo session. The development web app sends `/api/` calls to its own Metro origin; a development-only middleware streams them to the selected remote backend. This covers JSON, recorded audio uploads, speech downloads, and picture assets without changing the deployment's allowed origins. The proxy accepts only the configured localhost/LAN origins and the app's POST header, strips browser cookies/authorization/origin, and does not follow redirects. Other requests continue to Metro. Production exports do not include this proxy or use these development overrides.
+Native clients connect directly to the HTTPS backend. For browser testing, use `npm.cmd run dev:web:remote` or press **w** in the remote Expo session. The development web app sends `/api/` calls to its own Metro origin; a development-only middleware streams them to the selected remote backend. This covers JSON, recorded audio uploads, speech downloads, and picture assets without changing the deployment's allowed origins. The proxy accepts only the configured localhost/LAN origins and the app's POST header, strips unrelated browser cookies/authorization/origin, and does not follow redirects. Account routes relay only the Little Say session cookie and expected account ID; the cookie retains HttpOnly and SameSite, with Secure removed only for the HTTP development hop. Other requests continue to Metro. Production exports do not include this proxy or use these development overrides.
 
 AI requests made while testing use the deployed server and its normal billing/caches. Startup and doctor checks only request health/status endpoints. Stop and restart Expo when switching modes or changing the remote origin; append `-- --clear` if a device still has a stale bundle.
 
@@ -115,3 +115,10 @@ The helper supports `-WhatIf`. No firewall rule is installed automatically. Mark
 Expo's `--tunnel` tunnels the bundler only; it does not make this local API reachable. This launcher intentionally uses LAN mode so the bundle and API use one working network path.
 
 Expo Go includes this app's [SQLite](https://docs.expo.dev/versions/latest/sdk/sqlite/) and [audio](https://docs.expo.dev/versions/latest/sdk/audio/) modules. Its permission text, development menu, app identity, and system containment can differ from a standalone build. Test final child-mode containment and distribution behavior in a native build before the family pilot.
+
+
+## Firebase and Postgres
+
+Local API development now requires Postgres. Run `npm run db:up` for the optional Docker database, or set the PG variables for your installed database. The local launcher runs migrations and starts its own demo Auth emulator. Use `DEV_AUTH_MODE=hosted` with Firebase settings for real-provider testing. Remote mode starts neither service. See [backend operation](BACKEND.md) for setup, ports, demo identities and hosted settings.
+
+Expo Go continues to support guest and email/password flows. For Google/Apple, install a development build containing the native modules and run `npm run dev -- --dev-client` (or `dev:remote -- --dev-client`). Public iOS Google callback configuration must be supplied when generating/building the native app. Native configuration changes require a new binary and the existing release/runtime checks.

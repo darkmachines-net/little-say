@@ -20,7 +20,7 @@ import { prepareProposalPictures } from '../services/pictures';
  * Resume saved setup progress, generate starter drafts for the chosen languages, and commit the
  * parent-approved result through onCommit.
  */
-export function FirstTimeSetup({ library, onCommit }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void> }) {
+export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onAccount: () => void }) {
   const setup = library.setup!;
   const [profile, setProfile] = useState(() => getLanguageProfile(library.settings));
   const [topics, setTopics] = useState(setup.topics);
@@ -76,7 +76,7 @@ export function FirstTimeSetup({ library, onCommit }: { library: Library; onComm
   const languageStep = setup.stage === 'languages';
   return <View style={styles.page}>
     <View style={{ borderBottomWidth: 1, borderColor: theme.line, backgroundColor: theme.surface }}>
-      <View style={[styles.container, styles.row, { minHeight: 76 }]}><Brand /></View>
+      <View style={[styles.container, styles.row, { minHeight: 76, justifyContent: 'space-between', flexWrap: 'wrap' }]}><Brand /><Button kind="ghost" disabled={Boolean(working)} onPress={onAccount}>Sign in or restore boards</Button></View>
     </View>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
       <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Parent settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
