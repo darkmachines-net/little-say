@@ -17,8 +17,11 @@ import { searchPictures } from './picture-catalog';
 import { type AiProvider } from './provider';
 import { SpeechCache, SpeechCacheError } from './speech-cache';
 import release from '../../../release.json';
+import { type ChatGptConnections } from './chatgpt';
+import { chatGptRoutes, chatGptSession, usesChatGpt } from './chatgpt-routes';
+import { ChatGptError } from './chatgpt-oauth';
 
-export interface ServerOptions { provider: AiProvider | null; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
+export interface ServerOptions { provider: AiProvider | null; chatgpt?: ChatGptConnections; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
 
 /**
  * Construct and register a server with injected AI, speech, and picture services without opening a listening
@@ -27,7 +30,7 @@ export interface ServerOptions { provider: AiProvider | null; speechCache?: Spee
 export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
-  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say'], credentials: false });
+  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'X-Little-Say-AI'], credentials: true });
   await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024, files: 1, fields: 0, parts: 1 }, throwFileSizeLimit: true });
   await app.register(rateLimit, { global: false });
   const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
@@ -37,8 +40,12 @@ export async function createServer(options: ServerOptions) {
     if (!request.url.startsWith('/api/')) return;
     if (request.headers.origin && !origins.includes(request.headers.origin)) return reply.code(403).send({ error: 'This web address is not allowed by the private server.' });
     if (request.method === 'POST' && request.headers['x-little-say'] !== '1') return reply.code(403).send({ error: 'Use the Little Say app to make this request.' });
+    if (request.method === 'POST' && usesChatGpt(request) && ['/api/speech', '/api/transcribe', '/api/pictures/analyze', '/api/pictures/jobs', '/api/pictures/review'].includes(request.url.split('?')[0])) {
+      return reply.code(409).send({ error: 'ChatGPT plan usage covers board drafts and translations. Voice prompts, AI audio, and automatic pictures are unavailable while connected. The server API key was not used.' });
+    }
   });
   app.setErrorHandler((error, request, reply) => {
+    if (error instanceof ChatGptError) return reply.code(error.statusCode).send({ error: error.message });
     const status = (error as { statusCode?: number }).statusCode ?? 500;
     // Only log metadata, never prompt, transcript, recording, board, or provider error bodies.
     app.log.warn({ requestId: request.id, statusCode: status }, 'Request failed');
@@ -46,7 +53,8 @@ export async function createServer(options: ServerOptions) {
   });
 
   app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
-  app.addHook('onClose', async () => { options.pictures?.close(); });
+  app.addHook('onClose', async () => { options.pictures?.close(); options.chatgpt?.close(); });
+  await chatGptRoutes(app, options.chatgpt, options.secureCookies ?? true);
   app.get('/api/pictures/search', aiLimits, async (request, reply) => {
     const parsed = z.object({ q: z.string().trim().min(1).max(300), style: z.enum(['color', 'line']) }).safeParse(request.query);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide search words and a picture style.' });
@@ -117,26 +125,33 @@ export async function createServer(options: ServerOptions) {
   app.post('/api/boards/propose', { ...aiLimits, bodyLimit: 512 * 1024 }, async (request, reply) => {
     const parsed = proposalRequestSchema.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide a prompt and a valid board of up to 24 tiles.' });
-    if (!options.provider) return reply.code(503).send({ error: 'AI is not configured yet. Add OPENAI_API_KEY on your home server. You can still create and edit boards manually.' });
+    if (!usesChatGpt(request) && !options.provider) return reply.code(503).send({ error: 'AI is not configured yet. Connect ChatGPT in Parent settings if available, or configure the server API key. You can still create boards manually.' });
     if (active >= maxConcurrent) return reply.code(429).send({ error: 'The server is working on another board. Please try again shortly.' });
     active++;
     const start = Date.now();
     try {
-      const proposal = validateGeneratedBoard(await options.provider.propose(parsed.data), parsed.data.board);
+      const provider = usesChatGpt(request) ? await options.chatgpt?.provider(chatGptSession(request)) : options.provider;
+      if (!provider) throw new ChatGptError('Reconnect ChatGPT in Parent settings. The server API key was not used.', 401);
+      const proposal = validateGeneratedBoard(await provider.propose(parsed.data), parsed.data.board);
       app.log.info({ operation: 'propose', durationMs: Date.now() - start }, 'AI request completed');
       return { boardId: parsed.data.board?.id ?? null, baseRevision: parsed.data.board?.revision ?? null, proposal };
-    } catch {
+    } catch (error) {
+      if (error instanceof ChatGptError) throw error;
       return reply.code(502).send({ error: 'AI could not produce a complete, valid board. Your saved board is unchanged. Try again or simplify the prompt.' });
     } finally { active--; }
   });
   app.post('/api/boards/translate', aiLimits, async (request, reply) => {
     const parsed = translationRequestSchema.safeParse(request.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide a valid board and up to six target languages per tile.' });
-    if (!options.provider?.translate) return reply.code(503).send({ error: 'Translations need AI configured on your server. You can enter translations in each tile editor.' });
+    if (!usesChatGpt(request) && !options.provider?.translate) return reply.code(503).send({ error: 'Translations need AI configured on your server. You can enter translations in each tile editor.' });
     if (active >= maxConcurrent) return reply.code(429).send({ error: 'The server is working on another board. Please try again shortly.' });
     active++;
-    try { return validateTranslations(parsed.data, await options.provider.translate(parsed.data)); }
-    catch { return reply.code(502).send({ error: 'AI could not prepare all translations. Your board is unchanged. Please try again.' }); }
+    try {
+      const provider = usesChatGpt(request) ? await options.chatgpt?.provider(chatGptSession(request)) : options.provider;
+      if (!provider?.translate) throw new ChatGptError('Reconnect ChatGPT in Parent settings. The server API key was not used.', 401);
+      return validateTranslations(parsed.data, await provider.translate(parsed.data));
+    }
+    catch (error) { if (error instanceof ChatGptError) throw error; return reply.code(502).send({ error: 'AI could not prepare all translations. Your board is unchanged. Please try again.' }); }
     finally { active--; }
   });
   app.post('/api/transcribe', aiLimits, async (request, reply) => {

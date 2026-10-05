@@ -33,6 +33,8 @@ Photos use the platform picker/cropper on native and an in-app cropper on web. L
 
 Use iOS Guided Access or Android screen pinning to restrict system navigation during play. The app cannot suppress operating-system gestures. Browser storage is tied to the URL's origin; development and production URLs have separate libraries. There is no export or cloud backup, so uninstalling or clearing storage removes local boards and audio.
 
+- The website can optionally connect a visitor's ChatGPT plan for board drafts and translations under **Parent settings → AI requests**. This requires an approved hosted OpenAI client and is disabled until configured. Speech and automatic picture generation are unavailable while connected; failed requests never switch to the server API key. See [ChatGPT setup and limitations](docs/CHATGPT.md).
+
 ## Backend and privacy
 
 OpenAI requests go through the backend using the following configuration. No secret belongs in `EXPO_PUBLIC_*` variables or the app.

@@ -15,6 +15,8 @@ The suites cover touch gestures, unlock timing, bounded speech, persistence and 
 
 Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under ignored `artifacts/screenshots/landing/`; reviewed PR evidence is retained in [the website screenshot index](screenshots/website-landing/README.md). The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
 
+ChatGPT connection tests use mocked OpenAI endpoints and real test JWT signatures to check identity validation, one-use callbacks, encrypted storage, isolated visitor billing, renewal, and refusal to spend the server API key. `tests/web/chatgpt.spec.ts` checks browser settings and composer behavior without external sign-in. A real hosted OAuth round trip and ChatGPT-funded inference remain separate rollout checks requiring an approved client; see [ChatGPT configuration](CHATGPT.md).
+
 ## Live AI evaluation
 
 ```sh

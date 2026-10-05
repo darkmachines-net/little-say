@@ -11,9 +11,13 @@ import { SpeechCache } from './speech-cache';
 import { openAISynthesis, speechProfile } from './synthesis';
 import { PictureJobs } from './picture-jobs';
 import { openAIPictureProvider } from './picture-provider';
+import { chatGptConfig, ChatGptConnections } from './chatgpt';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true });
 config({ quiet: true });
+const chatgpt = chatGptConfig(process.env);
 const app = await createServer({
+  chatgpt: chatgpt ? new ChatGptConnections(chatgpt) : undefined,
+  secureCookies: process.env.NODE_ENV === 'production',
   provider: openAIProvider(process.env),
   pictures: new PictureJobs(resolve(process.env.PICTURE_CACHE_DIR || '../../.cache/pictures'), openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false'),
   speechCache: new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env))),

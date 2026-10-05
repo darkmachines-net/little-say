@@ -32,7 +32,7 @@ function Application() {
   const audio = useSpeechLibrary(store.library);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useEffect(() => { if (draftRoute.route?.boardId) setSelectedId(draftRoute.route.boardId); }, [draftRoute.route?.boardId]);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(() => Platform.OS === 'web' && new URLSearchParams(window.location.search).has('chatgpt'));
   const [voices, setVoices] = useState<Voice[]>([]);
   const [error, setError] = useState('');
   const [soundCheck, setSoundCheck] = useState<Board | null>(null);
