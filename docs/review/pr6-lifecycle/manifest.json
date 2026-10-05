@@ -1,0 +1,216 @@
+{
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "reviewed": "250d9a055a2c437360227528919d702e8f6196f7",
+  "head": "846311d3ba568630d3f014701a04f2142860abac",
+  "capturedAtUtc": "2026-10-05T19:15:36.325Z",
+  "host": "MCHARTIER_ZBOOK",
+  "browser": "153.0.8010.12",
+  "tool": "Playwright1.63 screenshot",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "steps": "Seed same synthetic version1 library; privacy: open Parent settings and scroll Storage & privacy into view. tile-close: open Farmyard friends, change Cow to Calf, Save tile, close automatically-started Board pictures (master has no picture preview), inspect editor and persisted library. Mock picture jobs remain pending; no paid provider calls.",
+  "normalization": "1280x1000, DPR1, light, en-US/UTC, reduced motion, fixed Date, service workers blocked. No CSS/DOM hiding, cropping, or pixel edits. Real scrolling only. All script/HTML response digests verified against served production files.",
+  "runs": [
+    {
+      "name": "base",
+      "source": "5d72992c77fbb09195518e257d799501b7db4d04",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-base\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        }
+      ],
+      "images": [
+        {
+          "file": "base-privacy.png",
+          "sha256": "fe063ea2661d2fc653e378ad8c4cfe4c9762785e9c18b8dabf1773a52f0ce138",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:37.154Z"
+        },
+        {
+          "file": "base-tile-close.png",
+          "sha256": "42f3209e020aa3fd9add7b376010defe82523711a874b226e90aa71d4311312c",
+          "state": "tile-close",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:37.880Z"
+        }
+      ]
+    },
+    {
+      "name": "reviewed",
+      "source": "250d9a055a2c437360227528919d702e8f6196f7",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-lifecycle-dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        }
+      ],
+      "images": [
+        {
+          "file": "reviewed-privacy.png",
+          "sha256": "bae3e9dea629c8db938d0a2a8319f1101cd9d4be559099c19ea7d3804e16b39d",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:38.987Z"
+        },
+        {
+          "file": "reviewed-tile-close.png",
+          "sha256": "947bd3519230e95e493ecf5c72e7f2ce535b617cb86d06390b02c39c0a8475be",
+          "state": "tile-close",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:40.194Z"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "846311d3ba568630d3f014701a04f2142860abac",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        }
+      ],
+      "images": [
+        {
+          "file": "after-privacy.png",
+          "sha256": "7d2da8daca9fc27c90edc883f336a976599318c88a842649179a21f05a47377d",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:41.321Z"
+        },
+        {
+          "file": "after-tile-close.png",
+          "sha256": "d8170c307c396acb0e8dd78616779b9c425b545b96d055cd87be2558d6901a91",
+          "state": "tile-close",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:15:42.614Z"
+        }
+      ]
+    }
+  ],
+  "reviewedBuildApplicability": "Reviewed250d9a mobile tree equals1e857c per selection source-impact record; served bytes match retained a1d42e policy After manifest. The250 build was copied before edits."
+}

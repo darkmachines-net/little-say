@@ -1,0 +1,66 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run vitest run apps/mobile/src/services/pictures.test.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-05/task-5/little-say-pr6
+
+ Γ¥» apps/mobile/src/services/pictures.test.ts (17 tests | 2 failed) 92ms
+     ├ù reuses distinct same-label meanings after reordering without aliasing earlier pictures 12ms
+     ├ù consumes each prior picture once and prepares added duplicate cards 1ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/mobile/src/services/pictures.test.ts > staged client pictures > reuses distinct same-label meanings after reordering without aliasing earlier pictures
+AssertionError: expected [ { kind: 'generated', ΓÇª(4) }, ΓÇª(1) ] to deeply equal [ { kind: 'generated', ΓÇª(4) }, ΓÇª(1) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,9 @@
+  [
+    {
+-     "assetId": "2222222222222222222222222222222222222222222222222222222222222222",
+-     "description": "ΓÜ╛",
++     "assetId": "1111111111111111111111111111111111111111111111111111111111111111",
++     "description": "≡ƒªç",
+      "kind": "generated",
+      "model": "test",
+      "style": "color",
+    },
+    {
+
+ Γ¥» apps/mobile/src/services/pictures.test.ts:32:76
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  apps/mobile/src/services/pictures.test.ts > staged client pictures > consumes each prior picture once and prepares added duplicate cards
+AssertionError: expected [ { kind: 'generated', ΓÇª(4) }, ΓÇª(1) ] to deeply equal [ { kind: 'generated', ΓÇª(4) }, ΓÇª(1) ]
+
+- Expected
++ Received
+
+@@ -5,11 +5,11 @@
+      "kind": "generated",
+      "model": "test",
+      "style": "color",
+    },
+    {
+-     "assetId": "2222222222222222222222222222222222222222222222222222222222222222",
++     "assetId": "1111111111111111111111111111111111111111111111111111111111111111",
+      "description": "Bat",
+      "kind": "generated",
+      "model": "test",
+      "style": "color",
+    },
+
+ Γ¥» apps/mobile/src/services/pictures.test.ts:40:88
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 15 passed (17)
+   Start at  12:10:20
+   Duration  1.11s (transform 733ms, setup 0ms, import 892ms, tests 92ms, environment 0ms)
+
