@@ -15,6 +15,33 @@ The suites cover touch gestures, unlock timing, bounded speech, persistence and 
 
 Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under ignored `artifacts/screenshots/landing/`; reviewed PR evidence is retained in [the website screenshot index](screenshots/website-landing/README.md). The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
 
+## PostgreSQL foundation tests
+
+Unit tests remain independent of external services. `npm run test:integration`
+requires PostgreSQL 17 and fails when the test service or explicit test settings
+are missing. CI supplies a disposable PostgreSQL service for this suite.
+
+For an isolated local test container on an available loopback port:
+
+```powershell
+docker run -d --name little-say-test-postgres -p 127.0.0.1:15432:5432 -e POSTGRES_USER=little_say_test -e POSTGRES_PASSWORD=little_say_test -e POSTGRES_DB=little_say_test postgres:17-bookworm
+$env:TEST_PGDATABASE='little_say_test'
+$env:TEST_PGUSER='little_say_test'
+$env:TEST_PGPASSWORD='little_say_test'
+$env:TEST_PGPORT='15432'
+npm.cmd run test:integration
+```
+
+The fixtures require `TEST_PGDATABASE` ending in `_test` and `TEST_PGPASSWORD`;
+they never inherit application `PG*` settings. Optional `TEST_PGHOST`,
+`TEST_PGPORT`, `TEST_PGUSER` and `TEST_PGSSLMODE` select the test connection.
+Each fixture migrates its own random schema and drops only that schema on close.
+Tests cover repeat migrations, migration lock contention/recovery, absent/unsupported histories, committed work,
+rollback and connection reuse after an error, and separation of fixtures. No
+Firebase project, account data, external AI service or running application is
+needed. [The foundation contract](POSTGRES.md) describes migration ordering and
+pool ownership. Stop/remove only a test container you created when finished.
+
 ## Live AI evaluation
 
 ```sh

@@ -38,7 +38,10 @@
     "ota:publish": "tsx scripts/release/native.ts ota",
     "server:configure": "tsx scripts/release/deploy.ts configure",
     "server:deploy": "tsx scripts/release/deploy.ts deploy",
-    "brand:assets": "node scripts/brand-assets.mjs"
+    "brand:assets": "node scripts/brand-assets.mjs",
+    "db:migrate": "npm run db:migrate -w @little-say/server",
+    "db:status": "npm run db:status -w @little-say/server",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "engines": {
     "node": ">=22.13"
@@ -54,6 +57,7 @@
     "@expo/image-utils": "0.11.5",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.20.0",
     "typescript": "~6.0.3",
     "vitest": "^4.0.0",
