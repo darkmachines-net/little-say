@@ -1,0 +1,137 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run tsx artifacts/pr6-disclosure/privacy.ts
+(node:39120) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39120) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:39120) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+{
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "reviewed": "250d9a055a2c437360227528919d702e8f6196f7",
+  "head": "b2b268e670c889dcda912eac822295278e3cf093",
+  "capturedAtUtc": "2026-10-05T19:32:03.714Z",
+  "host": "MCHARTIER_ZBOOK",
+  "browser": "153.0.8010.12",
+  "tool": "Playwright1.63 screenshot",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "steps": "Seed same synthetic version1 library; privacy: open Parent settings and scroll Storage & privacy into view. tile-close: open Farmyard friends, change Cow to Calf, Save tile, close automatically-started Board pictures (master has no picture preview), inspect editor and persisted library. Mock picture jobs remain pending; no paid provider calls.",
+  "normalization": "1280x1000, DPR1, light, en-US/UTC, reduced motion, fixed Date, service workers blocked. No CSS/DOM hiding, cropping, or pixel edits. Real scrolling only. All script/HTML response digests verified against served production files.",
+  "runs": [
+    {
+      "name": "base",
+      "source": "5d72992c77fbb09195518e257d799501b7db4d04",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-base\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        }
+      ],
+      "images": [
+        {
+          "file": "base-privacy.png",
+          "sha256": "fe063ea2661d2fc653e378ad8c4cfe4c9762785e9c18b8dabf1773a52f0ce138",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:32:04.564Z"
+        }
+      ]
+    },
+    {
+      "name": "reviewed",
+      "source": "250d9a055a2c437360227528919d702e8f6196f7",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-lifecycle-dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        },
+        {
+          "path": "index.html",
+          "sha256": "59a1aba9bc22c03737688518b8cfae1c85a1cff5c05e5ed64f84ad1a56cc8a90"
+        },
+        {
+          "path": "_expo/static/js/web/index-e05c1cc244ba5ea8f7a6b56b277ab567.js",
+          "sha256": "129c1914e7d939ab8438c5043cc79c6cef21b8962e4215fdc1814e9072c1dc54"
+        },
+        {
+          "path": "_expo/static/js/web/App-7dd02589fb4d37f49ae2c6a31f1eb36a.js",
+          "sha256": "c3c3d140e6d81c238ea76565943234eaf393396ed85e98f2d4862a21b73a30ad"
+        }
+      ],
+      "images": [
+        {
+          "file": "reviewed-privacy.png",
+          "sha256": "bae3e9dea629c8db938d0a2a8319f1101cd9d4be559099c19ea7d3804e16b39d",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:32:05.697Z"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "source": "b2b268e670c889dcda912eac822295278e3cf093",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        }
+      ],
+      "images": [
+        {
+          "file": "after-privacy.png",
+          "sha256": "6a9eb7481fedfb5025644db1556d6b9c8361507127f50b52e759d7f7f5091adf",
+          "state": "privacy",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:32:06.882Z"
+        }
+      ]
+    }
+  ],
+  "reviewedBuildApplicability": "Reviewed250d9a mobile tree equals1e857c per selection source-impact record; served bytes match retained a1d42e policy After manifest. The250 build was copied before edits."
+}

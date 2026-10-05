@@ -1,0 +1,354 @@
+npm notice run little-say-workspace@0.1.1 npx
+npm notice run tsx artifacts/pr6-disclosure/capture.ts
+(node:24308) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24308) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:24308) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+{
+  "base": "5d72992c77fbb09195518e257d799501b7db4d04",
+  "reviewed": "846311d3ba568630d3f014701a04f2142860abac",
+  "head": "b2b268e670c889dcda912eac822295278e3cf093",
+  "capturedAtUtc": "2026-10-05T19:30:35.777Z",
+  "host": "MCHARTIER_ZBOOK",
+  "browser": "153.0.8010.12",
+  "tool": "Playwright1.63 screenshot",
+  "clock": "2026-10-05T18:00:00.000Z",
+  "fixture": "library.json",
+  "steps": "Setup: fresh storage, English default, Continue, scroll generation disclosure above the visible Generate starter boards action. Intro: seeded library, New board, inspect the natural initial transcript position after layout settles; input remains visible. Board/card: open Pictures or Cow Picture options; scroll generation disclosure. No action that requests AI work is pressed.",
+  "normalization": "1280x1000 desktop or390x844 phone per state, DPR1, light, en-US/UTC, reduced motion, fixed Date, service workers blocked. No CSS/DOM hiding, cropping, or pixel edits. Real scrolling only. All script/HTML response digests verified against served production files.",
+  "runs": [
+    {
+      "name": "base",
+      "source": "5d72992c77fbb09195518e257d799501b7db4d04",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-base\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        },
+        {
+          "path": "index.html",
+          "sha256": "8fedf10276a2e5ec79d52c0270eead7ab8d3f4ca4454f630085d3dd5cbced9bf"
+        },
+        {
+          "path": "_expo/static/js/web/index-d6e8d2fdc0231f442fca810d15f75c22.js",
+          "sha256": "2e2e0c43ce8e5727439a15f4104dc76f34ab6f79873ad624365b75b5aa944231"
+        }
+      ],
+      "images": [
+        {
+          "file": "base-setup-desktop.png",
+          "sha256": "2efc643c3ced936450c131738319d453f80ba7b58ed9f7fb435366a8df9a9218",
+          "state": "setup-desktop",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:36.403Z"
+        },
+        {
+          "file": "base-setup-phone.png",
+          "sha256": "dd7b03977889d3834ecbefb9cd51a19650f752f6ef0277097e8fb238707ef5f2",
+          "state": "setup-phone",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:36.857Z"
+        }
+      ]
+    },
+    {
+      "name": "reviewed",
+      "source": "846311d3ba568630d3f014701a04f2142860abac",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\pr6-reviewed-disclosure-dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        },
+        {
+          "path": "index.html",
+          "sha256": "b4ba5a1eee10dd87597e94e1071535e14b565de8fcbcf0d08e6105660783cff4"
+        },
+        {
+          "path": "_expo/static/js/web/index-f4fcfb54d23a82c767c5fd1680471351.js",
+          "sha256": "5a645af706a77797ee3d17492cda83f3a6f1f650ac8c0037d976425385748243"
+        },
+        {
+          "path": "_expo/static/js/web/App-cb6cb5040e2c17970d035e4e591ce48f.js",
+          "sha256": "4425b837a4cfe81e52408335447ff26047e064838b9a4137c396320b9ea35e66"
+        }
+      ],
+      "images": [
+        {
+          "file": "reviewed-setup-desktop.png",
+          "sha256": "2efc643c3ced936450c131738319d453f80ba7b58ed9f7fb435366a8df9a9218",
+          "state": "setup-desktop",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:37.468Z"
+        },
+        {
+          "file": "reviewed-setup-phone.png",
+          "sha256": "dd7b03977889d3834ecbefb9cd51a19650f752f6ef0277097e8fb238707ef5f2",
+          "state": "setup-phone",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:38.057Z"
+        },
+        {
+          "file": "reviewed-intro-phone.png",
+          "sha256": "11134957ce782baeb44b80c9cee1e9922469979753a9d1b0aa85f7d3929f16f1",
+          "state": "intro-phone",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:39.591Z"
+        },
+        {
+          "file": "reviewed-board.png",
+          "sha256": "38bb3eb8f156862ceb6cf28ce9cb7f24e59862577d4dc3df575388c288bd0ff4",
+          "state": "board",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:40.698Z"
+        },
+        {
+          "file": "reviewed-card.png",
+          "sha256": "5c8b4a154f5106571cf12af6748543a83b394f97fc3884795cfed705e3026020",
+          "state": "card",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:41.862Z"
+        }
+      ],
+      "transcript": {
+        "scrollTop": 0,
+        "height": 418,
+        "scrollHeight": 418
+      }
+    },
+    {
+      "name": "after",
+      "source": "b2b268e670c889dcda912eac822295278e3cf093",
+      "webRoot": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-05\\task-5\\little-say-pr6\\apps\\mobile\\dist",
+      "buildCommand": "npm ci; npm run build",
+      "served": [
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        }
+      ],
+      "images": [
+        {
+          "file": "after-setup-desktop.png",
+          "sha256": "16a1eadd952d30608950b9e09665bae559094b9beb5c7ea931ab87866104cf92",
+          "state": "setup-desktop",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:42.489Z"
+        },
+        {
+          "file": "after-setup-phone.png",
+          "sha256": "70915b9379bd92b7877063025809e377d9df2b122edfe4efe73368c7528efa00",
+          "state": "setup-phone",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:43.091Z"
+        },
+        {
+          "file": "after-intro-phone.png",
+          "sha256": "4e3c78f208b9cc56613abde112c0e1e3362beb4e04144cb79ccecda8843bfb54",
+          "state": "intro-phone",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:44.626Z"
+        },
+        {
+          "file": "after-board.png",
+          "sha256": "773f3897dc5a239305187508e730fdef3cd64f7694b2ba81b499e5bbdea4f069",
+          "state": "board",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:45.731Z"
+        },
+        {
+          "file": "after-card.png",
+          "sha256": "7f3630e77011a15d6f47865243e48661adbec9690f242ea82dd5ed98ac47dfe2",
+          "state": "card",
+          "route": "/app",
+          "observedAtUtc": "2026-10-05T19:30:46.845Z"
+        }
+      ],
+      "transcript": {
+        "scrollTop": 0,
+        "height": 418,
+        "scrollHeight": 418
+      }
+    }
+  ],
+  "reviewedBuildApplicability": "Reviewed846 production build copied before edits; served digests match a003b18 lifecycle After manifest."
+}
