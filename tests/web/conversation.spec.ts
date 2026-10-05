@@ -327,3 +327,16 @@ test('the compact editor fits tablet orientations and keeps reordering in the ti
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await expect(page.getByTestId('editor-preview').getByRole('button').nth(1)).toHaveAccessibleName('Edit tile Cow');
 });
+
+test('a new phone conversation starts with its full data-use introduction visible', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  const intro = page.getByText(/Messages and board words go to AI/);
+  await expect(intro).toContainText('without automatic deletion');
+  await page.evaluate(async () => { await document.fonts.ready; await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))); });
+  const panel = (await page.getByTestId('ai-transcript').boundingBox())!;
+  const text = (await intro.boundingBox())!;
+  expect(text.y).toBeGreaterThanOrEqual(panel.y);
+  expect(text.y + text.height).toBeLessThanOrEqual(panel.y + panel.height);
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toBeVisible();
+});
