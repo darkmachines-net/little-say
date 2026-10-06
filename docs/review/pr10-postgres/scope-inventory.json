@@ -1,0 +1,1420 @@
+{
+  "purpose": "Complete live published PR commit/parent/file inventories; original history preserved, focused replacement assessed",
+  "owner": "PR10 continuation",
+  "retention": "Through human review and stack completion",
+  "checkedAt": "2026-10-06T00:03:15.758Z",
+  "mergeBase": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
+  "records": [
+    {
+      "pr": 10,
+      "url": "https://github.com/MChartier/little-say/pull/10",
+      "head": "7323a68dd4690171d86f82ac5e5dec3982d275ee",
+      "target": {
+        "repository": "MChartier/little-say",
+        "ref": "feat/automatic-card-pictures",
+        "sha": "bac81796235ecef4647f7584d6ecfac6a8b0d80e"
+      },
+      "ultimateTarget": "master",
+      "declaredParent": {
+        "pr": 6,
+        "state": "open"
+      },
+      "commitCount": 2,
+      "fileCount": 35,
+      "commits": [
+        {
+          "sha": "c02fb8cdc18759572e240f09f80095e83b58bd4e",
+          "parents": [
+            "1d1afe04e5224d162e9a120d4c24bb88208a8b9b"
+          ],
+          "message": "Add optional visitor ChatGPT plan connection",
+          "files": [
+            {
+              "path": ".env.example",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 0
+            },
+            {
+              "path": "Dockerfile",
+              "status": "modified",
+              "additions": 3,
+              "deletions": 2
+            },
+            {
+              "path": "README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/App.tsx",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/mobile/src/services/aiBilling.ts",
+              "status": "added",
+              "additions": 6,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/services/aiBilling.web.ts",
+              "status": "added",
+              "additions": 15,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/services/api.ts",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 3
+            },
+            {
+              "path": "apps/mobile/src/services/useChatGpt.ts",
+              "status": "added",
+              "additions": 60,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/ui/AiConversation.tsx",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 4
+            },
+            {
+              "path": "apps/mobile/src/ui/ChatGptPanel.tsx",
+              "status": "added",
+              "additions": 38,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/ui/ParentSettings.tsx",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/package.json",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/app.ts",
+              "status": "modified",
+              "additions": 24,
+              "deletions": 9
+            },
+            {
+              "path": "apps/server/src/chatgpt-oauth.ts",
+              "status": "added",
+              "additions": 105,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt-provider.ts",
+              "status": "added",
+              "additions": 43,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt-routes.ts",
+              "status": "added",
+              "additions": 52,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt.ts",
+              "status": "added",
+              "additions": 159,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/index.ts",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/provider.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/server/test/chatgpt-oauth.test.ts",
+              "status": "added",
+              "additions": 38,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/chatgpt-provider.test.ts",
+              "status": "added",
+              "additions": 32,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/chatgpt.test.ts",
+              "status": "added",
+              "additions": 187,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/tsup.config.ts",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 1
+            },
+            {
+              "path": "compose.yaml",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 0
+            },
+            {
+              "path": "deploy/compose.yaml",
+              "status": "modified",
+              "additions": 3,
+              "deletions": 0
+            },
+            {
+              "path": "docs/CHATGPT.md",
+              "status": "added",
+              "additions": 41,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/README.md",
+              "status": "added",
+              "additions": 20,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/limit-1180.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/limit-390.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/settings-1180.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/settings-390.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/testing.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "package-lock.json",
+              "status": "modified",
+              "additions": 11,
+              "deletions": 1
+            },
+            {
+              "path": "playwright.config.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "tests/web/chatgpt.spec.ts",
+              "status": "added",
+              "additions": 90,
+              "deletions": 0
+            }
+          ]
+        },
+        {
+          "sha": "7323a68dd4690171d86f82ac5e5dec3982d275ee",
+          "parents": [
+            "c02fb8cdc18759572e240f09f80095e83b58bd4e",
+            "bac81796235ecef4647f7584d6ecfac6a8b0d80e"
+          ],
+          "message": "Merge updated board creation into ChatGPT draft",
+          "files": [
+            {
+              "path": "README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 2
+            },
+            {
+              "path": "apps/mobile/src/App.tsx",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 2
+            },
+            {
+              "path": "apps/mobile/src/services/pictures.test.ts",
+              "status": "modified",
+              "additions": 27,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/services/pictures.ts",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 9
+            },
+            {
+              "path": "apps/mobile/src/ui/AiConversation.tsx",
+              "status": "modified",
+              "additions": 29,
+              "deletions": 29
+            },
+            {
+              "path": "apps/mobile/src/ui/Dashboard.tsx",
+              "status": "modified",
+              "additions": 3,
+              "deletions": 3
+            },
+            {
+              "path": "apps/mobile/src/ui/DraftCanvas.tsx",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 3
+            },
+            {
+              "path": "apps/mobile/src/ui/PicturePreferences.tsx",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 2
+            },
+            {
+              "path": "apps/server/src/picture-jobs.ts",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 2
+            },
+            {
+              "path": "apps/server/src/provider.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/server/test/pictures.test.ts",
+              "status": "modified",
+              "additions": 16,
+              "deletions": 0
+            },
+            {
+              "path": "docs/DESIGN.md",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 4
+            },
+            {
+              "path": "docs/PICTURES.md",
+              "status": "modified",
+              "additions": 10,
+              "deletions": 6
+            },
+            {
+              "path": "docs/screenshots/board-workspace/README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 2
+            },
+            {
+              "path": "docs/screenshots/board-workspace/fallback-desktop.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/fallback-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/fallback-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/progress-desktop.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/progress-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/progress-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/ready-desktop.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/ready-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/ready-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/board-workspace/settings-during-work.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 2
+            },
+            {
+              "path": "docs/screenshots/card-pictures/board-controls-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/board-controls-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/card-controls-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/card-controls-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/prompt-controls-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/prompt-controls-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/source-options-phone.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/card-pictures/source-options-tablet.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 2
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/limit-1180.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/limit-390.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/chatgpt-plan/settings-1180.png",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/README.md",
+              "status": "added",
+              "additions": 24,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/boards-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/boards-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/conversation-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/conversation-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/emoji-ready-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/emoji-ready-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/first-send-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/first-send-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-generating-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-generating-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-library-search-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-library-search-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-ready-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/after/gap-ready-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/boards-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/boards-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/conversation-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/conversation-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/first-send-desktop.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/screenshots/creation-entry/before/first-send-phone.png",
+              "status": "added",
+              "additions": 0,
+              "deletions": 0
+            },
+            {
+              "path": "docs/testing.md",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "packages/core/src/pictures.test.ts",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 1
+            },
+            {
+              "path": "packages/core/src/pictures.ts",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 5
+            },
+            {
+              "path": "scripts/capture-creation-entry-evidence.ts",
+              "status": "added",
+              "additions": 82,
+              "deletions": 0
+            },
+            {
+              "path": "tests/web/app.spec.ts",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 5
+            },
+            {
+              "path": "tests/web/chatgpt.spec.ts",
+              "status": "modified",
+              "additions": 24,
+              "deletions": 2
+            },
+            {
+              "path": "tests/web/conversation.spec.ts",
+              "status": "modified",
+              "additions": 28,
+              "deletions": 9
+            },
+            {
+              "path": "tests/web/pictures.spec.ts",
+              "status": "modified",
+              "additions": 45,
+              "deletions": 5
+            },
+            {
+              "path": "tests/web/setup.spec.ts",
+              "status": "modified",
+              "additions": 0,
+              "deletions": 1
+            },
+            {
+              "path": "tests/web/speech.spec.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": ".env.example",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "Dockerfile",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 2,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "README.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "scope": "maintained grant contract"
+        },
+        {
+          "path": "apps/mobile/src/App.tsx",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/aiBilling.ts",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/aiBilling.web.ts",
+          "status": "added",
+          "additions": 15,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/api.ts",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 3,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/useChatGpt.ts",
+          "status": "added",
+          "additions": 60,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/AiConversation.tsx",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 5,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/ChatGptPanel.tsx",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentSettings.tsx",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/package.json",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/app.ts",
+          "status": "modified",
+          "additions": 24,
+          "deletions": 9,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-oauth.ts",
+          "status": "added",
+          "additions": 105,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-provider.ts",
+          "status": "added",
+          "additions": 43,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-routes.ts",
+          "status": "added",
+          "additions": 52,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt.ts",
+          "status": "added",
+          "additions": 159,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/index.ts",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/src/provider.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "apps/server/test/chatgpt-oauth.test.ts",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0,
+          "scope": "maintained regression coverage"
+        },
+        {
+          "path": "apps/server/test/chatgpt-provider.test.ts",
+          "status": "added",
+          "additions": 32,
+          "deletions": 0,
+          "scope": "maintained regression coverage"
+        },
+        {
+          "path": "apps/server/test/chatgpt.test.ts",
+          "status": "added",
+          "additions": 187,
+          "deletions": 0,
+          "scope": "maintained regression coverage"
+        },
+        {
+          "path": "apps/server/tsup.config.ts",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "compose.yaml",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "deploy/compose.yaml",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "docs/CHATGPT.md",
+          "status": "added",
+          "additions": 41,
+          "deletions": 0,
+          "scope": "maintained grant contract"
+        },
+        {
+          "path": "docs/screenshots/chatgpt-plan/README.md",
+          "status": "added",
+          "additions": 20,
+          "deletions": 0,
+          "scope": "historical evidence excluded from replacement"
+        },
+        {
+          "path": "docs/screenshots/chatgpt-plan/limit-1180.png",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "scope": "historical evidence excluded from replacement"
+        },
+        {
+          "path": "docs/screenshots/chatgpt-plan/limit-390.png",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "scope": "historical evidence excluded from replacement"
+        },
+        {
+          "path": "docs/screenshots/chatgpt-plan/settings-1180.png",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "scope": "historical evidence excluded from replacement"
+        },
+        {
+          "path": "docs/screenshots/chatgpt-plan/settings-390.png",
+          "status": "added",
+          "additions": 0,
+          "deletions": 0,
+          "scope": "historical evidence excluded from replacement"
+        },
+        {
+          "path": "docs/testing.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "scope": "maintained regression coverage"
+        },
+        {
+          "path": "package-lock.json",
+          "status": "modified",
+          "additions": 11,
+          "deletions": 1,
+          "scope": "grant product integration or required configuration"
+        },
+        {
+          "path": "playwright.config.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "maintained regression coverage"
+        },
+        {
+          "path": "tests/web/chatgpt.spec.ts",
+          "status": "added",
+          "additions": 112,
+          "deletions": 0,
+          "scope": "maintained regression coverage"
+        }
+      ],
+      "actualTargetRefSha": "2be85f0cb02cd5ba464f46c623b9b19cf5061231",
+      "mergeBase": "bac81796235ecef4647f7584d6ecfac6a8b0d80e"
+    },
+    {
+      "pr": 14,
+      "url": "https://github.com/MChartier/little-say/pull/14",
+      "head": "dc30c5416010bcb3bf471e36fffb9fa2a04aad12",
+      "target": {
+        "repository": "MChartier/little-say",
+        "ref": "feat/postgres-foundation",
+        "sha": "816a4babae6904f12e8336cb02e0b1658f0fd97e"
+      },
+      "ultimateTarget": "master",
+      "declaredParent": {
+        "pr": 13,
+        "state": "open",
+        "sha": "816a4babae6904f12e8336cb02e0b1658f0fd97e"
+      },
+      "commitCount": 3,
+      "fileCount": 31,
+      "commits": [
+        {
+          "sha": "0b9af0fc50fdff575bda7b1ce6574453d4c3d0e7",
+          "parents": [
+            "816a4babae6904f12e8336cb02e0b1658f0fd97e"
+          ],
+          "message": "Add optional ChatGPT grants on the PostgreSQL foundation",
+          "scope": "Existing optional ChatGPT product behavior adapted to pinned PostgreSQL foundation",
+          "files": [
+            {
+              "path": ".env.example",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 0
+            },
+            {
+              "path": "README.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/App.tsx",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/mobile/src/services/aiBilling.ts",
+              "status": "added",
+              "additions": 6,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/services/aiBilling.web.ts",
+              "status": "added",
+              "additions": 15,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/services/api.ts",
+              "status": "modified",
+              "additions": 6,
+              "deletions": 3
+            },
+            {
+              "path": "apps/mobile/src/services/useChatGpt.ts",
+              "status": "added",
+              "additions": 60,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/ui/AiConversation.tsx",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 4
+            },
+            {
+              "path": "apps/mobile/src/ui/ChatGptPanel.tsx",
+              "status": "added",
+              "additions": 38,
+              "deletions": 0
+            },
+            {
+              "path": "apps/mobile/src/ui/ParentSettings.tsx",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/migrations/1760000000001_chatgpt.sql",
+              "status": "added",
+              "additions": 6,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/package.json",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/app.ts",
+              "status": "modified",
+              "additions": 23,
+              "deletions": 8
+            },
+            {
+              "path": "apps/server/src/chatgpt-oauth.ts",
+              "status": "added",
+              "additions": 105,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt-provider.ts",
+              "status": "added",
+              "additions": 43,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt-routes.ts",
+              "status": "added",
+              "additions": 52,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/chatgpt.ts",
+              "status": "added",
+              "additions": 149,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/database.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/server/src/index.ts",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/src/provider.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "apps/server/test/chatgpt-oauth.test.ts",
+              "status": "added",
+              "additions": 38,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/chatgpt-provider.test.ts",
+              "status": "added",
+              "additions": 32,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/chatgpt.integration.test.ts",
+              "status": "added",
+              "additions": 212,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/database.integration.test.ts",
+              "status": "modified",
+              "additions": 3,
+              "deletions": 3
+            },
+            {
+              "path": "compose.yaml",
+              "status": "modified",
+              "additions": 5,
+              "deletions": 0
+            },
+            {
+              "path": "docs/CHATGPT.md",
+              "status": "added",
+              "additions": 45,
+              "deletions": 0
+            },
+            {
+              "path": "docs/testing.md",
+              "status": "modified",
+              "additions": 4,
+              "deletions": 0
+            },
+            {
+              "path": "package-lock.json",
+              "status": "modified",
+              "additions": 10,
+              "deletions": 0
+            },
+            {
+              "path": "playwright.config.ts",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            },
+            {
+              "path": "tests/web/chatgpt.spec.ts",
+              "status": "added",
+              "additions": 109,
+              "deletions": 0
+            }
+          ]
+        },
+        {
+          "sha": "531daa13e9d6f74814cbdae3b0379e28ad12da5d",
+          "parents": [
+            "0b9af0fc50fdff575bda7b1ce6574453d4c3d0e7"
+          ],
+          "message": "Document opt-in database lifecycle and pass Compose connection settings",
+          "scope": "Required opt-in Compose connection contract and operational documentation",
+          "files": [
+            {
+              "path": ".env.example",
+              "status": "modified",
+              "additions": 10,
+              "deletions": 1
+            },
+            {
+              "path": "compose.yaml",
+              "status": "modified",
+              "additions": 8,
+              "deletions": 0
+            },
+            {
+              "path": "docs/CHATGPT.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "docs/POSTGRES.md",
+              "status": "modified",
+              "additions": 1,
+              "deletions": 1
+            }
+          ]
+        },
+        {
+          "sha": "dc30c5416010bcb3bf471e36fffb9fa2a04aad12",
+          "parents": [
+            "531daa13e9d6f74814cbdae3b0379e28ad12da5d"
+          ],
+          "message": "Finalize ChatGPT turns and consume callback state once",
+          "scope": "Configured-review corrections for ChatGPT turn completion and one-time callback consumption, with maintained browser regressions",
+          "files": [
+            {
+              "path": "apps/mobile/src/ui/AiConversation.tsx",
+              "status": "modified",
+              "additions": 5,
+              "deletions": 4
+            },
+            {
+              "path": "apps/mobile/src/ui/ChatGptPanel.tsx",
+              "status": "modified",
+              "additions": 9,
+              "deletions": 1
+            },
+            {
+              "path": "docs/POSTGRES.md",
+              "status": "modified",
+              "additions": 7,
+              "deletions": 6
+            },
+            {
+              "path": "tests/web/chatgpt.spec.ts",
+              "status": "modified",
+              "additions": 27,
+              "deletions": 2
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": ".env.example",
+          "status": "modified",
+          "additions": 18,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "README.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "scope": "Maintained feature operation/security contract"
+        },
+        {
+          "path": "apps/mobile/src/App.tsx",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/aiBilling.ts",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/aiBilling.web.ts",
+          "status": "added",
+          "additions": 15,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/api.ts",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 3,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/services/useChatGpt.ts",
+          "status": "added",
+          "additions": 60,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/AiConversation.tsx",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 7,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/ChatGptPanel.tsx",
+          "status": "added",
+          "additions": 46,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentSettings.tsx",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/migrations/1760000000001_chatgpt.sql",
+          "status": "added",
+          "additions": 6,
+          "deletions": 0,
+          "scope": "Required ordered grant schema"
+        },
+        {
+          "path": "apps/server/package.json",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/app.ts",
+          "status": "modified",
+          "additions": 23,
+          "deletions": 8,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-oauth.ts",
+          "status": "added",
+          "additions": 105,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-provider.ts",
+          "status": "added",
+          "additions": 43,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt-routes.ts",
+          "status": "added",
+          "additions": 52,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/chatgpt.ts",
+          "status": "added",
+          "additions": 149,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/database.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "Required ordered grant schema"
+        },
+        {
+          "path": "apps/server/src/index.ts",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/src/provider.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "apps/server/test/chatgpt-oauth.test.ts",
+          "status": "added",
+          "additions": 38,
+          "deletions": 0,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "apps/server/test/chatgpt-provider.test.ts",
+          "status": "added",
+          "additions": 32,
+          "deletions": 0,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "apps/server/test/chatgpt.integration.test.ts",
+          "status": "added",
+          "additions": 212,
+          "deletions": 0,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "apps/server/test/database.integration.test.ts",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 3,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "compose.yaml",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "docs/CHATGPT.md",
+          "status": "added",
+          "additions": 47,
+          "deletions": 0,
+          "scope": "Maintained feature operation/security contract"
+        },
+        {
+          "path": "docs/POSTGRES.md",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 6,
+          "scope": "Maintained feature operation/security contract"
+        },
+        {
+          "path": "docs/testing.md",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "package-lock.json",
+          "status": "modified",
+          "additions": 10,
+          "deletions": 0,
+          "scope": "Optional grant product integration or necessary dependency/configuration"
+        },
+        {
+          "path": "playwright.config.ts",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "scope": "Maintained regression contract"
+        },
+        {
+          "path": "tests/web/chatgpt.spec.ts",
+          "status": "added",
+          "additions": 134,
+          "deletions": 0,
+          "scope": "Maintained regression contract"
+        }
+      ],
+      "actualTargetRefSha": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
+      "mergeBase": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
+      "additions": 1059,
+      "deletions": 31
+    }
+  ],
+  "ultimateTarget": {
+    "ref": "master",
+    "sha": "5d72992c77fbb09195518e257d799501b7db4d04"
+  },
+  "originalScopeNote": "PR10 API base.sha remains its historical bac8179 while the actual live target ref now points at final PR6 2be85f0. Original is preserved, not certified or retargeted. Replacement has identical live target/API base/merge-base pinned PR13."
+}
