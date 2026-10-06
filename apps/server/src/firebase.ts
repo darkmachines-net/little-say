@@ -26,7 +26,7 @@ export function firebaseConfig(env: NodeJS.ProcessEnv): AuthConfig {
   if (emulator && (!/^[a-zA-Z0-9.\-\[\]:]+:\d+$/.test(emulator) || emulator.includes('://'))) throw new Error('FIREBASE_AUTH_EMULATOR_HOST must be host:port without a protocol.');
   const projectId = env.FIREBASE_PROJECT_ID || (emulator ? 'demo-little-say' : '');
   if (!projectId || (emulator && !projectId.startsWith('demo-')) || (!emulator && projectId.startsWith('demo-'))) throw new Error('Configure a hosted FIREBASE_PROJECT_ID or use a demo- project with the emulator.');
-  const providers = (env.FIREBASE_AUTH_PROVIDERS || (emulator ? 'password' : 'password,google.com,apple.com')).split(',').map(value => value.trim());
+  const providers = (env.FIREBASE_AUTH_PROVIDERS || (emulator ? 'password' : 'password,google.com,apple.com')).split(',').map((value: string) => value.trim());
   const config = authConfigSchema.parse({ projectId, apiKey: env.FIREBASE_API_KEY || (emulator ? 'demo-key' : ''), appId: env.FIREBASE_APP_ID || (emulator ? 'demo-app' : ''), authDomain: env.FIREBASE_AUTH_DOMAIN || projectId + '.firebaseapp.com', providers,
     ...(emulator ? { emulatorUrl: env.FIREBASE_AUTH_EMULATOR_URL || 'http://' + emulator } : {}),
     googleWebClientId: env.FIREBASE_GOOGLE_WEB_CLIENT_ID, googleIosClientId: env.FIREBASE_GOOGLE_IOS_CLIENT_ID,
