@@ -15,7 +15,7 @@
       "name": "before",
       "source": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
       "browser": "154.0.4258.53",
-      "time": "2026-10-06T00:02:58.830Z",
+      "time": "2026-10-06T00:11:58.424Z",
       "route": "/app",
       "fixture": {
         "version": 2,
@@ -364,9 +364,9 @@
     },
     {
       "name": "after",
-      "source": "dc30c5416010bcb3bf471e36fffb9fa2a04aad12",
+      "source": "7456aba8541570f625a818a30a599eec252aeaa6",
       "browser": "154.0.4258.53",
-      "time": "2026-10-06T00:03:02.176Z",
+      "time": "2026-10-06T00:12:01.244Z",
       "route": "/app",
       "fixture": {
         "version": 2,
@@ -660,7 +660,7 @@
         },
         {
           "path": "apps/mobile/dist/index.html",
-          "sha256": "aa6f8364a3ac2667b0f73f82799fe23a6a30a7fe31bb1ffceb3e48f6affd699b"
+          "sha256": "dc937cc716af0bbf9c5bb3e1ee5fa80762e10092eb16201b376a9c87c1883324"
         },
         {
           "path": "apps/mobile/dist/manifest.webmanifest",
@@ -672,11 +672,11 @@
         },
         {
           "path": "apps/mobile/dist/sw.js",
-          "sha256": "0b062317eeff55983c8625c259cba9f4bff26100a4127e6d49bc8c3319fa80a0"
+          "sha256": "2ef36ecddfea86c420187d904b65c8fa5467b3d625e514c834a0bc5110b5140b"
         },
         {
           "path": "apps/mobile/dist/sw.js.map",
-          "sha256": "6fc70a3e21b528f76729e51072496017c6780677750d44a47ff28da535d992a1"
+          "sha256": "249624b625c6d22910f9bf431123227c1fce9b80287153ad1a98ed4aa992f043"
         },
         {
           "path": "apps/mobile/dist/workbox-9c191d2f.js",
@@ -691,15 +691,15 @@
           "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
         },
         {
-          "path": "apps/mobile/dist/_expo/static/js/web/App-4995f302df5fc720797920b89ad22620.js",
-          "sha256": "519236d2a051206caf680b4bc716415001668d79f6bc8fa5adba8b3a8d6652b3"
+          "path": "apps/mobile/dist/_expo/static/js/web/App-353ab49170dedb7326c605386a5f32d6.js",
+          "sha256": "1b0a910a31eef86d36ab646991f04be65bd6b666d80df8d95dca953ff7bd958d"
         },
         {
-          "path": "apps/mobile/dist/_expo/static/js/web/index-6945861a7a31b275a63fb1c36f6034e0.js",
-          "sha256": "341e6ceb0e83713635c9ced27e660c783938bd4d1fa92b3e89889f5b77bc98d9"
+          "path": "apps/mobile/dist/_expo/static/js/web/index-88528cc93783908e1fc537257d0535c5.js",
+          "sha256": "aaea920ced033d1493baaef47066013143a2adb0b09b48ef81e4c6147eee5628"
         }
       ],
-      "serverSha256": "c84aca206865ca3147539c592f03ee16db1b78756ce144cd43d2b3e2a43363b9",
+      "serverSha256": "5748c5f1b16ea0ecd590dc87507ac16ad5cb4615e447c3595363d39210fdbc29",
       "captures": [
         {
           "state": "settings",

@@ -2,7 +2,7 @@
   "purpose": "Complete live published PR commit/parent/file inventories; original history preserved, focused replacement assessed",
   "owner": "PR10 continuation",
   "retention": "Through human review and stack completion",
-  "checkedAt": "2026-10-06T00:03:15.758Z",
+  "checkedAt": "2026-10-06T00:11:09.555Z",
   "mergeBase": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
   "records": [
     {
@@ -913,7 +913,7 @@
     {
       "pr": 14,
       "url": "https://github.com/MChartier/little-say/pull/14",
-      "head": "dc30c5416010bcb3bf471e36fffb9fa2a04aad12",
+      "head": "7456aba8541570f625a818a30a599eec252aeaa6",
       "target": {
         "repository": "MChartier/little-say",
         "ref": "feat/postgres-foundation",
@@ -925,7 +925,7 @@
         "state": "open",
         "sha": "816a4babae6904f12e8336cb02e0b1658f0fd97e"
       },
-      "commitCount": 3,
+      "commitCount": 4,
       "fileCount": 31,
       "commits": [
         {
@@ -934,7 +934,7 @@
             "816a4babae6904f12e8336cb02e0b1658f0fd97e"
           ],
           "message": "Add optional ChatGPT grants on the PostgreSQL foundation",
-          "scope": "Existing optional ChatGPT product behavior adapted to pinned PostgreSQL foundation",
+          "scope": "Existing ChatGPT product adapted to PostgreSQL",
           "files": [
             {
               "path": ".env.example",
@@ -1124,7 +1124,7 @@
             "0b9af0fc50fdff575bda7b1ce6574453d4c3d0e7"
           ],
           "message": "Document opt-in database lifecycle and pass Compose connection settings",
-          "scope": "Required opt-in Compose connection contract and operational documentation",
+          "scope": "Required opt-in Compose connection contract",
           "files": [
             {
               "path": ".env.example",
@@ -1158,7 +1158,7 @@
             "531daa13e9d6f74814cbdae3b0379e28ad12da5d"
           ],
           "message": "Finalize ChatGPT turns and consume callback state once",
-          "scope": "Configured-review corrections for ChatGPT turn completion and one-time callback consumption, with maintained browser regressions",
+          "scope": "Review corrections for turn completion and callback consumption",
           "files": [
             {
               "path": "apps/mobile/src/ui/AiConversation.tsx",
@@ -1183,6 +1183,46 @@
               "status": "modified",
               "additions": 27,
               "deletions": 2
+            }
+          ]
+        },
+        {
+          "sha": "7456aba8541570f625a818a30a599eec252aeaa6",
+          "parents": [
+            "dc30c5416010bcb3bf471e36fffb9fa2a04aad12"
+          ],
+          "message": "Sequence grant status refreshes and expire abandoned sessions",
+          "scope": "Review corrections for delayed status/disconnect race and bounded expired-grant cleanup",
+          "files": [
+            {
+              "path": "apps/mobile/src/services/useChatGpt.ts",
+              "status": "modified",
+              "additions": 7,
+              "deletions": 3
+            },
+            {
+              "path": "apps/server/src/chatgpt.ts",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "apps/server/test/chatgpt.integration.test.ts",
+              "status": "modified",
+              "additions": 11,
+              "deletions": 0
+            },
+            {
+              "path": "docs/CHATGPT.md",
+              "status": "modified",
+              "additions": 2,
+              "deletions": 0
+            },
+            {
+              "path": "tests/web/chatgpt.spec.ts",
+              "status": "modified",
+              "additions": 21,
+              "deletions": 1
             }
           ]
         }
@@ -1233,7 +1273,7 @@
         {
           "path": "apps/mobile/src/services/useChatGpt.ts",
           "status": "added",
-          "additions": 60,
+          "additions": 64,
           "deletions": 0,
           "scope": "Optional grant product integration or necessary dependency/configuration"
         },
@@ -1303,7 +1343,7 @@
         {
           "path": "apps/server/src/chatgpt.ts",
           "status": "added",
-          "additions": 149,
+          "additions": 151,
           "deletions": 0,
           "scope": "Optional grant product integration or necessary dependency/configuration"
         },
@@ -1345,7 +1385,7 @@
         {
           "path": "apps/server/test/chatgpt.integration.test.ts",
           "status": "added",
-          "additions": 212,
+          "additions": 223,
           "deletions": 0,
           "scope": "Maintained regression contract"
         },
@@ -1366,7 +1406,7 @@
         {
           "path": "docs/CHATGPT.md",
           "status": "added",
-          "additions": 47,
+          "additions": 49,
           "deletions": 0,
           "scope": "Maintained feature operation/security contract"
         },
@@ -1401,14 +1441,14 @@
         {
           "path": "tests/web/chatgpt.spec.ts",
           "status": "added",
-          "additions": 134,
+          "additions": 154,
           "deletions": 0,
           "scope": "Maintained regression contract"
         }
       ],
       "actualTargetRefSha": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
       "mergeBase": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
-      "additions": 1059,
+      "additions": 1098,
       "deletions": 31
     }
   ],
