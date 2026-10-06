@@ -1,0 +1,30 @@
+{
+  "purpose": "Visual inspection of exact GitHub Markdown API rendered PR body; full authenticated PR webpage unavailable because browser sandbox startup failed",
+  "owner": "PR10 continuation",
+  "retention": "Through human review and stack completion",
+  "head": "7456aba8541570f625a818a30a599eec252aeaa6",
+  "base": "816a4babae6904f12e8336cb02e0b1658f0fd97e",
+  "bodySha256": "a835e72db5169750fd778a3a11fc67e9c15155942b8465197a8fd6fb9980c84e",
+  "browser": "154.0.4258.53",
+  "checkedAt": "2026-10-06T00:14:14.227Z",
+  "images": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-settings.png?raw=true",
+      "sha256": "a64d8814549954aca49fca1ad539fdab50cc1a5c3cc315ef379675ed75070613"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-settings.png?raw=true",
+      "sha256": "5731b64cd3416cf498375dd31eca1671abe02e604cf3463cbea5cbf3d1174ace"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-limit.png?raw=true",
+      "sha256": "a55034575c1ed3a9a881bb88f35d05ba9baf2fe9d1af3d4caf924bf6f017d136"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-limit.png?raw=true",
+      "sha256": "d699fe1905df95375ae90248f52fc6c4e14306c1390324940cc9e7ce778156f8"
+    }
+  ],
+  "htmlSha256": "2fec3313eb69f02d397ead427fae616828bfcdadfd84ff01e82759189b5e109e",
+  "pngSha256": "d523327428df020b6aae01dc39681b3f4b04ce22e5e665c4ebdd2be2b97a820d"
+}

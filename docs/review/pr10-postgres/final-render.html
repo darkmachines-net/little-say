@@ -1,0 +1,99 @@
+<html><head><meta charset="utf-8"><style>body{font:16px system-ui;margin:32px;max-width:1320px;line-height:1.5}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:10px}img{max-width:100%}code{overflow-wrap:anywhere}a{color:#0969da}</style></head><body><h2 dir="auto">Summary</h2>
+<p dir="auto">Visitors using the PostgreSQL foundation currently have no browser option to use their own ChatGPT grant for board drafts and translations. This adds an optional connection in Parent settings and keeps each visitor's encrypted grant in PostgreSQL. Selected-plan failures stop the request instead of switching to the server API key.</p>
+<p dir="auto"><strong>Draft; activation stays disabled.</strong> No live OAuth, provider billing, cloud provisioning or deployment was performed. Hosted-client approval and a separate authorized rollout remain prerequisites.</p>
+<p dir="auto">This is the focused replacement for <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5706161501" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/10" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/10/hovercard" href="https://github.com/MChartier/little-say/pull/10">#10</a>; the original remains open/draft with its source and evidence intact. Accounts are excluded. Review order: <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5703073650" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/6" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/6/hovercard" href="https://github.com/MChartier/little-say/pull/6">#6</a> → <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5716072982" data-permission-text="Title is private" data-url="https://github.com/MChartier/little-say/issues/13" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/13/hovercard" href="https://github.com/MChartier/little-say/pull/13">#13</a> → this PR → the later accounts adaptation. Actual base is <code class="notranslate">feat/postgres-foundation</code> at <code class="notranslate">816a4babae6904f12e8336cb02e0b1658f0fd97e</code>; it includes final PR6 <code class="notranslate">2be85f0cb02cd5ba464f46c623b9b19cf5061231</code>. Ultimate target is <code class="notranslate">master</code>; this child is not independently mergeable. Parent CI remains blocked by hosted-runner allocation and is not certified.</p>
+<h2 dir="auto">Test plan and behavior evidence</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Intended and observed outcome</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Open Parent settings with a synthetic connected grant</td>
+<td>The optional AI panel identifies plan use, explains limitations and offers an explicit switch back to server AI. Observed at 1180px and 390px.</td>
+<td>Seven ChatGPT browser scenarios passed in Edge; settings pair below.</td>
+</tr>
+<tr>
+<td>Submit a draft while selected, then receive a synthetic usage limit or lose its cookie</td>
+<td>Prompt remains editable, the request carries the selected-plan header, and no implicit billing switch occurs. Voice/picture actions are unavailable.</td>
+<td>Limit/expired-cookie browser scenarios passed; matched limit pair below.</td>
+</tr>
+<tr>
+<td>Disconnect explicitly, then revisit settings</td>
+<td>Browser selection clears only after successful server disconnection. Manual boards and ordinary composer behavior remain usable.</td>
+<td>Seven final-head ChatGPT scenarios and 14 unchanged conversation scenarios passed in Edge; revision applicability is explained below.</td>
+</tr>
+<tr>
+<td>Release an older connected-status response after explicit disconnection</td>
+<td>The disconnected controls and cleared browser preference remain intact.</td>
+<td>Controlled desktop and phone race regressions passed.</td>
+</tr>
+<tr>
+<td>Let 101 synthetic grants expire beside one live visitor, then start connections</td>
+<td>Cleanup removes at most 100 expired rows per attempt and preserves the live visitor.</td>
+<td>PostgreSQL CI observed one expired row after the first batch and none after the second.</td>
+</tr>
+<tr>
+<td>Answer a clarification, then save the completed ChatGPT draft</td>
+<td>Both turns remain in the transcript, the completed draft is saveable, and no unsupported picture request occurs.</td>
+<td>Maintained Edge regression passed against the final source.</td>
+</tr>
+<tr>
+<td>Return from a success or error callback, close settings, and reload</td>
+<td>Callback state is shown once, its query parameter is consumed, unrelated parameters remain, and settings stay closed on reload.</td>
+<td>Both callback browser regressions passed.</td>
+</tr>
+<tr>
+<td>Verify OAuth signatures and provider output with synthetic adapters</td>
+<td>Invalid identity or incomplete/error streams must fail.</td>
+<td>215 unit tests passed, including OAuth/provider tests. No external inference.</td>
+</tr>
+<tr>
+<td>Persist/reopen encrypted grants, consume callbacks once, race refresh with disconnect</td>
+<td>PostgreSQL must preserve encrypted durability and serialize updates across service instances without account coupling.</td>
+<td>Observed in PostgreSQL 17.11 CI: all 15 ChatGPT and 9 foundation integration cases passed, including callback replay, encrypted restart and refresh/disconnect coordination. <a href="https://github.com/MChartier/little-say/actions/runs/37392546935/job/112040779499">Executed run</a>. Local database execution was unavailable; CI supplied the disposable service.</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3 dir="auto">Before / After UI evidence</h3>
+<p dir="auto">Before: pinned parent <code class="notranslate">816a4babae6904f12e8336cb02e0b1658f0fd97e</code>. After: <code class="notranslate">7456aba8541570f625a818a30a599eec252aeaa6</code>. Both are actual isolated production builds. Same synthetic library, connected-status fixture, 1180×900 viewport, scale 1, light theme, fixed browser Date and interaction steps. The parent has no consumer for the supplied ChatGPT status. Both actual servers keep activation off.</p>
+<p dir="auto"><strong>Parent settings:</strong> the parent starts with language/server settings; the child adds the optional visitor grant controls.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-settings.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-settings.png?raw=true" alt="Before: parent settings" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-settings.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-settings.png?raw=true" alt="After: optional ChatGPT settings" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><strong>Rejected draft:</strong> both receive the identical synthetic 429. The child identifies plan selection, preserves the prompt, and disables unsupported actions. These images establish UI behavior, not a real provider limit or successful billing.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Before</th>
+<th>After</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-limit.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/before-limit.png?raw=true" alt="Before: rejected draft" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-limit.png?raw=true"><img src="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/after-limit.png?raw=true" alt="After: selected-plan rejected draft" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p dir="auto"><a href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/manifest.json">Exact capture provenance and image digests</a> and <a href="https://github.com/MChartier/little-say/tree/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres">reproduction harness/retention record</a> are bound to evidence commit <code class="notranslate">c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3</code>. Loaded JavaScript bytes were checked against each isolated build. No UI hiding or edited pixels. Desktop pairs are representative; phone interaction checks passed without a phone screenshot pair. Native and live OAuth flows remain unverified.</p>
+<h2 dir="auto">Supporting checks and limitations</h2>
+<p dir="auto">Release metadata, all workspace types, 215 units and production server/web builds passed. Seven final-head ChatGPT scenarios passed in Edge, including delayed-response races at desktop and phone widths. Fourteen unchanged conversation scenarios passed at <code class="notranslate">dc30c5416010bcb3bf471e36fffb9fa2a04aad12</code>; the later status sequencing and expired-row cleanup do not change those conversation contracts. The pinned Chromium executable was unavailable. <a href="https://github.com/MChartier/little-say/actions/runs/37392546935">Current-head CI</a> passed, including all 24 PostgreSQL 17.11 integration tests. All six configured review findings were addressed and their threads resolved. The <a href="https://github.com/MChartier/little-say/pull/14#issuecomment-6006142702" data-hovercard-type="pull_request" data-hovercard-url="/MChartier/little-say/pull/14/hovercard">final-head review request is quota-blocked</a>; the latest head is not engineering-review certified. Independent QA remains unstarted; latest revision-scoped records are in this PR's conversation. No readiness is claimed. Full authenticated GitHub-page browser inspection is blocked by a local sandbox startup failure; the exact published Markdown API rendering and all four authenticated image bytes were separately inspected. Independent QA must verify the final rendered PR.</p>
+<p dir="auto">The child appends <code class="notranslate">1760000000001_chatgpt</code> after the immutable foundation migration and checks the exact ledger before opt-in startup. Accounts migration <code class="notranslate">1760000000002_accounts</code> is reserved for later work. Neither SQLite draft databases nor the old combined <code class="notranslate">1760000000000_initial</code> migration are treated as compatible upgrade inputs. No deployed account/grant data is migrated. <a href="https://github.com/MChartier/little-say/blob/7456aba8541570f625a818a30a599eec252aeaa6/docs/CHATGPT.md">Configuration and security contract</a>.</p>
+<p dir="auto">The product range is four focused commits, 31 files, 1,098 additions/31 deletions: optional connection UI/API, encrypted PostgreSQL grants, required migration/configuration, maintained tests and documentation. No screenshot archive or one-off harness is in product history. <a href="https://github.com/MChartier/little-say/tree/7323a68dd4690171d86f82ac5e5dec3982d275ee">Original source/evidence</a> is additionally retained on <code class="notranslate">evidence/pr10-original-7323a68</code>; retention is through human review and stack completion, owned by this continuation. Evidence refs are never merge targets.</p>
+<p dir="auto"><a href="https://github.com/MChartier/little-say/blob/c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3/docs/review/pr10-postgres/scope-inventory.json">Complete published scope inventory</a> binds all ordered commits, parents and changed paths against the actual target. Latest review dispositions and final gate identities are recorded in the PR conversation.</p></body></html>
