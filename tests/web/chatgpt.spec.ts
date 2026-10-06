@@ -53,6 +53,7 @@ for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and
 
 test('Continue with ChatGPT starts the approved authorization flow and returns to the connection settings', async ({ page }) => {
   let state = { ...disconnected };
+  await page.route('**/api/chatgpt/acknowledge', async route => { state = { ...state, welcome: false }; await route.fulfill({ json: { ok: true } }); });
   await page.route('**/api/chatgpt/status', route => route.fulfill({ json: state }));
   await page.route('**/api/chatgpt/connect', route => route.fulfill({ json: { url: 'https://auth.openai.com/api/accounts/authorize?client_id=oaiapp_test' } }));
   await page.route('https://auth.openai.com/api/accounts/authorize?*', async route => {
@@ -63,7 +64,11 @@ test('Continue with ChatGPT starts the approved authorization flow and returns t
   await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
   await page.getByRole('button', { name: 'Continue with ChatGPT', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'You’re using your ChatGPT plan', exact: true })).toBeVisible();
-  await expect(page).toHaveURL(/\/app\?chatgpt=connected$/);
+  await expect(page).toHaveURL(/\/app$/);
+  await page.getByRole('button', { name: 'Got it', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Parent settings', exact: true })).toHaveCount(0);
 });
 
 test('an expired cookie preserves the visitor billing choice and sends the fail-closed header', async ({ page }) => {
@@ -84,13 +89,16 @@ test('an expired cookie preserves the visitor billing choice and sends the fail-
   await expect(page.getByText('Reconnect ChatGPT in Parent settings. The server API key was not used.', { exact: true })).toBeVisible();
 });
 
-test('a ChatGPT draft remains saveable without offering unsupported picture generation', async ({ page }) => {
+test('a ChatGPT clarification becomes a recorded saveable draft without unsupported pictures', async ({ page }) => {
   await page.route('**/api/chatgpt/status', route => route.fulfill({ json: { ...disconnected, selected: true, connected: true, planEnabled: true } }));
   const pictureRequests: string[] = [];
+  let turns = 0;
   await page.route('**/api/pictures/**', route => { pictureRequests.push(route.request().url()); return route.abort(); });
   await page.route('**/api/boards/propose', route => {
     const request = route.request().postDataJSON();
     expect(route.request().headers()['x-little-say-ai']).toBe('chatgpt');
+    if (++turns === 1) return route.fulfill({ json: { boardId: null, baseRevision: null, proposal: { title: 'Animal words', explanation: 'Which animal?', needsClarification: true, tiles: [] } } });
+    expect(request.conversation.history).toEqual([{ prompt: 'An animal', reply: 'Which animal?' }]);
     return route.fulfill({ json: { boardId: null, baseRevision: null, proposal: {
       title: 'Animal words', explanation: 'Here is a cow.', needsClarification: false, playLanguages: ['en-US'], picturePolicy: request.picturePolicy,
       tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage', languageMode: 'fixed', translations: [] }],
@@ -99,6 +107,9 @@ test('a ChatGPT draft remains saveable without offering unsupported picture gene
   await openExistingLibrary(page);
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await expect(page.getByText('Using ChatGPT plan', { exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An animal');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByText('Which animal?', { exact: true })).toBeVisible();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A cow');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByTestId('ai-draft')).toContainText('Cow');
@@ -106,4 +117,18 @@ test('a ChatGPT draft remains saveable without offering unsupported picture gene
   await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Picture settings', exact: true })).toHaveCount(0);
   expect(pictureRequests).toEqual([]);
+  await expect(page.getByText('Here is a cow.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Animal words');
+});
+
+
+test('an error callback is displayed once and consumed without discarding other query parameters', async ({ page }) => {
+  await openExistingLibrary(page);
+  await page.goto('/app?chatgpt=error&retained=yes');
+  await expect(page.getByText('ChatGPT connection was cancelled or could not be verified. Your previous AI setting is unchanged. You can try again.', { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/app\?retained=yes$/);
+  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Parent settings', exact: true })).toHaveCount(0);
 });

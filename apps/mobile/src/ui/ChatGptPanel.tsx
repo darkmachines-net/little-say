@@ -1,7 +1,7 @@
 /** @file Offers an optional browser ChatGPT plan connection, explicit billing changes, and first-connection confirmation. */
 
 import { Linking, Platform, Text, View } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useChatGpt } from '../services/useChatGpt';
 import { Button, Notice, Sheet } from './components';
 import { styles } from './theme';
@@ -10,6 +10,14 @@ import { styles } from './theme';
 export function ChatGptPanel({ server }: { server: string }) {
   const connection = useChatGpt(server);
   const [callbackError] = useState(() => Platform.OS === 'web' && new URLSearchParams(window.location.search).get('chatgpt') === 'error');
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('chatgpt')) {
+      url.searchParams.delete('chatgpt');
+      window.history.replaceState(window.history.state, '', url.href);
+    }
+  }, []);
   if (Platform.OS !== 'web') return null;
   const { status, busy, error, message } = connection;
   return <View style={{ gap: 12 }}>
