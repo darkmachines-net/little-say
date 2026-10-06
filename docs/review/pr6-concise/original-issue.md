@@ -1,0 +1,7 @@
+Backfill for existing PR #6 only; no new implementation or ownership assignment.
+
+Parents need clearer pictures when emoji are ambiguous and room to refine a board while viewing it. Preserve the published automatic emoji/library/generated-picture selection and full-page draft workspace, explicit save/cancel behavior, protected photos, offline saved PNGs, source controls and picture-data disclosure. Existing web introduction and /app entry remain within PR6's published scope.
+
+Acceptance: verify representative genuine Before/After evidence and source/build/fixture provenance; picture fallback, stopped work, save/retry, protected photos and offline persistence remain correct. Complete the outstanding authenticated rendered-PR inspection without claiming physical-device/live-provider tests ran.
+
+Current PR: https://github.com/MChartier/little-say/pull/6 (2be85f0cb02cd5ba464f46c623b9b19cf5061231). Existing owner: 01a10d30-f0f8-7529-8e14-cb54d10fb018, idle per published checkpoint; retain ownership. Stage: Blocked, based on independent QA https://github.com/MChartier/little-say/pull/6#issuecomment-6002210899. No readiness or merge implied. Foundation PR15 depends on this work; keep TestFlight issue #12 separate.
