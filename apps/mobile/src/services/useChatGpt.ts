@@ -1,6 +1,6 @@
 /** @file Reads browser ChatGPT connection state and controls explicit sign-in, welcome acknowledgement, and billing disconnection. */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import { z } from 'zod';
 import { apiFetch, backendUrl } from './api';
@@ -12,6 +12,7 @@ const statusSchema = z.object({ available: z.boolean(), selected: z.boolean(), c
 export function useChatGpt(configured: string) {
   const server = backendUrl(configured);
   const supported = Platform.OS === 'web' && server === window.location.origin;
+  const refreshSequence = useRef(0);
   const [status, setStatus] = useState<z.infer<typeof statusSchema> | null>(null);
   const [loading, setLoading] = useState(supported);
   const [busy, setBusy] = useState(false);
@@ -19,13 +20,15 @@ export function useChatGpt(configured: string) {
   const [message, setMessage] = useState('');
   const refresh = useCallback(async (signal?: AbortSignal) => {
     if (!supported) return;
+    const sequence = ++refreshSequence.current;
     try {
       const next = statusSchema.parse(await apiFetch(server, '/api/chatgpt/status', {}, signal, true));
+      if (signal?.aborted || sequence !== refreshSequence.current) return;
       if (next.selected) rememberChatGpt(server, true);
       if (!next.selected && prefersChatGpt(server)) { next.selected = true; next.needsLogin = true; }
       if (!signal?.aborted) { setStatus(next); setError(''); }
-    } catch (error) { if (!signal?.aborted) setError((error as Error).message); }
-    finally { if (!signal?.aborted) setLoading(false); }
+    } catch (error) { if (!signal?.aborted && sequence === refreshSequence.current) setError((error as Error).message); }
+    finally { if (!signal?.aborted && sequence === refreshSequence.current) setLoading(false); }
   }, [server, supported]);
   useEffect(() => {
     setStatus(null); setLoading(supported);
@@ -50,6 +53,7 @@ export function useChatGpt(configured: string) {
     }),
     /** Explicitly switch to server billing after deleting this browser's ChatGPT session. */
     disconnect: () => action(async () => {
+      ++refreshSequence.current;
       const result = await apiFetch(server, '/api/chatgpt/disconnect', { method: 'POST' }, undefined, true);
       rememberChatGpt(server, false); await refresh();
       setMessage(result.revoked ? 'ChatGPT disconnected. AI requests now use the server’s API key.' : 'Disconnected here. Remote revocation was not confirmed; remove Little Say in ChatGPT settings. AI requests now use the server’s API key.');

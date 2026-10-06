@@ -17,7 +17,17 @@ test('shows hosted availability honestly and keeps manual use available', async 
 for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and explicit server billing at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 });
   let state = { ...disconnected, selected: true, connected: true, planEnabled: true, welcome: true, email: 'parent@example.com' };
-  await page.route('**/api/chatgpt/status', route => route.fulfill({ json: state }));
+  let holdNextStatus = false;
+  let releaseStaleStatus: (() => Promise<void>) | undefined;
+  await page.route('**/api/chatgpt/status', route => {
+    if (holdNextStatus) {
+      holdNextStatus = false;
+      const stale = { ...state };
+      releaseStaleStatus = () => route.fulfill({ json: stale });
+      return;
+    }
+    return route.fulfill({ json: state });
+  });
   await page.route('**/api/chatgpt/acknowledge', async route => { state = { ...state, welcome: false }; await route.fulfill({ json: { ok: true } }); });
   await page.route('**/api/chatgpt/disconnect', async route => { state = { ...state, ...disconnected }; await route.fulfill({ json: { revoked: true } }); });
   await openExistingLibrary(page);
@@ -46,8 +56,18 @@ for (const width of [1180, 390]) test(`connected ChatGPT settings, composer, and
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'You’re using your ChatGPT plan', exact: true })).toHaveCount(0);
+  holdNextStatus = true;
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect.poll(() => Boolean(releaseStaleStatus)).toBe(true);
   await page.getByRole('button', { name: 'Disconnect ChatGPT & use server AI', exact: true }).click();
   await expect(page.getByText('Using the server’s API key', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem(`little-say:chatgpt:${location.origin}`))).toBeNull();
+  const staleResponse = page.waitForResponse('**/api/chatgpt/status');
+  await releaseStaleStatus!();
+  await (await staleResponse).finished();
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await expect(page.getByRole('button', { name: 'Continue with ChatGPT', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Disconnect ChatGPT & use server AI', exact: true })).toHaveCount(0);
   expect(await page.evaluate(() => localStorage.getItem(`little-say:chatgpt:${location.origin}`))).toBeNull();
 });
 

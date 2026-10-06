@@ -103,6 +103,17 @@ describe('ChatGPT sessions', () => {
     await connections.provider(id);
     expect(factory).toHaveBeenCalledWith('visitor-access', 'available-model');
   });
+  it('purges expired grants in bounded batches without deleting a live visitor', async () => {
+    const { connections, pool } = await service();
+    const id = await connect(connections);
+    await pool.query("INSERT INTO chatgpt_sessions (id,value,expires) SELECT md5(n::text)||md5(n::text),s.value,$1 FROM chatgpt_sessions s CROSS JOIN generate_series(1,101) n", [Date.now() - 1]);
+    await connections.start('');
+    expect(Number((await pool.query('SELECT count(*) FROM chatgpt_sessions WHERE expires<=$1', [Date.now()])).rows[0].count)).toBe(1);
+    expect((await connections.status(id)).connected).toBe(true);
+    await connections.start('');
+    expect(Number((await pool.query('SELECT count(*) FROM chatgpt_sessions')).rows[0].count)).toBe(1);
+    expect((await connections.status(id)).connected).toBe(true);
+  });
   it('serializes refreshes, uses the rotated token, and preserves a session after temporary failures', async () => {
     const { connections, oauth, factory } = await service();
     vi.mocked(oauth.exchange).mockResolvedValue({ ...tokens, expires_in: 1 });
