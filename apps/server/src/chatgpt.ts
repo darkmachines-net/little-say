@@ -63,6 +63,8 @@ export class ChatGptConnections {
     const url = new URL(await this.oauth.authorizationEndpoint());
     url.search = new URLSearchParams({ client_id: this.config.clientId, redirect_uri: this.config.redirectUri, response_type: 'code', scope: chatGptScope, resource: chatGptResource, state, nonce, code_challenge_method: 'S256', code_challenge: createHash('sha256').update(verifier).digest('base64url'), ...(previous && !this.enabled(previous) ? { prompt: 'consent' } : {}) }).toString();
     await this.db.query('DELETE FROM chatgpt_transactions WHERE expires<=$1', [Date.now()]);
+    // Bound opportunistic cleanup so abandoned grants do not accumulate indefinitely.
+    await this.db.query('DELETE FROM chatgpt_sessions WHERE id IN (SELECT id FROM chatgpt_sessions WHERE expires<=$1 ORDER BY expires LIMIT 100)', [Date.now()]);
     await this.db.query('INSERT INTO chatgpt_transactions VALUES($1,$2,$3,$4)', [hash(binding), hash(state), this.encrypt({ session: previous ? currentId : secret(), verifier, nonce, expectedSub: previous?.sub } satisfies Transaction), Date.now() + 600000]);
     return { binding, url: url.href };
   }
