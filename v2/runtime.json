@@ -1,0 +1,23 @@
+{
+  "node": "v24.19.0",
+  "platform": "win32",
+  "arch": "x64",
+  "osRelease": "10.0.26200",
+  "postgresPackage": "17.6.0-beta.15",
+  "postgresBinaries": [
+    {
+      "file": "initdb.exe",
+      "sha256": "96da800ec12faed19209c7f9e21231c3dca2dcb12d2215751e18b0b9df20cec1"
+    },
+    {
+      "file": "postgres.exe",
+      "sha256": "54e7e05939e61f3462e3fd295bc12292623ad3cf010c02ae9cc3295a64b0770f"
+    },
+    {
+      "file": "pg_ctl.exe",
+      "sha256": "4343536036689feb178461c559cc71c1003d11d9a7b9191ddd13e1fb835481f4"
+    }
+  ],
+  "firebaseTools": "15.32.1",
+  "playwright": "1.63.0"
+}

@@ -1,0 +1,7 @@
+Backfill for existing PR #11 only; preserve its published account/backup outcome and original ownership. Do not restart or expand implementation.
+
+Users need shared Firebase identity and optional consent-based backups while keeping guest SQLite/IndexedDB libraries and offline use local. Preserve published email/password and Google/Apple account flows, credential/session protection, provider linking/reauthentication, backup revision conflicts and asset checks, and durable account-deletion retries with accurately scoped retention disclosures.
+
+Acceptance: coordinate the account-specific continuation after the foundation/grant stack is reconciled, keeping shared infrastructure in PR15 and grants in PR14. Independently verify current published scope and applicable account/database/browser evidence. Real provider/device checks and deployment prerequisites remain explicit; no migration rollout, account provisioning, activation, release or deployment is authorized here.
+
+Current PR: https://github.com/MChartier/little-say/pull/11 (f48a34cc501f54d05b8af1f4e3ee507372e3df3a). Proposed stage: Blocked pending coordinator-owned prerequisite propagation and account continuation. Preserve the original PR11 owner; its task identity is not verified in published records and must be confirmed by the coordinator before any continuation. The PostgreSQL extraction owner is not automatically the accounts owner. Existing TestFlight issue #12 remains separate.
