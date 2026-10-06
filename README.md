@@ -1,0 +1,1 @@
+Final PR29 description QA. Owner: same independent QA task01a10fc2-31d1-77a6-92c1-26319d1f1020. Retain for review and historical audit; dedicated nonmerged evidence ref, never a product merge target. All previous records and receipts preserved.
