@@ -1,0 +1,12 @@
+{
+  "head": "74b721d095d0bd867ecaf5c093bfcf2c03e87eec",
+  "base": "344aded5566e310a703ffe48312bb26d8de77fef",
+  "issueBodySha256": "d741a7c582dfaf2029a921bb97ea8d611094db26a817577a626f583c3eb7a9bc",
+  "prBodySha256": "a146e33fd24a36225ea63d874307d836e55eb4fa34f49714181254b31adc35f8",
+  "evidenceCommit": "be04838347a23a3055d0874f0761f22a4112ff99",
+  "manifestSha256": "8af2aa60e2bbd9f9779079fb91d4258b2ec144d7492d9ae4db2f759c21954d8b",
+  "readBackAtUtc": "2026-10-06T06:11:50.112Z",
+  "remainingGate": "QA24-E1 actual authenticated private GitHub rendering; same independent QA reassessment pending",
+  "botRequestComment": 6010351308,
+  "botQuotaRefusalComment": 6010353008
+}
