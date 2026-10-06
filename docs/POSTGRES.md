@@ -2,10 +2,11 @@
 
 The server package provides one PostgreSQL configuration, process-owned pool,
 transaction helper, explicit migration runner and schema compatibility check for
-features that need shared storage. The current application does not open a pool
-or require a database at startup. Device SQLite/IndexedDB, media caches, HTTP
-health, development launchers and deployment behavior retain their existing
-contracts. Feature owners wire the shared infrastructure when adding storage.
+features that need shared storage. ChatGPT opens the pool and checks the schema
+only when explicitly enabled; the default disabled application needs no database.
+It owns the pool until HTTP shutdown. Device SQLite/IndexedDB, media caches and
+HTTP health retain their existing contracts. Root Compose passes optional PG
+settings to the server but does not provision a database service.
 
 ## Connection and ownership
 
@@ -61,8 +62,8 @@ The dependency order for the existing feature continuations is:
 3. Firebase/account storage: append `1760000000002_accounts` for account, backup,
    browser-session and deletion tables and indexes.
 
-Only the first migration ships here. Those feature tables remain owned by their
-respective changes. The earlier combined `1760000000000_initial` migration is
+The foundation and ChatGPT migrations ship here. Account tables remain owned by
+the later account change. The earlier combined `1760000000000_initial` migration is
 deliberately incompatible: do not rename its ledger entry or apply this history
 over it. Recreate only disposable test databases when validating the new stack.
 Little Say needs no legacy account migration; no existing data is imported or

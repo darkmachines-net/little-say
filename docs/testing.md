@@ -61,3 +61,7 @@ Review captures and their one-off harnesses live on [retained evidence refs](htt
 Before distribution, exercise a signed native build on iPad and Android: tap/swipe/multitouch, unlock, system containment, selected-language pronunciation and offline voices, generated audio and volume/silent-mode behavior, microphone permissions, native photo cropping, background/restart recovery, and local save failures. Expo Go does not demonstrate standalone launcher/splash, signing, OTA or system-containment behavior.
 
 Validate server connectivity and HTTPS from the actual tablet. Native signing, store submission, OTA application, and server deployment need their configured targets and the checks in [the release guide](releases.md). Browser or unit-test success does not prove installation or rollout. Use `npm audit` for current dependency advisories rather than a checked-in audit snapshot.
+
+## ChatGPT grants
+
+ChatGPT OAuth/provider unit tests use synthetic signed JWTs and mocked OpenAI responses. The PostgreSQL integration suite includes durable encrypted sessions, one-use callbacks, refresh/disconnect coordination, visitor isolation and refusal to fall back to server billing. Browser scenarios in `tests/web/chatgpt.spec.ts` exercise settings, limits and explicit disconnection with synthetic status responses. Activation stays disabled; no live OAuth or billed inference is tested.
