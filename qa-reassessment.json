@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "verdict": "evidence-incomplete",
+  "verdict": "changes-required",
   "workflowVersion": "workflow-v3",
   "prCommunicationStandard": "pr-review-v3",
   "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
@@ -8,8 +8,8 @@
   "pullRequest": "https://github.com/MChartier/little-say/pull/26",
   "issue": "https://github.com/MChartier/little-say/issues/25",
   "reviewerChat": "01a10fba-8105-755e-9628-a0ff41edc02e",
-  "supersedesVerdictCommentId": 6022194353,
-  "checkedAtUtc": "2026-10-06T18:02:28.664Z",
+  "supersedesVerdictCommentId": 6022350388,
+  "checkedAtUtc": "2026-10-06T18:39:14.960Z",
   "headSha": "f6e793cfd09a8dc1ff099f910678bb0b7fc6a08c",
   "baseSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
   "parentRevisions": [],
@@ -21,8 +21,8 @@
     "engineeringReview": "pass carried forward: same independent reviewer, unchanged exact head/base/scope; live paginated reviews and inline findings empty; only previous verdict in PR discussion.",
     "ci": "pass: current-head check remains completed/success. No rerun for communication-only migration.",
     "behavior": "pass: independent Node 24.19.0 probe exercised actual releaseConfig: baseline null owner rejects; final exact values accepted; HTTP, path and credential-bearing origins reject. Actual Expo config resolves correct EAS/update URL for both internal and production channels, preserves app IDs, rejects invalid channel. release:check and diff hygiene pass. Pinned EAS 22.4.0 project:info independently returns exact owner/slug/UUID.",
-    "evidence": "incomplete only for missing implementing-task link. No issue drift. Unchanged source and non-UI behavior evidence remain applicable.",
-    "communication": "incomplete only because required user-openable implementing-task link is absent and no exception approved. Fixed issue template preserves requirements, plan and PR association. Exact body matches coordinator digest; previous mismatch finding withdrawn.",
+    "evidence": "pass carried forward: exact UTF-8 metadata digests match supplied values; previous encoding false drift withdrawn; task ID accepted by explicit human amendment; non-UI behavior evidence unaffected.",
+    "communication": "changes-required: task-ID requirement passes; issue preserves requirements/plan and direct PR link. PR sentence Independent review remains pending is stale: independent source review is completed, only metadata reassessment remains. Remove or accurately reconcile it. Remove temporary issue communication-rebind pending note to avoid immediate staleness after reassessment.",
     "stack": "pass: actual and ultimate target MChartier/little-say:master. Base/direct parent/merge-base identical. No stacked parent."
   },
   "publishedScope": {
@@ -77,28 +77,28 @@
     "scopedHumanBaselineWaiver": null
   },
   "limitations": [
-    "Required user-openable implementing-task link missing; no temporary verified-ID exception approved.",
-    "Receipt correction only: no suite rerun or artificial UI gate.",
-    "No issue/PR body, product, label, draft, Project or provider mutation. No build/signing/upload/deploy/device action or credential access."
+    "Communication correction only; unchanged passing source/scope/behavior/CI gates carried forward.",
+    "No expensive suites, native build/signing/upload/deployment/device actions or signing-key access.",
+    "No product/issue/PR-body, label, draft or Project mutation by QA."
   ],
-  "nextAction": "Provide verified user-openable implementing-task link or explicit scoped human exception, then request communication-only reassessment. No issue digest reconciliation is needed; previous drift finding was QA decoding error.",
-  "issueBodySha256": "e7495e7a46267f9c35a36af52881f59b31cb368d0b5691b42b88974007e28f80",
-  "issueUpdatedAt": "2026-10-06T17:13:02Z",
+  "nextAction": "Original owner/coordinator should remove or accurately reconcile stale Independent review remains pending in PR, and remove temporary communication-rebind pending issue note. Return changed bodies for communication-only reassessment; do not rerun tests or change source.",
+  "issueBodySha256": "860300bdd406c4cabe38f90c37b0cea44a163fd45cebcae88f63da1ec465d451",
+  "issueUpdatedAt": "2026-10-06T18:27:28Z",
   "priorReceipt": {
-    "commentId": 6022194353,
-    "sha256": "17dc2ff53314b3d92a68017d5527306368f426677c53591468b59808dd63c407",
-    "updatedAt": "2026-10-06T17:53:39Z"
+    "commentId": 6022350388,
+    "sha256": "0b3b2b320c8e18f953b5b93181ef9222e5127127489094e55de711459da8d684",
+    "updatedAt": "2026-10-06T18:02:30Z"
   },
-  "acknowledgment": "Full supplied pinned workflow-v3/pr-review-v3 standards and direct amendments read, including concise comments, linkage and fixed issue template; repository AGENTS.md reread. Same verified mchartier_zbook and clean isolated detached qa-pr26 worktree. No runtime pin migration.",
+  "acknowledgment": "Full supplied pinned workflow-v3/pr-review-v3 standards and direct amendments read, including concise comments, linkage and fixed issue template; repository AGENTS.md reread. Same verified mchartier_zbook and clean isolated detached qa-pr26 worktree. No runtime pin migration. Re-read supplied packet and new 18:22 task-ID/rendering amendments; verified actual mchartier_zbook and clean isolated QA worktree.",
   "communicationAssessment": {
     "requirementsPreserved": true,
     "projectFields": "Not inspected or mutated; no Project-field certification",
     "nativeAssociation": "PR26 closingIssuesReferences contains issue25; hasNextPage false",
-    "issueBody": "## Problem\n\nLittle Say's tracked native release configuration has no Expo owner, project ID, or backend URL, so a clean checkout cannot resolve the existing release project. The user requested publishing-environment setup for Little Say and Calibrate on the ZBook.\n\n## Requirements and acceptance\n\nRecord Little Say's verified existing Expo project (`@matthewchartier/little-say`) and the backend already documented in the README (`https://littlesay.darkmachines.net`). Keep signing credentials in local app data, outside Git.\n\n- Change only the three nonsecret values in `native-release.json`; preserve app IDs, versions, channels, and release workflows.\n- Show that the native release contract accepts the configuration and read-only EAS project inspection resolves the existing project.\n- Run setup and release checks; distinguish these from an actual signed build, upload, or device test, which are outside this task.\n\nThis narrow setup outcome is separate from TestFlight preparation #12, optional grants #18/#20, and accounts #19/#24. It does not implement those features or establish iOS readiness. Calibrate's existing project access and prerequisite checks were verified separately; no Calibrate repository change is needed.\n\n## Implementation plan\n\nRecord only the three verified nonsecret release values, preserve app identity/versions/channels, and validate configuration plus read-only EAS project resolution. Signing material stays outside Git; no native build, upload or distribution is part of this issue.\n\n[Exact original requirements, plan and history](https://github.com/MChartier/agentic-development-workflow/blob/be7f2a00cbf9ced12d4b1a7a52f28e455695d7e3/issue-template-migration/little-say-25-original.md).\n\n## Implementing Codex task\n\nAssigned to the existing implementation owner. Verified user-openable Codex task link unavailable in the current tools; link resolution remains pending. This is not unassigned work.\n\n## Implementing PR\n\nCurrent: [PR26 — existing Expo project configuration](https://github.com/MChartier/little-say/pull/26). Source-review evidence and results remain in the PR; issue-template communication rebind is pending.\n",
+    "issueBody": "## Problem\n\nLittle Say's tracked native release configuration has no Expo owner, project ID, or backend URL, so a clean checkout cannot resolve the existing release project. The user requested publishing-environment setup for Little Say and Calibrate on the ZBook.\n\n## Requirements and acceptance\n\nRecord Little Say's verified existing Expo project (`@matthewchartier/little-say`) and the backend already documented in the README (`https://littlesay.darkmachines.net`). Keep signing credentials in local app data, outside Git.\n\n- Change only the three nonsecret values in `native-release.json`; preserve app IDs, versions, channels, and release workflows.\n- Show that the native release contract accepts the configuration and read-only EAS project inspection resolves the existing project.\n- Run setup and release checks; distinguish these from an actual signed build, upload, or device test, which are outside this task.\n\nThis narrow setup outcome is separate from TestFlight preparation #12, optional grants #18/#20, and accounts #19/#24. It does not implement those features or establish iOS readiness. Calibrate's existing project access and prerequisite checks were verified separately; no Calibrate repository change is needed.\n\n## Implementation plan\n\nRecord only the three verified nonsecret release values, preserve app identity/versions/channels, and validate configuration plus read-only EAS project resolution. Signing material stays outside Git; no native build, upload or distribution is part of this issue.\n\n[Exact original requirements, plan and history](https://github.com/MChartier/agentic-development-workflow/blob/be7f2a00cbf9ced12d4b1a7a52f28e455695d7e3/issue-template-migration/little-say-25-original.md).\n\n## Implementing Codex task\n\n\nVerified implementing Codex task ID: `01a10f69-db3f-7763-b183-f0588d867033`. A shareable task link is not available through the current tools.\n\n## Implementing PR\n\nCurrent: [PR26 — existing Expo project configuration](https://github.com/MChartier/little-say/pull/26). Source-review evidence and results remain in the PR; issue-template communication rebind is pending.\n",
     "prBody": "## Summary\n\nLittle Say's native release configuration leaves its Expo project and backend unset, so a clean checkout fails the release configuration check. This records the verified existing Expo project and the HTTPS backend already documented in the README, allowing the release tools to resolve the intended app.\n\nOnly three nonsecret values change. App IDs, versions, channels, and release workflows stay unchanged. Closes #25; independent of the TestFlight and accounts work.\n\n## Test plan and behavior evidence\n\nThis is a non-UI configuration change. Against current master, the release contract rejects the unset owner; with these values it accepts the project and server origin. Read-only EAS inspection then resolves `@matthewchartier/little-say` with the exact configured project ID. [Observed results, source revisions, and reproduction commands](https://github.com/MChartier/little-say/issues/25#issuecomment-6009578922).\n\n## Supporting checks and limitations\n\nNative setup and release metadata checks pass, as do all 18 existing release regression tests and diff hygiene. No signed native build, OTA publication, upload, deployment, or device test was performed. Signing credentials remain outside Git. [CI passes](https://github.com/MChartier/little-say/actions/runs/37415745229), including repository checks and PostgreSQL integration tests. Independent review remains pending.\r\n",
     "archiveRead": true,
     "originalArchive": "https://github.com/MChartier/agentic-development-workflow/blob/be7f2a00cbf9ced12d4b1a7a52f28e455695d7e3/issue-template-migration/little-say-25-original.md",
-    "taskLink": "Absent, not waived"
+    "taskLink": "Resolved by direct human amendment: verified task ID 01a10f69-db3f-7763-b183-f0588d867033 acceptable when shareable link unavailable. Native read_thread confirms Configure Expo publishing and PR26 implementation context."
   },
   "retention": {
     "purpose": "Communication-only independent QA reassessment for issue25/PR26",
@@ -113,8 +113,11 @@
     "correctHash": "e7495e7a46267f9c35a36af52881f59b31cb368d0b5691b42b88974007e28f80"
   },
   "historicalRecord": {
-    "commitSha": "0c12243cff3237ac170fa158b261ac7c5e55c471",
-    "sha256": "387b85fef31eabac2760622e3ecfbda41f6c35749bb7e8ed991aec71542439e3",
-    "url": "https://github.com/MChartier/little-say/blob/0c12243cff3237ac170fa158b261ac7c5e55c471/qa-reassessment.json"
+    "commitSha": "395ae1f26c97aa47a43b878d0054d854c12026e7",
+    "sha256": "44290b5914f72a3ec137607d92301c8f946ef9950eded94ec93fb9646ba43eae"
+  },
+  "amendments20261006T1822": {
+    "taskId": "User permits verified ID when shareable link unavailable; no invented URL required.",
+    "rendering": "User generally waives GitHub PR-page screenshot rendering, not genuine capture/pixel/provenance gates; this change remains non-UI."
   }
 }
