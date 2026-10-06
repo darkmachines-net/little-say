@@ -1,0 +1,76 @@
+{
+  "records": [
+    {
+      "name": "before",
+      "root": "accounts-before",
+      "sha": "344aded5566e310a703ffe48312bb26d8de77fef",
+      "port": 4191,
+      "capturedAt": "2026-10-06T04:48:03.492Z",
+      "serverPid": 36720,
+      "browser": "153.0.8010.12",
+      "loadedBundles": [
+        {
+          "path": "/_expo/static/js/web/index-794df40b43e912f0abf43963a3cdfb03.js",
+          "bytes": 359876,
+          "sha256": "17617179a7ef65a4f692ad4d7f99bf53f20d04e6b91ef2fc1d85c144717c04b9"
+        },
+        {
+          "path": "/_expo/static/js/web/App-e3a755d6110dc52230f7eab7792b3d5e.js",
+          "bytes": 5766943,
+          "sha256": "2461ed93822548a24e6e507c32b4f0a91b62aa8e1c4ca116627f5b3ac0cea9c4"
+        }
+      ],
+      "serverBundleSha256": "5748c5f1b16ea0ecd590dc87507ac16ad5cb4615e447c3595363d39210fdbc29",
+      "images": [
+        {
+          "state": "setup",
+          "file": "before-setup.png",
+          "sha256": "07246db0bc928d55a58fbe54bf0802e9bdd56072e377be9de6ee1cf83e9f955f"
+        },
+        {
+          "state": "settings",
+          "file": "before-settings.png",
+          "sha256": "f310ac52dc319f5fcd7b191fb13534dfa28d70839e4ed33cebabf0002f12a3d1"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "root": "little-say-accounts",
+      "sha": "74b721d095d0bd867ecaf5c093bfcf2c03e87eec",
+      "port": 4192,
+      "capturedAt": "2026-10-06T04:48:05.706Z",
+      "serverPid": 39720,
+      "browser": "153.0.8010.12",
+      "loadedBundles": [
+        {
+          "path": "/_expo/static/js/web/index-4ceb775b6f66d4272282f0f9a6d1437c.js",
+          "bytes": 359876,
+          "sha256": "358bf1a6693f74d99308838b88904bd4b0ff7480f2fcdef8f557fd2ad95374ad"
+        },
+        {
+          "path": "/_expo/static/js/web/App-3bf44b8b73af70fe5a3d02a7d7743796.js",
+          "bytes": 6081010,
+          "sha256": "86f33d8814ce581729b338f7f89e05ef43274807d8839acb5a77958e20899bb7"
+        }
+      ],
+      "serverBundleSha256": "f6a5878868ed8e1b3cc77b316dab60e49c94a2d4eb390efb3da4520cb5d0c783",
+      "images": [
+        {
+          "state": "setup",
+          "file": "after-setup.png",
+          "sha256": "c8acfb9bb49a4547e1af56e51305ad7f2fd59ec1cf973272129ec693b1e85f6e"
+        },
+        {
+          "state": "settings",
+          "file": "after-settings.png",
+          "sha256": "631e54f0a353c7047df30d2fbd07efb185c0b84951c633f50b3a07715f76e6a4"
+        }
+      ]
+    }
+  ],
+  "fixture": "Fresh browser storage; default languages; Continue; Start without starter boards; Parent settings. No credentials or account endpoint fixtures.",
+  "normalization": "Identical UTC clock, locale, viewport, scale, light theme and reduced motion. No UI hidden, no image alteration.",
+  "harnessSha256": "86daed5942502b2aea93cf995d9947084ca7469fc0287dc288fccbc8848691d0",
+  "sourceArchiveSha256": "a673a41ddbfa7d078c661799f8afe845cf72660efb78f3e072f0b2a8631eddfc"
+}

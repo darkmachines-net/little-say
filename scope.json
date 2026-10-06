@@ -1,0 +1,398 @@
+{
+  "head": "74b721d095d0bd867ecaf5c093bfcf2c03e87eec",
+  "base": "344aded5566e310a703ffe48312bb26d8de77fef",
+  "mergeBase": "344aded5566e310a703ffe48312bb26d8de77fef",
+  "parentPr": 20,
+  "parentState": "open draft; corrected owner checkpoint, not QA certification",
+  "target": "MChartier/little-say:continuation/pr10-postgres-clean",
+  "ultimateTarget": {
+    "ref": "master",
+    "sha": "842ac7fc016fc708060886c1fe59271b7021fbb5"
+  },
+  "commits": [
+    {
+      "sha": "709fd719d7fcd579002bb57ecce20bc673ab01b8",
+      "parents": [
+        "dd484c0ab0acf41afcf1d21ed21034713c2ccbdd"
+      ],
+      "subject": "Add optional Firebase accounts and private board backups",
+      "scope": "Account product and maintained verification"
+    },
+    {
+      "sha": "d91ba714baf2baf1c9e63914251e59e9d9fea3fd",
+      "parents": [
+        "709fd719d7fcd579002bb57ecce20bc673ab01b8",
+        "344aded5566e310a703ffe48312bb26d8de77fef"
+      ],
+      "subject": "Merge commit '344aded5566e310a703ffe48312bb26d8de77fef' into continuation/pr11-accounts-zbook",
+      "scope": "Coordinator-authorized corrected parent integration"
+    },
+    {
+      "sha": "74b721d095d0bd867ecaf5c093bfcf2c03e87eec",
+      "parents": [
+        "d91ba714baf2baf1c9e63914251e59e9d9fea3fd"
+      ],
+      "subject": "Validate account contracts with disposable identity and browser services",
+      "scope": "Account product and maintained verification"
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 1,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/mobile/app.config.js",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 2,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.ts",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.web.ts",
+      "status": "modified",
+      "additions": 19,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/data/useLibrary.ts",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.web.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.test.ts",
+      "status": "added",
+      "additions": 59,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.ts",
+      "status": "added",
+      "additions": 74,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebase-native.d.ts",
+      "status": "added",
+      "additions": 14,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseAccount.ts",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.test.ts",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.ts",
+      "status": "added",
+      "additions": 58,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.web.ts",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.test.ts",
+      "status": "added",
+      "additions": 13,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.ts",
+      "status": "added",
+      "additions": 39,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.web.ts",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/speechLibrary.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/services/useAccount.ts",
+      "status": "added",
+      "additions": 124,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountPanel.tsx",
+      "status": "added",
+      "additions": 86,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 2,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/migrations/1760000000002_accounts.sql",
+      "status": "added",
+      "additions": 43,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/account-routes.ts",
+      "status": "added",
+      "additions": 102,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/accounts.ts",
+      "status": "added",
+      "additions": 154,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/app.ts",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 3,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/database.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/firebase.ts",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/src/index.ts",
+      "status": "modified",
+      "additions": 22,
+      "deletions": 9,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "apps/server/test/accounts.integration.test.ts",
+      "status": "added",
+      "additions": 100,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/server/test/database.integration.test.ts",
+      "status": "modified",
+      "additions": 14,
+      "deletions": 3,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "apps/server/test/firebase.integration.test.ts",
+      "status": "added",
+      "additions": 134,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "docs/ACCOUNTS.md",
+      "status": "added",
+      "additions": 38,
+      "deletions": 0,
+      "scope": "Maintained account behavior and test contract"
+    },
+    {
+      "path": "docs/testing.md",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "scope": "Maintained account behavior and test contract"
+    },
+    {
+      "path": "firebase.json",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "modified",
+      "additions": 11965,
+      "deletions": 3225,
+      "scope": "Required generated lock: Firebase client/Admin/emulator and native adapters; no existing package version changed"
+    },
+    {
+      "path": "package.json",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "packages/core/src/account.test.ts",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "packages/core/src/account.ts",
+      "status": "added",
+      "additions": 61,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "status": "modified",
+      "additions": 15,
+      "deletions": 0,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "playwright.accounts.config.ts",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "playwright.config.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "scripts/dev-proxy.cjs",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 1,
+      "scope": "Account implementation or necessary guest/storage/server integration"
+    },
+    {
+      "path": "scripts/dev-proxy.test.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "scripts/test-server.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    },
+    {
+      "path": "tests/web/accounts.spec.ts",
+      "status": "added",
+      "additions": 161,
+      "deletions": 0,
+      "scope": "Maintained account regression and disposable service configuration"
+    }
+  ],
+  "totals": {
+    "files": 50,
+    "commits": 3,
+    "additions": 13808,
+    "deletions": 3255
+  },
+  "excluded": "Old combined 121-file range, deployment changes, release metadata reversions, picture/grant reversions, screenshot archives and ad-hoc capture scripts."
+}
