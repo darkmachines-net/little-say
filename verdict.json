@@ -1,0 +1,765 @@
+{
+  "schemaVersion": 1,
+  "verdict": "evidence-incomplete",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/29",
+  "issue": "https://github.com/MChartier/little-say/issues/19",
+  "reviewerChat": "01a10fc2-31d1-77a6-92c1-26319d1f1020",
+  "supersedesVerdictCommentId": null,
+  "checkedAtUtc": "2026-10-06T17:44:53.771Z",
+  "headSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+  "baseSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+  "parentRevisions": [
+    {
+      "ref": "master",
+      "sha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+      "kind": "sole actual commit parent; no unmerged PR dependency"
+    }
+  ],
+  "prBodySha256": "0cc4ac69bdecfcd547d7b5bb6a6fd142f38e6b8ba4e5b3bda13bf70f8c6365ee",
+  "issueBodySha256": "329451100373ebcf383a9ce92ab0550c14a4f2681ca3bafc78527f4dfcc543b1",
+  "gates": {
+    "value": "pass: optional recovery of family boards/media across reinstall or device change is concrete issue19 value; guest use remains available.",
+    "outcome": "pass within browser/emulator scope; provider/device execution remains unperformed and explicitly limited.",
+    "code": "pass: full current master-to-head scope inspected; unchanged account blobs compared with this same QA task prior independent inspection, changed integration and routing inspected afresh. Local SQLite/IndexedDB and offline playback retained; explicit account/server consent; local-preserving signout; native SecureStore/browser HttpOnly, CSRF and revocation; account/server isolation; reauth/linking; revision conflict copies; SHA256 media restoration, quotas, durable deletion retry and interrupted Apple confirmation contracts retained. No legacy Little Say account migration. Foundation unchanged, accounts appended without deferred grant migration.",
+    "engineeringReview": "pass under direct quota amendment: current PR29 bot explicitly refused solely for code-review quota at comment6021548643; no bot completion claimed. No current reviews or inline findings. Prior source dispositions rechecked in original QA and account blobs retained; independent review covers current published code and integration.",
+    "ci": "pass: run37501992018 completed success at exact head; logs inspected:228 unit,25 PostgreSQL17/Auth-emulator integration and3 account browser tests, release/types/build checks. No inference from parent20 CI.",
+    "behavior": "pass within tested scope: independently ran22 focused tests in6 files at exact current head using its own lockfile. Account routing to consented server, sync conflicts, persistence, provider contracts, core schema and development proxy checks passed. Fresh current-head CI supports browser restore/offline/conflict/signout/isolation and database boundaries.73 guest browser and Android JS export are owner-reported, not independently rerun; no device claim.",
+    "evidence": "incomplete: all six exact originals, source/build/fixture/harness provenance verified; actual authenticated rendered PR29 remains uninspected. Prior20/24 waiver does not apply.",
+    "communication": "main narrative passes: concise real problem, optional backup solution, behavioral expected/observed table, genuine master-to-head comparisons and honest supplementary recovery. Issue fixed-template sections are concise, but required user-openable implementing Codex task link is absent and temporary exception unconfirmed.",
+    "stack": "pass: direct master base842ac, sole commit88fd, no20 dependency or grant ancestry. Native closes19 and Project Current PRs29 verified;24 closed unmerged with original branches/evidence retained."
+  },
+  "scope": {
+    "repository": "MChartier/little-say",
+    "targetRef": "master",
+    "targetSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+    "mergeBase": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+    "ultimateTarget": {
+      "ref": "master",
+      "sha": "842ac7fc016fc708060886c1fe59271b7021fbb5"
+    },
+    "orderedCommits": [
+      {
+        "sha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "parents": [
+          "842ac7fc016fc708060886c1fe59271b7021fbb5"
+        ],
+        "subject": "Add optional account backup and restore independently of OAuth grants"
+      }
+    ],
+    "files": [
+      {
+        "path": ".github/workflows/ci.yml",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 1,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/mobile/app.config.js",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 2,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/package.json",
+        "status": "modified",
+        "additions": 6,
+        "deletions": 1,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/App.tsx",
+        "status": "modified",
+        "additions": 6,
+        "deletions": 2,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/data/storage.ts",
+        "status": "modified",
+        "additions": 20,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/data/storage.web.ts",
+        "status": "modified",
+        "additions": 19,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/data/useLibrary.ts",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 1,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/accountSession.ts",
+        "status": "added",
+        "additions": 17,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/accountSession.web.ts",
+        "status": "added",
+        "additions": 17,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/accountSync.test.ts",
+        "status": "added",
+        "additions": 59,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/mobile/src/services/accountSync.ts",
+        "status": "added",
+        "additions": 74,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/api.test.ts",
+        "status": "added",
+        "additions": 19,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/mobile/src/services/api.ts",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 3,
+        "scopeReason": "Exact consented-server credential isolation without deferred billing headers"
+      },
+      {
+        "path": "apps/mobile/src/services/firebase-native.d.ts",
+        "status": "added",
+        "additions": 14,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/firebaseAccount.ts",
+        "status": "added",
+        "additions": 140,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/firebasePersistence.test.ts",
+        "status": "added",
+        "additions": 31,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/mobile/src/services/firebasePersistence.ts",
+        "status": "added",
+        "additions": 58,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/firebasePersistence.web.ts",
+        "status": "added",
+        "additions": 6,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/firebaseProviders.test.ts",
+        "status": "added",
+        "additions": 13,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/mobile/src/services/firebaseProviders.ts",
+        "status": "added",
+        "additions": 39,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/firebaseProviders.web.ts",
+        "status": "added",
+        "additions": 7,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/speechLibrary.ts",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/services/useAccount.ts",
+        "status": "added",
+        "additions": 124,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/ui/AccountPanel.tsx",
+        "status": "added",
+        "additions": 86,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 2,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentSettings.tsx",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 2,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/migrations/1760000000002_accounts.sql",
+        "status": "added",
+        "additions": 43,
+        "deletions": 0,
+        "scopeReason": "Append independent account schema to unchanged landed foundation"
+      },
+      {
+        "path": "apps/server/package.json",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 1,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/src/account-routes.ts",
+        "status": "added",
+        "additions": 102,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/src/accounts.ts",
+        "status": "added",
+        "additions": 154,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/src/app.ts",
+        "status": "modified",
+        "additions": 21,
+        "deletions": 3,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/src/database.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "scopeReason": "Append independent account schema to unchanged landed foundation"
+      },
+      {
+        "path": "apps/server/src/firebase.ts",
+        "status": "added",
+        "additions": 79,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/src/index.ts",
+        "status": "modified",
+        "additions": 21,
+        "deletions": 2,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "apps/server/test/accounts.integration.test.ts",
+        "status": "added",
+        "additions": 100,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/server/test/database.integration.test.ts",
+        "status": "modified",
+        "additions": 12,
+        "deletions": 3,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "apps/server/test/firebase.integration.test.ts",
+        "status": "added",
+        "additions": 134,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "docs/ACCOUNTS.md",
+        "status": "added",
+        "additions": 38,
+        "deletions": 0,
+        "scopeReason": "Maintained account contract and test operation"
+      },
+      {
+        "path": "docs/testing.md",
+        "status": "modified",
+        "additions": 20,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "firebase.json",
+        "status": "added",
+        "additions": 7,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "package-lock.json",
+        "status": "modified",
+        "additions": 11972,
+        "deletions": 3223,
+        "scopeReason": "Required account SDK/emulator dependency closure; no existing versions changed"
+      },
+      {
+        "path": "package.json",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 1,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "packages/core/src/account.test.ts",
+        "status": "added",
+        "additions": 49,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "packages/core/src/account.ts",
+        "status": "added",
+        "additions": 61,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "packages/core/src/index.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "packages/core/src/schema.ts",
+        "status": "modified",
+        "additions": 15,
+        "deletions": 0,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "playwright.accounts.config.ts",
+        "status": "added",
+        "additions": 15,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "playwright.config.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "scripts/dev-proxy.cjs",
+        "status": "modified",
+        "additions": 13,
+        "deletions": 1,
+        "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+      },
+      {
+        "path": "scripts/dev-proxy.test.ts",
+        "status": "modified",
+        "additions": 12,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "scripts/test-server.ts",
+        "status": "added",
+        "additions": 20,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      },
+      {
+        "path": "tests/web/accounts.spec.ts",
+        "status": "added",
+        "additions": 161,
+        "deletions": 0,
+        "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+      }
+    ],
+    "totals": {
+      "commits": 1,
+      "files": 52,
+      "renames": 0,
+      "additions": 13836,
+      "deletions": 3249
+    },
+    "inventoryUrl": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/scope.json",
+    "inventorySha256": "1648212cf46182d814eeb5a692c3c695808f413eb589e5021af05ca45ea92925",
+    "assessment": "All pages of API commits/files reconcile exactly to local git numstat and retained inventory. Every file is account product wiring, maintained regression/configuration, required dependency lock or maintained account documentation. No evidence/log/screenshot/capture add-delete churn or sibling/grant commits in product history. Lock11972 additions/3223 deletions; independently verified zero existing dependency version changes or removed paths. Historical PR24/11 and evidence remain separate; no history rewrite used."
+  },
+  "evidence": [
+    "https://github.com/MChartier/little-say/actions/runs/37501992018",
+    "https://github.com/MChartier/little-say/pull/29#issuecomment-6021647686",
+    "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/README.md",
+    "https://github.com/MChartier/little-say/blob/fa01515ad5200d3d17931d36c7e375d511f526cf/publication.json"
+  ],
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Matched consent and fresh-device restore pairs, plus honestly labeled current-head offline/reconnect sequence. Sufficient representative changed and failure/recovery states.",
+    "pairs": [
+      {
+        "state": "backup-consent",
+        "beforeSourceSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+        "afterSourceSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "images": [
+          {
+            "role": "before",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/before-consent-unavailable.png?raw=true",
+            "sha256": "6f5c4092683fe6c306adbae24a275dbb4e9c8f71aebaa59211e996452e0c8b06"
+          },
+          {
+            "role": "after",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-backup-consent.png?raw=true",
+            "sha256": "e52efd39fd0c9f05a89c3cca5113243a3a1fcaa7cceedacbfbda6c41f4e9cfd6"
+          }
+        ]
+      },
+      {
+        "state": "fresh-device-restoration",
+        "beforeSourceSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+        "afterSourceSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "images": [
+          {
+            "role": "before",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/before-fresh-device.png?raw=true",
+            "sha256": "b76173eb007641b881d625461384ef6d4898e538c353391947ec41135c34a279"
+          },
+          {
+            "role": "after",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-restored-device.png?raw=true",
+            "sha256": "36e587c86d4bc19747c510f635df6e2577e1bdafaf290c14d391c9db340f61bd"
+          }
+        ]
+      },
+      {
+        "state": "offline-failure-and-recovery",
+        "comparisonType": "supplemental current-head sequence",
+        "sourceSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "images": [
+          {
+            "role": "after-offline",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-offline-retry.png?raw=true",
+            "sha256": "75a2c587a17ca87e7491d4b6814384c1c7d350a2f3fd062fa89a29bc1138b294"
+          },
+          {
+            "role": "after-recovered",
+            "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-recovered.png?raw=true",
+            "sha256": "1a230d1f8e2a4094beb8a68e8f278241db3b7ffbb8e005fdd29d6b7626a0c67a"
+          }
+        ]
+      }
+    ],
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/README.md",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "75404ac3a5b449040c5f9a8b80ecfc9ca7409f05efa728fd5ad83ba971c9337f"
+      },
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/manifest.json",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "dd577107cc74d2081a2fcd6eeb3f9dbd8d2b7a556cda65a0936c612846888ff7"
+      },
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/fixture.json",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "53b3168f1e6ab1e7148cbf58d7a2e35637c5b5ecec739d878eb76161f76cb49d"
+      },
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/capture-account-master-evidence.cjs",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "6d4c0235a5434cb73f15c35d0c1f72b25eb50329d616326b27ad7406263f4036"
+      },
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/run-account-master-evidence.cjs",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "87305e2127f864339ee261a59e0d07dec672033476f85e411d4dd7bf4d859379"
+      },
+      {
+        "pairs": [
+          "backup-consent",
+          "fresh-device-restoration",
+          "offline-failure-and-recovery"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/runtime.json",
+        "commitSha": "5731b0dafacd0553b538c3f9d824348c75ce92b5",
+        "sha256": "110a8917f2a33a4ca3a12d38d811730cf06eaaf9e6d5184eaadf7ef8c7dcdaaa"
+      }
+    ],
+    "provenanceAssessment": "Authenticated API original bytes fetched and all publication image/provenance identities verified. Read full README, fixture, runtime, manifest and both harnesses. Isolated actual master/head builds;1180x1050 scale1 light en-US UTC shared frozen epoch; no UI hiding, cropping or altered pixels. Synthetic PNG/WAV and real loopback PostgreSQL17.6/demo Auth, no API mocks. Harness owns spawned server PIDs39320/28312, refuses reused PostgreSQL data and tears down owned services. Nonempty loaded entry/App JS hashes matched exact build files; before App5759606 bytes,after6073686 bytes; distinct server hashes. Manifest supports source/build running identity; this is inspected owner capture evidence, not a new QA browser run. Baseline navigation differences disclosed because master lacks accounts.",
+    "runningBuildProof": [
+      {
+        "name": "before",
+        "root": "accounts-master-before",
+        "sourceSha": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+        "origin": "http://127.0.0.1:4191",
+        "serverPid": 39320,
+        "serverBundleSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e",
+        "loaded": [
+          {
+            "path": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+            "bytes": 359876,
+            "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+          },
+          {
+            "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+            "bytes": 5759606,
+            "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+          },
+          {
+            "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+            "bytes": 5759606,
+            "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+          },
+          {
+            "path": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+            "bytes": 359876,
+            "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+          },
+          {
+            "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+            "bytes": 5759606,
+            "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+          }
+        ],
+        "images": [
+          {
+            "file": "before-consent-unavailable.png",
+            "sha256": "6f5c4092683fe6c306adbae24a275dbb4e9c8f71aebaa59211e996452e0c8b06",
+            "capturedAt": "2026-10-06T17:10:05.618Z"
+          },
+          {
+            "file": "before-fresh-device.png",
+            "sha256": "b76173eb007641b881d625461384ef6d4898e538c353391947ec41135c34a279",
+            "capturedAt": "2026-10-06T17:10:06.861Z"
+          }
+        ]
+      },
+      {
+        "name": "after",
+        "root": "little-say-accounts-master",
+        "sourceSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "origin": "http://127.0.0.1:4192",
+        "serverPid": 28312,
+        "serverBundleSha256": "8d87a2ba687ca6114e3f9ae12adfb6ba48b75308c409ebc66793b90040410933",
+        "loaded": [
+          {
+            "path": "/_expo/static/js/web/index-49e6c85fa9be662801da833eca7f26b5.js",
+            "bytes": 359876,
+            "sha256": "65194ef6acc9dc2543d1dd48b719f88091387eed2f72d0c5cb967599c6a383c0"
+          },
+          {
+            "path": "/_expo/static/js/web/App-a41f192965b3e9237954a97e4e75a638.js",
+            "bytes": 6073686,
+            "sha256": "56f2f659789143e38e16d289387b06ae302144656b026ff7d2a31580535c19ad"
+          },
+          {
+            "path": "/_expo/static/js/web/index-49e6c85fa9be662801da833eca7f26b5.js",
+            "bytes": 359876,
+            "sha256": "65194ef6acc9dc2543d1dd48b719f88091387eed2f72d0c5cb967599c6a383c0"
+          },
+          {
+            "path": "/_expo/static/js/web/App-a41f192965b3e9237954a97e4e75a638.js",
+            "bytes": 6073686,
+            "sha256": "56f2f659789143e38e16d289387b06ae302144656b026ff7d2a31580535c19ad"
+          },
+          {
+            "path": "/_expo/static/js/web/index-49e6c85fa9be662801da833eca7f26b5.js",
+            "bytes": 359876,
+            "sha256": "65194ef6acc9dc2543d1dd48b719f88091387eed2f72d0c5cb967599c6a383c0"
+          },
+          {
+            "path": "/_expo/static/js/web/App-a41f192965b3e9237954a97e4e75a638.js",
+            "bytes": 6073686,
+            "sha256": "56f2f659789143e38e16d289387b06ae302144656b026ff7d2a31580535c19ad"
+          }
+        ],
+        "images": [
+          {
+            "file": "after-backup-consent.png",
+            "sha256": "e52efd39fd0c9f05a89c3cca5113243a3a1fcaa7cceedacbfbda6c41f4e9cfd6",
+            "capturedAt": "2026-10-06T17:10:09.615Z"
+          },
+          {
+            "file": "after-restored-device.png",
+            "sha256": "36e587c86d4bc19747c510f635df6e2577e1bdafaf290c14d391c9db340f61bd",
+            "capturedAt": "2026-10-06T17:10:14.939Z"
+          },
+          {
+            "file": "after-offline-retry.png",
+            "sha256": "75a2c587a17ca87e7491d4b6814384c1c7d350a2f3fd062fa89a29bc1138b294",
+            "capturedAt": "2026-10-06T17:10:15.619Z"
+          },
+          {
+            "file": "after-recovered.png",
+            "sha256": "1a230d1f8e2a4094beb8a68e8f278241db3b7ffbb8e005fdd29d6b7626a0c67a",
+            "capturedAt": "2026-10-06T17:10:16.278Z"
+          }
+        ]
+      }
+    ],
+    "pixelObservations": "Independently opened all six actual PNGs. Master settings has no account or deferred grant panel. After consent explains uploads/server access and shows continue without signing in. Fresh master is empty; After restores Farmyard six tiles and backup status. Two blank media thumbnails correspond to deliberately tiny fixture, disclosed. Offline text says server unreachable and changes retained locally; recovered says all boards/assets synced. No clipping obscures these claims. Equal pixels in unchanged fresh/restore states compared with historical evidence do not substitute sources: fresh harness and loaded-resource hashes bind actual master/current builds.",
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/29",
+      "checkedAtUtc": null,
+      "status": "unverified",
+      "observations": "Native browser earlier failed before navigation with kernel exit/apply deny-read ACL error. No repeated identical attempt, credential copying, private access bypass or synthetic Markdown rendering substituted. Authenticated API image access and independent pixels do not prove rendered GitHub embeds. No PR29 human waiver."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null
+  },
+  "linkage": {
+    "nativeClosingIssue": 19,
+    "projectCurrentPr": 29,
+    "readback": {
+      "data": {
+        "repository": {
+          "pullRequest": {
+            "closingIssuesReferences": {
+              "nodes": [
+                {
+                  "number": 19,
+                  "url": "https://github.com/MChartier/little-say/issues/19"
+                }
+              ]
+            }
+          },
+          "issue": {
+            "projectItems": {
+              "nodes": [
+                {
+                  "id": "PVTI_lAHOABMy1c4Bl3Eqzg-xZ7w",
+                  "project": {
+                    "title": "Agentic development pipeline",
+                    "number": 1
+                  },
+                  "fieldValues": {
+                    "nodes": [
+                      {},
+                      {},
+                      {
+                        "text": "Provide Firebase accounts and optional PostgreSQL backups",
+                        "field": {
+                          "name": "Title"
+                        }
+                      },
+                      {
+                        "name": "Review / QA",
+                        "field": {
+                          "name": "Pipeline state"
+                        }
+                      },
+                      {
+                        "text": "01a10f7a-bf1e-7154-8695-468b946d4021 (clean and idle; independent QA queued)",
+                        "field": {
+                          "name": "Owner"
+                        }
+                      },
+                      {
+                        "text": "Current: https://github.com/MChartier/little-say/pull/29 ; history: https://github.com/MChartier/little-say/pull/24 , https://github.com/MChartier/little-say/pull/11",
+                        "field": {
+                          "name": "Current PRs"
+                        }
+                      },
+                      {
+                        "text": "Independent account-only draft PR29 targets master directly; no active PR20 dependency. Owner clean/idle; independent QA pending. Head 88fd6b0865d6d195e51dd51b732fe8abcfd1a953 / base842ac7fc016fc708060886c1fe59271b7021fbb5. Handoff: https://github.com/MChartier/little-say/pull/29#issuecomment-6021647686 . Prior PR24/11 evidence preserved; old rendering waiver does not cover PR29.",
+                        "field": {
+                          "name": "Blocked by"
+                        }
+                      },
+                      {
+                        "text": "2026-10-06T17:24:28.072862+00:00",
+                        "field": {
+                          "name": "Verified at"
+                        }
+                      },
+                      {
+                        "name": "In Progress",
+                        "field": {
+                          "name": "Status"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "implementingTask": "owner01a10f7a-bf1e-7154-8695-468b946d4021 verified; required user-openable task URL absent; no inferred exception"
+  },
+  "limitations": [
+    "Authenticated actual PR29 rendering remains unverified; old20/24 waiver is explicitly inapplicable.",
+    "Issue19 requires actual user-openable implementing Codex task URL or explicit scoped exception; pending request is not approval.",
+    "Real Google/Apple provider authorization, hardware SecureStore and physical-device playback were not performed. Android JS export is not device proof.",
+    "Same actual MCHARTIER_ZBOOK, isolated detached qa-pr29; no owner worktree or product edits. No readiness/label/draft/Project/deploy/merge mutations."
+  ],
+  "nextAction": "Coordinator retain this receipt; obtain actual authenticated PR29 rendered-image check (or explicit new scoped human decision) and implementing-task link/explicit exception. Same QA reassesses affected evidence/communication only if source/base remain unchanged; no expensive suite repetition needed."
+}
