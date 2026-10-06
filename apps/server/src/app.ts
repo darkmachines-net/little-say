@@ -17,8 +17,13 @@ import { searchPictures } from './picture-catalog';
 import { type AiProvider } from './provider';
 import { SpeechCache, SpeechCacheError } from './speech-cache';
 import release from '../../../release.json';
+import { type Accounts } from './accounts';
+import { type IdentityService } from './firebase';
+import { type Pool } from 'pg';
+import { checkDatabase } from './database';
+import { accountRoutes } from './account-routes';
 
-export interface ServerOptions { provider: AiProvider | null; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
+export interface ServerOptions { provider: AiProvider | null; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
 
 /**
  * Construct and register a server with injected AI, speech, and picture services without opening a listening
@@ -27,7 +32,7 @@ export interface ServerOptions { provider: AiProvider | null; speechCache?: Spee
 export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
-  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say'], credentials: false });
+  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
   await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024, files: 1, fields: 0, parts: 1 }, throwFileSizeLimit: true });
   await app.register(rateLimit, { global: false });
   const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
@@ -46,7 +51,20 @@ export async function createServer(options: ServerOptions) {
   });
 
   app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
-  app.addHook('onClose', async () => { options.pictures?.close(); });
+  app.get('/api/ready', async (_request, reply) => {
+    try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version }; }
+    catch { return reply.code(503).send({ status: 'unavailable', error: 'Database readiness check failed.' }); }
+  });
+  let deletionWork: Promise<void> | undefined;
+  const sweep = () => {
+    if (!deletionWork && options.accounts && options.auth) deletionWork = options.accounts.processDeletions(options.auth.config.projectId, uid => options.auth!.deleteUser(uid)).catch(() => { app.log.error('Account deletion retry failed; pending work remains durable.'); }).finally(() => { deletionWork = undefined; });
+  };
+  const deletionTimer = options.accounts && options.auth ? setInterval(sweep, 30000) : undefined;
+  deletionTimer?.unref();
+  app.addHook('onReady', async () => { sweep(); });
+  app.addHook('onClose', async () => { clearInterval(deletionTimer); await deletionWork; options.pictures?.close(); await options.auth?.close(); await options.database?.end(); });
+
+  if (options.accounts && options.auth) await accountRoutes(app, options.accounts, options.auth, options.secureCookies ?? true);
   app.get('/api/pictures/search', aiLimits, async (request, reply) => {
     const parsed = z.object({ q: z.string().trim().min(1).max(300), style: z.enum(['color', 'line']) }).safeParse(request.query);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide search words and a picture style.' });
