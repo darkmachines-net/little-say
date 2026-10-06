@@ -2,7 +2,7 @@
   "version": "0.1.0",
   "androidVersionCode": 1,
   "iosBuildNumber": "1",
-  "expoOwner": null,
-  "expoProjectId": null,
-  "serverUrl": null
+  "expoOwner": "matthewchartier",
+  "expoProjectId": "a0336055-a9d6-46b1-8eb4-120944304685",
+  "serverUrl": "https://littlesay.darkmachines.net"
 }
