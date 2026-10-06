@@ -129,10 +129,11 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
         setDraft(response);
         if (response.proposal.picturePolicy) {
           if (policyRef.current === requestedPolicy) setPicturePolicy(response.proposal.picturePolicy);
-          if (chatgpt.selected) return;
-          const prepared = await prepareProposalPictures(source, response, { ...settings, aiConsent: true }, { signal: controller.signal, ...pictureCallbacks(controller, response) }, draft);
-          if (!live.current || request.current !== controller) return;
-          setDraft(prepared.proposal); setPictureIssues(prepared.issues);
+          if (!chatgpt.selected) {
+            const prepared = await prepareProposalPictures(source, response, { ...settings, aiConsent: true }, { signal: controller.signal, ...pictureCallbacks(controller, response) }, draft);
+            if (!live.current || request.current !== controller) return;
+            setDraft(prepared.proposal); setPictureIssues(prepared.issues);
+          }
         }
       }
       // A stopped picture request discards the whole turn, including its conversation context.
