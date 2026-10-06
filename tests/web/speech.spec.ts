@@ -69,7 +69,7 @@ test('generates from draft text and language, regenerates, persists offline, and
   // Wait for the independent audio index to restore, then use real HTML audio.
   await expect.poll(() => page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
+      const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
     });
     return new Promise<boolean>(resolve => {
       const request = db.transaction('speech').objectStore('speech').get(JSON.stringify(['Привет, бабушка', 'ru-RU']));
@@ -105,7 +105,7 @@ test('board creation does not wait for background audio and stale generation can
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Owl');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+
   await page.getByRole('button', { name: 'Use this board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Owl', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Edit tile Owl', exact: true }).click();

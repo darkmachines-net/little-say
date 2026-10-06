@@ -12,16 +12,49 @@ const proposal = (label = 'Cow') => ({ title: 'Animal words', explanation: `Here
 const envelope = (value = proposal()) => ({ boardId: null, baseRevision: null, proposal: value });
 async function saved(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say', 2); r.onsuccess = () => resolve(r.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
     const value = await new Promise<any>(resolve => { const r = db.transaction('state').objectStore('state').get('library'); r.onsuccess = () => resolve(r.result); }); db.close(); return value;
   });
 }
-async function send(page: Page, message: string, consent = false) {
+async function send(page: Page, message: string) {
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill(message);
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  if (consent) await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
 }
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
+
+test('manual creation starts from the library and suggestions stay in the conversation without an opt-in screen', async ({ page }) => {
+  let requests = 0;
+  await page.route('**/api/boards/propose', route => { requests++; return route.fulfill({ json: envelope() }); });
+  await page.getByRole('button', { name: 'Build manually', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Our new board');
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+  expect(requests).toBe(0);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Build manually', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: '🐾 Farm animals', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Create six farm animal tiles including cow, sheep, and horse.');
+  await expect(page).toHaveURL(/#boards\/new$/);
+  expect(requests).toBe(0); expect((await saved(page)).settings.aiConsent).toBe(false);
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByText('Use AI services?', { exact: true })).toHaveCount(0);
+  expect(requests).toBe(1);
+});
+
+test('editing routes survive reload and return to their source board without saving a draft', async ({ page }) => {
+  const original = (await saved(page)).boards[0];
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`#boards/${original.id}/ai$`));
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsaved message');
+  await page.reload();
+  await expect(page.getByTestId('ai-canvas')).toContainText('Farmyard friends');
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
+  await page.getByRole('button', { name: 'Back to board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
+  expect((await saved(page)).boards[0]).toEqual(original);
+});
 
 test('clarification, draft and refinement stay in one conversation until explicitly saved', async ({ page }) => {
   const requests: any[] = [];
@@ -34,7 +67,7 @@ test('clarification, draft and refinement stay in one conversation until explici
   });
   const count = (await saved(page)).boards.length;
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Make two animal cards. Ask me which ones.', true);
+  await send(page, 'Make two animal cards. Ask me which ones.');
   await expect(page.getByTestId('ai-working')).toBeVisible();
   await expect(page.getByText(/Working on your draft… · [1-9]/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Stop request', exact: true })).toBeEnabled();
@@ -77,7 +110,7 @@ test('editing refines the latest draft while keeping source IDs, languages and p
     await route.fulfill({ json: { boardId: input.board.id, baseRevision: input.board.revision, proposal: { ...proposal(), title: requests.length === 1 ? 'Our animals' : 'Our favorite animals', explanation: 'Your draft is updated.', playLanguages: input.board.playLanguages, tiles } } });
   });
   await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
-  await send(page, 'Replace Horse with Goat', true);
+  await send(page, 'Replace Horse with Goat');
   await expect(page.getByTestId('ai-draft')).toContainText('Goat');
   await send(page, 'Call it Our favorite animals');
   await expect(page.getByTestId('ai-draft')).toContainText('Our favorite animals');
@@ -104,7 +137,7 @@ test('stopping and retrying ignores late replies and does not duplicate conversa
     else await route.fulfill({ json: envelope() });
   });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'A cow', true);
+  await send(page, 'A cow');
   await expect(page.getByTestId('ai-working')).toBeVisible();
   await page.getByRole('button', { name: 'Stop request', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A cow');
@@ -114,7 +147,7 @@ test('stopping and retrying ignores late replies and does not duplicate conversa
   expect(requests[1].conversation.history).toEqual([]);
   await expect(page.getByText('A cow', { exact: true })).toHaveCount(1);
   await expect(page.getByTestId('ai-draft')).not.toContainText('Wrong late word');
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   expect((await saved(page)).boards).toHaveLength(3);
 });
 
@@ -129,7 +162,7 @@ test('failed follow-ups and clarification preserve the previous draft and small-
     else await route.fulfill({ json: envelope() });
   });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow', true);
+  await send(page, 'Cow');
   await expect(page.getByTestId('ai-draft')).toContainText('Cow');
   await send(page, 'Change its color');
   await expect(page.getByText('Please try again.', { exact: true })).toBeVisible();
@@ -139,20 +172,20 @@ test('failed follow-ups and clarification preserve the previous draft and small-
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByText('Which color?', { exact: true })).toBeVisible();
   expect(requests[2].conversation.history).toHaveLength(1);
-  await expect(page.getByTestId('ai-draft')).toContainText('Previous draft');
+  await expect(page.getByTestId('ai-draft')).toContainText('Waiting for your answer');
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toHaveCount(0);
   await send(page, 'Blue');
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
   expect(requests[3].conversation.history).toHaveLength(2);
   expect(requests[3].conversation.draft).toEqual(proposal());
-  for (const name of ['Use this board', 'Voice prompt', 'Send message', 'Close New board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+  for (const name of ['Use this board', 'Voice prompt', 'Send message', 'Back to boards']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
   await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-phone.png' });
 });
 
 test('a failed save keeps the draft and retry creates exactly one board', async ({ page }) => {
   await page.route('**/api/boards/propose', route => route.fulfill({ json: envelope() }));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow', true);
+  await send(page, 'Cow');
   await expect(page.getByTestId('ai-draft')).toBeVisible();
   await page.evaluate(() => { const put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function (...args: any[]) { if ((window as any).__failWrites) throw new DOMException('Storage full', 'QuotaExceededError'); return put.apply(this, args as any); }; (window as any).__failWrites = true; });
   await page.getByRole('button', { name: 'Use this board', exact: true }).click();
@@ -164,7 +197,57 @@ test('a failed save keeps the draft and retry creates exactly one board', async 
   expect((await saved(page)).boards).toHaveLength(4);
 });
 
-for (const dismissal of ['close button', 'outside click']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
+for (const outcome of ['failure', 'success'] as const) test(`browser history preserves a pending draft save through ${outcome}`, async ({ page }) => {
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: envelope() }));
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await send(page, 'Cow');
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  // Retain a same-document Forward destination while the current draft stays mounted.
+  await page.evaluate(() => { history.pushState({}, '', '#other'); history.back(); });
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+  await page.evaluate(() => {
+    const put = IDBObjectStore.prototype.put;
+    IDBObjectStore.prototype.put = function (...args: any[]) {
+      const result = put.apply(this, args as any);
+      if (this.name === 'state' && !(window as any).__heldWrite) {
+        (window as any).__heldWrite = true;
+        let hold = true;
+        const store = this;
+        const keepAlive = () => { if (hold) store.get('library').onsuccess = keepAlive; };
+        keepAlive();
+        (window as any).__releaseWrite = (fail: boolean) => { hold = false; if (fail) store.transaction.abort(); };
+      }
+      return result;
+    };
+  });
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => Boolean((window as any).__releaseWrite))).toBe(true);
+  await page.goForward();
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await page.goBack();
+    await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+    await expect(page.getByTestId('ai-draft')).toContainText('Cow');
+  }
+  await expect(page.getByRole('button', { name: 'Back to boards', exact: true })).toBeDisabled();
+  await page.evaluate(fail => (window as any).__releaseWrite(fail), outcome === 'failure');
+  if (outcome === 'failure') {
+    await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+    await expect(page.getByTestId('ai-conversation')).toContainText(/abort/i);
+    expect((await saved(page)).boards).toHaveLength(3);
+    await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  }
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+  expect((await saved(page)).boards).toHaveLength(4);
+  // Save protection ends: ordinary Back and Forward can dismiss and reopen a fresh workspace.
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await page.goBack();
+  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+  await page.goForward();
+  await expect(page.getByTestId('ai-conversation')).toBeVisible();
+});
+
+for (const dismissal of ['page back', 'browser back']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
   await page.evaluate(() => {
     (window as any).__stoppedTracks = 0;
     Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
@@ -180,7 +263,7 @@ for (const dismissal of ['close button', 'outside click']) test(`voice transcrip
   await page.route('**/api/transcribe', route => route.fulfill({ json: { text: 'Make the cow blue' } }));
   await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: envelope() }); });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow', true);
+  await send(page, 'Cow');
   await expect(page.getByTestId('ai-draft')).toBeVisible();
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await page.getByRole('button', { name: /^Stop ·/ }).click();
@@ -194,8 +277,8 @@ for (const dismissal of ['close button', 'outside click']) test(`voice transcrip
   expect(requests[1].conversation.history).toHaveLength(1);
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  if (dismissal === 'outside click') await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: 4 } });
-  else await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  if (dismissal === 'browser back') await page.goBack();
+  else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
@@ -216,7 +299,7 @@ test('a capture-time recorder error releases the microphone and lets the parent 
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Our family');
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue with AI', exact: true }).click();
+
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
   await page.evaluate(() => (window as any).__recorder.onerror(new Event('error')));
   await expect(page.getByText('The recording failed. Please try again.', { exact: true })).toBeVisible();
@@ -224,7 +307,7 @@ test('a capture-time recorder error releases the microphone and lets the parent 
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Our family');
   await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
   await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  await page.getByRole('button', { name: 'Close New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
 });
 
@@ -243,4 +326,17 @@ test('the compact editor fits tablet orientations and keeps reordering in the ti
   await expect(page.getByText('Position 2 of 6', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await expect(page.getByTestId('editor-preview').getByRole('button').nth(1)).toHaveAccessibleName('Edit tile Cow');
+});
+
+test('a new phone conversation starts with its full data-use introduction visible', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  const intro = page.getByText(/Messages and board words go to AI/);
+  await expect(intro).toContainText('without automatic deletion');
+  await page.evaluate(async () => { await document.fonts.ready; await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))); });
+  const panel = (await page.getByTestId('ai-transcript').boundingBox())!;
+  const text = (await intro.boundingBox())!;
+  expect(text.y).toBeGreaterThanOrEqual(panel.y);
+  expect(text.y + text.height).toBeLessThanOrEqual(panel.y + panel.height);
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toBeVisible();
 });

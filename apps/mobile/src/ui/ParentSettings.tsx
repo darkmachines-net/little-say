@@ -11,6 +11,8 @@ import { requestPersistence } from '../data/storage';
 import { Button, Field, Notice, Sheet } from './components';
 import { styles, theme } from './theme';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
+import { defaultPicturePolicy } from '@little-say/core';
+import { PictureCredits, PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
 
 /**
  * Edit settings in a local draft, preview voices, and save through the supplied callback; show
@@ -26,6 +28,7 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
   const [language, setLanguage] = useState(() => getLanguageProfile(settings).defaultLanguage);
   const [sample, setSample] = useState(() => firstWord(getLanguageProfile(settings).defaultLanguage).speech);
   const [voiceList, setVoiceList] = useState(false);
+  const [pictureDefaults, setPictureDefaults] = useState(settings.pictureDefaults ?? defaultPicturePolicy);
   const matches = voices.filter(v => v.language.split('-')[0] === language.split('-')[0]);
   const testConnection = async () => {
     setBusy(true); setError(''); setMessage('');
@@ -33,7 +36,7 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
     catch (e) { setError((e as Error).message); }
     finally { setBusy(false); }
   };
-  return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
+  return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
     <View style={{ gap: 14 }}>
       <View style={styles.row}><Globe size={20} color={theme.accent} /><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Languages on this device</Text></View>
@@ -62,11 +65,13 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
       <Field label="Voice test words" value={sample} onChangeText={setSample} maxLength={200} />
       <Button kind="ghost" icon={Volume2} disabled={!sample.trim()} onPress={() => { void onSave({ ...settings, voices: selected }).then(() => onPreview({ id: 'voice-test', label: 'Voice test', speech: sample.trim(), language, color: 'sage', illustration: { kind: 'emoji', emoji: '👋' } })).catch(() => setError('Could not save the selected voice.')); }}>Test selected voice</Button>
     </View>
+    <View style={styles.divider} />
+    <View style={{ gap: 12 }}><Text style={styles.title}>Pictures for new boards</Text><PicturePreferences value={pictureDefaults} onChange={setPictureDefaults} /><PictureGenerationInfo /><Text style={styles.small}>Source choices apply to new boards. Existing boards keep their saved pictures.</Text><PictureCredits /></View>
     {(Platform.OS === 'ios' || Platform.OS === 'android') && <>
       <View style={styles.divider} />
       <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Lock the screen</Text><Text style={styles.body}>Our parent button needs a hold and a separate confirmation. To prevent system gestures from leaving the app, enable {Platform.OS === 'ios' ? 'Guided Access' : 'screen pinning'} before handing it over.</Text>{Platform.OS === 'ios' ? <Button kind="secondary" onPress={() => void Linking.openURL('https://support.apple.com/en-us/111795')}>Guided Access instructions</Button> : <Button kind="secondary" onPress={() => void Linking.openURL('https://support.google.com/android/answer/9455138?hl=en')}>Screen pinning instructions</Button>}</View>
     </>}
     <View style={styles.divider} />
-    <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Storage & privacy</Text><Text style={styles.body}>There are no accounts or board backups in this pilot. Uninstalling the app or clearing its storage deletes the boards and downloaded audio on this device.</Text>{Platform.OS === 'web' && <Button kind="secondary" onPress={() => { void requestPersistence().then(persistent => setMessage(persistent ? 'Persistent storage is enabled for this browser.' : 'This browser has not granted persistent storage. It may clear local data when storage is low.')).catch(() => setError('Persistent storage is unavailable in this browser.')); }}>Request persistent browser storage</Button>}<Text style={styles.small}>AI sends parent prompts, microphone recordings, and necessary board words through your server to OpenAI. Photos stay here. The app does not log prompt content or retain microphone recordings on the server. Generated speech is retained in the server’s audio cache.</Text><Button kind="ghost" onPress={() => void Linking.openURL('https://developers.openai.com/api/docs/guides/your-data')}>OpenAI data policy</Button><Text style={styles.small}>Little Say · private pilot · {Constants.expoConfig?.version}</Text></View>
+    <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Storage & privacy</Text><Text style={styles.body}>There are no accounts or board backups in this pilot. Uninstalling the app or clearing its storage deletes the boards, photos, downloaded pictures, and audio on this device.</Text>{Platform.OS === 'web' && <Button kind="secondary" onPress={() => { void requestPersistence().then(persistent => setMessage(persistent ? 'Persistent storage is enabled for this browser.' : 'This browser has not granted persistent storage. It may clear local data when storage is low.')).catch(() => setError('Persistent storage is unavailable in this browser.')); }}>Request persistent browser storage</Button>}<Text style={styles.small}>AI sends parent prompts, microphone recordings, and necessary board words through your server to OpenAI. Picture matching and generation also send card descriptions and library or generated picture pixels through your server to OpenAI. Personal photos stay on this device. Downloaded pictures are saved here for offline play. The app does not log prompt content or retain microphone recordings on the server. Generated speech is retained in the server’s audio cache. Library and generated pictures, concept descriptions, and picture-job metadata remain in the server’s picture cache without automatic deletion.</Text><Button kind="ghost" onPress={() => void Linking.openURL('https://developers.openai.com/api/docs/guides/your-data')}>OpenAI data policy</Button><Text style={styles.small}>Little Say · private pilot · {Constants.expoConfig?.version}</Text></View>
   </Sheet>;
 }

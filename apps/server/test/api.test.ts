@@ -87,7 +87,7 @@ describe('private generation API', () => {
   });
   it('reports readiness without keys and preserves a usable manual-only app', async () => {
     const app = await server(null);
-    expect((await app.inject('/api/health')).json()).toEqual({ status: 'ok', aiConfigured: false, version: release.version });
+    expect((await app.inject('/api/health')).json()).toEqual({ status: 'ok', aiConfigured: false, version: release.version, pictures: { version: 1, catalog: false, analysis: false, generation: false } });
     const result = await app.inject({ method: 'POST', url: '/api/boards/propose', headers, payload: { prompt: 'Farm', board: null } });
     expect(result.statusCode).toBe(503); expect(result.json().error).toContain('manually');
   });

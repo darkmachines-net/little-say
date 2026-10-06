@@ -1,4 +1,4 @@
-/** @file Edits a card draft with language variants, photo or emoji visuals, and speech generation. */
+/** @file Edits a card draft with language variants, pictures, photos, emoji, and speech generation. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
@@ -12,16 +12,20 @@ import { EmojiPicker } from './EmojiPicker';
 import { PhotoCropEditor } from './PhotoCropEditor';
 import { LanguageChoices } from './LanguageChoices';
 import { palettes, styles, theme } from './theme';
+import { type Board } from '@little-say/core';
+import { CardPictures } from './CardPictures';
 
 /**
  * Stage card edits and previews in a dialog, exposing save, reorder, duplicate, delete, and
  * per-language audio actions through the supplied callbacks.
  */
-export function TileEditor({ tile, playLanguages = [], settings, audio, onConsent, canDelete, canDuplicate, onSave, onDelete, onDuplicate, onClose, onPreview, position, tileCount, onMove }: { tile: Tile; playLanguages?: string[]; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; canDelete: boolean; canDuplicate: boolean; onSave: (tile: Tile) => void; onDelete: () => void; onDuplicate: (tile: Tile) => void; onClose: () => void; onPreview: (tile: Tile) => void; position?: number; tileCount?: number; onMove?: (offset: number) => void }) {
+export function TileEditor({ tile, board, playLanguages = [], settings, audio, onConsent, canDelete, canDuplicate, onSave, onDelete, onDuplicate, onClose, onPreview, position, tileCount, onMove }: { tile: Tile; board: Board; playLanguages?: string[]; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; canDelete: boolean; canDuplicate: boolean; onSave: (tile: Tile) => void; onDelete: () => void; onDuplicate: (tile: Tile) => void; onClose: () => void; onPreview: (tile: Tile) => void; position?: number; tileCount?: number; onMove?: (offset: number) => void }) {
   const [draft, setDraft] = useState(tile);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [showEmoji, setShowEmoji] = useState(false);
+  const [showPictures, setShowPictures] = useState(false);
+  const [pictureBusy, setPictureBusy] = useState(false);
   const [audioLanguage, setAudioLanguage] = useState<string | null>(null);
   const [cropping, setCropping] = useState<TilePhoto | null>(null);
   const [photoReady, setPhotoReady] = useState(false);
@@ -55,18 +59,20 @@ export function TileEditor({ tile, playLanguages = [], settings, audio, onConsen
       if (!selected || attempt !== operation.current) return;
       setShowEmoji(false);
       if (Platform.OS === 'web') openCrop(selected);
-      else update({ illustration: selected });
+      else update({ illustration: selected, pictureOptions: { ...draft.pictureOptions, locked: true, instruction: draft.pictureOptions?.instruction ?? '' } });
     } catch { if (attempt === operation.current) setError('That photo could not be added. Check photo permissions and free storage, then try again.'); }
     finally { picking.current = false; if (attempt === operation.current) setBusy(false); }
   };
-  return <Sheet title={cropping ? 'Crop photo' : 'Edit tile'} onClose={cropping ? () => setCropping(null) : onClose} footer={cropping ? <View style={[styles.row, { justifyContent: 'flex-end' }]}><Button kind="ghost" onPress={() => setCropping(null)}>Cancel</Button><Button disabled={!photoReady} onPress={() => { update({ illustration: cropping }); setCropping(null); }}>Use photo</Button></View> : <Button onPress={() => { if (validated.success) onSave(validated.data); else setError(validated.error.issues[0].message); }} disabled={busy}>Save tile</Button>}>
+  return <Sheet title={cropping ? 'Crop photo' : 'Edit tile'} onClose={cropping ? () => setCropping(null) : onClose} footer={cropping ? <View style={[styles.row, { justifyContent: 'flex-end' }]}><Button kind="ghost" onPress={() => setCropping(null)}>Cancel</Button><Button disabled={!photoReady} onPress={() => { update({ illustration: cropping, pictureOptions: { ...draft.pictureOptions, locked: true, instruction: draft.pictureOptions?.instruction ?? '' } }); setCropping(null); }}>Use photo</Button></View> : <Button onPress={() => { if (validated.success) onSave(validated.data); else setError(validated.error.issues[0].message); }} disabled={busy || pictureBusy}>Save tile</Button>}>
     {cropping ? <PhotoCropEditor tile={draft} photo={cropping} onChange={setCropping} onReady={setPhotoReady} /> : <>
     {onMove && position !== undefined && tileCount !== undefined && <View style={[styles.row, { justifyContent: 'space-between' }]}><Button compact kind="secondary" icon={ArrowLeft} disabled={position === 0} accessibilityLabel={`Move ${tile.label} earlier`} onPress={() => onMove(-1)} /><Text style={styles.small}>Position {position + 1} of {tileCount}</Text><Button compact kind="secondary" icon={ArrowRight} disabled={position === tileCount - 1} accessibilityLabel={`Move ${tile.label} later`} onPress={() => onMove(1)} /></View>}
     <View style={{ gap: 14 }}>
       <View testID="tile-photo-preview" style={{ width: photo ? Math.min(290, width - 100) : 150, height: photo ? Math.min(290, width - 100) + 56 : 150, alignSelf: 'center' }}><TileFace tile={draft} size={photo ? 70 : 65} /></View>
       <View style={[styles.wrap, { justifyContent: 'center' }]}><Button kind="secondary" icon={ImagePlus} onPress={() => void attachPhoto()} busy={busy}>{photo ? 'Change photo' : 'Choose photo'}</Button>{photo && <Button kind="secondary" icon={Crop} disabled={busy} onPress={() => openCrop(photo)}>Adjust crop</Button>}<Button kind="ghost" disabled={busy} onPress={() => setShowEmoji(value => !value)}>{showEmoji ? 'Hide emoji' : 'Choose emoji'}</Button></View>
     </View>
-    {showEmoji && <EmojiPicker selected={draft.illustration.kind === 'emoji' ? draft.illustration.emoji : undefined} onSelect={emoji => { update({ illustration: { kind: 'emoji', emoji } }); setShowEmoji(false); }} />}
+    {showEmoji && <EmojiPicker selected={draft.illustration.kind === 'emoji' ? draft.illustration.emoji : undefined} onSelect={emoji => { update({ illustration: { kind: 'emoji', emoji }, pictureOptions: { ...draft.pictureOptions, locked: true, instruction: draft.pictureOptions?.instruction ?? '' } }); setShowEmoji(false); }} />}
+    <Button kind="secondary" disabled={pictureBusy} onPress={() => setShowPictures(value => !value)}>{showPictures ? 'Hide picture options' : 'Picture options'}</Button>
+    {showPictures && <CardPictures tile={draft} board={board} settings={settings} onConsent={onConsent} onChange={setDraft} onBusy={setPictureBusy} />}
     <Field label="Words on the tile" value={draft.label} maxLength={80} onChangeText={label => update({ label, ...(draft.speech === draft.label ? { speech: label } : {}) })} />
     <Field label="What it says" value={draft.speech} maxLength={200} onChangeText={speech => update({ speech })} />
     <View style={{ gap: 8 }}><Text style={styles.label}>Language for this tile</Text><LanguageChoices selected={[draft.language]} preferred={[...profileLanguages(settings), ...playLanguages]} onChoose={language => update({ language })} label="tile language" customInput={false} /><Field label="Language tag" value={draft.language} onChangeText={language => update({ language })} autoCapitalize="none" placeholder="e.g. es-MX" /><Text style={styles.small}>The label and spoken words can differ. Choose the language of the spoken words and preview to check pronunciation.</Text><Button kind="secondary" icon={Volume2} disabled={!validated.success} onPress={() => onPreview(draft)}>Listen to this tile</Button></View>

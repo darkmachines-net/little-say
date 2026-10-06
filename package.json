@@ -25,6 +25,8 @@
     "check": "npm run release:check && npm run typecheck && npm test && npm run build",
     "eval:ai": "tsx scripts/evaluate-ai.ts",
     "emoji:update": "tsx scripts/update-emoji-catalog.ts",
+    "pictures:update": "tsx scripts/update-picture-catalog.ts",
+    "eval:pictures": "tsx scripts/evaluate-pictures.ts",
     "release:check": "tsx scripts/release/version.ts check",
     "release:cut": "tsx scripts/release/server-cut.ts",
     "release:prepare": "tsx scripts/release/version.ts prepare",

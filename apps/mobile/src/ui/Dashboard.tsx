@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { Plus, Settings as SettingsIcon } from 'lucide-react-native';
-import { type Board, type BoardProposal, type Library } from '@little-say/core';
-import { AiConversation } from './AiConversation';
+import { type Board, type Library } from '@little-say/core';
 import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
 import { type SpeechLibrary } from '../services/speechLibrary';
@@ -14,11 +13,10 @@ import { Brand, MountainMark } from './Brand';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation dialog.
+ * AI creation workspace, with a separate manual creation entry.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onManual, onSettings, onApply, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onManual: () => void; onSettings: () => void; onApply: (proposal: BoardProposal) => Promise<void>; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
-  const [creating, setCreating] = useState(false);
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuBoard = library.boards.find(board => board.id === menuId);
   const columns = width > 1050 ? 3 : width > 620 ? 2 : 1;
@@ -38,15 +36,14 @@ export function Dashboard({ library, audio, onOpen, onPlay, onManual, onSettings
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>
-        <Button icon={Plus} onPress={() => setCreating(true)}>New board</Button>
+        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>New board</Button><Button kind="ghost" compact onPress={onManual}>Build manually</Button></View>
       </View>
       {recent && card(recent, true)}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 }}>
         {remaining.map(board => <View key={board.id} style={{ width: `${100 / columns}%`, padding: 8 }}>{card(board)}</View>)}
       </View>
-      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text><Button icon={Plus} onPress={() => setCreating(true)}>Create your first board</Button></View>}
+      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text><Button icon={Plus} onPress={onCompose}>Create your first board</Button></View>}
     </ScrollView>
     {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onConsent={onConsent} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
-    {creating && <AiConversation settings={library.settings} onApply={onApply} onConsent={onConsent} onClose={() => setCreating(false)} onManual={() => { setCreating(false); onManual(); }} />}
   </View>;
 }

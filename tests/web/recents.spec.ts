@@ -9,7 +9,7 @@ import { openExistingLibrary } from './existingLibrary';
 
 async function savedLibrary(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     const library = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result); }); db.close(); return library;
   });
 }
@@ -72,7 +72,7 @@ test('recent play order persists offline and stays independent of edits, undo, c
 
 test('returning from a legacy active session creates an accessible responsive spotlight', async ({ page }) => {
   await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>(resolve => {
       const tx = db.transaction('state', 'readwrite'), store = tx.objectStore('state'), request = store.get('library');
       request.onsuccess = () => { const library = request.result; library.settings.activeBoardId = 'starter-family'; store.put(library, 'library'); };

@@ -17,7 +17,7 @@ function fixture(request: ProposalRequest) {
 }
 async function readLibrary(page: Page) {
   return page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say', 2); request.onsuccess = () => resolve(request.result); });
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     const value = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result); });
     db.close(); return value;
   });
@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
     } });
     Element.prototype.requestFullscreen = async () => {};
   });
-  await page.goto('/');
+  await page.goto('/app');
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 
@@ -103,7 +103,6 @@ test('offline setup can save a regional preference and start empty without Engli
   const saved = await readLibrary(page);
   expect(saved.setup).toBeUndefined(); expect(saved.boards).toEqual([]);
   expect(saved.settings.languageProfile).toEqual({ languages: ['es-MX'], defaultLanguage: 'es-MX' });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('button', { name: 'Build manually', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Hola', exact: true })).toBeVisible();
 });
