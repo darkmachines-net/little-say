@@ -26,7 +26,7 @@ import { theme, styles } from './ui/theme';
 import { Brand } from './ui/Brand';
 import { defaultPicturePolicy } from '@little-say/core';
 import { useAccount } from './services/useAccount';
-import { AccountPanel } from './ui/AccountPanel';
+import { AccountScreen } from './ui/AccountScreen';
 
 function Application() {
   const store = useLibrary();
@@ -35,6 +35,8 @@ function Application() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useEffect(() => { if (draftRoute.route?.boardId) setSelectedId(draftRoute.route.boardId); }, [draftRoute.route?.boardId]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [entryChecked, setEntryChecked] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [error, setError] = useState('');
   const [soundCheck, setSoundCheck] = useState<Board | null>(null);
@@ -42,6 +44,11 @@ function Application() {
   const [updateReady, setUpdateReady] = useState(false);
   const [undo, setUndo] = useState<Record<string, Board[]>>({});
   const account = useAccount(store, !draftRoute.route && !selectedId && !store.library?.settings.activeBoardId, () => audio.reload());
+  useEffect(() => {
+    if (entryChecked || !store.library || !account.ready) return;
+    setEntryChecked(true);
+    if (!account.session && !store.library.settings.accountChoiceMade && !store.library.settings.activeBoardId && !draftRoute.route) setAccountOpen(true);
+  }, [entryChecked, store.library, account.ready, account.session, draftRoute.route]);
   const previewQueue = useMemo(() => speechQueue(voices, store.library?.settings.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset), [voices, store.library?.settings.voices, audio]);
   useEffect(() => () => previewQueue.stop(), [previewQueue]);
   const consent = () => store.change(current => ({ ...current, settings: { ...current.settings, aiConsent: true } }));
@@ -56,7 +63,7 @@ function Application() {
     return () => { active = false; clearTimeout(timer); cleanup?.(); if (Platform.OS === 'web') window.speechSynthesis?.removeEventListener('voiceschanged', refresh); };
   }, []);
   const remember = (board: Board) => setUndo(current => ({ ...current, [board.id]: [...(current[board.id] ?? []).slice(-19), board] }));
-  const setSettings = (settings: Settings) => store.change(current => ({ ...current, settings: { ...settings, activeBoardId: current.settings.activeBoardId } }));
+  const setSettings = (settings: Settings) => store.change(current => ({ ...current, settings: { ...settings, activeBoardId: current.settings.activeBoardId, accountChoiceMade: current.settings.accountChoiceMade } }));
   const deleteBoard = (id: string) => {
     previewQueue.stop();
     void store.change(current => {
@@ -87,9 +94,13 @@ function Application() {
     void Speech.stop().then(() => Speech.speak(tile.speech, { language: tile.language, voice: voice?.identifier, rate: 0.88, onError: () => setError('This voice could not play. Check your device’s voice settings and volume.') }));
   };
   if (store.loadError) return <View style={[styles.page, { justifyContent: 'center', padding: 30, gap: 20 }]}><Notice>{store.loadError}</Notice><Button onPress={() => void store.reload()}>Try opening again</Button></View>;
-  if (!store.library) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
+  if (!store.library || !entryChecked) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
   const library = store.library;
-  if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setSettingsOpen(true)} />{settingsOpen && <Sheet title="Account & backup" onClose={() => setSettingsOpen(false)}><AccountPanel account={account} /></Sheet>}</>;
+  const accountScreen = accountOpen && <AccountScreen account={account} onClose={async () => {
+    if (!store.current.current!.settings.accountChoiceMade) await store.commit(current => ({ ...current, settings: { ...current.settings, accountChoiceMade: true } }));
+    setAccountOpen(false);
+  }} />;
+  if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
   const activeBoard = library.boards.find(board => board.id === library.settings.activeBoardId);
   const selected = library.boards.find(board => board.id === selectedId);
   if (activeBoard && playReady) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onExit={async () => { await store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })); if (Platform.OS === 'web' && document.fullscreenElement) await document.exitFullscreen().catch(() => {}); }} />;
@@ -120,7 +131,7 @@ function Application() {
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
     return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={proposal => draftRoute.save(() => accept(proposal))} onAiUse={consent} onClose={draftRoute.close} />;
   }
-  return <View style={styles.page}>
+  return <><View style={styles.page}>
     <StatusBar style="dark" />
     {!selected && account.session && <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={styles.small}>{account.error ? 'Backup needs attention' : account.busy ? 'Syncing account backup…' : account.savedAt ? 'Account backup enabled' : 'Account backup pending'}</Text><Button compact kind="ghost" onPress={() => setSettingsOpen(true)}>Account & backup</Button></View>}
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
@@ -148,9 +159,9 @@ function Application() {
         return { ...current, favoriteBoardIds: [...favorites] };
       }).catch(() => {});
     }} />}
-    {settingsOpen && <ParentSettings account={account} settings={library.settings} voices={voices} languages={Array.from(new Set(library.boards.flatMap(b => [...(b.playLanguages ?? []), ...b.tiles.map(t => t.language)])))} onSave={setSettings} onPreview={previewSystem} onClose={() => { previewQueue.stop(); setSettingsOpen(false); }} />}
+    {settingsOpen && <ParentSettings visible={!accountOpen} account={account} onAccount={() => setAccountOpen(true)} settings={library.settings} voices={voices} languages={Array.from(new Set(library.boards.flatMap(b => [...(b.playLanguages ?? []), ...b.tiles.map(t => t.language)])))} onSave={setSettings} onPreview={previewSystem} onClose={() => { previewQueue.stop(); setSettingsOpen(false); }} />}
     {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => !audio.asset(t) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => { setSoundCheck(null); setSettingsOpen(true); }}>Check parent settings</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
-  </View>;
+  </View>{accountScreen}</>;
 }
 /**
  * Mount the app with safe-area support and the library-driven setup, dashboard, editor, and play

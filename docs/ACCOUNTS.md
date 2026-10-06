@@ -2,7 +2,9 @@
 
 Little Say works without an account. Guest boards, photos, illustrations and speech remain in the existing device library. Guest setup makes no account request. Firebase is used for identity only; no Firestore or Firebase Storage is involved.
 
-In **Parent settings → Account & backup**, choose email/password, Google, or Apple. Continuing explicitly connects this device's boards and assets to the selected server. Email/password users must verify their email before backup starts; password reset and verification use Firebase email actions. Local editing and playback remain available while verification or sign-in is pending. Expo Go supports guest and email flows; Google/Apple require a development or release build.
+On the first launch without a saved sign-in, a dedicated welcome screen offers **Log in**, **Create an account**, and **Continue without an account**. Continuing saves only a device-local launch preference; subsequent guest launches open the existing setup/library directly. Existing signed-in users and resumed play sessions are not interrupted. Existing guest libraries receive the choice without replacing their boards or settings.
+
+**Parent settings** links to the same full-screen account experience instead of embedding authentication fields. Back/cancel leaves the form, then returns to the previous screen with local data and settings drafts intact. Sign-out from settings keeps downloaded boards and opens the login/create choices. Choosing guest makes no account request. Email/password, Google and Apple actions still require explicit consent to the selected server; email verification gates backup. Expo Go supports guest and email flows; Google/Apple require a development or release build.
 
 Signing in merges existing server boards into this device and uploads local boards, personal photos, illustrations and downloaded speech. Backups are visible to the server administrator and are not end-to-end encrypted. Device settings, consent, favorites, play history, drafts and undo history remain local. AI consent is independent of account consent.
 

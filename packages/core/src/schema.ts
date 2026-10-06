@@ -45,6 +45,8 @@ export const boardSchema = z.object({
 export const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),
+  // Local launch preference only; choosing guest never enables backup or AI consent.
+  accountChoiceMade: z.boolean().optional(),
   autoSpeech: z.boolean().default(true),
   pictureDefaults: picturePolicySchema.optional(),
   // Read older libraries losslessly; picture source now governs generation instead of this legacy flag.

@@ -6,7 +6,6 @@ import { Linking, Platform, Pressable, Text, View } from 'react-native';
 import { Check, Globe, Volume2, Wifi } from 'lucide-react-native';
 import { firstWord, getLanguageProfile, languageName, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, developmentApiUrl } from '../services/api';
-import { AccountPanel } from './AccountPanel';
 import { type AccountController } from '../services/useAccount';
 import { type Voice } from '../services/speech';
 import { requestPersistence } from '../data/storage';
@@ -20,7 +19,7 @@ import { PictureCredits, PictureGenerationInfo, PicturePreferences } from './Pic
  * Edit settings in a local draft, preview voices, and save through the supplied callback; show
  * navigation-lock instructions only on applicable native platforms.
  */
-export function ParentSettings({ account, settings, languages, voices, onSave, onPreview, onClose }: { account: AccountController; settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
+export function ParentSettings({ account, onAccount, visible, settings, languages, voices, onSave, onPreview, onClose }: { account: AccountController; visible: boolean; onAccount: () => void; settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
   const [url, setUrl] = useState(settings.backendUrl);
   const [selected, setSelected] = useState(settings.voices);
   const [message, setMessage] = useState('');
@@ -38,9 +37,15 @@ export function ParentSettings({ account, settings, languages, voices, onSave, o
     catch (e) { setError((e as Error).message); }
     finally { setBusy(false); }
   };
-  return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
+  return <Sheet visible={visible} title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
-    <AccountPanel account={account} /><View style={styles.divider} />
+    <View style={{ gap: 12 }}>
+      <Text accessibilityRole="header" style={styles.title}>Account & backup</Text>
+      <Text style={styles.body}>{account.session ? 'Signed in as ' + (account.session.account.email || account.session.account.displayName || 'parent') : 'You are using Little Say without an account. Your boards stay on this device.'}</Text>
+      <Button onPress={onAccount}>{account.session ? 'Open account & backup' : 'Log in or create an account'}</Button>
+      {account.session && <Button kind="secondary" disabled={account.busy} onPress={() => void account.disconnect().then(onAccount).catch(() => {})}>Sign out and keep local boards</Button>}
+      {Boolean(account.error) && <Notice>{account.error}</Notice>}
+    </View><View style={styles.divider} />
     <View style={{ gap: 14 }}>
       <View style={styles.row}><Globe size={20} color={theme.accent} /><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Languages on this device</Text></View>
       <Text style={styles.body}>Choose up to six languages for new boards and quick setup. Existing boards keep their own languages.</Text>

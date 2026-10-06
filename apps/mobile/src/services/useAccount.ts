@@ -89,9 +89,18 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false);
     setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. Preparing to sync…' : 'Verify your email before enabling backup. Local boards remain available.');
   };
-  const prepare = async () => run(async () => {
-    const context = await accountContext(backendUrl(store.current.current!.settings.backendUrl)); setConfig(context.config);
-  });
+  const prepare = async () => {
+    // Loading public provider choices must never trap a guest on an unavailable server.
+    const server = backendUrl(store.current.current!.settings.backendUrl);
+    setError(''); setConfig(null);
+    try {
+      const context = await accountContext(server);
+      if (mounted.current && backendUrl(store.current.current!.settings.backendUrl) === server) setConfig(context.config);
+    } catch (e) {
+      if (mounted.current && backendUrl(store.current.current!.settings.backendUrl) === server) setError(accountError(e));
+      throw e;
+    }
+  };
   const authenticate = async (mode: 'register' | 'login', email: string, password: string, provider: Provider = 'password') => run(async () => {
     const server = backendUrl(store.current.current!.settings.backendUrl);
     await remember(await authenticateAccount(server, mode, email, password, provider));
