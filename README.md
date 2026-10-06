@@ -1,0 +1,1 @@
+Fresh PR29 human-feedback QA. Owner same QA task01a10fc2-31d1-77a6-92c1-26319d1f1020. Dedicated nonmerged evidence, retain current/historical audit; never product merge. Earlier incorrect READY and invalidation preserved.
