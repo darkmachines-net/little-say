@@ -42,6 +42,26 @@ Firebase project, account data, external AI service or running application is
 needed. [The foundation contract](POSTGRES.md) describes migration ordering and
 pool ownership. Stop/remove only a test container you created when finished.
 
+## Account validation
+
+`npm run test:services` runs the PostgreSQL integration suites with the loopback
+Firebase Auth emulator (`demo-little-say`). It requires the explicit `TEST_PG*`
+settings above and the Java runtime required by Firebase tools. It does not use
+hosted identities or provider credentials. The accounts migration suite verifies
+an upgrade from populated grant tables as well as empty-database initialization.
+
+After building, run `npx firebase emulators:exec --only auth --project demo-little-say
+"npm run test:accounts:web"` with those same database settings. This separate
+browser suite owns its API process and random database schema, tests verification,
+complete media restoration, offline conflict copies, sign-out, and server/account
+isolation. Ordinary guest browser tests do not require Firebase. Do not reuse an
+unowned server on the configured test ports.
+
+Provider-adapter unit tests and synthetic emulator credentials cannot establish
+real Google/Apple consent, native SecureStore behavior on a device, or interrupted
+Apple-provider revocation. Those checks require a separately authorized provider
+configuration and native build. See [the account contract](ACCOUNTS.md).
+
 ## Live AI evaluation
 
 ```sh

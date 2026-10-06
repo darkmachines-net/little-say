@@ -5,7 +5,7 @@ import pg, { type PoolClient, type PoolConfig } from 'pg';
 import { runner } from 'node-pg-migrate';
 
 // Append each feature migration in application order; never edit an applied migration.
-export const SCHEMA_VERSIONS = ['1760000000000_foundation', '1760000000001_chatgpt'] as const;
+export const SCHEMA_VERSIONS = ['1760000000000_foundation', '1760000000001_chatgpt', '1760000000002_accounts'] as const;
 const migrations = fileURLToPath(new URL('../migrations/', import.meta.url));
 
 function integer(value: string | undefined, fallback: number, max: number) {

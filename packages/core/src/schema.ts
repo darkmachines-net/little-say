@@ -59,11 +59,26 @@ export const setupSchema = z.object({
   stage: z.enum(['languages', 'boards']), topics: starterTopicsSchema,
   drafts: z.array(z.object({ topic: starterTopicSchema, board: boardSchema })).max(3).refine(drafts => new Set(drafts.map(draft => draft.topic)).size === drafts.length),
 });
+export const syncAssetSchema = z.object({
+  kind: z.enum(['photo', 'picture', 'speech']),
+  id: z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/),
+  hash: z.string().regex(/^[a-f0-9]{64}$/),
+  key: z.string().max(500).optional(),
+}).refine(asset => asset.kind === 'speech' ? Boolean(asset.key) && /^[a-f0-9]{64}$/.test(asset.id) : !asset.key);
+export const syncSnapshotSchema = z.object({
+  revision: z.number().int().nonnegative(),
+  boards: z.array(boardSchema).max(500), assets: z.array(syncAssetSchema).max(15000),
+}).refine(snapshot => new Set(snapshot.boards.map(board => board.id)).size === snapshot.boards.length, 'Board IDs must be unique.')
+  .refine(snapshot => new Set(snapshot.assets.map(asset => `${asset.kind}:${asset.key ?? asset.id}`)).size === snapshot.assets.length, 'Asset references must be unique.');
+export type SyncAsset = z.infer<typeof syncAssetSchema>;
+export type SyncSnapshot = z.infer<typeof syncSnapshotSchema>;
 export const librarySchema = z.object({
   version: z.literal(2), boards: z.array(boardSchema), settings: settingsSchema, setup: setupSchema.optional(),
   // Device usage belongs outside board content, revisions, AI requests, and undo.
   boardLastPlayedAt: z.record(z.string(), z.number().int().nonnegative()).optional(),
   favoriteBoardIds: z.array(z.string().min(1).max(100)).optional(),
+  // The acknowledged server snapshot travels atomically with local boards; credentials never do.
+  sync: z.object({ accountId: z.string(), server: z.string(), snapshot: syncSnapshotSchema, savedAt: z.string() }).optional(),
 });
 export type Tile = z.infer<typeof tileSchema>;
 export type Board = z.infer<typeof boardSchema>;

@@ -7,6 +7,8 @@ import { Check, Globe, Volume2, Wifi } from 'lucide-react-native';
 import { firstWord, getLanguageProfile, languageName, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, developmentApiUrl } from '../services/api';
 import { ChatGptPanel } from './ChatGptPanel';
+import { AccountPanel } from './AccountPanel';
+import { type AccountController } from '../services/useAccount';
 import { type Voice } from '../services/speech';
 import { requestPersistence } from '../data/storage';
 import { Button, Field, Notice, Sheet } from './components';
@@ -19,7 +21,7 @@ import { PictureCredits, PictureGenerationInfo, PicturePreferences } from './Pic
  * Edit settings in a local draft, preview voices, and save through the supplied callback; show
  * navigation-lock instructions only on applicable native platforms.
  */
-export function ParentSettings({ settings, languages, voices, onSave, onPreview, onClose }: { settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
+export function ParentSettings({ account, settings, languages, voices, onSave, onPreview, onClose }: { account: AccountController; settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
   const [url, setUrl] = useState(settings.backendUrl);
   const [selected, setSelected] = useState(settings.voices);
   const [message, setMessage] = useState('');
@@ -39,6 +41,7 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
   };
   return <Sheet title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
+    <AccountPanel account={account} /><View style={styles.divider} />
     {Platform.OS === 'web' && <><ChatGptPanel server={settings.backendUrl} /><View style={styles.divider} /></>}
     <View style={{ gap: 14 }}>
       <View style={styles.row}><Globe size={20} color={theme.accent} /><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Languages on this device</Text></View>
@@ -74,6 +77,6 @@ export function ParentSettings({ settings, languages, voices, onSave, onPreview,
       <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Lock the screen</Text><Text style={styles.body}>Our parent button needs a hold and a separate confirmation. To prevent system gestures from leaving the app, enable {Platform.OS === 'ios' ? 'Guided Access' : 'screen pinning'} before handing it over.</Text>{Platform.OS === 'ios' ? <Button kind="secondary" onPress={() => void Linking.openURL('https://support.apple.com/en-us/111795')}>Guided Access instructions</Button> : <Button kind="secondary" onPress={() => void Linking.openURL('https://support.google.com/android/answer/9455138?hl=en')}>Screen pinning instructions</Button>}</View>
     </>}
     <View style={styles.divider} />
-    <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Storage & privacy</Text><Text style={styles.body}>There are no accounts or board backups in this pilot. Uninstalling the app or clearing its storage deletes the boards, photos, downloaded pictures, and audio on this device.</Text>{Platform.OS === 'web' && <Button kind="secondary" onPress={() => { void requestPersistence().then(persistent => setMessage(persistent ? 'Persistent storage is enabled for this browser.' : 'This browser has not granted persistent storage. It may clear local data when storage is low.')).catch(() => setError('Persistent storage is unavailable in this browser.')); }}>Request persistent browser storage</Button>}<Text style={styles.small}>AI sends parent prompts, microphone recordings, and necessary board words through your server to OpenAI. Picture matching and generation also send card descriptions and library or generated picture pixels through your server to OpenAI. Personal photos stay on this device. Downloaded pictures are saved here for offline play. The app does not log prompt content or retain microphone recordings on the server. Generated speech is retained in the server’s audio cache. Library and generated pictures, concept descriptions, and picture-job metadata remain in the server’s picture cache without automatic deletion.</Text><Button kind="ghost" onPress={() => void Linking.openURL('https://developers.openai.com/api/docs/guides/your-data')}>OpenAI data policy</Button><Text style={styles.small}>Little Say · private pilot · {Constants.expoConfig?.version}</Text></View>
+    <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Storage & privacy</Text><Text style={styles.body}>Accounts are optional. Without a synced account backup, uninstalling the app or clearing its storage deletes local boards, pictures and downloaded audio. Sign in on the same server to restore a saved account backup.</Text>{Platform.OS === 'web' && <Button kind="secondary" onPress={() => { void requestPersistence().then(persistent => setMessage(persistent ? 'Persistent storage is enabled for this browser.' : 'This browser has not granted persistent storage. It may clear local data when storage is low.')).catch(() => setError('Persistent storage is unavailable in this browser.')); }}>Request persistent browser storage</Button>}<Text style={styles.small}>AI sends parent prompts, microphone recordings, and necessary board words through your server to OpenAI. Picture matching and generation also send card descriptions and library or generated picture pixels through your server to OpenAI. Personal photos stay on this device unless you enable account backup; photos are never sent to AI. Downloaded pictures are saved here for offline play. The app does not log prompt content or retain microphone recordings on the server. Generated speech is retained in the server’s audio cache. Library and generated pictures, concept descriptions, and picture-job metadata remain in the server’s picture cache without automatic deletion.</Text><Button kind="ghost" onPress={() => void Linking.openURL('https://developers.openai.com/api/docs/guides/your-data')}>OpenAI data policy</Button><Text style={styles.small}>Little Say · private pilot · {Constants.expoConfig?.version}</Text></View>
   </Sheet>;
 }

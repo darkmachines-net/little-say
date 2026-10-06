@@ -9,18 +9,29 @@ let database: Awaited<ReturnType<typeof testDatabase>>;
 beforeEach(async () => { database = await testDatabase(); });
 afterEach(async () => { await database?.close(); });
 
-it('initializes the grant tables and migration ledger and repeats migrations without duplicate versions', async () => {
+it('initializes account and grant tables and repeats migrations without duplicate versions', async () => {
   await checkDatabase(database.pool);
   await migrateDatabase({ ...database.config, options: undefined }, database.schema);
   await checkDatabase(database.pool);
   const versions = await database.pool.query('SELECT name FROM pgmigrations ORDER BY id');
   expect(versions.rows.map(row => row.name)).toEqual(SCHEMA_VERSIONS);
   const tables = await database.pool.query('SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY tablename', [database.schema]);
-  expect(tables.rows.map(row => row.tablename)).toEqual(['chatgpt_sessions', 'chatgpt_transactions', 'pgmigrations']);
+  expect(tables.rows.map(row => row.tablename)).toEqual(['account_assets', 'account_deletions', 'account_snapshots', 'accounts', 'browser_sessions', 'chatgpt_sessions', 'chatgpt_transactions', 'pgmigrations', 'revoked_browser_sessions']);
+});
+
+it('appends accounts to an existing grant database without changing its rows or prior ledger', async () => {
+  await database.pool.query('DROP TABLE account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts');
+  await database.pool.query('DELETE FROM pgmigrations WHERE name=$1', [SCHEMA_VERSIONS[2]]);
+  await database.pool.query('INSERT INTO chatgpt_sessions VALUES ($1,$2,$3)', ['retained-grant', 'opaque-encrypted-fixture', 9999999999999]);
+  const before = (await database.pool.query('SELECT id,name,run_on FROM pgmigrations ORDER BY id')).rows;
+  await migrateDatabase(database.config, database.schema);
+  expect((await database.pool.query('SELECT id,name,run_on FROM pgmigrations ORDER BY id')).rows.slice(0, 2)).toEqual(before);
+  expect((await database.pool.query('SELECT * FROM chatgpt_sessions')).rows).toEqual([{ id: 'retained-grant', value: 'opaque-encrypted-fixture', expires: '9999999999999' }]);
+  await expect(checkDatabase(database.pool)).resolves.toBeUndefined();
 });
 
 it('rejects an unmigrated schema and becomes ready after explicit migration', async () => {
-  await database.pool.query('DROP TABLE chatgpt_transactions, chatgpt_sessions, pgmigrations');
+  await database.pool.query('DROP TABLE account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts, chatgpt_transactions, chatgpt_sessions, pgmigrations');
   await expect(checkDatabase(database.pool)).rejects.toThrow();
   await migrateDatabase(database.config, database.schema);
   await expect(checkDatabase(database.pool)).resolves.toBeUndefined();

@@ -41,7 +41,9 @@
     "brand:assets": "node scripts/brand-assets.mjs",
     "db:migrate": "npm run db:migrate -w @little-say/server",
     "db:status": "npm run db:status -w @little-say/server",
-    "test:integration": "vitest run --config vitest.integration.config.ts"
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:services": "firebase emulators:exec --only auth --project demo-little-say \"npm run test:integration\"",
+    "test:accounts:web": "playwright test --config playwright.accounts.config.ts"
   },
   "engines": {
     "node": ">=22.13"
@@ -58,6 +60,7 @@
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.23.1",
+    "firebase-tools": "^15.32.1",
     "tsx": "^4.20.0",
     "typescript": "~6.0.3",
     "vitest": "^4.0.0",
