@@ -1,0 +1,27 @@
+# Accounts directly on master: retained review evidence
+
+Purpose: genuine consent, restoration and recovery evidence for issue19's account-only replacement of PR24. Owner: the existing accounts continuation task. Retain this evidence branch for current and historical review; it is never a product merge target. PR24 at 74b721d095d0bd867ecaf5c093bfcf2c03e87eec, PR20 at 344aded5566e310a703ffe48312bb26d8de77fef, and original PR11 at f48a34cc501f54d05b8af1f4e3ee507372e3df3a remain unchanged. [Original PR24 evidence](https://github.com/MChartier/little-say/tree/760bb1932cde0d96be05016ff9151aee90a95c8d) remains historical, not the replacement baseline.
+
+Before: actual master 842ac7fc016fc708060886c1fe59271b7021fbb5. After: 88fd6b0865d6d195e51dd51b732fe8abcfd1a953, whose sole parent is that master. The baseline was extracted by `git archive` into `accounts-master-before`; the owned replacement worktree is `little-say-accounts-master`. Both ran `npm ci --ignore-scripts --no-audit --no-fund` and `npm run build`. The After build was part of `npm run check`. Neither checkout contains live credentials. The baseline contains no account or grant feature.
+
+## Capture and behavioral proof
+
+Run `node run-account-master-evidence.cjs` from the surrounding workspace with the two named build directories. The complete outer service owner and inner capture harness are retained here, alongside their fixture. PostgreSQL 17.6 binaries came from the separately installed @embedded-postgres/windows-x64 17.6.0-beta.15 package, with lifecycle scripts disabled. The outer harness refuses reused cluster state, creates only its own loopback database, explicitly migrates it, starts the demo-little-say Auth emulator, and stops the owned services. Runtime binary/package identities are in runtime.json. No hosted identity, paid inference, provider setup or device installation was used.
+
+The inner harness starts its own Before and After APIs on ports 4191/4192. manifest.json binds source SHAs, server PIDs, server bundle hashes, successful actually-loaded browser bundle bytes/hashes, capture times, browser version, and all image/fixture/harness digests. It asserts nonempty loaded App bundles and equality with each isolated build. The full manifest is immutable at this evidence commit; do not silently substitute its identity.
+
+Both contexts use Chromium, 1180×1050, scale 1, en-US, UTC, light theme, reduced motion and one shared current clock. Storage is fresh. The original-device consent comparison uses the same seeded Farmyard friends library. The fresh-device comparison begins with empty storage; the baseline completes guest setup without starters because it has no restore action, while After signs into the verified account. No UI is hidden, mocked, cropped or pixel-edited. The blank-looking Cow/Sheep thumbnails are deliberately tiny synthetic media. The harness asserts exact restoration of boards plus photo, generated-picture and speech byte arrays, with AI consent remaining false.
+
+- before-consent-unavailable.png / after-backup-consent.png: genuine master Parent settings has no account entry; After explains upload scope, server access and optionality before confirmation. Different necessary navigation reflects the new feature.
+- before-fresh-device.png / after-restored-device.png: master has no saved boards; After restores the verified account library on a fresh browser.
+- after-offline-retry.png / after-recovered.png: supplemental sequence at the same After revision, not a purported baseline pair. Offline sync leaves the library unchanged and displays the error; reconnection restores successful sync.
+
+All six images were independently opened and inspected by the implementer. Their disclosure, empty/restored library and offline/recovered states are visible and agree with the asserted behavior. Actual authenticated GitHub PR-page rendering remains unavailable in this environment: no authenticated browser tool is exposed. The prior human rendering waiver covered PR20/24 only and is not applied to the replacement. Independent QA and actual rendered-page verification remain required.
+
+## Current checks and scope
+
+`npm run check`: release validation, types, 228 unit tests and server/web builds passed. Owned PostgreSQL17/Auth-emulator execution: 25 integration tests and three real account-browser scenarios passed. Foundation-to-accounts migration preserves the prior ledger; exact-server API regression protects credentials from development overrides. Android JavaScript export passed, which is not hardware or provider proof. Guest browser results and published scope are recorded in the final handoff record.
+
+The product range has one accounts commit and 52 paths; full inventories in scope.json. No deferred OAuth commits, grant migration/routes/panel/billing headers, evidence, ad-hoc harnesses or capture logs enter product history. The required dependency lock contributes 11,972 additions / 3,223 deletions; zero pre-existing dependency versions changed or disappeared. Other retained files are account product/contracts, maintained regression tests/configuration, and account/testing documentation. The unchanged foundation migration is followed directly by 1760000000002_accounts; no applied migration was relabeled.
+
+Real Google/Apple authorization, native SecureStore on hardware and live provider revocation remain unperformed. Synthetic tests establish only the described contracts. No readiness or merge is claimed.
