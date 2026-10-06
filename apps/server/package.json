@@ -7,7 +7,9 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
     "start": "node dist/index.js",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "db:migrate": "tsx src/database-cli.ts migrate",
+    "db:status": "tsx src/database-cli.ts status"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.0",
@@ -17,7 +19,9 @@
     "@little-say/core": "*",
     "dotenv": "^17.0.0",
     "fastify": "^5.12.5",
+    "node-pg-migrate": "^9.0.0",
     "openai": "^7.27.0",
+    "pg": "^8.23.1",
     "sharp": "^0.35.5",
     "ws": "^8.21.0",
     "zod": "^4.6.5"

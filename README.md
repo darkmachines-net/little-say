@@ -78,6 +78,7 @@ For a production web preview without Docker, run `npm run build` then `npm start
 
 - [Local development](docs/LOCAL_DEVELOPMENT.md): Expo Go, environment resolution, ports and device connectivity.
 - [Testing](docs/testing.md): automated checks, opt-in live AI evaluation and native validation.
+- [PostgreSQL foundation](docs/POSTGRES.md): shared connection, migration and transaction tools for server storage features.
 - [Releases](docs/releases.md): GitHub server-image publication; local native builds/submissions, OTA updates and server deployment.
 - [Interface conventions](docs/DESIGN.md) and [mountain assets](apps/mobile/assets/brand/README.md).
 

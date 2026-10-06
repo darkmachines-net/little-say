@@ -21,6 +21,7 @@ FROM node:24-bookworm-slim AS runtime
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=8787 WEB_ROOT=/app/web
 WORKDIR /app
 COPY --from=build /app/apps/server/dist ./server
+COPY --from=build /app/apps/server/migrations ./migrations
 COPY --from=build /app/apps/mobile/dist ./web
 COPY --from=server-deps /app/node_modules ./node_modules
 COPY --from=build /app/apps/server/package.json ./package.json
