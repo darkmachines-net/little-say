@@ -1,0 +1,167 @@
+{
+  "records": [
+    {
+      "name": "before",
+      "root": "accounts-launch-before",
+      "sourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "origin": "http://127.0.0.1:4191",
+      "serverPid": 26864,
+      "serverBundleSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e",
+      "loaded": [
+        {
+          "path": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "bytes": 359876,
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "bytes": 5759606,
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "bytes": 359876,
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "bytes": 5759606,
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "bytes": 359876,
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        },
+        {
+          "path": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "bytes": 5759606,
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        }
+      ],
+      "images": [
+        {
+          "file": "before-launch.png",
+          "sha256": "4e411ebeaa00fbf9fdb7c52e92acae57c672eabec6f1790fec363ef314e1c3d9",
+          "capturedAt": "2026-10-06T22:35:21.364Z"
+        },
+        {
+          "file": "before-consent-unavailable.png",
+          "sha256": "009ba9d3f4269f089d79d813d2410297644cb8dad8c0b65acd2eaba971166eda",
+          "capturedAt": "2026-10-06T22:35:22.391Z"
+        },
+        {
+          "file": "before-fresh-device.png",
+          "sha256": "78ad4a61e34be92b8fc6b14dd0cce0c30f84e5e7d49c60a7e04d8a95a6d65f46",
+          "capturedAt": "2026-10-06T22:35:23.511Z"
+        }
+      ]
+    },
+    {
+      "name": "after",
+      "root": "little-say-accounts-master",
+      "sourceSha": "ddad8685c60bb390eacf81613249584eae55eb1e",
+      "origin": "http://127.0.0.1:4192",
+      "serverPid": 18788,
+      "serverBundleSha256": "d4bcacfcc34fb20d2631ed611504d271f4227c8e8fa2bbc14800f049b7ece7f0",
+      "loaded": [
+        {
+          "path": "/_expo/static/js/web/index-d92e9e880e40a4382b3d9841b2c87bcd.js",
+          "bytes": 359876,
+          "sha256": "72e4c6b0573081449a4a974fd4d695b4fde967d1e52479a6e2bda27dee123afa"
+        },
+        {
+          "path": "/_expo/static/js/web/App-8cebda393f921c106a906946537d8198.js",
+          "bytes": 6076773,
+          "sha256": "88a6b9af7c4bd70213a477c7237d5b63b2ad8a7e21bc8761e4484b554b96fc43"
+        },
+        {
+          "path": "/_expo/static/js/web/index-d92e9e880e40a4382b3d9841b2c87bcd.js",
+          "bytes": 359876,
+          "sha256": "72e4c6b0573081449a4a974fd4d695b4fde967d1e52479a6e2bda27dee123afa"
+        },
+        {
+          "path": "/_expo/static/js/web/App-8cebda393f921c106a906946537d8198.js",
+          "bytes": 6076773,
+          "sha256": "88a6b9af7c4bd70213a477c7237d5b63b2ad8a7e21bc8761e4484b554b96fc43"
+        },
+        {
+          "path": "/_expo/static/js/web/index-d92e9e880e40a4382b3d9841b2c87bcd.js",
+          "bytes": 359876,
+          "sha256": "72e4c6b0573081449a4a974fd4d695b4fde967d1e52479a6e2bda27dee123afa"
+        },
+        {
+          "path": "/_expo/static/js/web/App-8cebda393f921c106a906946537d8198.js",
+          "bytes": 6076773,
+          "sha256": "88a6b9af7c4bd70213a477c7237d5b63b2ad8a7e21bc8761e4484b554b96fc43"
+        }
+      ],
+      "images": [
+        {
+          "file": "after-launch.png",
+          "sha256": "80b0f8f066161debe3948c5d6b176e7b20484da5d3e4534b6be52eaa063adc14",
+          "capturedAt": "2026-10-06T22:35:25.375Z"
+        },
+        {
+          "file": "after-settings.png",
+          "sha256": "80598abf63d84d43ba6633fd8609aeec64f035de1874b21018a62f4dad038f02",
+          "capturedAt": "2026-10-06T22:35:26.394Z"
+        },
+        {
+          "file": "after-backup-consent.png",
+          "sha256": "7392a03f5a4b3ccfd1bd51c8ba23d41e0106c4286c1ebeac16113e67609b742f",
+          "capturedAt": "2026-10-06T22:35:27.393Z"
+        },
+        {
+          "file": "after-restored-device.png",
+          "sha256": "5ce09b65983d8285ad1089b68b554ffe74329d2060ad5f50b1f93fd3dfd65a83",
+          "capturedAt": "2026-10-06T22:35:32.893Z"
+        },
+        {
+          "file": "after-offline-retry.png",
+          "sha256": "811abd1fa4045b8286570744643c202e36733334d4f06b79f467e8a1d7744445",
+          "capturedAt": "2026-10-06T22:35:33.958Z"
+        },
+        {
+          "file": "after-recovered.png",
+          "sha256": "25f4388a42363935d7e1af035e58a69479ab476448f442ef6c72f3a3a16feae9",
+          "capturedAt": "2026-10-06T22:35:34.593Z"
+        }
+      ]
+    }
+  ],
+  "browser": "153.0.8010.12",
+  "epoch": 1791326117446,
+  "postgresVersion": "PostgreSQL 17.6 on x86_64-windows, compiled by msvc-19.44.35213, 64-bit",
+  "emulator": "owned Firebase demo-little-say Auth emulator via emulators:exec; real loopback APIs; no hosted provider",
+  "viewport": {
+    "width": 390,
+    "height": 1050,
+    "scale": 1
+  },
+  "localAfterPreference": "accountChoiceMade=true after explicitly choosing guest; no board/media/consent normalization",
+  "normalization": "Shared fixed current clock, en-US, UTC, light, reduced motion. Fresh storage; no UI hiding, API mocking, cropping, or pixel edits.",
+  "assertions": [
+    "Same seeded guest library before consent",
+    "Master lacks account consent/restore actions",
+    "Fresh master device has no boards",
+    "Email verification precedes backup",
+    "Fresh After device restored exact boards and all three media byte arrays",
+    "Offline sync failure preserved local boards",
+    "Online event restored successful sync"
+  ],
+  "artifacts": [
+    {
+      "file": "fixture.json",
+      "sha256": "53b3168f1e6ab1e7148cbf58d7a2e35637c5b5ecec739d878eb76161f76cb49d"
+    },
+    {
+      "file": "capture-accounts-launch-evidence.cjs",
+      "sha256": "d3b31a6efc00a050740cc90e93b36e5f5c8ac44b89f67ab0a24894d84de2291e"
+    },
+    {
+      "file": "run-accounts-launch-evidence.cjs",
+      "sha256": "d42cbbb3d2fad953f0ca710b7cf10372c32b9b5b66dcff64ca3d4289b29d19e2"
+    }
+  ]
+}

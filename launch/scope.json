@@ -1,0 +1,425 @@
+{
+  "repository": "MChartier/little-say",
+  "head": "ddad8685c60bb390eacf81613249584eae55eb1e",
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "baseRef": "master",
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "commits": [
+    {
+      "sha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+      "parents": [
+        "842ac7fc016fc708060886c1fe59271b7021fbb5"
+      ],
+      "message": "Add optional account backup and restore independently of OAuth grants"
+    },
+    {
+      "sha": "52f090db1ad3b733d10754196b25e161d378f805",
+      "parents": [
+        "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "message": "Merge branch 'master' of https://github.com/MChartier/little-say into continuation/accounts-master-zbook"
+    },
+    {
+      "sha": "ddad8685c60bb390eacf81613249584eae55eb1e",
+      "parents": [
+        "52f090db1ad3b733d10754196b25e161d378f805"
+      ],
+      "message": "Offer dedicated account screens at launch and from settings"
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 1,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/mobile/app.config.js",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 6,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.ts",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.web.ts",
+      "status": "modified",
+      "additions": 19,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/data/useLibrary.ts",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.web.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.test.ts",
+      "status": "added",
+      "additions": 59,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.ts",
+      "status": "added",
+      "additions": 74,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/api.test.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/mobile/src/services/api.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 3,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebase-native.d.ts",
+      "status": "added",
+      "additions": 14,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseAccount.ts",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.test.ts",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.ts",
+      "status": "added",
+      "additions": 58,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.web.ts",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.test.ts",
+      "status": "added",
+      "additions": 13,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.ts",
+      "status": "added",
+      "additions": 39,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.web.ts",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/speechLibrary.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/services/useAccount.ts",
+      "status": "added",
+      "additions": 133,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountPanel.tsx",
+      "status": "added",
+      "additions": 86,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountScreen.tsx",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "status": "modified",
+      "additions": 11,
+      "deletions": 3,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/mobile/src/ui/components.tsx",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 3,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/migrations/1760000000002_accounts.sql",
+      "status": "added",
+      "additions": 43,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/account-routes.ts",
+      "status": "added",
+      "additions": 102,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/accounts.ts",
+      "status": "added",
+      "additions": 154,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/app.ts",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 3,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/database.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/firebase.ts",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/src/index.ts",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 2,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "apps/server/test/accounts.integration.test.ts",
+      "status": "added",
+      "additions": 100,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/server/test/database.integration.test.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 3,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "apps/server/test/firebase.integration.test.ts",
+      "status": "added",
+      "additions": 134,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "docs/ACCOUNTS.md",
+      "status": "added",
+      "additions": 40,
+      "deletions": 0,
+      "reason": "Maintained account behavior/testing contract"
+    },
+    {
+      "path": "docs/testing.md",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "firebase.json",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "modified",
+      "additions": 11972,
+      "deletions": 3223,
+      "reason": "Account dependencies; existing versions unchanged"
+    },
+    {
+      "path": "package.json",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "packages/core/src/account.test.ts",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "packages/core/src/account.ts",
+      "status": "added",
+      "additions": 61,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "status": "modified",
+      "additions": 17,
+      "deletions": 0,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "playwright.accounts.config.ts",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "playwright.config.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "scripts/dev-proxy.cjs",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 1,
+      "reason": "Account product, local launch navigation, contracts and migration"
+    },
+    {
+      "path": "scripts/dev-proxy.test.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "scripts/test-server.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "tests/web/accounts.spec.ts",
+      "status": "added",
+      "additions": 232,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "tests/web/existingLibrary.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    },
+    {
+      "path": "tests/web/setup.spec.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "reason": "Maintained regression/configuration for accounts and preserved guest flows"
+    }
+  ]
+}
