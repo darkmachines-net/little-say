@@ -1,0 +1,10 @@
+{
+  "checkedAtUtc": "2026-10-06T03:15:43.126Z",
+  "head": null,
+  "base": null,
+  "bodySha256": "a8821f8d52b7cb0ddd399b00c0ea430c3e560777d3d9e4681079822dba5658ae",
+  "bodyHtmlSha256": "5ec7f98f8d33d7d092e8e6f1ffc9e6d0049be663f6e8c6324df5da5dca0d6498",
+  "scope": "Exact API-rendered body_html with authenticated repository image routing. Full authenticated GitHub-page layout unavailable: CUA kernel fails applying sandbox ACLs. Browser UI access not claimed.",
+  "loaded": [],
+  "images": []
+}
