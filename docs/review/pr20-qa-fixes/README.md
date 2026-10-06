@@ -1,0 +1,13 @@
+# PR20 matched capture correction
+
+Purpose: retained non-product review evidence for QA20-2. Owner: original PR20 implementation owner. Retain through human review and stack completion. This evidence branch is never a product merge target.
+
+These are NEW captures from actual master 842ac7fc016fc708060886c1fe59271b7021fbb5 and corrected head 344aded5566e310a703ffe48312bb26d8de77fef. The prior c5d40e709ed5294fbb7e316f57aa3a9e1b9b5fe3 records remain historical. Their empty loadedBundles arrays did NOT establish served-JavaScript identity; the prior README claim of byte verification was unsupported. Do not use those records as running-build proof or relabel their screenshots.
+
+Build each clean isolated checkout with `npm run build`. Place capture.ts at `artifacts/capture-qa20.ts` in the final checkout, with the actual master checkout at sibling `little-say-before`; run `npx tsx artifacts/capture-qa20.ts`. The fixture imported from final source `tests/fixtures/library.ts` is also retained as fixture.ts. Its exact identity, harness hash, full export/server inventories, source SHAs, browser version/time, screenshot hashes and loaded responses are bound in manifest.json.
+
+The harness refuses an already-listening capture port. It launches the actual built server with provider credentials empty and ChatGPT activation false, waits for health, then checks netstat's listening PID equals that launched child's PID. It rechecks ownership before capture. The browser response listener hashes actual JavaScript response bodies and compares them with isolated exported files. Nonempty assertions require the actual App bundle; both index and App scripts were checked on initial navigation and reload. No follow-up fetch substitutes for the bytes the browser loaded. Each source record has four checked responses (two unique scripts).
+
+Identical synthetic board/status/error fixtures, fixed browser Date, fresh browser context/IndexedDB, blocked service workers, 1180x900 viewport, scale1 and light theme are used. No UI hiding or pixel editing; animations disabled only for screenshots. Settings illustrates the optional controls. The rejected-draft pair illustrates explicit plan/unsupported-action disclosure while preserving the same prompt and synthetic429. Baseline has no grant status consumer. The manifest contains all relevant setup data and original PNG identities.
+
+Only browser pixels were captured; no live OAuth, paid inference or native-device evidence. Actual authenticated GitHub PR-page inspection remains a separate unverified gate. API Markdown rendering does not satisfy it.
