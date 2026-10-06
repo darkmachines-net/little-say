@@ -1,0 +1,564 @@
+{
+  "checkedAt": "2026-10-06T17:20:26.098Z",
+  "head": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+  "base": "842ac7fc016fc708060886c1fe59271b7021fbb5",
+  "baseRef": "master",
+  "draft": true,
+  "labels": [],
+  "prBody": "## Summary\n\nFamilies currently keep boards and saved media only on each device, so reinstalling or moving devices can lose their library. This adds optional Firebase sign-in and consent-based backup to the selected server, preserving guest use, offline playback and local boards after sign-out.\n\nBackups validate media with SHA-256, preserve conflicting edits, enforce quotas and retry interrupted deletion. Browser sessions use HttpOnly cookies; native credentials use SecureStore. The accounts migration follows the landed PostgreSQL foundation. Account requests stay pinned to the consented server, including during development.\n\nCloses #19. Replaces the accounts work in #24 directly on master, without the deferred OAuth grants in #20. Those branches and their historical evidence remain preserved.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed result |\n| --- | --- |\n| Create an account, verify email, then sign in on a fresh browser | Explicit consent precedes backup; verification gates sync; boards and photo/picture/speech bytes restore exactly. Three real account-browser scenarios passed. |\n| Disconnect during sync, then reconnect | Local boards remain intact; reconnect completes sync. Browser tests also passed offline conflict-copy, sign-out and account/server-isolation cases. |\n| Upgrade the foundation database; corrupt media; race revisions/quotas; interrupt deletion | Prior migration ledger is preserved, unsafe writes are rejected and deletion work stays durable. All 25 PostgreSQL17/Auth-emulator contracts passed. |\n\n### Before / After\n\nBefore is actual master `842ac7f`; After is the account-only head `88fd6b0`. Matched synthetic library, fresh second-device storage, 1180×1050, scale 1, light theme and shared clock. No UI hiding or image edits. Baseline navigation differs because master has no account action.\n\n**Consent:** After explains what uploads, server access and how to continue without signing in.\n\n| Before: no account consent | After: explicit backup consent |\n| --- | --- |\n| ![Before: master Parent settings](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/before-consent-unavailable.png?raw=true) | ![After: backup disclosure and consent](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-backup-consent.png?raw=true) |\n\n**Restore:** the fresh master device has no saved boards; After restores the verified account library. Blank-looking thumbnails are deliberate tiny synthetic media; restored bytes were asserted exactly.\n\n| Before: fresh guest device | After: restored account library |\n| --- | --- |\n| ![Before: no saved boards](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/before-fresh-device.png?raw=true) | ![After: Farmyard friends restored](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-restored-device.png?raw=true) |\n\n**Recovery, both at After:** offline sync reports failure without losing boards; reconnect completes sync. This supplements the master-to-head comparisons.\n\n| After: offline failure | After: recovered |\n| --- | --- |\n| ![After: boards retained during failure](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-offline-retry.png?raw=true) | ![After: all boards and assets synced](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/after-recovered.png?raw=true) |\n\n[Immutable source/build/fixture provenance, reproduction and full scope](https://github.com/MChartier/little-say/blob/5731b0dafacd0553b538c3f9d824348c75ce92b5/README.md). Nonempty actually loaded bundles matched both isolated builds.\n\n## Supporting checks and limitations\n\n[Current-head CI](https://github.com/MChartier/little-say/actions/runs/37501992018) passed. Release/type checks, 228 unit tests, 73 guest/offline browser scenarios, server/web builds and Android JavaScript export passed. Real Google/Apple authorization and hardware SecureStore remain unverified; synthetic identities and export are not provider/device proof. No provider setup or deployment is included. Independent QA and authenticated GitHub image rendering remain pending; the prior PR20/24 rendering waiver does not cover this replacement.\n",
+  "prBodySha256": "0cc4ac69bdecfcd547d7b5bb6a6fd142f38e6b8ba4e5b3bda13bf70f8c6365ee",
+  "commits": [
+    {
+      "sha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+      "parents": [
+        "842ac7fc016fc708060886c1fe59271b7021fbb5"
+      ],
+      "message": "Add optional account backup and restore independently of OAuth grants"
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 1,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/mobile/app.config.js",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 1,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 2,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.ts",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.web.ts",
+      "status": "modified",
+      "additions": 19,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/data/useLibrary.ts",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.web.ts",
+      "status": "added",
+      "additions": 17,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.test.ts",
+      "status": "added",
+      "additions": 59,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.ts",
+      "status": "added",
+      "additions": 74,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/api.test.ts",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/api.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 3,
+      "scopeReason": "Exact consented-server credential isolation without deferred billing headers"
+    },
+    {
+      "path": "apps/mobile/src/services/firebase-native.d.ts",
+      "status": "added",
+      "additions": 14,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseAccount.ts",
+      "status": "added",
+      "additions": 140,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.test.ts",
+      "status": "added",
+      "additions": 31,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.ts",
+      "status": "added",
+      "additions": 58,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.web.ts",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.test.ts",
+      "status": "added",
+      "additions": 13,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.ts",
+      "status": "added",
+      "additions": 39,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.web.ts",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/speechLibrary.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/services/useAccount.ts",
+      "status": "added",
+      "additions": 124,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountPanel.tsx",
+      "status": "added",
+      "additions": 86,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 2,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/migrations/1760000000002_accounts.sql",
+      "status": "added",
+      "additions": 43,
+      "deletions": 0,
+      "scopeReason": "Append independent account schema to unchanged landed foundation"
+    },
+    {
+      "path": "apps/server/package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/src/account-routes.ts",
+      "status": "added",
+      "additions": 102,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/src/accounts.ts",
+      "status": "added",
+      "additions": 154,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/src/app.ts",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 3,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/src/database.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "scopeReason": "Append independent account schema to unchanged landed foundation"
+    },
+    {
+      "path": "apps/server/src/firebase.ts",
+      "status": "added",
+      "additions": 79,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/src/index.ts",
+      "status": "modified",
+      "additions": 21,
+      "deletions": 2,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "apps/server/test/accounts.integration.test.ts",
+      "status": "added",
+      "additions": 100,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/server/test/database.integration.test.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 3,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "apps/server/test/firebase.integration.test.ts",
+      "status": "added",
+      "additions": 134,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "docs/ACCOUNTS.md",
+      "status": "added",
+      "additions": 38,
+      "deletions": 0,
+      "scopeReason": "Maintained account contract and test operation"
+    },
+    {
+      "path": "docs/testing.md",
+      "status": "modified",
+      "additions": 20,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "firebase.json",
+      "status": "added",
+      "additions": 7,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "modified",
+      "additions": 11972,
+      "deletions": 3223,
+      "scopeReason": "Required account SDK/emulator dependency closure; no existing versions changed"
+    },
+    {
+      "path": "package.json",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 1,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "packages/core/src/account.test.ts",
+      "status": "added",
+      "additions": 49,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "packages/core/src/account.ts",
+      "status": "added",
+      "additions": 61,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "status": "modified",
+      "additions": 15,
+      "deletions": 0,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "playwright.accounts.config.ts",
+      "status": "added",
+      "additions": 15,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "playwright.config.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "scripts/dev-proxy.cjs",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 1,
+      "scopeReason": "Published account outcome and necessary mobile/server/core wiring"
+    },
+    {
+      "path": "scripts/dev-proxy.test.ts",
+      "status": "modified",
+      "additions": 12,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "scripts/test-server.ts",
+      "status": "added",
+      "additions": 20,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    },
+    {
+      "path": "tests/web/accounts.spec.ts",
+      "status": "added",
+      "additions": 161,
+      "deletions": 0,
+      "scopeReason": "Maintained account or guest regression validation and isolated runtime configuration"
+    }
+  ],
+  "verifiedArtifacts": [
+    {
+      "name": "after-backup-consent.png",
+      "sha256": "e52efd39fd0c9f05a89c3cca5113243a3a1fcaa7cceedacbfbda6c41f4e9cfd6"
+    },
+    {
+      "name": "after-offline-retry.png",
+      "sha256": "75a2c587a17ca87e7491d4b6814384c1c7d350a2f3fd062fa89a29bc1138b294"
+    },
+    {
+      "name": "after-recovered.png",
+      "sha256": "1a230d1f8e2a4094beb8a68e8f278241db3b7ffbb8e005fdd29d6b7626a0c67a"
+    },
+    {
+      "name": "after-restored-device.png",
+      "sha256": "36e587c86d4bc19747c510f635df6e2577e1bdafaf290c14d391c9db340f61bd"
+    },
+    {
+      "name": "before-consent-unavailable.png",
+      "sha256": "6f5c4092683fe6c306adbae24a275dbb4e9c8f71aebaa59211e996452e0c8b06"
+    },
+    {
+      "name": "before-fresh-device.png",
+      "sha256": "b76173eb007641b881d625461384ef6d4898e538c353391947ec41135c34a279"
+    },
+    {
+      "name": "capture-account-master-evidence.cjs",
+      "sha256": "6d4c0235a5434cb73f15c35d0c1f72b25eb50329d616326b27ad7406263f4036"
+    },
+    {
+      "name": "fixture.json",
+      "sha256": "53b3168f1e6ab1e7148cbf58d7a2e35637c5b5ecec739d878eb76161f76cb49d"
+    },
+    {
+      "name": "manifest.json",
+      "sha256": "dd577107cc74d2081a2fcd6eeb3f9dbd8d2b7a556cda65a0936c612846888ff7"
+    },
+    {
+      "name": "README.md",
+      "sha256": "75404ac3a5b449040c5f9a8b80ecfc9ca7409f05efa728fd5ad83ba971c9337f"
+    },
+    {
+      "name": "run-account-master-evidence.cjs",
+      "sha256": "87305e2127f864339ee261a59e0d07dec672033476f85e411d4dd7bf4d859379"
+    },
+    {
+      "name": "runtime.json",
+      "sha256": "110a8917f2a33a4ca3a12d38d811730cf06eaaf9e6d5184eaadf7ef8c7dcdaaa"
+    },
+    {
+      "name": "scope.json",
+      "sha256": "1648212cf46182d814eeb5a692c3c695808f413eb589e5021af05ca45ea92925"
+    }
+  ],
+  "oldStack": {
+    "head": "74b721d095d0bd867ecaf5c093bfcf2c03e87eec",
+    "commitsAgainstMaster": 8,
+    "pathsAgainstMaster": 72,
+    "preservedEvidence": "760bb1932cde0d96be05016ff9151aee90a95c8d"
+  },
+  "checks": {
+    "unit": 228,
+    "integrationPostgres17AuthEmulator": 25,
+    "accountBrowser": 3,
+    "guestBrowser": 73,
+    "releaseTypesServerWebBuild": "passed",
+    "androidJavaScriptExport": "passed, no device installation",
+    "renderedGithub": "unverified; no authenticated browser tool exposed; old waiver not applicable"
+  },
+  "bot": {
+    "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6021548643",
+    "html_url": "https://github.com/MChartier/little-say/pull/29#issuecomment-6021548643",
+    "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/29",
+    "id": 6021548643,
+    "node_id": "IC_kwDOU65Oyc8AAAABZumKYw",
+    "user": {
+      "login": "chatgpt-codex-connector[bot]",
+      "id": 199175422,
+      "node_id": "BOT_kgDOC98s_g",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-06T17:15:55Z",
+    "updated_at": "2026-10-06T17:15:55Z",
+    "author_association": "NONE",
+    "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+    "reactions": {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6021548643/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": {
+      "id": 1144995,
+      "slug": "chatgpt-codex-connector",
+      "node_id": "A_kwHOAOQ6Gs4AEXij",
+      "owner": {
+        "login": "openai",
+        "id": 14957082,
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjE0OTU3MDgy",
+        "avatar_url": "https://avatars.githubusercontent.com/u/14957082?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/openai",
+        "html_url": "https://github.com/openai",
+        "followers_url": "https://api.github.com/users/openai/followers",
+        "following_url": "https://api.github.com/users/openai/following{/other_user}",
+        "gists_url": "https://api.github.com/users/openai/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/openai/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/openai/subscriptions",
+        "organizations_url": "https://api.github.com/users/openai/orgs",
+        "repos_url": "https://api.github.com/users/openai/repos",
+        "events_url": "https://api.github.com/users/openai/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/openai/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "name": "ChatGPT Codex Connector",
+      "description": "Bring ChatGPT and Codex to your GitHub repositories.",
+      "external_url": "https://www.chatgpt.com",
+      "html_url": "https://github.com/apps/chatgpt-codex-connector",
+      "created_at": "2025-02-14T01:37:05Z",
+      "updated_at": "2026-09-23T18:52:59Z",
+      "permissions": {
+        "actions": "write",
+        "checks": "read",
+        "contents": "write",
+        "emails": "read",
+        "issues": "write",
+        "metadata": "read",
+        "pull_requests": "write",
+        "statuses": "read",
+        "workflows": "write"
+      },
+      "events": [
+        "check_run",
+        "check_suite",
+        "commit_comment",
+        "issues",
+        "issue_comment",
+        "pull_request",
+        "pull_request_review",
+        "pull_request_review_comment",
+        "pull_request_review_thread",
+        "repository",
+        "status",
+        "sub_issues"
+      ]
+    },
+    "minimized": null,
+    "pin": null
+  },
+  "ci": {
+    "conclusion": "success",
+    "headSha": "88fd6b0865d6d195e51dd51b732fe8abcfd1a953",
+    "status": "completed",
+    "url": "https://github.com/MChartier/little-say/actions/runs/37501992018"
+  },
+  "next": "Same independent QA; actual authenticated rendered PR required. Prior rendering waiver does not apply. Coordinator owns issue19/Project Current PR update and superseded closure decision."
+}
