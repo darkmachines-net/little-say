@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-16/qa-head
+
+
+ Test Files  4 passed (4)
+      Tests  6 passed (6)
+   Start at  20:26:19
+   Duration  4.87s (transform 986ms, setup 0ms, import 3.69s, tests 542ms, environment 0ms)
+

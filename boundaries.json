@@ -1,0 +1,106 @@
+{
+  "checkedAtUtc": "2026-10-07T03:30:11.881Z",
+  "resourceFailures": [
+    {
+      "label": "missing",
+      "stage": "build",
+      "error": "Cannot read file: C:\\Users\\MChar\\Documents\\Codex\\2026-10-06\\task-16\\records\\missing-resource\\board.json"
+    },
+    {
+      "label": "invalid-json",
+      "stage": "build",
+      "error": "Expected string in JSON but found end of file"
+    },
+    {
+      "label": "missing-field",
+      "stage": "initialization",
+      "exitCode": 1,
+      "error": "Error: Missing or invalid prompt: server/board.instructions"
+    },
+    {
+      "label": "unknown-template",
+      "stage": "initialization",
+      "exitCode": 1,
+      "error": "Error: Invalid prompt fields: server/speech.instructions"
+    }
+  ],
+  "clientBundles": [
+    {
+      "platform": "web",
+      "source": "read-only retained owner bundle bytes",
+      "allRecordedHashesVerified": true,
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\App-dd04d083665bb72107758e76d66fd6ce.js",
+          "bytes": 5761800,
+          "sha256": "8f71e04d2b55fcf6cd68ad54dcca43859b5fc1b4dfa830f52709b18fe01c7e2e"
+        },
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\index-3e4c181f0c61d5227a99f4d463cd8d53.js",
+          "bytes": 359876,
+          "sha256": "801b6c86ab42ebdd80a2b505430584274c4ed90684739ced2138df04388f9f9e"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "source": "read-only retained owner bundle bytes",
+      "allRecordedHashesVerified": true,
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\ios\\index-f5f6361364ea89f16f73b66385ef3710.hbc",
+          "bytes": 6855447,
+          "sha256": "6c75859423942c95b756613a70bafac090d07f6127e13b24c94ca175a7c50552"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "source": "read-only retained owner bundle bytes",
+      "allRecordedHashesVerified": true,
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\android\\index-35556cb8d822daa2c55b9842370c95f9.hbc",
+          "bytes": 6860310,
+          "sha256": "30b79712e4cc42433179d0cc8d20173d2df259babdb4336e2ddb4300a08d7af3"
+        }
+      ]
+    }
+  ],
+  "sourceTsx": {
+    "status": 0,
+    "observation": "Unicode, combining marks, quotes, dollars, repeated fields, braces, backslash and newlines preserved once"
+  },
+  "relocatedRuntime": {
+    "status": 200,
+    "health": {
+      "status": "ok",
+      "aiConfigured": false,
+      "version": "0.2.0",
+      "pictures": {
+        "version": 1,
+        "catalog": true,
+        "analysis": false,
+        "generation": false
+      }
+    },
+    "copiedSourceOrPromptDirectories": false,
+    "serverFiles": [
+      "database-cli.js",
+      "index.js"
+    ],
+    "serverBundleSha256": "d0465482cbaf4c61365b0110ab8f2e4ca5da7e8bf233c5b66e8e5eae84feaef5"
+  },
+  "docker": {
+    "performed": false,
+    "engineProbeExitCode": 1,
+    "reason": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.",
+    "assessment": "Static JSON imports embed all server/shared resources in production dist. Unchanged Docker build COPY . . includes prompts; runtime copies complete dist. Source-free production launch and bundle tests pass. Container build/run remains unperformed; this exact-text refactor does not alter image/dependency contracts."
+  }
+}

@@ -1,0 +1,3 @@
+/** @file Captures baseline/current presets without changing product source. */
+import {writeFileSync,readFileSync} from 'node:fs'; import {expect,it} from 'vitest'; import {starterPrompt,starterTopics} from 'C:/Users/MChar/Documents/Codex/2026-10-06/task-16/qa-base/packages/core/src/onboarding'; 
+it('captures presets',()=>{const conversation=Array.from(readFileSync('C:/Users/MChar/Documents/Codex/2026-10-06/task-16/qa-base/apps/mobile/src/ui/AiConversation.tsx','utf8').matchAll(/'(Create six [^']+)'/g),m=>m[1]);expect(conversation).toHaveLength(3);writeFileSync("C:/Users/MChar/Documents/Codex/2026-10-06/task-16/records/reproduce-base/presets.json",JSON.stringify({topics:starterTopics,starters:starterTopics.map(t=>starterPrompt(t.id)),conversation},null,2)+'\n');});

@@ -1,0 +1,229 @@
+{
+  "manifestSha256": "96c59178d5fb560a3b6a77e2b95a7ac5ad0034fcd5d53e21bba8efd196f527b3",
+  "artifacts": [
+    {
+      "file": "before/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "after/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "before/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "after/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "before/prompt-payloads.test.ts",
+      "sha256": "87704dc2237062db2ef016f8c4ec357758a9414290623b7783fd0b254cda903d"
+    },
+    {
+      "file": "before/prompt-presets.test.ts",
+      "sha256": "d91c71e6007844000d0d4a00346f02064c88f2a5c4b9346a8ec48cde04d696e5"
+    },
+    {
+      "file": "after/prompt-payloads.test.ts",
+      "sha256": "01a84f25e501548b053b408769e3d7be5074a97048bacdec664aa1de26ec555e"
+    },
+    {
+      "file": "after/prompt-presets.test.ts",
+      "sha256": "8d9ba17dafcbe12b0eb02a57ed31d0e8e007a1c87e3b0a793a6a2746cfc7c10c"
+    },
+    {
+      "file": "before/test.log",
+      "sha256": "13596378b39b5751cd1c7a47d974e73af30b8cb3bf27cef66a6c30ef656bbd3f"
+    },
+    {
+      "file": "after/test.log",
+      "sha256": "184a594c57dce02ae4b0ee3aacc02ac405ed73d67ba32ce0199fcc98b922c4e2"
+    },
+    {
+      "file": "check-final.log",
+      "sha256": "a97f6b81d1e982b40d1af271c911dfce96a0071af64823126a09b3beea7cc5e5"
+    },
+    {
+      "file": "bundle-test.log",
+      "sha256": "2f690d41c04f6f62614d83afc4b2a7ef181ff42510bbe13473437ac7b8df313b"
+    },
+    {
+      "file": "native-export.log",
+      "sha256": "f1d4cea769140122dba22a72804c368fce32db7153380f7fc12885104ed1d578"
+    },
+    {
+      "file": "browser-final.log",
+      "sha256": "a244080913e13f9d5153c17172a52cdf20745b10debc45e659f864fa2c312018"
+    },
+    {
+      "file": "runtime-report.json",
+      "sha256": "feafb492ce5665bacb3d9acf8588755fae60eec70e1c4fa28542728cabb6b43e"
+    },
+    {
+      "file": "runtime.log",
+      "sha256": "c7d7816b9efa01d579cfb0f5bcd67bfacac5b3bac340fa6db3521a4438a3a656"
+    },
+    {
+      "file": "negative-control.log",
+      "sha256": "d3823bb00c6f0a4583a6152acb2d6939e69d032eb5437529761701d712cc3c03"
+    },
+    {
+      "file": "restored-control.log",
+      "sha256": "3525a3380e286aa8fecea6776c2318524fb3b4e202490208dd23e2d1b01107b4"
+    }
+  ],
+  "sourceBlobs": [
+    {
+      "file": "apps/mobile/src/ui/AiConversation.tsx",
+      "blob": "1ce711ea5970f09c3e7ffba1174c6c59d33aa208"
+    },
+    {
+      "file": "apps/server/src/picture-provider.ts",
+      "blob": "f994398575e4e3642d2d15f7d6d84c0b8c82d7d4"
+    },
+    {
+      "file": "apps/server/src/prompts.ts",
+      "blob": "8fbf2f17b6ad04d93b0a5d2508f6fb88995e7ca8"
+    },
+    {
+      "file": "apps/server/src/provider.ts",
+      "blob": "eb7cb145b2c5e94b83936056ae0f7a96c4289471"
+    },
+    {
+      "file": "apps/server/src/synthesis.ts",
+      "blob": "23a7dbaedd13cd2999d6945a95afb115d08fb9d6"
+    },
+    {
+      "file": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "blob": "9e2e50c8c1d0ae70d50b355f03cca7848563f142"
+    },
+    {
+      "file": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "blob": "d98b0c66f86c1c4d7a3de9cb7c1e78559e72dc21"
+    },
+    {
+      "file": "apps/server/test/prompt-payloads.test.ts",
+      "blob": "31e76310a118b1f0b95cd91b8c4e40290ae0b762"
+    },
+    {
+      "file": "apps/server/test/prompt-presets.test.ts",
+      "blob": "31bdcee0c9dd93256286900a6a8dec707acad52f"
+    },
+    {
+      "file": "packages/core/src/index.ts",
+      "blob": "1d6166be4f53184751303a4e5d518c93e77030a9"
+    },
+    {
+      "file": "packages/core/src/onboarding.ts",
+      "blob": "8f719e696b46812ca042e25674a06a195e823374"
+    },
+    {
+      "file": "packages/core/src/promptPresets.ts",
+      "blob": "fd881c5a23221bf2cb3f8ff5e129e6ef20906fcd"
+    },
+    {
+      "file": "packages/core/src/promptResources.test.ts",
+      "blob": "9d9a2ae08f8eacbd46a7b24b10f2c27277ed1e33"
+    },
+    {
+      "file": "packages/core/src/promptResources.ts",
+      "blob": "8f706e188f858d0019016f444e4a4bd4583822d8"
+    },
+    {
+      "file": "prompts/README.md",
+      "blob": "69c384de46f7e73a7a19788f9e65a14896cf9992"
+    },
+    {
+      "file": "prompts/server/board.json",
+      "blob": "14ae46139662df7e8a4edb07e173c9d62fe25dfc"
+    },
+    {
+      "file": "prompts/server/pictures.json",
+      "blob": "8ef350cc1c903698c4965857918d61622b9f953f"
+    },
+    {
+      "file": "prompts/server/speech.json",
+      "blob": "4e114b4c5aa3af17ee2306f22320f804e9a569d7"
+    },
+    {
+      "file": "prompts/shared/conversation.json",
+      "blob": "dbf8183ae51f385fea692b8f585269108892b887"
+    },
+    {
+      "file": "prompts/shared/onboarding.json",
+      "blob": "0215c9565d62cb412c419473b8bcf055963db8b6"
+    },
+    {
+      "file": "scripts/prompt-bundle.test.ts",
+      "blob": "c658a8651ec9a6a7d6317a88642fa98299d5a96d"
+    }
+  ],
+  "beforeAfterBytesEqual": true,
+  "allEvidencePaths": [
+    ".gitattributes",
+    "README.md",
+    "after/payloads.json",
+    "after/presets.json",
+    "after/prompt-payloads.test.ts",
+    "after/prompt-presets.test.ts",
+    "after/test.log",
+    "before/payloads.json",
+    "before/presets.json",
+    "before/prompt-payloads.test.ts",
+    "before/prompt-presets.test.ts",
+    "before/test.log",
+    "browser-final.log",
+    "browser.config.ts",
+    "bundle-test.log",
+    "capture-contract.mjs",
+    "check-final.log",
+    "extract-prompts.mjs",
+    "manifest.json",
+    "native-export.log",
+    "negative-control.log",
+    "negative-control.mjs",
+    "prepare-evidence.mjs",
+    "restored-control.log",
+    "retention-correction.json",
+    "runtime-report.json",
+    "runtime.log",
+    "scope.txt",
+    "verify-runtime.mjs"
+  ],
+  "payloadKeys": [
+    "default/board/plain",
+    "default/board/1",
+    "default/translate",
+    "default/transcribe",
+    "default/analyze",
+    "default/select",
+    "default/generate/color",
+    "default/generate/line",
+    "default/review",
+    "default/speech/en-US",
+    "default/speech/fr-FR",
+    "default/speech/ja-JP",
+    "default/speech/literal-boundary",
+    "default/speech-profile",
+    "configured/board/plain",
+    "configured/board/1",
+    "configured/translate",
+    "configured/transcribe",
+    "configured/analyze",
+    "configured/select",
+    "configured/generate/color",
+    "configured/generate/line",
+    "configured/review",
+    "configured/speech/en-US",
+    "configured/speech/fr-FR",
+    "configured/speech/ja-JP",
+    "configured/speech/literal-boundary",
+    "configured/speech-profile",
+    "client-options",
+    "realtime-options"
+  ],
+  "unicodeFixture": "const data = 'Café 牛 \"quoted\" \\\\ $& $` $\\' $$ {{language}} {{concept}}\\nsecond line';\r",
+  "githubExactManifestAccessible": true
+}

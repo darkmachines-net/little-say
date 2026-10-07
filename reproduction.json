@@ -1,0 +1,14 @@
+{
+  "payloads": {
+    "equal": true,
+    "ownerCaptureEqual": true,
+    "bytes": 82019,
+    "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+  },
+  "presets": {
+    "equal": true,
+    "ownerCaptureEqual": true,
+    "bytes": 2262,
+    "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+  }
+}
