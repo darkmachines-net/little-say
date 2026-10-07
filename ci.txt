@@ -1,0 +1,653 @@
+check	Set up job	﻿2026-10-07T02:17:06.1230754Z Current runner version: '2.337.0'
+check	Set up job	2026-10-07T02:17:06.1271925Z ##[group]Runner Image Provisioner
+check	Set up job	2026-10-07T02:17:06.1273584Z Hosted Compute Agent
+check	Set up job	2026-10-07T02:17:06.1274800Z Version: 20260901.588
+check	Set up job	2026-10-07T02:17:06.1275920Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+check	Set up job	2026-10-07T02:17:06.1277298Z Build Date: 2026-09-01T19:56:44Z
+check	Set up job	2026-10-07T02:17:06.1278616Z Worker ID: {d6081f89-d031-4985-b580-5dac3fa726ca}
+check	Set up job	2026-10-07T02:17:06.1279849Z Azure Region: eastus
+check	Set up job	2026-10-07T02:17:06.1280973Z ##[endgroup]
+check	Set up job	2026-10-07T02:17:06.1283846Z ##[group]Operating System
+check	Set up job	2026-10-07T02:17:06.1285136Z Ubuntu
+check	Set up job	2026-10-07T02:17:06.1286096Z 24.04.5
+check	Set up job	2026-10-07T02:17:06.1286920Z LTS
+check	Set up job	2026-10-07T02:17:06.1287951Z ##[endgroup]
+check	Set up job	2026-10-07T02:17:06.1288914Z ##[group]Runner Image
+check	Set up job	2026-10-07T02:17:06.1290016Z Image: ubuntu-24.04
+check	Set up job	2026-10-07T02:17:06.1291117Z Version: 20260927.320.1
+check	Set up job	2026-10-07T02:17:06.1293320Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+check	Set up job	2026-10-07T02:17:06.1296543Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+check	Set up job	2026-10-07T02:17:06.1298395Z ##[endgroup]
+check	Set up job	2026-10-07T02:17:06.1300357Z ##[group]GITHUB_TOKEN Permissions
+check	Set up job	2026-10-07T02:17:06.1303564Z Contents: read
+check	Set up job	2026-10-07T02:17:06.1304715Z Metadata: read
+check	Set up job	2026-10-07T02:17:06.1305774Z ##[endgroup]
+check	Set up job	2026-10-07T02:17:06.1308965Z Secret source: Actions
+check	Set up job	2026-10-07T02:17:06.1310589Z Cache mode: write
+check	Set up job	2026-10-07T02:17:06.1311765Z Prepare workflow directory
+check	Set up job	2026-10-07T02:17:06.1956339Z Prepare all required actions
+check	Set up job	2026-10-07T02:17:06.2027777Z Getting action download info
+check	Set up job	2026-10-07T02:17:06.4061460Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+check	Set up job	2026-10-07T02:17:06.6053128Z Download action repository 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+check	Set up job	2026-10-07T02:17:07.1236332Z Complete job name: check
+check	Initialize containers	﻿2026-10-07T02:17:07.1789295Z ##[group]Checking docker version
+check	Initialize containers	2026-10-07T02:17:07.1803320Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+check	Initialize containers	2026-10-07T02:17:09.3804228Z '1.48'
+check	Initialize containers	2026-10-07T02:17:09.3825092Z Docker daemon API version: '1.48'
+check	Initialize containers	2026-10-07T02:17:09.3825630Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+check	Initialize containers	2026-10-07T02:17:09.4044375Z '1.48'
+check	Initialize containers	2026-10-07T02:17:09.4057321Z Docker client API version: '1.48'
+check	Initialize containers	2026-10-07T02:17:09.4063339Z ##[endgroup]
+check	Initialize containers	2026-10-07T02:17:09.4065991Z ##[group]Clean up resources from previous jobs
+check	Initialize containers	2026-10-07T02:17:09.4070853Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=36874e"
+check	Initialize containers	2026-10-07T02:17:09.4266147Z ##[command]/usr/bin/docker network prune --force --filter "label=36874e"
+check	Initialize containers	2026-10-07T02:17:09.4533095Z ##[endgroup]
+check	Initialize containers	2026-10-07T02:17:09.4533484Z ##[group]Create local container network
+check	Initialize containers	2026-10-07T02:17:09.4543221Z ##[command]/usr/bin/docker network create --label 36874e github_network_5885e2b4714e4f88a92bbdfe632f64b4
+check	Initialize containers	2026-10-07T02:17:09.5240561Z 535b83969a8a345badb2a958c38ae5e5bc51d72b42b114943ff852082ff9f00d
+check	Initialize containers	2026-10-07T02:17:09.5260018Z ##[endgroup]
+check	Initialize containers	2026-10-07T02:17:09.5285456Z ##[group]Starting postgres service container
+check	Initialize containers	2026-10-07T02:17:09.5306694Z ##[command]/usr/bin/docker pull postgres:17-bookworm
+check	Initialize containers	2026-10-07T02:17:09.9893737Z 17-bookworm: Pulling from library/postgres
+check	Initialize containers	2026-10-07T02:17:10.1173620Z 7fd1ebe418b5: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1182375Z a74c50568115: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1193703Z 017b31e4ff27: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1194693Z 146d06bcb573: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1195586Z e7e8da52359d: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1196063Z d01ea4064291: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1196528Z 6d0eb3c6cdb9: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1196980Z b1cc6947b8a6: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1197359Z e96ba86f00e5: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1197638Z a219b7b9b5d4: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1197934Z 584b3a82e541: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1198642Z d254c075f128: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1198925Z fb616fac62de: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1199206Z 7f82c3d75427: Pulling fs layer
+check	Initialize containers	2026-10-07T02:17:10.1199464Z 146d06bcb573: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1199705Z e7e8da52359d: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1199930Z d01ea4064291: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1200152Z 6d0eb3c6cdb9: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1200369Z b1cc6947b8a6: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1200583Z e96ba86f00e5: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1200807Z a219b7b9b5d4: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1201029Z 584b3a82e541: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1201247Z d254c075f128: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1201459Z fb616fac62de: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1201674Z 7f82c3d75427: Waiting
+check	Initialize containers	2026-10-07T02:17:10.1470495Z a74c50568115: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.1473026Z a74c50568115: Download complete
+check	Initialize containers	2026-10-07T02:17:10.1843170Z 017b31e4ff27: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.1845216Z 017b31e4ff27: Download complete
+check	Initialize containers	2026-10-07T02:17:10.2016476Z 146d06bcb573: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.2019553Z 146d06bcb573: Download complete
+check	Initialize containers	2026-10-07T02:17:10.2651796Z e7e8da52359d: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.2656279Z e7e8da52359d: Download complete
+check	Initialize containers	2026-10-07T02:17:10.2686304Z 7fd1ebe418b5: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.2687567Z 7fd1ebe418b5: Download complete
+check	Initialize containers	2026-10-07T02:17:10.2700272Z d01ea4064291: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.2703862Z d01ea4064291: Download complete
+check	Initialize containers	2026-10-07T02:17:10.3228495Z 6d0eb3c6cdb9: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.3229766Z 6d0eb3c6cdb9: Download complete
+check	Initialize containers	2026-10-07T02:17:10.3285053Z b1cc6947b8a6: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.3286044Z b1cc6947b8a6: Download complete
+check	Initialize containers	2026-10-07T02:17:10.3702236Z 584b3a82e541: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.3703737Z 584b3a82e541: Download complete
+check	Initialize containers	2026-10-07T02:17:10.3773958Z a219b7b9b5d4: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.3774804Z a219b7b9b5d4: Download complete
+check	Initialize containers	2026-10-07T02:17:10.4301532Z d254c075f128: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.4363391Z d254c075f128: Download complete
+check	Initialize containers	2026-10-07T02:17:10.4364657Z fb616fac62de: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.4368698Z fb616fac62de: Download complete
+check	Initialize containers	2026-10-07T02:17:10.4831763Z 7f82c3d75427: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.4833710Z 7f82c3d75427: Download complete
+check	Initialize containers	2026-10-07T02:17:10.8335871Z e96ba86f00e5: Verifying Checksum
+check	Initialize containers	2026-10-07T02:17:10.8337032Z e96ba86f00e5: Download complete
+check	Initialize containers	2026-10-07T02:17:11.9264590Z 7fd1ebe418b5: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.0759562Z a74c50568115: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.2420414Z 017b31e4ff27: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.2929806Z 146d06bcb573: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.6468490Z e7e8da52359d: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.7332104Z d01ea4064291: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.7408797Z 6d0eb3c6cdb9: Pull complete
+check	Initialize containers	2026-10-07T02:17:15.7999247Z b1cc6947b8a6: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4187323Z e96ba86f00e5: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4383216Z a219b7b9b5d4: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4560549Z 584b3a82e541: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4689354Z d254c075f128: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4821550Z fb616fac62de: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4915392Z 7f82c3d75427: Pull complete
+check	Initialize containers	2026-10-07T02:17:20.4959101Z Digest: sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+check	Initialize containers	2026-10-07T02:17:20.4970787Z Status: Downloaded newer image for postgres:17-bookworm
+check	Initialize containers	2026-10-07T02:17:20.4993165Z docker.io/library/postgres:17-bookworm
+check	Initialize containers	2026-10-07T02:17:20.5046072Z ##[command]/usr/bin/docker create --name a8b1de8b39b14b21ad0155e2c361a9af_postgres17bookworm_d0a257 --label 36874e --network github_network_5885e2b4714e4f88a92bbdfe632f64b4 --network-alias postgres -p 5432:5432 --health-cmd "pg_isready -U little_say_test -d little_say_test" --health-interval 5s --health-timeout 5s --health-retries 20 -e "POSTGRES_USER=little_say_test" -e "POSTGRES_PASSWORD=little_say_test" -e "POSTGRES_DB=little_say_test" -e GITHUB_ACTIONS=true -e CI=true postgres:17-bookworm
+check	Initialize containers	2026-10-07T02:17:20.6210652Z 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:20.6235864Z ##[command]/usr/bin/docker start 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:22.8121864Z 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:22.8148542Z ##[command]/usr/bin/docker ps --all --filter id=71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+check	Initialize containers	2026-10-07T02:17:22.8368507Z 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026 Up 2 seconds (health: starting)
+check	Initialize containers	2026-10-07T02:17:22.8381324Z ##[command]/usr/bin/docker port 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:22.8618682Z 5432/tcp -> 0.0.0.0:5432
+check	Initialize containers	2026-10-07T02:17:22.8619215Z 5432/tcp -> [::]:5432
+check	Initialize containers	2026-10-07T02:17:22.8667351Z ##[endgroup]
+check	Initialize containers	2026-10-07T02:17:22.8679355Z ##[group]Waiting for all services to be ready
+check	Initialize containers	2026-10-07T02:17:22.8698610Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:22.8947461Z starting
+check	Initialize containers	2026-10-07T02:17:22.8962329Z postgres service is starting, waiting 2 seconds before checking again.
+check	Initialize containers	2026-10-07T02:17:24.8968572Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:24.9111390Z starting
+check	Initialize containers	2026-10-07T02:17:24.9126274Z postgres service is starting, waiting 3 seconds before checking again.
+check	Initialize containers	2026-10-07T02:17:28.6074745Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Initialize containers	2026-10-07T02:17:28.6224847Z healthy
+check	Initialize containers	2026-10-07T02:17:28.6243028Z postgres service is healthy.
+check	Initialize containers	2026-10-07T02:17:28.6243630Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	﻿2026-10-07T02:17:28.6626013Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6626736Z with:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6626981Z   repository: MChartier/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6630014Z   token: ***
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6630244Z   ssh-strict: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6630465Z   ssh-user: git
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6630692Z   persist-credentials: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6630939Z   clean: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6631172Z   sparse-checkout-cone-mode: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6631439Z   fetch-depth: 1
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6631652Z   fetch-tags: false
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6631873Z   show-progress: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6632092Z   lfs: false
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6632294Z   submodules: false
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6632727Z   set-safe-directory: true
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6633006Z   allow-unsafe-pr-checkout: false
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6633517Z env:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6633747Z   TEST_PGDATABASE: little_say_test
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6634035Z   TEST_PGUSER: little_say_test
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6634302Z   TEST_PGPASSWORD: little_say_test
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.6634606Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.7881757Z Syncing repository: MChartier/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.7898773Z ##[group]Getting Git version info
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.7899524Z Working directory is '/home/runner/work/little-say/little-say'
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.7903461Z [command]/usr/bin/git version
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8006849Z git version 2.55.0
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8072293Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8082285Z Temporarily overriding HOME='/home/runner/work/_temp/2f8e653e-de44-4913-bdd3-d3d0f3013faa' before making global git config changes
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8093481Z Adding repository directory to the temporary git global config as a safe directory
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8106770Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/little-say/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8162969Z Deleting the contents of '/home/runner/work/little-say/little-say'
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8164672Z ##[group]Initializing the repository
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8165616Z [command]/usr/bin/git init /home/runner/work/little-say/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8310516Z hint: Using 'master' as the name for the initial branch. This default branch name
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8333640Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8336522Z hint: to use in all of your new repositories, which will suppress this warning,
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8337432Z hint: call:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8353171Z hint:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8367131Z hint: 	git config --global init.defaultBranch <name>
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8368040Z hint:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8368760Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8370362Z hint: 'development'. The just-created branch can be renamed via this command:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8371204Z hint:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8371709Z hint: 	git branch -m <name>
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8372357Z hint:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8375028Z hint: Disable this message with "git config set advice.defaultBranchName false"
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8413492Z Initialized empty Git repository in /home/runner/work/little-say/little-say/.git/
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8423351Z [command]/usr/bin/git remote add origin https://github.com/MChartier/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8454754Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8455631Z ##[group]Disabling automatic garbage collection
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8456523Z [command]/usr/bin/git config --local gc.auto 0
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8493802Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8494878Z ##[group]Setting up auth
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8503626Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.8575800Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9081480Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9204448Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9470183Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9501439Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9751809Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9797228Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9798454Z ##[group]Fetching the repository
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:28.9809062Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e053d68f45fc98fcf8db478dd234fb6180c30cea:refs/remotes/pull/33/merge
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6258237Z From https://github.com/MChartier/little-say
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6283612Z  * [new ref]         e053d68f45fc98fcf8db478dd234fb6180c30cea -> pull/33/merge
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6321187Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6323242Z ##[group]Determining the checkout info
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6337340Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6340749Z [command]/usr/bin/git sparse-checkout disable
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6522913Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6543853Z ##[group]Checking out the ref
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6553758Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/33/merge
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6996821Z Note: switching to 'refs/remotes/pull/33/merge'.
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.6998956Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7008657Z You are in 'detached HEAD' state. You can look around, make experimental
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7009943Z changes and commit them, and you can discard any commits you make in this
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7011370Z state without impacting any branches by switching back to a branch.
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7012206Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7013440Z If you want to create a new branch to retain commits you create, you may
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7014909Z do so (now or later) by using -c with the switch command. Example:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7015887Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7016382Z   git switch -c <new-branch-name>
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7017244Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7017674Z Or undo this operation with:
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7018583Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7019149Z   git switch -
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7023346Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7024130Z Turn off this advice by setting config variable advice.detachedHead to false
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7025441Z 
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7026500Z HEAD is now at e053d68 Merge c3bc7b2777708e8c79f15f530a42b0c89fb48271 into 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7029882Z ##[endgroup]
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7050672Z [command]/usr/bin/git log -1 --format=%H
+check	Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:17:29.7081202Z e053d68f45fc98fcf8db478dd234fb6180c30cea
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	﻿2026-10-07T02:17:29.7350234Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7350669Z with:
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7350896Z   node-version: 24
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7351117Z   cache: npm
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7351350Z   always-auth: false
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7351586Z   check-latest: false
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7354701Z   token: ***
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7354930Z env:
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7355156Z   TEST_PGDATABASE: little_say_test
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7355441Z   TEST_PGUSER: little_say_test
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7355718Z   TEST_PGPASSWORD: little_say_test
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.7355981Z ##[endgroup]
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.8912321Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.8915920Z (node:2470) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.8917247Z (Use `node --trace-deprecation ...` to show where the warning was created)
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:29.8919981Z ##[group]Environment details
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.4374498Z node: v24.21.0
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.4375528Z npm: 11.19.0
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.4394843Z yarn: 1.22.22
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.4403590Z ##[endgroup]
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.4414814Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.7505038Z /home/runner/.npm
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.8275780Z Cache hit for: node-cache-Linux-x64-npm-955f012e4e5abeb6506a75cad3daf5a1c20d8704ff31f7b28be163b1e690a122
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:30.8436279Z (node:2470) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:31.8924232Z Received 150994944 of 234993904 (64.3%), 141.9 MBs/sec
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:32.2877033Z Received 234993904 of 234993904 (100.0%), 158.9 MBs/sec
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:32.2878435Z Cache Size: ~224 MB (234993904 B)
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:32.2921975Z [command]/usr/bin/tar -xf /home/runner/work/_temp/ca157324-eae7-4be9-89db-48aafaccfc4f/cache.tzst -P -C /home/runner/work/little-say/little-say --use-compress-program unzstd
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:32.9141341Z Cache restored successfully
+check	Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:17:32.9315315Z Cache restored from key: node-cache-Linux-x64-npm-955f012e4e5abeb6506a75cad3daf5a1c20d8704ff31f7b28be163b1e690a122
+check	Run npm ci	﻿2026-10-07T02:17:32.9751273Z ##[group]Run npm ci
+check	Run npm ci	2026-10-07T02:17:32.9751755Z ^[[36;1mnpm ci^[[0m
+check	Run npm ci	2026-10-07T02:17:33.0009127Z shell: /usr/bin/bash -e {0}
+check	Run npm ci	2026-10-07T02:17:33.0009486Z env:
+check	Run npm ci	2026-10-07T02:17:33.0009760Z   TEST_PGDATABASE: little_say_test
+check	Run npm ci	2026-10-07T02:17:33.0010115Z   TEST_PGUSER: little_say_test
+check	Run npm ci	2026-10-07T02:17:33.0010445Z   TEST_PGPASSWORD: little_say_test
+check	Run npm ci	2026-10-07T02:17:33.0010792Z ##[endgroup]
+check	Run npm ci	2026-10-07T02:17:42.6392726Z npm warn deprecated uuid@7.0.3: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+check	Run npm ci	2026-10-07T02:17:43.2565442Z npm warn deprecated glob@11.1.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+check	Run npm ci	2026-10-07T02:17:59.5832791Z 
+check	Run npm ci	2026-10-07T02:17:59.5833986Z added 914 packages, and audited 918 packages in 27s
+check	Run npm ci	2026-10-07T02:17:59.5835019Z 
+check	Run npm ci	2026-10-07T02:17:59.5847776Z 192 packages are looking for funding
+check	Run npm ci	2026-10-07T02:17:59.5850073Z   run `npm fund` for details
+check	Run npm ci	2026-10-07T02:17:59.6813722Z 
+check	Run npm ci	2026-10-07T02:17:59.6815124Z 27 vulnerabilities (1 low, 8 moderate, 17 high, 1 critical)
+check	Run npm ci	2026-10-07T02:17:59.6816092Z 
+check	Run npm ci	2026-10-07T02:17:59.6819937Z To address issues that do not require attention, run:
+check	Run npm ci	2026-10-07T02:17:59.6822313Z   npm audit fix
+check	Run npm ci	2026-10-07T02:17:59.6823120Z 
+check	Run npm ci	2026-10-07T02:17:59.6838294Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+check	Run npm ci	2026-10-07T02:17:59.6839510Z To address all issues (including breaking changes), run:
+check	Run npm ci	2026-10-07T02:17:59.6841175Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+check	Run npm ci	2026-10-07T02:17:59.6842010Z   npm audit fix --force
+check	Run npm ci	2026-10-07T02:17:59.6845560Z npm warn install-scripts   esbuild@0.27.7 (postinstall: node install.js)
+check	Run npm ci	2026-10-07T02:17:59.6846181Z 
+check	Run npm ci	2026-10-07T02:17:59.6860863Z npm warn install-scripts
+check	Run npm ci	2026-10-07T02:17:59.6861548Z Run `npm audit` for details.
+check	Run npm ci	2026-10-07T02:17:59.6863417Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+check	Run npm run check	﻿2026-10-07T02:17:59.8202436Z ##[group]Run npm run check
+check	Run npm run check	2026-10-07T02:17:59.8203214Z ^[[36;1mnpm run check^[[0m
+check	Run npm run check	2026-10-07T02:17:59.8270721Z shell: /usr/bin/bash -e {0}
+check	Run npm run check	2026-10-07T02:17:59.8271019Z env:
+check	Run npm run check	2026-10-07T02:17:59.8271249Z   TEST_PGDATABASE: little_say_test
+check	Run npm run check	2026-10-07T02:17:59.8271553Z   TEST_PGUSER: little_say_test
+check	Run npm run check	2026-10-07T02:17:59.8271840Z   TEST_PGPASSWORD: little_say_test
+check	Run npm run check	2026-10-07T02:17:59.8272125Z ##[endgroup]
+check	Run npm run check	2026-10-07T02:17:59.9417592Z 
+check	Run npm run check	2026-10-07T02:17:59.9418676Z > little-say-workspace@0.2.0 check
+check	Run npm run check	2026-10-07T02:17:59.9419992Z > npm run release:check && npm run typecheck && npm test && npm run build
+check	Run npm run check	2026-10-07T02:17:59.9420852Z 
+check	Run npm run check	2026-10-07T02:18:00.0723828Z 
+check	Run npm run check	2026-10-07T02:18:00.0738591Z > little-say-workspace@0.2.0 release:check
+check	Run npm run check	2026-10-07T02:18:00.0743208Z > tsx scripts/release/version.ts check
+check	Run npm run check	2026-10-07T02:18:00.0743613Z 
+check	Run npm run check	2026-10-07T02:18:00.4733171Z 
+check	Run npm run check	2026-10-07T02:18:00.4734165Z > little-say-workspace@0.2.0 typecheck
+check	Run npm run check	2026-10-07T02:18:00.4735565Z > npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json
+check	Run npm run check	2026-10-07T02:18:00.4738277Z 
+check	Run npm run check	2026-10-07T02:18:00.6037727Z 
+check	Run npm run check	2026-10-07T02:18:00.6038693Z > @little-say/app@0.1.0 typecheck
+check	Run npm run check	2026-10-07T02:18:00.6039998Z > tsc -p tsconfig.json
+check	Run npm run check	2026-10-07T02:18:00.6040653Z 
+check	Run npm run check	2026-10-07T02:18:05.7866438Z 
+check	Run npm run check	2026-10-07T02:18:05.7867316Z > @little-say/server@0.2.0 typecheck
+check	Run npm run check	2026-10-07T02:18:05.7868080Z > tsc -p tsconfig.json
+check	Run npm run check	2026-10-07T02:18:05.7868484Z 
+check	Run npm run check	2026-10-07T02:18:10.9771615Z 
+check	Run npm run check	2026-10-07T02:18:10.9772778Z > @little-say/core@0.1.0 typecheck
+check	Run npm run check	2026-10-07T02:18:10.9773787Z > tsc -p tsconfig.json
+check	Run npm run check	2026-10-07T02:18:10.9774253Z 
+check	Run npm run check	2026-10-07T02:18:17.5222435Z 
+check	Run npm run check	2026-10-07T02:18:17.5224041Z > little-say-workspace@0.2.0 test
+check	Run npm run check	2026-10-07T02:18:17.5225625Z > vitest run
+check	Run npm run check	2026-10-07T02:18:17.5226338Z 
+check	Run npm run check	2026-10-07T02:18:17.8911039Z 
+check	Run npm run check	2026-10-07T02:18:17.8931724Z ^[[1m^[[30m^[[46m RUN ^[[49m^[[39m^[[22m ^[[36mv4.1.11 ^[[39m^[[90m/home/runner/work/little-say/little-say^[[39m
+check	Run npm run check	2026-10-07T02:18:17.9016799Z 
+check	Run npm run check	2026-10-07T02:18:20.3583861Z (node:2887) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:20.3587935Z (Use `node --trace-warnings ...` to show where the warning was created)
+check	Run npm run check	2026-10-07T02:18:20.3989900Z (node:2887) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:20.4350110Z (node:2887) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:21.0085919Z  ^[[32m✓^[[39m apps/server/test/pictures.test.ts ^[[2m(^[[22m^[[2m16 tests^[[22m^[[2m)^[[22m^[[33m 1235^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:21.5030025Z  ^[[32m✓^[[39m apps/mobile/src/services/pictures.test.ts ^[[2m(^[[22m^[[2m17 tests^[[22m^[[2m)^[[22m^[[32m 96^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:22.0324892Z ^[[90mstdout^[[2m | scripts/release/release.test.ts^[[2m > ^[[22m^[[2mpublication boundary^[[2m > ^[[22m^[[2mverifies deployment, restoring the previous image only when public health fails (healthy=true)
+check	Run npm run check	2026-10-07T02:18:22.0328016Z ^[[22m^[[39mDeployed and verified server 0.1.1: ghcr.io/org/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+check	Run npm run check	2026-10-07T02:18:22.0339846Z 
+check	Run npm run check	2026-10-07T02:18:22.0377064Z ^[[90mstderr^[[2m | scripts/release/release.test.ts^[[2m > ^[[22m^[[2mpublication boundary^[[2m > ^[[22m^[[2mverifies deployment, restoring the previous image only when public health fails (healthy=false)
+check	Run npm run check	2026-10-07T02:18:22.0384638Z ^[[22m^[[39mDeployment failed; restored the previous container image. Speech cache was preserved.
+check	Run npm run check	2026-10-07T02:18:22.0389618Z 
+check	Run npm run check	2026-10-07T02:18:22.0411528Z  ^[[32m✓^[[39m scripts/release/release.test.ts ^[[2m(^[[22m^[[2m18 tests^[[22m^[[2m)^[[22m^[[33m 330^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:22.9785806Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:22.9791186Z (Use `node --trace-warnings ...` to show where the warning was created)
+check	Run npm run check	2026-10-07T02:18:23.0372455Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.0529727Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.0639235Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.0769929Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.0857098Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1355889Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1500444Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1632799Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1699835Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1775702Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1823339Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1869151Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.1921468Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.2303981Z (node:3003) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:23.2425472Z  ^[[32m✓^[[39m apps/server/test/api.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[33m 312^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:23.4275819Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mcollects the final data, releases tracks, and returns a multipart recording
+check	Run npm run check	2026-10-07T02:18:23.4278998Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4280230Z 
+check	Run npm run check	2026-10-07T02:18:23.4643383Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases every acquired track after constructor failure
+check	Run npm run check	2026-10-07T02:18:23.4649104Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4650315Z 
+check	Run npm run check	2026-10-07T02:18:23.4676620Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases every acquired track after start failure
+check	Run npm run check	2026-10-07T02:18:23.4684563Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4688364Z 
+check	Run npm run check	2026-10-07T02:18:23.4695223Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases every acquired track after unsupported failure
+check	Run npm run check	2026-10-07T02:18:23.4704608Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4707295Z 
+check	Run npm run check	2026-10-07T02:18:23.4715636Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases tracks and settles stop even when MediaRecorder.stop throws
+check	Run npm run check	2026-10-07T02:18:23.4719527Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4720727Z 
+check	Run npm run check	2026-10-07T02:18:23.4739370Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mcontinues releasing tracks if recorder stop and an individual track stop both throw
+check	Run npm run check	2026-10-07T02:18:23.4744240Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4745910Z 
+check	Run npm run check	2026-10-07T02:18:23.4767705Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreports capture-time error and stops the microphone immediately
+check	Run npm run check	2026-10-07T02:18:23.4769814Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4770543Z 
+check	Run npm run check	2026-10-07T02:18:23.4783068Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreports capture-time unexpected stop and stops the microphone immediately
+check	Run npm run check	2026-10-07T02:18:23.4785278Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4785999Z 
+check	Run npm run check	2026-10-07T02:18:23.4803845Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2msettles a pending stop on cleanup and ignores late events after a new capture
+check	Run npm run check	2026-10-07T02:18:23.4806593Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4812215Z 
+check	Run npm run check	2026-10-07T02:18:23.4838468Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2msettles a pending stop on background and ignores late events after a new capture
+check	Run npm run check	2026-10-07T02:18:23.4841951Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4843750Z 
+check	Run npm run check	2026-10-07T02:18:23.4860620Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2msettles a pending stop on unmount and ignores late events after a new capture
+check	Run npm run check	2026-10-07T02:18:23.4864258Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4865452Z 
+check	Run npm run check	2026-10-07T02:18:23.4868726Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2msettles a pending stop on unmount and ignores late events after a new capture
+check	Run npm run check	2026-10-07T02:18:23.4871409Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4873764Z 
+check	Run npm run check	2026-10-07T02:18:23.4886981Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases a delayed permission result after closing the dialog
+check	Run npm run check	2026-10-07T02:18:23.4891119Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4892311Z 
+check	Run npm run check	2026-10-07T02:18:23.4907802Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mkeeps the latest capture when an older permission request resolves late
+check	Run npm run check	2026-10-07T02:18:23.4910451Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4911602Z 
+check	Run npm run check	2026-10-07T02:18:23.4925190Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.web.test.ts^[[2m > ^[[22m^[[2mbrowser voice recording^[[2m > ^[[22m^[[2mreleases the previous session before replacing its stream reference
+check	Run npm run check	2026-10-07T02:18:23.4927601Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.4928827Z 
+check	Run npm run check	2026-10-07T02:18:23.4967213Z  ^[[32m✓^[[39m apps/mobile/src/services/useRecording.web.test.ts ^[[2m(^[[22m^[[2m14 tests^[[22m^[[2m)^[[22m^[[32m 74^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:23.7649396Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2muploads a File using the installed Expo multipart encoder
+check	Run npm run check	2026-10-07T02:18:23.7664974Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7666213Z 
+check	Run npm run check	2026-10-07T02:18:23.7825483Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mcan close without ever opening the microphone
+check	Run npm run check	2026-10-07T02:18:23.7834009Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7835233Z 
+check	Run npm run check	2026-10-07T02:18:23.7841412Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mdeletes the saved file after Expo releases an active recorder
+check	Run npm run check	2026-10-07T02:18:23.7852239Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7853753Z 
+check	Run npm run check	2026-10-07T02:18:23.7866016Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mcancels a pending permission request when the dialog closes
+check	Run npm run check	2026-10-07T02:18:23.7868565Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7872432Z 
+check	Run npm run check	2026-10-07T02:18:23.7886355Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mdoes not prepare a released recorder after awaiting audio mode
+check	Run npm run check	2026-10-07T02:18:23.7890005Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7893850Z 
+check	Run npm run check	2026-10-07T02:18:23.7900327Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mdoes not start a released recorder after preparation finishes
+check	Run npm run check	2026-10-07T02:18:23.7904706Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7905864Z 
+check	Run npm run check	2026-10-07T02:18:23.7925819Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mdoes not read a released recorder after stop completes
+check	Run npm run check	2026-10-07T02:18:23.7933884Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7935303Z 
+check	Run npm run check	2026-10-07T02:18:23.7937416Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mstops and cleans up on background, then allows another recording
+check	Run npm run check	2026-10-07T02:18:23.7941331Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7943758Z 
+check	Run npm run check	2026-10-07T02:18:23.7966102Z ^[[90mstderr^[[2m | apps/mobile/src/services/useRecording.test.ts^[[2m > ^[[22m^[[2mnative voice recording^[[2m > ^[[22m^[[2mresets audio mode and deletes the file when starting the recorder fails
+check	Run npm run check	2026-10-07T02:18:23.7968727Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:23.7970851Z 
+check	Run npm run check	2026-10-07T02:18:23.7991921Z  ^[[32m✓^[[39m apps/mobile/src/services/useRecording.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 62^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:24.0076738Z ^[[90mstdout^[[2m | scripts/release/server-cut.test.ts^[[2m > ^[[22m^[[2mone-run server releases^[[2m > ^[[22m^[[2mchecks and merges the candidate before passing its merged SHA to publication
+check	Run npm run check	2026-10-07T02:18:24.0079214Z ^[[22m^[[39mhttps://github.com/example/app/pull/7
+check	Run npm run check	2026-10-07T02:18:24.0081002Z 
+check	Run npm run check	2026-10-07T02:18:24.0108975Z ^[[90mstdout^[[2m | scripts/release/server-cut.test.ts^[[2m > ^[[22m^[[2mone-run server releases^[[2m > ^[[22m^[[2mrechecks and resumes an open PR after review without creating a duplicate
+check	Run npm run check	2026-10-07T02:18:24.0112869Z ^[[22m^[[39mhttps://github.com/example/app/pull/7
+check	Run npm run check	2026-10-07T02:18:24.0113733Z 
+check	Run npm run check	2026-10-07T02:18:24.0121147Z ^[[90mstdout^[[2m | scripts/release/server-cut.test.ts^[[2m > ^[[22m^[[2mone-run server releases^[[2m > ^[[22m^[[2mrecovers a pushed branch when the previous attempt failed before PR creation
+check	Run npm run check	2026-10-07T02:18:24.0125139Z ^[[22m^[[39mhttps://github.com/example/app/pull/7
+check	Run npm run check	2026-10-07T02:18:24.0125885Z 
+check	Run npm run check	2026-10-07T02:18:24.0142341Z ^[[90mstdout^[[2m | scripts/release/server-cut.test.ts^[[2m > ^[[22m^[[2mone-run server releases^[[2m > ^[[22m^[[2mleaves a review-blocked release unpublished and resumes the merged PR on retry
+check	Run npm run check	2026-10-07T02:18:24.0145603Z ^[[22m^[[39mhttps://github.com/example/app/pull/7
+check	Run npm run check	2026-10-07T02:18:24.0146989Z 
+check	Run npm run check	2026-10-07T02:18:24.0155092Z ^[[90mstdout^[[2m | scripts/release/server-cut.test.ts^[[2m > ^[[22m^[[2mone-run server releases^[[2m > ^[[22m^[[2mdoes not publish a queued PR before it has actually merged
+check	Run npm run check	2026-10-07T02:18:24.0157122Z ^[[22m^[[39mhttps://github.com/example/app/pull/7
+check	Run npm run check	2026-10-07T02:18:24.0157876Z 
+check	Run npm run check	2026-10-07T02:18:24.0211778Z  ^[[32m✓^[[39m scripts/release/server-cut.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 21^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:24.2485054Z  ^[[32m✓^[[39m scripts/dev-config.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 20^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:24.5228937Z  ^[[32m✓^[[39m packages/core/src/boardLanguages.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 36^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:25.6625229Z (node:3077) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npm run check	2026-10-07T02:18:25.6633879Z (Use `node --trace-warnings ...` to show where the warning was created)
+check	Run npm run check	2026-10-07T02:18:25.7271826Z  ^[[32m✓^[[39m apps/server/test/speech.test.ts ^[[2m(^[[22m^[[2m8 tests^[[22m^[[2m)^[[22m^[[32m 277^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:25.9490497Z  ^[[32m✓^[[39m packages/core/src/interaction.test.ts ^[[2m(^[[22m^[[2m17 tests^[[22m^[[2m)^[[22m^[[32m 22^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:26.3526655Z  ^[[32m✓^[[39m apps/mobile/src/services/audioPlayback.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 17^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:27.0310720Z  ^[[32m✓^[[39m apps/mobile/src/services/speechLibrary.test.ts ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[33m 328^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:27.3009560Z  ^[[32m✓^[[39m scripts/dev-proxy.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 98^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:27.7055633Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2maccepts release immediately when the label becomes ready
+check	Run npm run check	2026-10-07T02:18:27.7073870Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7074503Z 
+check	Run npm run check	2026-10-07T02:18:27.7229223Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2mreschedules early timers and ignores wall-clock changes
+check	Run npm run check	2026-10-07T02:18:27.7233537Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7234582Z 
+check	Run npm run check	2026-10-07T02:18:27.7277337Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2mresets feedback on movement and cannot show ready for a cancelled gesture
+check	Run npm run check	2026-10-07T02:18:27.7283182Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7284420Z 
+check	Run npm run check	2026-10-07T02:18:27.7308670Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2mrequires a fresh full hold after releasing early and pressing again
+check	Run npm run check	2026-10-07T02:18:27.7310592Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7311185Z 
+check	Run npm run check	2026-10-07T02:18:27.7347776Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2mcancels immediately if another finger joins, even after readiness
+check	Run npm run check	2026-10-07T02:18:27.7350502Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7351514Z 
+check	Run npm run check	2026-10-07T02:18:27.7374131Z ^[[90mstderr^[[2m | apps/mobile/src/ui/ParentControl.test.ts^[[2m > ^[[22m^[[2mnative parent unlock feedback^[[2m > ^[[22m^[[2mclears readiness on native cancellation and external board/background cancellation
+check	Run npm run check	2026-10-07T02:18:27.7376728Z ^[[22m^[[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+check	Run npm run check	2026-10-07T02:18:27.7377775Z 
+check	Run npm run check	2026-10-07T02:18:27.7421374Z  ^[[32m✓^[[39m apps/mobile/src/ui/ParentControl.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 41^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:27.9979362Z  ^[[32m✓^[[39m packages/core/src/schema.test.ts ^[[2m(^[[22m^[[2m6 tests^[[22m^[[2m)^[[22m^[[32m 25^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:28.2726041Z  ^[[32m✓^[[39m packages/core/src/onboarding.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 37^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:28.5219315Z  ^[[32m✓^[[39m packages/core/src/pictures.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 26^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:28.7004040Z  ^[[32m✓^[[39m apps/mobile/src/services/photos.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 13^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:28.9559136Z  ^[[32m✓^[[39m packages/core/src/languageProfile.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 22^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:29.1089091Z  ^[[32m✓^[[39m packages/core/src/photo.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:29.5256115Z  ^[[32m✓^[[39m apps/mobile/src/services/hybridSpeech.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:29.9882386Z  ^[[32m✓^[[39m packages/core/src/emoji.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 125^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:30.1915009Z  ^[[32m✓^[[39m apps/server/test/postgres-fixture.test.ts ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:30.3393465Z  ^[[32m✓^[[39m apps/mobile/src/services/backendConfig.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:30.5275083Z  ^[[32m✓^[[39m apps/server/test/database-config.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
+check	Run npm run check	2026-10-07T02:18:30.5324692Z 
+check	Run npm run check	2026-10-07T02:18:30.5343790Z ^[[2m Test Files ^[[22m ^[[1m^[[32m26 passed^[[39m^[[22m^[[90m (26)^[[39m
+check	Run npm run check	2026-10-07T02:18:30.5350023Z ^[[2m      Tests ^[[22m ^[[1m^[[32m216 passed^[[39m^[[22m^[[90m (216)^[[39m
+check	Run npm run check	2026-10-07T02:18:30.5351263Z ^[[2m   Start at ^[[22m 02:18:17
+check	Run npm run check	2026-10-07T02:18:30.5353170Z ^[[2m   Duration ^[[22m 12.63s^[[2m (transform 1.29s, setup 0ms, import 5.71s, tests 3.25s, environment 3ms)^[[22m
+check	Run npm run check	2026-10-07T02:18:30.5354235Z 
+check	Run npm run check	2026-10-07T02:18:30.6767841Z 
+check	Run npm run check	2026-10-07T02:18:30.6768916Z > little-say-workspace@0.2.0 build
+check	Run npm run check	2026-10-07T02:18:30.6770228Z > npm run build -w @little-say/server && npm run build:web -w @little-say/app
+check	Run npm run check	2026-10-07T02:18:30.6771143Z 
+check	Run npm run check	2026-10-07T02:18:30.8031478Z 
+check	Run npm run check	2026-10-07T02:18:30.8032265Z > @little-say/server@0.2.0 build
+check	Run npm run check	2026-10-07T02:18:30.8033169Z > tsup
+check	Run npm run check	2026-10-07T02:18:30.8033412Z 
+check	Run npm run check	2026-10-07T02:18:31.1889795Z ^[[34mCLI^[[39m Building entry: src/database-cli.ts, src/index.ts
+check	Run npm run check	2026-10-07T02:18:31.1905889Z ^[[34mCLI^[[39m Using tsconfig: tsconfig.json
+check	Run npm run check	2026-10-07T02:18:31.1907208Z ^[[34mCLI^[[39m tsup v8.5.1
+check	Run npm run check	2026-10-07T02:18:31.1908818Z ^[[34mCLI^[[39m Using tsup config: /home/runner/work/little-say/little-say/apps/server/tsup.config.ts
+check	Run npm run check	2026-10-07T02:18:31.1924030Z ^[[34mCLI^[[39m Target: node22
+check	Run npm run check	2026-10-07T02:18:31.1933932Z ^[[34mCLI^[[39m Cleaning output folder
+check	Run npm run check	2026-10-07T02:18:31.1943923Z ^[[34mESM^[[39m Build start
+check	Run npm run check	2026-10-07T02:18:31.4196800Z ^[[32mESM^[[39m ^[[1mdist/database-cli.js ^[[22m^[[32m3.36 KB^[[39m
+check	Run npm run check	2026-10-07T02:18:31.4198379Z ^[[32mESM^[[39m ^[[1mdist/index.js        ^[[22m^[[32m3.90 MB^[[39m
+check	Run npm run check	2026-10-07T02:18:31.4222662Z ^[[32mESM^[[39m ⚡️ Build success in 225ms
+check	Run npm run check	2026-10-07T02:18:31.5582948Z 
+check	Run npm run check	2026-10-07T02:18:31.5584090Z > @little-say/app@0.1.0 build:web
+check	Run npm run check	2026-10-07T02:18:31.5585353Z > expo export --platform web && node scripts/build-pwa.mjs
+check	Run npm run check	2026-10-07T02:18:31.5586300Z 
+check	Run npm run check	2026-10-07T02:18:32.2340346Z Expo Autolinking module resolution enabled
+check	Run npm run check	2026-10-07T02:18:33.2519353Z Starting Metro Bundler
+check	Run npm run check	2026-10-07T02:18:33.2520046Z 
+check	Run npm run check	2026-10-07T02:19:13.0296514Z Web Bundled 39726ms apps/mobile/index.ts (2397 modules)
+check	Run npm run check	2026-10-07T02:19:13.4118059Z 
+check	Run npm run check	2026-10-07T02:19:13.4124338Z › Assets (3):
+check	Run npm run check	2026-10-07T02:19:13.4206741Z assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+check	Run npm run check	2026-10-07T02:19:13.4209524Z 
+check	Run npm run check	2026-10-07T02:19:13.4210441Z › web bundles (3):
+check	Run npm run check	2026-10-07T02:19:13.4214017Z _expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+check	Run npm run check	2026-10-07T02:19:13.4272466Z _expo/static/js/web/App-6210fdf5c9155ca10be8715d7204b7d4.js (5.8MB)
+check	Run npm run check	2026-10-07T02:19:13.4283796Z _expo/static/js/web/index-b48cac3b55eb00aa49a6a464dd8e492b.js (354KB)
+check	Run npm run check	2026-10-07T02:19:13.4285850Z 
+check	Run npm run check	2026-10-07T02:19:13.4286406Z › Files (3):
+check	Run npm run check	2026-10-07T02:19:13.4287056Z favicon.ico (15KB)
+check	Run npm run check	2026-10-07T02:19:13.4287706Z index.html (1.5KB)
+check	Run npm run check	2026-10-07T02:19:13.4288265Z metadata.json (49B)
+check	Run npm run check	2026-10-07T02:19:13.4468564Z 
+check	Run npm run check	2026-10-07T02:19:13.4472231Z Exported: dist
+check	Run npm run check	2026-10-07T02:19:15.8005648Z Offline shell: 14 assets (6378 KiB). Updates wait for parent action.
+check	Run npm run test:integration	﻿2026-10-07T02:19:15.8579150Z ##[group]Run npm run test:integration
+check	Run npm run test:integration	2026-10-07T02:19:15.8579544Z ^[[36;1mnpm run test:integration^[[0m
+check	Run npm run test:integration	2026-10-07T02:19:15.8642858Z shell: /usr/bin/bash -e {0}
+check	Run npm run test:integration	2026-10-07T02:19:15.8643153Z env:
+check	Run npm run test:integration	2026-10-07T02:19:15.8643381Z   TEST_PGDATABASE: little_say_test
+check	Run npm run test:integration	2026-10-07T02:19:15.8643681Z   TEST_PGUSER: little_say_test
+check	Run npm run test:integration	2026-10-07T02:19:15.8643973Z   TEST_PGPASSWORD: little_say_test
+check	Run npm run test:integration	2026-10-07T02:19:15.8644285Z ##[endgroup]
+check	Run npm run test:integration	2026-10-07T02:19:15.9812152Z 
+check	Run npm run test:integration	2026-10-07T02:19:15.9813901Z > little-say-workspace@0.2.0 test:integration
+check	Run npm run test:integration	2026-10-07T02:19:15.9815351Z > vitest run --config vitest.integration.config.ts
+check	Run npm run test:integration	2026-10-07T02:19:15.9816182Z 
+check	Run npm run test:integration	2026-10-07T02:19:16.4033327Z 
+check	Run npm run test:integration	2026-10-07T02:19:16.4039564Z ^[[1m^[[30m^[[46m RUN ^[[49m^[[39m^[[22m ^[[36mv4.1.11 ^[[39m^[[90m/home/runner/work/little-say/little-say^[[39m
+check	Run npm run test:integration	2026-10-07T02:19:16.4075422Z 
+check	Run npm run test:integration	2026-10-07T02:19:17.2787056Z  ^[[32m✓^[[39m apps/server/test/database.integration.test.ts ^[[2m(^[[22m^[[2m9 tests^[[22m^[[2m)^[[22m^[[33m 604^[[2mms^[[22m^[[39m
+check	Run npm run test:integration	2026-10-07T02:19:17.2818031Z 
+check	Run npm run test:integration	2026-10-07T02:19:17.2824608Z ^[[2m Test Files ^[[22m ^[[1m^[[32m1 passed^[[39m^[[22m^[[90m (1)^[[39m
+check	Run npm run test:integration	2026-10-07T02:19:17.2827299Z ^[[2m      Tests ^[[22m ^[[1m^[[32m9 passed^[[39m^[[22m^[[90m (9)^[[39m
+check	Run npm run test:integration	2026-10-07T02:19:17.2828439Z ^[[2m   Start at ^[[22m 02:19:16
+check	Run npm run test:integration	2026-10-07T02:19:17.2829935Z ^[[2m   Duration ^[[22m 870ms^[[2m (transform 44ms, setup 0ms, import 100ms, tests 604ms, environment 0ms)^[[22m
+check	Run npm run test:integration	2026-10-07T02:19:17.2831003Z 
+check	Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	﻿2026-10-07T02:19:17.3231575Z Post job cleanup.
+check	Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:19:17.4650325Z (node:3629) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+check	Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:19:17.4652282Z (Use `node --trace-deprecation ...` to show where the warning was created)
+check	Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020	2026-10-07T02:19:17.4656118Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-955f012e4e5abeb6506a75cad3daf5a1c20d8704ff31f7b28be163b1e690a122, not saving cache.
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	﻿2026-10-07T02:19:17.4798864Z Post job cleanup.
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.5824760Z [command]/usr/bin/git version
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.5903613Z git version 2.55.0
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.5984260Z Temporarily overriding HOME='/home/runner/work/_temp/6b644cf8-5aee-48d7-ab87-2d45c3486b84' before making global git config changes
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.5986193Z Adding repository directory to the temporary git global config as a safe directory
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.5996746Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/little-say/little-say
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6069306Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6123263Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6811032Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6883213Z http.https://github.com/.extraheader
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6894944Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.6968709Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.7398141Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+check	Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262	2026-10-07T02:19:17.7487371Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+check	Stop containers	﻿2026-10-07T02:19:17.8148847Z Print service container logs: a8b1de8b39b14b21ad0155e2c361a9af_postgres17bookworm_d0a257
+check	Stop containers	2026-10-07T02:19:17.8154362Z ##[command]/usr/bin/docker logs --details 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Stop containers	2026-10-07T02:19:17.8305192Z  initdb: warning: enabling "trust" authentication for local connections
+check	Stop containers	2026-10-07T02:19:17.8306857Z  The files belonging to this database system will be owned by user "postgres".
+check	Stop containers	2026-10-07T02:19:17.8309039Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+check	Stop containers	2026-10-07T02:19:17.8310548Z  This user must also own the server process.
+check	Stop containers	2026-10-07T02:19:17.8311087Z  
+check	Stop containers	2026-10-07T02:19:17.8311595Z  The database cluster will be initialized with locale "en_US.utf8".
+check	Stop containers	2026-10-07T02:19:17.8312436Z  The default database encoding has accordingly been set to "UTF8".
+check	Stop containers	2026-10-07T02:19:17.8313460Z  The default text search configuration will be set to "english".
+check	Stop containers	2026-10-07T02:19:17.8314108Z  
+check	Stop containers	2026-10-07T02:19:17.8314467Z  Data page checksums are disabled.
+check	Stop containers	2026-10-07T02:19:17.8314902Z  
+check	Stop containers	2026-10-07T02:19:17.8315432Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+check	Stop containers	2026-10-07T02:19:17.8316124Z  creating subdirectories ... ok
+check	Stop containers	2026-10-07T02:19:17.8316653Z  selecting dynamic shared memory implementation ... posix
+check	Stop containers	2026-10-07T02:19:17.8317245Z  selecting default "max_connections" ... 100
+check	Stop containers	2026-10-07T02:19:17.8317787Z  selecting default "shared_buffers" ... 128MB
+check	Stop containers	2026-10-07T02:19:17.8318322Z  selecting default time zone ... Etc/UTC
+check	Stop containers	2026-10-07T02:19:17.8318815Z  creating configuration files ... ok
+check	Stop containers	2026-10-07T02:19:17.8319290Z  running bootstrap script ... ok
+check	Stop containers	2026-10-07T02:19:17.8319812Z  performing post-bootstrap initialization ... ok
+check	Stop containers	2026-10-07T02:19:17.8320372Z  syncing data to disk ... ok
+check	Stop containers	2026-10-07T02:19:17.8320834Z  
+check	Stop containers	2026-10-07T02:19:17.8321158Z  
+check	Stop containers	2026-10-07T02:19:17.8323864Z  2026-10-07 02:17:23.935 UTC [1] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+check	Stop containers	2026-10-07T02:19:17.8325436Z  Success. You can now start the database server using:
+check	Stop containers	2026-10-07T02:19:17.8327048Z  
+check	Stop containers	2026-10-07T02:19:17.8327718Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+check	Stop containers	2026-10-07T02:19:17.8328295Z  
+check	Stop containers	2026-10-07T02:19:17.8329497Z  waiting for server to start....2026-10-07 02:17:23.620 UTC [47] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+check	Stop containers	2026-10-07T02:19:17.8331098Z  2026-10-07 02:17:23.621 UTC [47] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+check	Stop containers	2026-10-07T02:19:17.8331773Z  2026-10-07 02:17:23.624 UTC [50] LOG:  database system was shut down at 2026-10-07 02:17:23 UTC
+check	Stop containers	2026-10-07T02:19:17.8332331Z  2026-10-07 02:17:23.627 UTC [47] LOG:  database system is ready to accept connections
+check	Stop containers	2026-10-07T02:19:17.8333277Z   done
+check	Stop containers	2026-10-07T02:19:17.8333629Z  server started
+check	Stop containers	2026-10-07T02:19:17.8333929Z  CREATE DATABASE
+check	Stop containers	2026-10-07T02:19:17.8334160Z  
+check	Stop containers	2026-10-07T02:19:17.8334354Z  
+check	Stop containers	2026-10-07T02:19:17.8334703Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+check	Stop containers	2026-10-07T02:19:17.8335150Z  
+check	Stop containers	2026-10-07T02:19:17.8335442Z  2026-10-07 02:17:23.809 UTC [47] LOG:  received fast shutdown request
+check	Stop containers	2026-10-07T02:19:17.8336019Z  waiting for server to shut down...2026-10-07 02:17:23.809 UTC [47] LOG:  aborting any active transactions
+check	Stop containers	2026-10-07T02:19:17.8336783Z  .2026-10-07 02:17:23.812 UTC [47] LOG:  background worker "logical replication launcher" (PID 53) exited with exit code 1
+check	Stop containers	2026-10-07T02:19:17.8337363Z  2026-10-07 02:17:23.815 UTC [48] LOG:  shutting down
+check	Stop containers	2026-10-07T02:19:17.8337786Z  2026-10-07 02:17:23.815 UTC [48] LOG:  checkpoint starting: shutdown immediate
+check	Stop containers	2026-10-07T02:19:17.8338917Z  2026-10-07 02:17:23.832 UTC [48] LOG:  checkpoint complete: wrote 921 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.003 s, total=0.018 s; sync files=301, longest=0.002 s, average=0.001 s; distance=4238 kB, estimate=4238 kB; lsn=0/190A9C8, redo lsn=0/190A9C8
+check	Stop containers	2026-10-07T02:19:17.8340563Z  2026-10-07 02:17:23.840 UTC [47] LOG:  database system is shut down
+check	Stop containers	2026-10-07T02:19:17.8340946Z   done
+check	Stop containers	2026-10-07T02:19:17.8341240Z  server stopped
+check	Stop containers	2026-10-07T02:19:17.8341471Z  
+check	Stop containers	2026-10-07T02:19:17.8341732Z  PostgreSQL init process complete; ready for start up.
+check	Stop containers	2026-10-07T02:19:17.8342064Z  
+check	Stop containers	2026-10-07T02:19:17.8343087Z  2026-10-07 02:17:23.935 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+check	Stop containers	2026-10-07T02:19:17.8344208Z  2026-10-07 02:17:23.936 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+check	Stop containers	2026-10-07T02:19:17.8345383Z  2026-10-07 02:17:23.938 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+check	Stop containers	2026-10-07T02:19:17.8346570Z  2026-10-07 02:17:23.943 UTC [63] LOG:  database system was shut down at 2026-10-07 02:17:23 UTC
+check	Stop containers	2026-10-07T02:19:17.8347698Z  2026-10-07 02:17:23.949 UTC [1] LOG:  database system is ready to accept connections
+check	Stop containers	2026-10-07T02:19:17.8348892Z  2026-10-07 02:19:16.857 UTC [262] ERROR:  relation "pgmigrations" does not exist at character 18
+check	Stop containers	2026-10-07T02:19:17.8350043Z  2026-10-07 02:19:16.857 UTC [262] STATEMENT:  SELECT name FROM pgmigrations ORDER BY id
+check	Stop containers	2026-10-07T02:19:17.8351076Z  2026-10-07 02:19:16.936 UTC [270] WARNING:  you don't own a lock of type ExclusiveLock
+check	Stop containers	2026-10-07T02:19:17.8352153Z  2026-10-07 02:19:17.188 UTC [294] ERROR:  duplicate key value violates unique constraint "atomic_work_pkey"
+check	Stop containers	2026-10-07T02:19:17.8353731Z  2026-10-07 02:19:17.188 UTC [294] DETAIL:  Key (id)=(1) already exists.
+check	Stop containers	2026-10-07T02:19:17.8354565Z  2026-10-07 02:19:17.188 UTC [294] STATEMENT:  INSERT INTO atomic_work VALUES (1)
+check	Stop containers	2026-10-07T02:19:17.8361755Z Stop and remove container: a8b1de8b39b14b21ad0155e2c361a9af_postgres17bookworm_d0a257
+check	Stop containers	2026-10-07T02:19:17.8367398Z ##[command]/usr/bin/docker rm --force 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Stop containers	2026-10-07T02:19:18.0289254Z 71cad607fff37ff921687432b077ee2add31a7038e1a967f80a05417301c9026
+check	Stop containers	2026-10-07T02:19:18.0342165Z Remove container network: github_network_5885e2b4714e4f88a92bbdfe632f64b4
+check	Stop containers	2026-10-07T02:19:18.0349425Z ##[command]/usr/bin/docker network rm github_network_5885e2b4714e4f88a92bbdfe632f64b4
+check	Stop containers	2026-10-07T02:19:18.1150510Z github_network_5885e2b4714e4f88a92bbdfe632f64b4
+check	Complete job	﻿2026-10-07T02:19:18.1231387Z Cleaning up orphan processes
+check	Complete job	2026-10-07T02:19:18.1558593Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
