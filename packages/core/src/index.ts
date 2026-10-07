@@ -10,3 +10,5 @@ export * from './languageProfile';
 export * from './onboarding';
 export * from './photo';
 export * from './pictures';
+export * from './promptResources';
+export * from './promptPresets';

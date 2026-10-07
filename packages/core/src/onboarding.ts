@@ -3,14 +3,15 @@
  * languages.
  */
 
+import { starterConcepts, starterPromptText } from './promptPresets';
 import { applyProposal, languageProfileSchema, starterTopicsSchema, type Board, type BoardProposal, type LanguageProfile, type Library, type StarterTopic } from './schema';
 import { canonicalLanguage, hasTileLanguage } from './boardLanguages';
 import { getLanguageProfile, initialLanguageProfile, profileLanguages } from './languageProfile';
 
 export const starterTopics: { id: StarterTopic; title: string; emoji: string; prompt: string }[] = [
-  { id: 'farm', title: 'Farm animals', emoji: '🐄', prompt: 'cow, sheep, horse, pig, chicken, and duck' },
-  { id: 'everyday', title: 'Everyday words', emoji: '👋', prompt: 'more, water, help, all done, eat, and love you' },
-  { id: 'family', title: 'Family', emoji: '🏠', prompt: 'mother, father, grandmother, grandfather, sister, and brother' },
+  { id: 'farm', title: 'Farm animals', emoji: '🐄', prompt: starterConcepts.farm },
+  { id: 'everyday', title: 'Everyday words', emoji: '👋', prompt: starterConcepts.everyday },
+  { id: 'family', title: 'Family', emoji: '🏠', prompt: starterConcepts.family },
 ];
 
 /** Create an empty library with setup pending and language preferences derived from the device locale. */
@@ -21,7 +22,7 @@ export function newLibrary(locale?: string): Library {
 /** Build the six-card generation prompt for a supported starter topic. */
 export function starterPrompt(topic: StarterTopic): string {
   const content = starterTopics.find(value => value.id === topic)!;
-  return `Create a starter soundboard with exactly six cards for these concepts: ${content.prompt}. Use the device language profile. Write the board title and base words in the default language. Every card must work in every selected language, with natural spoken words and labels in each language. Set every card to follow the board language when multiple languages are selected. Family words are generic roles, not specific people's names. Use a clear emoji per card.`;
+  return starterPromptText({ concepts: content.prompt });
 }
 
 /**
