@@ -1,0 +1,10 @@
+{
+  "priorCommit": "3aa36b065b62b319ae136e648d3bb975f1509976",
+  "reason": "Initial Git text normalization changed these captured CRLF artifacts. Original bytes remain local and are preserved in the next commit with -text attributes; prior commit is retained, not rewritten.",
+  "mismatches": [
+    "check-final.log",
+    "bundle-test.log",
+    "native-export.log",
+    "browser-final.log"
+  ]
+}
