@@ -1,0 +1,700 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "amendmentsAcknowledged": [
+    5984018358,
+    5987999201,
+    5997739454,
+    6002971212,
+    6006523068,
+    6008280372,
+    6008834896,
+    6020948896,
+    6021105604,
+    6021281028,
+    6022754087,
+    6026521080
+  ],
+  "instructionAcknowledgment": "Read the entire supplied exact-source packet, repository AGENTS.md and pinned deployment. Direct user amendments govern scope, quota refusal, final-state concise communication, full feedback, lifecycle, fixed issue template, task links, rendering waiver and separate retained records without migrating pins. No other agents spawned. Same-QA continuation acknowledges the direct PR34-only decision to defer native rotation, OS text scaling and screen-reader validation, as supplied by the trusted coordinator task and recorded in comment6030384716. No runtime pin migration or global waiver.",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/34",
+  "issue": "https://github.com/MChartier/little-say/issues/31",
+  "reviewerChat": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+  "implementationOwner": "01a11405-db71-76ed-9ec6-44717ef3402a",
+  "supersedesVerdictCommentId": 6030169572,
+  "checkedAtUtc": "2026-10-07T03:43:59.128Z",
+  "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "prBodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+  "environment": {
+    "hostname": "MCHARTIER_ZBOOK",
+    "worktree": "C:/Users/MChar/Documents/Codex/2026-10-06/task-14/qa-worktree",
+    "isolation": "Detached worktree from task-local shared clone; product tracked files unchanged. Exact verified build bytes copied to task-local runtime; separate loopback7464/browser contexts. Dependencies read only from existing installation. No product branch mutated.",
+    "native": "adb devices -l returned no attached devices; SDK emulator executable and local AVD directory unavailable. No native runtime, OS text-scale or screen-reader session performed.",
+    "browser": "Microsoft Edge 154.0.4258.62"
+  },
+  "scope": {
+    "targetRepository": "MChartier/little-say",
+    "actualTargetRef": "refs/heads/master",
+    "actualTargetSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "headRepository": "MChartier/little-say",
+    "headRef": "refs/heads/feat/balanced-storyboard-grid",
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "mergeBaseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "declaredParent": null,
+    "declaredParentState": "none",
+    "ultimateTarget": {
+      "repository": "MChartier/little-say",
+      "ref": "refs/heads/master",
+      "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "pagination": "All REST pages fetched with --paginate --slurp and per_page=100; GraphQL reviewThreads and closing references report hasNextPage=false.",
+    "orderedCommits": [
+      {
+        "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "parents": [
+          "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+        ],
+        "message": "Balance storyboard rows within measured play and editor bounds",
+        "disposition": "Single direct base child; every changed file maps below."
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "7d4650a7f7de9df6b5528a247765154fe277a87d",
+        "additions": 4,
+        "deletions": 5,
+        "rationale": "Consumes ordered rectangles with compact caps and existing scroll affordance."
+      },
+      {
+        "path": "apps/mobile/src/ui/PlayBoard.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "876c7fe5b835d856b9b416161701d30f679f095c",
+        "additions": 4,
+        "deletions": 2,
+        "rationale": "Consumes measured rectangles and reports infeasible target bounds."
+      },
+      {
+        "path": "apps/mobile/src/ui/TileFace.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "7c867dc83ca03c80a4e6be817759b2c779500e23",
+        "additions": 10,
+        "deletions": 4,
+        "rationale": "Fits play pictures to remaining frame, reducing dense-card gutters."
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "9742c04f05cd90ef9c759a88cbff2b1cc3c42bd7",
+        "additions": 1,
+        "deletions": 1,
+        "rationale": "Opts native play cards into frame fitting; native hit rectangles/accessibility activation remain intact."
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.web.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "b009ab94c2ac23a51de7873661c37cb8c9bfd1fe",
+        "additions": 1,
+        "deletions": 1,
+        "rationale": "Opts web play cards into frame fitting; pointer/keyboard mapping uses the same rectangles."
+      },
+      {
+        "path": "docs/DESIGN.md",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "17b043775775a892b93a6b710bead70b01c894aa",
+        "additions": 1,
+        "deletions": 0,
+        "rationale": "One maintained product-contract paragraph, not a development diary."
+      },
+      {
+        "path": "packages/core/src/boardLayout.test.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "bcba8dbf345ba6b7e01c847654c6da5ad7e06143",
+        "additions": 75,
+        "deletions": 0,
+        "rationale": "Maintained regression checks for balanced rows, fit, minimum targets, compact scroll and invalid bounds."
+      },
+      {
+        "path": "packages/core/src/boardLayout.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "e761b098d0450981bdf5466e8ede6a8cf61ee1e0",
+        "additions": 64,
+        "deletions": 0,
+        "rationale": "Deterministic balanced per-card rectangle contract."
+      },
+      {
+        "path": "packages/core/src/interaction.test.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "d92d132ce3a2888ff9c3b01d0b11d61994ed1195",
+        "additions": 6,
+        "deletions": 4,
+        "rationale": "Updates existing geometry assertions to the new rectangle contract."
+      },
+      {
+        "path": "packages/core/src/interaction.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "f034c8db0af0748b139fed495fd964fa284339b4",
+        "additions": 1,
+        "deletions": 15,
+        "rationale": "Re-exports new geometry contract without changing touch/queue algorithms."
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "fb59ed87b232446dcda18bd7e31f9de336db03e9",
+        "additions": 2,
+        "deletions": 1,
+        "rationale": "Narrow portability correction for equivalent Intl regional names; retained baseline-regional.log reproduces baseline failure. Assertion still requires ES-MX."
+      },
+      {
+        "path": "tests/web/grid.spec.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "acfd71557cc4a2afe022a7d04517e99792680749",
+        "additions": 162,
+        "deletions": 0,
+        "rationale": "19 maintained behavior scenarios covering changed layout, resize cancellation, speech continuity, multilingual labels, editor and recovery."
+      }
+    ],
+    "totals": {
+      "commits": 1,
+      "files": 12,
+      "additions": 331,
+      "deletions": 33,
+      "productFiles": 7,
+      "testFiles": 4,
+      "maintainedDocumentationFiles": 1
+    },
+    "assessment": "Complete net merge diff AND published ordered commit history inspected. No unrelated merges, temporary add/delete churn, generated-contract noise or evidence artifacts in product history. Test and one-line design documentation scope is proportionate; Intl assertion exception is supported by unchanged-baseline reproduction."
+  },
+  "gates": {
+    "value": {
+      "status": "pass",
+      "reason": "Direct human report of four-card landscape imbalance; families benefit from usable board area and stable ordered targets. Scope is proportionate."
+    },
+    "outcome": {
+      "status": "pass-with-explicit-native-deferral",
+      "reason": "Default-size geometry, bounded targets, ordered rendering/hits, editor and browser rotation/playback criteria retain prior supporting evidence. The user explicitly permits readiness while native rotation, OS text scaling and screen-reader validation remain deferred for PR34 only."
+    },
+    "code": {
+      "status": "pass-with-limitation",
+      "reason": "Full diff and relevant gesture/photo/queue contracts inspected; no confirmed default-size product regression found. Frame fitting has no picture-height floor when label size grows; this motivates F1, not an unverified native defect claim."
+    },
+    "engineeringReview": {
+      "status": "pass-under-quota-amendment",
+      "reason": "Independent complete code/scope review performed in separate chat/worktree. Bot requested on current head, refused solely for quota in6029732188; zero submitted reviews/inline findings/threads. No completed bot review claimed."
+    },
+    "ci": {
+      "status": "pass",
+      "reason": "Run37562895456/check112603976685 successful on exact head; release/types/unit/build and PostgreSQL integration steps successful. No incomplete/failing/skipped steps. Retained local222-unit/92-browser/iOS+Android JS export logs verified; expensive unaffected suites not rerun. Rechecked again during this decision reassessment: exact-head check remains completed/success."
+    },
+    "behavior": {
+      "status": "pass-with-explicit-native-deferral",
+      "reason": "Prior independent browser/numeric/photo/gesture observations remain applicable to unchanged source/build/base. No new tests performed. Native behavior is not certified; the150%CSS-label dense-picture diagnostic remains an accepted disclosed risk, not native OS-scaling evidence or a proven native regression."
+    },
+    "evidence": {
+      "status": "pass-with-scoped-decisions",
+      "reason": "All mandatory genuine matched captures, independent pixel observations, source/build/fixture/harness/image identities remain unchanged and were reverified. The native-validation gap is explicitly deferred by the trusted PR34-only decision6030384716. Actual GitHub-page rendering separately remains waived under6022754087; no baseline waiver and no native success claim."
+    },
+    "communication": {
+      "status": "pass",
+      "reason": "Final actual PR body read in full: concrete base-state problem and final solution; default-text qualification; concise observable Test plan; three visibly embedded matched pairs; unchanged linked provenance; historical first QA verdict accurately distinguished from current scoped human deferral;150%large-text picture risk prominent. The stated same-QA prerequisite is fulfilled by this superseding verdict. No product/history narrative or native-passed implication. Issue fixed template and active closing association remain valid."
+    },
+    "stack": {
+      "status": "pass",
+      "reason": "Actual master/base/merge-base and head remain exact. No parent for PR34; issue30 continues on the same parent pin. No source correction or new descendant invalidation is introduced by this body/decision recheck. This PR34-only native deferral grants no waiver to issue30/PR35."
+    }
+  },
+  "acceptance": [
+    {
+      "criterion": "Four-card tablet2x2/preserve portrait",
+      "result": "pass",
+      "evidence": "Four-card matched pixels plus independent rendered820x1180/1180x820 probes."
+    },
+    {
+      "criterion": "Counts1-24 balanced/ordered/within bounds and targets>=44",
+      "result": "pass",
+      "evidence": "192 independent numerical cases and20 real rendered cases including4,5,7,23,24; retained maintained matrix supplies remaining specified browser counts."
+    },
+    {
+      "criterion": "Labels, emoji, photos, larger text and accessibility",
+      "result": "pass-with-explicit-native-deferral",
+      "evidence": "Default labels/accessible names and pictures passed; independently tested Russian name and dense photo crop. Larger-text native and screen-reader interaction absent; F1. Native text/accessibility validation is now explicitly deferred forPR34 by decision6030384716; no passed-native claim."
+    },
+    {
+      "criterion": "Rotation keeps IDs/order/language/content/playback and cancels stale gestures",
+      "result": "browser-pass/native-explicitly-deferred",
+      "evidence": "Actual browser reflow and synthetic active/pending speech inspected; stable React keys/shared rects/controller cancellation read. No physical rotation claim. Native rotation remains deferred under the scoped user decision."
+    },
+    {
+      "criterion": "Editor shared compact geometry/actions/scroll",
+      "result": "pass in browser",
+      "evidence": "Seven-card matched pixels,24-card phone/tablet probes and last-card editing; maintained editor-control tests inspected."
+    },
+    {
+      "criterion": "No unrelated navigation/audio recovery/account scope",
+      "result": "pass",
+      "evidence": "Full commit/file inventory confirmed; no #30 transitions/#28 lifecycle/#29 accounts changes."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "category": "disclosed-risk/native-validation-deferred",
+      "severity": "not-blocking-under-scoped-human-decision",
+      "observed": "Issue31 asks larger text to remain usable and its implementation plan calls for representative native rotation/accessibility validation. Those checks are explicitly unexecuted. Independent browser-only 150% label-font diagnostic on390x844/24cards leaves the final card picture frame1.5px high versus25.5px at default; several pictures become visually negligible. This diagnostic changes label CSS only and is not a genuine native scaling capture or a proven native regression; React Native adjustsFontSizeToFit may behave differently.",
+      "expected": "Provide representative native rotation and increased OS text-size results with usable pictures/labels/controls and working screen-reader activation, bound to this exact source/build. The scoped rendered-GitHub waiver does not waive these checks.",
+      "consequence": "The larger-text/readability and native accessibility acceptance cannot be certified from normal-scale browser captures or JS exports, and the diagnostic exposes a concrete risk worth checking.",
+      "nextAction": "Coordinator may perform its independent receipt/pre-post readiness checks. Preserve the native deferral/risk and obtain native validation separately when available; a later demonstrated source defect goes to the existing owner and invalidates affected descendant gates.",
+      "status": "Explicitly deferred by user for PR34 only; not fixed and not proven safe on native.",
+      "disposition": "The trusted user decision Mark ready at03:37:04UTC and comment6030384716 explicitly accept readiness with the three native checks deferred and risk disclosed. The final body makes that scope clear."
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/92d6c20503e0110765d22672eb2e0e9b383c1599/publication/record.json",
+      "sha256": "0f075fdd310f387b09f11b84d760eb8cbd96a7bb66585382e3c93795e914d8bb",
+      "purpose": "Implementer binding independently reconciled, not taken as verdict"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/actions/runs/37562895456",
+      "purpose": "Current exact-head successful CI"
+    },
+    {
+      "path": "probe/result.json",
+      "purpose": "Independent browser/numeric results; diagnostic explicitly separated"
+    },
+    {
+      "path": "asset-probe/result.json",
+      "purpose": "Independent dense photo and multilingual probe"
+    }
+  ],
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Six master-to-final pairs: four-card portrait/landscape, seven-card landscape/editor,24-card phone and infeasible tiny window. Three pairs visibly embedded adjacent to main Test plan. No exhaustive screenshot matrix claimed.",
+    "pairs": [
+      {
+        "state": "four-portrait",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 820,
+          "height": 1180
+        },
+        "before": {
+          "side": "before",
+          "scene": "four-portrait",
+          "file": "before-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "width": 820,
+          "height": 1180
+        },
+        "after": {
+          "side": "after",
+          "scene": "four-portrait",
+          "file": "after-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "width": 820,
+          "height": 1180
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-four-portrait.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-four-portrait.png",
+        "pixelObservation": "Both real captures show identical readable 2x2 layout; PNG bytes are identical."
+      },
+      {
+        "state": "four-landscape",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "four-landscape",
+          "file": "before-four-landscape.png",
+          "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "four-landscape",
+          "file": "after-four-landscape.png",
+          "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-four-landscape.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-four-landscape.png",
+        "pixelObservation": "Baseline 3+1 leaves unused lower area; final 2+2 fills both rows with consistent gutters and readable labels."
+      },
+      {
+        "state": "seven-landscape",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "seven-landscape",
+          "file": "before-seven-landscape.png",
+          "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "seven-landscape",
+          "file": "after-seven-landscape.png",
+          "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-seven-landscape.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-seven-landscape.png",
+        "pixelObservation": "Ordered 4+3 remains, but final shorter row fills the width; picture sizes remain consistent. Long label deliberately ellipsizes."
+      },
+      {
+        "state": "seven-editor",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "seven-editor",
+          "file": "before-seven-editor.png",
+          "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "seven-editor",
+          "file": "after-seven-editor.png",
+          "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-seven-editor.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-seven-editor.png",
+        "pixelObservation": "Baseline 3+3+1 becomes centered compact 4+3; Pictures/AI/Add/audio/Duplicate/Delete actions remain visible."
+      },
+      {
+        "state": "twenty-four-phone",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "before": {
+          "side": "before",
+          "scene": "twenty-four-phone",
+          "file": "before-twenty-four-phone.png",
+          "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+          "width": 390,
+          "height": 844
+        },
+        "after": {
+          "side": "after",
+          "scene": "twenty-four-phone",
+          "file": "after-twenty-four-phone.png",
+          "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+          "width": 390,
+          "height": 844
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-twenty-four-phone.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-twenty-four-phone.png",
+        "pixelObservation": "Final emoji are whole and two-line long-label ellipsis is intentional. Targets remain large; dense pictures are smaller than sparse cards."
+      },
+      {
+        "state": "tiny-window",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 320,
+          "height": 320
+        },
+        "before": {
+          "side": "before",
+          "scene": "tiny-window",
+          "file": "before-tiny-window.png",
+          "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+          "width": 320,
+          "height": 320
+        },
+        "after": {
+          "side": "after",
+          "scene": "tiny-window",
+          "file": "after-tiny-window.png",
+          "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+          "width": 320,
+          "height": 320
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-tiny-window.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-tiny-window.png",
+        "pixelObservation": "Baseline unusable clipped text/undersized cards becomes a readable resize/rotate message while Hold to unlock stays visible."
+      }
+    ],
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/manifest.json",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214"
+      },
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/capture-grid.mjs",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+        "fixtureBinding": "Independently evaluated exact retained fixture function; all12 fixture digests reproduced."
+      },
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/artifact-index.json",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f"
+      }
+    ],
+    "provenanceAssessment": "Authenticated git fetched exact retained commits; all71 indexed artifacts exact-byte matched. All12 PNG digests/dimensions and12 fixture hashes verified. Both19-file build inventories/server hashes match retained local build bytes; capture harness verifies actual served App/index responses and owned listeners. Independent probe copied final build bytes and verified both loaded bundle hashes anew. Both sources clean at capture, current After is exact head, Before is actual master. Same clock, fixture, scale1,light theme,viewport,locale and settled metrics. Service workers blocked; speech stub/fullscreen normalization identically disclosed; no image edits/crops/UI hiding. Evidence root and historical be7e8a2/b3f3aa5/92d6c20 remain reachable from nonmerged evidence/issue31-balanced-grid-zbook at beeae0527074d7824a43a4e51086a38be99a80be; owner/purpose/lifetime retention note verified.",
+    "pixelObservations": {
+      "four-portrait": "Both real captures show identical readable 2x2 layout; PNG bytes are identical.",
+      "four-landscape": "Baseline 3+1 leaves unused lower area; final 2+2 fills both rows with consistent gutters and readable labels.",
+      "seven-landscape": "Ordered 4+3 remains, but final shorter row fills the width; picture sizes remain consistent. Long label deliberately ellipsizes.",
+      "seven-editor": "Baseline 3+3+1 becomes centered compact 4+3; Pictures/AI/Add/audio/Duplicate/Delete actions remain visible.",
+      "twenty-four-phone": "Final emoji are whole and two-line long-label ellipsis is intentional. Targets remain large; dense pictures are smaller than sparse cards.",
+      "tiny-window": "Baseline unusable clipped text/undersized cards becomes a readable resize/rotate message while Hold to unlock stays visible."
+    },
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/34",
+      "checkedAtUtc": null,
+      "observations": "Not performed; direct human amendment6022754087 waives only actual GitHub-page image rendering. Source Markdown embedding/labels and genuine downloaded image pixels independently checked."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null
+  },
+  "feedback": {
+    "items": [
+      {
+        "kind": "issueComments",
+        "id": 6029167414,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029167414",
+        "updatedAt": "2026-10-07T01:51:03Z",
+        "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8",
+        "body": "Source request and planning findings\n\nThe human reported a good four-card 2×2 portrait layout, a 3+1 landscape layout, and requested fuller use of space with square-ish (not strictly square) cards and rows equal in count or differing by one. Exact scoping authorization: “Yeah, so spin up a task to scope that out um through planning and then create an issue”. Source coordinator task: `01a0f838-69d6-75b3-8cc0-f768175aa03e`. Its later trusted update authorizes coordinated implementation after both plans; this task only creates the plan/issue.\n\nInspected live master **`1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`** on the designated ZBook; the clean local checkout matched it. No product source, branch or active worktree was changed.\n\n- [gridLayout](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/packages/core/src/interaction.ts) tries 1–8 columns, fills a regular rectangle and scores minimum side minus aspect distortion and a small empty-slot penalty. It does not enforce balanced occupied rows. [PlayBoard](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/PlayBoard.tsx) then derives positions with modulo/division by that column count.\n- [BoardEditor](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/BoardEditor.tsx) shares the helper but caps preview cells at 164×148, uses an 8-unit gap, and permits preview scrolling. Updating only the helper's column choice would leave both consumers unable to represent rows such as 4+3 with independent widths. Return ordered row/per-card geometry and adapt both consumers.\n- [TouchSurface](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/TouchSurface.tsx) and its web counterpart already consume rectangles and cancel old contacts when they change. Keep stable card IDs and those interaction contracts; geometry changes should not recreate the speech queue. Preserve the editor's actions and the play header's measured space.\n- Existing [unit](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/packages/core/src/interaction.test.ts) and [browser](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/tests/web/app.spec.ts) tests check fit/touch dimensions and 24-card access, but do not assert balanced occupied rows. They were read, not run.\n\nA planning-only Node probe executed the unchanged sizing function extracted from that Git revision. Synthetic bounds subtract the current 32-unit horizontal padding and 92-unit header/bottom allocation; actual safe-area measurements and installed-build identity remain unverified:\n\n| Viewport assumption | Board bounds | Current four-card rows | Current cell |\n| --- | --- | --- | --- |\n| 820×1180 | 788×1088 | 2+2 | 388×538 |\n| 1180×820 | 1148×728 | 3+1 | 374.7×358 |\n| 900×600 | 868×508 | 3+1 | 281.3×248 |\n\nThis reproduces the **source-function selection**, not the user's device UI. A 192-case numerical exploration (1–24 cards at eight sizes) supports quotient/remainder row distribution; at the tablet landscape bounds, 2+2 gives 568×358 cards, while five/seven cards can use 3+2 / 4+3. Rectangles are expected: forcing squares would leave space unused. Candidate scoring still needs visual tuning—an early scalar score picked an undesirable 2+1+1 for four cards on a narrow phone. Prefer uniform rows among similarly usable options and validate boundaries, rather than copy that experiment as production code.\n\nVery small windows expose a genuine constraint: at synthetic 288×228 board bounds, 24 cards with current gaps cannot all meet the 44-unit floor. Preserve non-scrolling play on the specified phone/tablet acceptance sizes; tiny-window behavior must be explicit rather than shrinking text/targets indefinitely. Editor preview scrolling already exists. Long labels need deliberate two-line/wrapping/truncation behavior and complete accessible names, with image space protected.\n\nCoordination/dispositions: #30 owns navigation/animation and should follow this settled geometry; it is not a duplicate. #28's reported stuck playback remains a separate unresolved investigation. The full paginated issue/PR discussions and review/inline collections for nearby #19/#29 and #20 were retrieved; their account-entry and billing/provenance feedback stays with their existing owners, and this scoping task makes no readiness or resolution assessment. Neither PR changes the core layout, PlayBoard or BoardEditor, so neither is a prerequisite. All existing open/closed issue titles and open PR paths were checked for duplication.\n\nRead the repository instructions, pinned deployment/intake/template, supplied full standards, and all 12 required live #405 amendments; execution and communication pins remain fixed. The issue uses the amended five-section template. Implementation is unassigned and no PR exists; coordinator owns admission and Project Scoping. No application run, native-device validation or implementation result is claimed.",
+        "disposition": "Original human report/acceptance retained. Default browser behavior is supported; native rotation, OS text scaling and screen-reader validation are now explicitly deferred for PR34 only by the trusted decision6030384716."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029219796,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029219796",
+        "updatedAt": "2026-10-07T01:55:10Z",
+        "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95",
+        "body": "Queued claim after planning under Matthew's direct instruction to move the backlog through scoping and implementation. Planned owner 01a11405-db71-76ed-9ec6-44717ef3402a; implementation not yet started. Queued for coordinator continuation of the completed grid planner. Intake passes; balanced geometry first. No PR or implementation dispatch yet. Coordinator must confirm shared capacity and the actual base before starting; at most three implementation tasks share the ZBook. No execution, branch claim, readiness or release is asserted.",
+        "disposition": "Historical queued claim; later trusted task/started checkpoint supplies implementation authority."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029348137,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029348137",
+        "updatedAt": "2026-10-07T02:05:47Z",
+        "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02",
+        "body": "Implementation started under claim6029219796 in the existing owner task `01a11405-db71-76ed-9ec6-44717ef3402a`. Verified ZBook and live master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`; isolated branch `feat/balanced-storyboard-grid`. The durable clone and other owners remain unchanged. Read/acknowledged the full pinned implementation packet and all amendments; workflow-v3 execution `f0919b1` and pr-review-v3 communication `97e5583` remain fixed. Geometry and play/editor integration only; #30 follows a published checkpoint, and #28 retains audio lifecycle work. Validation and PR are pending.",
+        "disposition": "Owner and fixed-pin acknowledgement confirmed; separate QA worktree and chat used."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029662109,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029662109",
+        "updatedAt": "2026-10-07T02:32:23Z",
+        "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d",
+        "body": "Shared geometry checkpoint published: `b21d3ba7370c08468b868385ce9df3d875eee799` on `feat/balanced-storyboard-grid`, based directly on master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`. This is the canonical ordered-rectangle contract for #30 to pin after coordinator review; it includes balanced play/editor geometry and scoped dense-play picture fitting. No transition or audio lifecycle changes.\n\n222 unit tests, types/build checks, all 19 new browser grid scenarios, and Android/iOS bundle exports pass. The full browser suite and retained matched evidence publication are finishing; this checkpoint is not a readiness verdict. Sole owner remains task `01a11405-db71-76ed-9ec6-44717ef3402a`; PR creation follows.\r\n",
+        "disposition": "Published stable geometry SHA confirmed. Later full browser/evidence/CI results supersede its pending stages without relabeling historical evidence."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029730527,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029730527",
+        "updatedAt": "2026-10-07T02:38:14Z",
+        "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a",
+        "body": "@codex review\n\nPlease review the current change against master, including shared ordered geometry, resize/interaction preservation and dense-card rendering. Source scope and exact matched UI evidence are linked in the description. Independent workflow QA will be coordinated separately.\r\n",
+        "disposition": "Single configured bot review request; independent full published code/scope review performed here."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029732188,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029732188",
+        "updatedAt": "2026-10-07T02:38:24Z",
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+        "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+        "disposition": "Exact quota-only bot refusal verified; amendment6006523068 applies. No bot review completion claimed, no retry or billing action."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029795718,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029795718",
+        "updatedAt": "2026-10-07T02:43:57Z",
+        "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2",
+        "body": "Implementation handoff: current-head CI, 222 unit tests, all 92 browser tests, and Android/iOS exports pass. The complete published scope is one commit / 12 files, with no evidence artifacts in product history. [Exact source/body/CI/feedback bindings and access checks](https://github.com/MChartier/little-say/blob/92d6c20503e0110765d22672eb2e0e9b383c1599/publication/record.json) are retained separately.\n\nBot review was quota-refused in comment6029732188; independent full-scope review/QA remains required. Native device rotation, OS large-font and screen-reader checks are unexecuted. Actual GitHub-page rendering uses the explicit waiver; genuine image pixels and provenance were verified.\n\nStable geometry for #30: `b21d3ba7370c08468b868385ce9df3d875eee799`. No transition or audio-lifecycle work is included. Draft/readiness and Project progression remain with the coordinator.",
+        "disposition": "Earlier implementer claims and source/evidence limitations remain valid; prior F1 native gap now explicitly deferred without relabeling any tests."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029994635,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029994635",
+        "updatedAt": "2026-10-07T03:00:32Z",
+        "bodySha256": "bcaa53a24b41b311feed306e1c2dba1df7a6168351c9d521ee3bc22caa0b01e6",
+        "body": "Independent QA assignment is next in the shared review slot, following completion of the saved-target review. It will assess the exact balanced-grid checkpoint b21d3ba7370c08468b868385ce9df3d875eee799 against master 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4, including complete scope, portrait/landscape behavior and genuine matched evidence. Issue30’s separate implementation is pinned to this parent; any parent correction must be coordinated and revalidated.",
+        "disposition": "QA claim covers exact head/base. Issue30 parent correction must go through coordinator to existing owner and invalidate affected child gates."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030169572,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030169572",
+        "updatedAt": "2026-10-07T03:16:43Z",
+        "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+        "body": "Independent QA: **evidence-incomplete** for `b21d3ba` against master `1f03290`.\n\nDefault-size geometry, rotation/queued speech, stale-contact cancellation, keyboard activation, editor selection and dense-photo crops passed independent browser probes. All six genuine matched image pairs and exact provenance were verified; the one-commit/12-file published scope is focused and current-head CI passes.\n\n**Remaining gap:** #31's representative native rotation, larger-text and screen-reader checks are unexecuted. A browser-only150% label-font diagnostic reduced a dense card's picture frame from25.5px to1.5px; this is a risk signal, not native OS-scaling proof or a proven native regression. Obtain bound native evidence, or an explicit scoped human decision, before certification.\n\n[Detailed immutable QA record](https://github.com/MChartier/little-say/blob/afd754057722f8368084ce7b8a770f35208c8870/README.md) · [Exact bindings, findings and feedback dispositions](https://github.com/MChartier/little-say/blob/afd754057722f8368084ce7b8a770f35208c8870/record.json).\n\nCoordinator: route follow-up to the existing #31 owner. Any source correction invalidates affected #30 parent/evidence gates until reviewed. No readiness, draft, merge or deployment action taken.",
+        "disposition": "Prior evidence-incomplete verdict exact API body and updated_at verified against trusted receipt. Historical record remains unedited. This verdict supersedes it solely for explicit deferral and updated communication gates; prior code/pixel/behavior findings retained."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030384716,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+        "updatedAt": "2026-10-07T03:37:43Z",
+        "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+        "body": "Scoped human decision, October 6, 2026: in response to the explicit choice between retaining the iPad-validation hold or marking this balanced-grid PR ready with native checks deferred, Matthew replied “Mark ready”. This defers native rotation, OS text-scaling and screen-reader validation for this PR’s current balanced-grid outcome. It does not claim those checks ran, remove the disclosed dense-board large-text risk, or waive source/CI/feedback/provenance gates. The genuine matched browser captures and independent browser checks remain the current evidence. Same-QA reassessment and coordinator rechecks will bind the final description before readiness.",
+        "disposition": "Scoped human decision confirmed through trusted coordinator instruction and exact live body. Defers only native rotation, OS text scaling and screen-reader validation for PR34. Large-text risk and all other gates preserved; final body matches scope."
+      }
+    ],
+    "reviews": [],
+    "inlineComments": [],
+    "reviewThreads": [],
+    "fullContentComparedAt": "2026-10-07T03:42:49.499Z",
+    "assessment": "Every live issue/PR conversation body, submitted review and inline thread reread. Only new actionable item is scoped human decision6030384716; disposition explicit. No outstanding change request remains. Zero reviews and zero inline threads."
+  },
+  "bindingChecks": {
+    "priorReceiptVerified": {
+      "id": 6030169572,
+      "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+      "updatedAt": "2026-10-07T03:16:43Z"
+    },
+    "decisionSnapshot": {
+      "checkedAtUtc": "2026-10-07T03:42:49.499Z",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "headRef": "feat/balanced-storyboard-grid",
+      "baseRef": "master",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+      "prUpdatedAt": "2026-10-07T03:40:18Z",
+      "draft": true,
+      "commits": 1,
+      "changedFiles": 12,
+      "additions": 331,
+      "deletions": 33
+    },
+    "evidenceReverifiedAt": "2026-10-07T03:43:59.128Z",
+    "comparison": "Complete commits/files/parents and original issue feedback unchanged; only PR body and explicit native deferral comment added.",
+    "branches": {
+      "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "evidence/issue31-balanced-grid-zbook": "beeae0527074d7824a43a4e51086a38be99a80be",
+      "evidence/qa-pr34-20261007": "5fd606426e59d61aceeecb5615d2e21d70637461"
+    },
+    "preAndPostComment": "Fresh complete bindings/feedback will be checked immediately before and after append-only comment; exact readback receipt delivered through trusted QA task."
+  },
+  "limitations": [
+    "No native hardware/emulator execution; OS scaling,TalkBack/VoiceOver,physical rotation and human auditory assessment are unperformed. JS exports are compile/package evidence only. These checks are expressly deferred for this PR by scoped user decision6030384716; the deferral is not a claim of success.",
+    "Synthetic browser speech validates queue/state and activation routing, not acoustic output.",
+    "150% CSS label diagnostic is explicitly synthetic; no native equivalence or baseline-regression claim.",
+    "Actual GitHub PR-page image rendering waived, not passed.",
+    "No label,draft,merge,deploy,release,install or product branch/source mutation performed."
+  ],
+  "nextAction": "Coordinator independently verifies this new append-only comment against its trusted-task receipt and saves a separate receipt, then performs current head/base/body/evidence/full-feedback checks before and after any readiness/draft transition. QA takes no readiness/draft action. Preserve native deferral and dense-picture risk; no broad waiver or merge authorization.",
+  "reassessment": {
+    "scope": "Communication and explicit human decision only; product source/base/ordered commits/files and prior evidence unchanged.",
+    "previousVerdict": {
+      "commentId": 6030169572,
+      "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+      "updatedAt": "2026-10-07T03:16:43Z",
+      "recordUrl": "https://github.com/MChartier/little-say/blob/afd754057722f8368084ce7b8a770f35208c8870/record.json"
+    },
+    "newTestsOrCaptures": "None. Prior independent review, pixel observations and targeted probes retained with exact unchanged identities; successful current-head CI reread.",
+    "nativeValidationDeferral": {
+      "id": 6030384716,
+      "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+      "updatedAt": "2026-10-07T03:37:43Z",
+      "body": "Scoped human decision, October 6, 2026: in response to the explicit choice between retaining the iPad-validation hold or marking this balanced-grid PR ready with native checks deferred, Matthew replied “Mark ready”. This defers native rotation, OS text-scaling and screen-reader validation for this PR’s current balanced-grid outcome. It does not claim those checks ran, remove the disclosed dense-board large-text risk, or waive source/CI/feedback/provenance gates. The genuine matched browser captures and independent browser checks remain the current evidence. Same-QA reassessment and coordinator rechecks will bind the final description before readiness.",
+      "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+      "trustedInstruction": "Same coordinator task reports direct user reply Mark ready at2026-10-07T03:37:04Z to explicit PR34 native-validation deferral choice; this task instruction authorizes scope, not same-account comment alone.",
+      "appliesOnlyTo": "PR34 current balanced-grid outcome at b21d3ba7370c08468b868385ce9df3d875eee799 against1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "deferred": [
+        "native rotation",
+        "OS text scaling",
+        "screen-reader validation"
+      ],
+      "notDeferred": [
+        "source/base/complete published scope",
+        "CI",
+        "all current feedback",
+        "genuine matched captures and independent pixel inspection",
+        "source/build/fixture/harness/image provenance",
+        "disclosure of dense-picture150%label-font risk",
+        "coordinator receipt and readiness rechecks",
+        "human merge/release authority"
+      ],
+      "nativePassed": false
+    },
+    "historicalBody": {
+      "url": "https://github.com/MChartier/little-say/blob/92d6c20503e0110765d22672eb2e0e9b383c1599/publication/pr-body.md",
+      "exactFileSha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608",
+      "priorApiBodySha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608"
+    }
+  }
+}

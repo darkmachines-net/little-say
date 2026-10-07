@@ -1,0 +1,160 @@
+{
+  "checkedAtUtc": "2026-10-07T03:43:59.128Z",
+  "binding": {
+    "checkedAtUtc": "2026-10-07T03:42:49.499Z",
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "headRef": "feat/balanced-storyboard-grid",
+    "baseRef": "master",
+    "headRepository": "MChartier/little-say",
+    "baseRepository": "MChartier/little-say",
+    "prBodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+    "prUpdatedAt": "2026-10-07T03:40:18Z",
+    "draft": true,
+    "commits": 1,
+    "changedFiles": 12,
+    "additions": 331,
+    "deletions": 33
+  },
+  "priorReceiptVerified": {
+    "id": 6030169572,
+    "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+    "updatedAt": "2026-10-07T03:16:43Z"
+  },
+  "scopedDecision": {
+    "id": 6030384716,
+    "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+    "updatedAt": "2026-10-07T03:37:43Z",
+    "body": "Scoped human decision, October 6, 2026: in response to the explicit choice between retaining the iPad-validation hold or marking this balanced-grid PR ready with native checks deferred, Matthew replied “Mark ready”. This defers native rotation, OS text-scaling and screen-reader validation for this PR’s current balanced-grid outcome. It does not claim those checks ran, remove the disclosed dense-board large-text risk, or waive source/CI/feedback/provenance gates. The genuine matched browser captures and independent browser checks remain the current evidence. Same-QA reassessment and coordinator rechecks will bind the final description before readiness.",
+    "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+    "trustedInstruction": "Same coordinator task reports direct user reply Mark ready at2026-10-07T03:37:04Z to explicit PR34 native-validation deferral choice; this task instruction authorizes scope, not same-account comment alone."
+  },
+  "evidenceReadback": [
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/manifest.json",
+      "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+      "verifiedSha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+      "gitBlobSha": "a84e31d973d2138a48adc8920d4fc2636630de81"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "capture-grid.mjs",
+      "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+      "verifiedSha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+      "gitBlobSha": "9758e467d89f4293e8087f6304d26f8077837841"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "artifact-index.json",
+      "sha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f",
+      "verifiedSha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f",
+      "gitBlobSha": "e6fd539c2ae8feb4f3c6f546062b20b79fb3d83a"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "verifiedSha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "gitBlobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "verifiedSha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "gitBlobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+      "verifiedSha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+      "gitBlobSha": "4dbb41e2c548db4480212aeaf44da48e08abb1a8"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+      "verifiedSha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+      "gitBlobSha": "68cf85465b1fd28fefa58748d7ce0a0a6272a4b8"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+      "verifiedSha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+      "gitBlobSha": "dba21a4b5bad433f033383396308cf8eafd1dfb9"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+      "verifiedSha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+      "gitBlobSha": "70f4a962611fd9e55a54d1e14cd9d97de4c2fd99"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+      "verifiedSha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+      "gitBlobSha": "58f8a6770666045bab7859a0589bb51555df01ef"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+      "verifiedSha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+      "gitBlobSha": "c1c9e9fdd8d05fe0313ae6b825344af0b10663e8"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+      "verifiedSha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+      "gitBlobSha": "570b5b8da8bdfae1bb91fc4acd1debbf0dcdd5e5"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-twenty-four-phone.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+      "verifiedSha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+      "gitBlobSha": "400f2b9611fa5a418e3d8fbbad4c16482f41c451"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+      "verifiedSha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+      "gitBlobSha": "bb6df5dfd8add1584e02b68b530042a256f017a7"
+    },
+    {
+      "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+      "path": "ui-final2/after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+      "verifiedSha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+      "gitBlobSha": "f7743d86f4bbd6400fa8762fcd7276551e42638c"
+    },
+    {
+      "commit": "afd754057722f8368084ce7b8a770f35208c8870",
+      "path": "record.json",
+      "sha256": "a3fde50ad54be5801bbdc471709f0fe722f46df17449f83567725c78358dec3a",
+      "verifiedSha256": "a3fde50ad54be5801bbdc471709f0fe722f46df17449f83567725c78358dec3a",
+      "gitBlobSha": "c6680c88f4aeffaecc59263f177ed3b964a53cff"
+    }
+  ],
+  "branches": {
+    "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "evidence/issue31-balanced-grid-zbook": "beeae0527074d7824a43a4e51086a38be99a80be",
+    "evidence/qa-pr34-20261007": "5fd606426e59d61aceeecb5615d2e21d70637461"
+  },
+  "originalBody": {
+    "url": "https://github.com/MChartier/little-say/blob/92d6c20503e0110765d22672eb2e0e9b383c1599/publication/pr-body.md",
+    "exactFileSha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608",
+    "priorApiBodySha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608"
+  },
+  "scope": "Complete commits/files/parents and original issue feedback unchanged; only PR body and explicit native deferral comment added.",
+  "tests": "None rerun; exact unchanged source/base/build/capture/provenance and successful CI preserve prior independent code/behavior evidence.",
+  "sourceWorktreeStatus": ""
+}
