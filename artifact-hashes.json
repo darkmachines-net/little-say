@@ -1,0 +1,117 @@
+[
+  {
+    "path": ".gitattributes",
+    "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "bytes": 8
+  },
+  {
+    "path": "additional-vendor-hashes.json",
+    "sha256": "17531ce7f6f09e779e0a4921a246feade58a5d4d4a2305ba5bd55a6c6b5c12d5",
+    "bytes": 681
+  },
+  {
+    "path": "assessed-issue-body.md",
+    "sha256": "50d4a771111ff0bdb00e56d710383d32d192d16000a890fb0895547839caa5dd",
+    "bytes": 3973
+  },
+  {
+    "path": "assessed-pr-body.md",
+    "sha256": "c4c493ed52f66d9ce2620306b22e65ea5faa073e262b86b55598da272b7ffcff",
+    "bytes": 2768
+  },
+  {
+    "path": "bindings.json",
+    "sha256": "3ea40d80f0900ccf42b7eab4014fe9e2759fb52748d558bc3f5a5814899ac1de",
+    "bytes": 12315
+  },
+  {
+    "path": "check-runs.json",
+    "sha256": "19d888c24f096dd0f7bd2c0e7821660b049029d1c08c049321f94a6832a7e6ef",
+    "bytes": 3555
+  },
+  {
+    "path": "ci-extract.txt",
+    "sha256": "63c963be8c79fdc25b92a65fd35fb97ab6c397099f6ef3bb29a0393d7585c623",
+    "bytes": 1764
+  },
+  {
+    "path": "ci-jobs.json",
+    "sha256": "3bc0f144cdb6f4dabbc2e17caed7af61845dea777d0884929f79b73efdb76b0e",
+    "bytes": 2853
+  },
+  {
+    "path": "ci-run.json",
+    "sha256": "65dc2b0128905c130d24f660be1b8cf9d74ecdfc61d1ae40d4b375e4590ab489",
+    "bytes": 12851
+  },
+  {
+    "path": "feedback.json",
+    "sha256": "8807c80fadd0cccc711c5662e7982d2ed7a44d1ee6b56466aecc3312e9c4a32d",
+    "bytes": 13721
+  },
+  {
+    "path": "focused-tests.log",
+    "sha256": "bf0a8969e992bfeb79c91080f64b4a8b60a7e6e8e5332aafc07077a78db16179",
+    "bytes": 4074
+  },
+  {
+    "path": "full-merge.diff",
+    "sha256": "e3f0c5f22de7d28c57dbbb8fa9bcb2cd88a582830886a9fd43f42224f97566fb",
+    "bytes": 9722
+  },
+  {
+    "path": "original-inputs/apps/mobile/src/services/audioPlayback.test.ts",
+    "sha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+    "bytes": 5709
+  },
+  {
+    "path": "original-inputs/tests/fixtures/library.ts",
+    "sha256": "00baa33d2409d69770dce67fedee86ecabd90e6ff74c3c4fff9f542d1ef53a14",
+    "bytes": 1763
+  },
+  {
+    "path": "original-inputs/tests/web/existingLibrary.ts",
+    "sha256": "ad0a0070d0904d43c8b783fb7c31cf75433de8db99aff3e3231cb00ec315a495",
+    "bytes": 1074
+  },
+  {
+    "path": "original-inputs/tests/web/speech.spec.ts",
+    "sha256": "5237708193ca3550f95316fda4ba1c6585a0669cc4cf66e8e6f45e4f5824e728",
+    "bytes": 9649
+  },
+  {
+    "path": "README.md",
+    "sha256": "df7ee6f4b064dcbf38f091ea8d481492d909f5853f49d829ab1b753239ff8833",
+    "bytes": 9026
+  },
+  {
+    "path": "retained-verification.json",
+    "sha256": "fa869a87a160cb18f58c9d41cf8ed3112fd6cfafda9728f2445658e7ed7b1b51",
+    "bytes": 8420
+  },
+  {
+    "path": "runtime.json",
+    "sha256": "0e02a6ab7f70fe1a941c971b8d7951a06467b31c60ef40d146abdfe776fa663a",
+    "bytes": 938
+  },
+  {
+    "path": "scope.json",
+    "sha256": "735a0746a603aba1628b26bed1c7cb1fe902456735562bdc14e8885d84c2356a",
+    "bytes": 2669
+  },
+  {
+    "path": "source-inputs.json",
+    "sha256": "e9554705a822fa3a7de657f550ef57e72cf2afa140d5fbd318b2c777dc481ff2",
+    "bytes": 1969
+  },
+  {
+    "path": "verdict.json",
+    "sha256": "dc27d931b1963cc0dfebce5672a1520d1935c74c70f0032322db58224d9841cc",
+    "bytes": 8898
+  },
+  {
+    "path": "vitest.qa.config.mjs",
+    "sha256": "97b6e5e610004de525071e4535a0e4dcbbd67bb50634e64b1fd110c414e34775",
+    "bytes": 657
+  }
+]

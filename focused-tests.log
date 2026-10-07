@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-11/qa-source
+
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > tap 1ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > swipe between tiles 0ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > start on tile, release outside 0ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > gap to tile 0ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > outside to outside 0ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > activates on down, ignores duplicate downs and never replays a held tile on release 1ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > cancellation, including layout changes, cannot activate on a later release 0ms
+ Γ£ô packages/core/src/interaction.test.ts > forgiving child gestures > tracks multiple fingers independently 0ms
+ Γ£ô packages/core/src/interaction.test.ts > bounded speech > finishes the word and retains only the most recent next word 1ms
+ Γ£ô packages/core/src/interaction.test.ts > bounded speech > allows deliberate repeats without an unbounded queue 0ms
+ Γ£ô packages/core/src/interaction.test.ts > bounded speech > ignores stale callbacks after stopping and resumes from an engine timeout 2ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > requires a full stationary hold and release 0ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > uses one latched readiness state for feedback and release 0ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > movement, another contact, or a board touch cancels the hold 0ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > fits every tile without scrolling at 768 ├ù 880 1ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > fits every tile without scrolling at 1120 ├ù 650 1ms
+ Γ£ô packages/core/src/interaction.test.ts > parent hold and fixed layout > fits every tile without scrolling at 360 ├ù 670 1ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=idle after loading 6ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=failed after loading 1ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > completes a clip and advances only to the latest pending card, then allows a repeat 1ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > ignores late status and audio-mode resolution after cancellation 1ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > releases the queue when native audio and fallback speech both fail 1ms
+ Γ£ô apps/mobile/src/services/hybridSpeech.test.ts > saved audio playback with device fallback > uses saved audio without also speaking through TTS 1ms
+ Γ£ô apps/mobile/src/services/hybridSpeech.test.ts > saved audio playback with device fallback > immediately uses TTS when the tile has no matching saved audio 0ms
+ Γ£ô apps/mobile/src/services/hybridSpeech.test.ts > saved audio playback with device fallback > falls back once on playback failure without changing text or language 0ms
+ Γ£ô apps/mobile/src/services/hybridSpeech.test.ts > saved audio playback with device fallback > cancels audio and TTS and ignores late callbacks after leaving play 0ms
+ Γ£ô apps/mobile/src/services/hybridSpeech.test.ts > saved audio playback with device fallback > keeps the existing current-plus-latest queue for rapid taps 0ms
+
+ Test Files  3 passed (3)
+      Tests  27 passed (27)
+   Start at  19:30:35
+   Duration  1.71s (transform 881ms, setup 0ms, import 1.22s, tests 24ms, environment 0ms)
+

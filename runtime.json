@@ -1,0 +1,30 @@
+{
+  "checkedAtUtc": "2026-10-07T02:37:06.9059668Z",
+  "hostname": "MCHARTIER_ZBOOK",
+  "os": "Windows",
+  "inventory": [
+    {
+      "root": "C:\\Users\\MChar\\AppData\\Local\\Android\\Sdk",
+      "exists": true,
+      "emulatorExecutable": false,
+      "systemImages": false
+    },
+    {
+      "root": "C:\\Users\\MChar\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Android\\Sdk",
+      "exists": true,
+      "emulatorExecutable": false,
+      "systemImages": false
+    }
+  ],
+  "ANDROID_AVD_HOME": null,
+  "ANDROID_USER_HOME": null,
+  "defaultAvdDirectoryExists": true,
+  "packagedAvdDirectoryExists": false,
+  "adbDevices": [
+    "List of devices attached",
+    ""
+  ],
+  "avdmanagerList": "Available Android Virtual Devices:",
+  "emulatorProcesses": [],
+  "assessment": "No suitable configured native runtime found; no installation performed. Android cannot reproduce the confirmed iPad Expo Go report."
+}

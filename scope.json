@@ -1,0 +1,74 @@
+{
+  "target": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "head": {
+    "repository": "MChartier/little-say",
+    "ref": "fix/playback-completion",
+    "sha": "c3bc7b2777708e8c79f15f530a42b0c89fb48271"
+  },
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "declaredParent": null,
+  "parentRevisions": [],
+  "ultimateTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "orderedCommits": [
+    {
+      "sha": "c3bc7b2777708e8c79f15f530a42b0c89fb48271",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "message": "Handle native audio error status without waiting for queue timeout",
+      "disposition": "Only product fix and maintained tests for issue28; all paths mapped below."
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/mobile/src/services/audioPlayback.test.ts",
+      "previousPath": null,
+      "status": "added",
+      "blobSha": "1ea2a68683d6e1ecb966aeb32680ad078477266d",
+      "additions": 102,
+      "deletions": 0,
+      "rationale": "Maintained five-case native adapter/queue regression protection; +102/-0."
+    },
+    {
+      "path": "apps/mobile/src/services/audioPlayback.ts",
+      "previousPath": null,
+      "status": "modified",
+      "blobSha": "a7d9038d20a8bc8f250eb0e4c5786d85024f192c",
+      "additions": 2,
+      "deletions": 1,
+      "rationale": "Product correction to native error routing; +2/-1."
+    },
+    {
+      "path": "tests/web/speech.spec.ts",
+      "previousPath": null,
+      "status": "modified",
+      "blobSha": "a726da620199f82777d945ce21784900c45d9725",
+      "additions": 18,
+      "deletions": 2,
+      "rationale": "Maintained completion/idle/replay/another-card assertions; +18/-2. Relevant to issue28 investigation, accurately browser-only."
+    }
+  ],
+  "totals": {
+    "commits": 1,
+    "files": 3,
+    "additions": 122,
+    "deletions": 3
+  },
+  "pagination": "REST --paginate --slurp on all commit/file/comment/review endpoints; all counts reconciled to live PR. GraphQL reviewThreads totalCount=0, hasNextPage=false.",
+  "treeSha": "471b8896f9703a8a076176f1b5433bfec394a979",
+  "reviewerWorktree": {
+    "hostname": "MCHARTIER_ZBOOK",
+    "path": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-06\\task-11\\qa-source",
+    "detached": true,
+    "trackedStatus": "clean"
+  },
+  "diffComposition": "Product +2/-1; maintained tests +120/-2. No documentation, evidence, generated files, unrelated changes, renames, parent merges or add/delete evidence churn anywhere in the published commit range."
+}

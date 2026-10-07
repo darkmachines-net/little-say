@@ -1,0 +1,34 @@
+[
+  {
+    "path": "apps/mobile/src/services/audioPlayback.test.ts",
+    "retainedPath": "original-inputs/apps/mobile/src/services/audioPlayback.test.ts",
+    "originalSha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+    "gitObjectSha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+    "sameTextAfterLineEndingComparison": true,
+    "note": "Original bytes preserved exactly; Git may normalize line endings. These identities are distinct, not silently substituted."
+  },
+  {
+    "path": "tests/web/speech.spec.ts",
+    "retainedPath": "original-inputs/tests/web/speech.spec.ts",
+    "originalSha256": "5237708193ca3550f95316fda4ba1c6585a0669cc4cf66e8e6f45e4f5824e728",
+    "gitObjectSha256": "ac00032d15184ee555b26ac84f9c0cb321f882d0085a2411d4a098062883b3c7",
+    "sameTextAfterLineEndingComparison": true,
+    "note": "Original bytes preserved exactly; Git may normalize line endings. These identities are distinct, not silently substituted."
+  },
+  {
+    "path": "tests/fixtures/library.ts",
+    "retainedPath": "original-inputs/tests/fixtures/library.ts",
+    "originalSha256": "00baa33d2409d69770dce67fedee86ecabd90e6ff74c3c4fff9f542d1ef53a14",
+    "gitObjectSha256": "03607b1b12063ba8a41edd5ba86b1ed1ff4a461bbe5993f15eee14aaba242674",
+    "sameTextAfterLineEndingComparison": true,
+    "note": "Original bytes preserved exactly; Git may normalize line endings. These identities are distinct, not silently substituted."
+  },
+  {
+    "path": "tests/web/existingLibrary.ts",
+    "retainedPath": "original-inputs/tests/web/existingLibrary.ts",
+    "originalSha256": "ad0a0070d0904d43c8b783fb7c31cf75433de8db99aff3e3231cb00ec315a495",
+    "gitObjectSha256": "8c208da3e414c35381c5d04e387a2a0ebd7f8c9b3a77db9e98cd9fda2d6fd1dc",
+    "sameTextAfterLineEndingComparison": true,
+    "note": "Original bytes preserved exactly; Git may normalize line endings. These identities are distinct, not silently substituted."
+  }
+]

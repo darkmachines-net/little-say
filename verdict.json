@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "verdict": "evidence-incomplete",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "prCommunicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/33",
+  "issue": "https://github.com/MChartier/little-say/issues/28",
+  "reviewerChat": "01a1142c-ce99-745f-9ef2-0303c745b03f",
+  "supersedesVerdictCommentId": null,
+  "checkedAtUtc": "2026-10-07T02:37:10.754Z",
+  "headSha": "c3bc7b2777708e8c79f15f530a42b0c89fb48271",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "prBodySha256": "c4c493ed52f66d9ce2620306b22e65ea5faa073e262b86b55598da272b7ffcff",
+  "gates": {
+    "value": {
+      "status": "pass-for-bounded-checkpoint",
+      "finding": "The base ignores a documented native error field after loading. Routing it to existing fallback reduces recovery latency without changing timeout or queue policy. This is a supported error-path improvement within issue28, not evidence that the reported normal-completion hang was fixed."
+    },
+    "outcome": {
+      "status": "partial",
+      "finding": "Mocked native error/fallback, latest-pending advancement, repeated play, stale-event suppression and double failure are supported. Original generated-audio normal completion on iPad Expo Go is not reproduced, and full issue acceptance remains open."
+    },
+    "code": {
+      "status": "pass-for-bounded-change",
+      "finding": "Complete one-commit merge diff and relevant playback/storage/UI/native-vendor contracts inspected; no actionable introduced code defect found. The error field check preserves normal done, active flag, timeout, generation and epoch handling. No product changes requested from this review."
+    },
+    "engineeringReview": {
+      "status": "independent-review-completed",
+      "finding": "This independent current-head code/scope review completed. No submitted GitHub reviews or inline threads exist. Bot refusal 6029501231 was solely review quota; narrowly nonblocking under direct human amendment, never counted as bot review completion."
+    },
+    "ci": {
+      "status": "pass",
+      "finding": "Run 37561239839, job 112598739978, attempt1: success. 216 unit tests, 9 PostgreSQL integration tests, release checks, types, server and web builds. Checkout was synthetic merge e053d68f45fc98fcf8db478dd234fb6180c30cea with exact head/base parents and the same tree as head. One configured check; no skipped job steps. Legacy status API has zero contexts and is not a pending configured check."
+    },
+    "behavior": {
+      "status": "partial",
+      "finding": "Independent one-worker focused run passed all 27 existing tests in the clean QA source worktree. Retained baseline overlay reports 3 native error tests fail and 2 completion/cancel tests pass. Browser retained logs report 2 Chrome scenarios, real HTML audio ended events but mocked TTS; independently read, not rerun and not native evidence."
+    },
+    "evidence": {
+      "status": "evidence-incomplete",
+      "finding": "No genuine matched native screenshots or iPad Expo Go playback trace were offered. No pixels were inspected, no baseline waiver exists, and no non-UI exception applies. Existing source/log/provenance records were read and verified, but cannot satisfy this native interaction gate."
+    },
+    "communication": {
+      "status": "changes-required",
+      "finding": "Opening and behavioral test plan describe the final base-to-head bounded fix accurately, are understandable and disclose mocked/native/browser limits. The latest issue body now correctly records generated audio on iPad Expo Go and outstanding version/revision questions. Update the PR with that clarified context and, after this verdict, replace independent-review-pending text with this completed partial result. Keep the original hang, missing native evidence and issue-open limits explicit. This is a communication-only correction."
+    },
+    "stack": {
+      "status": "pass",
+      "finding": "Actual target and ultimate target are MChartier/little-say master at the recorded base. Head directly parents base; merge-base equals base. No parent PR or sibling dependency. Exactly one published commit and three paths, no renames or unrelated history."
+    }
+  },
+  "evidence": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/709c1d0c76e7e653ce1df826bf1ea1743aed6eea/README.md",
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "sha256": "6bf31a8673a394c725bc97b39c5b163f050e06780b45999e41803d92812ac09a",
+      "assessment": "Exact bytes read; GitHub contents API matches Git object; no images in evidence tree."
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/709c1d0c76e7e653ce1df826bf1ea1743aed6eea/manifest.json",
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "sha256": "baaf6ced7669d55c0a687a387ccc9dad718540d1460a67b2676189fede29d852",
+      "assessment": "Exact bytes read; source and pinned vendor inputs verified; working-tree line endings documented in source-inputs.json without replacing hashes."
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/00be78334ed6d6f5cd0b118f90625055c90db4ad/verification.json",
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "sha256": "c59312d9fce5f4f88294151f5c0f0ec2cca8a477cfc88bca1b733f0a40ed97d4",
+      "assessment": "Exact bytes read and API verified. Historical implementation record, not an independent QA receipt."
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/actions/runs/37561239839",
+      "assessment": "Live run/job/check metadata and logs independently read; exact integration tree verified."
+    },
+    {
+      "path": "focused-tests.log",
+      "assessment": "Independent 27/27 pass; native platform/player and speech callbacks are mocked."
+    }
+  ],
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Required: actual iPad Expo Go generated/saved audio normal-completion/replay and relevant native error/fallback recovery states on matched baseline/final builds. No such pair exists.",
+    "pairs": [],
+    "provenanceRecords": [],
+    "provenanceAssessment": "No native capture/build/fixture provenance to validate. Source/test evidence is supplementary, not screenshot provenance.",
+    "pixelObservations": "None: no actual UI images were offered in the PR or retained evidence trees. No image was invented or reconstructed.",
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/33",
+      "checkedAtUtc": null,
+      "observations": "Not performed; GitHub image-rendering-only waiver authorized by https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087. This does not waive captures, pixel inspection, source/build/fixture provenance, or honest presentation."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null
+  },
+  "limitations": [
+    "Original reported hang remains unreproduced; generated audio on iPad hardware running Expo Go is now confirmed, but iPadOS/Expo Go version, served bundle/source, SDK/native binary and stuck duration remain unknown.",
+    "No iOS runtime is available on this Windows host. Read-only Android inventory found no attached target, configured AVD, emulator executable or system image in configured/conventional SDK roots; Android could not establish affected-iPad reproduction anyway. No runtime/app installation or provider call was made.",
+    "Pinned expo-audio 57.0.5 source inspection does not establish which native package version is embedded in the user's Expo Go binary.",
+    "Source inspection identifies where to trace a lost terminal event or cleanup exception; neither was observed on hardware and neither is asserted as root cause.",
+    "Full CI/browser suites were not rerun to duplicate fresh evidence; no native execution claimed. Branch rules API returned GitHub plan restriction; master reports protected=false and the sole configured workflow/check was verified."
+  ],
+  "nextAction": "Owner: update PR context with the confirmed iPad/Expo Go generated-audio report and this completed partial review; latest issue already incorporates the clarification. Obtain actual iPadOS, Expo Go/SDK and served source/build identities; trace completion/error/listener cleanup/queue epoch on the affected iPad without provider calls or unauthorized installations. Preserve original report until reproduced. Obtain genuine matched baseline/final native screenshots plus functional recovery evidence; re-QA affected gates. This assessment applies only to the recorded published revision; later owner changes are not reviewed. Coordinator retains readiness/human authority; no merge/release/deployment."
+}

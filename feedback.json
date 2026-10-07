@@ -1,0 +1,78 @@
+{
+  "checkedAtUtc": "2026-10-07T02:37:10.754Z",
+  "groups": {
+    "issueComments": [
+      {
+        "id": 6019573351,
+        "updatedAt": "2026-10-06T15:25:48Z",
+        "bodySha256": "31fb5f04838e96178d5b133008a6a5177f84487edbc0a4d9f4eb7d79f129ac93",
+        "body": "## Source investigation — hypotheses, not reproduction\n\nInspected remote master `842ac7fc016fc708060886c1fe59271b7021fbb5` on 2026-10-06. The affected installed/served build is unknown; this source review does not establish that the reported runtime matches master.\n\n### Established source behavior\n\n- [LatestSpeechQueue](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/packages/core/src/interaction.ts#L36-L97) keeps one active item and replaces its pending item on additional taps. Completion/failure uses a settled guard and epoch, clears the watchdog, then starts the pending item or reports idle. Stop invalidates callbacks and clears active/pending state. There is already a **20-second watchdog**, so “no timeout exists” is not a supported diagnosis.\n- [PlayBoard](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/ui/PlayBoard.tsx) receives active/pending state from the queue. Language switching explicitly calls queue.stop(), as do app backgrounding, page hiding, unmount and confirmed exit. This is consistent with the reported reset workaround but does not prove which earlier event failed. Queue lifetime also depends on voices, voice preferences and the audio-asset callback.\n- [Native audio](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/audioPlayback.ts) calls completion for didJustFinish, failure for playbackState=error, and clears its three-second load timer when loaded. Stop removes the listener/player. [Web audio](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/audioPlayback.web.ts) completes on ended, fails on error or rejected play(), clears its startup timer on playing, and detaches handlers/releases the source on stop. Neither startup timer is evidence of sound completion.\n- [Hybrid driver](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/hybridSpeech.ts) prefers a saved clip, falls back once to system speech on clip failure, and uses a generation check to reject stale callbacks. Clip completion calls audio.stop() before forwarding done. Queue failure/stop also calls driver.stop() before later error/state notifications.\n- [Native speech](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/speech.ts) maps onDone/onStopped/onError; [web speech](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/speech.web.ts) maps utterance onend/onerror and uses synthesis.cancel() on stop.\n- [Native touch](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/ui/TouchSurface.tsx) and [web touch](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/ui/TouchSurface.web.tsx) keep touch feedback separate from playing state; there is no direct playingId-based disable guard. Investigate whether subsequent taps still reach enqueue and become pending versus whether input itself stops arriving.\n\n### Focused hypotheses to test\n\n1. A terminal platform event is absent, delayed or not forwarded for the actual audio source. Trace sound start/end, platform callback, hybrid callback, queue settlement and rendered state with one playback identity.\n2. A synchronous cleanup exception could prevent completion/state notification: for example, clip completion calls audio.stop() before done(), and queue stop/failure calls driver.stop() before changed/error. These ordering paths exist; no exception was observed and this is **not a confirmed root cause**.\n3. A stale event, queue replacement or interruption race could leave the rendered state inconsistent with the live playback owner. Existing epoch/generation guards must be preserved and verified rather than assumed absent.\n4. If the stuck state lasts well beyond 20 seconds, determine whether the watchdog fired, cleanup threw, the app was suspended, or the reported build differs. Do not conceal a lifecycle defect by choosing a shorter arbitrary timeout.\n\n### Existing coverage and evidence plan\n\n[Queue tests](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/packages/core/src/interaction.test.ts) already cover latest-pending semantics, repeats, stale completion after stop and watchdog recovery. [Hybrid tests](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/apps/mobile/src/services/hybridSpeech.test.ts) cover saved clips, fallback, cancellation and late callbacks using mocks. [Browser speech coverage](https://github.com/MChartier/little-say/blob/842ac7fc016fc708060886c1fe59271b7021fbb5/tests/web/speech.spec.ts) uses a real short WAV for saved/offline playback and stubbed TTS for fallback; it waits 700 ms before a repeat. Those files were **read, not run**. They do not establish behavior on the unknown affected device/engine.\n\nStart with a synthetic two-card board on the reported platform/build. Record exact card words/languages, saved-clip versus TTS source, frequency, elapsed time, indicators, whether other taps flash/queue, and any background/interruption preceding failure. Exercise completion followed by same/other-card taps, rapid A→B→C taps and deliberate repeats; then target actual failure/cancel/stale-event paths. Keep expected and observed results separate. A recording/event trace with subsequent audible playback can establish functional recovery; screenshots alone cannot prove sound completion.\n\nFor eventual UI QA, retain genuine matched baseline/final screenshots of representative playing and recovered states, together with verified running builds, full source identities, synthetic setup and bound provenance. Embed the pairs in the eventual PR and preserve detailed artifacts outside product history. Missing baseline evidence remains a disclosed gate, not permission to manufacture a Before image.\n\n### Duplicate, dependency and scope check\n\nAll currently returned repository issues/PRs (open and closed), open PR paths, Project cards and recent task ownership were checked before creation; no matching playback-stuck issue or assigned playback fix was found. Open PRs #20, #24 and #26 retain their owners. #24 touches App and speech-library integration; recheck that integration and the actual base before future implementation, without treating this bug as dependent on the accounts/release stack. No known code prerequisite is established.\n\nApplied the supplied requirements role, workflow-v3 execution pin f0919b184b6344d6279178b2388190936ca432a9, pr-review-v3/queue-v1 correction pin 97e5583c8355f3673aad0835c0ce3ca1486aeb8b and direct amendments. Read repository AGENTS.md, pinned intake/template and deployment records. The master tree has no .agents directory or additional nested AGENTS.md/skill instruction file. No code edits, build/test runs, device installs, provider setup or workflow execution occurred. The existing bug label is used; needs-scoping is not an existing repository label, so Scoping is recorded in the issue/Project without creating new routing labels or applying agent-ready.",
+        "disposition": "Source hypotheses and acceptance plan reviewed. Existing completion/error/cancel pathways inspected; none of its unobserved exceptions treated as diagnosis. Normal-completion/native evidence remain open."
+      },
+      {
+        "id": 6029221413,
+        "updatedAt": "2026-10-07T01:55:18Z",
+        "bodySha256": "3c26986ca70b2dbe6a70aa8c89693482fd9ac2bdc34b4486eca1fc5590b001c8",
+        "body": "Queued claim after planning under Matthew's direct instruction to move the backlog through scoping and implementation. Planned owner 01a111cd-7184-7671-9c7b-1e95a7719032; investigation/fix not yet started. Queued for same scoping-owner investigation and evidenced playback fix under new human backlog authority. Reproduction comes first; preserve queue policy. Coordinate PlayBoard boundaries with grid31; no dispatch yet. Coordinator must confirm shared capacity and the actual base before starting; at most three implementation tasks share the ZBook. No execution, branch claim, readiness or release is asserted.",
+        "disposition": "Authorized queued claim; direct task supplies active QA scope. Work bounded to error adapter and maintained tests; no layout/shared-queue edits."
+      },
+      {
+        "id": 6029529163,
+        "updatedAt": "2026-10-07T02:21:56Z",
+        "bodySha256": "b0d92b43d56b986eb860889c3fa731b7a201d5b1e926d90930cfd9d259c2b7db",
+        "body": "Partial implementation checkpoint: draft #33 corrects a verified native audio error-field mismatch; original normal-completion hang remains unreproduced. No PlayBoard/grid/editor/shared-queue changes were needed. Current-head CI passed 216 unit and nine integration tests; 27 focused local tests and two real-HTML-audio Chrome scenarios passed. Native tests use mocked platform events.\n\n[Retained source/test evidence](https://github.com/MChartier/little-say/blob/709c1d0c76e7e653ce1df826bf1ea1743aed6eea/README.md) and [final scope/feedback/CI binding](https://github.com/MChartier/little-say/blob/00be78334ed6d6f5cd0b118f90625055c90db4ad/verification.json). No Android target was attached; genuine native Before/After captures and original-report diagnosis remain required. No baseline waiver or native-device pass is claimed. Review bot refusal was quota-only; independent QA remains pending.\n\nIssue and Project Current PR links and GitHub's nonclosing cross-reference to #33 are verified. There is no closing Development association for this partial checkpoint; no separate supported nonclosing Development-link mutation was available. Project stage is Blocked, with this task retained as owner. Coordinator can review the bounded fix independently while resolving native evidence access. Issue stays open; no release or deployment occurred.\r\n",
+        "disposition": "Implementation checkpoint checked against exact source, logs, CI and manifests. Bounded fix supported; native evidence and original hang remain open; this QA supersedes independent-review-pending status, not historical evidence identities."
+      },
+      {
+        "id": 6029682192,
+        "updatedAt": "2026-10-07T02:34:09Z",
+        "bodySha256": "c311ed76b58747164d31e75e6c5e0f55788aa783f7039db06012103067db268f",
+        "body": "Human clarification relayed by the coordinator: the reported playback hang occurs with generated audio on iPad hardware running Expo Go. This identifies the reported environment; it is not a reproduction or a device-validation result.\n\nPlanned continuation retains owner `01a111cd-7184-7671-9c7b-1e95a7719032` for issue #28 / partial draft #33. Continuation has not started: the coordinator is awaiting the LS27 owner's explicit idle checkpoint before resuming this priority investigation. Independent QA has been informed. Preserve existing audio sequencing and checkpoint before shared PlayBoard edits; no release/app installation or readiness is claimed.",
+        "disposition": "Human iPad Expo Go/generated-audio clarification read in full and incorporated into the iOS review. Latest issue body now correctly records known platform/source and unknown version/revision/duration. Continuation belongs to the existing owner; later edits are not assessed here."
+      }
+    ],
+    "prComments": [
+      {
+        "id": 6029500014,
+        "updatedAt": "2026-10-07T02:19:09Z",
+        "bodySha256": "7750379659fbba413136c8bf4f500a59f1e03f0c36c0ab16b0a2475eb13ecb1a",
+        "body": "@codex review",
+        "disposition": "Review request answered only by quota refusal; this independent review supplies current code assessment."
+      },
+      {
+        "id": 6029501231,
+        "updatedAt": "2026-10-07T02:19:17Z",
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+        "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+        "disposition": "Exact quota-only refusal read. Nonblocking under direct amendment6006523068; no bot completion claimed or retry made."
+      }
+    ],
+    "reviews": [],
+    "inlineComments": []
+  },
+  "reviewThreads": {
+    "data": {
+      "repository": {
+        "pullRequest": {
+          "reviewThreads": {
+            "totalCount": 0,
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          },
+          "closingIssuesReferences": {
+            "nodes": []
+          }
+        }
+      }
+    }
+  },
+  "trustedTaskClarification": {
+    "receivedAtUtc": "2026-10-07T02:30:56Z",
+    "sourceThread": "01a0f838-69d6-75b3-8cc0-f768175aa03e",
+    "quote": "It was generated audio, and it was on iPad hardware running the app in Expo Go",
+    "disposition": "Applied to iOS completion/listener/lifetime review and next evidence target; not a root cause or permission for device installation. Build version remains unspecified."
+  }
+}

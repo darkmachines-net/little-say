@@ -1,0 +1,22 @@
+[
+  {
+    "path": "ios/AudioModule.swift",
+    "sha256": "988bad3ed7eadf2b79d0de2a02529862e7e04cf5d52c9e8ddb65b55acb133e52"
+  },
+  {
+    "path": "ios/AudioComponentRegistry.swift",
+    "sha256": "45af89001f159d392b991cfd2111050e31ea3c9a23f94600e142f9974732621f"
+  },
+  {
+    "path": "ios/AudioUtils.swift",
+    "sha256": "80aae4033b3c5905e74b4122fd68c85828fffe276a3871f7ef0ad086a54d033b"
+  },
+  {
+    "path": "src/ExpoAudio.ts",
+    "sha256": "246e9b438c9bfc68c8b2235a3ee0fbdb51eca8ce62982bb9db37fd965e79b21a"
+  },
+  {
+    "path": "android/src/main/java/expo/modules/audio/BaseAudioPlayer.kt",
+    "sha256": "72048bf31c327cc05e469dc30362f4c1c7d7d61cd546eceada70b1ba49bd90a3"
+  }
+]

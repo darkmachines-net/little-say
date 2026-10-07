@@ -1,0 +1,221 @@
+{
+  "checkedAtUtc": "2026-10-07T02:29:15.637Z",
+  "records": [
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "README.md",
+      "sha256": "6bf31a8673a394c725bc97b39c5b163f050e06780b45999e41803d92812ac09a",
+      "bytes": 4955,
+      "apiReadbackMatches": true
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "browser-final.txt",
+      "sha256": "1f68e9b3ba555258f00050644a2f825504573a551865cb2c356464bb576f8036",
+      "bytes": 1398
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "changed-files.txt",
+      "sha256": "fc85555cdeb06ec8ce37171f3883f01df47f3b23e6e3b8f3730fa5c14cab066d",
+      "bytes": 129
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "check.txt",
+      "sha256": "138d80c890d3e95da7643de1b219303e1081921b4d37e5e76524f2b2e0631992",
+      "bytes": 7299
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "commits.txt",
+      "sha256": "100ebb9c42f3ee3ffe169e8acd58c28303b2f47333314eadc976d9c385d8cca1",
+      "bytes": 149
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "manifest.json",
+      "sha256": "baaf6ced7669d55c0a687a387ccc9dad718540d1460a67b2676189fede29d852",
+      "bytes": 2201,
+      "apiReadbackMatches": true
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "native-after.txt",
+      "sha256": "61da476e118f8b1478cf5623079cff4c56b65d4b7367eee9a73b6f61b8ccbd78",
+      "bytes": 4269
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "native-baseline-final-tests.txt",
+      "sha256": "b47f6a105878d7bc5ad230380bd2d15e84c664f24c05fefbe491af9c94a6fe3c",
+      "bytes": 3231
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "playwright.config.ts",
+      "sha256": "76fc644fc681fa929c3591355cb76d587e7080c2481f8f780322cb9115b1c25d",
+      "bytes": 452
+    },
+    {
+      "commitSha": "709c1d0c76e7e653ce1df826bf1ea1743aed6eea",
+      "path": "typecheck-final.txt",
+      "sha256": "7b0c73f9c7c85bcc32093d0a759030bb5ceb30cf0a40f4324c9759f48d39e2de",
+      "bytes": 324
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "README.md",
+      "sha256": "6bf31a8673a394c725bc97b39c5b163f050e06780b45999e41803d92812ac09a",
+      "bytes": 4955
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "browser-final.txt",
+      "sha256": "1f68e9b3ba555258f00050644a2f825504573a551865cb2c356464bb576f8036",
+      "bytes": 1398
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "changed-files.txt",
+      "sha256": "fc85555cdeb06ec8ce37171f3883f01df47f3b23e6e3b8f3730fa5c14cab066d",
+      "bytes": 129
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "check.txt",
+      "sha256": "138d80c890d3e95da7643de1b219303e1081921b4d37e5e76524f2b2e0631992",
+      "bytes": 7299
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "ci.txt",
+      "sha256": "cbf3a2b60743282832c19f598511d2200f61e4f47231fe9a998a0260245facb2",
+      "bytes": 83392
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "commits.txt",
+      "sha256": "100ebb9c42f3ee3ffe169e8acd58c28303b2f47333314eadc976d9c385d8cca1",
+      "bytes": 149
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "final-pr-body.md",
+      "sha256": "0e3a4d77840c1199362a80ef857849af6cb97bb9842ac648fbbfc3bd520a6e12",
+      "bytes": 2765
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "manifest.json",
+      "sha256": "baaf6ced7669d55c0a687a387ccc9dad718540d1460a67b2676189fede29d852",
+      "bytes": 2201
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "native-after.txt",
+      "sha256": "61da476e118f8b1478cf5623079cff4c56b65d4b7367eee9a73b6f61b8ccbd78",
+      "bytes": 4269
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "native-baseline-final-tests.txt",
+      "sha256": "b47f6a105878d7bc5ad230380bd2d15e84c664f24c05fefbe491af9c94a6fe3c",
+      "bytes": 3231
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "playwright.config.ts",
+      "sha256": "76fc644fc681fa929c3591355cb76d587e7080c2481f8f780322cb9115b1c25d",
+      "bytes": 452
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "typecheck-final.txt",
+      "sha256": "7b0c73f9c7c85bcc32093d0a759030bb5ceb30cf0a40f4324c9759f48d39e2de",
+      "bytes": 324
+    },
+    {
+      "commitSha": "00be78334ed6d6f5cd0b118f90625055c90db4ad",
+      "path": "verification.json",
+      "sha256": "c59312d9fce5f4f88294151f5c0f0ec2cca8a477cfc88bca1b733f0a40ed97d4",
+      "bytes": 11214,
+      "apiReadbackMatches": true
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "apps/mobile/src/services/audioPlayback.test.ts",
+      "expectedSha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+      "actualSha256": "5721ec029598519a51e45d303af277a991f6384f843e0a170d7f37cdfdb9d9e4",
+      "matches": false,
+      "gitObjectSha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+      "gitObjectMatches": true
+    },
+    {
+      "path": "tests/web/speech.spec.ts",
+      "expectedSha256": "5237708193ca3550f95316fda4ba1c6585a0669cc4cf66e8e6f45e4f5824e728",
+      "actualSha256": "98b0cbc51543672af61fd1565a1b783052ac688b5ad70b407dd18c9b40e30665",
+      "matches": false,
+      "gitObjectSha256": "ac00032d15184ee555b26ac84f9c0cb321f882d0085a2411d4a098062883b3c7",
+      "gitObjectMatches": false
+    },
+    {
+      "path": "tests/fixtures/library.ts",
+      "expectedSha256": "00baa33d2409d69770dce67fedee86ecabd90e6ff74c3c4fff9f542d1ef53a14",
+      "actualSha256": "00baa33d2409d69770dce67fedee86ecabd90e6ff74c3c4fff9f542d1ef53a14",
+      "matches": true,
+      "gitObjectSha256": "03607b1b12063ba8a41edd5ba86b1ed1ff4a461bbe5993f15eee14aaba242674",
+      "gitObjectMatches": false
+    },
+    {
+      "path": "tests/web/existingLibrary.ts",
+      "expectedSha256": "ad0a0070d0904d43c8b783fb7c31cf75433de8db99aff3e3231cb00ec315a495",
+      "actualSha256": "ad0a0070d0904d43c8b783fb7c31cf75433de8db99aff3e3231cb00ec315a495",
+      "matches": true,
+      "gitObjectSha256": "8c208da3e414c35381c5d04e387a2a0ebd7f8c9b3a77db9e98cd9fda2d6fd1dc",
+      "gitObjectMatches": false
+    }
+  ],
+  "vendorHashes": [
+    {
+      "path": "node_modules/expo-audio/android/src/main/java/expo/modules/audio/AudioPlayer.kt",
+      "expectedSha256": "636f4ef70dac17d7490ec5e99aa60d71dc7ce6d7b4b913c501001079d6b8f33e",
+      "actualSha256": "636f4ef70dac17d7490ec5e99aa60d71dc7ce6d7b4b913c501001079d6b8f33e",
+      "matches": true
+    },
+    {
+      "path": "node_modules/expo-audio/ios/AudioPlayer.swift",
+      "expectedSha256": "ec25a72a075180123437450350e7eed1ab7ef669645ebed901c4470c039ee41c",
+      "actualSha256": "ec25a72a075180123437450350e7eed1ab7ef669645ebed901c4470c039ee41c",
+      "matches": true
+    },
+    {
+      "path": "node_modules/expo-audio/ios/StringConversions.swift",
+      "expectedSha256": "022b0a50f04744f5171175b8aa2056a9368e1fed9af6af4a721223cb29910e9f",
+      "actualSha256": "022b0a50f04744f5171175b8aa2056a9368e1fed9af6af4a721223cb29910e9f",
+      "matches": true
+    },
+    {
+      "path": "node_modules/expo-audio/src/Audio.types.ts",
+      "expectedSha256": "d5782c755dcdf2164a15ee48b2ad250f42aa69198d5419555928e52295300dce",
+      "actualSha256": "d5782c755dcdf2164a15ee48b2ad250f42aa69198d5419555928e52295300dce",
+      "matches": true
+    }
+  ],
+  "expoAudioLock": {
+    "version": "57.0.5",
+    "resolved": "https://registry.npmjs.org/expo-audio/-/expo-audio-57.0.5.tgz",
+    "integrity": "sha512-39fX5JC5zDvELB4/eDJPj2XAYRN0W9+K2DfDWm5N3aC5WZ7HRrhupWtT6hbH09NlfYpsRSqYOwEZnocFM42ynQ==",
+    "license": "MIT",
+    "peerDependencies": {
+      "expo": "*",
+      "expo-asset": "*",
+      "react": "*",
+      "react-native": "*"
+    }
+  },
+  "expoIntegrityMatches": true,
+  "dependencyLockMatches": true,
+  "sourceEvidenceRef": "refs/heads/evidence/issue28-native-status 00be78334ed6d6f5cd0b118f90625055c90db4ad"
+}
