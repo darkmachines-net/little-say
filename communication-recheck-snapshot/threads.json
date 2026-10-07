@@ -1,0 +1,23 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "endCursor": null
+          },
+          "nodes": []
+        },
+        "closingIssuesReferences": {
+          "nodes": [
+            {
+              "number": 23,
+              "url": "https://github.com/MChartier/little-say/issues/23"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
