@@ -1,0 +1,56 @@
+{
+  "uiMatchedEvidence": "Unavailable: native code changed; no attached Android target, no iOS runtime on Windows. Browser behavior passes but is not native Before/After evidence.",
+  "source": "c3bc7b2777708e8c79f15f530a42b0c89fb48271",
+  "nodeVersion": "v24.19.0",
+  "capturedAtUtc": "2026-10-07T02:15:05.6594601Z",
+  "expoAudioIntegrity": "sha512-39fX5JC5zDvELB4/eDJPj2XAYRN0W9+K2DfDWm5N3aC5WZ7HRrhupWtT6hbH09NlfYpsRSqYOwEZnocFM42ynQ==",
+  "chromeVersion": "154.0.8037.98",
+  "issue": 28,
+  "webBundles": [
+    {
+      "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+      "path": "App-ef6191c2f26ad5b79eeb8156b4a1d069.js"
+    },
+    {
+      "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+      "path": "index-7daf2701ae2aac85569c8c6bb59782ac.js"
+    }
+  ],
+  "expoAudioVersion": "57.0.5",
+  "parent": null,
+  "fileHashes": [
+    {
+      "sha256": "6a83985f076faa221cb714012590cea1c30bbd45b4d711f16497dfd19bcfe1df",
+      "path": "apps/mobile/src/services/audioPlayback.test.ts"
+    },
+    {
+      "sha256": "5237708193ca3550f95316fda4ba1c6585a0669cc4cf66e8e6f45e4f5824e728",
+      "path": "tests/web/speech.spec.ts"
+    },
+    {
+      "sha256": "00baa33d2409d69770dce67fedee86ecabd90e6ff74c3c4fff9f542d1ef53a14",
+      "path": "tests/fixtures/library.ts"
+    },
+    {
+      "sha256": "ad0a0070d0904d43c8b783fb7c31cf75433de8db99aff3e3231cb00ec315a495",
+      "path": "tests/web/existingLibrary.ts"
+    },
+    {
+      "sha256": "636f4ef70dac17d7490ec5e99aa60d71dc7ce6d7b4b913c501001079d6b8f33e",
+      "path": "node_modules/expo-audio/android/src/main/java/expo/modules/audio/AudioPlayer.kt"
+    },
+    {
+      "sha256": "ec25a72a075180123437450350e7eed1ab7ef669645ebed901c4470c039ee41c",
+      "path": "node_modules/expo-audio/ios/AudioPlayer.swift"
+    },
+    {
+      "sha256": "022b0a50f04744f5171175b8aa2056a9368e1fed9af6af4a721223cb29910e9f",
+      "path": "node_modules/expo-audio/ios/StringConversions.swift"
+    },
+    {
+      "sha256": "d5782c755dcdf2164a15ee48b2ad250f42aa69198d5419555928e52295300dce",
+      "path": "node_modules/expo-audio/src/Audio.types.ts"
+    }
+  ],
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+}

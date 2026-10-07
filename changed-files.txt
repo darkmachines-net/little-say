@@ -1,0 +1,3 @@
+102	0	apps/mobile/src/services/audioPlayback.test.ts
+2	1	apps/mobile/src/services/audioPlayback.ts
+18	2	tests/web/speech.spec.ts

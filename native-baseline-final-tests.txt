@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-3/little-say-baseline
+
+ ├ù apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=idle after loading 7ms
+   ΓåÆ expected "vi.fn()" to be called once, but got 0 times
+ ├ù apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=failed after loading 1ms
+   ΓåÆ expected "vi.fn()" to be called once, but got 0 times
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > completes a clip and advances only to the latest pending card, then allows a repeat 1ms
+ Γ£ô apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > ignores late status and audio-mode resolution after cancellation 1ms
+ ├ù apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > releases the queue when native audio and fallback speech both fail 1ms
+   ΓåÆ Cannot read properties of undefined (reading '2')
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 3 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=idle after loading
+ FAIL  apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > falls back immediately for an Expo error with playbackState=failed after loading
+AssertionError: expected "vi.fn()" to be called once, but got 0 times
+ Γ¥» apps/mobile/src/services/audioPlayback.test.ts:40:26
+     38|     // Expo 57 Android emits an error string with idle; iOS emits its ΓÇª
+     39|     clip.emit({ playbackState, isLoaded: false, error: 'Decoder failedΓÇª
+     40|     expect(system.speak).toHaveBeenCalledOnce();
+       |                          ^
+     41|     expect(clip.subscription.remove).toHaveBeenCalledOnce();
+     42|     expect(clip.remove).toHaveBeenCalledOnce();
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»
+
+ FAIL  apps/mobile/src/services/audioPlayback.test.ts > native audio terminal events > releases the queue when native audio and fallback speech both fail
+TypeError: Cannot read properties of undefined (reading '2')
+ Γ¥» apps/mobile/src/services/audioPlayback.test.ts:95:31
+     93|     const queue = new LatestSpeechQueue<Tile>(hybridSpeech(system, audΓÇª
+     94|     queue.enqueue(tile); await Promise.resolve(); clip.emit({ error: 'ΓÇª
+     95|     system.speak.mock.calls[0][2]();
+       |                               ^
+     96|     expect(failure).toHaveBeenCalledExactlyOnceWith(tile);
+     97|     expect(changes).toHaveBeenLastCalledWith(null, null);
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  19:14:08
+   Duration  1.14s (transform 829ms, setup 0ms, import 991ms, tests 11ms, environment 0ms)
+

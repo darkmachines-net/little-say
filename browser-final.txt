@@ -1,0 +1,18 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run playwright test --config artifacts/playback/playwright.config.ts tests/web/speech.spec.ts
+[WebServer] npm notice run little-say-workspace@0.2.0 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.2.0 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:35044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:35044) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 2 tests using 1 worker
+
+(node:21664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] ΓÇ║ tests\web\speech.spec.ts:11:1 ΓÇ║ generates from draft text and language, regenerates, persists offline, and falls back on playback failure (6.1s)
+  ok 2 [chromium] ΓÇ║ tests\web\speech.spec.ts:105:1 ΓÇ║ board creation does not wait for background audio and stale generation cannot replace edited words (2.5s)
+
+  2 passed (12.6s)
