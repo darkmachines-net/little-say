@@ -1,0 +1,1454 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/36",
+  "issue": "https://github.com/MChartier/little-say/issues/30",
+  "reviewerChat": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+  "implementationOwner": "01a11406-66b3-71fb-a4cc-2aad6d51802c",
+  "supersedesVerdictCommentId": 6032466082,
+  "checkedAtUtc": "2026-10-07T18:34:01.288Z",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "mergeBaseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "parentRevisions": [
+    {
+      "pullRequest": 34,
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "state": "open",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "verdictCommentId": 6032727047,
+      "verdictBodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+      "verdictUpdatedAt": "2026-10-07T06:58:54Z"
+    }
+  ],
+  "ultimateTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "prBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+  "issueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+  "parentPrBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+  "parentIssueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+  "instructionAcknowledgment": {
+    "workflow": "Read the supplied full pinned QA/AGENTS/SKILL/intake/stacks/operations sources and pr-review-v3/queue/template. Execution pins unchanged.",
+    "amendments": [
+      {
+        "id": 5984018358,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5984018358",
+        "updatedAt": "2026-10-04T20:21:21Z",
+        "bodySha256": "457e7755eb1ec94e1552e2192e0a487c308a181cd6920f204f3af1b2ba2c8abf",
+        "verified": true
+      },
+      {
+        "id": 5987999201,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5987999201",
+        "updatedAt": "2026-10-05T04:16:50Z",
+        "bodySha256": "972a4a9e64684bfe8703118c7cc8c33f26980abe65f1e212c05f899d2e65ed63",
+        "verified": true
+      },
+      {
+        "id": 5997739454,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5997739454",
+        "updatedAt": "2026-10-05T15:35:43Z",
+        "bodySha256": "8ffac98257544b912ec49d1b11259be82d56e50183685364f12e159298f6e396",
+        "verified": true
+      },
+      {
+        "id": 6002971212,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6002971212",
+        "updatedAt": "2026-10-05T21:09:29Z",
+        "bodySha256": "02bd694f3a6fe0bcc7b48a7f16e20f12d8a3db11c04e2ed326a5e11bcb789992",
+        "verified": true
+      },
+      {
+        "id": 6006523068,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6006523068",
+        "updatedAt": "2026-10-06T00:30:46Z",
+        "bodySha256": "445c01c614a0aa767f408e4e98ca79f6525a3dd1a52a6b977a9499384f389481",
+        "verified": true
+      },
+      {
+        "id": 6008280372,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008280372",
+        "updatedAt": "2026-10-06T02:45:58Z",
+        "bodySha256": "53ea8dd801ffd744c1fdaaa625bc959ceb8ae1f4193926339073a0574d1ec4ee",
+        "verified": true
+      },
+      {
+        "id": 6008834896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008834896",
+        "updatedAt": "2026-10-06T03:38:32Z",
+        "bodySha256": "c7a8391deb149ce166ba49323682fb4f6336e43a941c8164cfb7a12d8c1f3a10",
+        "verified": true
+      },
+      {
+        "id": 6020948896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6020948896",
+        "updatedAt": "2026-10-06T16:40:54Z",
+        "bodySha256": "b833facef0b79a05c92ffec982480393d1f060e4b741c11136af7c011d680ba6",
+        "verified": true
+      },
+      {
+        "id": 6021105604,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021105604",
+        "updatedAt": "2026-10-06T16:50:11Z",
+        "bodySha256": "d9fc320b61d0238711e14dcb9cb028ba605c16024d64ac6dc97ebe75c7299b48",
+        "verified": true
+      },
+      {
+        "id": 6021281028,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021281028",
+        "updatedAt": "2026-10-06T17:00:34Z",
+        "bodySha256": "eb9a05a4b43bd4a1f7d9b39e78ddda0a5ad6f0b47af8293768fcef6f5905e0cb",
+        "verified": true
+      },
+      {
+        "id": 6022754087,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087",
+        "updatedAt": "2026-10-06T18:24:41Z",
+        "bodySha256": "1bdb9f683ed1c434d2f5ab20b9621217be7d14f17bbc34e5fc946a9e86c5e161",
+        "verified": true
+      },
+      {
+        "id": 6026521080,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6026521080",
+        "updatedAt": "2026-10-06T22:21:29Z",
+        "bodySha256": "74a486b468a12a67303e9f40b21193c41e10c6485e3a1d9a20431ee02d87a990",
+        "verified": true
+      },
+      {
+        "id": 6041659686,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+        "updatedAt": "2026-10-07T15:58:13Z",
+        "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+        "verified": true
+      }
+    ],
+    "operative": "Focused complete published scope; actual-base final-state descriptions; concise fixed issue template/current task and PR association; full feedback disposition; genuine matched captures and independent pixels/provenance; page-rendering-only waiver; explicit native-device deferral6041659686; append-only concise comment with immutable detail and exact API-readback trusted receipt. Coordinator owns readiness/draft/Project; human owns merge/release."
+  },
+  "environment": {
+    "actualHostnameOutput": "mchartier_zbook",
+    "verifiedHost": "MCHARTIER_ZBOOK",
+    "isolatedReadOnlySource": "qa-pr36",
+    "detachedHead": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "sourceWorktreeClean": true,
+    "repositoryInstructions": "Read current AGENTS.md; no applicable .agents/skills in isolated checkout/task or checked ancestor. No product/owner files, source branches, devices, labels, draft state or Project changed.",
+    "execution": "Metadata/evidence API checks only in this reassessment. No new build, test, capture, native installation or protected-log access."
+  },
+  "reassessment": {
+    "reason": "Direct human native-device deferral6041659686 and completed owner metadata correction. Same independent QA; affected policy/communication/evidence/feedback/stack gates reassessed, prior exact unchanged code/behavior/pixels reused.",
+    "changes": "Issue removes only Draft from its implementing PR label and a stale operational no-readiness sentence. All five sections, problem/requirements/plan and URLs remain. PR replaces this draft with this PR and rewrites only the native-limit paragraph to cite the explicit new deferral/current parent QA; summary, behavioral evidence, genuine image URLs and source context otherwise unchanged. Exact old bodies retained before edit and hashes match prior trusted receipt.",
+    "parentImpact": "Parent current bodyd6815 and latest6032727047 receipt are bound here, replacing historical e464/603049 metadata references. Parent sourceb21/master1f032, geometry and capture baseline unchanged. Metadata-only differences cannot alter the captured runtime; no image relabeling or build rerun.",
+    "originals": [
+      {
+        "name": "original-bindings.json",
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/bindings.json",
+        "sha256": "3b24780789b6d6c5c46439b94862cd9153a72af41b21dd66da9df2cb4510841d"
+      },
+      {
+        "name": "original-issue-body.md",
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/issue-body.md",
+        "sha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1"
+      },
+      {
+        "name": "original-pr-body.md",
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/pr-body.md",
+        "sha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab"
+      }
+    ],
+    "historical": {
+      "originalIndependentAssessment": {
+        "url": "https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/record.json",
+        "commitSha": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+        "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+      },
+      "priorVerdict": {
+        "id": 6032466082,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6032466082",
+        "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99",
+        "updatedAt": "2026-10-07T06:38:47Z"
+      },
+      "priorDetailedVerdict": {
+        "url": "https://github.com/MChartier/little-say/blob/591a9e8d25e6e1cdafe9fb943a6fee7b58cad432/communication-final-20261007/record.json",
+        "sha256": "9522386af5e97b40a183b658a1475b89499700d960bd40a96aaffa8c26bb1abc"
+      },
+      "priorReceipt": {
+        "url": "https://github.com/MChartier/little-say/blob/d24a7de3b8c3de6f3f9531581ba2c512f0292a7f/communication-final-20261007/publication-readback.json",
+        "sha256": "f1f48927d32b83ffe5f11ad60193cf88f30cb2b10ea713afd6b94ec8f62c4a6a"
+      },
+      "usage": "Historical statuses remain historical. Reuse unchanged source/scope/behavior/pixel observations only; current status and parent bindings are freshly stated in this record."
+    }
+  },
+  "scope": {
+    "targetRepository": "MChartier/little-say",
+    "targetRef": "feat/balanced-storyboard-grid",
+    "targetSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "mergeBase": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRepository": "MChartier/little-say",
+    "headRef": "feat/direct-board-editor-issue30",
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "declaredParent": {
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+      "state": "open",
+      "draft": false,
+      "labels": [
+        "human-ready"
+      ],
+      "receipt": {
+        "id": 6032727047,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6032727047",
+        "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+        "updatedAt": "2026-10-07T06:58:54Z"
+      }
+    },
+    "ultimateTarget": {
+      "repository": "MChartier/little-say",
+      "ref": "master",
+      "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "orderedCommits": [
+      {
+        "sha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+        "parents": [
+          "b21d3ba7370c08468b868385ce9df3d875eee799"
+        ],
+        "message": "Open the existing editor directly after the parent hold",
+        "rationale": "Issue30 direct editor handoff on declared grid prerequisite; no sibling/evidence commits."
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/App.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 29,
+        "deletions": 11,
+        "category": "product",
+        "rationale": "Bind active board to editor, preserve accepted state, stop preview and flush durable writes before return; guard concurrent return.",
+        "headBlob": "7b0b5a71abd09739020f2ebb873376277ccb168f",
+        "baseBlob": "ce6ee1c603bb56c78e966e105cf40d507696fd3c"
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 32,
+        "deletions": 18,
+        "category": "product",
+        "rationale": "Responsive reachable existing editor controls, measured preview, draft/navigation guards and direct-return presentation.",
+        "headBlob": "29d0f7d66988397fb12805c92457dabc1af0af62",
+        "baseBlob": "7d4650a7f7de9df6b5528a247765154fe277a87d"
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardTransition.tsx",
+        "previousPath": null,
+        "status": "added",
+        "additions": 50,
+        "deletions": 0,
+        "category": "product",
+        "rationale": "Inert measured card transition, reduced motion and interruption fallback; no second interactive board.",
+        "headBlob": "4f29036ad075c69b64c4ab6d8c2c939fe3285b4a",
+        "baseBlob": null
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.test.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 28,
+        "deletions": 6,
+        "category": "maintained regression test",
+        "rationale": "Maintained native-component boundary/cancellation mocks for changed parent unlock; not device proof.",
+        "headBlob": "67ac22567e942d65eddc5cb93ba182275829d6e5",
+        "baseBlob": "69bcf9841505073edef9e0a140e0ef4185198dd8"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 12,
+        "deletions": 9,
+        "category": "product",
+        "rationale": "Native bounds and deliberate timed accessibility unlock replacing confirmation-dependent activation.",
+        "headBlob": "8759c813aadcd4fd26e08f66aee2a79c2bc6c4d1",
+        "baseBlob": "93a4e7af98609d4db443770561879d962fd902b7"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.web.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 26,
+        "deletions": 10,
+        "category": "product",
+        "rationale": "Browser pointer/keyboard/assistive gate and interruption handling without immediate ordinary activation bypass.",
+        "headBlob": "0d417ee8cb16dae3a01acbad9329f44ff7dc0a34",
+        "baseBlob": "68ce04298f26e371a5761fbbe8d629edbda0473c"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentSettings.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "category": "product",
+        "rationale": "Correct existing unlock instructions after confirmation removal.",
+        "headBlob": "2d9082e13fcaa046ea9f658d5e5bf95f60b22964",
+        "baseBlob": "5d7a3aec9e727f147f11414fd7e5559a40d2ea8b"
+      },
+      {
+        "path": "apps/mobile/src/ui/PlayBoard.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 35,
+        "deletions": 20,
+        "category": "product",
+        "rationale": "Single guarded handoff with source geometry, audio/contact cleanup and restored noneditable focus.",
+        "headBlob": "562998904357ec8b639088068951b4da2889740f",
+        "baseBlob": "876c7fe5b835d856b9b416161701d30f679f095c"
+      },
+      {
+        "path": "apps/mobile/src/ui/screenFocus.ts",
+        "previousPath": null,
+        "status": "added",
+        "additions": 20,
+        "deletions": 0,
+        "category": "product",
+        "rationale": "Shared noneditable heading focus after mode change, with native accessibility focus API.",
+        "headBlob": "8eab44bed06cd7c022de5782a62d57f02900900d",
+        "baseBlob": null
+      },
+      {
+        "path": "apps/mobile/src/ui/useParentHold.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 33,
+        "deletions": 20,
+        "category": "product",
+        "rationale": "One monotonic threshold, generation cancellation and cancellable timed assistive alternative.",
+        "headBlob": "836c58f59f121d8d8bc8aa41fab861d82e3b6c75",
+        "baseBlob": "fb7778bea53012830b380abedc3fbc737a5f8a85"
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 23,
+        "deletions": 28,
+        "category": "maintained regression test",
+        "rationale": "Update affected navigation contracts and preserve threshold, multitouch, language and failed-save regression coverage.",
+        "headBlob": "4ab93def9d39fc22704b1d4c4cc0aefce43c9d1e",
+        "baseBlob": "fb59ed87b232446dcda18bd7e31f9de336db03e9"
+      },
+      {
+        "path": "tests/web/editor-transition.spec.ts",
+        "previousPath": null,
+        "status": "added",
+        "additions": 236,
+        "deletions": 0,
+        "category": "maintained regression test",
+        "rationale": "Maintained consequential behavior protection: board identity, guarded inputs, drafts, storage failure, queue cleanup and motion/layout.",
+        "headBlob": "010ea0d79bcf7d75598f478085b1393a8a51467b",
+        "baseBlob": null
+      },
+      {
+        "path": "tests/web/recents.spec.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 3,
+        "deletions": 2,
+        "category": "maintained regression test",
+        "rationale": "Adapt existing recents flow to intentional keyboard hold and explicit Boards navigation.",
+        "headBlob": "41e1c2433dff8186f24fec70cab0860a3443b542",
+        "baseBlob": "3d14cf94b72019080cc83b55760074bd1a2fd6f6"
+      }
+    ],
+    "totals": {
+      "commits": 1,
+      "files": 13,
+      "additions": 528,
+      "deletions": 125,
+      "productFiles": 9,
+      "productAdditions": 238,
+      "productDeletions": 89,
+      "testFiles": 4,
+      "testAdditions": 290,
+      "testDeletions": 36
+    },
+    "assessment": "Complete paginated live commits/files and local range/parents/blob identities match the previously independently reviewed scope. Nine product and four maintained regression-test files, no renames, unrelated commits, evidence add/delete churn, packages, screenshot archives, ad-hoc capture harnesses or build/export inventories in product history. No retained exception. Regressions protect the consequential guard-removal, navigation, input, save and audio boundaries."
+  },
+  "gates": {
+    "value": {
+      "status": "pass",
+      "reason": "Direct human requested shorter intentional path from play to the existing same-board editor and back; removing confirmation/dashboard detours benefits parent editing without a new editor or unrelated scope."
+    },
+    "outcome": {
+      "status": "pass-with-deferred-native-checks",
+      "reason": "Acceptance is mapped to unchanged source and independent browser evidence below; native behavior remains explicitly unexecuted and deferred by the direct human instruction."
+    },
+    "code": {
+      "status": "pass",
+      "reason": "Prior independent full current code/contracts inspection found no source defect. Exact one-commit/13-file scope, per-file head/base blobs and actual merge range reverified unchanged."
+    },
+    "engineeringReview": {
+      "status": "pass",
+      "reason": "PR36 configured bot completed currenthead7e8ab599 in6030514092/6030553625, no major issues. Complete live submitted reviews, inline comments and threads empty. Prior independent code review remains applicable; no quota waiver used for child."
+    },
+    "ci": {
+      "status": "pass",
+      "reason": "All current child and parent checks completed successfully on their exact heads; no pending/failed/cancelled checks or unjustified skips. Reused fresh existing suites without rerun.",
+      "checks": {
+        "child": [
+          {
+            "id": 112619831465,
+            "name": "check",
+            "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/MChartier/little-say/actions/runs/37567933495/job/112619831465"
+          }
+        ],
+        "parent": [
+          {
+            "id": 112603976685,
+            "name": "check",
+            "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+            "status": "completed",
+            "conclusion": "success",
+            "url": "https://github.com/MChartier/little-say/actions/runs/37562895456/job/112603976685"
+          }
+        ]
+      }
+    },
+    "behavior": {
+      "status": "pass-with-deferred-native-checks",
+      "reason": "Independent targeted browser probes and original motion/pixels remain applicable at identical source/base/fixtures; exact threshold, cancellation, responsive layout, focus, storage recovery, audio cleanup and photo/data preservation supported. Native executions expressly deferred.",
+      "native": {
+        "decisionCommentId": 6041659686,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+        "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+        "updatedAt": "2026-10-07T15:58:13Z",
+        "status": "unexecuted; deferred for review readiness",
+        "scope": "PR36 native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior.",
+        "limits": "No device pass, no waiver of source/feedback/CI/review/genuine captures/provenance/independent pixels/communication/receipt gates, no merge/release/deployment authority."
+      }
+    },
+    "evidence": {
+      "status": "pass-with-explicit-deferrals",
+      "reason": "Genuine baseline/final pairs and original motion, exact source/build/fixture/harness/image identities, prior independent pixels and reviewer access reverified. No missing mandatory browser/provenance proof. Native execution deferred by6041659686; actual GitHub rendered-page check separately waived by6022754087."
+    },
+    "communication": {
+      "status": "pass",
+      "reason": "Entire live issue and PR read as final descriptions. Opening explains base-state confirmation/dashboard problem and direct existing-editor solution. Scenario table connects intended outcomes to actual browser/component observations, recovery cases and genuine visibly embedded pairs. Requirements remain prospective in fixed issue template; no development diary or device proof. Current parent and explicit native limits agree."
+    },
+    "stack": {
+      "status": "pass",
+      "reason": "Actual base and merge-base are exact parent34b21; master1f032 separately verified. Parent latest verdict/body/issue/CI/feedback match trusted receipt. Review34 first; this child is not independently mergeable. Parent source corrections would invalidate affected descendant gates through original owners/coordinator."
+    }
+  },
+  "acceptance": [
+    {
+      "criterion": "Intentional two-second release opens same-board editor once without dialog/dashboard",
+      "observed": "Prior independent1999/2000ms, outside/resize cancellation, timed keyboard and real-clock assistive start/cancel/complete checks passed on unchanged browser source. Native events are source/component evidence only.",
+      "nativeStatus": "deferred; not executed"
+    },
+    {
+      "criterion": "Measured shrink and responsive reachable existing controls",
+      "observed": "Three genuine matched viewport pairs plus actual VP8 intermediate frames at4.2/4.4/4.6s.12 independent cases4/7/24cards across1180x820,820x1180,390x844,844x390; minimum preview side57.65625px and phone24side64px. Last cards/actions reachable via expected editor scrolling; dense labels deliberately ellipsize with complete accessible/editor labels.",
+      "nativeStatus": "rotation/OS scaling deferred; not executed"
+    },
+    {
+      "criterion": "Deliberate accessible unlock, noneditable focus, reduced motion",
+      "observed": "Browser keyboard and synthetic assistive-event checks, focused heading after effects settle, reduced-motion/resize usable final editor. No ordinary activation bypass observed.",
+      "nativeStatus": "VoiceOver/TalkBack/focus/reduced motion deferred; not executed"
+    },
+    {
+      "criterion": "Return same board/language/settings with idle audio and accepted edits",
+      "observed": "Independent injected write failure retains edits and retry; successful retry/return survives reload. Active/pending synthetic speech stops and late callback does not resume queue. Unchanged source and maintained language/missing-voice/pending-write coverage support guards."
+    },
+    {
+      "criterion": "Preserve IDs/order/media/undo/drafts and AI guards",
+      "observed": "Independent photo crop coordinates preserved within0.001 across play/editor/return; saved board deep equality after cancelled draft and consent remains false. Existing explicit save/cancel/revision/undo/language contracts inspected; no new AI work/consent by entering edit."
+    }
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "status": "resolved",
+      "scope": "Stale QA/pixel pending prose",
+      "resolution": "Resolved in6032466082; current final body retains completed independent-assessment link without stale pending language."
+    },
+    {
+      "id": "F1",
+      "status": "deferred-for-review-readiness",
+      "scope": "Native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced motion",
+      "resolution": "Still unexecuted. Explicit human amendment6041659686 removes this as a review-readiness blocker only; no device evidence or technical fix claimed.",
+      "decision": {
+        "decisionCommentId": 6041659686,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+        "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+        "updatedAt": "2026-10-07T15:58:13Z",
+        "status": "unexecuted; deferred for review readiness",
+        "scope": "PR36 native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior.",
+        "limits": "No device pass, no waiver of source/feedback/CI/review/genuine captures/provenance/independent pixels/communication/receipt gates, no merge/release/deployment authority."
+      }
+    }
+  ],
+  "feedback": {
+    "checkedAtUtc": "2026-10-07T18:34:01.288Z",
+    "completePagination": true,
+    "counts": {
+      "child": {
+        "issueComments": 5,
+        "prComments": 9,
+        "reviews": 0,
+        "inlineComments": 0,
+        "threads": 0
+      },
+      "parent": {
+        "issueComments": 4,
+        "prComments": 8,
+        "reviews": 0,
+        "inlineComments": 0,
+        "threads": 0
+      }
+    },
+    "items": [
+      {
+        "scope": "child",
+        "kind": "issueComments",
+        "id": 6029143002,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029143002",
+        "updatedAt": "2026-10-07T01:48:57Z",
+        "bodySha256": "b7cbe1d67bd83bd598429f7ece9dae8e6f42fdcfb127193f103cf70c10cae56a",
+        "disposition": "Requirements/design retained unchanged. Same-board entry, threshold/cancellation, measured transition, persistence/drafts and audio cleanup are supported by the unchanged independent source/browser evidence. Native unlock/focus/accessibility/motion checks remain unexecuted, now deferred by6041659686."
+      },
+      {
+        "scope": "child",
+        "kind": "issueComments",
+        "id": 6029220665,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029220665",
+        "updatedAt": "2026-10-07T01:55:14Z",
+        "bodySha256": "23c125062d51179e1db234800d6f4a92e4359505b1fbb48a99a78c090a5b6609",
+        "disposition": "Historical queued claim; subsequent sole-owner implementation and independent QA completed. No new implementation admission here."
+      },
+      {
+        "scope": "child",
+        "kind": "issueComments",
+        "id": 6029841739,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029841739",
+        "updatedAt": "2026-10-07T02:47:37Z",
+        "bodySha256": "c560e9a9ba166fd7cf1632537d36cf04f8f205b54b8fc477c5b394a13a1ef111",
+        "disposition": "Pinned-parent dispatch honored: child is directly based on b21d3ba, with no account/audio sibling commits. Existing owner remains sole writer; source and dependent work were not changed."
+      },
+      {
+        "scope": "child",
+        "kind": "issueComments",
+        "id": 6043387502,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6043387502",
+        "updatedAt": "2026-10-07T17:38:44Z",
+        "bodySha256": "eed975ec6db59743d304506921bdfac6757b387177e310342b75707b0db8a24f",
+        "disposition": "Owner metadata reconciliation independently checked against exact retained originals; source and parent unchanged, native limitations explicit."
+      },
+      {
+        "scope": "child",
+        "kind": "issueComments",
+        "id": 6044175583,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6044175583",
+        "updatedAt": "2026-10-07T18:24:39Z",
+        "bodySha256": "6419c54874e1842cfdfd0f885771b174841acafb880da3e1b06e31870deb13c8",
+        "disposition": "Current same-QA assignment fulfilled by this affected-gate reassessment; one QA task, no readiness or product mutation."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6030511657,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030511657",
+        "updatedAt": "2026-10-07T03:48:54Z",
+        "bodySha256": "4683084bdbf417107bce3cea995a76a86167eb6caf7c9c38dcc9209c9946235d",
+        "disposition": "Configured engineering review request completed at the unchanged current head in6030514092/6030553625."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6030514092,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030514092",
+        "updatedAt": "2026-10-07T03:53:11Z",
+        "bodySha256": "0854ab1bd37e87615496ee2e1b130ddfee7e7089f32ed69947e2b9427a2c5a81",
+        "disposition": "Current-head bot review completed; no quota waiver needed for this child."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6030553625,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625",
+        "updatedAt": "2026-10-07T03:53:09Z",
+        "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624",
+        "disposition": "Bot reported no major issues at7e8ab59935. Full submitted-review/inline/thread collections remain empty; independent prior full code/scope review still applies."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6030581928,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030581928",
+        "updatedAt": "2026-10-07T03:55:55Z",
+        "bodySha256": "817d6d75ee3779bd0af2eea7267a02e87d4d8f5516aeca1b4fdfde34549625a7",
+        "disposition": "Historical handoff verified through retained original publication evidence. Its pending/native/parent-status statements describe that earlier checkpoint, superseded by later QA and the new direct amendment."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6031048619,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6031048619",
+        "updatedAt": "2026-10-07T04:39:20Z",
+        "bodySha256": "eb89fa5f62858339c991d56b54ca81ccdf79ee1b76fa046b96a43dfd98bec2d4",
+        "disposition": "Earlier assignment and dependency constraint preserved. Parent-only deferral did not cover child then;6041659686 now expressly does. Child32 source/work and its separate permission hold remain untouched."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6031291236,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6031291236",
+        "updatedAt": "2026-10-07T05:02:29Z",
+        "bodySha256": "0ff7e06972d10224f891a96c28b53b129520001c6fd6c55a1bf5cac42c61c4b5",
+        "disposition": "Historical original evidence-incomplete verdict preserved. Its independent code, behavior, pixels and provenance remain applicable. The only native-evidence blocker is deferred under the later explicit human amendment, without claiming execution."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6032310277,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6032310277",
+        "updatedAt": "2026-10-07T06:26:21Z",
+        "bodySha256": "d7c3044408ef57b85520e88c9d1e5080c20a93e8ea5668f2ab0456ef2102ddc4",
+        "disposition": "Historical issue rebind and C1 request preserved. C1 stale pending-QA/pixel prose was resolved in6032466082 and remains resolved in the current description."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6032466082,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6032466082",
+        "updatedAt": "2026-10-07T06:38:47Z",
+        "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99",
+        "disposition": "Exact comment identity and updated_at match the trusted prior receipt. Superseded by this new verdict: communication C1 remains resolved; native F1 remains unexecuted but is explicitly deferred for review readiness by6041659686."
+      },
+      {
+        "scope": "child",
+        "kind": "prComments",
+        "id": 6043684205,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6043684205",
+        "updatedAt": "2026-10-07T17:55:25Z",
+        "bodySha256": "886f18a3e1e4640e3eab3edc52ddb0612315713a528c0b3000cf3c8a61bfc367",
+        "disposition": "Owner final handoff independently verified: exact preserved old/new issue/PR bodies, unchanged source/capture identities, current parent description, honest native deferral. No source/test/capture correction needed."
+      },
+      {
+        "scope": "parent",
+        "kind": "issueComments",
+        "id": 6029167414,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029167414",
+        "updatedAt": "2026-10-07T01:51:03Z",
+        "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8",
+        "disposition": "Parent planning requirements and value remain unchanged; retained independent parent code/browser/pixel assessment applies. Native rotation/text scaling/screen reader remain explicitly deferred, with dense large-text risk disclosed."
+      },
+      {
+        "scope": "parent",
+        "kind": "issueComments",
+        "id": 6029219796,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029219796",
+        "updatedAt": "2026-10-07T01:55:10Z",
+        "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95",
+        "disposition": "Historical parent queue claim superseded by completed implementation and QA; no new assignment."
+      },
+      {
+        "scope": "parent",
+        "kind": "issueComments",
+        "id": 6029348137,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029348137",
+        "updatedAt": "2026-10-07T02:05:47Z",
+        "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02",
+        "disposition": "Historical sole-owner parent implementation claim; pinned source and its clean scope remain unchanged."
+      },
+      {
+        "scope": "parent",
+        "kind": "issueComments",
+        "id": 6029662109,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029662109",
+        "updatedAt": "2026-10-07T02:32:23Z",
+        "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d",
+        "disposition": "Published parent geometry checkpoint remains exact b21d3ba and is the actual child base/merge-base. Parent-first order preserved."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6029730527,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029730527",
+        "updatedAt": "2026-10-07T02:38:14Z",
+        "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a",
+        "disposition": "Parent bot request received quota-only refusal6029732188; no completed bot review is claimed. Independent parent review completed under6006523068."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6029732188,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029732188",
+        "updatedAt": "2026-10-07T02:38:24Z",
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+        "disposition": "Exact quota-only refusal retained; narrowly nonblocking under6006523068. No retry or billing action."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6029795718,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029795718",
+        "updatedAt": "2026-10-07T02:43:57Z",
+        "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2",
+        "disposition": "Historical parent handoff claims independently assessed in prior QA. Current source/scope/CI/body bindings and parent latest trusted verdict reverified."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6029994635,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029994635",
+        "updatedAt": "2026-10-07T03:00:32Z",
+        "bodySha256": "bcaa53a24b41b311feed306e1c2dba1df7a6168351c9d521ee3bc22caa0b01e6",
+        "disposition": "Historical independent parent QA assignment completed; source unchanged, no descendant invalidation triggered by this metadata-only reassessment."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6030169572,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030169572",
+        "updatedAt": "2026-10-07T03:16:43Z",
+        "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+        "disposition": "Historical parent evidence-incomplete finding resolved for review readiness by6030384716 and later superseding QA; native checks remain unperformed and large-text risk remains explicit."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6030384716,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+        "updatedAt": "2026-10-07T03:37:43Z",
+        "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+        "disposition": "PR34-only human native deferral remains applicable to parent atb21d3ba; it is not used as authority for child36. Child36 uses separate explicit6041659686."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6030490282,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030490282",
+        "updatedAt": "2026-10-07T03:46:50Z",
+        "bodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+        "disposition": "Historical parent ready verdict superseded by6032727047 for current metadata. Prior receipt preserved."
+      },
+      {
+        "scope": "parent",
+        "kind": "prComments",
+        "id": 6032727047,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6032727047",
+        "updatedAt": "2026-10-07T06:58:54Z",
+        "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+        "disposition": "Current parent verdict identity and updated_at match trusted receipt; bodyd6815/issue4f34 sourceb21/master1f032 all match. Its PR34-only deferral remains parent-specific; the later broad amendment separately covers child36."
+      }
+    ],
+    "submittedReviews": {
+      "child": [],
+      "parent": []
+    },
+    "inlineComments": {
+      "child": [],
+      "parent": []
+    },
+    "reviewThreads": {
+      "child": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      },
+      "parent": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      }
+    },
+    "assessment": "All current full issue/PR conversation bodies, submitted reviews and inline/thread content read and explicitly dispositioned for child and parent. No actionable code/human finding remains unresolved for this review-readiness scope. Historical native blockers remain preserved and are explicitly superseded by the newer human decision."
+  },
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Three exact matched parent-to-child hold-release pairs: wide,portrait,short-landscape; supplementary scrolled controls/idle return and original motion. Independent dense4/7/24 browser cases and photo fixture complement representative screenshots.",
+    "pairs": [
+      {
+        "id": "wide",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-wide-hold-release.png?raw=true",
+          "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+          "capturedAtUtc": "2026-10-07T03:32:57.067Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-wide-hold-release.png?raw=true",
+          "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+          "capturedAtUtc": "2026-10-07T03:33:16.048Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over 2x2 play; After same board title/cards in existing editor with four-card side preview, clear Return to play and existing actions."
+      },
+      {
+        "id": "portrait",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-portrait-hold-release.png?raw=true",
+          "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+          "capturedAtUtc": "2026-10-07T03:33:02.445Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-portrait-hold-release.png?raw=true",
+          "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+          "capturedAtUtc": "2026-10-07T03:33:22.520Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over stacked play; After same cards in readable 2x2 preview above existing controls."
+      },
+      {
+        "id": "short-landscape",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-short-landscape-hold-release.png?raw=true",
+          "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+          "capturedAtUtc": "2026-10-07T03:33:07.980Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-short-landscape-hold-release.png?raw=true",
+          "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+          "capturedAtUtc": "2026-10-07T03:33:28.729Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over four horizontal cards; After editor preview with fixed top actions. Supplementary scrolled-controls capture and independent clicks verify actions remain reachable by scrolling."
+      }
+    ],
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "wide",
+          "portrait",
+          "short-landscape"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/manifest.json",
+        "commitSha": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+        "fixtureSha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151",
+        "harnessSha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+        "bindingsSha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+        "details": "Read and verified exact source/build/serve/capture/fixture/harness and loadedJS identities. Complete original web/server output retained and used by QA; superseded fixed-clockmanifest/video retained with original identities and not promoted as motion proof."
+      }
+    ],
+    "provenanceAssessment": "Exact prior source/build/serve/fixture/harness/capture bindings remain unchanged. Reverified accessible canonical manifest, bindings, harness, fixture, original image/video bytes and historical QA records through authenticated API; all80 retained local bound artifact hashes still match. Matched synthetic setup/advancing clock/scale1/light/localeUTC/synthetic speech/normalized fullscreen/blocked service workers preserved, no edited/reconstructed images. Metadata-only child and parent changes have no runtime effect.",
+    "pixelObservations": "Independently opened all10PNG originals (six pair members plus short scroll andthree idle-return views). Same title/cards/colors/labels in each matched pair, genuine old confirmation versus current editor, readable default-size controls. Dense QA previews intentionally scroll and ellipsize; last fullcard label is accessible in its editor. Decoded original video shows large play cards at4.2s, shrinking/repositioning at4.4s, settled row at4.6s. Overlay is decorative/noninteractive by source and browser evidence.",
+    "pixelAssessmentSource": {
+      "url": "https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/record.json",
+      "commitSha": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+      "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+    },
+    "pixelReuse": "Same independent reviewer previously opened the original PNGs and decoded original video. Reusing exact unchanged pixels for this metadata/policy reassessment; no new capture or native claim.",
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/36",
+      "checkedAtUtc": null,
+      "observations": "Actual GitHub PR-page image-rendering check unperformed, explicitly waived by6022754087. Live Markdown pairs are visible/noncollapsed and actual image/provenance bytes accessible; no rendered-page pass claimed."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null,
+    "nativeDeferral": {
+      "decisionCommentId": 6041659686,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+      "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+      "updatedAt": "2026-10-07T15:58:13Z",
+      "status": "unexecuted; deferred for review readiness",
+      "scope": "PR36 native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior.",
+      "limits": "No device pass, no waiver of source/feedback/CI/review/genuine captures/provenance/independent pixels/communication/receipt gates, no merge/release/deployment authority."
+    }
+  },
+  "evidence": [
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "README.md",
+      "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065",
+      "gitBlob": "658dc825331543f8f62d2b71b7b7ba1900bc6807"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "manifest.json",
+      "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+      "gitBlob": "22731244f24f684b28dcb461ae018625f472d978"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "bindings.json",
+      "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+      "gitBlob": "96e51254bfe62dea667daf620bd241636270a530"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-wide-hold-release.png",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+      "gitBlob": "d531c57e0a6e8b62f2fce6bb255f96c8388fa567"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-portrait-hold-release.png",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+      "gitBlob": "5709f2e41f320c8fa5267ec9427cfd06c1727ecd"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-short-landscape-hold-release.png",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+      "gitBlob": "31c08d47683f880fa0fc4eb692ef60a8d7f36a71"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-hold-release.png",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+      "gitBlob": "d0dc109764b75df2beb06e323095f2cc787b2e56"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-returned-idle.png",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673",
+      "gitBlob": "5cdd44741c53f2fbc49baffe3bd64b0c21919f23"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-hold-release.png",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+      "gitBlob": "b7924e83a70d13c09a3de566bcc1f68d4cdb45a6"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-returned-idle.png",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1",
+      "gitBlob": "5b9c1429a7edbabb9ee0b4b52d9b9f3e6971ecfe"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-hold-release.png",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+      "gitBlob": "0fe7c8a5780dd21e5b4d1ea71d39b948af45373e"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-scrolled-controls.png",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653",
+      "gitBlob": "8181c17568d1538997378d5d52ab0d0182386552"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-returned-idle.png",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166",
+      "gitBlob": "87c8d2783f5d17799af9d82b8bb12d089fbdea9e"
+    },
+    {
+      "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+      "path": "publication/record.json",
+      "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273",
+      "gitBlob": "e6a8892c81c0bf046c395090484db467ecb1ffd3"
+    },
+    {
+      "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+      "path": "parent-readiness-20261007/record.json",
+      "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77",
+      "gitBlob": "f90cf71bda015db301812c8d5940a6f7c15b3cd2"
+    },
+    {
+      "commit": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+      "path": "record.json",
+      "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46",
+      "gitBlob": "42804c5ea68bd00fbd41fc562d63162b0c51edb2"
+    },
+    {
+      "commit": "591a9e8d25e6e1cdafe9fb943a6fee7b58cad432",
+      "path": "communication-final-20261007/record.json",
+      "sha256": "9522386af5e97b40a183b658a1475b89499700d960bd40a96aaffa8c26bb1abc",
+      "gitBlob": "9cef3b127d9134ea4d5135fff9bd2f4197c3d844"
+    },
+    {
+      "commit": "543bf32d96ed514de94ed61236fd4bf33c1c69be",
+      "path": "native-deferral-20261007/final/record.json",
+      "sha256": "eb3cb23db8f41a94ec75b98f08e83d6d8c1931316de5d26e7408b112b8658d6a",
+      "gitBlob": "3e42b6c5a26c7b91c0d9e086db87826ffc041406"
+    },
+    {
+      "commit": "d24a7de3b8c3de6f3f9531581ba2c512f0292a7f",
+      "path": "communication-final-20261007/publication-readback.json",
+      "sha256": "f1f48927d32b83ffe5f11ad60193cf88f30cb2b10ea713afd6b94ec8f62c4a6a",
+      "gitBlob": "b76164ea2ff070558b93f1841ed2927e49eddf60"
+    },
+    {
+      "commit": "d8082c02139ae0ca052119193a7aa837f6b9d519",
+      "path": "metadata-20261007/record.json",
+      "sha256": "0bb12bdae5ffaa565a23171e4dfcb758b7c6b7d5a550d9f890cc919170c2298a",
+      "gitBlob": "b02561ecd195640e5dc9457cf9e4cc0249f5116d"
+    },
+    {
+      "commit": "4532557f137374aee6aad98adcef6ab1ff8029a3",
+      "path": "metadata-20261007/publication-readback.json",
+      "sha256": "7cb42a62737afd1374bb97a673fab6126a67897a88d13a66a9681af11f7fe804",
+      "gitBlob": "e07213762530fb810634a85919b02a73a7342841"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/bindings.json",
+      "sha256": "3b24780789b6d6c5c46439b94862cd9153a72af41b21dd66da9df2cb4510841d",
+      "gitBlob": "967ebae076d64b82e4398c029bbb6fa62f1fd219"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/issue-body.md",
+      "sha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+      "gitBlob": "64b2a9f42b97830eb2d114cde0981e1b1e391794"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/pr-body.md",
+      "sha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab",
+      "gitBlob": "8ba473c550ec51452b6f1237c4415bd3eafd3ddc"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "capture-editor.mjs",
+      "sha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+      "gitBlob": "8063b50d1db081e0f60dd4b3c1add690fe696fbd"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "fixture.json",
+      "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151",
+      "gitBlob": "dfaff27aae4b0175fb95e06bcceb5648182b29ff"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-motion.webm",
+      "sha256": "248246968f345b700dbb6915c2bda60612c9238518d493e0b6a735a270a45458",
+      "gitBlob": "67cc481d78b51d888e62ab1a12ca72d8d22361bd"
+    }
+  ],
+  "bindingChecks": {
+    "checkedAtUtc": "2026-10-07T18:34:01.288Z",
+    "host": "mchartier_zbook",
+    "sourceWorktreeClean": true,
+    "binding": {
+      "checkedAtUtc": "2026-10-07T18:33:31.524Z",
+      "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "headRef": "feat/direct-board-editor-issue30",
+      "baseRef": "feat/balanced-storyboard-grid",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+      "prUpdatedAt": "2026-10-07T17:55:25Z",
+      "draft": true,
+      "commits": 1,
+      "changedFiles": 13,
+      "additions": 528,
+      "deletions": 125,
+      "issueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+      "issueUpdatedAt": "2026-10-07T18:24:39Z",
+      "mergeBase": "b21d3ba7370c08468b868385ce9df3d875eee799"
+    },
+    "parent": {
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+      "state": "open",
+      "draft": false,
+      "labels": [
+        "human-ready"
+      ],
+      "receipt": {
+        "id": 6032727047,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6032727047",
+        "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+        "updatedAt": "2026-10-07T06:58:54Z"
+      }
+    },
+    "ultimateTarget": {
+      "repository": "MChartier/little-say",
+      "ref": "master",
+      "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "priorVerdict": {
+      "id": 6032466082,
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6032466082",
+      "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99",
+      "updatedAt": "2026-10-07T06:38:47Z"
+    },
+    "refs": {
+      "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "feat/direct-board-editor-issue30": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "evidence/qa-pr36-20261007": "d24a7de3b8c3de6f3f9531581ba2c512f0292a7f"
+    },
+    "amendments": [
+      {
+        "id": 5984018358,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5984018358",
+        "updatedAt": "2026-10-04T20:21:21Z",
+        "bodySha256": "457e7755eb1ec94e1552e2192e0a487c308a181cd6920f204f3af1b2ba2c8abf",
+        "verified": true
+      },
+      {
+        "id": 5987999201,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5987999201",
+        "updatedAt": "2026-10-05T04:16:50Z",
+        "bodySha256": "972a4a9e64684bfe8703118c7cc8c33f26980abe65f1e212c05f899d2e65ed63",
+        "verified": true
+      },
+      {
+        "id": 5997739454,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5997739454",
+        "updatedAt": "2026-10-05T15:35:43Z",
+        "bodySha256": "8ffac98257544b912ec49d1b11259be82d56e50183685364f12e159298f6e396",
+        "verified": true
+      },
+      {
+        "id": 6002971212,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6002971212",
+        "updatedAt": "2026-10-05T21:09:29Z",
+        "bodySha256": "02bd694f3a6fe0bcc7b48a7f16e20f12d8a3db11c04e2ed326a5e11bcb789992",
+        "verified": true
+      },
+      {
+        "id": 6006523068,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6006523068",
+        "updatedAt": "2026-10-06T00:30:46Z",
+        "bodySha256": "445c01c614a0aa767f408e4e98ca79f6525a3dd1a52a6b977a9499384f389481",
+        "verified": true
+      },
+      {
+        "id": 6008280372,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008280372",
+        "updatedAt": "2026-10-06T02:45:58Z",
+        "bodySha256": "53ea8dd801ffd744c1fdaaa625bc959ceb8ae1f4193926339073a0574d1ec4ee",
+        "verified": true
+      },
+      {
+        "id": 6008834896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008834896",
+        "updatedAt": "2026-10-06T03:38:32Z",
+        "bodySha256": "c7a8391deb149ce166ba49323682fb4f6336e43a941c8164cfb7a12d8c1f3a10",
+        "verified": true
+      },
+      {
+        "id": 6020948896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6020948896",
+        "updatedAt": "2026-10-06T16:40:54Z",
+        "bodySha256": "b833facef0b79a05c92ffec982480393d1f060e4b741c11136af7c011d680ba6",
+        "verified": true
+      },
+      {
+        "id": 6021105604,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021105604",
+        "updatedAt": "2026-10-06T16:50:11Z",
+        "bodySha256": "d9fc320b61d0238711e14dcb9cb028ba605c16024d64ac6dc97ebe75c7299b48",
+        "verified": true
+      },
+      {
+        "id": 6021281028,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021281028",
+        "updatedAt": "2026-10-06T17:00:34Z",
+        "bodySha256": "eb9a05a4b43bd4a1f7d9b39e78ddda0a5ad6f0b47af8293768fcef6f5905e0cb",
+        "verified": true
+      },
+      {
+        "id": 6022754087,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087",
+        "updatedAt": "2026-10-06T18:24:41Z",
+        "bodySha256": "1bdb9f683ed1c434d2f5ab20b9621217be7d14f17bbc34e5fc946a9e86c5e161",
+        "verified": true
+      },
+      {
+        "id": 6026521080,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6026521080",
+        "updatedAt": "2026-10-06T22:21:29Z",
+        "bodySha256": "74a486b468a12a67303e9f40b21193c41e10c6485e3a1d9a20431ee02d87a990",
+        "verified": true
+      },
+      {
+        "id": 6041659686,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+        "updatedAt": "2026-10-07T15:58:13Z",
+        "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+        "verified": true
+      }
+    ],
+    "evidence": [
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "README.md",
+        "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065",
+        "gitBlob": "658dc825331543f8f62d2b71b7b7ba1900bc6807"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "manifest.json",
+        "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+        "gitBlob": "22731244f24f684b28dcb461ae018625f472d978"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "bindings.json",
+        "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+        "gitBlob": "96e51254bfe62dea667daf620bd241636270a530"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-wide-hold-release.png",
+        "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+        "gitBlob": "d531c57e0a6e8b62f2fce6bb255f96c8388fa567"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-portrait-hold-release.png",
+        "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+        "gitBlob": "5709f2e41f320c8fa5267ec9427cfd06c1727ecd"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-short-landscape-hold-release.png",
+        "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+        "gitBlob": "31c08d47683f880fa0fc4eb692ef60a8d7f36a71"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-wide-hold-release.png",
+        "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+        "gitBlob": "d0dc109764b75df2beb06e323095f2cc787b2e56"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-wide-returned-idle.png",
+        "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673",
+        "gitBlob": "5cdd44741c53f2fbc49baffe3bd64b0c21919f23"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-portrait-hold-release.png",
+        "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+        "gitBlob": "b7924e83a70d13c09a3de566bcc1f68d4cdb45a6"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-portrait-returned-idle.png",
+        "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1",
+        "gitBlob": "5b9c1429a7edbabb9ee0b4b52d9b9f3e6971ecfe"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-hold-release.png",
+        "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+        "gitBlob": "0fe7c8a5780dd21e5b4d1ea71d39b948af45373e"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-scrolled-controls.png",
+        "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653",
+        "gitBlob": "8181c17568d1538997378d5d52ab0d0182386552"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-returned-idle.png",
+        "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166",
+        "gitBlob": "87c8d2783f5d17799af9d82b8bb12d089fbdea9e"
+      },
+      {
+        "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+        "path": "publication/record.json",
+        "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273",
+        "gitBlob": "e6a8892c81c0bf046c395090484db467ecb1ffd3"
+      },
+      {
+        "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+        "path": "parent-readiness-20261007/record.json",
+        "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77",
+        "gitBlob": "f90cf71bda015db301812c8d5940a6f7c15b3cd2"
+      },
+      {
+        "commit": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+        "path": "record.json",
+        "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46",
+        "gitBlob": "42804c5ea68bd00fbd41fc562d63162b0c51edb2"
+      },
+      {
+        "commit": "591a9e8d25e6e1cdafe9fb943a6fee7b58cad432",
+        "path": "communication-final-20261007/record.json",
+        "sha256": "9522386af5e97b40a183b658a1475b89499700d960bd40a96aaffa8c26bb1abc",
+        "gitBlob": "9cef3b127d9134ea4d5135fff9bd2f4197c3d844"
+      },
+      {
+        "commit": "543bf32d96ed514de94ed61236fd4bf33c1c69be",
+        "path": "native-deferral-20261007/final/record.json",
+        "sha256": "eb3cb23db8f41a94ec75b98f08e83d6d8c1931316de5d26e7408b112b8658d6a",
+        "gitBlob": "3e42b6c5a26c7b91c0d9e086db87826ffc041406"
+      },
+      {
+        "commit": "d24a7de3b8c3de6f3f9531581ba2c512f0292a7f",
+        "path": "communication-final-20261007/publication-readback.json",
+        "sha256": "f1f48927d32b83ffe5f11ad60193cf88f30cb2b10ea713afd6b94ec8f62c4a6a",
+        "gitBlob": "b76164ea2ff070558b93f1841ed2927e49eddf60"
+      },
+      {
+        "commit": "d8082c02139ae0ca052119193a7aa837f6b9d519",
+        "path": "metadata-20261007/record.json",
+        "sha256": "0bb12bdae5ffaa565a23171e4dfcb758b7c6b7d5a550d9f890cc919170c2298a",
+        "gitBlob": "b02561ecd195640e5dc9457cf9e4cc0249f5116d"
+      },
+      {
+        "commit": "4532557f137374aee6aad98adcef6ab1ff8029a3",
+        "path": "metadata-20261007/publication-readback.json",
+        "sha256": "7cb42a62737afd1374bb97a673fab6126a67897a88d13a66a9681af11f7fe804",
+        "gitBlob": "e07213762530fb810634a85919b02a73a7342841"
+      },
+      {
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/bindings.json",
+        "sha256": "3b24780789b6d6c5c46439b94862cd9153a72af41b21dd66da9df2cb4510841d",
+        "gitBlob": "967ebae076d64b82e4398c029bbb6fa62f1fd219"
+      },
+      {
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/issue-body.md",
+        "sha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+        "gitBlob": "64b2a9f42b97830eb2d114cde0981e1b1e391794"
+      },
+      {
+        "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+        "path": "native-deferral-20261007/originals/pr-body.md",
+        "sha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab",
+        "gitBlob": "8ba473c550ec51452b6f1237c4415bd3eafd3ddc"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "capture-editor.mjs",
+        "sha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+        "gitBlob": "8063b50d1db081e0f60dd4b3c1add690fe696fbd"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "fixture.json",
+        "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151",
+        "gitBlob": "dfaff27aae4b0175fb95e06bcceb5648182b29ff"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-wide-motion.webm",
+        "sha256": "248246968f345b700dbb6915c2bda60612c9238518d493e0b6a735a270a45458",
+        "gitBlob": "67cc481d78b51d888e62ab1a12ca72d8d22361bd"
+      }
+    ],
+    "localRetainedFileHashesVerified": 80,
+    "ci": {
+      "child": [
+        {
+          "id": 112619831465,
+          "name": "check",
+          "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/MChartier/little-say/actions/runs/37567933495/job/112619831465"
+        }
+      ],
+      "parent": [
+        {
+          "id": 112603976685,
+          "name": "check",
+          "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/MChartier/little-say/actions/runs/37562895456/job/112603976685"
+        }
+      ]
+    },
+    "feedbackCounts": {
+      "child": {
+        "issueComments": 5,
+        "prComments": 9,
+        "reviews": 0,
+        "inlineComments": 0,
+        "threads": 0
+      },
+      "parent": {
+        "issueComments": 4,
+        "prComments": 8,
+        "reviews": 0,
+        "inlineComments": 0,
+        "threads": 0
+      }
+    },
+    "association": {
+      "nativeClosingIssue": 30,
+      "project": "Agentic development pipeline",
+      "itemId": "PVTI_lAHOABMy1c4Bl3Eqzg_BqBM",
+      "currentPRs": "https://github.com/MChartier/little-say/pull/36 (child of PR34)",
+      "checkedAtUtc": "2026-10-07T18:34:01.289Z"
+    }
+  },
+  "association": {
+    "nativeClosingIssue": 30,
+    "project": "Agentic development pipeline",
+    "itemId": "PVTI_lAHOABMy1c4Bl3Eqzg_BqBM",
+    "currentPRs": "https://github.com/MChartier/little-say/pull/36 (child of PR34)",
+    "checkedAtUtc": "2026-10-07T18:34:01.289Z"
+  },
+  "limitations": [
+    "Native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion checks remain unexecuted under6041659686; browser/component/bundle results are not native-device proof.",
+    "Parent34 retains a disclosed browser-only150% label-font risk: dense picture area25.5px to1.5px. This is not native OS-scaling proof or a newly established child regression; the risk is not erased by either deferral.",
+    "Actual GitHub rendered-image page check unperformed under separate6022754087 waiver.",
+    "Synthetic browser speech does not reproduce or fix the separate iPad Expo Go audio-completion hang.",
+    "PR36 is stacked on unmerged PR34; parent-first review and coordinated revalidation on source/base changes remain required. No merge/release/deployment approval."
+  ],
+  "retention": {
+    "ref": "refs/heads/evidence/qa-pr36-20261007",
+    "purpose": "Append-only independent QA reassessment and receipt; nonmerged evidence only.",
+    "owner": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+    "retainUntil": "Explicit human archival/removal authorization; retain original evidence and all historical comment/record/receipt identities.",
+    "productHistory": "No evidence artifacts added to product branches."
+  },
+  "nextAction": "Coordinator verifies this append-only comment exact trusted receipt, immutable record/provenance, current child/parent/master/body/full feedback/CI bindings immediately before and after any readiness transition. Preserve explicit native deferral and parent-first order. QA itself changes no readiness/draft/Project/source; no new implementation correction is requested."
+}

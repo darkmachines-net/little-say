@@ -1,0 +1,49 @@
+{
+  "purpose": "Fresh coherent native-deferral reassessment; historical records referenced without changing their identities.",
+  "files": [
+    {
+      "path": "association.json",
+      "sha256": "1b8cc6d80f2c26b2fb76b8dcf5fb6d44acd43a96c83ebaed8bb0f1df42fb7e82"
+    },
+    {
+      "path": "feedback.json",
+      "sha256": "f7d1b8250205707a627411f6c24a14fa00f19e740b464a3810274a9f067ddb36"
+    },
+    {
+      "path": "issue-body.diff",
+      "sha256": "12269d41c732fc4519afbeb2a85c0a989193deb9043c005878e45ee191ae77c9"
+    },
+    {
+      "path": "issue-body.md",
+      "sha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55"
+    },
+    {
+      "path": "native-deferral-instruction.json",
+      "sha256": "608386278682bf46d019b9b7090381120d3c65b0da0ec250bf82242ee0bfc5b7"
+    },
+    {
+      "path": "parent-issue-body.md",
+      "sha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2"
+    },
+    {
+      "path": "parent-pr-body.md",
+      "sha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39"
+    },
+    {
+      "path": "pr-body.diff",
+      "sha256": "3218e4c8f36faaacb04cf1949902ebd78a3890101b6b3006a08d955890e4afab"
+    },
+    {
+      "path": "pr-body.md",
+      "sha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bad1d3764a917ac3d7549ae22614b124815c0a3c4f6d0433e84a51413047b2b3"
+    },
+    {
+      "path": "record.json",
+      "sha256": "7d8ded6d03cfaf99e93ebcab5b8463807960a4aae2346c692d775471c0b44563"
+    }
+  ]
+}

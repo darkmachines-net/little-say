@@ -1,0 +1,64 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "pageInfo": {
+            "hasNextPage": false
+          },
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg_BqBM",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "pageInfo": {
+                  "hasNextPage": false
+                },
+                "nodes": [
+                  {},
+                  {},
+                  {},
+                  {
+                    "text": "Open the existing storyboard editor directly after a two-second parent hold",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {},
+                  {
+                    "text": "01a11406-66b3-71fb-a4cc-2aad6d51802c; PR36 completed, clean and idle",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {},
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/36 (child of PR34)",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  },
+                  {
+                    "text": "QA evidence-incomplete: https://github.com/MChartier/little-say/pull/36#issuecomment-6031291236 . No source defect; VoiceOver/TalkBack, native rotation and OS text scaling remain unverified. PR34-only deferral does not apply. Native evidence or explicit PR36-specific human decision required; coordinate stopped issue32 child before parent changes.",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "2026-10-07T05:10:32.892366+00:00",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

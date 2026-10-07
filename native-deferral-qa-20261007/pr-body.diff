@@ -1,0 +1,21 @@
+diff --git a/pr36-deferral-records/original-pr-body.md b/pr36-deferral-assessed/pr-body.md
+index 8ba473c..50c81e9 100644
+--- a/pr36-deferral-records/original-pr-body.md
++++ b/pr36-deferral-assessed/pr-body.md
+@@ -2,7 +2,7 @@
+ 
+ Parents currently reach a “Leave this board?” confirmation after an intentional hold, and dashboard-started or resumed play can return to the dashboard instead of the editor. This opens the same board's existing editor directly, animates its cards into the responsive preview, and provides **Return to play** with accepted edits and idle audio. The existing two-second threshold is preserved; accidental/interrupted input does not unlock.
+ 
+-Closes #30. **Review #34 first:** this draft targets `feat/balanced-storyboard-grid` at `b21d3ba7370c08468b868385ce9df3d875eee799`. Ultimate target: master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`. Parent changes require coordinated revalidation. Independent account PR #29 and audio PR #33 are excluded.
++Closes #30. **Review #34 first:** this PR targets `feat/balanced-storyboard-grid` at `b21d3ba7370c08468b868385ce9df3d875eee799`. Ultimate target: master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`. Parent changes require coordinated revalidation. Independent account PR #29 and audio PR #33 are excluded.
+ 
+ ## Test plan and behavior evidence
+ 
+@@ -34,4 +34,6 @@ At 390×844, the same direct handoff stacks the readable preview above the exist
+ 
+ 225 unit tests, 19 affected browser scenarios, typecheck, release-metadata validation, web build and iOS/Android bundle exports pass. [CI passed at the final head](https://github.com/MChartier/little-say/actions/runs/37567933495). [Codex engineering review completed at the final head](https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625), reporting no major issues. The full child scope is one commit, nine product files and four maintained test files; [complete inventory](https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/source-scope.json). Evidence and build outputs are retained on a separate non-merged ref. No packages added.
+ 
+-**Native evidence limitation:** Native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior are unexecuted; bundle export is not native execution. Parent #34 has a [ready verdict for pinned `b21d3ba`](https://github.com/MChartier/little-say/blob/2dbe1b7438bf34a2570ad384bbeff6cde4a56f47/decision-20261007/record.json) under its own PR-only native-validation deferral; review that parent first. That deferral does not apply to this child. This does not reproduce or fix the separate iPad Expo Go audio-completion hang. Actual GitHub image-page rendering uses the [explicit human waiver](https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087); it is not claimed as performed. The rendering waiver does not cover native validation.
++**Deferred native checks:** Native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior remain unexecuted. The [direct human amendment](https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686) defers these checks for review readiness; browser/component results and bundle exports are not native execution. Parent #34's earlier deferral was PR-specific; this child is covered separately by the amendment. Review #34 first ([revision-scoped parent QA](https://github.com/MChartier/little-say/blob/d8082c02139ae0ca052119193a7aa837f6b9d519/metadata-20261007/record.json)). Other review and evidence requirements remain unchanged.
++
++This does not reproduce or fix the separate iPad Expo Go audio-completion hang. The [GitHub PR-page rendering waiver](https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087) covers the unperformed page-rendering check only.

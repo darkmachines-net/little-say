@@ -1,0 +1,12 @@
+diff --git a/pr36-deferral-records/original-issue-body.md b/pr36-deferral-assessed/issue-body.md
+index 64b2a9f..a634632 100644
+--- a/pr36-deferral-records/original-issue-body.md
++++ b/pr36-deferral-assessed/issue-body.md
+@@ -30,4 +30,4 @@ Implementation owner: verified task ID `01a11406-66b3-71fb-a4cc-2aad6d51802c`, c
+ 
+ ## Implementing PR
+ 
+-[Draft PR #36 — Open the existing board editor directly from the parent hold](https://github.com/MChartier/little-say/pull/36). Review PR #34 first; native closing association to this issue is recorded. [Retained source/build/fixture evidence and validation](https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/README.md). No readiness, merge or release is claimed.
+\ No newline at end of file
++[PR #36 — Open the existing board editor directly from the parent hold](https://github.com/MChartier/little-say/pull/36). Review PR #34 first; native closing association to this issue is recorded. [Retained source/build/fixture evidence and validation](https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/README.md).
+\ No newline at end of file
