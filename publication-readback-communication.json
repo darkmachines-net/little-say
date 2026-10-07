@@ -1,0 +1,29 @@
+{
+  "verdict": "ready",
+  "supersedesVerdictCommentId": 6030357938,
+  "verdictCommentId": 6030548675,
+  "verdictBodySha256": "cced214d3fac4a44d0c6e704d0bed01ec356174609e77c1c3f94ac0b9da307c0",
+  "verdictUpdatedAt": "2026-10-07T03:52:38Z",
+  "commentUrl": "https://github.com/MChartier/little-say/pull/35#issuecomment-6030548675",
+  "headSha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "commitParents": [
+    "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  ],
+  "prBodySha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb",
+  "checkedAtUtc": "2026-10-07T03:52:55.178Z",
+  "evidenceCommit": "99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472",
+  "evidenceUrl": "https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/qa-verdict-communication.json",
+  "evidenceSha256": "365804dd546a8276949763c1282fdf84826618e8ca1516371f6b0617ed1adee4",
+  "reviewerChat": "01a11461-180f-73dd-8d1c-3e2f64ae7027",
+  "coordinatorSeparateReceiptRequired": true,
+  "beforePublishCheckedAtUtc": "2026-10-07T03:52:41.205Z",
+  "postPublishFullFeedbackUnchangedExceptOwnVerdict": true,
+  "postPublishBindingsUnchanged": true,
+  "draft": true,
+  "labels": [],
+  "remainingBlockers": [],
+  "dockerExecution": "unperformed",
+  "testsRerun": false
+}

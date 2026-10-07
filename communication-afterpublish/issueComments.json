@@ -1,0 +1,51 @@
+[
+  [
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029576641",
+      "html_url": "https://github.com/MChartier/little-say/issues/23#issuecomment-6029576641",
+      "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/23",
+      "id": 6029576641,
+      "node_id": "IC_kwDOU65Oyc8AAAABZ2QJwQ",
+      "user": {
+        "login": "MChartier",
+        "id": 1258197,
+        "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/MChartier",
+        "html_url": "https://github.com/MChartier",
+        "followers_url": "https://api.github.com/users/MChartier/followers",
+        "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+        "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+        "organizations_url": "https://api.github.com/users/MChartier/orgs",
+        "repos_url": "https://api.github.com/users/MChartier/repos",
+        "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/MChartier/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-07T02:26:13Z",
+      "updated_at": "2026-10-07T02:26:13Z",
+      "body": "Pre-dispatch scope checkpoint (2026-10-07T02:26:15.398470+00:00). Current master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` still contains the identified production prompt prose. Intake passes for exact-text resource extraction and packaged-load regression checks; no new product decision is needed. Proposed branch: `refactor/prompt-resources-issue23` from that master (remote branch absent when checked). No branch/worktree created and no implementation dispatched.\n\nImplementation owner remains unassigned; no original native planner/task identity is present in the issue, its retained original, Project or available supported audit records. Coordinator must assign one writer and record its verified task identity before execution; the owner must recheck local/remote ownership and current base. This is a pre-dispatch reservation for #23, not an execution claim.\n\nScope: server prompt resources/helpers, core starter prompt resources, and only preset imports in AiConversation; exclude PlayBoard, BoardEditor, TileEditor, geometry, hold/navigation and translation behavior. Preserve exact assembled text, whitespace, literal substitutions, audio/cache identities and server/client packaging boundaries. Deferred PR20 remains deferred; account completion is not a prerequisite. Coordinate any newly discovered overlap before editing.",
+      "author_association": "OWNER",
+      "pin": null,
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029576641/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
+  ]
+]
