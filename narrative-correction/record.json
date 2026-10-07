@@ -1,0 +1,10 @@
+{
+  "checkedAtUtc": "2026-10-07T02:43:16.988Z",
+  "head": "c3bc7b2777708e8c79f15f530a42b0c89fb48271",
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "beforeBodySha256": "c4c493ed52f66d9ce2620306b22e65ea5faa073e262b86b55598da272b7ffcff",
+  "afterBodySha256": "207b6f637e0dd65890da75c541bf6e45f991cca5013c97b4749a45627f89694b",
+  "qaCommentId": 6029759443,
+  "qaStatus": "historical assessment retained; corrected body requires same-QA recheck",
+  "sourceChanged": false
+}
