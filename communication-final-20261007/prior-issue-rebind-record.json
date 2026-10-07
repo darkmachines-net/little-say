@@ -1,0 +1,837 @@
+{
+  "schemaVersion": 1,
+  "verdict": "evidence-incomplete",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/36",
+  "issue": "https://github.com/MChartier/little-say/issues/30",
+  "reviewerChat": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+  "implementationOwner": "01a11406-66b3-71fb-a4cc-2aad6d51802c",
+  "supersedesVerdictCommentId": 6031291236,
+  "checkedAtUtc": "2026-10-07T06:24:49.426Z",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "parentRevisions": [
+    {
+      "pullRequest": 34,
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "state": "open"
+    }
+  ],
+  "prBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+  "instructionAcknowledgment": {
+    "workflow": "Read supplied exact QA/AGENTS/SKILL/intake/stacks/operations source at pinned f0919b184, and supplied pr-review-v3/queue/template at pinned97e5583. No runtime migration.",
+    "amendments": [
+      "5984018358",
+      "5987999201",
+      "5997739454",
+      "6002971212",
+      "6006523068",
+      "6008280372",
+      "6008834896",
+      "6020948896",
+      "6021105604",
+      "6021281028",
+      "6022754087",
+      "6026521080"
+    ],
+    "operative": "Complete actual published scope and feedback, focused product history, concise final-state issue/PR, exact provenance and independent pixels, append-only concise comment linked to immutable record, trusted exact-body receipt, coordinator readiness and human merge authority. GitHub rendered-page inspection alone waived. PR34 native deferral expressly not extended to child36."
+  },
+  "environment": {
+    "hostVerifiedCaseInsensitive": "MCHARTIER_ZBOOK",
+    "actualHostnameOutput": "mchartier_zbook",
+    "isolatedDetachedHead": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "sourceWorktreeClean": true,
+    "productOrOwnerMutations": "None",
+    "nativeAvailability": "adb devices -l returned no connected devices; no native installation, launch, rotation, OS text scaling or screen-reader session performed."
+  },
+  "scope": {
+    "targetRepository": "MChartier/little-say",
+    "targetRef": "feat/balanced-storyboard-grid",
+    "targetSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "mergeBase": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRepository": "MChartier/little-say",
+    "headRef": "feat/direct-board-editor-issue30",
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "declaredParent": {
+      "pr": 34,
+      "state": "open",
+      "draft": false,
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "bodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+      "labels": [
+        "human-ready"
+      ],
+      "verdictCommentId": 6030490282,
+      "verdictBodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+      "verdictUpdatedAt": "2026-10-07T03:46:50Z",
+      "scope": "PR34-only native deferral; does not apply to child36"
+    },
+    "ultimateTarget": {
+      "repository": "MChartier/little-say",
+      "ref": "master",
+      "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "orderedCommits": [
+      {
+        "sha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+        "parents": [
+          "b21d3ba7370c08468b868385ce9df3d875eee799"
+        ],
+        "message": "Open the existing editor directly after the parent hold",
+        "rationale": "Direct implementation of issue30 on its declared grid prerequisite; no unrelated product/evidence commits."
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/App.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 29,
+        "deletions": 11,
+        "category": "product",
+        "rationale": "Bind active board to editor, preserve accepted state, stop preview and flush durable writes before return; guard concurrent return.",
+        "headBlob": "7b0b5a71abd09739020f2ebb873376277ccb168f",
+        "baseBlob": "ce6ee1c603bb56c78e966e105cf40d507696fd3c"
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 32,
+        "deletions": 18,
+        "category": "product",
+        "rationale": "Responsive reachable existing editor controls, measured preview, draft/navigation guards and direct-return presentation.",
+        "headBlob": "29d0f7d66988397fb12805c92457dabc1af0af62",
+        "baseBlob": "7d4650a7f7de9df6b5528a247765154fe277a87d"
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardTransition.tsx",
+        "previousPath": null,
+        "status": "added",
+        "additions": 50,
+        "deletions": 0,
+        "category": "product",
+        "rationale": "Inert measured card transition, reduced motion and interruption fallback; no second interactive board.",
+        "headBlob": "4f29036ad075c69b64c4ab6d8c2c939fe3285b4a",
+        "baseBlob": null
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.test.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 28,
+        "deletions": 6,
+        "category": "maintained regression test",
+        "rationale": "Maintained native-component boundary/cancellation mocks for changed parent unlock; not device proof.",
+        "headBlob": "67ac22567e942d65eddc5cb93ba182275829d6e5",
+        "baseBlob": "69bcf9841505073edef9e0a140e0ef4185198dd8"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 12,
+        "deletions": 9,
+        "category": "product",
+        "rationale": "Native bounds and deliberate timed accessibility unlock replacing confirmation-dependent activation.",
+        "headBlob": "8759c813aadcd4fd26e08f66aee2a79c2bc6c4d1",
+        "baseBlob": "93a4e7af98609d4db443770561879d962fd902b7"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentControl.web.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 26,
+        "deletions": 10,
+        "category": "product",
+        "rationale": "Browser pointer/keyboard/assistive gate and interruption handling without immediate ordinary activation bypass.",
+        "headBlob": "0d417ee8cb16dae3a01acbad9329f44ff7dc0a34",
+        "baseBlob": "68ce04298f26e371a5761fbbe8d629edbda0473c"
+      },
+      {
+        "path": "apps/mobile/src/ui/ParentSettings.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "category": "product",
+        "rationale": "Correct existing unlock instructions after confirmation removal.",
+        "headBlob": "2d9082e13fcaa046ea9f658d5e5bf95f60b22964",
+        "baseBlob": "5d7a3aec9e727f147f11414fd7e5559a40d2ea8b"
+      },
+      {
+        "path": "apps/mobile/src/ui/PlayBoard.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 35,
+        "deletions": 20,
+        "category": "product",
+        "rationale": "Single guarded handoff with source geometry, audio/contact cleanup and restored noneditable focus.",
+        "headBlob": "562998904357ec8b639088068951b4da2889740f",
+        "baseBlob": "876c7fe5b835d856b9b416161701d30f679f095c"
+      },
+      {
+        "path": "apps/mobile/src/ui/screenFocus.ts",
+        "previousPath": null,
+        "status": "added",
+        "additions": 20,
+        "deletions": 0,
+        "category": "product",
+        "rationale": "Shared noneditable heading focus after mode change, with native accessibility focus API.",
+        "headBlob": "8eab44bed06cd7c022de5782a62d57f02900900d",
+        "baseBlob": null
+      },
+      {
+        "path": "apps/mobile/src/ui/useParentHold.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 33,
+        "deletions": 20,
+        "category": "product",
+        "rationale": "One monotonic threshold, generation cancellation and cancellable timed assistive alternative.",
+        "headBlob": "836c58f59f121d8d8bc8aa41fab861d82e3b6c75",
+        "baseBlob": "fb7778bea53012830b380abedc3fbc737a5f8a85"
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 23,
+        "deletions": 28,
+        "category": "maintained regression test",
+        "rationale": "Update affected navigation contracts and preserve threshold, multitouch, language and failed-save regression coverage.",
+        "headBlob": "4ab93def9d39fc22704b1d4c4cc0aefce43c9d1e",
+        "baseBlob": "fb59ed87b232446dcda18bd7e31f9de336db03e9"
+      },
+      {
+        "path": "tests/web/editor-transition.spec.ts",
+        "previousPath": null,
+        "status": "added",
+        "additions": 236,
+        "deletions": 0,
+        "category": "maintained regression test",
+        "rationale": "Maintained consequential behavior protection: board identity, guarded inputs, drafts, storage failure, queue cleanup and motion/layout.",
+        "headBlob": "010ea0d79bcf7d75598f478085b1393a8a51467b",
+        "baseBlob": null
+      },
+      {
+        "path": "tests/web/recents.spec.ts",
+        "previousPath": null,
+        "status": "modified",
+        "additions": 3,
+        "deletions": 2,
+        "category": "maintained regression test",
+        "rationale": "Adapt existing recents flow to intentional keyboard hold and explicit Boards navigation.",
+        "headBlob": "41e1c2433dff8186f24fec70cab0860a3443b542",
+        "baseBlob": "3d14cf94b72019080cc83b55760074bd1a2fd6f6"
+      }
+    ],
+    "totals": {
+      "commits": 1,
+      "files": 13,
+      "additions": 528,
+      "deletions": 125,
+      "productFiles": 9,
+      "productAdditions": 238,
+      "productDeletions": 89,
+      "testFiles": 4,
+      "testAdditions": 290,
+      "testDeletions": 36
+    },
+    "assessment": "All API pages reconciled with local full range and parents; no renames, sibling merges, copied source, build/export inventories, screenshot/harness archives or add/delete evidence churn in product history. No retained exception needed. Existing immutable evidence is on dedicated nonmerged refs, not product ancestry. Tests protect accidental unlock, data loss and navigation/audio boundaries, proportionate to removing a guard dialog."
+  },
+  "gates": {
+    "value": {
+      "status": "pass",
+      "reason": "Direct requested removal of a repeated parent editing detour; same existing editor reused with modest product scope. Concrete caregiver benefit, no invented production timing defect."
+    },
+    "outcome": {
+      "status": "partial",
+      "reason": "Browser/source acceptance supported; consequential native unlock, focus, scaling and rotation behavior unverified (F1)."
+    },
+    "code": {
+      "status": "pass",
+      "reason": "Reviewed all 13 changed files and relevant unchanged gesture, grid, asset, speech and persistence contracts. No actionable source defect found; no package, provider, consent or account-flow broadening."
+    },
+    "engineeringReview": {
+      "status": "pass",
+      "reason": "Actual Codex review completed on current7e8ab599 head at6030514092/6030553625; no major issues. All current submitted reviews and inline threads empty. Quota exception not needed for this PR."
+    },
+    "ci": {
+      "status": "pass",
+      "reason": "Exact-head GitHub Actions run37567933495/check112619831465 completed successfully, including npm run check and integration. Retained225-unit,19-affected-browser,types/build/release-check/native-JS-export outputs verified; no expensive unaffected repeat. Runner lifecycle/deprecation notices are unrelated nonfailure annotations."
+    },
+    "behavior": {
+      "status": "browser-pass/native-unverified",
+      "reason": "Independent12 varied-count/viewport editor cases plus timing/resize/focus, assistive event, failed-save/retry, late speech, reduced motion and photo/draft/ID preservation checks passed after explicit probe settlement. No physical/native accessibility or native audio-completion result."
+    },
+    "evidence": {
+      "status": "incomplete",
+      "reason": "Genuine three matched pairs, supplementary views and actual video pixels independently inspected;80 bound file hashes and13 API-accessible artifacts verified, plus exact publication/body-correction records. Missing native acceptance evidence remains F1; no child deferral."
+    },
+    "communication": {
+      "status": "changes-required",
+      "reason": "Revised issue is readable and passes: exactly one stale operational sentence removed, five sections/requirements/task/PR links preserved. Unchanged PR still contains two stale independent-QA/inspection-pending clauses after completed verdict6031291236; C1 needs a narrow owner body edit and reread. Native disclosure remains honest and blocking."
+    },
+    "stack": {
+      "status": "pass",
+      "reason": "Child head is one direct commit above actual target/merge-base b21d3ba. Parent34 remains open ready-for-review at unchanged b21d3ba over master1f0329, exact QA receipt/body verified. Parent-only native deferral does not cover child. No source mutation or rebasing; child32 remains subject to coordinator invalidation if36 changes."
+    }
+  },
+  "acceptance": [
+    {
+      "criterion": "Intentional threshold and exactly-once same-board edit without dialog/dashboard",
+      "result": "browser-pass/native-unverified",
+      "evidence": "Independent1999ms early release,2000ms ready/outside release, interrupted resize, keyboard timed entry; real-clock cancellable assistive activation at3sizes. Native event handling inspected and mocked tests retained, actual AT pending."
+    },
+    {
+      "criterion": "Measured shrink, responsive existing controls and reachable targets",
+      "result": "browser-pass/native-unverified",
+      "evidence": "Three matched genuine pairs; originalVP8 video frames4.2/4.4/4.6show source, intermediate shrink and finalpreview.12 count/viewport cases4/7/24x1180x820,820x1180,390x844,844x390; editor minimum side57.65625px overall and64px for phone24; last card remains selectable. Short viewports scroll; dense labels ellipsize but full accessible/editor labels remain."
+    },
+    {
+      "criterion": "Deliberate accessible path, focus, reduced motion",
+      "result": "browser-pass/native-unverified",
+      "evidence": "Browser synthetic assistive starts/cancels/completes atthree sizes; keyboard focus waits for actual effect; reduced motion/resize editor usable. Real VO/TalkBack announcement, cancellation, focus and native text scaling unexecuted."
+    },
+    {
+      "criterion": "Return same board, selected language/settings, idle audio and persistence",
+      "result": "browser-pass",
+      "evidence": "Independent storage failure keeps edits/editor, retrythenreturn persists through reload. Stopped active/pending synthetic speech; late callback does not resume queue. Owner language/missingvoice/serialized pendingwrite tests retained and source inspected."
+    },
+    {
+      "criterion": "IDs/order/media, undo, drafts and AI safeguards",
+      "result": "browser-pass/source-reviewed",
+      "evidence": "Independent photo crop preserved within0.001 normalized coordinates in play/editor/return; savedboards deep-equal fixture after discarded card draft; AI consent staysfalse. Maintained undo/language/AI-route tests and unchanged explicit save/cancel/revision contracts inspected."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "category": "missing-native-validation",
+      "severity": "readiness-blocker",
+      "observed": "Native rotation, OS text scaling, VoiceOver and TalkBack are unexecuted. Available proof is browser execution, mocked native-component events and compiled native JS exports. adb reports no connected target.",
+      "expected": "Evidence of the changed deliberate native unlock/cancel, noneditable focus, reduced motion/rotation and readable/reachable editor/return controls on actual supported native runtimes, including VoiceOver/TalkBack, or an explicit PR36-specific human deferral.",
+      "consequence": "The child removes the confirmation safety step and introduces native assistive timing/focus and measured transitions. Browser/mocked events cannot establish actual native activation delivery, announcements, focus or large-text geometry. PR34-only deferral does not resolve this child gap.",
+      "nextAction": "Coordinator route the native evidence gap to existing issue30/PR36 owner. Keep readiness withheld pending required native evidence or a scoped human decision. If a source correction follows, coordinate checkpointed issue32 child and invalidate/reassess affected child gates. No source correction is currently demonstrated."
+    },
+    {
+      "id": "C1",
+      "category": "stale-PR-status-prose",
+      "severity": "communication-correction-before-readiness",
+      "observed": "Unchanged PR body still says \"independent QA is pending\" and \"independent inspection remains required\" despite completed QA/pixel inspection in6031291236.",
+      "expected": "Distinguish completed independent QA/pixel inspection from outstanding native validation; retain evidence-incomplete status and native limits.",
+      "consequence": "Reader cannot tell completed independent review from the remaining native blocker without reconciling the comment history.",
+      "nextAction": "Existing owner should replace only those stale QA/inspection clauses with completed QA and the native-evidence blocker, then obtain a narrow same-QA PR-body rebind. No source/test/capture change needed."
+    }
+  ],
+  "feedback": {
+    "checkedAtUtc": "2026-10-07T06:21:51.761Z",
+    "completePages": true,
+    "items": [
+      {
+        "kind": "issueComments",
+        "id": 6029143002,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029143002",
+        "updatedAt": "2026-10-07T01:48:57Z",
+        "bodySha256": "b7cbe1d67bd83bd598429f7ece9dae8e6f42fdcfb127193f103cf70c10cae56a",
+        "body": "Source findings and transition design (planning, not runtime verification)\n\nInspected authenticated live master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`. The user's requested outcome is authoritative; the reported three-second timing differs from this source, and the installed/served version was not identified. No app run, implementation or test execution is claimed.\n\n**Current contracts**\n\n- [Core gesture](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/packages/core/src/interaction.ts#L91-L126) uses `PARENT_HOLD_MS = 2000`, monotonic readiness and release validation; movement over 12 units cancels. [useParentHold](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/useParentHold.ts) shares the clock/timer, generation invalidation and contact tracking. Existing native/core/browser tests already cover 1,999/2,000 ms, early timers, repeat attempts and several cancellations; extend these rather than replacing the gesture.\n- [PlayBoard](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/PlayBoard.tsx) opens the exit sheet after ready release. The sheet blocks new card activation, but stopping audio currently occurs on confirmed exit. Background/page-hide/unmount/language paths already stop the queue. Keep those lifecycles and the existing queue/driver epoch guards; transition work is not the root-cause fix for #28.\n- [App navigation](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/App.tsx#L67-L125) renders play from persisted `activeBoardId`; exit clears it without selecting that board. Thus dashboard-started/reloaded play can return to the dashboard, while editor-started play can return to the retained selection. The new handoff must always bind the active board explicitly and avoid a transient dashboard or account-entry screen.\n- [BoardEditor](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/BoardEditor.tsx) already has the requested controls. At width 900 and above, preview is left and a 280-unit actions panel is right; narrower layouts stack. Retain this established placement as the starting point, use measured available space including safe areas, and allow controls to scroll in short viewports. Do not duplicate the grid planner's card distribution algorithm.\n- [Web ParentControl](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/ParentControl.web.tsx) sends `click.detail === 0` directly to the dialog; [native ParentControl](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/ui/ParentControl.tsx) does likewise for accessibility activation. This is a preventive regression concern when removing the dialog, not a claim of an observed one-tap editor defect. Check actual control bounds as well as movement distance: leaving near an edge can move less than 12 units.\n\n**Proposed handoff**\n\nOn valid release, latch one transition, cancel the hold/contact state, stop active and pending speech, clear flash timers, and record the current board identity plus source geometry. Mount the existing editor and its controls immediately, measure its preview after any fullscreen/status-bar change, and animate an inert presentation into that target (a short approximately 200–300 ms transition is a starting point). Keep that visual layer noninteractive and hidden from accessibility. Use stable card IDs and the shared grid's final geometry; no second live editor, library copy or AI session. Rotation/resize cancels stale measurements and settles in the correct usable layout. Backgrounding never lets an incomplete hold unlock later. Once unlock has completed, an interrupted animation settles in edit rather than returning a stale hold or blank screen.\n\nKeyboard Space/Enter down/up should use the same two-second clock and release semantics, ignore repeat events and cancel on blur/Escape. Native screen-reader interaction needs a documented deliberate equivalent using the same cancellable timing; generic activate must not directly navigate. Validate TalkBack/VoiceOver operation during implementation, without replacing access with an unusable pointer-only hold. Announce readiness and the mode change once; move focus to a non-editable editor heading, and return focus to the play heading/parent control without speaking a card. Respect runtime reduced-motion changes.\n\nThe library remains authoritative. [useLibrary](https://github.com/MChartier/little-say/blob/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4/apps/mobile/src/data/useLibrary.ts) has optimistic changes, serialized writes, durable commits, flush and retry. Retain visible edits/errors if a mode write fails; do not depend on animation completion to save. Return to play resolves the latest board and waits for required writes before displaying play. Existing card sheets and AI routes retain explicit Save/Cancel, abort and revision checks; do not expose a background return action that unmounts a draft or pending save. Preserve existing missing-voice checks, consent/disclosures, automatic-audio eligibility, protected photos and proposal validation. No new generation occurs solely because editing opens.\n\n**Coordination**\n\nThe grid planner was contacted in its verified task about stable measured geometry and shared files. Grid-first is the recommended integration order; if stacked, the coordinator must bind the exact parent/head and refresh evidence after it changes. PR #29's account owner retains `App.tsx` ownership; its guard permits sync only outside selected/active/draft sessions, so avoid a transient idle-library window during handoff. PR #20/#18 is deferred, not a prerequisite or authority to activate grants. Keep #28's audio diagnosis separate.\n\nAuthorization: direct delegated human request in coordinator task `01a0f838-69d6-75b3-8cc0-f768175aa03e`; its subsequent instruction authorizes future implementation after both plans, while this task remains issue-only. Read repository AGENTS.md, local environment/deployment configuration, pinned requirements/intake/issue template and all 12 required live #405 amendments. No applicable local `.agents/skills` directory exists in the checkout or searched ancestors. Execution pin `f0919b184b6344d6279178b2388190936ca432a9` and communication pin `97e5583c8355f3673aad0835c0ce3ca1486aeb8b` remain fixed. The coordinator owns admission, assignment and Project Scoping. Existing clean clone and all active worktrees are preserved.\r\n",
+        "disposition": "Accepted design/source findings mapped to the complete child diff and acceptance results below. Native TalkBack/VoiceOver validation explicitly requested here remains unexecuted (F1); no false three-to-two-second timing claim."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029220665,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029220665",
+        "updatedAt": "2026-10-07T01:55:14Z",
+        "bodySha256": "23c125062d51179e1db234800d6f4a92e4359505b1fbb48a99a78c090a5b6609",
+        "body": "Queued claim after planning under Matthew's direct instruction to move the backlog through scoping and implementation. Implementation not yet assigned; planner 01a11406-66b3-71fb-a4cc-2aad6d51802c completed. Queued behind issue31 shared geometry: https://github.com/MChartier/little-say/issues/31 . No implementation yet. App.tsx also overlaps PR29 accounts; coordinate exact base/ownership before work, no speculative stack. Coordinator must confirm shared capacity and the actual base before starting; at most three implementation tasks share the ZBook. No execution, branch claim, readiness or release is asserted.",
+        "disposition": "Historical queue/claim before implementation; superseded by actual current child and owner assignment, no unresolved change request."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029841739,
+        "url": "https://github.com/MChartier/little-say/issues/30#issuecomment-6029841739",
+        "updatedAt": "2026-10-07T02:47:37Z",
+        "bodySha256": "c560e9a9ba166fd7cf1632537d36cf04f8f205b54b8fc477c5b394a13a1ef111",
+        "body": "Pre-dispatch claim (2026-10-07T02:47:39.235435+00:00): existing planner `01a11406-66b3-71fb-a4cc-2aad6d51802c` is the proposed sole implementation owner for #30. No implementation has started and no dispatch is performed by this metadata task. Proposed child branch `feat/direct-board-editor-issue30` (remote absent), based on PR #34 branch `feat/balanced-storyboard-grid`, pinned parent `b21d3ba7370c08468b868385ce9df3d875eee799`. Parent owner is verified idle. Review order: #34, then this child; no parent merge/rewrite is authorized. Recheck actual refs/local ownership before creating the isolated child worktree.\n\nImplement the existing two-second hold-to-same-board editor plan using the pinned ordered geometry. Preserve cancellation/accessibility/reduced-motion, idle audio handoff, drafts/save failure and return-to-play contracts; no row-balancing reimplementation. Audit the complete child diff against the pinned parent, not master. Parent changes invalidate affected source/base/evidence gates until explicitly revalidated and QA reassessed.\n\nRead all current #30/#31 discussions and PR #29/#33 conversation/review/inline feedback. PR29 remains independently owned at `ddad8685c60bb390eacf81613249584eae55eb1e`; its launch/login/guest flow and App.tsx history must remain separate. PR33 remains a partial native-error fix at `c3bc7b2777708e8c79f15f530a42b0c89fb48271`, with unreproduced iPad Expo Go generated-audio hang and missing native evidence. Do not merge either unrelated branch or claim this navigation change fixes that hang. Preserve audio lifecycle contracts; coordinate any shared ownership change before edits. Deferred PR20 remains deferred.",
+        "disposition": "Existing owner and exact parent respected; one direct child commit inspected against b21d3ba, with no account/audio/sibling merge. Historical proposed-branch status is not current authority."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030511657,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030511657",
+        "updatedAt": "2026-10-07T03:48:54Z",
+        "bodySha256": "4683084bdbf417107bce3cea995a76a86167eb6caf7c9c38dcc9209c9946235d",
+        "body": "@codex review Please review the complete child diff against pinned parent b21d3ba7370c08468b868385ce9df3d875eee799 (PR #34), at head 7e8ab5993503419e5945c8f304ffab3a6fc91f56. Check the direct parent-hold/editor/return flow, cancellation and accessibility behavior, save/draft preservation, audio cleanup, and scope. Independent QA and native validation remain pending.",
+        "disposition": "Review request names the exact current head and parent. Completed bot evidence follows; no retry needed."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030514092,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030514092",
+        "updatedAt": "2026-10-07T03:53:11Z",
+        "bodySha256": "0854ab1bd37e87615496ee2e1b130ddfee7e7089f32ed69947e2b9427a2c5a81",
+        "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ✅ **Completed** <relative-time datetime=\"2026-10-07T03:53:10.262489Z\">2026-10-07T03:53:10.262489Z</relative-time> | `7e8ab59` | Manual request |\n\n\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.\n\n</details>",
+        "disposition": "Actual completed engineering review on 7e8ab59, not a quota refusal. Completion checked against the current complete head SHA."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030553625,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625",
+        "updatedAt": "2026-10-07T03:53:09Z",
+        "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624",
+        "body": "Codex Review: Didn't find any major issues. Keep them coming!\n\n**Reviewed commit:** `7e8ab59935`\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>",
+        "disposition": "Bot completed current-head review and reported no major issues. No findings to dispose; independent review still performed."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030581928,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030581928",
+        "updatedAt": "2026-10-07T03:55:55Z",
+        "bodySha256": "817d6d75ee3779bd0af2eea7267a02e87d4d8f5516aeca1b4fdfde34549625a7",
+        "body": "Implementation handoff: head `7e8ab5993503419e5945c8f304ffab3a6fc91f56`, pinned parent PR #34 at `b21d3ba7370c08468b868385ce9df3d875eee799`. CI passed and Codex engineering review completed with no major issues. The complete current conversation, submitted reviews and inline threads were read; no actionable finding remains at this checkpoint.\n\n[Verified publication receipt](https://github.com/MChartier/little-say/blob/f6320514d5701ce1cec056eec75e57db6952efe3/publication/record.json) binds the exact final PR/issue bodies, native closing association, full 13-file scope, CI and review response. All six receipt files were fetched back through authenticated GitHub and matched byte for byte. [Canonical matched UI evidence](https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/README.md) remains unchanged on its non-merged evidence ref.\n\nIndependent QA is pending. Native rotation, OS text scaling, VoiceOver and TalkBack remain unexecuted; no deferral is assumed. Parent #34 remains evidence-incomplete. Review #34 first, then this child. Source work is checkpointed and idle for coordinator-managed QA or findings; no readiness, merge or release is claimed.",
+        "disposition": "Owner claims independently checked: scope, CI, retained bytes, pixels and targeted behavior. Historical parent-evidence-incomplete text is preserved; final body corrected by immutable 4808b714 record. Native gap remains F1 for this child."
+      },
+      {
+        "kind": "prComments",
+        "id": 6031048619,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6031048619",
+        "updatedAt": "2026-10-07T04:39:20Z",
+        "bodySha256": "eb89fa5f62858339c991d56b54ca81ccdf79ee1b76fa046b96a43dfd98bec2d4",
+        "body": "Independent QA assignment is next following completion of the atomic-login review. The existing independent reviewer for this geometry/editor stack will assess child36 at 7e8ab5993503419e5945c8f304ffab3a6fc91f56 against pinned parent34 b21d3ba7370c08468b868385ce9df3d875eee799. The parent’s native-validation deferral is PR34-specific and does not waive this outcome’s checks. Child issue32 is checkpointed with uncommitted work; no parent source changes may proceed without coordinating that dependency.",
+        "disposition": "Current sole-QA assignment honored. PR34-only native deferral is not applied to PR36. Child32 is checkpointed/uncommitted per trusted assignment; no source changes or owner/worktree edits by QA."
+      },
+      {
+        "kind": "prComments",
+        "id": 6031291236,
+        "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6031291236",
+        "updatedAt": "2026-10-07T05:02:29Z",
+        "bodySha256": "0ff7e06972d10224f891a96c28b53b129520001c6fd6c55a1bf5cac42c61c4b5",
+        "body": "Independent QA: **evidence-incomplete — native validation remains outstanding.**\n\nThe complete child scope, current-head CI and completed bot review check out. Genuine matched captures, original motion pixels, source/build/fixture identities, and targeted browser timing, layout, save/retry, audio-cleanup and photo-preservation checks support the proposed flow. No source defect was found.\n\nVoiceOver/TalkBack, native rotation and OS text scaling remain unexecuted. They matter to the changed unlock/focus/transition behavior; PR34’s native deferral does **not** cover this child. Keep readiness withheld pending native evidence or an explicit PR36-specific human decision. Route any resulting correction through the existing owner and coordinate affected issue32 gates.\n\n[Immutable detailed verdict and exact bindings](https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/record.json) · [Readable findings and evidence](https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/README.md). All current feedback was read and dispositioned. QA changed no source, readiness label or draft state; the separate native audio-completion issue remains unresolved.",
+        "disposition": "Prior evidence-incomplete verdict verified against trusted exact-body digest/updated_at and immutable record; superseded only for corrected issue-body binding and current metadata findings. Native F1 remains unresolved."
+      }
+    ],
+    "submittedReviews": [],
+    "inlineComments": [],
+    "reviewThreads": {
+      "totalCount": 0,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": []
+    },
+    "assessment": "All nine current full conversation bodies reread; no new or edited conversation feedback. Submitted reviews and inline threads remain empty. Source acceptance dispositions remain unchanged; F1 native gap persists."
+  },
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Three exact matched parent-to-child hold-release pairs: wide,portrait,short-landscape; supplementary scrolled controls/idle return and original motion. Independent dense4/7/24 browser cases and photo fixture complement representative screenshots.",
+    "pairs": [
+      {
+        "id": "wide",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-wide-hold-release.png?raw=true",
+          "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+          "capturedAtUtc": "2026-10-07T03:32:57.067Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-wide-hold-release.png?raw=true",
+          "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+          "capturedAtUtc": "2026-10-07T03:33:16.048Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over 2x2 play; After same board title/cards in existing editor with four-card side preview, clear Return to play and existing actions."
+      },
+      {
+        "id": "portrait",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-portrait-hold-release.png?raw=true",
+          "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+          "capturedAtUtc": "2026-10-07T03:33:02.445Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-portrait-hold-release.png?raw=true",
+          "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+          "capturedAtUtc": "2026-10-07T03:33:22.520Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over stacked play; After same cards in readable 2x2 preview above existing controls."
+      },
+      {
+        "id": "short-landscape",
+        "state": "Same synthetic four-card board in play; hold 2.1 seconds then release",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "before": {
+          "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/before-short-landscape-hold-release.png?raw=true",
+          "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+          "capturedAtUtc": "2026-10-07T03:33:07.980Z"
+        },
+        "after": {
+          "sourceSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/after-short-landscape-hold-release.png?raw=true",
+          "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+          "capturedAtUtc": "2026-10-07T03:33:28.729Z"
+        },
+        "matched": true,
+        "observation": "Before actual confirmation over four horizontal cards; After editor preview with fixed top actions. Supplementary scrolled-controls capture and independent clicks verify actions remain reachable by scrolling."
+      }
+    ],
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "wide",
+          "portrait",
+          "short-landscape"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/manifest.json",
+        "commitSha": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+        "fixtureSha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151",
+        "harnessSha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+        "bindingsSha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+        "details": "Read and verified exact source/build/serve/capture/fixture/harness and loadedJS identities. Complete original web/server output retained and used by QA; superseded fixed-clockmanifest/video retained with original identities and not promoted as motion proof."
+      }
+    ],
+    "provenanceAssessment": "Both sides clean isolated sources at exact parent/final, bound serverPID/listener and runtime-loaded JS bytes, identical fixture/viewport/scale/theme/locale/clock/audio/fullscreen/service-worker normalization; no image editing or UI reconstruction. API readback verified accessible exact PNG/provenance bytes. After capture matches currenthead; body-only parentstatuscorrection does not affect images.",
+    "pixelObservations": "Independently opened all10PNG originals (six pair members plus short scroll andthree idle-return views). Same title/cards/colors/labels in each matched pair, genuine old confirmation versus current editor, readable default-size controls. Dense QA previews intentionally scroll and ellipsize; last fullcard label is accessible in its editor. Decoded original video shows large play cards at4.2s, shrinking/repositioning at4.4s, settled row at4.6s. Overlay is decorative/noninteractive by source and browser evidence.",
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/36",
+      "checkedAtUtc": null,
+      "observations": "Actual GitHub page image-rendering inspection not performed, explicitly waived by human amendment6022754087. API body read in full; visible noncollapsed Markdown pairs and exact image accessibility verified. No rendering-pass claim."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null,
+    "nativeDeferral": null
+  },
+  "independentProbe": {
+    "initial": "probe/initial-result.json",
+    "followup": "probe/followup-result.json",
+    "realClockAccessibility": "probe/accessibility-result.json",
+    "diagnosticDisposition": "Initial combined fake-clock sequence sampled assistive state before resize/lost-capture effects settled; a follow-up sampled focus before its scheduled effect. Explicit settlement and independent real-clock3viewport checks passed with unchanged source. Both initial attempts preserved, not hidden or treated as code fixes. Browser video screenshots were white compositor output and rejected; actual unaltered originalVP8video was decoded with existingFFmpeg for frame pixelinspection."
+  },
+  "evidence": [
+    {
+      "url": "https://github.com/MChartier/little-say/blob/e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a/README.md",
+      "commitSha": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/f6320514d5701ce1cec056eec75e57db6952efe3/publication/record.json",
+      "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/blob/4808b714ec210a5ab7d5c8080cd6e6177831503d/parent-readiness-20261007/record.json",
+      "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/actions/runs/37567933495"
+    },
+    {
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625"
+    }
+  ],
+  "limitations": [
+    "No native-device rotation, OS text scaling, VoiceOver or TalkBack proof; no PR36-specific deferral.",
+    "Synthetic speech validates navigation queue cleanup only. Original iPad Expo Go normal-completion audio hang issue28 remains separate/unresolved; no reproduction or fix claimed.",
+    "Browser default-font readability only. Prior parent34 browser150%label-font diagnostic is inherited context, not native proof or a new child source defect.",
+    "Actual GitHub rendered-page check waived; genuine matched captures and independent pixel/provenance checks completed.",
+    "Parent34 is unmerged; child36 is not independently mergeable. Account29/audio33 and checkpointed translationchild32 require coordinator integration.",
+    "Native reduced-motion behavior is also unexecuted; browser reduced-motion success is retained only as browser evidence. No waiver applies to PR36."
+  ],
+  "nextAction": "Keep evidence-incomplete. Issue-only correction passes; existing owner/coordinator resolve native F1 or obtain explicit PR36-specific human decision, and reconcile C1 stale PR status text. No ref/product/readiness action by QA; original evidence and prior receipt remain immutable.",
+  "association": {
+    "nativeClosingIssue": 30,
+    "project": "Agentic development pipeline",
+    "itemId": "PVTI_lAHOABMy1c4Bl3Eqzg_BqBM",
+    "currentPRs": "https://github.com/MChartier/little-say/pull/36 (child of PR34)",
+    "checkedAtUtc": "2026-10-07T05:00:48.378Z",
+    "evidence": "project-association.json"
+  },
+  "issueBodySha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+  "issueUpdatedAt": "2026-10-07T06:19:17Z",
+  "reassessment": {
+    "scope": "Issue-only readability and exact binding; no source, ref, test, capture or readiness mutation.",
+    "instructionAcknowledgment": "Same-QA continuation retains fully acknowledged workflow-v3 f0919b184b6344d6279178b2388190936ca432a9 / pr-review-v3 97e5583c8355f3673aad0835c0ce3ca1486aeb8b and all supplied operative amendments. No new native deferral or runtime pin migration.",
+    "removedSentence": "Independent QA and native validation remain pending; the coordinator owns readiness and Project updates.",
+    "fiveSectionsUnchanged": true,
+    "requirementsAndLinksUnchanged": true,
+    "oldIssueBody": {
+      "url": "https://github.com/MChartier/little-say/blob/f6320514d5701ce1cec056eec75e57db6952efe3/publication/issue-body.md",
+      "sha256": "5eb0520280e2704f3685fa7fc5dc0f059d65d8a90a592973e4a6e23741ec149a"
+    },
+    "priorVerdict": {
+      "commentId": 6031291236,
+      "bodySha256": "0ff7e06972d10224f891a96c28b53b129520001c6fd6c55a1bf5cac42c61c4b5",
+      "updatedAt": "2026-10-07T05:02:29Z",
+      "recordUrl": "https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/record.json",
+      "recordSha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+    },
+    "reusedEvidence": "Prior complete source/scope review, independent pixel observations and targeted behavior results remain applicable to identical head/base/body/fixtures/builds/images. No tests or captures rerun. Sixteen retained artifact identities and exact old receipt verified through GitHub.",
+    "publicDetail": "The concise superseding comment links the existing immutable detailed assessment and preserved old issue body, and explicitly states the new issue SHA and changed gate findings. No ref changes are made; this expanded supplemental record and exact receipt remain in the trusted task workspace."
+  },
+  "bindingChecks": {
+    "current": {
+      "checkedAtUtc": "2026-10-07T06:21:51.761Z",
+      "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "headRef": "feat/direct-board-editor-issue30",
+      "baseRef": "feat/balanced-storyboard-grid",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+      "prUpdatedAt": "2026-10-07T05:02:29Z",
+      "draft": true,
+      "commits": 1,
+      "changedFiles": 13,
+      "additions": 528,
+      "deletions": 125
+    },
+    "related": {
+      "checkedAtUtc": "2026-10-07T06:21:55.279Z",
+      "refs": {
+        "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "feat/direct-board-editor-issue30": "7e8ab5993503419e5945c8f304ffab3a6fc91f56"
+      },
+      "orderedCommitParents": [
+        "7e8ab5993503419e5945c8f304ffab3a6fc91f56 b21d3ba7370c08468b868385ce9df3d875eee799"
+      ],
+      "mergeBase": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "files": [
+        {
+          "path": "apps/mobile/src/App.tsx",
+          "additions": 29,
+          "deletions": 11
+        },
+        {
+          "path": "apps/mobile/src/ui/BoardEditor.tsx",
+          "additions": 32,
+          "deletions": 18
+        },
+        {
+          "path": "apps/mobile/src/ui/BoardTransition.tsx",
+          "additions": 50,
+          "deletions": 0
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentControl.test.ts",
+          "additions": 28,
+          "deletions": 6
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentControl.tsx",
+          "additions": 12,
+          "deletions": 9
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentControl.web.tsx",
+          "additions": 26,
+          "deletions": 10
+        },
+        {
+          "path": "apps/mobile/src/ui/ParentSettings.tsx",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "apps/mobile/src/ui/PlayBoard.tsx",
+          "additions": 35,
+          "deletions": 20
+        },
+        {
+          "path": "apps/mobile/src/ui/screenFocus.ts",
+          "additions": 20,
+          "deletions": 0
+        },
+        {
+          "path": "apps/mobile/src/ui/useParentHold.ts",
+          "additions": 33,
+          "deletions": 20
+        },
+        {
+          "path": "tests/web/app.spec.ts",
+          "additions": 23,
+          "deletions": 28
+        },
+        {
+          "path": "tests/web/editor-transition.spec.ts",
+          "additions": 236,
+          "deletions": 0
+        },
+        {
+          "path": "tests/web/recents.spec.ts",
+          "additions": 3,
+          "deletions": 2
+        }
+      ],
+      "parent": {
+        "pr": 34,
+        "state": "open",
+        "draft": false,
+        "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "bodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+        "labels": [
+          "human-ready"
+        ],
+        "verdictCommentId": 6030490282,
+        "verdictBodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+        "verdictUpdatedAt": "2026-10-07T03:46:50Z",
+        "scope": "PR34-only native deferral; does not apply to child36"
+      },
+      "bodyCorrection": {
+        "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+        "path": "parent-readiness-20261007/record.json",
+        "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+      },
+      "ownerPublication": {
+        "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+        "path": "publication/record.json",
+        "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+      },
+      "sourceWorktreeClean": true,
+      "host": "mchartier_zbook"
+    },
+    "refs": {
+      "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "feat/direct-board-editor-issue30": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "evidence/qa-pr36-20261007": "ed9af33d18a36068072444a722c20820a1fcd8bb"
+    },
+    "evidenceReverifiedAt": "2026-10-07T06:24:49.428Z",
+    "evidence": [
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "README.md",
+        "gitBlob": "658dc825331543f8f62d2b71b7b7ba1900bc6807",
+        "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065",
+        "verifiedSha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "manifest.json",
+        "gitBlob": "22731244f24f684b28dcb461ae018625f472d978",
+        "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+        "verifiedSha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "bindings.json",
+        "gitBlob": "96e51254bfe62dea667daf620bd241636270a530",
+        "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+        "verifiedSha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-wide-hold-release.png",
+        "gitBlob": "d531c57e0a6e8b62f2fce6bb255f96c8388fa567",
+        "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+        "verifiedSha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-portrait-hold-release.png",
+        "gitBlob": "5709f2e41f320c8fa5267ec9427cfd06c1727ecd",
+        "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+        "verifiedSha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "before-short-landscape-hold-release.png",
+        "gitBlob": "31c08d47683f880fa0fc4eb692ef60a8d7f36a71",
+        "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+        "verifiedSha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-wide-hold-release.png",
+        "gitBlob": "d0dc109764b75df2beb06e323095f2cc787b2e56",
+        "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+        "verifiedSha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-wide-returned-idle.png",
+        "gitBlob": "5cdd44741c53f2fbc49baffe3bd64b0c21919f23",
+        "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673",
+        "verifiedSha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-portrait-hold-release.png",
+        "gitBlob": "b7924e83a70d13c09a3de566bcc1f68d4cdb45a6",
+        "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+        "verifiedSha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-portrait-returned-idle.png",
+        "gitBlob": "5b9c1429a7edbabb9ee0b4b52d9b9f3e6971ecfe",
+        "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1",
+        "verifiedSha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-hold-release.png",
+        "gitBlob": "0fe7c8a5780dd21e5b4d1ea71d39b948af45373e",
+        "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+        "verifiedSha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-scrolled-controls.png",
+        "gitBlob": "8181c17568d1538997378d5d52ab0d0182386552",
+        "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653",
+        "verifiedSha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653"
+      },
+      {
+        "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+        "path": "after-short-landscape-returned-idle.png",
+        "gitBlob": "87c8d2783f5d17799af9d82b8bb12d089fbdea9e",
+        "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166",
+        "verifiedSha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166"
+      },
+      {
+        "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+        "path": "publication/record.json",
+        "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273",
+        "verifiedSha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+      },
+      {
+        "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+        "path": "parent-readiness-20261007/record.json",
+        "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77",
+        "verifiedSha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+      },
+      {
+        "commit": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+        "path": "record.json",
+        "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46",
+        "verifiedSha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+      }
+    ]
+  }
+}

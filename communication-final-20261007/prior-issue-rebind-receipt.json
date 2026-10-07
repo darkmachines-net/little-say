@@ -1,0 +1,136 @@
+{
+  "verdict": "evidence-incomplete",
+  "supersedesVerdictCommentId": 6031291236,
+  "verdictCommentId": 6032310277,
+  "verdictUrl": "https://github.com/MChartier/little-say/pull/36#issuecomment-6032310277",
+  "verdictBodySha256": "d7c3044408ef57b85520e88c9d1e5080c20a93e8ea5668f2ab0456ef2102ddc4",
+  "verdictUpdatedAt": "2026-10-07T06:26:21Z",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "parentRevisions": [
+    {
+      "pullRequest": 34,
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "state": "open"
+    }
+  ],
+  "prBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+  "issueBodySha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+  "issueUpdatedAt": "2026-10-07T06:19:17Z",
+  "checkedAtUtc": "2026-10-07T06:24:49.426Z",
+  "preCommentCheckedAtUtc": "2026-10-07T06:26:21.084Z",
+  "retainedDetailUrl": "https://github.com/MChartier/little-say/blob/6b640f90f986cdff4e4c52e007b9c632c68c5c4e/record.json",
+  "retainedDetailSha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46",
+  "supplementalRecordPath": "pr36-issue-rebind-detail/record.json",
+  "supplementalRecordSha256": "c680635eaea3f99adbd3b7726c9370aa587d6e90babb1c2d23c29eb2b15c3f01",
+  "hashMethod": "SHA-256 over exact full API-decoded comment body encoded as UTF-8, with no trim, normalization or added newline.",
+  "postPublicationCheckedAtUtc": "2026-10-07T06:26:49.916Z",
+  "postEvidenceCheckedAtUtc": "2026-10-07T06:27:02.452Z",
+  "postPublicationBindings": {
+    "checkedAtUtc": "2026-10-07T06:26:49.916Z",
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRef": "feat/direct-board-editor-issue30",
+    "baseRef": "feat/balanced-storyboard-grid",
+    "headRepository": "MChartier/little-say",
+    "baseRepository": "MChartier/little-say",
+    "prBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+    "prUpdatedAt": "2026-10-07T06:26:21Z",
+    "draft": true,
+    "commits": 1,
+    "changedFiles": 13,
+    "additions": 528,
+    "deletions": 125
+  },
+  "refs": {
+    "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "feat/direct-board-editor-issue30": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "evidence/qa-pr36-20261007": "ed9af33d18a36068072444a722c20820a1fcd8bb"
+  },
+  "verifiedEvidence": [
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "README.md",
+      "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "manifest.json",
+      "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "bindings.json",
+      "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-wide-hold-release.png",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-portrait-hold-release.png",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-short-landscape-hold-release.png",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-hold-release.png",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-returned-idle.png",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-hold-release.png",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-returned-idle.png",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-hold-release.png",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-scrolled-controls.png",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-returned-idle.png",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166"
+    },
+    {
+      "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+      "path": "publication/record.json",
+      "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+    },
+    {
+      "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+      "path": "parent-readiness-20261007/record.json",
+      "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+    },
+    {
+      "commit": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+      "path": "record.json",
+      "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+    }
+  ],
+  "checks": "PASS: revised issue body and all five sections/requirements/links bound; head/base/parent/master/PR-body/full scope/CI unchanged; all full conversation/review/inline feedback unchanged except this superseding verdict; prior/new verdict exact bodies and updated_at verified. Sixteen retained evidence identities unchanged. No ref, source, readiness or draft change. Native F1 and stale PR communication C1 remain outstanding."
+}

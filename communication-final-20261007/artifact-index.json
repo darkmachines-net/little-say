@@ -1,0 +1,33 @@
+{
+  "purpose": "Final PR36 communication reassessment; preserve historical identities",
+  "files": [
+    {
+      "path": "feedback.json",
+      "sha256": "a43404f5fc79a8c39ef126bd46e68900cc73e0212392278afa100d229e99d421"
+    },
+    {
+      "path": "issue-body.md",
+      "sha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1"
+    },
+    {
+      "path": "pr-body.md",
+      "sha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab"
+    },
+    {
+      "path": "prior-issue-rebind-receipt.json",
+      "sha256": "286d3ec66febd28736c89c8a07ffdd0c63776938aace572035e26f6c840bc6f6"
+    },
+    {
+      "path": "prior-issue-rebind-record.json",
+      "sha256": "c680635eaea3f99adbd3b7726c9370aa587d6e90babb1c2d23c29eb2b15c3f01"
+    },
+    {
+      "path": "README.md",
+      "sha256": "96410735afb1f29394fee3db0d82cbd01c3c3c61f168a7514be6e3a1c776f07c"
+    },
+    {
+      "path": "record.json",
+      "sha256": "9522386af5e97b40a183b658a1475b89499700d960bd40a96aaffa8c26bb1abc"
+    }
+  ]
+}
