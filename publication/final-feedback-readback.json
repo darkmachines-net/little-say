@@ -1,0 +1,31 @@
+{
+  "checkedAtUtc": "2026-10-07T02:44:31.941Z",
+  "comments": [
+    {
+      "id": 6029730527,
+      "body": "@codex review\n\nPlease review the current change against master, including shared ordered geometry, resize/interaction preservation and dense-card rendering. Source scope and exact matched UI evidence are linked in the description. Independent workflow QA will be coordinated separately.\r\n",
+      "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a",
+      "disposition": "Disposition retained in publication/record.json"
+    },
+    {
+      "id": 6029732188,
+      "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+      "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+      "disposition": "Disposition retained in publication/record.json"
+    },
+    {
+      "id": 6029795718,
+      "body": "Implementation handoff: current-head CI, 222 unit tests, all 92 browser tests, and Android/iOS exports pass. The complete published scope is one commit / 12 files, with no evidence artifacts in product history. [Exact source/body/CI/feedback bindings and access checks](https://github.com/MChartier/little-say/blob/92d6c20503e0110765d22672eb2e0e9b383c1599/publication/record.json) are retained separately.\n\nBot review was quota-refused in comment6029732188; independent full-scope review/QA remains required. Native device rotation, OS large-font and screen-reader checks are unexecuted. Actual GitHub-page rendering uses the explicit waiver; genuine image pixels and provenance were verified.\n\nStable geometry for #30: `b21d3ba7370c08468b868385ce9df3d875eee799`. No transition or audio-lifecycle work is included. Draft/readiness and Project progression remain with the coordinator.",
+      "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2",
+      "disposition": "Read-back implementer handoff; independent QA still pending; no new product request"
+    }
+  ],
+  "issueCommentIds": [
+    6029167414,
+    6029219796,
+    6029348137,
+    6029662109
+  ],
+  "reviews": [],
+  "inline": []
+}
