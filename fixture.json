@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "settings": {
+    "backendUrl": "",
+    "voices": {},
+    "activeBoardId": "everyday",
+    "aiConsent": false,
+    "autoSpeech": false,
+    "languageProfile": {
+      "languages": [
+        "en-US"
+      ],
+      "defaultLanguage": "en-US"
+    }
+  },
+  "boards": [
+    {
+      "id": "everyday",
+      "title": "My everyday words",
+      "revision": 0,
+      "createdAt": "2026-10-07T00:00:00.000Z",
+      "updatedAt": "2026-10-07T00:00:00.000Z",
+      "tiles": [
+        {
+          "id": "card-0",
+          "label": "Water",
+          "speech": "Water",
+          "language": "en-US",
+          "color": "sage",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "💧"
+          }
+        },
+        {
+          "id": "card-1",
+          "label": "Something to eat",
+          "speech": "Something to eat",
+          "language": "en-US",
+          "color": "peach",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🍎"
+          }
+        },
+        {
+          "id": "card-2",
+          "label": "All done",
+          "speech": "All done",
+          "language": "en-US",
+          "color": "butter",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "✅"
+          }
+        },
+        {
+          "id": "card-3",
+          "label": "Please help me",
+          "speech": "Please help me",
+          "language": "en-US",
+          "color": "sky",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🙋"
+          }
+        }
+      ]
+    }
+  ]
+}

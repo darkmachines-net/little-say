@@ -1,0 +1,30 @@
+# Direct storyboard editing — retained evidence
+
+Owner: implementing task `01a11406-66b3-71fb-a4cc-2aad6d51802c`, issue #30. Purpose: genuine parent-to-child evidence, reproducible validation and full scope review. This dedicated evidence ref is **not a product merge branch**. Retain the exact commit and all earlier records through review and merge, and until the human explicitly authorizes archival/removal. Do not replace historical identities.
+
+The baseline is PR #34 at `b21d3ba7370c08468b868385ce9df3d875eee799`; final source is `7e8ab5993503419e5945c8f304ffab3a6fc91f56`. Ultimate master at dispatch is `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4`. Review #34 first. A changed parent needs an impact assessment and affected source/evidence revalidation.
+
+## What the evidence establishes
+
+The same synthetic four-card board starts in play on both revisions. A 2.1-second hold and release opens the baseline's actual confirmation dialog. The final revision opens the existing editor directly, with the same board, a side preview at 1180×820, a stacked preview at 390×844, and scrollable controls at 844×390. The supplemental returned-idle images show the direct return. The original `after-wide-motion.webm` shows the measured 260 ms card transition; exact video frames around 4.2, 4.4 and 4.6 seconds were inspected locally. Those extracted frames are diagnostic only; the original video is retained.
+
+All three matched pairs were opened and their pixels inspected by the implementer. Their final hashes exactly match the previously inspected endpoint images. The wide view has all existing actions beside the preview; the portrait view keeps cards and actions readable; the short landscape view requires scrolling below the preview while the return button stays available. This is implementer inspection, not independent QA. The moving overlay is decorative and hidden from accessibility; the browser test also measures an intermediate shrinking frame while editor controls are enabled.
+
+`manifest.json` binds source commits, serving process IDs, loaded JavaScript bytes, complete web output hashes, fixture, viewports, clock, normalization, capture time, image hashes and original video. `bindings.json` binds the exact manifest and harness bytes. `builds/before` and `builds/after` retain the actual web/server outputs. No screenshot is edited or reconstructed. Both contexts use the same synthetic speech driver, no-op fullscreen and blocked service workers; this avoids cache/update interference and is disclosed, not described as an untouched production environment. The controlled clock starts at the same epoch and advances normally. No private user data or external AI calls were used.
+
+Run `node capture-editor.mjs` from a task workspace containing `little-say-before` at the parent and `little-say` at the final commit with the build outputs and existing lock-matched dependencies. The build/serve commands and isolated ports are in the harness/manifest. The lockfile and package manifests are unchanged.
+
+## Validation and limits
+
+- Current source: **225 unit tests**, **19 affected browser tests**, typecheck, release-metadata check, web build and iOS/Android bundle export pass. Browser: Microsoft Edge 154.0.4258.62 on Windows; one browser worker, two Metro workers. Native exports compile bundles; they are not native execution.
+- Browser scenarios cover dashboard/reload entry, exact 1,999/2,000 ms hold boundary, pointer bounds/multitouch, keyboard repeat/Escape/blur/background, cancellable assistive activation, focus, measured animation, reduced motion/resize, card drafts, AI route boundaries, language/voice guards, board identity/content, undo, pending/failed saves, and active/pending speech cleanup. The current-head suite also rechecks existing dense preview and language/offline contracts.
+- An earlier related sweep had 55 passes and seven failures. They exposed old destination/save expectations, a real intrinsic-height layout regression, and an animation clock-fixture error. All affected scenarios passed after correction. Historical diagnostic logs/captures remain in the task workspace; they are not promoted as passing final evidence. Detailed current passing outputs are in `validation/`.
+- **Native rotation, OS text scaling, VoiceOver and TalkBack remain unexecuted.** Parent PR #34 is evidence-incomplete, with a browser-only 150% font diagnostic indicating a dense-picture risk. That diagnostic is not proof of native behavior. No deferral or baseline waiver is assumed. Independent full-scope QA remains required.
+- Actual authenticated GitHub PR-page rendering is waived by the explicit human amendment in Calibrate #405 comment6022754087. This does not waive genuine captures, exact provenance or independent pixel inspection. No rendering check is claimed.
+- PR #29's account launch/settings request is resolved in its own revised source/QA record at `ddad8685c60bb390eacf81613249584eae55eb1e`; that independent branch is not merged here. Coordinate shared `App.tsx` integration later. PR #33 remains an independent partial native-error correction at `c3bc7b2777708e8c79f15f530a42b0c89fb48271`; this navigation work does not fix or reproduce the reported iPad Expo Go generated-audio completion hang. Issue #23's AI preset scope is untouched; #32 translation work remains coordinator-queued.
+
+## Retained superseded capture
+
+`superseded-fixed-clock/` preserves the exact first manifest, harness, fixture, originals and video. The first harness froze `Date.now`, which prevented the JS animation from advancing. Its endpoint screenshots are genuine and byte-identical to the final endpoints, but its video does **not** establish motion. The corrected capture uses an advancing controlled clock and has a new manifest identity. No original identity was silently replaced.
+
+`source-scope.json` records the complete focused merge diff and commit inventory. Operational logs, built output, screenshots and capture helpers appear only on this non-merged evidence ref.

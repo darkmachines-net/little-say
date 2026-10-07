@@ -1,0 +1,24 @@
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:16124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:16124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 3781ms apps\mobile\index.ts (2398 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js (5.8MB)
+_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js (360KB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (49B)
+
+Exported: dist
+Offline shell: 14 assets (6385 KiB). Updates wait for parent action.

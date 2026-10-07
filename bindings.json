@@ -1,0 +1,50 @@
+{
+  "head": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "parent": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "manifestSha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+  "harnessSha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+  "supersededManifestSha256": "d0e196208a1771193f180091290c641a827fa568b70dc2a3607c58a376e91394",
+  "checkedAtUtc": "2026-10-07T03:38:18.440Z",
+  "retainedLogs": [
+    {
+      "file": "validation/unit-head.log",
+      "sha256": "1fb6aa7670cf883f49da18f4dd8b8f953cf7eac9e22836ca7f5ef6ee2e9aa3f3"
+    },
+    {
+      "file": "validation/typecheck-final2.log",
+      "sha256": "113a37733ae0187ea681df9aae1cb85fd6f814b4e4e4c284a3face03e9a53de0"
+    },
+    {
+      "file": "validation/browser-head.log",
+      "sha256": "132e4f2f24d262b7d29f805e9b4641c2d9c211718509972f851593f5425fd0b3"
+    },
+    {
+      "file": "validation/release-check-final.log",
+      "sha256": "84e9532de7458e6fcce7738b047fd84786a3274d83698bd11a2fb111152130a6"
+    },
+    {
+      "file": "validation/native-export.log",
+      "sha256": "3b8642f0c2f36979fbeb1af3abaa5534b04b053e54d81a17940c902663313a62"
+    },
+    {
+      "file": "validation/baseline-server-build.log",
+      "sha256": "17cdbfeb85bb48fdcf039365971a156268df84c00b51271df509dafa44e71bd5"
+    },
+    {
+      "file": "validation/baseline-web-build.log",
+      "sha256": "8c5db374783db330977009a77d3a0fdd7de7c135860d722a3aa45e908d087788"
+    },
+    {
+      "file": "validation/server-build.log",
+      "sha256": "2a20f711dcb9cd143599192b4da310466d7982f6b655c06965021304b508c1db"
+    },
+    {
+      "file": "validation/web-final2-build.log",
+      "sha256": "f1ab74dac593404bd0470a7f5d6ec113fd9522693d8ce6cc4fb27e4ee5a71819"
+    },
+    {
+      "file": "validation/capture-editor-final.log",
+      "sha256": "8b56bd21e3e21a43466a38df18fe7c206c938818caafb6031fde2873af84314a"
+    }
+  ]
+}

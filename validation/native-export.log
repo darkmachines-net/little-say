@@ -1,0 +1,32 @@
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:35952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:35952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 2601ms apps\mobile\index.ts (2394 modules)
+iOS Bundled 22593ms apps\mobile\index.ts (2848 modules)
+Android Bundled 40212ms apps\mobile\index.ts (2846 modules)
+
+ΓÇ║ Assets (6):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+assets\brand\mountain.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js (5.8MB)
+_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js (360KB)
+
+ΓÇ║ ios bundles (1):
+_expo/static/js/ios/index-91e57df3ed822a49542b8267e3af15ec.hbc (6.9MB)
+
+ΓÇ║ android bundles (1):
+_expo/static/js/android/index-00a4e6bc897d41f270cd3227d4258704.hbc (6.9MB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (626B)
+
+Exported: ../../../native-compatibility-export

@@ -1,0 +1,91 @@
+{
+  "head": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "parent": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "ultimateMasterAtDispatch": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "status": "",
+  "commits": [
+    "7e8ab5993503419e5945c8f304ffab3a6fc91f56 Open the existing editor directly after the parent hold"
+  ],
+  "files": [
+    {
+      "file": "apps/mobile/src/App.tsx",
+      "added": 29,
+      "removed": 11,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardEditor.tsx",
+      "added": 32,
+      "removed": 18,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardTransition.tsx",
+      "added": 50,
+      "removed": 0,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/ParentControl.test.ts",
+      "added": 28,
+      "removed": 6,
+      "category": "maintained test"
+    },
+    {
+      "file": "apps/mobile/src/ui/ParentControl.tsx",
+      "added": 12,
+      "removed": 9,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/ParentControl.web.tsx",
+      "added": 26,
+      "removed": 10,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/ParentSettings.tsx",
+      "added": 1,
+      "removed": 1,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/PlayBoard.tsx",
+      "added": 35,
+      "removed": 20,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/screenFocus.ts",
+      "added": 20,
+      "removed": 0,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/useParentHold.ts",
+      "added": 33,
+      "removed": 20,
+      "category": "product"
+    },
+    {
+      "file": "tests/web/app.spec.ts",
+      "added": 23,
+      "removed": 28,
+      "category": "maintained test"
+    },
+    {
+      "file": "tests/web/editor-transition.spec.ts",
+      "added": 236,
+      "removed": 0,
+      "category": "maintained test"
+    },
+    {
+      "file": "tests/web/recents.spec.ts",
+      "added": 3,
+      "removed": 2,
+      "category": "maintained test"
+    }
+  ],
+  "inspection": "Entire parent-to-child patch and every published commit/file inspected. No unrelated account/audio/grid implementation, packages, lockfile, provider/security changes or operational evidence in product history. One commit, thirteen files; 528 additions / 125 deletions. Nine product files (+238/-89), four maintained tests (+290/-36). No evidence cleanup commit required: evidence never entered the product branch.",
+  "ownership": "Sole child owner task 01a11406-66b3-71fb-a4cc-2aad6d51802c; parent PR34 remains unchanged; user clean clone remains clean at master."
+}

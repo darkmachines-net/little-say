@@ -1,0 +1,29 @@
+[WebServer] (node:28644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:28644) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 19 tests using 1 worker
+
+(node:35816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 little-say\tests\web\app.spec.ts:98:1 ΓÇ║ device language profile persists offline and drives French/Spanish board setup without changing fixed cards (9.2s)
+  ok  2 little-say\tests\web\app.spec.ts:155:1 ΓÇ║ regional language preferences drive manual cards and AI requests (7.4s)
+  ok  3 little-say\tests\web\app.spec.ts:655:1 ΓÇ║ 24 tiles fit in both tablet orientations and remain keyboard accessible (4.4s)
+  ok  4 little-say\tests\web\app.spec.ts:700:1 ΓÇ║ failed local writes are visible, retryable, and do not enter play prematurely (1.9s)
+  ok  5 little-say\tests\web\editor-transition.spec.ts:30:1 ΓÇ║ dashboard and reload entry bind the same board, preserve edits and stop active/pending audio (7.2s)
+  ok  6 little-say\tests\web\editor-transition.spec.ts:54:1 ΓÇ║ selected play language, missing translations and voice safeguards survive the direct handoff (4.8s)
+  ok  7 little-say\tests\web\editor-transition.spec.ts:88:1 ΓÇ║ keyboard requires a continuous hold and cancels repeat, blur, Escape and background interruptions (1.5s)
+  ok  8 little-say\tests\web\editor-transition.spec.ts:108:1 ΓÇ║ assistive activation is delayed, cancellable and cannot fire after backgrounding (1.4s)
+  ok  9 little-say\tests\web\editor-transition.spec.ts:121:1 ΓÇ║ release outside the control and a second contact elsewhere cannot unlock (1.6s)
+  ok 10 little-say\tests\web\editor-transition.spec.ts:138:1 ΓÇ║ a pending return keeps the editor visible and prevents concurrent edits until the save completes (4.3s)
+  ok 11 little-say\tests\web\editor-transition.spec.ts:161:1 ΓÇ║ a failed save retains edits and editor until retry, without granting AI consent (4.7s)
+  ok 12 little-say\tests\web\editor-transition.spec.ts:184:3 ΓÇ║ existing editing controls and drafts remain usable at 1180x820 (4.7s)
+  ok 13 little-say\tests\web\editor-transition.spec.ts:184:3 ΓÇ║ existing editing controls and drafts remain usable at 820x1180 (4.6s)
+  ok 14 little-say\tests\web\editor-transition.spec.ts:184:3 ΓÇ║ existing editing controls and drafts remain usable at 844x390 (4.8s)
+  ok 15 little-say\tests\web\editor-transition.spec.ts:184:3 ΓÇ║ existing editing controls and drafts remain usable at 390x844 (4.7s)
+  ok 16 little-say\tests\web\editor-transition.spec.ts:206:1 ΓÇ║ cards shrink toward the measured preview while existing controls are already available (1.7s)
+  ok 17 little-say\tests\web\editor-transition.spec.ts:227:1 ΓÇ║ reduced motion and resize during the transition always leave a usable editor (6.3s)
+  ok 18 little-say\tests\web\grid.spec.ts:134:3 ΓÇ║ 7-card editor preview remains balanced and editable (2.2s)
+  ok 19 little-say\tests\web\grid.spec.ts:134:3 ΓÇ║ 24-card editor preview remains balanced and editable (3.3s)
+
+  19 passed (1.4m)
