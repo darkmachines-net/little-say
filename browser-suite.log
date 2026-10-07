@@ -1,0 +1,156 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run playwright test --config artifacts/grid-playwright.config.ts --reporter=line
+[WebServer] npm notice run little-say-workspace@0.2.0 start
+
+[WebServer] npm notice run npm run start -w @little-say/server
+
+
+[WebServer] npm notice run @little-say/server@0.2.0 start
+
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:40028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:40028) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+
+Running 89 tests using 1 worker
+
+(node:31816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/89] [chromium] ΓÇ║ tests\web\app.spec.ts:42:5 ΓÇ║ outside modal dismissal ΓÇ║ outside taps keep play active at 390px
+[2/89] [chromium] ΓÇ║ tests\web\app.spec.ts:72:5 ΓÇ║ outside modal dismissal ΓÇ║ outside taps cancel editing and deletion at 390px
+[3/89] [chromium] ΓÇ║ tests\web\app.spec.ts:42:5 ΓÇ║ outside modal dismissal ΓÇ║ outside taps keep play active at 1180px
+[4/89] [chromium] ΓÇ║ tests\web\app.spec.ts:72:5 ΓÇ║ outside modal dismissal ΓÇ║ outside taps cancel editing and deletion at 1180px
+[5/89] [chromium] ΓÇ║ tests\web\app.spec.ts:107:1 ΓÇ║ device language profile persists offline and drives French/Spanish board setup without changing fixed cards
+[6/89] [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests
+  1) [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('button', { name: 'Play in Mexican Spanish', exact: true })
+    Expected: "ES-MX"
+    Timeout: 7000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('button', { name: 'Play in Mexican Spanish', exact: true }) with timeout 7000ms
+      - waiting for getByRole('button', { name: 'Play in Mexican Spanish', exact: true })
+
+
+      174 |   await page.setViewportSize({ width: 540, height: 820 });
+      175 |   await page.getByRole('button', { name: 'Play board', exact: true }).click();
+    > 176 |   await expect(page.getByRole('button', { name: 'Play in Mexican Spanish', exact: true })).toHaveText('ES-MX');
+          |                                                                                            ^
+      177 |   await expect(page.getByRole('button', { name: 'Play in Spanish', exact: true })).toHaveText('ES-ES');
+      178 |   await leaveBoard(page);
+      179 |   await page.setViewportSize({ width: 1180, height: 900 });
+        at C:\Users\MChar\Documents\Codex\2026-10-06\task-8\little-say-grid\tests\web\app.spec.ts:176:92
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+
+(node:4164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[7/89] [chromium] ΓÇ║ tests\web\app.spec.ts:204:1 ΓÇ║ starter library, manual edit, mixed-language data, and persistence
+[8/89] [chromium] ΓÇ║ tests\web\app.spec.ts:218:1 ΓÇ║ complete emoji search finds blueberries for a plum card and persists offline
+[9/89] [chromium] ΓÇ║ tests\web\app.spec.ts:261:1 ΓÇ║ swipes are forgiving, speech is bounded, and parent exit needs two deliberate steps
+[10/89] [chromium] ΓÇ║ tests\web\app.spec.ts:283:1 ΓÇ║ unlock readiness matches release at the boundary and cancelled holds reset immediately
+[11/89] [chromium] ΓÇ║ tests\web\app.spec.ts:309:1 ΓÇ║ another touch cancels the ready unlock state without leaving stale feedback
+[12/89] [chromium] ΓÇ║ tests\web\app.spec.ts:333:1 ΓÇ║ active board survives reload and uses Russian pronunciation
+[13/89] [chromium] ΓÇ║ tests\web\app.spec.ts:342:1 ΓÇ║ tap feedback never steals the playing highlight during repeated queued taps
+[14/89] [chromium] ΓÇ║ tests\web\app.spec.ts:383:1 ΓÇ║ board languages translate switchable cards, preserve fixed cards, and save translated audio offline
+[15/89] [chromium] ΓÇ║ tests\web\app.spec.ts:450:1 ΓÇ║ board card menu confirms deletion and preserves other boards after reload
+[16/89] [chromium] ΓÇ║ tests\web\app.spec.ts:473:1 ΓÇ║ board card menu fills missing translated audio, continues when closed, retries failures, and hides when complete
+[17/89] [chromium] ΓÇ║ tests\web\app.spec.ts:527:1 ΓÇ║ board audio retry fills only missing clips with automatic generation disabled
+[18/89] [chromium] ΓÇ║ tests\web\app.spec.ts:553:1 ΓÇ║ numbers 1ΓÇô9 get a visible bilingual setup and switch speech while preserving digit labels
+[19/89] [chromium] ΓÇ║ tests\web\app.spec.ts:620:1 ΓÇ║ AI proposal requires review, applies safely, and can be undone
+[20/89] [chromium] ΓÇ║ tests\web\app.spec.ts:637:1 ΓÇ║ offline shell and local boards survive a disconnected reload
+[21/89] [chromium] ΓÇ║ tests\web\app.spec.ts:647:1 ΓÇ║ tablet layouts and screenshots stay within the viewport
+[22/89] [chromium] ΓÇ║ tests\web\app.spec.ts:661:1 ΓÇ║ 24 tiles fit in both tablet orientations and remain keyboard accessible
+[23/89] [chromium] ΓÇ║ tests\web\app.spec.ts:690:1 ΓÇ║ photo attachments survive reload and remain on the device
+[24/89] [chromium] ΓÇ║ tests\web\app.spec.ts:706:1 ΓÇ║ failed local writes are visible, retryable, and do not enter play prematurely
+[25/89] [chromium] ΓÇ║ tests\web\app.spec.ts:722:1 ΓÇ║ missing AI configuration retains the parent prompt and existing boards
+[26/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:25:1 ΓÇ║ manual creation starts from the library and suggestions stay in the conversation without an opt-in screen
+[27/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:45:1 ΓÇ║ editing routes survive reload and return to their source board without saving a draft
+[28/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:59:1 ΓÇ║ clarification, draft and refinement stay in one conversation until explicitly saved
+[29/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:97:1 ΓÇ║ editing refines the latest draft while keeping source IDs, languages and photos private
+[30/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:130:1 ΓÇ║ stopping and retrying ignores late replies and does not duplicate conversation turns
+[31/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:154:1 ΓÇ║ failed follow-ups and clarification preserve the previous draft and small-screen controls
+[32/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:185:1 ΓÇ║ a failed save keeps the draft and retry creates exactly one board
+[33/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through failure
+[34/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through success
+[35/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:250:56 ΓÇ║ voice transcripts can be reviewed for follow-ups and page back releases the microphone
+[36/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:250:56 ΓÇ║ voice transcripts can be reviewed for follow-ups and browser back releases the microphone
+[37/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:286:1 ΓÇ║ a capture-time recorder error releases the microphone and lets the parent retry
+[38/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:314:1 ΓÇ║ the compact editor fits tablet orientations and keeps reordering in the tile dialog
+[39/89] [chromium] ΓÇ║ tests\web\conversation.spec.ts:331:1 ΓÇ║ a new phone conversation starts with its full data-use introduction visible
+[40/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 1 cards fill balanced rows across tablet and phone rotation
+[41/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 2 cards fill balanced rows across tablet and phone rotation
+[42/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 3 cards fill balanced rows across tablet and phone rotation
+[43/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 4 cards fill balanced rows across tablet and phone rotation
+[44/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 5 cards fill balanced rows across tablet and phone rotation
+[45/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 6 cards fill balanced rows across tablet and phone rotation
+[46/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 7 cards fill balanced rows across tablet and phone rotation
+[47/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 8 cards fill balanced rows across tablet and phone rotation
+[48/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 9 cards fill balanced rows across tablet and phone rotation
+[49/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 11 cards fill balanced rows across tablet and phone rotation
+[50/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 23 cards fill balanced rows across tablet and phone rotation
+[51/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 24 cards fill balanced rows across tablet and phone rotation
+[52/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:83:1 ΓÇ║ rotation preserves speech and cancels contacts measured against the old grid
+[53/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:114:3 ΓÇ║ 7-card editor preview remains balanced and editable
+[54/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:114:3 ΓÇ║ 24-card editor preview remains balanced and editable
+[55/89] [chromium] ΓÇ║ tests\web\grid.spec.ts:133:1 ΓÇ║ a tiny play window explains its limit and recovers on resize
+[56/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:6:3 ΓÇ║ homepage describes the app without starting it at 1440px
+[57/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:6:3 ΓÇ║ homepage describes the app without starting it at 390px
+[58/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:6:3 ΓÇ║ homepage describes the app without starting it at 320px
+[59/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:41:1 ΓÇ║ homepage navigation works with a keyboard and installed web apps launch into the app
+[60/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:57:1 ΓÇ║ older iOS home-screen installs bypass the homepage at their original root URL
+[61/89] [chromium] ΓÇ║ tests\web\landing.spec.ts:64:1 ΓÇ║ standalone display mode also bypasses the homepage for older installs
+[62/89] [chromium] ΓÇ║ tests\web\photos.spec.ts:56:1 ΓÇ║ fine crop controls match the final photo in the editor, library and rotated offline play board
+[63/89] [chromium] ΓÇ║ tests\web\photos.spec.ts:89:1 ΓÇ║ pinch zoom and one-finger repositioning work without scrolling the crop away
+[64/89] [chromium] ΓÇ║ tests\web\photos.spec.ts:108:1 ΓÇ║ cancelled crops and replacement uploads preserve the saved photo, including after reload
+[65/89] [chromium] ΓÇ║ tests\web\photos.spec.ts:123:1 ΓÇ║ duplicate family cards can frame different people without modifying their shared image
+[66/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:43:1 ΓÇ║ a complete emoji board is ready to save without suggesting AI illustrations
+[67/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:62:1 ΓÇ║ Automatic fills only a gap and illustration changes remain available in Picture settings
+[68/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:109:1 ΓÇ║ construction pictures are staged, generated by default, saved offline, and retained in later text edits
+[69/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:140:1 ΓÇ║ stopping picture jobs cancels queued work and discards the partial preview without saving it
+[70/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:177:1 ΓÇ║ manual library selection needs no AI permission and saves attribution plus a protected offline picture
+[71/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:195:1 ΓÇ║ board restyling previews changes, preserves a protected card, and supports returning to emoji
+[72/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:222:1 ΓÇ║ picture sources use a compact explained selector with keyboard dismissal and no duplicate generation gate
+[73/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:245:1 ΓÇ║ card source choices show their inherited value and can return to following the board
+[74/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:261:1 ΓÇ║ full-page canvas streams finished pictures, distinguishes active and queued work, and keeps settings accessible
+[75/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:320:1 ΓÇ║ missing library and disabled server generation keep a usable emoji board with one summary
+[76/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Library only and explicit overrides
+[77/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Emoji only and explicit overrides
+[78/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture close
+[79/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture stop
+[80/89] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture apply
+[81/89] [chromium] ΓÇ║ tests\web\recents.spec.ts:36:1 ΓÇ║ recent play order persists offline and stays independent of edits, undo, copies and deletion
+[82/89] [chromium] ΓÇ║ tests\web\recents.spec.ts:73:1 ΓÇ║ returning from a legacy active session creates an accessible responsive spotlight
+[83/89] [chromium] ΓÇ║ tests\web\recents.spec.ts:101:1 ΓÇ║ favorites stay immediately below the latest board, with recent play order within each group
+[84/89] [chromium] ΓÇ║ tests\web\recents.spec.ts:133:1 ΓÇ║ favorites work before first play, retry failed saves, and are independent of edits, copies and deletion
+[85/89] [chromium] ΓÇ║ tests\web\setup.spec.ts:40:1 ΓÇ║ first-time setup generates chosen languages, resumes partial success, and starts audio after completion
+[86/89] [chromium] ΓÇ║ tests\web\setup.spec.ts:89:1 ΓÇ║ offline setup can save a regional preference and start empty without English sample boards
+[87/89] [chromium] ΓÇ║ tests\web\setup.spec.ts:110:1 ΓÇ║ setup waits for durable saves and retains generated drafts when final saving fails
+[88/89] [chromium] ΓÇ║ tests\web\speech.spec.ts:11:1 ΓÇ║ generates from draft text and language, regenerates, persists offline, and falls back on playback failure
+[89/89] [chromium] ΓÇ║ tests\web\speech.spec.ts:89:1 ΓÇ║ board creation does not wait for background audio and stale generation cannot replace edited words
+  1 failed
+    [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests 
+  88 passed (4.3m)

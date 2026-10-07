@@ -1,0 +1,311 @@
+{
+  "purpose": "Issue31 matched actual-app screenshots from clean committed source",
+  "clock": "2026-10-07T00:00:00.000Z",
+  "captureTool": "Playwright with installed Microsoft Edge",
+  "deviceScaleFactor": 1,
+  "colorScheme": "light",
+  "serviceWorkers": "blocked identically in both contexts to prevent cached build/update interference; no UI elements hidden",
+  "syntheticData": "fixture function in this retained harness; no real user data",
+  "scenes": [
+    {
+      "name": "dense",
+      "count": 24,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "play"
+    }
+  ],
+  "sources": [
+    {
+      "side": "after",
+      "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "status": "",
+      "buildCommand": "npm.cmd run build",
+      "serveCommand": "node apps/server/dist/index.js with explicit WEB_ROOT, empty provider/database settings and dedicated loopback port",
+      "port": 7414,
+      "processId": 4416,
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e",
+      "buildFiles": [
+        {
+          "path": "apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+        },
+        {
+          "path": "favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+        },
+        {
+          "path": "favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+        },
+        {
+          "path": "icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+        },
+        {
+          "path": "icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+        },
+        {
+          "path": "icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+        },
+        {
+          "path": "index.html",
+          "sha256": "43116721dc015ed6385d0d5ad8646586455bf268c803e3ab4b9931d7a02d0942"
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+        },
+        {
+          "path": "sw.js",
+          "sha256": "8759d6c051120aa254d3891760cc84547209a061f07000b1100ad0f058f73247"
+        },
+        {
+          "path": "sw.js.map",
+          "sha256": "a9353ff17bd5277136d15ef5ce5d0bbb1b4edbb2924735f4e1764456de53c61a"
+        },
+        {
+          "path": "workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+        },
+        {
+          "path": "workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+        },
+        {
+          "path": "_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+          "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760"
+        },
+        {
+          "path": "_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+          "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8"
+        }
+      ],
+      "captures": [
+        {
+          "scene": "dense",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:30:55.814Z",
+          "fixtureSha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205",
+          "filename": "after-dense.png",
+          "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+              "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+              "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760",
+              "bytes": 5760938
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Word 1",
+              "x": 16,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 2",
+              "x": 139.328125,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 3",
+              "x": 262.65625,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 4",
+              "x": 16,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 5",
+              "x": 139.328125,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 6",
+              "x": 262.65625,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 7",
+              "x": 16,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 8",
+              "x": 139.328125,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 9",
+              "x": 262.65625,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 10",
+              "x": 16,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 11",
+              "x": 139.328125,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 12",
+              "x": 262.65625,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 13",
+              "x": 16,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 14",
+              "x": 139.328125,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 15",
+              "x": 262.65625,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 16",
+              "x": 16,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 17",
+              "x": 139.328125,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 18",
+              "x": 262.65625,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 19",
+              "x": 16,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 20",
+              "x": 139.328125,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 21",
+              "x": 262.65625,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 22",
+              "x": 16,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 23",
+              "x": 139.328125,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Please help me find my favourite things",
+              "x": 262.65625,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            }
+          ]
+        }
+      ],
+      "listenerPids": [
+        4416
+      ],
+      "finalListenerPids": [
+        4416
+      ]
+    }
+  ],
+  "browserVersion": "154.0.4258.62",
+  "harnessSha256": "3791bbe779f3d808493564b2370e95f0c020ec8a18034a5b13c354e5af231c4d"
+}

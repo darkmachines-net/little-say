@@ -1,0 +1,78 @@
+{
+  "issue": "https://github.com/MChartier/little-say/issues/31",
+  "head": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "actualTargetRef": "master",
+  "actualTargetSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parents": [],
+  "ultimateTarget": "master",
+  "commits": [
+    {
+      "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "purpose": "Balanced ordered card rectangles, play/editor integration, dense play illustration fitting and proportionate maintained validation"
+    }
+  ],
+  "files": [
+    {
+      "file": "apps/mobile/src/ui/BoardEditor.tsx",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "apps/mobile/src/ui/PlayBoard.tsx",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "apps/mobile/src/ui/TileFace.tsx",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "apps/mobile/src/ui/TouchSurface.tsx",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "apps/mobile/src/ui/TouchSurface.web.tsx",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "docs/DESIGN.md",
+      "purpose": "Maintained geometry and resize contract"
+    },
+    {
+      "file": "packages/core/src/boardLayout.test.ts",
+      "purpose": "Maintained behavioral regression coverage for accepted geometry and interaction outcomes"
+    },
+    {
+      "file": "packages/core/src/boardLayout.ts",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "packages/core/src/interaction.test.ts",
+      "purpose": "Maintained behavioral regression coverage for accepted geometry and interaction outcomes"
+    },
+    {
+      "file": "packages/core/src/interaction.ts",
+      "purpose": "Scoped shared geometry or card-rendering integration"
+    },
+    {
+      "file": "tests/web/app.spec.ts",
+      "purpose": "Preserve regional-language validation across browser Intl/CLDR names; same failure reproduced on unchanged baseline"
+    },
+    {
+      "file": "tests/web/grid.spec.ts",
+      "purpose": "Maintained behavioral regression coverage for accepted geometry and interaction outcomes"
+    }
+  ],
+  "composition": {
+    "productFiles": 7,
+    "maintainedTestFiles": 4,
+    "maintainedDocFiles": 1,
+    "addedLines": 331,
+    "removedLines": 33,
+    "oneOffProductFiles": 0,
+    "evidenceCommitsInProductHistory": 0
+  },
+  "inspection": "Complete local commit/parent inventory and every changed path reviewed. One commit; no sibling/parent merges, one-off evidence, add/delete evidence churn, generated binaries or unrelated product changes. GitHub published inventories must be independently reconciled after PR creation."
+}

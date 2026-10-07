@@ -1,0 +1,25 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run expo export --platform android --platform ios --output-dir artifacts/native-grid
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:36220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:36220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android Bundled 21255ms apps\mobile\index.ts (2840 modules)
+iOS Bundled 40731ms apps\mobile\index.ts (2847 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.png (3 variations | 49KB)
+
+ΓÇ║ android bundles (1):
+_expo/static/js/android/index-c502b77f5b67d77709f63c3339cec691.hbc (6.9MB)
+
+ΓÇ║ ios bundles (1):
+_expo/static/js/ios/index-93b569759d75fccb12cb1bc12a42ed24.hbc (6.9MB)
+
+ΓÇ║ Files (1):
+metadata.json (626B)
+
+Exported: artifacts/native-grid

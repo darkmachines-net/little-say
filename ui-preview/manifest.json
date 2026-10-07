@@ -1,0 +1,1348 @@
+{
+  "purpose": "Issue31 matched actual-app screenshots; preview unless source checkouts are clean",
+  "clock": "2026-10-07T00:00:00.000Z",
+  "captureTool": "Playwright with installed Microsoft Edge",
+  "deviceScaleFactor": 1,
+  "colorScheme": "light",
+  "serviceWorkers": "blocked identically in both contexts to prevent cached build/update interference; no UI elements hidden",
+  "syntheticData": "fixture function in this retained harness; no real user data",
+  "scenes": [
+    {
+      "name": "four-portrait",
+      "count": 4,
+      "viewport": {
+        "width": 820,
+        "height": 1180
+      },
+      "mode": "play"
+    },
+    {
+      "name": "four-landscape",
+      "count": 4,
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "mode": "play"
+    },
+    {
+      "name": "seven-landscape",
+      "count": 7,
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "mode": "play"
+    },
+    {
+      "name": "seven-editor",
+      "count": 7,
+      "viewport": {
+        "width": 1180,
+        "height": 820
+      },
+      "mode": "edit"
+    },
+    {
+      "name": "twenty-four-phone",
+      "count": 24,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "play"
+    },
+    {
+      "name": "tiny-window",
+      "count": 24,
+      "viewport": {
+        "width": 320,
+        "height": 320
+      },
+      "mode": "play"
+    }
+  ],
+  "sources": [
+    {
+      "side": "before",
+      "sourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "status": "",
+      "buildCommand": "npm.cmd run build",
+      "serveCommand": "node apps/server/dist/index.js with explicit WEB_ROOT, empty provider/database settings and dedicated loopback port",
+      "port": 7413,
+      "processId": 13140,
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e",
+      "buildFiles": [
+        {
+          "path": "apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+        },
+        {
+          "path": "favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+        },
+        {
+          "path": "favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+        },
+        {
+          "path": "icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+        },
+        {
+          "path": "icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+        },
+        {
+          "path": "icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb"
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+        },
+        {
+          "path": "sw.js",
+          "sha256": "e90c1e0cd2cd0ada0b8403790179054ea437468704bc5cb67b6297b5c72b9a78"
+        },
+        {
+          "path": "sw.js.map",
+          "sha256": "0b245a45dd00b55e07b883fc77336822faa0431f5619b4680881b2ef36a95670"
+        },
+        {
+          "path": "workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+        },
+        {
+          "path": "workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa"
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef"
+        }
+      ],
+      "captures": [
+        {
+          "scene": "four-portrait",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:23.042Z",
+          "fixtureSha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c",
+          "filename": "before-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 416,
+              "y": 76,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "All done",
+              "x": 16,
+              "y": 626,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "Please help me",
+              "x": 416,
+              "y": 626,
+              "width": 388,
+              "height": 538
+            }
+          ]
+        },
+        {
+          "scene": "four-landscape",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:24.638Z",
+          "fixtureSha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c",
+          "filename": "before-four-landscape.png",
+          "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 374.65625,
+              "height": 358
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 402.65625,
+              "y": 76,
+              "width": 374.65625,
+              "height": 358
+            },
+            {
+              "label": "All done",
+              "x": 789.328125,
+              "y": 76,
+              "width": 374.65625,
+              "height": 358
+            },
+            {
+              "label": "Please help me",
+              "x": 16,
+              "y": 446,
+              "width": 374.65625,
+              "height": 358
+            }
+          ]
+        },
+        {
+          "scene": "seven-landscape",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:26.242Z",
+          "fixtureSha256": "d6f274b782bd4e7aaeed6162f45a89f3ab65e38961d896656cd681fa9f746ae9",
+          "filename": "before-seven-landscape.png",
+          "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 306,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "All done",
+              "x": 596,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "Please help me",
+              "x": 886,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "More",
+              "x": 16,
+              "y": 446,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "Take a break",
+              "x": 306,
+              "y": 446,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "Thank you",
+              "x": 596,
+              "y": 446,
+              "width": 278,
+              "height": 358
+            }
+          ]
+        },
+        {
+          "scene": "seven-editor",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:27.855Z",
+          "fixtureSha256": "e4c8f95f496e704f75e1de362dfbe6896703b0423254a472cb0aef371be67245",
+          "filename": "before-seven-editor.png",
+          "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Edit tile Water",
+              "x": 189,
+              "y": 257.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile I would like something to eat",
+              "x": 361,
+              "y": 257.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile All done",
+              "x": 533,
+              "y": 257.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Please help me",
+              "x": 189,
+              "y": 413.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile More",
+              "x": 361,
+              "y": 413.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Take a break",
+              "x": 533,
+              "y": 413.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Thank you",
+              "x": 189,
+              "y": 569.5,
+              "width": 164,
+              "height": 148
+            }
+          ]
+        },
+        {
+          "scene": "twenty-four-phone",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:29.405Z",
+          "fixtureSha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205",
+          "filename": "before-twenty-four-phone.png",
+          "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Word 1",
+              "x": 16,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 2",
+              "x": 139.328125,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 3",
+              "x": 262.65625,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 4",
+              "x": 16,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 5",
+              "x": 139.328125,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 6",
+              "x": 262.65625,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 7",
+              "x": 16,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 8",
+              "x": 139.328125,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 9",
+              "x": 262.65625,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 10",
+              "x": 16,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 11",
+              "x": 139.328125,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 12",
+              "x": 262.65625,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 13",
+              "x": 16,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 14",
+              "x": 139.328125,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 15",
+              "x": 262.65625,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 16",
+              "x": 16,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 17",
+              "x": 139.328125,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 18",
+              "x": 262.65625,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 19",
+              "x": 16,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 20",
+              "x": 139.328125,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 21",
+              "x": 262.65625,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 22",
+              "x": 16,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 23",
+              "x": 139.328125,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Please help me find my favourite things",
+              "x": 262.65625,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            }
+          ]
+        },
+        {
+          "scene": "tiny-window",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:31.053Z",
+          "fixtureSha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205",
+          "filename": "before-tiny-window.png",
+          "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+              "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+              "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+              "bytes": 5759606
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Word 1",
+              "x": 16,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 2",
+              "x": 66,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 3",
+              "x": 116,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 4",
+              "x": 166,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 5",
+              "x": 216,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 6",
+              "x": 266,
+              "y": 76,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 7",
+              "x": 16,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 8",
+              "x": 66,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 9",
+              "x": 116,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 10",
+              "x": 166,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 11",
+              "x": 216,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 12",
+              "x": 266,
+              "y": 136,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 13",
+              "x": 16,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 14",
+              "x": 66,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 15",
+              "x": 116,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 16",
+              "x": 166,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 17",
+              "x": 216,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 18",
+              "x": 266,
+              "y": 196,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 19",
+              "x": 16,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 20",
+              "x": 66,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 21",
+              "x": 116,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 22",
+              "x": 166,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Word 23",
+              "x": 216,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            },
+            {
+              "label": "Please help me find my favourite things",
+              "x": 266,
+              "y": 256,
+              "width": 38,
+              "height": 48
+            }
+          ]
+        }
+      ],
+      "listenerPids": [
+        13140
+      ],
+      "finalListenerPids": [
+        13140
+      ]
+    },
+    {
+      "side": "after",
+      "sourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "status": " M apps/mobile/src/ui/BoardEditor.tsx\n M apps/mobile/src/ui/PlayBoard.tsx\n M docs/DESIGN.md\n M packages/core/src/interaction.test.ts\n M packages/core/src/interaction.ts\n?? packages/core/src/boardLayout.test.ts\n?? packages/core/src/boardLayout.ts\n?? tests/web/grid.spec.ts\n",
+      "buildCommand": "npm.cmd run build",
+      "serveCommand": "node apps/server/dist/index.js with explicit WEB_ROOT, empty provider/database settings and dedicated loopback port",
+      "port": 7414,
+      "processId": 24564,
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e",
+      "buildFiles": [
+        {
+          "path": "apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+        },
+        {
+          "path": "favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+        },
+        {
+          "path": "favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+        },
+        {
+          "path": "icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+        },
+        {
+          "path": "icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+        },
+        {
+          "path": "icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+        },
+        {
+          "path": "index.html",
+          "sha256": "f37c04842bcfb193c5e95b4d200d97f72c8521bd5d5cc61fb2255966feb8679c"
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+        },
+        {
+          "path": "sw.js",
+          "sha256": "541436020655aeff5542b4341c394ec293c381314ecdc7b0f662e63f9d5a7984"
+        },
+        {
+          "path": "sw.js.map",
+          "sha256": "3ba3ed5e704426d8e0b607598517f2b384dd8685becbfa65a45f932525bb9f6c"
+        },
+        {
+          "path": "workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+        },
+        {
+          "path": "workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+        },
+        {
+          "path": "_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+          "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f"
+        },
+        {
+          "path": "_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+          "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0"
+        }
+      ],
+      "captures": [
+        {
+          "scene": "four-portrait",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:36.503Z",
+          "fixtureSha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c",
+          "filename": "after-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 416,
+              "y": 76,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "All done",
+              "x": 16,
+              "y": 626,
+              "width": 388,
+              "height": 538
+            },
+            {
+              "label": "Please help me",
+              "x": 416,
+              "y": 626,
+              "width": 388,
+              "height": 538
+            }
+          ]
+        },
+        {
+          "scene": "four-landscape",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:38.119Z",
+          "fixtureSha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c",
+          "filename": "after-four-landscape.png",
+          "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 568,
+              "height": 358
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 596,
+              "y": 76,
+              "width": 568,
+              "height": 358
+            },
+            {
+              "label": "All done",
+              "x": 16,
+              "y": 446,
+              "width": 568,
+              "height": 358
+            },
+            {
+              "label": "Please help me",
+              "x": 596,
+              "y": 446,
+              "width": 568,
+              "height": 358
+            }
+          ]
+        },
+        {
+          "scene": "seven-landscape",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:39.771Z",
+          "fixtureSha256": "d6f274b782bd4e7aaeed6162f45a89f3ab65e38961d896656cd681fa9f746ae9",
+          "filename": "after-seven-landscape.png",
+          "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Water",
+              "x": 16,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "I would like something to eat",
+              "x": 306,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "All done",
+              "x": 596,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "Please help me",
+              "x": 886,
+              "y": 76,
+              "width": 278,
+              "height": 358
+            },
+            {
+              "label": "More",
+              "x": 16,
+              "y": 446,
+              "width": 374.65625,
+              "height": 358
+            },
+            {
+              "label": "Take a break",
+              "x": 402.65625,
+              "y": 446,
+              "width": 374.65625,
+              "height": 358
+            },
+            {
+              "label": "Thank you",
+              "x": 789.328125,
+              "y": 446,
+              "width": 374.65625,
+              "height": 358
+            }
+          ]
+        },
+        {
+          "scene": "seven-editor",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:41.442Z",
+          "fixtureSha256": "e4c8f95f496e704f75e1de362dfbe6896703b0423254a472cb0aef371be67245",
+          "filename": "after-seven-editor.png",
+          "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Edit tile Water",
+              "x": 103,
+              "y": 335.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile I would like something to eat",
+              "x": 275,
+              "y": 335.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile All done",
+              "x": 447,
+              "y": 335.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Please help me",
+              "x": 619,
+              "y": 335.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile More",
+              "x": 189,
+              "y": 491.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Take a break",
+              "x": 361,
+              "y": 491.5,
+              "width": 164,
+              "height": 148
+            },
+            {
+              "label": "Edit tile Thank you",
+              "x": 533,
+              "y": 491.5,
+              "width": 164,
+              "height": 148
+            }
+          ]
+        },
+        {
+          "scene": "twenty-four-phone",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:43.066Z",
+          "fixtureSha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205",
+          "filename": "after-twenty-four-phone.png",
+          "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": [
+            {
+              "label": "Word 1",
+              "x": 16,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 2",
+              "x": 139.328125,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 3",
+              "x": 262.65625,
+              "y": 76,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 4",
+              "x": 16,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 5",
+              "x": 139.328125,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 6",
+              "x": 262.65625,
+              "y": 171.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 7",
+              "x": 16,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 8",
+              "x": 139.328125,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 9",
+              "x": 262.65625,
+              "y": 267,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 10",
+              "x": 16,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 11",
+              "x": 139.328125,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 12",
+              "x": 262.65625,
+              "y": 362.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 13",
+              "x": 16,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 14",
+              "x": 139.328125,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 15",
+              "x": 262.65625,
+              "y": 458,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 16",
+              "x": 16,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 17",
+              "x": 139.328125,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 18",
+              "x": 262.65625,
+              "y": 553.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 19",
+              "x": 16,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 20",
+              "x": 139.328125,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 21",
+              "x": 262.65625,
+              "y": 649,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 22",
+              "x": 16,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Word 23",
+              "x": 139.328125,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            },
+            {
+              "label": "Please help me find my favourite things",
+              "x": 262.65625,
+              "y": 744.5,
+              "width": 111.328125,
+              "height": 83.5
+            }
+          ]
+        },
+        {
+          "scene": "tiny-window",
+          "route": "/app",
+          "setup": "Fresh context; write synthetic fixture into IndexedDB state/library after database creation; reload; open existing editor only for edit mode",
+          "timeUtc": "2026-10-07T02:19:44.687Z",
+          "fixtureSha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205",
+          "filename": "after-tiny-window.png",
+          "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+          "loadedBundles": [
+            {
+              "url": "/_expo/static/js/web/index-66b9312a3a3e89f8a0db7a96ceb333f7.js",
+              "sha256": "0b80b60fa4f56d5d7ea1f05b1aee1b1f2625abec9568f7d8cee3ee18d43f05c0",
+              "bytes": 359876
+            },
+            {
+              "url": "/_expo/static/js/web/App-340c4783157c08234680cb39bb8d98c4.js",
+              "sha256": "a424282dab68ca0de44549bbc6975d95dc612c801628f521a1e86ec32b60f93f",
+              "bytes": 5760656
+            }
+          ],
+          "geometry": []
+        }
+      ],
+      "listenerPids": [
+        24564
+      ],
+      "finalListenerPids": [
+        24564
+      ]
+    }
+  ],
+  "browserVersion": "154.0.4258.62",
+  "harnessSha256": "70475562bd9386e5162b3042fe7003463b72f62a3560b62c343d131942bd5cd9"
+}

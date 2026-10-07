@@ -1,0 +1,107 @@
+{
+  "head": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "baseline": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "host": "MCHARTIER_ZBOOK",
+  "worktree": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-06\\task-8\\little-say-grid",
+  "branch": "feat/balanced-storyboard-grid",
+  "task": "01a11405-db71-76ed-9ec6-44717ef3402a",
+  "workflow": {
+    "execution": "f0919b184b6344d6279178b2388190936ca432a9",
+    "communication": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+    "version": "workflow-v3 / pr-review-v3",
+    "amendments": [
+      5984018358,
+      5987999201,
+      5997739454,
+      6002971212,
+      6006523068,
+      6008280372,
+      6008834896,
+      6020948896,
+      6021105604,
+      6021281028,
+      6022754087,
+      6026521080
+    ]
+  },
+  "checks": [
+    {
+      "command": "npm.cmd run check",
+      "result": "PASS: 222 unit tests, workspace types, release checks, server/web production builds",
+      "log": "check-final.log",
+      "applicability": "Run against the identical staged source subsequently committed as head; clean committed web rebuild in build-committed.log"
+    },
+    {
+      "command": "npx.cmd playwright test --config artifacts/grid-playwright.config.ts --reporter=line",
+      "result": "PASS: 92 tests including 19 new grid scenarios",
+      "log": "browser-committed.log",
+      "browser": "Microsoft Edge 154.0.4258.62",
+      "source": "b21d3ba7370c08468b868385ce9df3d875eee799"
+    },
+    {
+      "command": "npx.cmd expo export --platform android --platform ios --output-dir artifacts/native-grid",
+      "result": "PASS: Android and iOS JS/Hermes exports; no device runtime claim",
+      "log": "native-committed.log",
+      "source": "b21d3ba7370c08468b868385ce9df3d875eee799"
+    }
+  ],
+  "behavior": [
+    "4 cards remain 2+2 at both tablet orientations; 7-card play uses full-width 4+3 and editor uses centered compact 4+3.",
+    "All 1–24 card counts meet balanced-row, target-floor, non-overlap and ordered hit-test contracts in unit checks; browser counts 1,2,3,4,5,6,7,8,9,11,23,24 across four phone/tablet viewports.",
+    "Rotation preserves active/pending synthetic speech and keyboard activation; stale pointer contacts and parent holds cancel.",
+    "24-card phone English/Russian/Spanish accessible names and whole emoji frames pass; labels retain deliberate two-line ellipsis.",
+    "Existing photo crop/offline/rotation, picture-source and editor-control scenarios pass in the complete browser suite.",
+    "320x320/24 cards show a more-room message; resizing recovers actionable cards without play scrolling."
+  ],
+  "captures": {
+    "current": "ui-final2/manifest.json",
+    "manifestSha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+    "harness": "capture-grid.mjs",
+    "harnessSha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+    "sourceStatus": [
+      {
+        "side": "before",
+        "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "status": ""
+      },
+      {
+        "side": "after",
+        "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "status": ""
+      }
+    ],
+    "coverage": "Six genuine matched states; both isolated sources and exact served App/index bundle bytes verified; synthetic data; same viewport/scale/theme/clock/locale; fresh browser contexts. Service workers blocked identically; no UI hiding, cropping, redaction or pixel alteration. Speech synthesis is stubbed and fullscreen requests disabled identically."
+  },
+  "pixelInspection": {
+    "checkedAtUtc": "2026-10-07T02:35:22.280Z",
+    "observations": [
+      "Landscape4 baseline3+1 with large unused lower area becomes2+2; portrait4 remains pixel-identical2+2.",
+      "Seven-card play fills its shorter row; editor moves3+3+1 to centered4+3 while all actions remain visible.",
+      "Dense phone picture frames become useful whole emoji while long labels remain two-line ellipsized with full accessible names.",
+      "Tiny window replaces unreadable undersized cards with an explicit recovery message; parent unlock remains visible."
+    ],
+    "recapture": "ui-final2 reuses the same clean source revisions with explicit layout/font settling. All PNG digests equal ui-final except after-twenty-four-phone. That replacement equals ui-inspect/after-dense.png byte for byte, whose pixels were inspected. Original captures and manifests remain historical."
+  },
+  "dispositions": [
+    {
+      "finding": "Existing regional-language test expected Mexican Spanish; current Edge Intl returns Spanish (Mexico)",
+      "evidence": "baseline-regional.log plus browser-suite.log show unchanged baseline and implementation failures",
+      "disposition": "Fixed maintained assertion to accept both equivalent platform display names while still checking ES-MX. Full final suite passes."
+    },
+    {
+      "finding": "Initial dense-phone frame too small / early capture caught asynchronous emoji sizing",
+      "disposition": "Reduced padding only for opted-in play cards and fit emoji to remaining frame; 3 independent language fixtures assert full image containment. Capture harness now verifies stable geometry/font metrics. ui-final2 is current; older source/manifest identities are not relabeled."
+    },
+    {
+      "finding": "Earlier browser subset and preview runs",
+      "disposition": "Historical only. browser-final.log was run during finishing edits and is not current-head certification. Final 92-test committed run supersedes it. Dirty ui-preview is exploratory, not valid Before/After evidence."
+    }
+  ],
+  "limitations": [
+    "No attached adb device or installed emulator/AVD was available. Native rotation, OS large-font and TalkBack/VoiceOver activation are unexecuted; native exports do not prove them.",
+    "Browser keyboard/accessible-name and synthetic queued speech checks are automated; no claim of human auditory review or screen-reader session.",
+    "Very dense layouts deliberately ellipsize labels to two lines; full labels remain accessible. Actual OS text scaling still needs device validation.",
+    "Actual GitHub PR-page image rendering is not verified under the explicit general waiver in amendment6022754087; authenticated artifact bytes and image pixels remain required.",
+    "CI and independent readiness QA are separate pending gates at evidence publication. No readiness, human approval, merge, release or deployment is asserted."
+  ]
+}

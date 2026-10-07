@@ -1,0 +1,63 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run playwright test tests/web/app.spec.ts --grep regional language preferences --config artifacts/grid-playwright.config.ts --reporter=line
+[WebServer] npm notice run little-say-workspace@0.2.0 start
+
+[WebServer] npm notice run npm run start -w @little-say/server
+
+[WebServer] npm notice run @little-say/server@0.2.0 start
+
+
+[WebServer] npm notice run node dist/index.js
+
+[WebServer] (node:1712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:1712) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 1 test using 1 worker
+
+
+(node:39368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests
+  1) [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('button', { name: 'Play in Mexican Spanish', exact: true })
+    Expected: "ES-MX"
+    Timeout: 7000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('button', { name: 'Play in Mexican Spanish', exact: true }) with timeout 7000ms
+      - waiting for getByRole('button', { name: 'Play in Mexican Spanish', exact: true })
+
+
+      174 |   await page.setViewportSize({ width: 540, height: 820 });
+      175 |   await page.getByRole('button', { name: 'Play board', exact: true }).click();
+    > 176 |   await expect(page.getByRole('button', { name: 'Play in Mexican Spanish', exact: true })).toHaveText('ES-MX');
+          |                                                                                            ^
+      177 |   await expect(page.getByRole('button', { name: 'Play in Spanish', exact: true })).toHaveText('ES-ES');
+      178 |   await leaveBoard(page);
+      179 |   await page.setViewportSize({ width: 1180, height: 900 });
+        at C:\Users\MChar\Documents\Codex\2026-10-06\task-8\little-say-before\tests\web\app.spec.ts:176:92
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\app-regional-language-pref-2d969-anual-cards-and-AI-requests-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+  1 failed
+    [chromium] ΓÇ║ tests\web\app.spec.ts:163:1 ΓÇ║ regional language preferences drive manual cards and AI requests 

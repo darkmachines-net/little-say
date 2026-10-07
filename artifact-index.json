@@ -1,0 +1,289 @@
+{
+  "purpose": "Exact-byte retained artifact identities; commit also binds this index",
+  "files": [
+    {
+      "path": "baseline-regional.log",
+      "sha256": "77d6071defe0c324c6aebdc82a8bf16f746bc52b3b5e2be244fd63cffc5ff6d7"
+    },
+    {
+      "path": "before-build.log",
+      "sha256": "f7852f8ac2d11f55306f8f9700174e98ab6fd47d3bb2632a7015dcc631fe3ac2"
+    },
+    {
+      "path": "browser-committed.log",
+      "sha256": "50f37b297135c2bb08a2220d5530959f17d928a28ebd55b5815f8b0d2c64c946"
+    },
+    {
+      "path": "browser-final.log",
+      "sha256": "89dedf1f980f09f90ac49e707e1596fd5629642c938c37617bf4a12cf4237c6d"
+    },
+    {
+      "path": "browser-suite.log",
+      "sha256": "01210567cdaa3354298a299753c086ddbb413ba1119d4dd250fb48c7c8985ba3"
+    },
+    {
+      "path": "build-committed.log",
+      "sha256": "7b7899ab376abf443596a214c7514825445dab10873758daf1664f06fdc7d65f"
+    },
+    {
+      "path": "capture-grid-preview.mjs",
+      "sha256": "70475562bd9386e5162b3042fe7003463b72f62a3560b62c343d131942bd5cd9"
+    },
+    {
+      "path": "capture-grid-v1.mjs",
+      "sha256": "f3af0a8150ec51c5ed6d488f6e05293d96dd07488104cbe1f9e2303f926f177f"
+    },
+    {
+      "path": "capture-grid.mjs",
+      "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923"
+    },
+    {
+      "path": "check-final.log",
+      "sha256": "e7b44bb7028c76ddc6e443e9b3b41a42e2f386c221140df1279e795ff01b3529"
+    },
+    {
+      "path": "grid-playwright.config.ts",
+      "sha256": "167993110b5007d3c9afd0826d3d41a603db4c0c3af6b98beffb51bbe874f4da"
+    },
+    {
+      "path": "inspect-density.mjs",
+      "sha256": "3791bbe779f3d808493564b2370e95f0c020ec8a18034a5b13c354e5af231c4d"
+    },
+    {
+      "path": "native-committed.log",
+      "sha256": "59e453988e724f1fa8f84e2ec078cb89e854c205c274c899ca3341b28a1e9d53"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1a27ad1b29b62c890907805514b8439506a2e31eae6aec5b59a32d038007c919"
+    },
+    {
+      "path": "source-scope.json",
+      "sha256": "02463d8fa6c0e909faa4136cee0528195633e75978c496b0093034725e3163a4"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "3f46ab4cf8e4e011f08cad9aa1f8b73894c650fe4d28e484fa01c1340bccab09"
+    },
+    {
+      "path": "ui-final/after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7"
+    },
+    {
+      "path": "ui-final/after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-final/after-server-owner.json",
+      "sha256": "2de24d58b48d275b8b5dd9177fe5a99278e48f147d9d1fb5114f0760c2cb31e8"
+    },
+    {
+      "path": "ui-final/after-server.log",
+      "sha256": "d4eeb571a6e42f6c04325edd274b3b304bfbb556531e6ae21880f2df7fbb47ee"
+    },
+    {
+      "path": "ui-final/after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c"
+    },
+    {
+      "path": "ui-final/after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891"
+    },
+    {
+      "path": "ui-final/after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768"
+    },
+    {
+      "path": "ui-final/after-twenty-four-phone.png",
+      "sha256": "1abbab430b8bdfcf0e59d1f335e26040a7a3ddef344f5e36cc4359fed56b17c7"
+    },
+    {
+      "path": "ui-final/before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f"
+    },
+    {
+      "path": "ui-final/before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-final/before-server-owner.json",
+      "sha256": "2efdbcd246ffde4d8b86838747b87faa7f98027649ea37e24595ef875d1347e6"
+    },
+    {
+      "path": "ui-final/before-server.log",
+      "sha256": "73adb8bab2572ac86d4435f4373321433fac82fe4a6f9703e0b91f2f609784f6"
+    },
+    {
+      "path": "ui-final/before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7"
+    },
+    {
+      "path": "ui-final/before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9"
+    },
+    {
+      "path": "ui-final/before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d"
+    },
+    {
+      "path": "ui-final/before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d"
+    },
+    {
+      "path": "ui-final/manifest.json",
+      "sha256": "25ec4853fff42a7ced7f1e4298c9f542aa3342ccab4bde444c6e147550107f9d"
+    },
+    {
+      "path": "ui-final2/after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7"
+    },
+    {
+      "path": "ui-final2/after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-final2/after-server-owner.json",
+      "sha256": "f177fa33dd184f0b8a4db40736bc3ecaf832cf17df312e375fb5cafd2cb7eb4e"
+    },
+    {
+      "path": "ui-final2/after-server.log",
+      "sha256": "80ed2512803ff6cb2ac8e6a23ff47fec76968f394b0989790ed3db509f40d820"
+    },
+    {
+      "path": "ui-final2/after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c"
+    },
+    {
+      "path": "ui-final2/after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891"
+    },
+    {
+      "path": "ui-final2/after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768"
+    },
+    {
+      "path": "ui-final2/after-twenty-four-phone.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d"
+    },
+    {
+      "path": "ui-final2/before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f"
+    },
+    {
+      "path": "ui-final2/before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-final2/before-server-owner.json",
+      "sha256": "ace64797370df7985133c7e7b6578b1a4228a643608cb5078c55879846757a02"
+    },
+    {
+      "path": "ui-final2/before-server.log",
+      "sha256": "1242445ae77732ed9f0169f1921e6a49ec759f88dd154727950221d3bd70b001"
+    },
+    {
+      "path": "ui-final2/before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7"
+    },
+    {
+      "path": "ui-final2/before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9"
+    },
+    {
+      "path": "ui-final2/before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d"
+    },
+    {
+      "path": "ui-final2/before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d"
+    },
+    {
+      "path": "ui-final2/manifest.json",
+      "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214"
+    },
+    {
+      "path": "ui-inspect/after-dense.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d"
+    },
+    {
+      "path": "ui-inspect/after-server-owner.json",
+      "sha256": "9af2dbe9d23b124c28164eb750d4c8b6e78d09f233b4e3e7fed4e13c3bb8c905"
+    },
+    {
+      "path": "ui-inspect/after-server.log",
+      "sha256": "056573ee382fa5e13be5514d655496caaf12adeea290c9fd23373573147a042c"
+    },
+    {
+      "path": "ui-inspect/manifest.json",
+      "sha256": "33ad58cce2d4ec21660480b604425db4e4bdf72368e6fbbfffc1e5d536f89fc9"
+    },
+    {
+      "path": "ui-preview/after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7"
+    },
+    {
+      "path": "ui-preview/after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-preview/after-server-owner.json",
+      "sha256": "f9e34f79ef0d9f97f421c047f0a16723565041018d5ff73fa0e2e29d04144b81"
+    },
+    {
+      "path": "ui-preview/after-server.log",
+      "sha256": "db0af9e9a074edb16beee29327a443fbb55878d0feccd7eb57ee0a14fa4ac1ad"
+    },
+    {
+      "path": "ui-preview/after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c"
+    },
+    {
+      "path": "ui-preview/after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891"
+    },
+    {
+      "path": "ui-preview/after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768"
+    },
+    {
+      "path": "ui-preview/after-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d"
+    },
+    {
+      "path": "ui-preview/before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f"
+    },
+    {
+      "path": "ui-preview/before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2"
+    },
+    {
+      "path": "ui-preview/before-server-owner.json",
+      "sha256": "f77f27d643a2557a0bd1a316e3222969f0514689a15f92e25e85349447d116a6"
+    },
+    {
+      "path": "ui-preview/before-server.log",
+      "sha256": "153cea99e81f679b98ae20437cb757c0d14c6fa975595cec11660b1f77501089"
+    },
+    {
+      "path": "ui-preview/before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7"
+    },
+    {
+      "path": "ui-preview/before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9"
+    },
+    {
+      "path": "ui-preview/before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d"
+    },
+    {
+      "path": "ui-preview/before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d"
+    },
+    {
+      "path": "ui-preview/manifest.json",
+      "sha256": "a6a846868a5c52a0577406f8fc45ee494875b466497fdaaf084140c3953581e3"
+    }
+  ]
+}

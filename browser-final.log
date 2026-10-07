@@ -1,0 +1,99 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run playwright test tests/web/grid.spec.ts tests/web/photos.spec.ts tests/web/pictures.spec.ts --config artifacts/grid-playwright.config.ts --reporter=line
+[WebServer] npm notice run little-say-workspace@0.2.0 start
+
+[WebServer] npm notice run npm run start -w @little-say/server
+
+
+[WebServer] npm notice run @little-say/server@0.2.0 start
+
+[WebServer] npm notice run node dist/index.js
+
+[WebServer] (node:37956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:37956) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 36 tests using 1 worker
+
+(node:35764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 1 cards fill balanced rows across tablet and phone rotation
+[2/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 2 cards fill balanced rows across tablet and phone rotation
+[3/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 3 cards fill balanced rows across tablet and phone rotation
+[4/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 4 cards fill balanced rows across tablet and phone rotation
+[5/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 5 cards fill balanced rows across tablet and phone rotation
+[6/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 6 cards fill balanced rows across tablet and phone rotation
+[7/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 7 cards fill balanced rows across tablet and phone rotation
+[8/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 8 cards fill balanced rows across tablet and phone rotation
+[9/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 9 cards fill balanced rows across tablet and phone rotation
+[10/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 11 cards fill balanced rows across tablet and phone rotation
+[11/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 23 cards fill balanced rows across tablet and phone rotation
+[12/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:54:3 ΓÇ║ 24 cards fill balanced rows across tablet and phone rotation
+[13/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:83:1 ΓÇ║ rotation preserves speech and cancels contacts measured against the old grid
+[14/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:113:1 ΓÇ║ dense phone cards retain whole pictures and long multilingual accessible names
+  1) [chromium] ΓÇ║ tests\web\grid.spec.ts:113:1 ΓÇ║ dense phone cards retain whole pictures and long multilingual accessible names 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 20
+    Received:    19.5
+
+    Call Log:
+    - Test timeout of 45000ms exceeded
+
+      125 |       expect(emoji.y).toBeGreaterThanOrEqual(frame.y - 1);
+      126 |       expect(emoji.y + emoji.height).toBeLessThanOrEqual(frame.y + frame.height + 1);
+    > 127 |     }).toPass();
+          |        ^
+      128 |     await card.focus(); await page.keyboard.press('Enter');
+      129 |     expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Word 24']);
+      130 |   }
+        at C:\Users\MChar\Documents\Codex\2026-10-06\task-8\little-say-grid\tests\web\grid.spec.ts:127:8
+
+    attachment #1: screenshot (image/png) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\grid-dense-phone-cards-ret-b46ae-ltilingual-accessible-names-chromium\test-failed-1.png
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+    Error Context: test-results\grid-dense-phone-cards-ret-b46ae-ltilingual-accessible-names-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    test-results\grid-dense-phone-cards-ret-b46ae-ltilingual-accessible-names-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\grid-dense-phone-cards-ret-b46ae-ltilingual-accessible-names-chromium\trace.zip
+
+    ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+
+
+
+(node:4644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[15/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:134:3 ΓÇ║ 7-card editor preview remains balanced and editable
+[16/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:134:3 ΓÇ║ 24-card editor preview remains balanced and editable
+[17/36] [chromium] ΓÇ║ tests\web\grid.spec.ts:153:1 ΓÇ║ a tiny play window explains its limit and recovers on resize
+[18/36] [chromium] ΓÇ║ tests\web\photos.spec.ts:56:1 ΓÇ║ fine crop controls match the final photo in the editor, library and rotated offline play board
+[19/36] [chromium] ΓÇ║ tests\web\photos.spec.ts:89:1 ΓÇ║ pinch zoom and one-finger repositioning work without scrolling the crop away
+[20/36] [chromium] ΓÇ║ tests\web\photos.spec.ts:108:1 ΓÇ║ cancelled crops and replacement uploads preserve the saved photo, including after reload
+[21/36] [chromium] ΓÇ║ tests\web\photos.spec.ts:123:1 ΓÇ║ duplicate family cards can frame different people without modifying their shared image
+[22/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:43:1 ΓÇ║ a complete emoji board is ready to save without suggesting AI illustrations
+[23/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:62:1 ΓÇ║ Automatic fills only a gap and illustration changes remain available in Picture settings
+[24/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:109:1 ΓÇ║ construction pictures are staged, generated by default, saved offline, and retained in later text edits
+[25/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:140:1 ΓÇ║ stopping picture jobs cancels queued work and discards the partial preview without saving it
+[26/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:177:1 ΓÇ║ manual library selection needs no AI permission and saves attribution plus a protected offline picture
+[27/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:195:1 ΓÇ║ board restyling previews changes, preserves a protected card, and supports returning to emoji
+[28/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:222:1 ΓÇ║ picture sources use a compact explained selector with keyboard dismissal and no duplicate generation gate
+[29/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:245:1 ΓÇ║ card source choices show their inherited value and can return to following the board
+[30/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:261:1 ΓÇ║ full-page canvas streams finished pictures, distinguishes active and queued work, and keeps settings accessible
+[31/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:320:1 ΓÇ║ missing library and disabled server generation keep a usable emoji board with one summary
+[32/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Library only and explicit overrides
+[33/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:343:94 ΓÇ║ migrated cards honor inherited Emoji only and explicit overrides
+[34/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture close
+[35/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture stop
+[36/36] [chromium] ΓÇ║ tests\web\pictures.spec.ts:370:59 ΓÇ║ saved tile edits survive automatic picture apply
+  1 failed
+    [chromium] ΓÇ║ tests\web\grid.spec.ts:113:1 ΓÇ║ dense phone cards retain whole pictures and long multilingual accessible names 
+  35 passed (2.5m)
