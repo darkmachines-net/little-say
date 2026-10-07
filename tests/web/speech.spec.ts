@@ -16,10 +16,11 @@ test('generates from draft text and language, regenerates, persists offline, and
   const requests: { text: string; language: string; regenerate: boolean }[] = [];
   await page.addInitScript(() => {
     const w = window as any;
-    w.__audioPlayed = []; w.__spoken = []; w.__failAudio = false;
+    w.__audioPlayed = []; w.__audioEnded = 0; w.__spoken = []; w.__failAudio = false;
     const original = HTMLMediaElement.prototype.play;
     HTMLMediaElement.prototype.play = function () {
       w.__audioPlayed.push(this.src);
+      this.addEventListener('ended', () => { w.__audioEnded++; }, { once: true });
       return w.__failAudio ? Promise.reject(new Error('Audio unavailable')) : original.call(this);
     };
     w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
@@ -80,7 +81,22 @@ test('generates from draft text and language, regenerates, persists offline, and
   await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed.length)).toBe(1);
   expect(await page.evaluate(() => (window as any).__audioPlayed[0])).toMatch(/^blob:/);
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
-  await page.waitForTimeout(700); // The real fixture is 0.5 seconds long.
+  // Wait for the real media terminal event and idle UI, not an assumed clip duration.
+  await expect.poll(() => page.evaluate(() => (window as any).__audioEnded)).toBe(1);
+  await expect(page.getByTestId('tile-playing')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Babushka', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__audioEnded)).toBe(2);
+  await expect(page.getByTestId('tile-playing')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Mama', exact: true }).click();
+  // Background preparation may already have cached this other card too.
+  await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed.length + (window as any).__spoken.length)).toBe(3);
+  await expect(page.getByTestId('tile-playing')).toHaveCount(0);
+  if (await page.evaluate(() => (window as any).__audioPlayed.length) === 3) {
+    await expect.poll(() => page.evaluate(() => (window as any).__audioEnded)).toBe(3);
+  } else {
+    expect(await page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Mama', language: 'en-US' }]);
+  }
+  await page.evaluate(() => { (window as any).__spoken = []; });
   await page.evaluate(() => { (window as any).__failAudio = true; });
   await page.getByRole('button', { name: 'Babushka', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Привет, бабушка', language: 'ru-RU' }]);

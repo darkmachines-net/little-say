@@ -19,7 +19,8 @@ export function audioPlayback(): SpeechDriver<string> {
       const subscription = player.addListener('playbackStatusUpdate', status => {
         if (!active) return;
         if (status.isLoaded) clearTimeout(timeout);
-        if (status.playbackState === 'error') failed();
+        // Expo reports decoder/playback failures in error, independently of the platform state.
+        if (status.error !== null && status.error !== undefined) failed();
         else if (status.didJustFinish) done();
       });
       cleanup = () => {
