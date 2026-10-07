@@ -77,8 +77,8 @@ export function relevantFile(path: string, target: 'server' | 'web' | 'android' 
 
 /** Calculate a target's input identity at a Git revision, including only its installed dependency graph. */
 export function sourceInputs(ref: string, target: 'server' | 'android' | 'ios', cwd = root): string {
-  const tree = new Map(git(['ls-tree', '-r', '--format=%(objectname)%x09%(path)', ref], cwd).split(/\r?\n/).map(line => {
-    const split = line.indexOf('\t'); return [line.slice(split + 1), line.slice(0, split)];
+  const tree = new Map(git(['ls-tree', '-r', '-z', ref], cwd).split('\0').filter(Boolean).map(line => {
+    const split = line.indexOf('\t'); return [line.slice(split + 1), line.slice(0, split).split(' ').at(-1)!];
   }));
   const paths = [...tree.keys()];
   const all = new Set(paths);

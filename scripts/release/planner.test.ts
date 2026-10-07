@@ -119,6 +119,8 @@ describe('real Git snapshots and candidate contracts', () => {
     write('README.md', 'docs'); git(['add', '.'], dir); git(['commit', '-m', 'docs'], dir); expect(sourceInputs('HEAD', 'server', dir)).toBe(before);
     git(['mv', 'apps/server/src/app.ts', 'apps/server/src/server.ts'], dir); git(['commit', '-m', 'rename'], dir); expect(sourceInputs('HEAD', 'server', dir)).not.toBe(before);
     git(['revert', '--no-edit', 'HEAD'], dir); expect(sourceInputs('HEAD', 'server', dir)).toBe(before);
+    write('apps/server/src/é.ts', 'unicode path input'); git(['add', '.'], dir); git(['commit', '-m', 'unicode source'], dir);
+    expect(sourceInputs('HEAD', 'server', dir)).not.toBe(before); git(['revert', '--no-edit', 'HEAD'], dir);
     git(['rm', 'apps/server/src/app.ts'], dir); git(['commit', '-m', 'delete'], dir); expect(sourceInputs('HEAD', 'server', dir)).not.toBe(before);
   });
   it('ignores allocated versions but rejects any extra functional candidate change', () => {
