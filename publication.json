@@ -1,0 +1,507 @@
+{
+  "checkedAtUtc": "2026-10-07T02:53:03.663Z",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/35",
+  "issue": "https://github.com/MChartier/little-say/issues/23",
+  "actualTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "head": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "ultimateTarget": "MChartier/little-say/master",
+  "prBodySha256": "dd8394f2c1f7153af1e488cc385eba62f0045b3ccc6ccefeac7984fd5c036070",
+  "prBody": "## Summary\n\nLittle Say's model instructions and starter messages are embedded in business logic, making prompt changes difficult to find and review. This moves the existing text into documented top-level JSON resources with typed validation and literal substitution. Models receive the same requests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets work through the existing Node/Expo builds without Docker or package-script changes. Deferred ChatGPT grants in PR20 are outside this change. PR26 is merged; account PR24 was replaced by PR29 and is not a prerequisite.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run the same synthetic requests against master and this extraction, including Unicode, quotes, dollar signs, braces and newlines. | Complete serialized model payloads and all starter/preset outputs are byte-identical. Both picture styles, speech languages, and default/configured models are covered. Deliberately removing the addendum newline fails the maintained regression test. | [Before/After captures and comparison](https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/README.md#observable-contract) |\n| Load prompts from source and a relocated ESM bundle; export web, iOS and Android. | Source and bundled loading pass. The relocated production server returns HTTP 200 with AI disabled. Client bundles contain shared presets and no server prompt markers. Invalid resources/substitutions fail clearly. | [Runtime and bundle results](https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/runtime-report.json) |\n| Create/refine starter boards and conversations with mocked providers, including cancellation and failed saves. | All 17 existing Chromium scenarios pass; prompts, drafts, consent and recovery behavior remain intact. | [Browser results](https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/browser-final.log) |\n\n### Non-UI observable contract\n\nThis is text/resource separation with unchanged UI and request behavior. Exact payload comparison is the relevant Before/After evidence; no visual change or screenshot comparison is claimed. Baseline is master `1f032905`; source under review is `ea87b78e`. [Immutable provenance and full source bindings](https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/manifest.json) preserve the capture inputs, harnesses and build identities outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: release metadata, types, 217 tests, server bundle and web export. iOS/Android Metro exports and the source-free prompt bundle test passed. Docker's engine was unavailable, so no container build/run is claimed; resource inclusion was verified through the unchanged dist-copy layout and relocated runtime. Native device execution and live inference were not run. Independent review/QA remains pending.",
+  "issueBodySha256": "1aeb799cef9c5b4c125ebf1d301a0d6b552694eb97ea8bf2f152c4feccecc8c7",
+  "commits": [
+    {
+      "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "message": "Extract exact model prompts into versioned resources",
+      "scope": "Issue23 exact resource extraction, typed loading/substitution and necessary regression/packaging tests."
+    }
+  ],
+  "files": [
+    {
+      "filename": "apps/mobile/src/ui/AiConversation.tsx",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "apps/server/src/picture-provider.ts",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 6,
+      "deletions": 6,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "apps/server/src/prompts.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 24,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "apps/server/src/provider.ts",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 5,
+      "deletions": 18,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "apps/server/src/synthesis.ts",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 36,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    },
+    {
+      "filename": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 9,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    },
+    {
+      "filename": "apps/server/test/prompt-payloads.test.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 100,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    },
+    {
+      "filename": "apps/server/test/prompt-presets.test.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 12,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    },
+    {
+      "filename": "packages/core/src/index.ts",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "packages/core/src/onboarding.ts",
+      "previousFilename": null,
+      "status": "modified",
+      "additions": 5,
+      "deletions": 4,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "packages/core/src/promptPresets.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 10,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "packages/core/src/promptResources.test.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 22,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    },
+    {
+      "filename": "packages/core/src/promptResources.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 24,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "prompts/README.md",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 19,
+      "deletions": 0,
+      "rationale": "Maintained resource caller/substitution and packaging guide"
+    },
+    {
+      "filename": "prompts/server/board.json",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 6,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "prompts/server/pictures.json",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 9,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "prompts/server/speech.json",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 3,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "prompts/shared/conversation.json",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 5,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "prompts/shared/onboarding.json",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 6,
+      "deletions": 0,
+      "rationale": "Scoped production resource, typed helper or existing prompt/preset caller"
+    },
+    {
+      "filename": "scripts/prompt-bundle.test.ts",
+      "previousFilename": null,
+      "status": "added",
+      "additions": 35,
+      "deletions": 0,
+      "rationale": "Maintained prompt/packaging regression contract"
+    }
+  ],
+  "scopeTotals": {
+    "commits": 1,
+    "files": 21,
+    "additions": 342,
+    "deletions": 30
+  },
+  "evidence": {
+    "commit": "e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f",
+    "manifestSha256": "96c59178d5fb560a3b6a77e2b95a7ac5ad0034fcd5d53e21bba8efd196f527b3",
+    "remoteTreeFilesVerified": 29
+  },
+  "issueComments": [
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029576641",
+      "html_url": "https://github.com/MChartier/little-say/issues/23#issuecomment-6029576641",
+      "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/23",
+      "id": 6029576641,
+      "node_id": "IC_kwDOU65Oyc8AAAABZ2QJwQ",
+      "user": {
+        "login": "MChartier",
+        "id": 1258197,
+        "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/MChartier",
+        "html_url": "https://github.com/MChartier",
+        "followers_url": "https://api.github.com/users/MChartier/followers",
+        "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+        "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+        "organizations_url": "https://api.github.com/users/MChartier/orgs",
+        "repos_url": "https://api.github.com/users/MChartier/repos",
+        "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/MChartier/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-07T02:26:13Z",
+      "updated_at": "2026-10-07T02:26:13Z",
+      "body": "Pre-dispatch scope checkpoint (2026-10-07T02:26:15.398470+00:00). Current master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` still contains the identified production prompt prose. Intake passes for exact-text resource extraction and packaged-load regression checks; no new product decision is needed. Proposed branch: `refactor/prompt-resources-issue23` from that master (remote branch absent when checked). No branch/worktree created and no implementation dispatched.\n\nImplementation owner remains unassigned; no original native planner/task identity is present in the issue, its retained original, Project or available supported audit records. Coordinator must assign one writer and record its verified task identity before execution; the owner must recheck local/remote ownership and current base. This is a pre-dispatch reservation for #23, not an execution claim.\n\nScope: server prompt resources/helpers, core starter prompt resources, and only preset imports in AiConversation; exclude PlayBoard, BoardEditor, TileEditor, geometry, hold/navigation and translation behavior. Preserve exact assembled text, whitespace, literal substitutions, audio/cache identities and server/client packaging boundaries. Deferred PR20 remains deferred; account completion is not a prerequisite. Coordinate any newly discovered overlap before editing.",
+      "author_association": "OWNER",
+      "pin": null,
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029576641/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
+  ],
+  "comments": [
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029843618",
+      "html_url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029843618",
+      "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/35",
+      "id": 6029843618,
+      "node_id": "IC_kwDOU65Oyc8AAAABZ2gcog",
+      "user": {
+        "login": "MChartier",
+        "id": 1258197,
+        "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/MChartier",
+        "html_url": "https://github.com/MChartier",
+        "followers_url": "https://api.github.com/users/MChartier/followers",
+        "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+        "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+        "organizations_url": "https://api.github.com/users/MChartier/orgs",
+        "repos_url": "https://api.github.com/users/MChartier/repos",
+        "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/MChartier/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-07T02:47:46Z",
+      "updated_at": "2026-10-07T02:47:46Z",
+      "body": "@codex review",
+      "author_association": "OWNER",
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029843618/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    },
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029846176",
+      "html_url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029846176",
+      "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/35",
+      "id": 6029846176,
+      "node_id": "IC_kwDOU65Oyc8AAAABZ2gmoA",
+      "user": {
+        "login": "chatgpt-codex-connector[bot]",
+        "id": 199175422,
+        "node_id": "BOT_kgDOC98s_g",
+        "avatar_url": "https://avatars.githubusercontent.com/in/1144995?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "followers_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/chatgpt-codex-connector%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-07T02:47:55Z",
+      "updated_at": "2026-10-07T02:47:55Z",
+      "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+      "author_association": "NONE",
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029846176/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": {
+        "id": 1144995,
+        "client_id": "Iv23liVemv8A9if9v0F2",
+        "slug": "chatgpt-codex-connector",
+        "node_id": "A_kwHOAOQ6Gs4AEXij",
+        "owner": {
+          "login": "openai",
+          "id": 14957082,
+          "node_id": "MDEyOk9yZ2FuaXphdGlvbjE0OTU3MDgy",
+          "avatar_url": "https://avatars.githubusercontent.com/u/14957082?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/openai",
+          "html_url": "https://github.com/openai",
+          "followers_url": "https://api.github.com/users/openai/followers",
+          "following_url": "https://api.github.com/users/openai/following{/other_user}",
+          "gists_url": "https://api.github.com/users/openai/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/openai/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/openai/subscriptions",
+          "organizations_url": "https://api.github.com/users/openai/orgs",
+          "repos_url": "https://api.github.com/users/openai/repos",
+          "events_url": "https://api.github.com/users/openai/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/openai/received_events",
+          "type": "Organization",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "name": "ChatGPT Codex Connector",
+        "description": "Bring ChatGPT and Codex to your GitHub repositories.",
+        "external_url": "https://www.chatgpt.com",
+        "html_url": "https://github.com/apps/chatgpt-codex-connector",
+        "created_at": "2025-02-14T01:37:05Z",
+        "updated_at": "2026-09-23T18:52:59Z",
+        "permissions": {
+          "actions": "write",
+          "checks": "read",
+          "contents": "write",
+          "emails": "read",
+          "issues": "write",
+          "metadata": "read",
+          "pull_requests": "write",
+          "statuses": "read",
+          "workflows": "write"
+        },
+        "events": [
+          "check_run",
+          "check_suite",
+          "commit_comment",
+          "issues",
+          "issue_comment",
+          "pull_request",
+          "pull_request_review",
+          "pull_request_review_comment",
+          "pull_request_review_thread",
+          "repository",
+          "status",
+          "sub_issues"
+        ]
+      },
+      "minimized": null
+    },
+    {
+      "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029880624",
+      "html_url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029880624",
+      "issue_url": "https://api.github.com/repos/MChartier/little-say/issues/35",
+      "id": 6029880624,
+      "node_id": "IC_kwDOU65Oyc8AAAABZ2itMA",
+      "user": {
+        "login": "MChartier",
+        "id": 1258197,
+        "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/MChartier",
+        "html_url": "https://github.com/MChartier",
+        "followers_url": "https://api.github.com/users/MChartier/followers",
+        "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+        "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+        "organizations_url": "https://api.github.com/users/MChartier/orgs",
+        "repos_url": "https://api.github.com/users/MChartier/repos",
+        "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/MChartier/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "created_at": "2026-10-07T02:50:40Z",
+      "updated_at": "2026-10-07T02:50:40Z",
+      "body": "The configured bot declined review solely because its code-review quota was reached ([exact refusal](https://github.com/MChartier/little-say/pull/35#issuecomment-6029846176)). No completed bot review is claimed and no retry was requested. Independent review/QA remains required under the recorded quota-only amendment.",
+      "author_association": "OWNER",
+      "reactions": {
+        "url": "https://api.github.com/repos/MChartier/little-say/issues/comments/6029880624/reactions",
+        "total_count": 0,
+        "+1": 0,
+        "-1": 0,
+        "laugh": 0,
+        "hooray": 0,
+        "confused": 0,
+        "heart": 0,
+        "rocket": 0,
+        "eyes": 0
+      },
+      "performed_via_github_app": null,
+      "minimized": null
+    }
+  ],
+  "reviews": [],
+  "inline": [],
+  "threads": [],
+  "closingIssues": [
+    {
+      "number": 23,
+      "url": "https://github.com/MChartier/little-say/issues/23"
+    }
+  ],
+  "issueFeedbackDispositions": [
+    {
+      "id": 6029576641,
+      "body": "Pre-dispatch scope checkpoint (2026-10-07T02:26:15.398470+00:00). Current master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` still contains the identified production prompt prose. Intake passes for exact-text resource extraction and packaged-load regression checks; no new product decision is needed. Proposed branch: `refactor/prompt-resources-issue23` from that master (remote branch absent when checked). No branch/worktree created and no implementation dispatched.\n\nImplementation owner remains unassigned; no original native planner/task identity is present in the issue, its retained original, Project or available supported audit records. Coordinator must assign one writer and record its verified task identity before execution; the owner must recheck local/remote ownership and current base. This is a pre-dispatch reservation for #23, not an execution claim.\n\nScope: server prompt resources/helpers, core starter prompt resources, and only preset imports in AiConversation; exclude PlayBoard, BoardEditor, TileEditor, geometry, hold/navigation and translation behavior. Preserve exact assembled text, whitespace, literal substitutions, audio/cache identities and server/client packaging boundaries. Deferred PR20 remains deferred; account completion is not a prerequisite. Coordinate any newly discovered overlap before editing.",
+      "disposition": "Executed scoped extraction from reverified actual master under assigned sole owner. Exact preset/import boundary preserved; no deferred grants, editor/layout, package-script or Docker changes. Independent QA remains pending."
+    }
+  ],
+  "feedbackDispositions": [
+    {
+      "id": 6029843618,
+      "url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029843618",
+      "updatedAt": "2026-10-07T02:47:46Z",
+      "body": "@codex review",
+      "disposition": "Single configured bot-review request; quota refusal recorded."
+    },
+    {
+      "id": 6029846176,
+      "url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029846176",
+      "updatedAt": "2026-10-07T02:47:55Z",
+      "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+      "disposition": "Quota-only bot refusal; no completed bot review claimed, no retry. Independent review/QA still required under direct amendment."
+    },
+    {
+      "id": 6029880624,
+      "url": "https://github.com/MChartier/little-say/pull/35#issuecomment-6029880624",
+      "updatedAt": "2026-10-07T02:50:40Z",
+      "body": "The configured bot declined review solely because its code-review quota was reached ([exact refusal](https://github.com/MChartier/little-say/pull/35#issuecomment-6029846176)). No completed bot review is claimed and no retry was requested. Independent review/QA remains required under the recorded quota-only amendment.",
+      "disposition": "Implementation status comment records the exact quota-only refusal and independent-QA requirement; no actionable code request."
+    }
+  ],
+  "checkRuns": [
+    {
+      "id": 112606227476,
+      "name": "check",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/MChartier/little-say/actions/runs/37563610911/job/112606227476",
+      "startedAt": "2026-10-07T02:46:51Z",
+      "completedAt": "2026-10-07T02:48:57Z"
+    }
+  ],
+  "independentQa": "Pending coordinator assignment; implementer does not award readiness.",
+  "isDraft": true,
+  "labels": []
+}
