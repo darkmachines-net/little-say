@@ -27,12 +27,18 @@ export function Illustration({ tile, size = 64 }: { tile: Tile; size?: number })
 }
 /**
  * Display the tile label and visual with separate playing, recently tapped, and pending speech
- * feedback.
+ * feedback. Opt-in frame fitting preserves pictures on dense play boards.
  */
-export function TileFace({ tile, compact = false, size = 64, playing = false, tapped = false, pending = false }: { tile: Tile; compact?: boolean; size?: number; playing?: boolean; tapped?: boolean; pending?: boolean }) {
+export function TileFace({ tile, compact = false, size = 64, playing = false, tapped = false, pending = false, fitToFrame = false }: { tile: Tile; fitToFrame?: boolean; compact?: boolean; size?: number; playing?: boolean; tapped?: boolean; pending?: boolean }) {
   const palette = palettes[tile.color];
-  return <View style={{ flex: 1, backgroundColor: palette.background, borderRadius: compact ? 14 : 24, overflow: 'hidden', borderWidth: 2, borderColor: pending ? theme.pending : 'transparent', padding: compact ? 5 : 12, justifyContent: 'center', alignItems: 'center', gap: compact ? 1 : 8 }}>
-    <View style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: compact ? 6 : 12, minHeight: 0 }}><Illustration tile={tile} size={size} /></View>
+  const [height, setHeight] = useState(Infinity);
+  const [picture, setPicture] = useState({ width: size, height: size * 1.25 });
+  const dense = fitToFrame && !compact && height < 140;
+  // Reserve label space first, then fit emoji inside the actual remaining picture frame. Dense
+  // boards need smaller gutters, not clipped pictures or smaller accessible touch targets.
+  const pictureSize = fitToFrame ? Math.max(0, Math.min(size, picture.width, picture.height / 1.25)) : size;
+  return <View onLayout={event => setHeight(event.nativeEvent.layout.height)} style={{ flex: 1, backgroundColor: palette.background, borderRadius: compact ? 14 : 24, overflow: 'hidden', borderWidth: 2, borderColor: pending ? theme.pending : 'transparent', padding: compact ? 5 : dense ? 4 : 12, justifyContent: 'center', alignItems: 'center', gap: compact ? 1 : dense ? 2 : 8 }}>
+    <View testID="tile-picture" onLayout={event => setPicture(event.nativeEvent.layout)} style={{ flex: 1, width: '100%', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: compact ? 6 : 12, minHeight: 0 }}><Illustration tile={tile} size={pictureSize} /></View>
     <Text accessible={false} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontSize: compact ? 12 : Math.max(17, Math.min(30, size * 0.4)), textAlign: 'center', fontWeight: '800', color: palette.ink, flexShrink: 0 }}>{tile.label}</Text>
     {playing && <View testID="tile-playing" pointerEvents="none" accessible={false} style={{ position: 'absolute', inset: 0, borderRadius: compact ? 8 : 20, borderWidth: 4, borderColor: theme.accent }}>
       <View style={{ position: 'absolute', top: 8, right: 8, padding: 5, borderRadius: 20, backgroundColor: theme.accent }}><Volume2 size={18} color="white" /></View>

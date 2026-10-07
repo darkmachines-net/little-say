@@ -37,9 +37,8 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
     const tile: Tile = { id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: board.playLanguages?.length ? 'board' : 'fixed', color: colors[board.tiles.length % colors.length], illustration: { kind: 'emoji', emoji: word.emoji } };
     setTiles([...board.tiles, tile]); setEditing(tile);
   };
-  const layout = gridLayout(board.tiles.length, Math.max(100, area.width - 24), Math.max(100, area.height - 24), 8);
-  const cellWidth = Math.max(44, Math.min(164, layout.width));
-  const cellHeight = Math.max(64, Math.min(148, layout.height));
+  const layout = gridLayout(board.tiles.length, Math.max(44, area.width - 24), Math.max(1, area.height - 24), 8,
+    { minHeight: 64, maxWidth: 164, maxHeight: 148, scroll: true });
   const audioTiles = boardAudioTiles(board);
   const readyAudio = audioTiles.filter(tile => audio.asset(tile)).length;
   const preparingAudio = audioTiles.filter(tile => audio.status(tile).state === 'preparing').length;
@@ -61,8 +60,8 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
       <View style={{ flex: 1, minHeight: 0, flexDirection: wide ? 'row' : 'column', gap: 14 }}>
         <View testID="editor-preview" onLayout={event => setArea(event.nativeEvent.layout)} style={{ flex: 1, minHeight: 80, borderRadius: 22, backgroundColor: theme.surface, overflow: 'hidden' }}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 12 }}>
-            <View style={{ width: layout.columns * cellWidth + (layout.columns - 1) * 8, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {board.tiles.map(tile => <Pressable key={tile.id} accessibilityRole="button" accessibilityLabel={`Edit tile ${tile.label}`} onPress={() => setEditing(tile)} style={({ pressed }) => ({ width: cellWidth, height: cellHeight, opacity: pressed ? 0.75 : 1 })}><TileFace tile={tile} compact size={Math.min(64, cellHeight * 0.43)} /></Pressable>)}
+            <View style={{ width: layout.width, height: layout.height }}>
+              {board.tiles.map((tile, index) => { const rect = layout.rects[index]; return rect && <Pressable key={tile.id} accessibilityRole="button" accessibilityLabel={`Edit tile ${tile.label}`} onPress={() => setEditing(tile)} style={({ pressed }) => ({ position: 'absolute', left: rect.x, top: rect.y, width: rect.width, height: rect.height, opacity: pressed ? 0.75 : 1 })}><TileFace tile={tile} compact size={Math.min(64, rect.height * 0.43)} /></Pressable>; })}
             </View>
           </ScrollView>
         </View>

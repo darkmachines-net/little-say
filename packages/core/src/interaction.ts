@@ -125,18 +125,4 @@ export class ParentExitGesture {
   cancel() { this.contact = null; }
 }
 
-/**
- * Choose a grid for a positive tile count and available pixel bounds, balancing usable tile size and
- * shape with the requested gap.
- */
-export function gridLayout(count: number, width: number, height: number, gap = 12) {
-  let best = { columns: 1, rows: count, width, height: height / count, score: -Infinity };
-  for (let columns = 1; columns <= Math.min(count, 8); columns++) {
-    const rows = Math.ceil(count / columns);
-    const w = (width - gap * (columns - 1)) / columns;
-    const h = (height - gap * (rows - 1)) / rows;
-    const score = Math.min(w, h) - Math.abs(Math.log(Math.max(w, 1) / Math.max(h, 1))) * 20 - (rows * columns - count) * 2;
-    if (score > best.score) best = { columns, rows, width: w, height: h, score };
-  }
-  return best;
-}
+export { gridLayout, type CardRect, type GridLayout, type GridOptions } from './boardLayout';

@@ -75,10 +75,12 @@ describe('parent hold and fixed layout', () => {
   it.each([[768, 880], [1120, 650], [360, 670]])('fits every tile without scrolling at %i × %i', (width, height) => {
     for (let count = 1; count <= 24; count++) {
       const layout = gridLayout(count, width, height);
-      expect(layout.columns * layout.rows).toBeGreaterThanOrEqual(count);
-      expect(layout.width * layout.columns + 12 * (layout.columns - 1)).toBeLessThanOrEqual(width + 0.01);
-      expect(layout.height * layout.rows + 12 * (layout.rows - 1)).toBeLessThanOrEqual(height + 0.01);
-      expect(Math.min(layout.width, layout.height)).toBeGreaterThan(44);
+      expect(layout.rects).toHaveLength(count);
+      for (const rect of layout.rects) {
+        expect(rect.x + rect.width).toBeLessThanOrEqual(width + 0.01);
+        expect(rect.y + rect.height).toBeLessThanOrEqual(height + 0.01);
+        expect(Math.min(rect.width, rect.height)).toBeGreaterThan(44);
+      }
     }
   });
 });

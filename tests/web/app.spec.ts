@@ -173,7 +173,8 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('button', { name: 'Build manually', exact: true }).click();
   await page.setViewportSize({ width: 540, height: 820 });
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Play in Mexican Spanish', exact: true })).toHaveText('ES-MX');
+  // Intl.DisplayNames uses either regional spelling across supported browser/CLDR versions.
+  await expect(page.getByRole('button', { name: /^Play in (Mexican Spanish|Spanish \(Mexico\))$/ })).toHaveText('ES-MX');
   await expect(page.getByRole('button', { name: 'Play in Spanish', exact: true })).toHaveText('ES-ES');
   await leaveBoard(page);
   await page.setViewportSize({ width: 1180, height: 900 });
