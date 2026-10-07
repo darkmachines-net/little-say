@@ -1,0 +1,111 @@
+{
+  "beforeAfterPayloadBytesEqual": true,
+  "beforeAfterPresetBytesEqual": true,
+  "bundles": [
+    {
+      "platform": "web",
+      "serverPromptMarkersAbsent": [
+        "board.instructions",
+        "board.pictures",
+        "board.translation",
+        "board.transcription",
+        "pictures.visualRules",
+        "pictures.analysis",
+        "pictures.selection",
+        "pictures.review",
+        "pictures.color",
+        "pictures.line",
+        "pictures.generation",
+        "speech.instructions"
+      ],
+      "sharedPromptMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\App-dd04d083665bb72107758e76d66fd6ce.js",
+          "bytes": 5761800,
+          "sha256": "8f71e04d2b55fcf6cd68ad54dcca43859b5fc1b4dfa830f52709b18fe01c7e2e"
+        },
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\index-3e4c181f0c61d5227a99f4d463cd8d53.js",
+          "bytes": 359876,
+          "sha256": "801b6c86ab42ebdd80a2b505430584274c4ed90684739ced2138df04388f9f9e"
+        }
+      ]
+    },
+    {
+      "platform": "ios",
+      "serverPromptMarkersAbsent": [
+        "board.instructions",
+        "board.pictures",
+        "board.translation",
+        "board.transcription",
+        "pictures.visualRules",
+        "pictures.analysis",
+        "pictures.selection",
+        "pictures.review",
+        "pictures.color",
+        "pictures.line",
+        "pictures.generation",
+        "speech.instructions"
+      ],
+      "sharedPromptMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\ios\\index-f5f6361364ea89f16f73b66385ef3710.hbc",
+          "bytes": 6855447,
+          "sha256": "6c75859423942c95b756613a70bafac090d07f6127e13b24c94ca175a7c50552"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "serverPromptMarkersAbsent": [
+        "board.instructions",
+        "board.pictures",
+        "board.translation",
+        "board.transcription",
+        "pictures.visualRules",
+        "pictures.analysis",
+        "pictures.selection",
+        "pictures.review",
+        "pictures.color",
+        "pictures.line",
+        "pictures.generation",
+        "speech.instructions"
+      ],
+      "sharedPromptMarkersPresent": true,
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\android\\index-35556cb8d822daa2c55b9842370c95f9.hbc",
+          "bytes": 6860310,
+          "sha256": "30b79712e4cc42433179d0cc8d20173d2df259babdb4336e2ddb4300a08d7af3"
+        }
+      ]
+    }
+  ],
+  "sourceTsx": {
+    "exitCode": 0,
+    "outputSha256": "66d79aaa7cbd192e3ceb33a78c6adb8526e5ffaec0b895a4f6d1595d004db5ac"
+  },
+  "runtime": {
+    "status": 200,
+    "health": {
+      "status": "ok",
+      "aiConfigured": false,
+      "version": "0.2.0",
+      "pictures": {
+        "version": 1,
+        "catalog": true,
+        "analysis": false,
+        "generation": false
+      }
+    },
+    "layout": [
+      "server/*.js",
+      "package.json",
+      "external node_modules junction"
+    ],
+    "sourceOrPromptsDirectoriesCopied": false,
+    "serverBundleSha256": "d0465482cbaf4c61365b0110ab8f2e4ca5da7e8bf233c5b66e8e5eae84feaef5"
+  }
+}

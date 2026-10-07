@@ -1,0 +1,56 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-12/little-say-prompts
+
+ ❯ apps/server/test/prompt-payloads.test.ts (2 tests | 1 failed) 19ms
+   × preserves complete board, picture, transcription and speech requests with literal hostile-looking data 17ms
+
+  Snapshots  1 failed
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:44:37
+   Duration  1.36s (transform 895ms, setup 0ms, import 1.20s, tests 19ms, environment 0ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/server/test/prompt-payloads.test.ts > preserves complete board, picture, transcription and speech requests with literal hostile-looking data
+Error: Snapshot `preserves complete board, picture, transcription and speech requests with literal hostile-looking data 1` mismatched
+
+- Expected
++ Received
+
+@@ -1,9 +1,9 @@
+  {
+    "client-options": "380bea17d9fb685de220b7d64da9473583a652ff9587f7f12c45d8f15e718448",
+    "configured/analyze": "9f9b7e4a827d0ac6abf215edb38fa0077abc90eee3c7a3cfd30b1286469a5a6c",
+-   "configured/board/1": "e0f272fdebb6b1522f8a1a1d6d3840df8397ae8e9d7283312e2972691004d4e9",
++   "configured/board/1": "4bc96ca4edaafde664b28f6d310f8ba6d31d4c0ee731c5985242f2f29f6c097d",
+    "configured/board/plain": "cc009a11e8899fe59210b10e0b3b3f898ab8ff9b7f2601ed4d1462bd9f15270d",
+    "configured/generate/color": "07228847def03ed59a949c19297b8d2fee7a985d158f1ca923595fceb9c0ced3",
+    "configured/generate/line": "040810d2ebb8ef7296bddee057321f4987b9a5178963146ba1de5fdd0615226e",
+    "configured/review": "ab564820cf245bdacbaf764a5560bd31071137f407c65632ca0f5bd879871c68",
+    "configured/select": "1a84b36bf0f4ead7091b7ee85cb932bbf4e8118eed9dd0c5b6e7a358b7e0c56b",
+@@ -13,11 +13,11 @@
+    "configured/speech/ja-JP": "5beeadc1e3f800b25c976ad194e909d589c8bc2b434ef2041a66d32564c48d4d",
+    "configured/speech/literal-boundary": "b0dbf3fc70f7abf78301a2cd5bbda392b8185c627ac245ef41ad4198453d98a7",
+    "configured/transcribe": "2f9b45bf94cadae439c7d5efcd21e8792f17d35acb130bc5317f59493bcb4cfa",
+    "configured/translate": "916d16d224a225c519f638ee62881374134f713f0b1f38e819618e5a4663b55e",
+    "default/analyze": "bf84de9fd7db140e8ccc213bad6366350f30828450f69cc2b5c6db43ac60cc6d",
+-   "default/board/1": "caf25a6935c9c7be7431f8169a6a9a1759381d1fda193237db135995ce79e2c8",
++   "default/board/1": "01260ea2285b35722de557a671e03d597827b93d0561359ed15400e13e585455",
+    "default/board/plain": "b8f16c77eee87db17ee9e96c737d8ee4d977a923aafa919b868775eca8287e6d",
+    "default/generate/color": "5e59cb2229259dd2fffcff109452067bac6f5bfe8dab63b913874953f969931e",
+    "default/generate/line": "adc3817b457f07c37d6e16489d3c5057b2b1f0315c95d93f7b2b1263f5cf7523",
+    "default/review": "f8c362fcf2a76d56b214dfda6c92fc5a63dd8d507fbc009a3d5124893ede1b08",
+    "default/select": "49ca66e21dd8459b9ab72f50bb22573c0821a2cd54293c0d50880ac8ea81262b",
+
+ ❯ apps/server/test/prompt-payloads.test.ts:88:20
+     86|   remember('client-options', calls.clients);
+     87|   remember('realtime-options', calls.connections);
+     88|   expect(observed).toMatchSnapshot();
+       |                    ^
+     89| });
+     90|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,11 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run vitest run scripts/prompt-bundle.test.ts packages/core/src/promptResources.test.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-12/little-say-prompts
+
+
+ Test Files  2 passed (2)
+      Tests  3 passed (3)
+   Start at  19:39:20
+   Duration  1.73s (transform 942ms, setup 0ms, import 1.44s, tests 197ms, environment 0ms)
+

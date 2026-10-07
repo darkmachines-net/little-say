@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-12/little-say-prompts
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  19:44:39
+   Duration  1.36s (transform 904ms, setup 0ms, import 1.21s, tests 13ms, environment 0ms)
+

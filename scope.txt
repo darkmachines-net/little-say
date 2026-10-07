@@ -1,0 +1,46 @@
+apps/mobile/src/ui/AiConversation.tsx              |   3 +-
+ apps/server/src/picture-provider.ts                |  12 +--
+ apps/server/src/prompts.ts                         |  24 +++++
+ apps/server/src/provider.ts                        |  23 ++---
+ apps/server/src/synthesis.ts                       |   3 +-
+ .../__snapshots__/prompt-payloads.test.ts.snap     |  36 ++++++++
+ .../test/__snapshots__/prompt-presets.test.ts.snap |   9 ++
+ apps/server/test/prompt-payloads.test.ts           | 100 +++++++++++++++++++++
+ apps/server/test/prompt-presets.test.ts            |  12 +++
+ packages/core/src/index.ts                         |   2 +
+ packages/core/src/onboarding.ts                    |   9 +-
+ packages/core/src/promptPresets.ts                 |  10 +++
+ packages/core/src/promptResources.test.ts          |  22 +++++
+ packages/core/src/promptResources.ts               |  24 +++++
+ prompts/README.md                                  |  19 ++++
+ prompts/server/board.json                          |   6 ++
+ prompts/server/pictures.json                       |   9 ++
+ prompts/server/speech.json                         |   3 +
+ prompts/shared/conversation.json                   |   5 ++
+ prompts/shared/onboarding.json                     |   6 ++
+ scripts/prompt-bundle.test.ts                      |  35 ++++++++
+ 21 files changed, 342 insertions(+), 30 deletions(-)
+
+ea87b78eb6c9e9612cc42b7eec490af9d8216b86 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4 Extract exact model prompts into versioned resources
+
+M	apps/mobile/src/ui/AiConversation.tsx
+M	apps/server/src/picture-provider.ts
+A	apps/server/src/prompts.ts
+M	apps/server/src/provider.ts
+M	apps/server/src/synthesis.ts
+A	apps/server/test/__snapshots__/prompt-payloads.test.ts.snap
+A	apps/server/test/__snapshots__/prompt-presets.test.ts.snap
+A	apps/server/test/prompt-payloads.test.ts
+A	apps/server/test/prompt-presets.test.ts
+M	packages/core/src/index.ts
+M	packages/core/src/onboarding.ts
+A	packages/core/src/promptPresets.ts
+A	packages/core/src/promptResources.test.ts
+A	packages/core/src/promptResources.ts
+A	prompts/README.md
+A	prompts/server/board.json
+A	prompts/server/pictures.json
+A	prompts/server/speech.json
+A	prompts/shared/conversation.json
+A	prompts/shared/onboarding.json
+A	scripts/prompt-bundle.test.ts

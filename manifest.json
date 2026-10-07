@@ -1,0 +1,208 @@
+{
+  "ownerTaskId": "01a11432-1043-7419-b695-bf3ec9caf02a",
+  "issue": "https://github.com/MChartier/little-say/issues/23",
+  "repository": "MChartier/little-say",
+  "targetRef": "refs/heads/master",
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "head": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "parentRevisions": [],
+  "commitParents": [
+    "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  ],
+  "ultimateTarget": "MChartier/little-say/master",
+  "branch": "refactor/prompt-resources-issue23",
+  "evidenceRef": "evidence/issue23-prompt-resources",
+  "executionPin": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationPin": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "capturedAtUtc": "2026-10-07T02:45:37.050Z",
+  "host": "MCHARTIER_ZBOOK",
+  "node": "v24.19.0",
+  "source": [
+    {
+      "file": "apps/mobile/src/ui/AiConversation.tsx",
+      "blob": "1ce711ea5970f09c3e7ffba1174c6c59d33aa208",
+      "workingBytesSha256": "af3fbd063a75e6b78b87949eba3866f5b0608bc0f093ca8898e626310dce3444"
+    },
+    {
+      "file": "apps/server/src/picture-provider.ts",
+      "blob": "f994398575e4e3642d2d15f7d6d84c0b8c82d7d4",
+      "workingBytesSha256": "d8176d52f59f35ee9cdb739daa4a4d2ada91d77ab7e83d895fa6a8e0a26d5213"
+    },
+    {
+      "file": "apps/server/src/prompts.ts",
+      "blob": "8fbf2f17b6ad04d93b0a5d2508f6fb88995e7ca8",
+      "workingBytesSha256": "3d374077518861f22ec6d553a45653ee9af3a747dcdc770f4f9d5045d1013e7f"
+    },
+    {
+      "file": "apps/server/src/provider.ts",
+      "blob": "eb7cb145b2c5e94b83936056ae0f7a96c4289471",
+      "workingBytesSha256": "54c12c94b300c1cc01b3442e1214e08d41fc3b31d3c01d015eab0003f2a3e38c"
+    },
+    {
+      "file": "apps/server/src/synthesis.ts",
+      "blob": "23a7dbaedd13cd2999d6945a95afb115d08fb9d6",
+      "workingBytesSha256": "abef7e660e1771c72b0021cfec4f10669f7b41b07f19ed76237938dfcc67e3ea"
+    },
+    {
+      "file": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "blob": "9e2e50c8c1d0ae70d50b355f03cca7848563f142",
+      "workingBytesSha256": "5fb9ba6cb112d53755e0e1f7a43f51b1e527f7f58601a839f9840bbe6431cdfe"
+    },
+    {
+      "file": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "blob": "d98b0c66f86c1c4d7a3de9cb7c1e78559e72dc21",
+      "workingBytesSha256": "72ae4ec9ca0133bd760518c3c8fe8498584865427bf3bea5aaed3620e13965f4"
+    },
+    {
+      "file": "apps/server/test/prompt-payloads.test.ts",
+      "blob": "31e76310a118b1f0b95cd91b8c4e40290ae0b762",
+      "workingBytesSha256": "2f09c58a123616e733b343d770fac733cee13de0344cdb1de62ae855f7eb32d0"
+    },
+    {
+      "file": "apps/server/test/prompt-presets.test.ts",
+      "blob": "31bdcee0c9dd93256286900a6a8dec707acad52f",
+      "workingBytesSha256": "4afb4c4dcdb3aae734605a2ea329832f785aedcaacbafc6a503a95ab7e3b5d1f"
+    },
+    {
+      "file": "packages/core/src/index.ts",
+      "blob": "1d6166be4f53184751303a4e5d518c93e77030a9",
+      "workingBytesSha256": "75e82079b705640eb3d92d981238f50afeff8ebe7f867a71612510a5e31376be"
+    },
+    {
+      "file": "packages/core/src/onboarding.ts",
+      "blob": "8f719e696b46812ca042e25674a06a195e823374",
+      "workingBytesSha256": "8b3be1776e37ffcd66f41e712c3b311e9dfb2f22921aed2911a64e6a02705e3a"
+    },
+    {
+      "file": "packages/core/src/promptPresets.ts",
+      "blob": "fd881c5a23221bf2cb3f8ff5e129e6ef20906fcd",
+      "workingBytesSha256": "b783584abb795b9d0db020ae695b7f62d8fcb6f83f50dfaf9d0458890e56c18a"
+    },
+    {
+      "file": "packages/core/src/promptResources.test.ts",
+      "blob": "9d9a2ae08f8eacbd46a7b24b10f2c27277ed1e33",
+      "workingBytesSha256": "7821e98a9285df6c9b68e5422abc94a471792ca3c265f2399afd59c2b5de8791"
+    },
+    {
+      "file": "packages/core/src/promptResources.ts",
+      "blob": "8f706e188f858d0019016f444e4a4bd4583822d8",
+      "workingBytesSha256": "d8ba63e8b07461bc9c7b028c108ca51ae9b4f2bc3967e09003fde16b97f84fb4"
+    },
+    {
+      "file": "prompts/README.md",
+      "blob": "69c384de46f7e73a7a19788f9e65a14896cf9992",
+      "workingBytesSha256": "ddaedecebec348e6a884286619aa3d89ea2ba12b3791b04b0d479b6d0347722d"
+    },
+    {
+      "file": "prompts/server/board.json",
+      "blob": "14ae46139662df7e8a4edb07e173c9d62fe25dfc",
+      "workingBytesSha256": "8a46cf69ca996215e649a0eaf794eccd71569ed6e9bf2b33aad658747eedda5e"
+    },
+    {
+      "file": "prompts/server/pictures.json",
+      "blob": "8ef350cc1c903698c4965857918d61622b9f953f",
+      "workingBytesSha256": "33ce20f3624ce4eedcdf9eb87f90d8a465ac03435087210905707a7973f1df42"
+    },
+    {
+      "file": "prompts/server/speech.json",
+      "blob": "4e114b4c5aa3af17ee2306f22320f804e9a569d7",
+      "workingBytesSha256": "691e870f154bdd67e52e972865a97a6cef86ca7d6b7d10069b6ae8b2a3587934"
+    },
+    {
+      "file": "prompts/shared/conversation.json",
+      "blob": "dbf8183ae51f385fea692b8f585269108892b887",
+      "workingBytesSha256": "0a737f1fbfc22c06c963108cc14e05155201729e96587e71f15532816f3979bb"
+    },
+    {
+      "file": "prompts/shared/onboarding.json",
+      "blob": "0215c9565d62cb412c419473b8bcf055963db8b6",
+      "workingBytesSha256": "d722b4d06204c4a355fae5358a7fd2fc211fc9dc276c64c0bd9a7bac2cae6257"
+    },
+    {
+      "file": "scripts/prompt-bundle.test.ts",
+      "blob": "c658a8651ec9a6a7d6317a88642fa98299d5a96d",
+      "workingBytesSha256": "133fb2dca42e7d37a758a30b2009d76097f47eaf7b42db54f00c62a8a319d7d9"
+    }
+  ],
+  "artifactDigests": [
+    {
+      "file": "before/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "after/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "before/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "after/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "before/prompt-payloads.test.ts",
+      "sha256": "87704dc2237062db2ef016f8c4ec357758a9414290623b7783fd0b254cda903d"
+    },
+    {
+      "file": "before/prompt-presets.test.ts",
+      "sha256": "d91c71e6007844000d0d4a00346f02064c88f2a5c4b9346a8ec48cde04d696e5"
+    },
+    {
+      "file": "after/prompt-payloads.test.ts",
+      "sha256": "01a84f25e501548b053b408769e3d7be5074a97048bacdec664aa1de26ec555e"
+    },
+    {
+      "file": "after/prompt-presets.test.ts",
+      "sha256": "8d9ba17dafcbe12b0eb02a57ed31d0e8e007a1c87e3b0a793a6a2746cfc7c10c"
+    },
+    {
+      "file": "before/test.log",
+      "sha256": "13596378b39b5751cd1c7a47d974e73af30b8cb3bf27cef66a6c30ef656bbd3f"
+    },
+    {
+      "file": "after/test.log",
+      "sha256": "184a594c57dce02ae4b0ee3aacc02ac405ed73d67ba32ce0199fcc98b922c4e2"
+    },
+    {
+      "file": "check-final.log",
+      "sha256": "a97f6b81d1e982b40d1af271c911dfce96a0071af64823126a09b3beea7cc5e5"
+    },
+    {
+      "file": "bundle-test.log",
+      "sha256": "2f690d41c04f6f62614d83afc4b2a7ef181ff42510bbe13473437ac7b8df313b"
+    },
+    {
+      "file": "native-export.log",
+      "sha256": "f1d4cea769140122dba22a72804c368fce32db7153380f7fc12885104ed1d578"
+    },
+    {
+      "file": "browser-final.log",
+      "sha256": "a244080913e13f9d5153c17172a52cdf20745b10debc45e659f864fa2c312018"
+    },
+    {
+      "file": "runtime-report.json",
+      "sha256": "feafb492ce5665bacb3d9acf8588755fae60eec70e1c4fa28542728cabb6b43e"
+    },
+    {
+      "file": "runtime.log",
+      "sha256": "c7d7816b9efa01d579cfb0f5bcd67bfacac5b3bac340fa6db3521a4438a3a656"
+    },
+    {
+      "file": "negative-control.log",
+      "sha256": "d3823bb00c6f0a4583a6152acb2d6939e69d032eb5437529761701d712cc3c03"
+    },
+    {
+      "file": "restored-control.log",
+      "sha256": "3525a3380e286aa8fecea6776c2318524fb3b4e202490208dd23e2d1b01107b4"
+    }
+  ],
+  "captureApplicability": "Before used original production files from actual master. After used unchanged application source later committed at head; subsequent edits only moved the Node-only preset test and added the maintained bundle test. Final npm run check and browser regressions include these final test files. No application source changed after exact payload capture or builds.",
+  "limitations": [
+    "Docker executable exists but the Docker Desktop Linux engine pipe is unavailable; no container build/run was claimed.",
+    "Native checks are Metro/Hermes exports, not emulator or physical-device execution.",
+    "No live inference, database provisioning, credentials, migrations, deployment or release. CI and independent review/QA are recorded separately after publication."
+  ]
+}
