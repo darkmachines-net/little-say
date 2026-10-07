@@ -1,0 +1,33 @@
+{
+  "purpose": "Coherent immutable PR34 metadata rebind preserving all previous records",
+  "files": [
+    {
+      "path": "feedback.json",
+      "sha256": "519cc289f38219777a232a032c48438e9f70d145b8a065597aa8098c523e5029"
+    },
+    {
+      "path": "issue-body.md",
+      "sha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2"
+    },
+    {
+      "path": "pr-body.diff",
+      "sha256": "1e65078bc9ab18fecfcdd92469d4eab613534de0c48372149bbbc803b45ea708"
+    },
+    {
+      "path": "pr-body.md",
+      "sha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39"
+    },
+    {
+      "path": "README.md",
+      "sha256": "aa3d8c2d5a856201018451cf93ca37dfe98de7bde1f246d71ae2a57d9867d351"
+    },
+    {
+      "path": "recheck.json",
+      "sha256": "089dd4f10059bcc7ca287fed7821ec9255e258857a71c16b556aa1038eb50eb2"
+    },
+    {
+      "path": "record.json",
+      "sha256": "0bb12bdae5ffaa565a23171e4dfcb758b7c6b7d5a550d9f890cc919170c2298a"
+    }
+  ]
+}

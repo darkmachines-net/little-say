@@ -1,0 +1,13 @@
+diff --git a/pr34-metadata-recheck/original-pr-body.md b/pr34-metadata-recheck/current-pr-body.md
+index 24f9f3d..4de4d19 100644
+--- a/pr34-metadata-recheck/original-pr-body.md
++++ b/pr34-metadata-recheck/current-pr-body.md
+@@ -41,7 +41,7 @@ Before source: `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` (actual master). After
+ 
+ 222 unit tests, type/release/build checks, all 92 browser tests, Android/iOS bundle exports and [current-head CI](https://github.com/MChartier/little-say/actions/runs/37562895456) pass. [Validation details and complete scope](https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/validation.json) retain the executed checks.
+ 
+-[Independent QA](https://github.com/MChartier/little-say/pull/34#issuecomment-6030169572) verified the code, scope, default-size browser behavior and all six matched image pairs, then returned **evidence-incomplete** for unexecuted native rotation, OS text-scaling and screen-reader checks. [The user's scoped decision](https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716) permits readiness with those three checks explicitly deferred for this PR only. They remain unexecuted; the same QA must reassess this updated description and decision before readiness.
++[Revision-scoped independent QA evidence](https://github.com/MChartier/little-say/blob/2dbe1b7438bf34a2570ad384bbeff6cde4a56f47/decision-20261007/record.json) covers source `b21d3ba` against `1f03290`, including code/scope review, default-size browser behavior and the six matched image pairs. [The user's scoped decision](https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716) defers native rotation, OS text-scaling and screen-reader checks for **PR #34 only**; those checks remain unexecuted.
+ 
+ **Remaining large-text risk:** a browser-only 150% label-font diagnostic reduced a dense card's picture area from 25.5px to 1.5px. This exposes a readability risk; it is not native OS-scaling evidence or a proven native regression. The deferral does not remove that risk or replace the retained browser evidence.
+ 

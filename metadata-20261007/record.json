@@ -1,0 +1,971 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "amendmentsAcknowledged": [
+    5984018358,
+    5987999201,
+    5997739454,
+    6002971212,
+    6006523068,
+    6008280372,
+    6008834896,
+    6020948896,
+    6021105604,
+    6021281028,
+    6022754087,
+    6026521080
+  ],
+  "instructionAcknowledgment": "Same independent QA retains the entire supplied pinned source packet and all operative amendments. Metadata-only continuation uses workflow-v3 f0919b184b6344d6279178b2388190936ca432a9 and pr-review-v3 97e5583c8355f3673aad0835c0ce3ca1486aeb8b. The trusted user Mark ready decision6030384716 applies only to PR34. No policy migration, expanded waiver or new merge authority.",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/34",
+  "issue": "https://github.com/MChartier/little-say/issues/31",
+  "reviewerChat": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+  "implementationOwner": "01a11405-db71-76ed-9ec6-44717ef3402a",
+  "supersedesVerdictCommentId": 6030490282,
+  "checkedAtUtc": "2026-10-07T06:53:56.652Z",
+  "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+  "prBodyUpdatedAt": "2026-10-07T06:45:50Z",
+  "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+  "issueUpdatedAt": "2026-10-07T06:45:45Z",
+  "environment": {
+    "hostnameVerified": "MCHARTIER_ZBOOK",
+    "actualHostname": "mchartier_zbook",
+    "isolation": "Same clean detached qa-worktree at exact b21d3ba head; no product source or branch mutation.",
+    "currentExecution": "Read-only metadata, feedback, CI and immutable evidence checks only. No new app execution, test, capture, native check, install or protected-log access."
+  },
+  "scope": {
+    "targetRepository": "MChartier/little-say",
+    "actualTargetRef": "refs/heads/master",
+    "actualTargetSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "headRepository": "MChartier/little-say",
+    "headRef": "refs/heads/feat/balanced-storyboard-grid",
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "mergeBaseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "declaredParent": null,
+    "declaredParentState": "none",
+    "ultimateTarget": {
+      "repository": "MChartier/little-say",
+      "ref": "refs/heads/master",
+      "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "pagination": "All REST pages fetched with --paginate --slurp and per_page=100; GraphQL reviewThreads and closing references report hasNextPage=false.",
+    "orderedCommits": [
+      {
+        "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "parents": [
+          "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+        ],
+        "message": "Balance storyboard rows within measured play and editor bounds",
+        "disposition": "Single direct base child; every changed file maps below."
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "7d4650a7f7de9df6b5528a247765154fe277a87d",
+        "additions": 4,
+        "deletions": 5,
+        "rationale": "Consumes ordered rectangles with compact caps and existing scroll affordance."
+      },
+      {
+        "path": "apps/mobile/src/ui/PlayBoard.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "876c7fe5b835d856b9b416161701d30f679f095c",
+        "additions": 4,
+        "deletions": 2,
+        "rationale": "Consumes measured rectangles and reports infeasible target bounds."
+      },
+      {
+        "path": "apps/mobile/src/ui/TileFace.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "7c867dc83ca03c80a4e6be817759b2c779500e23",
+        "additions": 10,
+        "deletions": 4,
+        "rationale": "Fits play pictures to remaining frame, reducing dense-card gutters."
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "9742c04f05cd90ef9c759a88cbff2b1cc3c42bd7",
+        "additions": 1,
+        "deletions": 1,
+        "rationale": "Opts native play cards into frame fitting; native hit rectangles/accessibility activation remain intact."
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.web.tsx",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "b009ab94c2ac23a51de7873661c37cb8c9bfd1fe",
+        "additions": 1,
+        "deletions": 1,
+        "rationale": "Opts web play cards into frame fitting; pointer/keyboard mapping uses the same rectangles."
+      },
+      {
+        "path": "docs/DESIGN.md",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "17b043775775a892b93a6b710bead70b01c894aa",
+        "additions": 1,
+        "deletions": 0,
+        "rationale": "One maintained product-contract paragraph, not a development diary."
+      },
+      {
+        "path": "packages/core/src/boardLayout.test.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "bcba8dbf345ba6b7e01c847654c6da5ad7e06143",
+        "additions": 75,
+        "deletions": 0,
+        "rationale": "Maintained regression checks for balanced rows, fit, minimum targets, compact scroll and invalid bounds."
+      },
+      {
+        "path": "packages/core/src/boardLayout.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "e761b098d0450981bdf5466e8ede6a8cf61ee1e0",
+        "additions": 64,
+        "deletions": 0,
+        "rationale": "Deterministic balanced per-card rectangle contract."
+      },
+      {
+        "path": "packages/core/src/interaction.test.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "d92d132ce3a2888ff9c3b01d0b11d61994ed1195",
+        "additions": 6,
+        "deletions": 4,
+        "rationale": "Updates existing geometry assertions to the new rectangle contract."
+      },
+      {
+        "path": "packages/core/src/interaction.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "f034c8db0af0748b139fed495fd964fa284339b4",
+        "additions": 1,
+        "deletions": 15,
+        "rationale": "Re-exports new geometry contract without changing touch/queue algorithms."
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "status": "modified",
+        "previousPath": null,
+        "blobSha": "fb59ed87b232446dcda18bd7e31f9de336db03e9",
+        "additions": 2,
+        "deletions": 1,
+        "rationale": "Narrow portability correction for equivalent Intl regional names; retained baseline-regional.log reproduces baseline failure. Assertion still requires ES-MX."
+      },
+      {
+        "path": "tests/web/grid.spec.ts",
+        "status": "added",
+        "previousPath": null,
+        "blobSha": "acfd71557cc4a2afe022a7d04517e99792680749",
+        "additions": 162,
+        "deletions": 0,
+        "rationale": "19 maintained behavior scenarios covering changed layout, resize cancellation, speech continuity, multilingual labels, editor and recovery."
+      }
+    ],
+    "totals": {
+      "commits": 1,
+      "files": 12,
+      "additions": 331,
+      "deletions": 33,
+      "productFiles": 7,
+      "testFiles": 4,
+      "maintainedDocumentationFiles": 1
+    },
+    "assessment": "Complete net merge diff AND published ordered commit history inspected. No unrelated merges, temporary add/delete churn, generated-contract noise or evidence artifacts in product history. Test and one-line design documentation scope is proportionate; Intl assertion exception is supported by unchanged-baseline reproduction."
+  },
+  "gates": {
+    "value": {
+      "status": "pass",
+      "reason": "Direct human four-card landscape imbalance request; useful ordered board space and stable targets. Unchanged focused work remains proportionate."
+    },
+    "outcome": {
+      "status": "pass-with-explicit-native-deferral",
+      "reason": "Prior default-size browser geometry, targets, ordered activation, resize and editor evidence remains applicable. Native rotation, OS text scaling and screen-reader validation are unexecuted and explicitly deferred for PR34 only."
+    },
+    "code": {
+      "status": "pass-with-disclosed-risk",
+      "reason": "Complete published one-commit/12-file inventory and exact source/base unchanged from independent code review. No confirmed new product defect; dense picture-height reduction under synthetic large labels remains disclosed as a risk, not proven native regression."
+    },
+    "engineeringReview": {
+      "status": "pass-under-quota-amendment",
+      "reason": "Prior independent complete code/scope review remains applicable. Bot refused only for quota in6029732188; no bot completion claimed. Current full feedback, submitted reviews and inline threads contain no unresolved change request."
+    },
+    "ci": {
+      "status": "pass",
+      "reason": "Exact-head run37562895456/check112603976685 remains successful. Prior222-unit/92-browser/type/build/release/native-JS-export evidence remains applicable; none rerun for prose changes."
+    },
+    "behavior": {
+      "status": "pass-with-explicit-native-deferral",
+      "reason": "Prior independent192 numerical and20 rendered cases plus gesture, queue, keyboard, editor and photo probes reused at identical source/build identities. Native runtime behavior remains unverified under the narrow PR34 deferral."
+    },
+    "evidence": {
+      "status": "pass-with-scoped-decisions",
+      "reason": "Seventeen exact retained provenance/image/QA record identities reverified through GitHub; previous independent pixel observations and source/build/fixture verification remain applicable. Native deferral and separate actual-GitHub-page-rendering waiver are explicitly distinguished; no baseline or general evidence waiver."
+    },
+    "communication": {
+      "status": "pass",
+      "reason": "Entire current issue/PR and exact original-body diff assessed. Issue removes obsolete draft designation and turns prospective plan wording into a standing evidence requirement; requirements and links remain intact. PR replaces only stale pending-reassessment history with revision-scoped QA evidence and explicit PR34-only native deferral. Base-to-final Summary/Test plan/images unchanged. Native checks still labeled unexecuted;150%label risk remains prominent. No further correction identified."
+    },
+    "stack": {
+      "status": "pass",
+      "reason": "Actual master/base/merge-base1f032905 and headb21d3ba unchanged. PR34 has no parent. Its metadata-only edit does not change child PR36 source/base applicability; this deferral grants no waiver to PR36 or Calibrate PR439."
+    }
+  },
+  "acceptance": [
+    {
+      "criterion": "Four-card tablet2x2 and preserved portrait layout",
+      "result": "pass",
+      "evidence": "Existing genuine matched pixels and independent820x1180/1180x820 browser probes; exact source/captures unchanged."
+    },
+    {
+      "criterion": "Counts1-24, ordered balanced rows, bounded targets and small-window recovery",
+      "result": "pass",
+      "evidence": "Prior192 numerical/20 rendered probes, maintained browser matrix and genuine tiny-window pair retained;44-unit floor and recovery observed in prior QA."
+    },
+    {
+      "criterion": "Default labels/pictures/photos and accessible names; larger-text/native access",
+      "result": "browser-pass; native-validation-explicitly-deferred",
+      "evidence": "Prior default-font, full-name, dense-photo/crop and multilingual observations remain valid. The synthetic150%label risk remains disclosed. Native OS text scaling and screen-reader behavior are unexecuted and deferred for PR34 only; no native pass claimed."
+    },
+    {
+      "criterion": "Resize/rotation preserves identity, content and playback; cancels stale contacts",
+      "result": "browser-pass; native-rotation-explicitly-deferred",
+      "evidence": "Prior browser reflow/queue/contact/hold observations and stable-ID contracts unchanged. No physical/native rotation proof; specifically deferred by6030384716."
+    },
+    {
+      "criterion": "Shared compact editor geometry and reachable actions",
+      "result": "pass-in-browser",
+      "evidence": "Prior seven-card comparison and24-card phone/tablet/last-card editing probes remain applicable."
+    },
+    {
+      "criterion": "Focused scope excludes transition, account and playback recovery work",
+      "result": "pass",
+      "evidence": "Complete current published commit/path inventory identical to prior assessment."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "category": "disclosed-large-text-risk/native-validation-deferred",
+      "severity": "nonblocking-under-explicit-PR34-decision",
+      "status": "Accepted deferral; risk remains and native behavior is not certified.",
+      "observed": "Prior browser-only150%CSS label-font diagnostic on a dense390x844 board reduced one picture frame from25.5px to1.5px. Native rotation, OS scaling and screen-reader validation remain unexecuted.",
+      "disposition": "Trusted user Mark ready decision6030384716 explicitly permits readiness for this unchanged PR34 outcome with the three native checks deferred. Standing issue requirements are preserved; no new human change request revokes the deferral.",
+      "expected": "Keep unexecuted native checks and the diagnostic risk visible. Native results may be obtained later against bound source/builds; they are not a current readiness prerequisite under this exact scoped decision.",
+      "consequence": "Ready is a scoped review verdict, not proof of native accessibility/large-text safety or a claim that the picture risk is fixed.",
+      "nextAction": "Coordinator may perform its separate receipt and readiness checks. Preserve risk/deferral; a later demonstrated source defect goes to the existing owner and invalidates affected descendant gates."
+    }
+  ],
+  "nativeValidationDeferral": {
+    "id": 6030384716,
+    "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+    "body": "Scoped human decision, October 6, 2026: in response to the explicit choice between retaining the iPad-validation hold or marking this balanced-grid PR ready with native checks deferred, Matthew replied “Mark ready”. This defers native rotation, OS text-scaling and screen-reader validation for this PR’s current balanced-grid outcome. It does not claim those checks ran, remove the disclosed dense-board large-text risk, or waive source/CI/feedback/provenance gates. The genuine matched browser captures and independent browser checks remain the current evidence. Same-QA reassessment and coordinator rechecks will bind the final description before readiness.",
+    "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+    "updatedAt": "2026-10-07T03:37:43Z",
+    "scope": "PR34 only: native rotation, OS text scaling and screen-reader validation. No native passed claim, risk removal, child36/Calibrate439 waiver or human merge approval.",
+    "trustedAuthority": "Repeated current delegated instruction confirms the direct user Mark ready decision; same-account comment alone is not treated as human authority.",
+    "appliesOnlyTo": {
+      "repository": "MChartier/little-say",
+      "pullRequest": 34,
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    },
+    "deferred": [
+      "native rotation",
+      "OS text scaling",
+      "screen-reader validation"
+    ],
+    "nativePassed": false,
+    "notExtendedTo": [
+      "Little Say PR36",
+      "Calibrate PR439",
+      "human auditory assessment",
+      "other native validation",
+      "source/CI/feedback/provenance gates",
+      "human merge/release approval"
+    ]
+  },
+  "feedback": {
+    "checkedAtUtc": "2026-10-07T06:53:47.587Z",
+    "completePages": true,
+    "items": [
+      {
+        "kind": "issueComments",
+        "id": 6029167414,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029167414",
+        "updatedAt": "2026-10-07T01:51:03Z",
+        "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8",
+        "disposition": "Standing human geometry/readability/interaction requirements and original planning findings are preserved. Prior independent browser/source evidence supports unchanged default-size outcome; native rotation, OS text scaling and screen-reader checks are expressly deferred for PR34 by6030384716. The standing requirements are not a new unresolved change request."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029219796,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029219796",
+        "updatedAt": "2026-10-07T01:55:10Z",
+        "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95",
+        "disposition": "Historical queued claim; later trusted task/started checkpoint supplies implementation authority."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029348137,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029348137",
+        "updatedAt": "2026-10-07T02:05:47Z",
+        "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02",
+        "disposition": "Owner and fixed-pin acknowledgement confirmed; separate QA worktree and chat used."
+      },
+      {
+        "kind": "issueComments",
+        "id": 6029662109,
+        "url": "https://github.com/MChartier/little-say/issues/31#issuecomment-6029662109",
+        "updatedAt": "2026-10-07T02:32:23Z",
+        "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d",
+        "disposition": "Published stable geometry SHA confirmed. Later full browser/evidence/CI results supersede its pending stages without relabeling historical evidence."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029730527,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029730527",
+        "updatedAt": "2026-10-07T02:38:14Z",
+        "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a",
+        "disposition": "Single configured bot review request; independent full published code/scope review performed here."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029732188,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029732188",
+        "updatedAt": "2026-10-07T02:38:24Z",
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+        "disposition": "Exact quota-only bot refusal verified; amendment6006523068 applies. No bot review completion claimed, no retry or billing action."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029795718,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029795718",
+        "updatedAt": "2026-10-07T02:43:57Z",
+        "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2",
+        "disposition": "Earlier implementer claims and source/evidence limitations remain valid; prior F1 native gap now explicitly deferred without relabeling any tests."
+      },
+      {
+        "kind": "prComments",
+        "id": 6029994635,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6029994635",
+        "updatedAt": "2026-10-07T03:00:32Z",
+        "bodySha256": "bcaa53a24b41b311feed306e1c2dba1df7a6168351c9d521ee3bc22caa0b01e6",
+        "disposition": "QA claim covers exact head/base. Issue30 parent correction must go through coordinator to existing owner and invalidate affected child gates."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030169572,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030169572",
+        "updatedAt": "2026-10-07T03:16:43Z",
+        "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4",
+        "disposition": "Prior evidence-incomplete verdict exact API body and updated_at verified against trusted receipt. Historical record remains unedited. This verdict supersedes it solely for explicit deferral and updated communication gates; prior code/pixel/behavior findings retained."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030384716,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+        "updatedAt": "2026-10-07T03:37:43Z",
+        "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+        "disposition": "Exact decision body verified against the trusted prior receipt and current delegated authority. Mark ready permits readiness for this PR34 outcome while three named native checks remain unexecuted and the150%label risk remains disclosed. No extension to PR36 or Calibrate PR439."
+      },
+      {
+        "kind": "prComments",
+        "id": 6030490282,
+        "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030490282",
+        "updatedAt": "2026-10-07T03:46:50Z",
+        "bodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+        "disposition": "Prior ready-under-scoped-deferral verdict exact body/updated_at verified. Remains historical and is superseded only to bind the final issue/PR communication. No test, capture, source or native validation change."
+      }
+    ],
+    "submittedReviews": [],
+    "inlineComments": [],
+    "reviewThreads": {
+      "totalCount": 0,
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      },
+      "nodes": []
+    },
+    "assessment": "All11 full current conversation bodies reread and verified unchanged from prior receipt checkpoint; every item dispositioned. No new actionable human request. Standing native requirements are covered only by the explicit three-check PR34 deferral, not silently declared complete."
+  },
+  "uiEvidence": {
+    "applicable": true,
+    "representativeCoverage": "Six master-to-final pairs: four-card portrait/landscape, seven-card landscape/editor,24-card phone and infeasible tiny window. Three pairs visibly embedded adjacent to main Test plan. No exhaustive screenshot matrix claimed.",
+    "pairs": [
+      {
+        "state": "four-portrait",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 820,
+          "height": 1180
+        },
+        "before": {
+          "side": "before",
+          "scene": "four-portrait",
+          "file": "before-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "width": 820,
+          "height": 1180
+        },
+        "after": {
+          "side": "after",
+          "scene": "four-portrait",
+          "file": "after-four-portrait.png",
+          "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+          "width": 820,
+          "height": 1180
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-four-portrait.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-four-portrait.png",
+        "pixelObservation": "Both real captures show identical readable 2x2 layout; PNG bytes are identical."
+      },
+      {
+        "state": "four-landscape",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "four-landscape",
+          "file": "before-four-landscape.png",
+          "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "four-landscape",
+          "file": "after-four-landscape.png",
+          "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-four-landscape.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-four-landscape.png",
+        "pixelObservation": "Baseline 3+1 leaves unused lower area; final 2+2 fills both rows with consistent gutters and readable labels."
+      },
+      {
+        "state": "seven-landscape",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "seven-landscape",
+          "file": "before-seven-landscape.png",
+          "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "seven-landscape",
+          "file": "after-seven-landscape.png",
+          "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-seven-landscape.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-seven-landscape.png",
+        "pixelObservation": "Ordered 4+3 remains, but final shorter row fills the width; picture sizes remain consistent. Long label deliberately ellipsizes."
+      },
+      {
+        "state": "seven-editor",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "before": {
+          "side": "before",
+          "scene": "seven-editor",
+          "file": "before-seven-editor.png",
+          "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+          "width": 1180,
+          "height": 820
+        },
+        "after": {
+          "side": "after",
+          "scene": "seven-editor",
+          "file": "after-seven-editor.png",
+          "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+          "width": 1180,
+          "height": 820
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-seven-editor.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-seven-editor.png",
+        "pixelObservation": "Baseline 3+3+1 becomes centered compact 4+3; Pictures/AI/Add/audio/Duplicate/Delete actions remain visible."
+      },
+      {
+        "state": "twenty-four-phone",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "before": {
+          "side": "before",
+          "scene": "twenty-four-phone",
+          "file": "before-twenty-four-phone.png",
+          "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+          "width": 390,
+          "height": 844
+        },
+        "after": {
+          "side": "after",
+          "scene": "twenty-four-phone",
+          "file": "after-twenty-four-phone.png",
+          "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+          "width": 390,
+          "height": 844
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-twenty-four-phone.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-twenty-four-phone.png",
+        "pixelObservation": "Final emoji are whole and two-line long-label ellipsis is intentional. Targets remain large; dense pictures are smaller than sparse cards."
+      },
+      {
+        "state": "tiny-window",
+        "beforeSourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+        "afterSourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "viewport": {
+          "width": 320,
+          "height": 320
+        },
+        "before": {
+          "side": "before",
+          "scene": "tiny-window",
+          "file": "before-tiny-window.png",
+          "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+          "width": 320,
+          "height": 320
+        },
+        "after": {
+          "side": "after",
+          "scene": "tiny-window",
+          "file": "after-tiny-window.png",
+          "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+          "width": 320,
+          "height": 320
+        },
+        "beforeUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/before-tiny-window.png",
+        "afterUrl": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/after-tiny-window.png",
+        "pixelObservation": "Baseline unusable clipped text/undersized cards becomes a readable resize/rotate message while Hold to unlock stays visible."
+      }
+    ],
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/ui-final2/manifest.json",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214"
+      },
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/capture-grid.mjs",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+        "fixtureBinding": "Independently evaluated exact retained fixture function; all12 fixture digests reproduced."
+      },
+      {
+        "pairs": [
+          "four-portrait",
+          "four-landscape",
+          "seven-landscape",
+          "seven-editor",
+          "twenty-four-phone",
+          "tiny-window"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f/artifact-index.json",
+        "commitSha": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "sha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f"
+      }
+    ],
+    "provenanceAssessment": "Prior independent QA verified the exact retained source/build/fixture/harness chain,71 indexed artifacts,12 PNGs and fixture identities, then inspected actual pixels for all six pairs. This metadata-only recheck verifies the same17 provenance/image/QA record identities and unchanged URLs; old observations are reused, not claimed as newly executed. Source/base/builds/fixtures/images are unchanged; capture normalization remains disclosed in the exact retained manifest/harness. No baseline waiver. The separate actual GitHub-page rendering waiver remains scoped to that page check.",
+    "pixelObservations": {
+      "four-portrait": "Both real captures show identical readable 2x2 layout; PNG bytes are identical.",
+      "four-landscape": "Baseline 3+1 leaves unused lower area; final 2+2 fills both rows with consistent gutters and readable labels.",
+      "seven-landscape": "Ordered 4+3 remains, but final shorter row fills the width; picture sizes remain consistent. Long label deliberately ellipsizes.",
+      "seven-editor": "Baseline 3+3+1 becomes centered compact 4+3; Pictures/AI/Add/audio/Duplicate/Delete actions remain visible.",
+      "twenty-four-phone": "Final emoji are whole and two-line long-label ellipsis is intentional. Targets remain large; dense pictures are smaller than sparse cards.",
+      "tiny-window": "Baseline unusable clipped text/undersized cards becomes a readable resize/rotate message while Hold to unlock stays visible."
+    },
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/34",
+      "checkedAtUtc": null,
+      "observations": "Not performed; direct human amendment6022754087 waives only actual GitHub-page image rendering. Source Markdown embedding/labels and genuine downloaded image pixels independently checked."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null
+  },
+  "limitations": [
+    "Native rotation, OS text scaling and screen-reader validation are unexecuted and explicitly deferred for PR34 only. Native behavior is not certified.",
+    "Dense-picture150%CSS-label diagnostic remains a readability risk; it is not OS scaling proof or a demonstrated native regression.",
+    "Synthetic browser speech proves queue/state behavior, not human auditory output; no broader native or acoustic waiver is inferred.",
+    "Actual GitHub-page image rendering is waived, not passed; genuine captures, independent prior pixel inspection and exact provenance remain verified.",
+    "QA changes no source, readiness label, draft state or Project item. Project permission is separately pending with coordinator and not assessed here."
+  ],
+  "reassessment": {
+    "scope": "Issue/PR prose only; unchanged tests/captures reused.",
+    "changes": "Issue removes (draft) and rewrites one prospective plan sentence as a standing evidence requirement; problem/acceptance and links remain exact. PR Summary/Test plan/images/provenance context unchanged. Supporting checks and limitations removes pending-reassessment status while retaining native deferral and150%label risk.",
+    "originalBodies": [
+      {
+        "kind": "issue",
+        "commit": "92d6c20503e0110765d22672eb2e0e9b383c1599",
+        "path": "publication/issue-body.md",
+        "sha256": "eeefdb8f961cd34eb8889005a3d41b22c4fce2984d289562a7fb5214f62047f3",
+        "verified": true
+      },
+      {
+        "kind": "pr",
+        "commit": "2dbe1b7438bf34a2570ad384bbeff6cde4a56f47",
+        "path": "decision-20261007/pr-body.md",
+        "sha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+        "verified": true
+      }
+    ],
+    "previousVerdict": {
+      "verdictCommentId": 6030490282,
+      "verdictBodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+      "verdictUpdatedAt": "2026-10-07T03:46:50Z"
+    },
+    "previousDetailedRecord": {
+      "url": "https://github.com/MChartier/little-say/blob/2dbe1b7438bf34a2570ad384bbeff6cde4a56f47/decision-20261007/record.json",
+      "sha256": "80189b4929e5e096590b150c72507712ca3bdbc854577802c68d5f27930500c1"
+    },
+    "recordAudit": "Fresh gates, acceptance, finding and limitation text avoids obsolete evidence-incomplete/pending statuses, draft-state assumptions, PR35 reference and overbroad native-deferral wording. Historical records are not edited; current child is PR36 and the named waiver excludesPR36/439."
+  },
+  "bindingChecks": {
+    "checkedAtUtc": "2026-10-07T06:53:56.652Z",
+    "binding": {
+      "checkedAtUtc": "2026-10-07T06:53:47.587Z",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "headRef": "feat/balanced-storyboard-grid",
+      "baseRef": "master",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "prUpdatedAt": "2026-10-07T06:45:50Z",
+      "draft": false,
+      "commits": 1,
+      "changedFiles": 12,
+      "additions": 331,
+      "deletions": 33,
+      "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+      "issueUpdatedAt": "2026-10-07T06:45:45Z"
+    },
+    "sourceWorktreeClean": true,
+    "host": "mchartier_zbook",
+    "refs": {
+      "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "evidence/issue31-balanced-grid-zbook": "beeae0527074d7824a43a4e51086a38be99a80be",
+      "evidence/qa-pr34-20261007": "6637bb4c7d0e9a2225ded142514728975a5b3e90"
+    },
+    "scope": {
+      "orderedCommits": [
+        {
+          "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "parents": [
+            "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+          ]
+        }
+      ],
+      "files": [
+        {
+          "path": "apps/mobile/src/ui/BoardEditor.tsx",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 4,
+          "deletions": 5
+        },
+        {
+          "path": "apps/mobile/src/ui/PlayBoard.tsx",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 4,
+          "deletions": 2
+        },
+        {
+          "path": "apps/mobile/src/ui/TileFace.tsx",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 10,
+          "deletions": 4
+        },
+        {
+          "path": "apps/mobile/src/ui/TouchSurface.tsx",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "apps/mobile/src/ui/TouchSurface.web.tsx",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1
+        },
+        {
+          "path": "docs/DESIGN.md",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        },
+        {
+          "path": "packages/core/src/boardLayout.test.ts",
+          "previousPath": null,
+          "status": "added",
+          "additions": 75,
+          "deletions": 0
+        },
+        {
+          "path": "packages/core/src/boardLayout.ts",
+          "previousPath": null,
+          "status": "added",
+          "additions": 64,
+          "deletions": 0
+        },
+        {
+          "path": "packages/core/src/interaction.test.ts",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 6,
+          "deletions": 4
+        },
+        {
+          "path": "packages/core/src/interaction.ts",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 1,
+          "deletions": 15
+        },
+        {
+          "path": "tests/web/app.spec.ts",
+          "previousPath": null,
+          "status": "modified",
+          "additions": 2,
+          "deletions": 1
+        },
+        {
+          "path": "tests/web/grid.spec.ts",
+          "previousPath": null,
+          "status": "added",
+          "additions": 162,
+          "deletions": 0
+        }
+      ],
+      "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "declaredParents": []
+    },
+    "originals": [
+      {
+        "kind": "issue",
+        "commit": "92d6c20503e0110765d22672eb2e0e9b383c1599",
+        "path": "publication/issue-body.md",
+        "sha256": "eeefdb8f961cd34eb8889005a3d41b22c4fce2984d289562a7fb5214f62047f3",
+        "verified": true
+      },
+      {
+        "kind": "pr",
+        "commit": "2dbe1b7438bf34a2570ad384bbeff6cde4a56f47",
+        "path": "decision-20261007/pr-body.md",
+        "sha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+        "verified": true
+      }
+    ],
+    "priorReceiptVerified": {
+      "verdictCommentId": 6030490282,
+      "verdictBodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+      "verdictUpdatedAt": "2026-10-07T03:46:50Z"
+    },
+    "scopedDecision": {
+      "id": 6030384716,
+      "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6030384716",
+      "body": "Scoped human decision, October 6, 2026: in response to the explicit choice between retaining the iPad-validation hold or marking this balanced-grid PR ready with native checks deferred, Matthew replied “Mark ready”. This defers native rotation, OS text-scaling and screen-reader validation for this PR’s current balanced-grid outcome. It does not claim those checks ran, remove the disclosed dense-board large-text risk, or waive source/CI/feedback/provenance gates. The genuine matched browser captures and independent browser checks remain the current evidence. Same-QA reassessment and coordinator rechecks will bind the final description before readiness.",
+      "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4",
+      "updatedAt": "2026-10-07T03:37:43Z",
+      "scope": "PR34 only: native rotation, OS text scaling and screen-reader validation. No native passed claim, risk removal, child36/Calibrate439 waiver or human merge approval."
+    },
+    "evidence": [
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/manifest.json",
+        "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+        "verifiedSha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+        "gitBlobSha": "a84e31d973d2138a48adc8920d4fc2636630de81"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "capture-grid.mjs",
+        "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+        "verifiedSha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+        "gitBlobSha": "9758e467d89f4293e8087f6304d26f8077837841"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "artifact-index.json",
+        "sha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f",
+        "verifiedSha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f",
+        "gitBlobSha": "e6fd539c2ae8feb4f3c6f546062b20b79fb3d83a"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-four-portrait.png",
+        "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+        "verifiedSha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+        "gitBlobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-four-portrait.png",
+        "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+        "verifiedSha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+        "gitBlobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-four-landscape.png",
+        "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+        "verifiedSha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+        "gitBlobSha": "4dbb41e2c548db4480212aeaf44da48e08abb1a8"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-four-landscape.png",
+        "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+        "verifiedSha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+        "gitBlobSha": "68cf85465b1fd28fefa58748d7ce0a0a6272a4b8"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-seven-landscape.png",
+        "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+        "verifiedSha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+        "gitBlobSha": "dba21a4b5bad433f033383396308cf8eafd1dfb9"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-seven-landscape.png",
+        "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+        "verifiedSha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+        "gitBlobSha": "70f4a962611fd9e55a54d1e14cd9d97de4c2fd99"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-seven-editor.png",
+        "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+        "verifiedSha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+        "gitBlobSha": "58f8a6770666045bab7859a0589bb51555df01ef"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-seven-editor.png",
+        "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+        "verifiedSha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+        "gitBlobSha": "c1c9e9fdd8d05fe0313ae6b825344af0b10663e8"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-twenty-four-phone.png",
+        "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+        "verifiedSha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+        "gitBlobSha": "570b5b8da8bdfae1bb91fc4acd1debbf0dcdd5e5"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-twenty-four-phone.png",
+        "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+        "verifiedSha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+        "gitBlobSha": "400f2b9611fa5a418e3d8fbbad4c16482f41c451"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/before-tiny-window.png",
+        "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+        "verifiedSha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+        "gitBlobSha": "bb6df5dfd8add1584e02b68b530042a256f017a7"
+      },
+      {
+        "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+        "path": "ui-final2/after-tiny-window.png",
+        "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+        "verifiedSha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+        "gitBlobSha": "f7743d86f4bbd6400fa8762fcd7276551e42638c"
+      },
+      {
+        "commit": "afd754057722f8368084ce7b8a770f35208c8870",
+        "path": "record.json",
+        "sha256": "a3fde50ad54be5801bbdc471709f0fe722f46df17449f83567725c78358dec3a",
+        "verifiedSha256": "a3fde50ad54be5801bbdc471709f0fe722f46df17449f83567725c78358dec3a",
+        "gitBlobSha": "c6680c88f4aeffaecc59263f177ed3b964a53cff"
+      },
+      {
+        "commit": "2dbe1b7438bf34a2570ad384bbeff6cde4a56f47",
+        "path": "decision-20261007/record.json",
+        "sha256": "80189b4929e5e096590b150c72507712ca3bdbc854577802c68d5f27930500c1",
+        "verifiedSha256": "80189b4929e5e096590b150c72507712ca3bdbc854577802c68d5f27930500c1"
+      }
+    ],
+    "ci": [
+      {
+        "id": 112603976685,
+        "name": "check",
+        "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/MChartier/little-say/actions/runs/37562895456/job/112603976685"
+      }
+    ],
+    "currentGitHubState": {
+      "draft": false,
+      "labels": []
+    },
+    "changes": "Issue removes (draft) and rewrites one prospective plan sentence as a standing evidence requirement; problem/acceptance and links remain exact. PR Summary/Test plan/images/provenance context unchanged. Supporting checks and limitations removes pending-reassessment status while retaining native deferral and150%label risk."
+  },
+  "currentGitHubState": {
+    "draft": false,
+    "labels": []
+  },
+  "nextAction": "Coordinator independently verifies this new append-only comment against the trusted-task exact receipt, saves a separate receipt, and performs current full-feedback/source/body/evidence checks before and after any readiness action. PR is already nondraft; human-ready is currently absent. No QA source/readiness/Project action. Preserve PR34-only deferral and disclosed risk; no merge or release authorization."
+}
