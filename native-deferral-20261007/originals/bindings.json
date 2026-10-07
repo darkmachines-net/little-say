@@ -1,0 +1,139 @@
+{
+  "preparedAtUtc": "2026-10-07T17:48:29.534Z",
+  "host": "mchartier_zbook",
+  "ownerTask": "01a11406-66b3-71fb-a4cc-2aad6d51802c",
+  "workflowVersion": "workflow-v3",
+  "reviewStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "amendments": [
+    {
+      "id": 5984018358,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5984018358",
+      "updatedAt": "2026-10-04T20:21:21Z",
+      "bodySha256": "457e7755eb1ec94e1552e2192e0a487c308a181cd6920f204f3af1b2ba2c8abf"
+    },
+    {
+      "id": 5987999201,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5987999201",
+      "updatedAt": "2026-10-05T04:16:50Z",
+      "bodySha256": "972a4a9e64684bfe8703118c7cc8c33f26980abe65f1e212c05f899d2e65ed63"
+    },
+    {
+      "id": 5997739454,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5997739454",
+      "updatedAt": "2026-10-05T15:35:43Z",
+      "bodySha256": "8ffac98257544b912ec49d1b11259be82d56e50183685364f12e159298f6e396"
+    },
+    {
+      "id": 6002971212,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6002971212",
+      "updatedAt": "2026-10-05T21:09:29Z",
+      "bodySha256": "02bd694f3a6fe0bcc7b48a7f16e20f12d8a3db11c04e2ed326a5e11bcb789992"
+    },
+    {
+      "id": 6006523068,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6006523068",
+      "updatedAt": "2026-10-06T00:30:46Z",
+      "bodySha256": "445c01c614a0aa767f408e4e98ca79f6525a3dd1a52a6b977a9499384f389481"
+    },
+    {
+      "id": 6008280372,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008280372",
+      "updatedAt": "2026-10-06T02:45:58Z",
+      "bodySha256": "53ea8dd801ffd744c1fdaaa625bc959ceb8ae1f4193926339073a0574d1ec4ee"
+    },
+    {
+      "id": 6008834896,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008834896",
+      "updatedAt": "2026-10-06T03:38:32Z",
+      "bodySha256": "c7a8391deb149ce166ba49323682fb4f6336e43a941c8164cfb7a12d8c1f3a10"
+    },
+    {
+      "id": 6020948896,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6020948896",
+      "updatedAt": "2026-10-06T16:40:54Z",
+      "bodySha256": "b833facef0b79a05c92ffec982480393d1f060e4b741c11136af7c011d680ba6"
+    },
+    {
+      "id": 6021105604,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021105604",
+      "updatedAt": "2026-10-06T16:50:11Z",
+      "bodySha256": "d9fc320b61d0238711e14dcb9cb028ba605c16024d64ac6dc97ebe75c7299b48"
+    },
+    {
+      "id": 6021281028,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021281028",
+      "updatedAt": "2026-10-06T17:00:34Z",
+      "bodySha256": "eb9a05a4b43bd4a1f7d9b39e78ddda0a5ad6f0b47af8293768fcef6f5905e0cb"
+    },
+    {
+      "id": 6022754087,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087",
+      "updatedAt": "2026-10-06T18:24:41Z",
+      "bodySha256": "1bdb9f683ed1c434d2f5ab20b9621217be7d14f17bbc34e5fc946a9e86c5e161"
+    },
+    {
+      "id": 6026521080,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6026521080",
+      "updatedAt": "2026-10-06T22:21:29Z",
+      "bodySha256": "74a486b468a12a67303e9f40b21193c41e10c6485e3a1d9a20431ee02d87a990"
+    },
+    {
+      "id": 6041659686,
+      "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+      "updatedAt": "2026-10-07T15:58:13Z",
+      "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b"
+    }
+  ],
+  "acknowledgment": "Read full supplied pinned standards, direct amendments, local AGENTS and complete current feedback. No applicable local .agents/skills found. Current task authority is metadata/evidence retention only.",
+  "prBefore": {
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRef": "feat/direct-board-editor-issue30",
+    "baseRef": "feat/balanced-storyboard-grid",
+    "headRepository": "MChartier/little-say",
+    "baseRepository": "MChartier/little-say",
+    "draft": true,
+    "labels": [],
+    "state": "open",
+    "bodySha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab",
+    "updatedAt": "2026-10-07T06:38:47Z"
+  },
+  "issueBefore": {
+    "state": "open",
+    "title": "Open the existing storyboard editor directly after a two-second parent hold",
+    "labels": [
+      "enhancement"
+    ],
+    "assignees": [],
+    "bodySha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+    "updatedAt": "2026-10-07T17:38:44Z"
+  },
+  "parent": {
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "headRef": "feat/balanced-storyboard-grid",
+    "baseRef": "master",
+    "headRepository": "MChartier/little-say",
+    "baseRepository": "MChartier/little-say",
+    "draft": false,
+    "labels": [
+      "human-ready"
+    ],
+    "state": "open",
+    "bodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+    "updatedAt": "2026-10-07T07:07:54Z"
+  },
+  "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "proposedPrBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+  "proposedIssueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+  "evidenceCommit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+  "manifestSha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+  "previousQa": {
+    "id": 6032466082,
+    "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99",
+    "updatedAt": "2026-10-07T06:38:47Z"
+  },
+  "scope": "Descriptions only. No source, tests, captures, readiness, draft, Project, issue-linkage or child32 changes. Original evidence identities retained. Native checks unexecuted and deferred for review readiness only."
+}
