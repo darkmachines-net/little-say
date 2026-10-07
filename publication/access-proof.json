@@ -1,0 +1,109 @@
+{
+  "ref": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+  "checkedAtUtc": "2026-10-07T02:37:08.955Z",
+  "access": "Authenticated repository Contents API; no public-access assumption or PR-page rendering claim",
+  "verified": [
+    {
+      "path": "README.md",
+      "sha256": "1a27ad1b29b62c890907805514b8439506a2e31eae6aec5b59a32d038007c919",
+      "bytes": 3801,
+      "blobSha": "9ab447e965b68c4b96fe9963a74113120030d7f6"
+    },
+    {
+      "path": "capture-grid.mjs",
+      "sha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+      "bytes": 11226,
+      "blobSha": "9758e467d89f4293e8087f6304d26f8077837841"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "3f46ab4cf8e4e011f08cad9aa1f8b73894c650fe4d28e484fa01c1340bccab09",
+      "bytes": 6418,
+      "blobSha": "c391cbf77f35887fabde100ec9ec49546ab1a7d9"
+    },
+    {
+      "path": "artifact-index.json",
+      "sha256": "17f86329ead05bb8d5da8fee38114e14f4c6e00557a8bb19f39b6a8b0a34366f",
+      "bytes": 10259,
+      "blobSha": "e6fd539c2ae8feb4f3c6f546062b20b79fb3d83a"
+    },
+    {
+      "path": "ui-final2/manifest.json",
+      "sha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+      "bytes": 42225,
+      "blobSha": "a84e31d973d2138a48adc8920d4fc2636630de81"
+    },
+    {
+      "path": "ui-final2/after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+      "bytes": 60464,
+      "blobSha": "68cf85465b1fd28fefa58748d7ce0a0a6272a4b8"
+    },
+    {
+      "path": "ui-final2/after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "bytes": 61972,
+      "blobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+    },
+    {
+      "path": "ui-final2/after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+      "bytes": 64859,
+      "blobSha": "c1c9e9fdd8d05fe0313ae6b825344af0b10663e8"
+    },
+    {
+      "path": "ui-final2/after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+      "bytes": 90850,
+      "blobSha": "70f4a962611fd9e55a54d1e14cd9d97de4c2fd99"
+    },
+    {
+      "path": "ui-final2/after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+      "bytes": 8544,
+      "blobSha": "f7743d86f4bbd6400fa8762fcd7276551e42638c"
+    },
+    {
+      "path": "ui-final2/after-twenty-four-phone.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+      "bytes": 78862,
+      "blobSha": "400f2b9611fa5a418e3d8fbbad4c16482f41c451"
+    },
+    {
+      "path": "ui-final2/before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+      "bytes": 60789,
+      "blobSha": "4dbb41e2c548db4480212aeaf44da48e08abb1a8"
+    },
+    {
+      "path": "ui-final2/before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "bytes": 61972,
+      "blobSha": "921cec11c113c40e872237f3aafb526ff3cd4185"
+    },
+    {
+      "path": "ui-final2/before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+      "bytes": 64998,
+      "blobSha": "58f8a6770666045bab7859a0589bb51555df01ef"
+    },
+    {
+      "path": "ui-final2/before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+      "bytes": 90742,
+      "blobSha": "dba21a4b5bad433f033383396308cf8eafd1dfb9"
+    },
+    {
+      "path": "ui-final2/before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+      "bytes": 22550,
+      "blobSha": "bb6df5dfd8add1584e02b68b530042a256f017a7"
+    },
+    {
+      "path": "ui-final2/before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+      "bytes": 69523,
+      "blobSha": "570b5b8da8bdfae1bb91fc4acd1debbf0dcdd5e5"
+    }
+  ]
+}
