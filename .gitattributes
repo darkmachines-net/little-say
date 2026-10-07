@@ -1,0 +1,2 @@
+# Preserve exact evidence bytes, including original log line endings.
+* -text
