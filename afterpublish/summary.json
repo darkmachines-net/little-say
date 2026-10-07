@@ -1,0 +1,154 @@
+{
+  "checkedAtUtc": "2026-10-07T03:35:42.705Z",
+  "host": "mchartier_zbook",
+  "headSha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "headRef": "refactor/prompt-resources-issue23",
+  "headRepo": "MChartier/little-say",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "baseRef": "master",
+  "baseRepo": "MChartier/little-say",
+  "liveMaster": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "prBodySha256": "dd8394f2c1f7153af1e488cc385eba62f0045b3ccc6ccefeac7984fd5c036070",
+  "commits": [
+    {
+      "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "filename": "apps/mobile/src/ui/AiConversation.tsx",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1
+    },
+    {
+      "filename": "apps/server/src/picture-provider.ts",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 6
+    },
+    {
+      "filename": "apps/server/src/prompts.ts",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/server/src/provider.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 18
+    },
+    {
+      "filename": "apps/server/src/synthesis.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1
+    },
+    {
+      "filename": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "status": "added",
+      "additions": 36,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "status": "added",
+      "additions": 9,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/server/test/prompt-payloads.test.ts",
+      "status": "added",
+      "additions": 100,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/server/test/prompt-presets.test.ts",
+      "status": "added",
+      "additions": 12,
+      "deletions": 0
+    },
+    {
+      "filename": "packages/core/src/index.ts",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0
+    },
+    {
+      "filename": "packages/core/src/onboarding.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 4
+    },
+    {
+      "filename": "packages/core/src/promptPresets.ts",
+      "status": "added",
+      "additions": 10,
+      "deletions": 0
+    },
+    {
+      "filename": "packages/core/src/promptResources.test.ts",
+      "status": "added",
+      "additions": 22,
+      "deletions": 0
+    },
+    {
+      "filename": "packages/core/src/promptResources.ts",
+      "status": "added",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/README.md",
+      "status": "added",
+      "additions": 19,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/server/board.json",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/server/pictures.json",
+      "status": "added",
+      "additions": 9,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/server/speech.json",
+      "status": "added",
+      "additions": 3,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/shared/conversation.json",
+      "status": "added",
+      "additions": 5,
+      "deletions": 0
+    },
+    {
+      "filename": "prompts/shared/onboarding.json",
+      "status": "added",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "filename": "scripts/prompt-bundle.test.ts",
+      "status": "added",
+      "additions": 35,
+      "deletions": 0
+    }
+  ],
+  "prTotals": {
+    "commits": 1,
+    "changed_files": 21,
+    "additions": 342,
+    "deletions": 30
+  }
+}

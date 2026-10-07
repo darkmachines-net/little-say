@@ -1,0 +1,26 @@
+{
+  "verdict": "changes-required",
+  "verdictCommentId": 6030357938,
+  "verdictBodySha256": "8629a966da52d09e0639c625bd6c9b1335c4ae86c5efff8a62ac88ea9c8f0924",
+  "verdictUpdatedAt": "2026-10-07T03:35:21Z",
+  "commentUrl": "https://github.com/MChartier/little-say/pull/35#issuecomment-6030357938",
+  "headSha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parentRevisions": [],
+  "commitParents": [
+    "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  ],
+  "prBodySha256": "dd8394f2c1f7153af1e488cc385eba62f0045b3ccc6ccefeac7984fd5c036070",
+  "checkedAtUtc": "2026-10-07T03:35:42.705Z",
+  "evidenceCommit": "0ddde9ab71f326cfae3b0b261baabb64f149768f",
+  "evidenceUrl": "https://github.com/MChartier/little-say/blob/0ddde9ab71f326cfae3b0b261baabb64f149768f/qa-verdict.json",
+  "evidenceSha256": "7b525acf193341c0eb96eabe5f7f0f0cd6d8382ed7ba87bdf4e94d45d453bac9",
+  "reviewerChat": "01a11461-180f-73dd-8d1c-3e2f64ae7027",
+  "coordinatorSeparateReceiptRequired": true,
+  "beforePublishCheckedAtUtc": "2026-10-07T03:35:23.786Z",
+  "postPublishFullFeedbackUnchangedExceptOwnVerdict": true,
+  "postPublishBindingsUnchanged": true,
+  "draft": true,
+  "labels": [],
+  "remainingBlocker": "C1 only: remove stale pending-QA sentence, then same-reviewer communication/full-feedback recheck."
+}

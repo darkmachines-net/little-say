@@ -1,0 +1,10 @@
+{
+  "ref": "refs/heads/master",
+  "node_id": "REF_kwDOU65OybFyZWZzL2hlYWRzL21hc3Rlcg",
+  "url": "https://api.github.com/repos/MChartier/little-say/git/refs/heads/master",
+  "object": {
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "type": "commit",
+    "url": "https://api.github.com/repos/MChartier/little-say/git/commits/1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  }
+}
