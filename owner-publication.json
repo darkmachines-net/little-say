@@ -1,0 +1,216 @@
+{
+  "checkedAtUtc": "2026-10-07T02:43:08.532Z",
+  "pr": "https://github.com/MChartier/little-say/pull/34",
+  "issue": "https://github.com/MChartier/little-say/issues/31",
+  "head": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "actualTargetRef": "master",
+  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "parents": [],
+  "ultimateTarget": "master",
+  "draft": true,
+  "prBodySha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608",
+  "issueBodySha256": "eeefdb8f961cd34eb8889005a3d41b22c4fce2984d289562a7fb5214f62047f3",
+  "bodyHashMethod": "SHA-256 over exact API-decoded UTF-8 body, with no trimming, newline normalization or added newline",
+  "task": "01a11405-db71-76ed-9ec6-44717ef3402a",
+  "host": "MCHARTIER_ZBOOK",
+  "worktree": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-06\\task-8\\little-say-grid",
+  "sourceScope": {
+    "pagination": "All REST pages requested with per_page=100; totals reconciled to live PR metadata",
+    "commits": [
+      {
+        "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "parents": [
+          "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+        ],
+        "message": "Balance storyboard rows within measured play and editor bounds"
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "7d4650a7f7de9df6b5528a247765154fe277a87d",
+        "additions": 4,
+        "deletions": 5
+      },
+      {
+        "path": "apps/mobile/src/ui/PlayBoard.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "876c7fe5b835d856b9b416161701d30f679f095c",
+        "additions": 4,
+        "deletions": 2
+      },
+      {
+        "path": "apps/mobile/src/ui/TileFace.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "7c867dc83ca03c80a4e6be817759b2c779500e23",
+        "additions": 10,
+        "deletions": 4
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "9742c04f05cd90ef9c759a88cbff2b1cc3c42bd7",
+        "additions": 1,
+        "deletions": 1
+      },
+      {
+        "path": "apps/mobile/src/ui/TouchSurface.web.tsx",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "b009ab94c2ac23a51de7873661c37cb8c9bfd1fe",
+        "additions": 1,
+        "deletions": 1
+      },
+      {
+        "path": "docs/DESIGN.md",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "17b043775775a892b93a6b710bead70b01c894aa",
+        "additions": 1,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/boardLayout.test.ts",
+        "previousPath": null,
+        "status": "added",
+        "blobSha": "bcba8dbf345ba6b7e01c847654c6da5ad7e06143",
+        "additions": 75,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/boardLayout.ts",
+        "previousPath": null,
+        "status": "added",
+        "blobSha": "e761b098d0450981bdf5466e8ede6a8cf61ee1e0",
+        "additions": 64,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/interaction.test.ts",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "d92d132ce3a2888ff9c3b01d0b11d61994ed1195",
+        "additions": 6,
+        "deletions": 4
+      },
+      {
+        "path": "packages/core/src/interaction.ts",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "f034c8db0af0748b139fed495fd964fa284339b4",
+        "additions": 1,
+        "deletions": 15
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "previousPath": null,
+        "status": "modified",
+        "blobSha": "fb59ed87b232446dcda18bd7e31f9de336db03e9",
+        "additions": 2,
+        "deletions": 1
+      },
+      {
+        "path": "tests/web/grid.spec.ts",
+        "previousPath": null,
+        "status": "added",
+        "blobSha": "acfd71557cc4a2afe022a7d04517e99792680749",
+        "additions": 162,
+        "deletions": 0
+      }
+    ],
+    "summary": "One direct child of actual master; 7 product files,4 maintained test files,1 maintained design note;331 additions/33 deletions. Every published commit/path reviewed. No sibling or evidence merges; no temporary logs, images, capture harnesses, source copies, inventories or reports in product history."
+  },
+  "ci": {
+    "head": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "run": "https://github.com/MChartier/little-say/actions/runs/37562895456",
+    "conclusion": "success",
+    "checks": [
+      {
+        "id": 112603976685,
+        "name": "check",
+        "head": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "conclusion": "success",
+        "url": "https://github.com/MChartier/little-say/actions/runs/37562895456/job/112603976685"
+      }
+    ]
+  },
+  "evidence": {
+    "commit": "b3f3aa5a79d8cdb8f7b8db4a9aa98ebc009cc15f",
+    "manifest": "ui-final2/manifest.json",
+    "manifestSha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+    "harness": "capture-grid.mjs",
+    "harnessSha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+    "access": "17 current remote files fetched through authenticated Contents API and matched byte for byte; complete local evidence commit also verified against artifact-index.json",
+    "actualGitHubRenderedPage": "Not inspected; explicit scoped general human waiver6022754087 applies only to this gate"
+  },
+  "feedback": {
+    "issueComments": [
+      {
+        "id": 6029167414,
+        "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8",
+        "disposition": "Original human report and planning retained; implementation follows scoped requirements. Original installed-device report remains distinct from genuine synthetic browser reproduction."
+      },
+      {
+        "id": 6029219796,
+        "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95",
+        "disposition": "Queued claim superseded by the trusted native implementation dispatch and started checkpoint; no authority inferred from label or timestamp."
+      },
+      {
+        "id": 6029348137,
+        "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02",
+        "disposition": "Implementation ownership/pin acknowledgment; scoped work now published in PR34."
+      },
+      {
+        "id": 6029662109,
+        "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d",
+        "disposition": "Stable geometry checkpoint; pending browser/evidence stages completed in the bound current records."
+      }
+    ],
+    "prComments": [
+      {
+        "id": 6029730527,
+        "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a",
+        "disposition": "Single configured bot-review request at current head; response is quota refusal, not completed engineering review."
+      },
+      {
+        "id": 6029732188,
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+        "disposition": "Quota-only refusal recorded under amendment6006523068; no retry, billing change or completion claim. Independent full-scope review/QA still required."
+      }
+    ],
+    "reviews": [],
+    "inline": [],
+    "reviewThreads": {
+      "nodes": [],
+      "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+      }
+    },
+    "botReview": "Not completed: quota-only refusal6029732188; amendment6006523068 permits independent review/QA to proceed"
+  },
+  "association": {
+    "nodes": [
+      {
+        "number": 31,
+        "url": "https://github.com/MChartier/little-say/issues/31"
+      }
+    ],
+    "pageInfo": {
+      "hasNextPage": false,
+      "endCursor": "MQ"
+    }
+  },
+  "limitations": [
+    "Native device rotation, OS large-font, TalkBack/VoiceOver and human auditory review remain unexecuted; adb showed no device and no emulator/AVD was available. Browser tests and native exports do not substitute for them.",
+    "Independent review and readiness QA are pending. This is an implementer handoff, not a QA verdict, readiness label or human approval.",
+    "Project Current PR/Pipeline state remains coordinator-owned. Issue body and native closing association are verified."
+  ],
+  "recordCorrections": "A PowerShell console re-encoding issue during the first issue-link update was repaired through structured API arguments. The five-section body was independently read back and matched exactly. Current receipt bodies use direct UTF-8 API bytes. Earlier local misencoded snapshots are not receipt identities."
+}

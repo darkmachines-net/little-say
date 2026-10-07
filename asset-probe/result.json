@@ -1,0 +1,118 @@
+{
+  "time": "2026-10-07T03:10:19.071Z",
+  "source": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "checks": [
+    {
+      "name": "numeric geometry boundary probe",
+      "detail": {
+        "cases": 192
+      }
+    },
+    {
+      "name": "dense photo crop remains invariant",
+      "detail": {
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "frame": {
+          "x": 305.3125,
+          "y": 750.25,
+          "width": 26,
+          "height": 26
+        },
+        "region": [
+          0.43751565239168544,
+          0.14049586776859505,
+          0.41672927623340844,
+          0.6250939143501127
+        ]
+      }
+    },
+    {
+      "name": "dense photo crop remains invariant",
+      "detail": {
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "frame": {
+          "x": 766,
+          "y": 288.8125,
+          "width": 33,
+          "height": 33
+        },
+        "region": [
+          0.43745067087608525,
+          0.1405741343592779,
+          0.4167324388318863,
+          0.6250369931932525
+        ]
+      }
+    },
+    {
+      "name": "dense photo crop remains invariant",
+      "detail": {
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "frame": {
+          "x": 682.5,
+          "y": 1006.8125,
+          "width": 55,
+          "height": 55
+        },
+        "region": [
+          0.4375,
+          0.140625,
+          0.4166666666666667,
+          0.625
+        ]
+      }
+    },
+    {
+      "name": "dense photo crop remains invariant",
+      "detail": {
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "frame": {
+          "x": 1044.8125,
+          "y": 645,
+          "width": 57,
+          "height": 57
+        },
+        "region": [
+          0.43746430611079384,
+          0.1405071967100754,
+          0.41667618503712167,
+          0.6250856751199452
+        ]
+      }
+    },
+    {
+      "name": "loaded local photo survives offline rotation",
+      "detail": "passed; no offline reload claim in this probe"
+    },
+    {
+      "name": "photo card keyboard speech target",
+      "detail": "passed"
+    }
+  ],
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+      "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8"
+    },
+    {
+      "path": "/_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+      "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760"
+    }
+  ],
+  "limitations": [
+    "Browser checks only; no OS font scaling, TalkBack, VoiceOver or physical rotation"
+  ],
+  "browser": "154.0.4258.62"
+}

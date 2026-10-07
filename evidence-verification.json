@@ -1,0 +1,469 @@
+{
+  "checkedAtUtc": "2026-10-07T03:04:33.854Z",
+  "manifestSha256": "ad25d87e7d648ff7297d4a92219d4a9111a32988ea490ff57e4afc671a989214",
+  "harnessSha256": "763db071c6ddddfa0db41ce9d5dff8803de3e342844e03787e5e8ad570e78923",
+  "images": [
+    {
+      "side": "before",
+      "scene": "four-portrait",
+      "file": "before-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "side": "before",
+      "scene": "four-landscape",
+      "file": "before-four-landscape.png",
+      "sha256": "4c174619d75011ee37665643aac720f921bbeb5d2aa1b63eb90650a9b24b786f",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "before",
+      "scene": "seven-landscape",
+      "file": "before-seven-landscape.png",
+      "sha256": "52bbc0b0c4cefdb89378120572357f816b19e64452da81a31751c227871bf5b9",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "before",
+      "scene": "seven-editor",
+      "file": "before-seven-editor.png",
+      "sha256": "58f4a976b4ca2ed840b3967e6c6e46ba06390e7886fc5a34d274f8d7ada8c0d7",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "before",
+      "scene": "twenty-four-phone",
+      "file": "before-twenty-four-phone.png",
+      "sha256": "0731cbf6277ee25a888fb2967f686aec22befc0f32e21f53113c2a8aefcef95d",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "side": "before",
+      "scene": "tiny-window",
+      "file": "before-tiny-window.png",
+      "sha256": "32a6a7f739c475bf3f781e7c39c47c82245c75fa40b42501a8a33e88b0a4764d",
+      "width": 320,
+      "height": 320
+    },
+    {
+      "side": "after",
+      "scene": "four-portrait",
+      "file": "after-four-portrait.png",
+      "sha256": "08a9458721fe50b33179d83cd31c494095ccae9f41b9c8929dd7c9da44c404f2",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "side": "after",
+      "scene": "four-landscape",
+      "file": "after-four-landscape.png",
+      "sha256": "09fa219d9c53a642b18cfc4b8b9455d1188221b97819ff4c06206efe7861a6c7",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "after",
+      "scene": "seven-landscape",
+      "file": "after-seven-landscape.png",
+      "sha256": "11fd4a65c228a412a7e342bb810546f5c522b3c3a3dba2baa311cb1fa0529891",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "after",
+      "scene": "seven-editor",
+      "file": "after-seven-editor.png",
+      "sha256": "4c08a829d85c666714c0c57c8be8c187d3d0ec3f01ea22a1487f1a740bcd383c",
+      "width": 1180,
+      "height": 820
+    },
+    {
+      "side": "after",
+      "scene": "twenty-four-phone",
+      "file": "after-twenty-four-phone.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "side": "after",
+      "scene": "tiny-window",
+      "file": "after-tiny-window.png",
+      "sha256": "5f8541e791a9ddb948c2c64f70741c3ecaa945b3f21930c0a48bcf0ce19a6768",
+      "width": 320,
+      "height": 320
+    }
+  ],
+  "fixtures": [
+    {
+      "side": "before",
+      "scene": "four-portrait",
+      "sha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c"
+    },
+    {
+      "side": "before",
+      "scene": "four-landscape",
+      "sha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c"
+    },
+    {
+      "side": "before",
+      "scene": "seven-landscape",
+      "sha256": "d6f274b782bd4e7aaeed6162f45a89f3ab65e38961d896656cd681fa9f746ae9"
+    },
+    {
+      "side": "before",
+      "scene": "seven-editor",
+      "sha256": "e4c8f95f496e704f75e1de362dfbe6896703b0423254a472cb0aef371be67245"
+    },
+    {
+      "side": "before",
+      "scene": "twenty-four-phone",
+      "sha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205"
+    },
+    {
+      "side": "before",
+      "scene": "tiny-window",
+      "sha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205"
+    },
+    {
+      "side": "after",
+      "scene": "four-portrait",
+      "sha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c"
+    },
+    {
+      "side": "after",
+      "scene": "four-landscape",
+      "sha256": "1c2bc5b6d19e81f62822785354ec26875750b40527aa55ffb5d5da288e671b3c"
+    },
+    {
+      "side": "after",
+      "scene": "seven-landscape",
+      "sha256": "d6f274b782bd4e7aaeed6162f45a89f3ab65e38961d896656cd681fa9f746ae9"
+    },
+    {
+      "side": "after",
+      "scene": "seven-editor",
+      "sha256": "e4c8f95f496e704f75e1de362dfbe6896703b0423254a472cb0aef371be67245"
+    },
+    {
+      "side": "after",
+      "scene": "twenty-four-phone",
+      "sha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205"
+    },
+    {
+      "side": "after",
+      "scene": "tiny-window",
+      "sha256": "a6573b673523dd6610a0fd8176dcff1145b8368d95938359f1b6b1d5c4313205"
+    }
+  ],
+  "builds": [
+    {
+      "side": "before",
+      "sourceSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "files": [
+        {
+          "path": "apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f",
+          "verified": true
+        },
+        {
+          "path": "favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c",
+          "verified": true
+        },
+        {
+          "path": "favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf",
+          "verified": true
+        },
+        {
+          "path": "icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e",
+          "verified": true
+        },
+        {
+          "path": "icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b",
+          "verified": true
+        },
+        {
+          "path": "icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae",
+          "verified": true
+        },
+        {
+          "path": "index.html",
+          "sha256": "93f593af40ef1e1c83f180926bbe12528452a916f5542ed1054af5e5ad7bddeb",
+          "verified": true
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8",
+          "verified": true
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991",
+          "verified": true
+        },
+        {
+          "path": "sw.js",
+          "sha256": "e90c1e0cd2cd0ada0b8403790179054ea437468704bc5cb67b6297b5c72b9a78",
+          "verified": true
+        },
+        {
+          "path": "sw.js.map",
+          "sha256": "0b245a45dd00b55e07b883fc77336822faa0431f5619b4680881b2ef36a95670",
+          "verified": true
+        },
+        {
+          "path": "workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b",
+          "verified": true
+        },
+        {
+          "path": "workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/js/web/App-ef6191c2f26ad5b79eeb8156b4a1d069.js",
+          "sha256": "4cb4706d7d8a0767765db620f6cbc2515e5858b3d808dc3d1961c9646adf6aaa",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/js/web/index-7daf2701ae2aac85569c8c6bb59782ac.js",
+          "sha256": "b96e967e21a9260da33e2aadbebc9bd820e073a434fda6a225bfe0a854a933ef",
+          "verified": true
+        }
+      ],
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    },
+    {
+      "side": "after",
+      "sourceSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "files": [
+        {
+          "path": "apple-touch-icon.png",
+          "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f",
+          "verified": true
+        },
+        {
+          "path": "favicon.ico",
+          "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c",
+          "verified": true
+        },
+        {
+          "path": "favicon.png",
+          "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf",
+          "verified": true
+        },
+        {
+          "path": "icon-192.png",
+          "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e",
+          "verified": true
+        },
+        {
+          "path": "icon-512.png",
+          "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b",
+          "verified": true
+        },
+        {
+          "path": "icon-maskable-512.png",
+          "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae",
+          "verified": true
+        },
+        {
+          "path": "index.html",
+          "sha256": "43116721dc015ed6385d0d5ad8646586455bf268c803e3ab4b9931d7a02d0942",
+          "verified": true
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8",
+          "verified": true
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991",
+          "verified": true
+        },
+        {
+          "path": "sw.js",
+          "sha256": "8759d6c051120aa254d3891760cc84547209a061f07000b1100ad0f058f73247",
+          "verified": true
+        },
+        {
+          "path": "sw.js.map",
+          "sha256": "a9353ff17bd5277136d15ef5ce5d0bbb1b4edbb2924735f4e1764456de53c61a",
+          "verified": true
+        },
+        {
+          "path": "workbox-9c191d2f.js",
+          "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b",
+          "verified": true
+        },
+        {
+          "path": "workbox-9c191d2f.js.map",
+          "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57",
+          "verified": true
+        },
+        {
+          "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+          "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+          "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760",
+          "verified": true
+        },
+        {
+          "path": "_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+          "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8",
+          "verified": true
+        }
+      ],
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    }
+  ],
+  "scope": [
+    {
+      "path": "apps/mobile/src/ui/BoardEditor.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "7d4650a7f7de9df6b5528a247765154fe277a87d",
+      "additions": 4,
+      "deletions": 5
+    },
+    {
+      "path": "apps/mobile/src/ui/PlayBoard.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "876c7fe5b835d856b9b416161701d30f679f095c",
+      "additions": 4,
+      "deletions": 2
+    },
+    {
+      "path": "apps/mobile/src/ui/TileFace.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "7c867dc83ca03c80a4e6be817759b2c779500e23",
+      "additions": 10,
+      "deletions": 4
+    },
+    {
+      "path": "apps/mobile/src/ui/TouchSurface.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "9742c04f05cd90ef9c759a88cbff2b1cc3c42bd7",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "apps/mobile/src/ui/TouchSurface.web.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "b009ab94c2ac23a51de7873661c37cb8c9bfd1fe",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "docs/DESIGN.md",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "17b043775775a892b93a6b710bead70b01c894aa",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "packages/core/src/boardLayout.test.ts",
+      "status": "added",
+      "previousPath": null,
+      "blobSha": "bcba8dbf345ba6b7e01c847654c6da5ad7e06143",
+      "additions": 75,
+      "deletions": 0
+    },
+    {
+      "path": "packages/core/src/boardLayout.ts",
+      "status": "added",
+      "previousPath": null,
+      "blobSha": "e761b098d0450981bdf5466e8ede6a8cf61ee1e0",
+      "additions": 64,
+      "deletions": 0
+    },
+    {
+      "path": "packages/core/src/interaction.test.ts",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "d92d132ce3a2888ff9c3b01d0b11d61994ed1195",
+      "additions": 6,
+      "deletions": 4
+    },
+    {
+      "path": "packages/core/src/interaction.ts",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "f034c8db0af0748b139fed495fd964fa284339b4",
+      "additions": 1,
+      "deletions": 15
+    },
+    {
+      "path": "tests/web/app.spec.ts",
+      "status": "modified",
+      "previousPath": null,
+      "blobSha": "fb59ed87b232446dcda18bd7e31f9de336db03e9",
+      "additions": 2,
+      "deletions": 1
+    },
+    {
+      "path": "tests/web/grid.spec.ts",
+      "status": "added",
+      "previousPath": null,
+      "blobSha": "acfd71557cc4a2afe022a7d04517e99792680749",
+      "additions": 162,
+      "deletions": 0
+    }
+  ]
+}

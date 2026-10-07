@@ -1,0 +1,398 @@
+{
+  "time": "2026-10-07T03:07:59.005Z",
+  "source": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "checks": [
+    {
+      "name": "numeric geometry boundary probe",
+      "detail": {
+        "cases": 192
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 4,
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "rows": [
+          2,
+          2
+        ],
+        "minimumSide": 388
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 4,
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "rows": [
+          2,
+          2
+        ],
+        "minimumSide": 358
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 4,
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "rows": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "minimumSide": 179
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 4,
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "rows": [
+          4
+        ],
+        "minimumSide": 194
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 5,
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "rows": [
+          2,
+          2,
+          1
+        ],
+        "minimumSide": 354.65625
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 5,
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "rows": [
+          3,
+          2
+        ],
+        "minimumSide": 358
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 5,
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "rows": [
+          2,
+          2,
+          1
+        ],
+        "minimumSide": 173
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 5,
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "rows": [
+          5
+        ],
+        "minimumSide": 152.796875
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 7,
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "rows": [
+          3,
+          2,
+          2
+        ],
+        "minimumSide": 254.65625
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 7,
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "rows": [
+          4,
+          3
+        ],
+        "minimumSide": 278
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 7,
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "rows": [
+          2,
+          2,
+          2,
+          1
+        ],
+        "minimumSide": 173
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 7,
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "rows": [
+          4,
+          3
+        ],
+        "minimumSide": 143
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 23,
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "rows": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          3
+        ],
+        "minimumSide": 171.328125
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 23,
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "rows": [
+          6,
+          6,
+          6,
+          5
+        ],
+        "minimumSide": 173
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 23,
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "rows": [
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "minimumSide": 80.5
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 23,
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "rows": [
+          8,
+          8,
+          7
+        ],
+        "minimumSide": 91
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 24,
+        "size": {
+          "width": 820,
+          "height": 1180
+        },
+        "rows": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          4
+        ],
+        "minimumSide": 171.328125
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 24,
+        "size": {
+          "width": 1180,
+          "height": 820
+        },
+        "rows": [
+          6,
+          6,
+          6,
+          6
+        ],
+        "minimumSide": 173
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 24,
+        "size": {
+          "width": 390,
+          "height": 844
+        },
+        "rows": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "minimumSide": 83.5
+      }
+    },
+    {
+      "name": "rendered geometry",
+      "detail": {
+        "count": 24,
+        "size": {
+          "width": 844,
+          "height": 390
+        },
+        "rows": [
+          8,
+          8,
+          8
+        ],
+        "minimumSide": 91
+      }
+    },
+    {
+      "name": "rotation queued speech, stale-gap contact cancellation and keyboard activation",
+      "detail": "passed"
+    },
+    {
+      "name": "parent hold cancels on resize",
+      "detail": "passed"
+    },
+    {
+      "name": "tiny window recovery",
+      "detail": "passed"
+    },
+    {
+      "name": "dense long label default",
+      "detail": {
+        "pictureHeight": 25.5,
+        "label": "Please help me find my favourite things"
+      }
+    },
+    {
+      "name": "browser text150 diagnostic",
+      "detail": {
+        "pictureHeight": 1.5,
+        "label": "Please help me find my favourite things"
+      }
+    },
+    {
+      "name": "editor phone24",
+      "detail": {
+        "buttons": 24,
+        "preview": {
+          "x": 20,
+          "y": 163,
+          "width": 350,
+          "height": 333
+        }
+      }
+    },
+    {
+      "name": "editor last card maps to correct saved content",
+      "detail": "passed"
+    }
+  ],
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+      "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8"
+    },
+    {
+      "path": "/_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+      "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760"
+    }
+  ],
+  "limitations": [
+    "Browser checks only; no OS font scaling, TalkBack, VoiceOver or physical rotation"
+  ],
+  "browser": "154.0.4258.62"
+}

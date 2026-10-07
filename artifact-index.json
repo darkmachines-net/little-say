@@ -1,0 +1,125 @@
+{
+  "purpose": "Independent QA evidence exact bytes; excluded from product history",
+  "files": [
+    {
+      "path": "artifact-index.json",
+      "sha256": "1bbfa35aeb7b0f3a8f9154678b8d4864f597d00e745edd789b3f597157210060"
+    },
+    {
+      "path": "asset-probe.mjs",
+      "sha256": "67e938f9e43f1505402d556d330154d9dbe81d9a402602cd6c0c5d682ce8e7ab"
+    },
+    {
+      "path": "ci-jobs.json",
+      "sha256": "37ea4e7e8ade80e23e04a65ecd63669f29e823f48e84f7ac2610e8433442764c"
+    },
+    {
+      "path": "evidence-verification.json",
+      "sha256": "cb5c45b39ca2286c7c5afa61fbd2488a2d834f1a6b02a4f55d844c35d345fa99"
+    },
+    {
+      "path": "owner-publication.json",
+      "sha256": "0f075fdd310f387b09f11b84d760eb8cbd96a7bb66585382e3c93795e914d8bb"
+    },
+    {
+      "path": "prepare-runtime.mjs",
+      "sha256": "1d976b4bb0ed5d5539896ea8a8d6503c2faec16a8d934cd5b81a857e2fbc8599"
+    },
+    {
+      "path": "probe.mjs",
+      "sha256": "5eadc12fd259ec6a598560acdec1d5e08798c241c2425a67797e7f5556c85074"
+    },
+    {
+      "path": "README.md",
+      "sha256": "74e549f650b9466e5219c551ea869b7841549a39daf7e9f32fa5e200e6840a8f"
+    },
+    {
+      "path": "record.json",
+      "sha256": "a3fde50ad54be5801bbdc471709f0fe722f46df17449f83567725c78358dec3a"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "sha256": "6633e61797cfd9325bc73ba17e5db8fb2b28f574ad83c0e47716cacafddfcd92"
+    },
+    {
+      "path": "retained-index-check.json",
+      "sha256": "a2db83cfb760ace98d8113e46bd81471ea41872bdbe876656c625304f1bcedc4"
+    },
+    {
+      "path": "verify-evidence.mjs",
+      "sha256": "1f232f8f2faf6fa6937faae6ecc4000004e4f58bbb98ea3945f87ab996cb9539"
+    },
+    {
+      "path": "asset-probe/photo-1180.png",
+      "sha256": "d8d4222ad8eb61005e6caf64d64892a09b9cee419cb5c862e81a360218138f5c"
+    },
+    {
+      "path": "asset-probe/photo-390.png",
+      "sha256": "fb4719f15d6e60c9d688e2a989ee8a94d48bb58156eb3a16206f6c9307e7c52b"
+    },
+    {
+      "path": "asset-probe/photo-820.png",
+      "sha256": "9b04e2805b1e148d642a8a948b1261c6968d5d9db488becabed949e1aac13ceb"
+    },
+    {
+      "path": "asset-probe/photo-844.png",
+      "sha256": "345b88b271a4f75a7aa15859ef58b3ba0531183f27ed80d086c7f42e2c71b24d"
+    },
+    {
+      "path": "asset-probe/result.json",
+      "sha256": "bb71649cede0bddc4080ccefefc884240176db275cd98baeac7baf396a585f8a"
+    },
+    {
+      "path": "bindings/binding.json",
+      "sha256": "ca6b50eb98d19eeb7e5678a684134ac5caf2546047d50772582c1fc160441fc7"
+    },
+    {
+      "path": "bindings/commits.json",
+      "sha256": "7c2d9d5e4d3a59360bc0e957b6b7884eadb565c12540f568a73a61cd313d0efa"
+    },
+    {
+      "path": "bindings/files.json",
+      "sha256": "cc8bc2da9757bb0df05d036bc48847273ad8d5bc4bbe22cefd4c9d9c99be9b84"
+    },
+    {
+      "path": "bindings/inlineComments.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "bindings/issue.json",
+      "sha256": "ea9e87bd0dbf26819d8981e41cd1e5cbb209b8a62d8a5d059959e89c779415c8"
+    },
+    {
+      "path": "bindings/pr.json",
+      "sha256": "428ab520c2b401e05077d6ceb524c05b8cb1f0459c3990ede009d7401f8d6fc4"
+    },
+    {
+      "path": "bindings/reviews.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "bindings/threads.json",
+      "sha256": "9a692155354d88bbc4570e7498ea8f2f0aa54ebd369158e5b7db3548a9b4f2e9"
+    },
+    {
+      "path": "probe/dense-browser-text150.png",
+      "sha256": "7d14020e80ca6979dfaaf2da8d7facadab3d016ff576753778c838c585f1e843"
+    },
+    {
+      "path": "probe/dense-portrait.png",
+      "sha256": "916d5d379ec65dad3fc1102a482a0e8516cbfc3e9fa66f9c5b08ac36b7345b2d"
+    },
+    {
+      "path": "probe/editor-phone24.png",
+      "sha256": "e5400dc4672a69966e2ec27af08dd4506a91ee8952526999f32064f180c4686e"
+    },
+    {
+      "path": "probe/editor-tablet24.png",
+      "sha256": "5cbe08e1f1cef3c1ae7fb48dade1e5a983d8b5cce83094ea9343fbf15d55585d"
+    },
+    {
+      "path": "probe/result.json",
+      "sha256": "bb936b49e5b760faff088a5edc9282ffede87cb41c1760859a62f593715e451f"
+    }
+  ]
+}

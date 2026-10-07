@@ -1,0 +1,16 @@
+{
+  "checkedAtUtc": "2026-10-07T03:15:35.053Z",
+  "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "headRef": "feat/balanced-storyboard-grid",
+  "baseRef": "master",
+  "headRepository": "MChartier/little-say",
+  "baseRepository": "MChartier/little-say",
+  "prBodySha256": "1db382d779b4339a62acf59d5e1c0686ac1e9d9490bfeae6c814e74857702608",
+  "prUpdatedAt": "2026-10-07T03:00:32Z",
+  "draft": true,
+  "commits": 1,
+  "changedFiles": 12,
+  "additions": 331,
+  "deletions": 33
+}

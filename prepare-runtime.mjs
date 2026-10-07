@@ -1,0 +1,8 @@
+/** @file Copies exact verified build bytes into isolated QA runtime; never changes product source. */
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {execFileSync} from 'node:child_process';
+const task='C:/Users/MChar/Documents/Codex/2026-10-06/task-8';const hash=b=>createHash('sha256').update(b).digest('hex');
+for(const side of ['before','after']){const src=path.join(task,side==='before'?'little-say-before':'little-say-grid');const dst=path.resolve('runtime',side);fs.mkdirSync(`${dst}/apps/server/dist`,{recursive:true});fs.cpSync(`${src}/apps/mobile/dist`,`${dst}/web`,{recursive:true});fs.copyFileSync(`${src}/apps/server/dist/index.js`,`${dst}/apps/server/dist/index.mjs`);fs.symlinkSync(`${src}/node_modules`,`${dst}/node_modules`,'junction');}
+const index=JSON.parse(fs.readFileSync('retained-evidence/artifact-index.json'));for(const f of index.files)assert.equal(hash(fs.readFileSync(path.join('retained-evidence',f.path))),f.sha256);
+fs.writeFileSync('retained-index-check.json',JSON.stringify({checkedAtUtc:new Date().toISOString(),filesVerified:index.files.length,indexSha256:hash(fs.readFileSync('retained-evidence/artifact-index.json'))},null,2));
+const data=JSON.parse(execFileSync('gh',['api','repos/MChartier/little-say/contents/publication/record.json?ref=92d6c20503e0110765d22672eb2e0e9b383c1599'],{encoding:'utf8'}));fs.writeFileSync('owner-publication.json',Buffer.from(data.content,'base64'));
+console.log({isolatedRuntime:path.resolve('runtime'),allRetainedArtifactsVerified:index.files.length});
