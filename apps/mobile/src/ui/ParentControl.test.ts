@@ -6,7 +6,8 @@ import { Text } from 'react-native';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ParentControl } from './ParentControl';
 
-vi.mock('react-native', () => ({ View: 'View', Text: 'Text', StyleSheet: { create: (styles: unknown) => styles } }));
+const lifecycle = vi.hoisted(() => ({ changed: (_state: string) => {} }));
+vi.mock('react-native', () => ({ Platform: { OS: 'android' }, AppState: { addEventListener: (_name: string, changed: (state: string) => void) => { lifecycle.changed = changed; return { remove() {} }; } }, View: 'View', Text: 'Text', StyleSheet: { create: (styles: unknown) => styles } }));
 vi.mock('lucide-react-native', () => ({ LockKeyhole: 'LockKeyhole' }));
 
 let renderer: ReactTestRenderer;
@@ -18,7 +19,8 @@ async function touch(name: 'onTouchStart' | 'onTouchMove' | 'onTouchEnd' | 'onTo
 async function advance(ms: number) { await act(async () => { vi.advanceTimersByTime(ms); }); }
 beforeEach(async () => {
   vi.useFakeTimers(); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); exit.mockClear();
-  await act(async () => { renderer = create(React.createElement(ParentControl, { cancelToken: 0, onExitRequest: exit })); });
+  await act(async () => { renderer = create(React.createElement(ParentControl, { cancelToken: 0, onExitRequest: exit }), { createNodeMock: () => ({ measureInWindow: (fn: (...bounds: number[]) => void) => fn(0, 0, 150, 100) }) }); });
+  await act(async () => { control().props.onLayout(); });
 });
 afterEach(async () => {
   await act(async () => { renderer.unmount(); });
@@ -30,7 +32,7 @@ describe('native parent unlock feedback', () => {
   it('accepts release immediately when the label becomes ready', async () => {
     await touch('onTouchStart'); await advance(1999);
     expect(label()).toBe('Keep holding…'); expect(exit).not.toHaveBeenCalled();
-    await advance(1); expect(label()).toBe('Release to continue');
+    await advance(1); expect(label()).toBe('Release to edit');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce(); expect(label()).toBe('Hold to unlock');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
@@ -38,7 +40,7 @@ describe('native parent unlock feedback', () => {
     const clock = vi.spyOn(performance, 'now').mockReturnValue(0);
     await touch('onTouchStart');
     clock.mockReturnValue(1999); await advance(2000); expect(label()).toBe('Keep holding…');
-    clock.mockReturnValue(2000); await advance(1); expect(label()).toBe('Release to continue');
+    clock.mockReturnValue(2000); await advance(1); expect(label()).toBe('Release to edit');
     vi.setSystemTime(new Date('2000-01-01'));
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
@@ -53,11 +55,11 @@ describe('native parent unlock feedback', () => {
     await touch('onTouchStart'); await advance(1000); await touch('onTouchEnd');
     await touch('onTouchStart'); await advance(1000); expect(label()).toBe('Keep holding…');
     await advance(999); expect(label()).toBe('Keep holding…');
-    await advance(1); expect(label()).toBe('Release to continue');
+    await advance(1); expect(label()).toBe('Release to edit');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
   it('cancels immediately if another finger joins, even after readiness', async () => {
-    await touch('onTouchStart'); await advance(2000); expect(label()).toBe('Release to continue');
+    await touch('onTouchStart'); await advance(2000); expect(label()).toBe('Release to edit');
     await touch('onTouchStart', point(2, 50, 2)); expect(label()).toBe('Hold to unlock');
     await advance(3000); expect(label()).toBe('Hold to unlock');
     await touch('onTouchEnd', point(2)); await touch('onTouchEnd'); expect(exit).not.toHaveBeenCalled();
@@ -70,5 +72,25 @@ describe('native parent unlock feedback', () => {
     await act(async () => { renderer.update(React.createElement(ParentControl, { cancelToken: 1, onExitRequest: exit })); });
     expect(label()).toBe('Hold to unlock'); await touch('onTouchEnd'); expect(exit).not.toHaveBeenCalled();
     await touch('onTouchStart'); // afterEach verifies unmount clears this pending timer.
+  });
+});
+
+describe('accessible timed unlock and bounds', () => {
+  const activate = async () => { await act(async () => { control().props.onAccessibilityAction({ nativeEvent: { actionName: 'activate' } }); }); };
+  it('announces a cancellable two-second alternative, without immediate navigation or a confirmation', async () => {
+    await activate(); expect(label()).toContain('Activate to cancel'); expect(exit).not.toHaveBeenCalled();
+    await advance(1999); expect(exit).not.toHaveBeenCalled();
+    await advance(1); expect(exit).toHaveBeenCalledOnce();
+    await advance(4000); expect(exit).toHaveBeenCalledOnce();
+  });
+  it('cancels assistive activation and backgrounded attempts, then accepts a fresh pointer hold', async () => {
+    await activate(); await advance(1000); await activate(); await advance(3000); expect(exit).not.toHaveBeenCalled();
+    await activate(); await advance(1000); await act(async () => lifecycle.changed('background'));
+    await advance(3000); expect(exit).not.toHaveBeenCalled();
+    await touch('onTouchStart'); await advance(2000); await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
+  });
+  it('rejects a ready release just outside an edge even within the movement tolerance', async () => {
+    await touch('onTouchStart', point(1, 149)); await advance(2000);
+    await touch('onTouchEnd', point(1, 151)); expect(exit).not.toHaveBeenCalled();
   });
 });

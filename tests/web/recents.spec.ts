@@ -14,8 +14,9 @@ async function savedLibrary(page: Page) {
   });
 }
 async function leaveBoard(page: Page) {
-  await page.getByTestId('parent-control').focus(); await page.keyboard.press('Enter');
-  await page.getByRole('button', { name: 'Leave board', exact: true }).click();
+  await page.getByTestId('parent-control').focus(); await page.keyboard.down('Enter');
+  await expect(page.getByTestId('parent-control')).toHaveText('Release to edit'); await page.keyboard.up('Enter');
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 }
 async function play(page: Page, name: string) {
