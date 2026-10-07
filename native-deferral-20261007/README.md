@@ -1,0 +1,11 @@
+# PR36 native-deferral description reconciliation
+
+Metadata-only continuation by owner task `01a11406-66b3-71fb-a4cc-2aad6d51802c` on the verified ZBook. The direct human amendment [6041659686](https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686) defers PR36's native-device checks for review readiness. Unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion checks remain unexecuted; no device result or readiness verdict is claimed.
+
+Exact original descriptions were retained before editing at commit `1abf3afc09df90ffb05062cea18f8aa082906927` under `native-deferral-20261007/originals/` and fetched back through authenticated GitHub. The final descriptions remove lifecycle-sensitive draft wording and distinguish the new direct amendment from PR34's historical PR-specific deferral. Issue30 keeps its five sections, requirements and actual associations; PR36 keeps the same problem, solution, behavior table, matched images and provenance.
+
+[Final bindings and feedback dispositions](final/record.json) identify both original and final full UTF-8 body digests, API timestamps, source/parent refs, instruction acknowledgment and the verified amendment identities. [Complete feedback snapshot](final/feedback.json) retains the current conversation, submitted reviews, inline threads and native closing association. [Final PR text](final/pr-body.md) and [final issue text](final/issue-body.md) are the exact API-read-back bytes.
+
+Product head `7e8ab5993503419e5945c8f304ffab3a6fc91f56`, parent `b21d3ba7370c08468b868385ce9df3d875eee799` and master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` are unchanged. Canonical UI evidence remains at `e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a`; no tests or captures were rerun. The child32 work and permission hold were untouched. Same-QA reassessment follows the owner handoff; all other review/evidence gates remain.
+
+This directory belongs only to the existing non-merged evidence ref. Preserve its exact commits and all prior records through review/merge and until the human authorizes archival or removal, under the ref's existing owner/purpose/retention policy. No historical record or receipt was overwritten.
