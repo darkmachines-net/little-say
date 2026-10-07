@@ -1,0 +1,25 @@
+{
+  "comments": [
+    {
+      "id": 6030511657,
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030511657",
+      "updatedAt": "2026-10-07T03:48:54Z",
+      "body": "@codex review Please review the complete child diff against pinned parent b21d3ba7370c08468b868385ce9df3d875eee799 (PR #34), at head 7e8ab5993503419e5945c8f304ffab3a6fc91f56. Check the direct parent-hold/editor/return flow, cancellation and accessibility behavior, save/draft preservation, audio cleanup, and scope. Independent QA and native validation remain pending."
+    },
+    {
+      "id": 6030514092,
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030514092",
+      "updatedAt": "2026-10-07T03:53:11Z",
+      "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| 📝 **Code Review** | ✅ **Completed** <relative-time datetime=\"2026-10-07T03:53:10.262489Z\">2026-10-07T03:53:10.262489Z</relative-time> | `7e8ab59` | Manual request |\n\n\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with 👀 while any review is running, comments if it has suggestions, and reacts with 👍 once all reviews finish with no findings.\n\n</details>"
+    },
+    {
+      "id": 6030553625,
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625",
+      "updatedAt": "2026-10-07T03:53:09Z",
+      "body": "Codex Review: Didn't find any major issues. Keep them coming!\n\n**Reviewed commit:** `7e8ab59935`\n\n<details> <summary>ℹ️ About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with 👍.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+    }
+  ],
+  "reviews": [],
+  "inline": [],
+  "threads": []
+}

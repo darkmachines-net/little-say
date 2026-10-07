@@ -1,0 +1,132 @@
+{
+  "checkedAtUtc": "2026-10-07T03:54:42.539Z",
+  "issue": "https://github.com/MChartier/little-say/issues/30",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/36",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "baseBranch": "feat/balanced-storyboard-grid",
+  "draft": true,
+  "prBodySha256": "fdb7f88839a0c44cfb76181b93b21ebf1a92c8a7524a24a289769eb86d415692",
+  "issueBodySha256": "5eb0520280e2704f3685fa7fc5dc0f059d65d8a90a592973e4a6e23741ec149a",
+  "preparedPrBodyExact": true,
+  "preparedIssueBodyExact": true,
+  "issueRequirementsPreserved": true,
+  "issueSections": [
+    "Problem",
+    "Requirements and acceptance",
+    "Implementation plan",
+    "Implementing Codex task",
+    "Implementing PR"
+  ],
+  "nativeClosingAssociation": true,
+  "files": [
+    {
+      "filename": "apps/mobile/src/App.tsx",
+      "additions": 29,
+      "deletions": 11
+    },
+    {
+      "filename": "apps/mobile/src/ui/BoardEditor.tsx",
+      "additions": 32,
+      "deletions": 18
+    },
+    {
+      "filename": "apps/mobile/src/ui/BoardTransition.tsx",
+      "additions": 50,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/mobile/src/ui/ParentControl.test.ts",
+      "additions": 28,
+      "deletions": 6
+    },
+    {
+      "filename": "apps/mobile/src/ui/ParentControl.tsx",
+      "additions": 12,
+      "deletions": 9
+    },
+    {
+      "filename": "apps/mobile/src/ui/ParentControl.web.tsx",
+      "additions": 26,
+      "deletions": 10
+    },
+    {
+      "filename": "apps/mobile/src/ui/ParentSettings.tsx",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "filename": "apps/mobile/src/ui/PlayBoard.tsx",
+      "additions": 35,
+      "deletions": 20
+    },
+    {
+      "filename": "apps/mobile/src/ui/screenFocus.ts",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "filename": "apps/mobile/src/ui/useParentHold.ts",
+      "additions": 33,
+      "deletions": 20
+    },
+    {
+      "filename": "tests/web/app.spec.ts",
+      "additions": 23,
+      "deletions": 28
+    },
+    {
+      "filename": "tests/web/editor-transition.spec.ts",
+      "additions": 236,
+      "deletions": 0
+    },
+    {
+      "filename": "tests/web/recents.spec.ts",
+      "additions": 3,
+      "deletions": 2
+    }
+  ],
+  "ci": {
+    "url": "https://github.com/MChartier/little-say/actions/runs/37567933495",
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "reviewComments": [
+    {
+      "id": 6030511657,
+      "updatedAt": "2026-10-07T03:48:54Z",
+      "bodySha256": "4683084bdbf417107bce3cea995a76a86167eb6caf7c9c38dcc9209c9946235d",
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030511657"
+    },
+    {
+      "id": 6030514092,
+      "updatedAt": "2026-10-07T03:53:11Z",
+      "bodySha256": "0854ab1bd37e87615496ee2e1b130ddfee7e7089f32ed69947e2b9427a2c5a81",
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030514092"
+    },
+    {
+      "id": 6030553625,
+      "updatedAt": "2026-10-07T03:53:09Z",
+      "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624",
+      "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625"
+    }
+  ],
+  "submittedReviews": 0,
+  "inlineComments": 0,
+  "reviewThreads": 0,
+  "evidenceCommit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+  "manifestSha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "readiness": "Not claimed; independent QA and native validation remain pending.",
+  "engineeringReview": {
+    "commentId": 6030553625,
+    "url": "https://github.com/MChartier/little-say/pull/36#issuecomment-6030553625",
+    "updatedAt": "2026-10-07T03:53:09Z",
+    "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624",
+    "result": "Completed at the current head; no major issues reported, with no submitted-review or inline findings."
+  },
+  "disposition": "Handoff to coordinator for independent QA. Native rotation, OS text scaling, VoiceOver and TalkBack are unexecuted; parent PR34 remains evidence-incomplete. No human-ready, merge, release or native deferral is claimed.",
+  "preserving": "Product worktree and user-facing clean clone are clean. Source, parent, package manifests and evidence manifest are unchanged by publication."
+}
