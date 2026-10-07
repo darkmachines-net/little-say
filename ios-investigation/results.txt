@@ -1,0 +1,11 @@
+npm notice run little-say-workspace@0.2.0 npx
+npm notice run vitest run --config artifacts/ios-investigation/config.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-06/task-3/little-say-playback
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  19:40:28
+   Duration  1.19s (transform 767ms, setup 0ms, import 1.04s, tests 14ms, environment 0ms)
+

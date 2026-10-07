@@ -1,0 +1,32 @@
+{
+  "checkedAtUtc": "2026-10-07T02:41:32.0923295Z",
+  "result": "4 modeled tests passed; native reproduction unavailable",
+  "sources": [
+    {
+      "path": "node_modules/expo-audio/ios/AudioPlayer.swift",
+      "sha256": "ec25a72a075180123437450350e7eed1ab7ef669645ebed901c4470c039ee41c"
+    },
+    {
+      "path": "node_modules/expo-audio/ios/AudioModule.swift",
+      "sha256": "988bad3ed7eadf2b79d0de2a02529862e7e04cf5d52c9e8ddb65b55acb133e52"
+    },
+    {
+      "path": "node_modules/expo-audio/ios/AudioUtils.swift",
+      "sha256": "80aae4033b3c5905e74b4122fd68c85828fffe276a3871f7ef0ad086a54d033b"
+    },
+    {
+      "path": "node_modules/expo-modules-core/ios/Core/Events/EventEmitter.swift",
+      "sha256": "66b5033150d788e6c392fda9c1abfe597ede029e08d378205847ee026cd1793d"
+    },
+    {
+      "path": "node_modules/expo-modules-core/common/cpp/EventEmitter.cpp",
+      "sha256": "b0d52f71e9f2cf45935ffd06913f58e67ba238e442c21d68c1a81a9b8e94872d"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "487d8a04d4cb289889be6d5ba39b16818caf16441dc552df880146beafccd311"
+    }
+  ],
+  "base": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "productHead": "c3bc7b2777708e8c79f15f530a42b0c89fb48271"
+}
