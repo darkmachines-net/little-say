@@ -1,20 +1,41 @@
 # Releases
 
-GitHub publishes the server image. A developer machine builds and submits native apps, publishes OTA updates, and deploys a published server image. None of those local operations run in GitHub Actions.
+Run **Cut release** in GitHub Actions on the repository default branch (`master`). It plans changes, prepares a protected version PR, and publishes the selected GHCR image, EAS cloud builds, store submissions, and compatible OTA updates. Merges run CI only. Server deployment and device installation remain separate local operations.
+
+| Input | Choices | Default |
+| --- | --- | --- |
+| Build mode | `auto`, `force_all` | `auto` |
+| Server bump | `patch`, `minor`, `major` | `patch` |
+| Client profile | `internal`, `production` | `internal` |
+| Dry run | Validate/check/export without release writes | `false` |
+
+`internal` means EAS internal distribution, the `preview` environment, the `internal` OTA channel, and **no submissions**. `production` means store builds, the production environment/channel, and exact-build-ID submissions to Play's **internal draft** configuration and App Store Connect/TestFlight. EAS submission completion does not mean store processing or public rollout completed.
 
 ## First-time setup
 
-1. Merge the app and release workflow into the repository's default branch before using **Cut server release**.
+1. Merge this workflow into the default branch before using **Cut release**. Start with a dry run and the internal profile.
 2. In GitHub **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. The workflow creates release PRs but does not approve reviews. Keep the default token permissions read-only: the jobs explicitly request `contents: write`, `pull-requests: write`, and `checks: write` for cutting a release, and `packages: write` for publication. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
-3. Create/link an Expo project with slug `little-say` in the intended account. Supply its owner, UUID, and the public HTTPS server origin:
+3. Use the committed Expo project in `native-release.json`: `@matthewchartier/little-say`, UUID `a0336055-a9d6-46b1-8eb4-120944304685`, server `https://littlesay.darkmachines.net`. The workflow verifies the remote project identity. Add an Expo access token as the GitHub repository secret `EXPO_TOKEN`; keep signing and submission credentials in EAS. No server deployment secret belongs in this workflow.
+4. Install locked dependencies and CLI, then configure **both** platforms' EAS-managed internal signing. Register iOS test devices and ensure an unexpired ad hoc provisioning profile includes them. Android needs one default keystore. Perform Expo's initial interactive cloud-build setup before relying on noninteractive CI; see [Expo CI prerequisites](https://docs.expo.dev/build/building-on-ci/). Queuing a build alone is not successful onboarding.
 
 ```powershell
 npm ci
-npm run native:setup
-npm run native:configure -- --owner YOUR_EXPO_ACCOUNT --project-id YOUR_PROJECT_UUID --server-url https://YOUR_SERVER
+npm ci --prefix tools/eas-cli
+cd apps/mobile
+node ../../tools/eas-cli/node_modules/eas-cli/bin/run credentials --platform android
+node ../../tools/eas-cli/node_modules/eas-cli/bin/run credentials --platform ios
+node ../../tools/eas-cli/node_modules/eas-cli/bin/run channel:create internal --branch internal
+cd ../..
 ```
 
-The values above are placeholders. `native-release.json` deliberately has no guessed account, project, or server. Configuration reads back the exact Expo project. Review and commit that file before a build.
+Use an existing channel/branch if already configured; do not recreate or repoint it. The release workflow requires a single active, unconditional branch mapping and pins that destination in its plan. Configure the `preview` EAS environment with reproducible readable strings. `LITTLE_SAY_CHANNEL`, if set remotely, must equal `internal`; keep backend keys and development URL overrides out of EAS. Secret/file EAS variables cannot be reproduced for compatibility proof and are rejected. A drifted environment requires new native builds.
+
+5. Confirm the repository/package grants `GITHUB_TOKEN` pull/push access to its GHCR namespace. Keep normal branch protection and required reviews. There is one concurrency group for all profiles with cancellation disabled; an unresolved candidate draft also blocks subsequent cuts.
+6. For production only, complete Play's initial app/upload setup, store its submission service-account key in EAS, configure App Store Connect app/signing/submission API key, and commit the numeric `submit.production.ios.ascAppId` in `apps/mobile/eas.json`. Create/verify the production channel and environment. Play remains `track: internal`, `releaseStatus: draft`. See [Expo submission behavior](https://docs.expo.dev/build/automate-submissions/). Production prerequisites are not required for internal releases.
+
+At implementation time no repository Actions secrets or environments were configured. Onboarding credentials and actual provider/device checks are required before declaring the pipeline operational.
+
+### Optional local build tooling
 
 Android needs a JDK, Android Studio SDK/Build Tools, and `ANDROID_HOME` (or `ANDROID_SDK_ROOT`). `native:setup -- --check` checks the existing tools without installing npm dependencies. The Gradle wrapper downloads its required Gradle version. SDK packages must be installed and their licenses accepted. Use Node 24 and `npm ci` for the root dependencies.
 
@@ -31,26 +52,44 @@ The wrapper downloads the default EAS signing key for **net.darkmachines.littles
 
 Local iOS builds need macOS, Xcode and CocoaPods. Run `native:setup -- --platform ios` there and add `--platform ios` to `native:configure`. Configure Apple signing with the pinned CLI's `credentials --platform ios`; register test devices for the `internal` ad hoc profile. No command falls back to a cloud build. See [Expo local build prerequisites](https://docs.expo.dev/build-reference/local-builds/).
 
-## Cut a server release
+## Selection, versions, and supported runtimes
 
-Ordinary feature commits do not bump or publish server versions. In GitHub Actions, run **Cut server release** on the default branch, choosing `patch`, `minor`, or `major`. Its `prepare` and `publish` jobs handle the entire release; there is no separate publishing workflow to launch or commit SHA to enter.
+Automatic selection hashes committed source and resolved dependency inputs, including deletions, renames, platform-specific files, shared workspace packages, and server-embedded web assets. Unrelated lockfile entries, documentation, tests, and allocated version fields are excluded. Native selection uses Expo fingerprints with allocated versions normalized before comparison. The machine-readable schema-1 `ReleasePlan` includes pinned source, profile/mode, comparison IDs, changed input identities, allocated versions, operations, OTA targets/exclusions, and reasons. It is printed to the run log and written to `artifacts/release-plan.json`.
 
-The workflow invokes `npm run release:cut`, which supplies `npm_execpath` for nested validation commands on the Ubuntu runner. This entry point requires GitHub Actions; do not launch `server-cut.ts` directly with Node.
+| Changed input | Image | Native | OTA |
+| --- | --- | --- | --- |
+| API/migrations/server dependency | Yes | No | No |
+| Web-only source/assets | Yes | No | No |
+| Shared client JavaScript/assets | When web inputs change | No | Affected compatible platforms |
+| Native module/plugin/permission/config | When image inputs change | Affected platforms | When bundle inputs also change |
+| Docs/tests/version bookkeeping | No | No | No |
 
-The action:
+The chosen server increment is used only for a new image. Native builds allocate one independent patch increment and increment the selected platforms' build numbers. Internal and production client baselines are independent; the server namespace is shared. An automatic no-op creates no version commit, candidate draft, or completion tag. Verified legacy `vX.Y.Z` image tags can bootstrap server history; a platform/profile without verifiable native evidence requires an initial build.
 
-1. Increments `release.json` and its root/server package and lockfile mirrors, leaving native versions unchanged.
-2. Validates the version-only commit with `npm run check`, pushes a branch named `release/server-run-<run-id>` and records the same `check` result on that exact commit. The run ID lets retries find the same candidate. This explicit check is needed because `GITHUB_TOKEN` pushes do not trigger normal PR workflows.
-3. Creates a release PR and attempts a normal squash merge. Required reviews and other protection rules still apply.
-4. Publishes the merged release commit as a multi-platform (`linux/amd64`, `linux/arm64`) GHCR image, creates Git tag `vX.Y.Z`, and reads back the image digest.
+`force_all` allocates a fresh server version, native patch, and both platform build numbers on every **new run**, even for unchanged source. It also publishes fresh OTA groups for all eligible runtimes, including the new builds. Retries of that same run reuse its versions, image, build/submission IDs, and update groups. Force never bypasses signing, identity, compatibility, retirement, protected merge, or immutable-tag checks.
 
-The image repository is `ghcr.io/<github-owner>/<github-repository>`. Tags are `vX.Y.Z`, `sha-<full-release-commit>`, and `latest`. Existing version/SHA tags are checked and reused, never rebuilt over. Recovering an older release cannot move `latest` backwards. Publication creates a Git tag and container image, not a GitHub Release object. No Expo or server deployment secrets are needed in GitHub.
+Runtimes retain Expo's `appVersion` policy. Cloud builds produce portable schema-2 `NativeBuildBaseline` records containing source, identity, environment, full/normalized fingerprints, exact build ID, artifact URL and SHA-256, and any submission ID. Completed receipts retain older verified baselines until explicitly retired in `release-policy.json` with `{ "profile": "internal", "platform": "android", "runtimeVersion": "0.1.0" }`. A compatible older runtime is exported using only its allocated version fields; current native configuration must still reproduce its **full** fingerprint. Changing the runtime string cannot make an incompatible app eligible. Equivalent platform/runtime targets are deduplicated, conflicting native fingerprints fail, and incompatible/retired targets are reported. Historical-source backports are outside this workflow. See [Expo runtime rules](https://docs.expo.dev/eas-update/runtime-versions/).
 
-If a review, required workflow, or merge queue prevents an immediate merge, the action leaves the PR and its URL in the run summary. Complete the normal review/merge process, then select **Re-run failed jobs** on that same **Cut server release** run. Preparation resumes its existing PR and passes the validated merged commit directly to publication. A closed, unmerged release PR is treated as abandoned; it is never silently replaced by a retry.
+To bootstrap an existing cloud build, commit its verified schema-2 record under `release-policy.json` → `importedBaselines`. A runtime name, local file path, or build URL alone is insufficient: preflight verifies the exact finished build, source ancestry, identity, full fingerprint and downloaded artifact digest. Existing local schema-1 baselines remain usable by the local tooling with their original artifact-integrity checks.
 
-After a tag or image publishing failure, select **Re-run failed jobs** on the original run to retry publication of the same commit. Re-running all jobs also reuses that run's release rather than bumping another version. Existing immutable image tags are verified and reused. Start a new workflow run only when you intend to prepare a new release; close any abandoned open release PR first. GitHub supports [re-running jobs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs) for 30 days after the original run.
+## Workflow and recovery
 
-The GitHub repository/package must permit `GITHUB_TOKEN` to publish to its GHCR namespace. First publication may be private; set package visibility or give the deployment machine pull access as intended. Publication alone does not change a running server.
+1. **Plan/preflight:** pin source and destination, verify remote project/environment/signing prerequisites, and print the complete operation list. Dry runs run repository/PostgreSQL checks and export selected new/compatible runtime bundles, but create no PRs, versions, journals, builds, submissions, or publications.
+2. **Prepare:** write the immutable plan in a draft `candidate/<run-id>` GitHub Release, create `release/unified-run-<run-id>`, and prepare only permitted server/native version fields together. Run `npm run check` and PostgreSQL integration tests; record `check` on the exact bot-created PR head because `GITHUB_TOKEN` pushes do not trigger normal PR CI. Attempt an ordinary squash merge without bypassing reviews.
+3. **Validate merged source:** require the merged tree to exactly equal the planned version candidate and still be on the default branch, then rerun checks. Functional changes during merge stop before publication and require a fresh cut.
+4. **Publish:** build the multi-platform GHCR image and selected EAS platforms in parallel. Wait for finished builds; verify source/project/app/profile/version/runtime/fingerprint and downloadable artifact bytes. Internal builds never submit. Production submits the exact successful IDs and waits for finished EAS submissions.
+5. **OTA:** after required image/build/submission jobs succeed, export each compatible target and upload with `--skip-bundler`. Read back raw update groups and verify source, runtime, environment, destination, embedded identity, and uploaded launch/asset hashes against the export.
+6. **Finalize:** read back results, safely advance the shared image `latest` alias, and publish `release/<profile>/<run-id>` with schema-1 `receipt.json` (`ReleaseReceipt`). Only published completion records advance baselines. The receipt retains unchanged component references. The candidate draft is removed only after completion readback succeeds.
+
+Image names remain `ghcr.io/<owner>/<repository>:vX.Y.Z`, `:sha-<full-commit>`, and `:latest`, with matching `vX.Y.Z` Git tags. Both Linux architectures and OCI labels are checked. Existing immutable names with conflicting content cause a hard failure. A later completed release or newer prepared server version prevents a stale retry from moving aliases/channels backwards. No job deploys the server.
+
+For review or a merge queue, complete the normal review/merge process and select **Re-run failed jobs on the original run**. Do the same for provider failures or queued builds that outlive the job's bounded wait. Re-running all jobs also reuses the run's immutable plan. Never dispatch `force_all` just to retry a failed cut.
+
+The draft journal uses immutable `plan.json`, `candidate.json`, `prepared.json`, `ota.json`, `receipt.json`, and append-only `op.<key>.<six-digit-sequence>.json` assets. Each operation has its own writer, so parallel platform jobs cannot overwrite each other's evidence. Intent is recorded before a request, its provider ID immediately after acceptance, and verified results before dependent work. Lost build/update responses are reconciled by exact run/source/payload markers; submissions are found on the exact build. Successful operations are never repeated. Partial publication is visible and is not an atomic transaction across providers.
+
+If an outcome is **unknown or ambiguous**, the workflow sends no second request. Keep the candidate draft. Inspect its latest operation asset and the EAS dashboard/API (build marker `little-say:<run-id>:build:<platform>`, OTA marker `little-say:<run-id>:ota:<platform>-<runtime>:<payload-hash>`, or submissions attached to the recorded build). Retry after the unique accepted operation becomes visible. If the provider confirms no operation was accepted, an operator can append the next operation asset with `status: "failed"`, preserving all earlier IDs, together with a separate recovery-evidence JSON asset; this explicitly authorizes retry after reconciliation. Never edit/clobber earlier journal assets or mark an existing successful operation failed. Multiple matching operations, changed artifacts, or immutable-tag conflicts require resolving the provider state, not blind uploads.
+
+To abandon a candidate **before any external artifact operation began**, close its version PR and preserve the draft/assets by renaming its candidate tag identity to `abandoned-candidate/<run-id>` through GitHub's release API. Record the reason. Merged version metadata is not rolled back. A partially published candidate stays blocking until its evidence is reconciled and it completes; do not delete its journal to unblock another release. GitHub's rerun window also limits recovery: resolve candidates promptly, and preserve their journals if a run expires rather than starting a duplicate release.
 
 ## Build, install and submit native apps
 
@@ -90,11 +129,11 @@ npm run ota:publish -- --platform android --profile production --message "Improv
 npm run ota:publish -- --platform android --profile production --message "Improve board editing"
 ```
 
-Repeat for `--platform ios` with that platform's retained baseline. Use `--baseline` to select a particular installed/distributed build. A default baseline records the most recent successful local build; it does **not** prove that a device has installed it.
+Repeat for `--platform ios` with that platform's retained baseline. Use `--baseline` to select a retained local build or a schema-2 cloud baseline extracted from a completed receipt. Cloud baselines download and verify the exact finished build artifact; local baselines retain file-hash verification. A default baseline records the most recent successful local build; it does **not** prove that a device has installed it.
 
 The wrapper verifies clean source, baseline ancestry, Expo owner/project, server URL, native version/build numbers, channel/environment, retained artifact hashes, and Expo's native fingerprint. It reads the selected EAS environment through the pinned CLI adapter and verifies it matches the build. The environment must be reproducible locally: no unreadable secret or file variables, no backend OpenAI keys, and no `EXPO_PUBLIC_*` URL overrides. The compiled server origin comes from `native-release.json`; parent settings can still override it on a device. Local `.env` files and development API URLs are excluded from native release commands.
 
-A dry run exports the actual JS bundle but publishes nothing. Publication uploads that already exported bundle, waits for EAS, reads the resulting group back, checks platform/runtime/source, and saves a receipt. A changed native dependency, plugin, permission, app configuration, or runtime requires a new native version/build. JavaScript and board UI changes with an unchanged native fingerprint can use OTA. Source and environment must stay unchanged throughout the command.
+A dry run exports the actual JS bundle but publishes nothing. Publication uploads that already exported bundle, reads the raw resulting group back, verifies its payload/platform/runtime/source/destination, and saves a receipt. Local and CI OTA share fingerprint and baseline validation: only target version fields can be overlaid, and the full native fingerprint must match. Changed native dependencies, plugins, permissions, or selected native configuration require a new build. Source and environment must stay unchanged throughout the command. Committed runtime retirements apply to local OTA too.
 
 Native updates check/download on launch and apply on a subsequent launch, without forcing a reload during a child's board session. A successful publication does not prove that a specific device has downloaded or applied it. Validate the actual target device after reopening the app.
 
@@ -115,4 +154,6 @@ For an existing Compose deployment, set `--project` to its existing project name
 
 ## Validation and limits
 
-`npm run check` validates version mirrors, TypeScript, unit/regression tests, server build and web export. Release tests exercise version-only transitions, dirty-source rejection, OTA baseline guards, artifact tampering, environment separation and workflow permissions/triggers. Native credentials, an actual EAS project, GitHub repository permissions, signing/builds on each host, and the self-host target must be validated during onboarding; local tests cannot prove store or device rollout.
+`npm run check` validates version mirrors, TypeScript, unit/regression tests, server build and web export. `npm run test:integration` requires a disposable PostgreSQL test database; CI supplies one. Release tests cover detection, lockfile resolution, version-only transitions, profile defaults, force-all, protected merge recovery, provider timeouts/ambiguity, exact submissions, payload integrity, runtime retirement, and durable journal immutability. The fingerprint tests execute the real Expo implementation. Workflow validation must also pass `actionlint`; check file headers and public-function JSDoc when changing release tooling. See [the implementation map](../scripts/release/README.md).
+
+After onboarding, record evidence from an internal cut, a compatible JavaScript-only OTA cut, an automatic no-change cut, and an unchanged-source force-all cut. Verify image digests, finished Android/iOS IDs, supported-runtime update groups, and unchanged/allocated versions in their receipts. Validate production exact-ID submissions separately once store credentials are configured. These are real publishing operations, not unit tests; credentials, signing, store processing, actual devices, and deployment cannot be proven by local checks alone.

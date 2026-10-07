@@ -12,7 +12,11 @@ import { downloadAndroidCredentials, readExpoEnvironment, verifyExpoProject } fr
 import { releaseEnvironment, validateExpoEnvironment } from './environment';
 import { verifyAndroidArtifacts } from './verify-android';
 import { verifyIosArtifact } from './verify-ios';
-import { type Baseline, type Platform, type Profile, profileConfig, releaseConfig, validateBaseline, verifyArtifacts, verifyOta } from './native-contract';
+import { type Baseline, type Platform, type Profile, profileConfig, releaseConfig, validateBaseline, verifyArtifacts } from './native-contract';
+import { channelBranch, localOtaEnvironment, otaEnvironment, updateGroup } from './expo';
+import { artifactHash, verifyBuildIdentity } from './cloud';
+import { validateCloudBaseline, type NativeBuildBaseline, type ReleasePlan } from './contract';
+import { bundlePayload, verifyUpdate } from './ota';
 import { checkVersions } from './version';
 
 const cli = resolve(root, 'tools/eas-cli/node_modules/eas-cli/bin/run');
@@ -24,7 +28,10 @@ function saveMachine(config: Machine) { writeJson(configFile, config); }
 function eas(args: string[], options: Parameters<typeof node>[2] = {}) {
   assert(existsSync(cli), 'Run npm run native:setup to install the locked EAS CLI.');
   assert(readJson(resolve(root, 'tools/eas-cli/node_modules/eas-cli/package.json')).version === '22.4.0', 'Wrong EAS CLI version. Run native:setup.');
-  return node(cli, args, { cwd: mobile, env: safeEnvironment(), ...options });
+  const env = { ...safeEnvironment(), ...options.env };
+  const platform = args[args.indexOf('--platform') + 1];
+  if (['android', 'ios'].includes(platform)) env.LITTLE_SAY_FINGERPRINT_PLATFORM = platform;
+  return node(cli, args, { cwd: mobile, ...options, env });
 }
 async function remoteEnvironment(profile: Profile) {
   eas(['--version'], { capture: true });
@@ -131,8 +138,8 @@ async function main() {
     config.baselines[`${platform}:${profile}`] = file; saveMachine(config);
     console.log(`Built locally and retained: ${directory}\nBaseline: ${file}`); return;
   }
-  const retained = baselineFor(platform, profile, args.baseline);
   if (command === 'install' || command === 'submit') {
+    const retained = baselineFor(platform, profile, args.baseline);
     assert(retained.baseline.commit === commit, 'Install/submit from the exact clean build commit, or check out that commit. Artifacts are never rebuilt implicitly.');
     assert(JSON.stringify(retained.baseline.release) === JSON.stringify(release), 'Retained artifact configuration differs.');
     if (command === 'install') {
@@ -158,21 +165,42 @@ async function main() {
   assert(command === 'ota', 'Unknown native command. Use --help.');
   assert(args.message && args.message !== 'true', 'Provide --message describing this OTA update.');
   const remote = await remoteEnvironment(profile);
-  const hash = fingerprint(platform, remote.env);
-  verifyOta(retained.baseline, { release, fingerprint: hash, environmentHash: remote.hash, platform, profile });
+  const file = args.baseline ? resolve(args.baseline) : machine().baselines[`${platform}:${profile}`];
+  assert(file && existsSync(file), 'Select a retained local or portable cloud baseline with --baseline.');
+  const baseline = readJson<Baseline | NativeBuildBaseline>(file);
+  let otaEnv: NodeJS.ProcessEnv;
+  if (baseline.schema === 2) {
+    validateCloudBaseline(baseline);
+    assert(baseline.platform === platform && baseline.profile === profile, 'Baseline platform/profile differs.');
+    const build = JSON.parse(eas(['build:view', baseline.buildId, '--json'], { env: remote.env, capture: true }));
+    verifyBuildIdentity(build, { profile, nativeRelease: baseline.release } as ReleasePlan, baseline.commit, platform);
+    assert(build.status === 'FINISHED' && build.fingerprint?.hash === baseline.fingerprint && await artifactHash(build.artifacts.applicationArchiveUrl || build.artifacts.buildUrl) === baseline.artifactSha256, 'Cloud baseline artifact no longer verifies.');
+    otaEnv = otaEnvironment(baseline, profile, remote);
+  } else {
+    verifyArtifacts(baseline, dirname(file));
+    assert(baseline.platform === platform, 'Baseline platform differs.');
+    otaEnv = localOtaEnvironment(baseline, profile, remote);
+  }
+  const runtimeVersion = baseline.release.version;
+  const retired = readJson(resolve(root, 'release-policy.json')).retiredRuntimes;
+  assert(!retired.some((r: any) => r.profile === profile && r.platform === platform && r.runtimeVersion === runtimeVersion), 'This runtime has been explicitly retired.');
+  const branch = await channelBranch(profile);
   // Export even for dry runs: catch bundling errors before asking EAS to publish.
   const exportDir = resolve(root, 'artifacts', 'ota', `${platform}-${profile}-${commit}`);
-  node(expo, ['export', '--platform', platform, '--output-dir', exportDir], { cwd: mobile, env: remote.env });
+  node(expo, ['export', '--platform', platform, '--output-dir', exportDir], { cwd: mobile, env: otaEnv });
   requireSameSource(commit);
   assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during export. Run the command again.');
-  if (args['dry-run']) { console.log(`OTA dry run passed. ${platform}, ${profile}, runtime ${release.version}, source ${commit}.\nBaseline: ${retained.file}\nNo update was published.`); return; }
-  const result = JSON.parse(eas(['update', '--channel', profile, '--environment', profileConfig(profile).environment, '--platform', platform, '--message', args.message, '--input-dir', exportDir, '--skip-bundler', '--non-interactive', '--json'], { env: remote.env, capture: true }));
+  if (args['dry-run']) { console.log(`OTA dry run passed. ${platform}, ${profile}, runtime ${runtimeVersion}, source ${commit}.\nBaseline: ${file}\nNo update was published.`); return; }
+  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during export.');
+  const result = JSON.parse(eas(['update', '--branch', branch.name, '--environment', profileConfig(profile).environment, '--platform', platform, '--message', args.message, '--input-dir', exportDir, '--skip-bundler', '--non-interactive', '--json'], { env: otaEnv, capture: true }));
   const updates = Array.isArray(result) ? result : [result];
   const group = updates[0]?.group;
   assert(typeof group === 'string', 'EAS did not return an update group. Check EAS dashboard before retrying.');
-  const readback = JSON.parse(eas(['update:view', group, '--json'], { capture: true }));
-  assert(Array.isArray(readback) && readback.some(update => update.group === group && update.platform === platform && update.runtimeVersion === release.version && update.gitCommitHash === commit), 'Published update readback differs. Check EAS dashboard before retrying.');
-  writeJson(resolve(exportDir, 'publication-receipt.json'), { group, commit, platform, profile, runtimeVersion: release.version, baseline: retained.file, readback, publishedAt: new Date().toISOString() });
+  const readback = await updateGroup(group);
+  assert(readback.length === 1 && readback[0].group === group, 'Published group differs. Check EAS before retrying.');
+  verifyUpdate(readback[0], { baseline: { ...baseline, runtimeVersion }, commit, branchId: branch.id, marker: args.message, payload: bundlePayload(exportDir, platform) });
+  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during publication.');
+  writeJson(resolve(exportDir, 'publication-receipt.json'), { group, commit, platform, profile, runtimeVersion, baseline: file, readback, publishedAt: new Date().toISOString() });
   console.log(`Published and read back OTA group ${group}. Devices download on launch and apply on a subsequent launch; device application has not been verified.`);
 }
 main().catch(fail);
