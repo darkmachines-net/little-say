@@ -1,0 +1,16 @@
+{
+  "checkedAtUtc": "2026-10-07T04:56:01.439Z",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "headRef": "feat/direct-board-editor-issue30",
+  "baseRef": "feat/balanced-storyboard-grid",
+  "headRepository": "MChartier/little-say",
+  "baseRepository": "MChartier/little-say",
+  "prBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+  "prUpdatedAt": "2026-10-07T04:39:20Z",
+  "draft": true,
+  "commits": 1,
+  "changedFiles": 13,
+  "additions": 528,
+  "deletions": 125
+}

@@ -1,0 +1,406 @@
+{
+  "checkedAtUtc": "2026-10-07T04:46:16.855Z",
+  "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+  "verifiedFileHashes": [
+    {
+      "path": "manifest.json",
+      "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796"
+    },
+    {
+      "path": "capture-editor.mjs",
+      "sha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad"
+    },
+    {
+      "path": "fixture.json",
+      "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151"
+    },
+    {
+      "path": "superseded-fixed-clock/manifest.json",
+      "sha256": "d0e196208a1771193f180091290c641a827fa568b70dc2a3607c58a376e91394"
+    },
+    {
+      "path": "validation/unit-head.log",
+      "sha256": "1fb6aa7670cf883f49da18f4dd8b8f953cf7eac9e22836ca7f5ef6ee2e9aa3f3"
+    },
+    {
+      "path": "validation/typecheck-final2.log",
+      "sha256": "113a37733ae0187ea681df9aae1cb85fd6f814b4e4e4c284a3face03e9a53de0"
+    },
+    {
+      "path": "validation/browser-head.log",
+      "sha256": "132e4f2f24d262b7d29f805e9b4641c2d9c211718509972f851593f5425fd0b3"
+    },
+    {
+      "path": "validation/release-check-final.log",
+      "sha256": "84e9532de7458e6fcce7738b047fd84786a3274d83698bd11a2fb111152130a6"
+    },
+    {
+      "path": "validation/native-export.log",
+      "sha256": "3b8642f0c2f36979fbeb1af3abaa5534b04b053e54d81a17940c902663313a62"
+    },
+    {
+      "path": "validation/baseline-server-build.log",
+      "sha256": "17cdbfeb85bb48fdcf039365971a156268df84c00b51271df509dafa44e71bd5"
+    },
+    {
+      "path": "validation/baseline-web-build.log",
+      "sha256": "8c5db374783db330977009a77d3a0fdd7de7c135860d722a3aa45e908d087788"
+    },
+    {
+      "path": "validation/server-build.log",
+      "sha256": "2a20f711dcb9cd143599192b4da310466d7982f6b655c06965021304b508c1db"
+    },
+    {
+      "path": "validation/web-final2-build.log",
+      "sha256": "f1ab74dac593404bd0470a7f5d6ec113fd9522693d8ce6cc4fb27e4ee5a71819"
+    },
+    {
+      "path": "validation/capture-editor-final.log",
+      "sha256": "8b56bd21e3e21a43466a38df18fe7c206c938818caafb6031fde2873af84314a"
+    },
+    {
+      "path": "capture-editor.mjs",
+      "sha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad"
+    },
+    {
+      "path": "fixture.json",
+      "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151"
+    },
+    {
+      "path": "builds/before/server/index.js",
+      "sha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    },
+    {
+      "path": "builds/before/web/apple-touch-icon.png",
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+    },
+    {
+      "path": "builds/before/web/favicon.ico",
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+    },
+    {
+      "path": "builds/before/web/favicon.png",
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+    },
+    {
+      "path": "builds/before/web/icon-192.png",
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+    },
+    {
+      "path": "builds/before/web/icon-512.png",
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+    },
+    {
+      "path": "builds/before/web/icon-maskable-512.png",
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+    },
+    {
+      "path": "builds/before/web/index.html",
+      "sha256": "43116721dc015ed6385d0d5ad8646586455bf268c803e3ab4b9931d7a02d0942"
+    },
+    {
+      "path": "builds/before/web/manifest.webmanifest",
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+    },
+    {
+      "path": "builds/before/web/metadata.json",
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+    },
+    {
+      "path": "builds/before/web/sw.js",
+      "sha256": "8759d6c051120aa254d3891760cc84547209a061f07000b1100ad0f058f73247"
+    },
+    {
+      "path": "builds/before/web/sw.js.map",
+      "sha256": "119a66a106f7e78362433be331e19847f38fb9121c681aa1ca8db3fd8aadd6d7"
+    },
+    {
+      "path": "builds/before/web/workbox-9c191d2f.js",
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "path": "builds/before/web/workbox-9c191d2f.js.map",
+      "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+    },
+    {
+      "path": "builds/before/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "builds/before/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "builds/before/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "builds/before/web/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+    },
+    {
+      "path": "builds/before/web/_expo/static/js/web/App-34187ff04bd83c843d2ce9402bd33f51.js",
+      "sha256": "3d08a353b4ad385277a7651b3bb5ac0e01cd10bf4292cfef54eb8ef8d55e0760"
+    },
+    {
+      "path": "builds/before/web/_expo/static/js/web/index-f9bc4ebed06fd028d75d0f2c32866b1f.js",
+      "sha256": "d50ea1984c06fb71a46c5bbcb78a47789b6ab39ecc7ffd184145423669f104a8"
+    },
+    {
+      "path": "before-wide-hold-release.png",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e"
+    },
+    {
+      "path": "before-portrait-hold-release.png",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521"
+    },
+    {
+      "path": "before-short-landscape-hold-release.png",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893"
+    },
+    {
+      "path": "builds/after/server/index.js",
+      "sha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    },
+    {
+      "path": "builds/after/web/apple-touch-icon.png",
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+    },
+    {
+      "path": "builds/after/web/favicon.ico",
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+    },
+    {
+      "path": "builds/after/web/favicon.png",
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+    },
+    {
+      "path": "builds/after/web/icon-192.png",
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+    },
+    {
+      "path": "builds/after/web/icon-512.png",
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+    },
+    {
+      "path": "builds/after/web/icon-maskable-512.png",
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+    },
+    {
+      "path": "builds/after/web/index.html",
+      "sha256": "c31c24c11551057f0dae204ee4d0c5c43d3a5f86d412e0374bbde9577d3c9900"
+    },
+    {
+      "path": "builds/after/web/manifest.webmanifest",
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+    },
+    {
+      "path": "builds/after/web/metadata.json",
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+    },
+    {
+      "path": "builds/after/web/sw.js",
+      "sha256": "ff2e44494807c4673959682c9c70c1a59c9e7b2f9d91466e285438f15ce4f89c"
+    },
+    {
+      "path": "builds/after/web/sw.js.map",
+      "sha256": "1ba1e82f778d0ac927b76d092ba718570677e38ac189c1c18b4c3993d2175fc6"
+    },
+    {
+      "path": "builds/after/web/workbox-9c191d2f.js",
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "path": "builds/after/web/workbox-9c191d2f.js.map",
+      "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+    },
+    {
+      "path": "builds/after/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "builds/after/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "builds/after/web/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "builds/after/web/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+    },
+    {
+      "path": "builds/after/web/_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js",
+      "sha256": "4eaacf126a47d374c63108ea84ba1bbaae3652bc51967fa9848a0bb3bb340d4c"
+    },
+    {
+      "path": "builds/after/web/_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js",
+      "sha256": "30f76a952413c50ce705db45cd2df9fd1ecfce792a06c3bda14fd1b1d415bfcd"
+    },
+    {
+      "path": "after-wide-hold-release.png",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175"
+    },
+    {
+      "path": "after-wide-returned-idle.png",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673"
+    },
+    {
+      "path": "after-portrait-hold-release.png",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d"
+    },
+    {
+      "path": "after-portrait-returned-idle.png",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1"
+    },
+    {
+      "path": "after-short-landscape-hold-release.png",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d"
+    },
+    {
+      "path": "after-short-landscape-scrolled-controls.png",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653"
+    },
+    {
+      "path": "after-short-landscape-returned-idle.png",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166"
+    },
+    {
+      "path": "after-wide-motion.webm",
+      "sha256": "248246968f345b700dbb6915c2bda60612c9238518d493e0b6a735a270a45458"
+    },
+    {
+      "path": "superseded-fixed-clock/capture-editor.mjs",
+      "sha256": "b660abf65eca4ba12f0e397afe5986bead17b383af8edda1162beb4320ced907"
+    },
+    {
+      "path": "superseded-fixed-clock/fixture.json",
+      "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151"
+    },
+    {
+      "path": "superseded-fixed-clock/before-wide-hold-release.png",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e"
+    },
+    {
+      "path": "superseded-fixed-clock/before-portrait-hold-release.png",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521"
+    },
+    {
+      "path": "superseded-fixed-clock/before-short-landscape-hold-release.png",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893"
+    },
+    {
+      "path": "superseded-fixed-clock/after-wide-hold-release.png",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175"
+    },
+    {
+      "path": "superseded-fixed-clock/after-wide-returned-idle.png",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673"
+    },
+    {
+      "path": "superseded-fixed-clock/after-portrait-hold-release.png",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d"
+    },
+    {
+      "path": "superseded-fixed-clock/after-portrait-returned-idle.png",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1"
+    },
+    {
+      "path": "superseded-fixed-clock/after-short-landscape-hold-release.png",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d"
+    },
+    {
+      "path": "superseded-fixed-clock/after-short-landscape-scrolled-controls.png",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653"
+    },
+    {
+      "path": "superseded-fixed-clock/after-short-landscape-returned-idle.png",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166"
+    },
+    {
+      "path": "superseded-fixed-clock/after-wide-motion.webm",
+      "sha256": "3dbd3cd35aade697a708faee297d890bb9941a4de38738e9cf070188388ada98"
+    }
+  ],
+  "remoteAccessibleFiles": [
+    {
+      "file": "README.md",
+      "gitBlob": "658dc825331543f8f62d2b71b7b7ba1900bc6807",
+      "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065"
+    },
+    {
+      "file": "manifest.json",
+      "gitBlob": "22731244f24f684b28dcb461ae018625f472d978",
+      "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796"
+    },
+    {
+      "file": "bindings.json",
+      "gitBlob": "96e51254bfe62dea667daf620bd241636270a530",
+      "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f"
+    },
+    {
+      "file": "before-wide-hold-release.png",
+      "gitBlob": "d531c57e0a6e8b62f2fce6bb255f96c8388fa567",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e"
+    },
+    {
+      "file": "before-portrait-hold-release.png",
+      "gitBlob": "5709f2e41f320c8fa5267ec9427cfd06c1727ecd",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521"
+    },
+    {
+      "file": "before-short-landscape-hold-release.png",
+      "gitBlob": "31c08d47683f880fa0fc4eb692ef60a8d7f36a71",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893"
+    },
+    {
+      "file": "after-wide-hold-release.png",
+      "gitBlob": "d0dc109764b75df2beb06e323095f2cc787b2e56",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175"
+    },
+    {
+      "file": "after-wide-returned-idle.png",
+      "gitBlob": "5cdd44741c53f2fbc49baffe3bd64b0c21919f23",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673"
+    },
+    {
+      "file": "after-portrait-hold-release.png",
+      "gitBlob": "b7924e83a70d13c09a3de566bcc1f68d4cdb45a6",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d"
+    },
+    {
+      "file": "after-portrait-returned-idle.png",
+      "gitBlob": "5b9c1429a7edbabb9ee0b4b52d9b9f3e6971ecfe",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1"
+    },
+    {
+      "file": "after-short-landscape-hold-release.png",
+      "gitBlob": "0fe7c8a5780dd21e5b4d1ea71d39b948af45373e",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d"
+    },
+    {
+      "file": "after-short-landscape-scrolled-controls.png",
+      "gitBlob": "8181c17568d1538997378d5d52ab0d0182386552",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653"
+    },
+    {
+      "file": "after-short-landscape-returned-idle.png",
+      "gitBlob": "87c8d2783f5d17799af9d82b8bb12d089fbdea9e",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166"
+    }
+  ],
+  "sourceCommits": [
+    {
+      "side": "before",
+      "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    },
+    {
+      "side": "after",
+      "sha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "serverSha256": "342291d2b48bf5dccdcdaae9c9c3fcdafd48150af013e54f3d47221c28b6788e"
+    }
+  ],
+  "runtime": "Exact retained web/server bytes copied into isolated runtime-pr36; existing lock-identical dependencies read through a junction, no product changes."
+}

@@ -1,0 +1,155 @@
+{
+  "purpose": "Immutable independent PR36 QA record; original source/build/image bytes remain at exact existing commits.",
+  "owner": "01a1144e-7290-74f6-9f05-1ad82d3e2018",
+  "retention": "Dedicated nonmerged evidence ref; retain through review/merge and until explicit human archival/removal.",
+  "files": [
+    {
+      "path": "binding-pr36.mjs",
+      "sha256": "eda7f06e1000d314b4afb3a0a611bd8c2f2f4dd38cfa560cbc9aa80ffa1a6696"
+    },
+    {
+      "path": "evidence-verification.json",
+      "sha256": "d5678476d9772d12e72a4477039807a3cf53d8ebd9e85f0515231ff9d3836c49"
+    },
+    {
+      "path": "issue-body.md",
+      "sha256": "5eb0520280e2704f3685fa7fc5dc0f059d65d8a90a592973e4a6e23741ec149a"
+    },
+    {
+      "path": "pr-body.md",
+      "sha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f"
+    },
+    {
+      "path": "project-association.json",
+      "sha256": "566aa562591d9e0216e4ee83e72c37518b60ac60f5bfbd66bf8aad2113984e0e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "4a482f2d2181bc1f502111e70630f5a126d29d0b1d1ae4a155c0cb1e3913c22b"
+    },
+    {
+      "path": "record.json",
+      "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46"
+    },
+    {
+      "path": "verify-pr36.mjs",
+      "sha256": "039d0fc20892963f8e717489087df1b263df032f78b2a86123a294e6e198ca13"
+    },
+    {
+      "path": "live-snapshot/binding.json",
+      "sha256": "9079306c74451e5097ab12480cd000bd396ce3225eb802ae8615e1db482d7794"
+    },
+    {
+      "path": "live-snapshot/body-correction.json",
+      "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+    },
+    {
+      "path": "live-snapshot/checks.json",
+      "sha256": "889658181e4d9e98fac0625ebcea0845987ba48332d3fb5bde4280f9bc88e81f"
+    },
+    {
+      "path": "live-snapshot/commits.json",
+      "sha256": "9a4a7673f0311d18971ef9ad051607e30b0eb4b4385b7cd9e11761c3da579919"
+    },
+    {
+      "path": "live-snapshot/files.json",
+      "sha256": "da21359dbbc58b9b0718a89b0e9eb811cbc7954578fcb0aee49075cf0ad9fccb"
+    },
+    {
+      "path": "live-snapshot/inlineComments.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "live-snapshot/issue.json",
+      "sha256": "1e763488c602fb9dfa8d5c5d54810980119225c8094f5e63a175c2c67e81dc7f"
+    },
+    {
+      "path": "live-snapshot/issueComments.json",
+      "sha256": "fa6edb2deed1603ef57becd16f7f44559c2cb08f7e9c94c3126a7ac0ee687e9c"
+    },
+    {
+      "path": "live-snapshot/owner-publication.json",
+      "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+    },
+    {
+      "path": "live-snapshot/pr.json",
+      "sha256": "e945abd4516a8e9edbd03015e26accd2ca6ed4da45964d9d71f3f3e0e7cb846c"
+    },
+    {
+      "path": "live-snapshot/prComments.json",
+      "sha256": "1a97d9028c1edf67c757fb4600d99ca2a7136ca6558cf395bb0d01e24ff32724"
+    },
+    {
+      "path": "live-snapshot/related-bindings.json",
+      "sha256": "8f3c6924399502b0cb0b5fc2d3a90d6655fb444b1e8ea212a3f543f9d8ff81ee"
+    },
+    {
+      "path": "live-snapshot/reviews.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "live-snapshot/runs.json",
+      "sha256": "d1b366182f4359c4382fe3ed09ddfdce1d16acf3ae78df3226012aec3ae88c76"
+    },
+    {
+      "path": "live-snapshot/statuses.json",
+      "sha256": "41e5dedf493324899d0db71108fb3e7671b77ce8ac8d8c92ebee131ea34b34a0"
+    },
+    {
+      "path": "live-snapshot/threads.json",
+      "sha256": "7e3191e7dc2216fa4aae388b1f748629d3846b266f549f19104d78631fe6848b"
+    },
+    {
+      "path": "probe/accessibility-harness.mjs",
+      "sha256": "27e3508e5e9f247d79796fb398e251592bd14c514a6f93a91213cdc427d89456"
+    },
+    {
+      "path": "probe/accessibility-result.json",
+      "sha256": "1a4b746ba29bea3f588ad9be3246b81bbbd76bc848ee15bc8b8c020ce445a0cf"
+    },
+    {
+      "path": "probe/decoded-motion-4.2.png",
+      "sha256": "80c41526843ab4b55d1cfd72f9ee6b8fccfa7a218c537af5fe626cb1eb3b8156"
+    },
+    {
+      "path": "probe/decoded-motion-4.4.png",
+      "sha256": "f73e31b81cafd8861341e8852597c4322c65346499eb7c7f3b45e947fa530da1"
+    },
+    {
+      "path": "probe/decoded-motion-4.6.png",
+      "sha256": "05b6bb92eecb262a4e074129f6d2878b0c5eccdce3ca958fc2bd093e6b322b8e"
+    },
+    {
+      "path": "probe/dense-editor-390x844.png",
+      "sha256": "5a4e3176e30569d26058960640cd5a4eb7fd3bb527653959ddcaf0310a6fd57f"
+    },
+    {
+      "path": "probe/dense-editor-844x390.png",
+      "sha256": "e0d19385c6dc55757175f1438ca7406201e754be6e14f1164757c1b636af5b6b"
+    },
+    {
+      "path": "probe/focus-attempt-harness.mjs",
+      "sha256": "02ec5c1652ef38c369bc93dd8c9b1cbe1d4043195a2d8b7232d3a86fe17ac341"
+    },
+    {
+      "path": "probe/focus-attempt-result.json",
+      "sha256": "75e6683ebdeac25751c3b2f4752db557a970bc6c167d6b5b059b1de6a9bdf507"
+    },
+    {
+      "path": "probe/followup-harness.mjs",
+      "sha256": "493e3d9a678e213e159541b2e691d9084fdc65694bc2dc4c6883589de1d251a3"
+    },
+    {
+      "path": "probe/followup-result.json",
+      "sha256": "e04b461eb5fd151a4de293434d410a37711b0cac1bd495a9cecf3e500ca017e4"
+    },
+    {
+      "path": "probe/initial-harness.mjs",
+      "sha256": "a803f4df3368a71798cf3a6ddb4e32d42c7fb30e6722245961ce09ea2cebb985"
+    },
+    {
+      "path": "probe/initial-result.json",
+      "sha256": "111399fa228971593994e1fda53de6e3440a6e5a4a639386c2fd8fd236ffb22d"
+    }
+  ]
+}

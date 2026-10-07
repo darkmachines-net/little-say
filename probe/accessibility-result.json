@@ -1,0 +1,282 @@
+{
+  "checkedAtUtc": "2026-10-07T04:50:21.407Z",
+  "source": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "checks": [
+    {
+      "name": "fresh assistive cancellation real clock",
+      "details": {
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "timeline": [
+          {
+            "stage": "before",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 1034,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "100ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 937.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "1000ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 937.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+300ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 1034,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+1800ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 1034,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "complete",
+            "control": null,
+            "editor": 1,
+            "size": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "fresh assistive completion real clock",
+      "details": {
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "last": {
+          "stage": "complete",
+          "control": null,
+          "editor": 1,
+          "size": null
+        }
+      }
+    },
+    {
+      "name": "fresh assistive cancellation real clock",
+      "details": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "timeline": [
+          {
+            "stage": "before",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 244,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "100ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 147.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "1000ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 147.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+300ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 244,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+1800ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 244,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "complete",
+            "control": null,
+            "editor": 1,
+            "size": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "fresh assistive completion real clock",
+      "details": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "last": {
+          "stage": "complete",
+          "control": null,
+          "editor": 1,
+          "size": null
+        }
+      }
+    },
+    {
+      "name": "fresh assistive cancellation real clock",
+      "details": {
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "timeline": [
+          {
+            "stage": "before",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 698,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "100ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 601.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "1000ms",
+            "control": "Unlocking. Activate to cancel.",
+            "editor": 0,
+            "size": {
+              "x": 601.203125,
+              "y": 14,
+              "width": 226.796875,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+300ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 698,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "cancel+1800ms",
+            "control": "Hold to unlock",
+            "editor": 0,
+            "size": {
+              "x": 698,
+              "y": 14,
+              "width": 130,
+              "height": 48
+            }
+          },
+          {
+            "stage": "complete",
+            "control": null,
+            "editor": 1,
+            "size": null
+          }
+        ]
+      }
+    },
+    {
+      "name": "fresh assistive completion real clock",
+      "details": {
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "last": {
+          "stage": "complete",
+          "control": null,
+          "editor": 1,
+          "size": null
+        }
+      }
+    }
+  ],
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js",
+      "sha256": "30f76a952413c50ce705db45cd2df9fd1ecfce792a06c3bda14fd1b1d415bfcd"
+    },
+    {
+      "path": "/_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js",
+      "sha256": "4eaacf126a47d374c63108ea84ba1bbaae3652bc51967fa9848a0bb3bb340d4c"
+    }
+  ],
+  "limitations": [
+    "Browser execution with synthetic speech, no-op fullscreen and IndexedDB fixtures; not native rotation, OS font scaling, VoiceOver or TalkBack proof."
+  ],
+  "browser": "154.0.4258.62",
+  "finishedAtUtc": "2026-10-07T04:50:42.588Z"
+}

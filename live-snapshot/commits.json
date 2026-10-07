@@ -1,0 +1,84 @@
+[
+  {
+    "sha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "node_id": "C_kwDOU65OydoAKDdlOGFiNTk5MzUwMzQxOWU1OTQ1YzhmMzA0ZmZhYjNhNmZjOTFmNTY",
+    "commit": {
+      "author": {
+        "name": "MChartier",
+        "email": "1258197+MChartier@users.noreply.github.com",
+        "date": "2026-10-07T03:28:17Z"
+      },
+      "committer": {
+        "name": "MChartier",
+        "email": "1258197+MChartier@users.noreply.github.com",
+        "date": "2026-10-07T03:28:17Z"
+      },
+      "message": "Open the existing editor directly after the parent hold",
+      "tree": {
+        "sha": "41fe9c264dc033d224df964b8c621759acd00ae4",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/41fe9c264dc033d224df964b8c621759acd00ae4"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "html_url": "https://github.com/MChartier/little-say/commit/7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/7e8ab5993503419e5945c8f304ffab3a6fc91f56/comments",
+    "author": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/b21d3ba7370c08468b868385ce9df3d875eee799",
+        "html_url": "https://github.com/MChartier/little-say/commit/b21d3ba7370c08468b868385ce9df3d875eee799"
+      }
+    ]
+  }
+]

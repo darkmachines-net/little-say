@@ -1,0 +1,40 @@
+{
+  "preparedAtUtc": "2026-10-07T04:03:04.822Z",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/36",
+  "before": {
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRef": "feat/direct-board-editor-issue30",
+    "baseRef": "feat/balanced-storyboard-grid",
+    "draft": true,
+    "labels": []
+  },
+  "previousBodySha256": "fdb7f88839a0c44cfb76181b93b21ebf1a92c8a7524a24a289769eb86d415692",
+  "proposedBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+  "previousBodyAlreadyRetained": true,
+  "previousRetainedBodyUrl": "https://github.com/MChartier/little-say/blob/f6320514d5701ce1cec056eec75e57db6952efe3/publication/pr-body.md",
+  "retainedBodySha256": "fdb7f88839a0c44cfb76181b93b21ebf1a92c8a7524a24a289769eb86d415692",
+  "parentVerdict": {
+    "url": "https://github.com/MChartier/little-say/blob/2dbe1b7438bf34a2570ad384bbeff6cde4a56f47/decision-20261007/record.json",
+    "sha256": "80189b4929e5e096590b150c72507712ca3bdbc854577802c68d5f27930500c1",
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "verdict": "ready",
+    "scope": "PR34 current balanced-grid outcome at b21d3ba7370c08468b868385ce9df3d875eee799 against1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "oldText": "Parent #34 remains evidence-incomplete, and no native deferral is assumed.",
+  "newText": "Parent #34 has a [ready verdict for pinned `b21d3ba`](https://github.com/MChartier/little-say/blob/2dbe1b7438bf34a2570ad384bbeff6cde4a56f47/decision-20261007/record.json) under its own PR-only native-validation deferral; review that parent first. That deferral does not apply to this child.",
+  "scope": "One parent-status sentence only. Child native checks remain unverified, independent QA pending, no child deferral inferred. No source/tests/captures/labels/draft changes.",
+  "coordination": "Issue32 admitted atop exact child head; branch remains idle and future source corrections require coordination.",
+  "checkedAtUtc": "2026-10-07T04:03:34.763Z",
+  "finalBodySha256": "90c22617a07fba9be409cef3948627e6982042c3140dcaa4be07323be947c61f",
+  "after": {
+    "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+    "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "headRef": "feat/direct-board-editor-issue30",
+    "baseRef": "feat/balanced-storyboard-grid",
+    "draft": true,
+    "labels": []
+  },
+  "apiReadbackExact": true
+}

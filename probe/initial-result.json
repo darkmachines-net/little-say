@@ -1,0 +1,166 @@
+{
+  "checkedAtUtc": "2026-10-07T04:48:13.892Z",
+  "source": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "checks": [
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 4,
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "minimumSide": 148,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 4,
+        "viewport": {
+          "width": 820,
+          "height": 1180
+        },
+        "minimumSide": 148,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 4,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "minimumSide": 134,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 4,
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "minimumSide": 148,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 7,
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "minimumSide": 148,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 7,
+        "viewport": {
+          "width": 820,
+          "height": 1180
+        },
+        "minimumSide": 148,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 7,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "minimumSide": 86.65625,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 7,
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "minimumSide": 104.5625,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 24,
+        "viewport": {
+          "width": 1180,
+          "height": 820
+        },
+        "minimumSide": 127,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 24,
+        "viewport": {
+          "width": 820,
+          "height": 1180
+        },
+        "minimumSide": 119.328125,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 24,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "minimumSide": 64,
+        "lastCardMatches": true
+      }
+    },
+    {
+      "name": "dense and varied editor reachability",
+      "details": {
+        "count": 24,
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "minimumSide": 57.65625,
+        "lastCardMatches": true
+      }
+    }
+  ],
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js",
+      "sha256": "30f76a952413c50ce705db45cd2df9fd1ecfce792a06c3bda14fd1b1d415bfcd"
+    },
+    {
+      "path": "/_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js",
+      "sha256": "4eaacf126a47d374c63108ea84ba1bbaae3652bc51967fa9848a0bb3bb340d4c"
+    }
+  ],
+  "limitations": [
+    "Browser execution with synthetic speech, no-op fullscreen and IndexedDB fixtures; not native rotation, OS font scaling, VoiceOver or TalkBack proof."
+  ],
+  "browser": "154.0.4258.62",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Unlocking. Activate to cancel.'\n- 'Hold to unlock'\n\n    at file:///C:/Users/MChar/Documents/Codex/2026-10-06/task-14/probe-pr36.mjs:30:253",
+  "finishedAtUtc": "2026-10-07T04:49:06.998Z"
+}

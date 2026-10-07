@@ -1,0 +1,106 @@
+{
+  "checkedAtUtc": "2026-10-07T04:56:04.413Z",
+  "refs": {
+    "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "feat/balanced-storyboard-grid": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "feat/direct-board-editor-issue30": "7e8ab5993503419e5945c8f304ffab3a6fc91f56"
+  },
+  "orderedCommitParents": [
+    "7e8ab5993503419e5945c8f304ffab3a6fc91f56 b21d3ba7370c08468b868385ce9df3d875eee799"
+  ],
+  "mergeBase": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "files": [
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "additions": 29,
+      "deletions": 11
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardEditor.tsx",
+      "additions": 32,
+      "deletions": 18
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardTransition.tsx",
+      "additions": 50,
+      "deletions": 0
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentControl.test.ts",
+      "additions": 28,
+      "deletions": 6
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentControl.tsx",
+      "additions": 12,
+      "deletions": 9
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentControl.web.tsx",
+      "additions": 26,
+      "deletions": 10
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "additions": 1,
+      "deletions": 1
+    },
+    {
+      "path": "apps/mobile/src/ui/PlayBoard.tsx",
+      "additions": 35,
+      "deletions": 20
+    },
+    {
+      "path": "apps/mobile/src/ui/screenFocus.ts",
+      "additions": 20,
+      "deletions": 0
+    },
+    {
+      "path": "apps/mobile/src/ui/useParentHold.ts",
+      "additions": 33,
+      "deletions": 20
+    },
+    {
+      "path": "tests/web/app.spec.ts",
+      "additions": 23,
+      "deletions": 28
+    },
+    {
+      "path": "tests/web/editor-transition.spec.ts",
+      "additions": 236,
+      "deletions": 0
+    },
+    {
+      "path": "tests/web/recents.spec.ts",
+      "additions": 3,
+      "deletions": 2
+    }
+  ],
+  "parent": {
+    "pr": 34,
+    "state": "open",
+    "draft": false,
+    "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+    "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "bodySha256": "e4646532d7702615850c18e214e420f20b2c2c1b0167bd2763eb9b179ec7a6cb",
+    "labels": [
+      "human-ready"
+    ],
+    "verdictCommentId": 6030490282,
+    "verdictBodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9",
+    "verdictUpdatedAt": "2026-10-07T03:46:50Z",
+    "scope": "PR34-only native deferral; does not apply to child36"
+  },
+  "bodyCorrection": {
+    "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+    "path": "parent-readiness-20261007/record.json",
+    "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77"
+  },
+  "ownerPublication": {
+    "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+    "path": "publication/record.json",
+    "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273"
+  },
+  "sourceWorktreeClean": true,
+  "host": "mchartier_zbook"
+}

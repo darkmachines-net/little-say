@@ -1,0 +1,58 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg_BqBM",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {},
+                  {},
+                  {},
+                  {
+                    "text": "Open the existing storyboard editor directly after a two-second parent hold",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {},
+                  {
+                    "text": "01a11406-66b3-71fb-a4cc-2aad6d51802c; PR36 completed, clean and idle",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {},
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/36 (child of PR34)",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  },
+                  {
+                    "text": "Sole independent QA now admitted/reviewing per coordinator: existing geometry QA task 01a1144e-7290-74f6-9f05-1ad82d3e2018, turn 01a114a8-d2fd-77cd-a8c2-5c4c58d13971; claim6031048619. Final PR36 body starts 90c22617; parent34-only deferral does not cover child. Coordinate any source change with stopped/uncommitted LS32 child.",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "2026-10-07T04:42:30.812377+00:00",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "checkedAtUtc": "2026-10-07T04:52:31.634Z",
+  "source": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "checks": [
+    {
+      "name": "exact threshold, outside release, resize cancellation, assistive cancellation, keyboard/focus",
+      "details": "passed after allowing post-navigation focus effect to execute"
+    },
+    {
+      "name": "failed-save return, retry and durable board",
+      "details": "passed"
+    },
+    {
+      "name": "active and pending speech stopped; late completion does not revive queue; returned play idle",
+      "details": "passed with synthetic browser voice only"
+    },
+    {
+      "name": "reduced motion and transition resize leave usable editor",
+      "details": "passed"
+    },
+    {
+      "name": "photo crop, IDs/order/media, cancelled card draft and AI consent preserved",
+      "details": {
+        "playCrop": [
+          0.43750245126877674,
+          0.14060477703259208,
+          0.4166764717417735,
+          0.6250147076126603
+        ],
+        "editorCrop": [
+          0.4374826108730733,
+          0.140567612687813,
+          0.4166713037671805,
+          0.6250417362270451
+        ],
+        "returnedCrop": [
+          0.43750245126877674,
+          0.14060477703259208,
+          0.4166764717417735,
+          0.6250147076126603
+        ]
+      }
+    },
+    {
+      "name": "original video decoded frame samples",
+      "details": {
+        "originalSha256": "248246968f345b700dbb6915c2bda60612c9238518d493e0b6a735a270a45458",
+        "frames": [
+          {
+            "seconds": 4.2,
+            "sha256": "b28e8b4ad2c051de82098b5af5efbe2d1f825060a457a0479dbc5fcaafd07212"
+          },
+          {
+            "seconds": 4.3,
+            "sha256": "b28e8b4ad2c051de82098b5af5efbe2d1f825060a457a0479dbc5fcaafd07212"
+          },
+          {
+            "seconds": 4.4,
+            "sha256": "b28e8b4ad2c051de82098b5af5efbe2d1f825060a457a0479dbc5fcaafd07212"
+          },
+          {
+            "seconds": 4.6,
+            "sha256": "b28e8b4ad2c051de82098b5af5efbe2d1f825060a457a0479dbc5fcaafd07212"
+          }
+        ]
+      }
+    }
+  ],
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js",
+      "sha256": "30f76a952413c50ce705db45cd2df9fd1ecfce792a06c3bda14fd1b1d415bfcd"
+    },
+    {
+      "path": "/_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js",
+      "sha256": "4eaacf126a47d374c63108ea84ba1bbaae3652bc51967fa9848a0bb3bb340d4c"
+    }
+  ],
+  "limitations": [
+    "Browser execution with synthetic speech, no-op fullscreen and IndexedDB fixtures; not native rotation, OS font scaling, VoiceOver or TalkBack proof."
+  ],
+  "browser": "154.0.4258.62",
+  "finishedAtUtc": "2026-10-07T04:52:50.137Z"
+}
