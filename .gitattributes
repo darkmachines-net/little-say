@@ -1,0 +1,2 @@
+# Retained evidence is exact binary content; do not normalize captured harnesses or logs.
+* -text
