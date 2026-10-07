@@ -1,0 +1,603 @@
+{
+  "totals": {
+    "configuration": {
+      "files": 9,
+      "additions": 60,
+      "deletions": 6
+    },
+    "product": {
+      "files": 31,
+      "additions": 1180,
+      "deletions": 25
+    },
+    "tests": {
+      "files": 12,
+      "additions": 664,
+      "deletions": 4
+    },
+    "migration": {
+      "files": 1,
+      "additions": 43,
+      "deletions": 0
+    },
+    "docs": {
+      "files": 2,
+      "additions": 60,
+      "deletions": 0
+    },
+    "lock": {
+      "files": 1,
+      "additions": 11972,
+      "deletions": 3223
+    }
+  },
+  "rows": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "additions": 3,
+      "deletions": 1,
+      "category": "configuration"
+    },
+    {
+      "path": "apps/mobile/app.config.js",
+      "additions": 2,
+      "deletions": 2,
+      "category": "configuration"
+    },
+    {
+      "path": "apps/mobile/package.json",
+      "additions": 6,
+      "deletions": 1,
+      "category": "configuration"
+    },
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "additions": 21,
+      "deletions": 6,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.ts",
+      "additions": 20,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/data/storage.web.ts",
+      "additions": 19,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/data/useLibrary.ts",
+      "additions": 4,
+      "deletions": 1,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.ts",
+      "additions": 17,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSession.web.ts",
+      "additions": 17,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.test.ts",
+      "additions": 59,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "apps/mobile/src/services/accountSync.ts",
+      "additions": 74,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/api.test.ts",
+      "additions": 19,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "apps/mobile/src/services/api.ts",
+      "additions": 5,
+      "deletions": 3,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebase-native.d.ts",
+      "additions": 14,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseAccount.ts",
+      "additions": 140,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.test.ts",
+      "additions": 31,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.ts",
+      "additions": 58,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebasePersistence.web.ts",
+      "additions": 6,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.test.ts",
+      "additions": 13,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.ts",
+      "additions": 39,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/firebaseProviders.web.ts",
+      "additions": 7,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/speechLibrary.ts",
+      "additions": 2,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/services/useAccount.ts",
+      "additions": 133,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountPanel.tsx",
+      "additions": 86,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountScreen.tsx",
+      "additions": 31,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/ui/FirstTimeSetup.tsx",
+      "additions": 2,
+      "deletions": 2,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "additions": 11,
+      "deletions": 3,
+      "category": "product"
+    },
+    {
+      "path": "apps/mobile/src/ui/components.tsx",
+      "additions": 4,
+      "deletions": 3,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/migrations/1760000000002_accounts.sql",
+      "additions": 43,
+      "deletions": 0,
+      "category": "migration"
+    },
+    {
+      "path": "apps/server/package.json",
+      "additions": 2,
+      "deletions": 1,
+      "category": "configuration"
+    },
+    {
+      "path": "apps/server/src/account-routes.ts",
+      "additions": 102,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/src/accounts.ts",
+      "additions": 154,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/src/app.ts",
+      "additions": 21,
+      "deletions": 3,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/src/database.ts",
+      "additions": 1,
+      "deletions": 1,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/src/firebase.ts",
+      "additions": 79,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/src/index.ts",
+      "additions": 21,
+      "deletions": 2,
+      "category": "product"
+    },
+    {
+      "path": "apps/server/test/accounts.integration.test.ts",
+      "additions": 100,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "apps/server/test/database.integration.test.ts",
+      "additions": 12,
+      "deletions": 3,
+      "category": "tests"
+    },
+    {
+      "path": "apps/server/test/firebase.integration.test.ts",
+      "additions": 134,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "docs/ACCOUNTS.md",
+      "additions": 40,
+      "deletions": 0,
+      "category": "docs"
+    },
+    {
+      "path": "docs/testing.md",
+      "additions": 20,
+      "deletions": 0,
+      "category": "docs"
+    },
+    {
+      "path": "firebase.json",
+      "additions": 7,
+      "deletions": 0,
+      "category": "configuration"
+    },
+    {
+      "path": "package-lock.json",
+      "additions": 11972,
+      "deletions": 3223,
+      "category": "lock"
+    },
+    {
+      "path": "package.json",
+      "additions": 4,
+      "deletions": 1,
+      "category": "configuration"
+    },
+    {
+      "path": "packages/core/src/account.test.ts",
+      "additions": 49,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "packages/core/src/account.ts",
+      "additions": 61,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "additions": 1,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "additions": 17,
+      "deletions": 0,
+      "category": "product"
+    },
+    {
+      "path": "playwright.accounts.config.ts",
+      "additions": 15,
+      "deletions": 0,
+      "category": "configuration"
+    },
+    {
+      "path": "playwright.config.ts",
+      "additions": 1,
+      "deletions": 0,
+      "category": "configuration"
+    },
+    {
+      "path": "scripts/dev-proxy.cjs",
+      "additions": 13,
+      "deletions": 1,
+      "category": "product"
+    },
+    {
+      "path": "scripts/dev-proxy.test.ts",
+      "additions": 12,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "scripts/test-server.ts",
+      "additions": 20,
+      "deletions": 0,
+      "category": "configuration"
+    },
+    {
+      "path": "tests/web/accounts.spec.ts",
+      "additions": 232,
+      "deletions": 0,
+      "category": "tests"
+    },
+    {
+      "path": "tests/web/existingLibrary.ts",
+      "additions": 2,
+      "deletions": 1,
+      "category": "tests"
+    },
+    {
+      "path": "tests/web/setup.spec.ts",
+      "additions": 1,
+      "deletions": 0,
+      "category": "tests"
+    }
+  ],
+  "lock": {
+    "newPackagePaths": 658,
+    "existingChanged": [
+      {
+        "path": "",
+        "fields": [
+          "devDependencies"
+        ]
+      },
+      {
+        "path": "apps/mobile",
+        "fields": [
+          "dependencies"
+        ]
+      },
+      {
+        "path": "apps/server",
+        "fields": [
+          "dependencies"
+        ]
+      },
+      {
+        "path": "node_modules/@babel/core",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/@babel/runtime",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/@expo/metro-runtime",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/@types/react",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/ajv",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/browserslist",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/esbuild",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/expo",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/expo-asset",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/expo-constants",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/expo-font",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/expo-server",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/foreground-child",
+        "fields": [
+          "dev",
+          "devOptional"
+        ]
+      },
+      {
+        "path": "node_modules/is-stream",
+        "fields": [
+          "dev",
+          "devOptional"
+        ]
+      },
+      {
+        "path": "node_modules/package-json-from-dist",
+        "fields": [
+          "dev",
+          "devOptional"
+        ]
+      },
+      {
+        "path": "node_modules/react",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/react-dom",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/react-native",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/react-native-web",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/react-refresh",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/rollup",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/signal-exit",
+        "fields": [
+          "dev",
+          "devOptional"
+        ]
+      },
+      {
+        "path": "node_modules/tslib",
+        "fields": [
+          "optional"
+        ]
+      },
+      {
+        "path": "node_modules/tsx",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/typescript",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/vite",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/ws",
+        "fields": [
+          "peer"
+        ]
+      },
+      {
+        "path": "node_modules/zod",
+        "fields": [
+          "peer"
+        ]
+      }
+    ],
+    "removed": [],
+    "attribution": {
+      "firebase-tools": {
+        "packages": 466,
+        "serializedLines": 6730
+      },
+      "firebase": {
+        "packages": 43,
+        "serializedLines": 661
+      },
+      "shared": {
+        "packages": 93,
+        "serializedLines": 1163
+      },
+      "firebase-admin": {
+        "packages": 52,
+        "serializedLines": 814
+      },
+      "@invertase/react-native-apple-authentication": {
+        "packages": 1,
+        "serializedLines": 10
+      },
+      "expo-secure-store": {
+        "packages": 1,
+        "serializedLines": 10
+      },
+      "react-native-nitro-google-signin": {
+        "packages": 1,
+        "serializedLines": 25
+      },
+      "react-native-nitro-modules": {
+        "packages": 1,
+        "serializedLines": 11
+      }
+    },
+    "note": "Dependency reachability counts exclude peer edges; serializedLines approximate JSON entry bulk, not exact git additions."
+  }
+}
