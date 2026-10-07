@@ -1,0 +1,893 @@
+{
+  "verdict": "ready",
+  "supersedesVerdictCommentId": 6032466082,
+  "verdictCommentId": 6044428670,
+  "verdictUrl": "https://github.com/MChartier/little-say/pull/36#issuecomment-6044428670",
+  "verdictBodySha256": "4b60b36534f72c83c6832ed10bd900eb37154d56476c2b15663aad8f4a48a534",
+  "verdictUpdatedAt": "2026-10-07T18:39:48Z",
+  "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "mergeBaseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "parentRevisions": [
+    {
+      "pullRequest": 34,
+      "repository": "MChartier/little-say",
+      "ref": "feat/balanced-storyboard-grid",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "state": "open",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "verdictCommentId": 6032727047,
+      "verdictBodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+      "verdictUpdatedAt": "2026-10-07T06:58:54Z"
+    }
+  ],
+  "ultimateTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+  },
+  "prBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+  "issueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+  "parentPrBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+  "parentIssueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+  "checkedAtUtc": "2026-10-07T18:34:01.288Z",
+  "preCommentCheckedAtUtc": "2026-10-07T18:39:49.771Z",
+  "qaEvidenceCommit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+  "qaRecordUrl": "https://github.com/MChartier/little-say/blob/3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b/native-deferral-qa-20261007/record.json",
+  "qaRecordSha256": "7d8ded6d03cfaf99e93ebcab5b8463807960a4aae2346c692d775471c0b44563",
+  "nativeDeferral": {
+    "decisionCommentId": 6041659686,
+    "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+    "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+    "updatedAt": "2026-10-07T15:58:13Z",
+    "status": "unexecuted; deferred for review readiness",
+    "scope": "PR36 native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion behavior.",
+    "limits": "No device pass, no waiver of source/feedback/CI/review/genuine captures/provenance/independent pixels/communication/receipt gates, no merge/release/deployment authority."
+  },
+  "scope": {
+    "commits": 1,
+    "files": 13,
+    "additions": 528,
+    "deletions": 125,
+    "productFiles": 9,
+    "productAdditions": 238,
+    "productDeletions": 89,
+    "testFiles": 4,
+    "testAdditions": 290,
+    "testDeletions": 36
+  },
+  "hashMethod": "SHA-256 of exact full API-decoded comment body encoded UTF-8, with no trimming, normalization or added newline.",
+  "publishedArtifactsReadback": [
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/association.json",
+      "sha256": "1b8cc6d80f2c26b2fb76b8dcf5fb6d44acd43a96c83ebaed8bb0f1df42fb7e82"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/feedback.json",
+      "sha256": "f7d1b8250205707a627411f6c24a14fa00f19e740b464a3810274a9f067ddb36"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/issue-body.diff",
+      "sha256": "12269d41c732fc4519afbeb2a85c0a989193deb9043c005878e45ee191ae77c9"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/issue-body.md",
+      "sha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/native-deferral-instruction.json",
+      "sha256": "608386278682bf46d019b9b7090381120d3c65b0da0ec250bf82242ee0bfc5b7"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/parent-issue-body.md",
+      "sha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/parent-pr-body.md",
+      "sha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/pr-body.diff",
+      "sha256": "3218e4c8f36faaacb04cf1949902ebd78a3890101b6b3006a08d955890e4afab"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/pr-body.md",
+      "sha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/README.md",
+      "sha256": "bad1d3764a917ac3d7549ae22614b124815c0a3c4f6d0433e84a51413047b2b3"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/record.json",
+      "sha256": "7d8ded6d03cfaf99e93ebcab5b8463807960a4aae2346c692d775471c0b44563"
+    },
+    {
+      "commit": "3fd5025ac7f1eb00e8a1b04aaf28e51a9023685b",
+      "path": "native-deferral-qa-20261007/artifact-index.json",
+      "sha256": "4c4c2fced82c5ca60ced15d950352f9ee45d903ad084829dd7919c93693585fe"
+    }
+  ],
+  "prePublication": {
+    "child": {
+      "checkedAtUtc": "2026-10-07T18:39:43.780Z",
+      "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "headRef": "feat/direct-board-editor-issue30",
+      "baseRef": "feat/balanced-storyboard-grid",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+      "prUpdatedAt": "2026-10-07T17:55:25Z",
+      "draft": true,
+      "commits": 1,
+      "changedFiles": 13,
+      "additions": 528,
+      "deletions": 125,
+      "issueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+      "issueUpdatedAt": "2026-10-07T18:24:39Z",
+      "state": "open",
+      "labels": [],
+      "feedback": [
+        {
+          "kind": "issueComments",
+          "id": 6029143002,
+          "updatedAt": "2026-10-07T01:48:57Z",
+          "bodySha256": "b7cbe1d67bd83bd598429f7ece9dae8e6f42fdcfb127193f103cf70c10cae56a"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029220665,
+          "updatedAt": "2026-10-07T01:55:14Z",
+          "bodySha256": "23c125062d51179e1db234800d6f4a92e4359505b1fbb48a99a78c090a5b6609"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029841739,
+          "updatedAt": "2026-10-07T02:47:37Z",
+          "bodySha256": "c560e9a9ba166fd7cf1632537d36cf04f8f205b54b8fc477c5b394a13a1ef111"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6043387502,
+          "updatedAt": "2026-10-07T17:38:44Z",
+          "bodySha256": "eed975ec6db59743d304506921bdfac6757b387177e310342b75707b0db8a24f"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6044175583,
+          "updatedAt": "2026-10-07T18:24:39Z",
+          "bodySha256": "6419c54874e1842cfdfd0f885771b174841acafb880da3e1b06e31870deb13c8"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030511657,
+          "updatedAt": "2026-10-07T03:48:54Z",
+          "bodySha256": "4683084bdbf417107bce3cea995a76a86167eb6caf7c9c38dcc9209c9946235d"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030514092,
+          "updatedAt": "2026-10-07T03:53:11Z",
+          "bodySha256": "0854ab1bd37e87615496ee2e1b130ddfee7e7089f32ed69947e2b9427a2c5a81"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030553625,
+          "updatedAt": "2026-10-07T03:53:09Z",
+          "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030581928,
+          "updatedAt": "2026-10-07T03:55:55Z",
+          "bodySha256": "817d6d75ee3779bd0af2eea7267a02e87d4d8f5516aeca1b4fdfde34549625a7"
+        },
+        {
+          "kind": "prComments",
+          "id": 6031048619,
+          "updatedAt": "2026-10-07T04:39:20Z",
+          "bodySha256": "eb89fa5f62858339c991d56b54ca81ccdf79ee1b76fa046b96a43dfd98bec2d4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6031291236,
+          "updatedAt": "2026-10-07T05:02:29Z",
+          "bodySha256": "0ff7e06972d10224f891a96c28b53b129520001c6fd6c55a1bf5cac42c61c4b5"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032310277,
+          "updatedAt": "2026-10-07T06:26:21Z",
+          "bodySha256": "d7c3044408ef57b85520e88c9d1e5080c20a93e8ea5668f2ab0456ef2102ddc4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032466082,
+          "updatedAt": "2026-10-07T06:38:47Z",
+          "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99"
+        },
+        {
+          "kind": "prComments",
+          "id": 6043684205,
+          "updatedAt": "2026-10-07T17:55:25Z",
+          "bodySha256": "886f18a3e1e4640e3eab3edc52ddb0612315713a528c0b3000cf3c8a61bfc367"
+        }
+      ],
+      "checks": [
+        {
+          "id": 112619831465,
+          "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reviewThreads": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      }
+    },
+    "parent": {
+      "checkedAtUtc": "2026-10-07T18:39:48.998Z",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "headRef": "feat/balanced-storyboard-grid",
+      "baseRef": "master",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "prUpdatedAt": "2026-10-07T07:07:54Z",
+      "draft": false,
+      "commits": 1,
+      "changedFiles": 12,
+      "additions": 331,
+      "deletions": 33,
+      "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+      "issueUpdatedAt": "2026-10-07T06:45:45Z",
+      "state": "open",
+      "labels": [
+        "human-ready"
+      ],
+      "feedback": [
+        {
+          "kind": "issueComments",
+          "id": 6029167414,
+          "updatedAt": "2026-10-07T01:51:03Z",
+          "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029219796,
+          "updatedAt": "2026-10-07T01:55:10Z",
+          "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029348137,
+          "updatedAt": "2026-10-07T02:05:47Z",
+          "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029662109,
+          "updatedAt": "2026-10-07T02:32:23Z",
+          "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029730527,
+          "updatedAt": "2026-10-07T02:38:14Z",
+          "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029732188,
+          "updatedAt": "2026-10-07T02:38:24Z",
+          "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029795718,
+          "updatedAt": "2026-10-07T02:43:57Z",
+          "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029994635,
+          "updatedAt": "2026-10-07T03:00:32Z",
+          "bodySha256": "bcaa53a24b41b311feed306e1c2dba1df7a6168351c9d521ee3bc22caa0b01e6"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030169572,
+          "updatedAt": "2026-10-07T03:16:43Z",
+          "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030384716,
+          "updatedAt": "2026-10-07T03:37:43Z",
+          "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030490282,
+          "updatedAt": "2026-10-07T03:46:50Z",
+          "bodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032727047,
+          "updatedAt": "2026-10-07T06:58:54Z",
+          "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4"
+        }
+      ],
+      "checks": [
+        {
+          "id": 112603976685,
+          "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reviewThreads": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      }
+    },
+    "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "policy": {
+      "id": 6041659686,
+      "updatedAt": "2026-10-07T15:58:13Z",
+      "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b"
+    },
+    "checkedAtUtc": "2026-10-07T18:39:49.771Z"
+  },
+  "postPublicationCheckedAtUtc": "2026-10-07T18:41:02.211Z",
+  "postEvidenceCheckedAtUtc": "2026-10-07T18:40:50.465Z",
+  "commentReadbackCheckedAtUtc": "2026-10-07T18:41:02.676Z",
+  "postPublication": {
+    "child": {
+      "checkedAtUtc": "2026-10-07T18:40:56.059Z",
+      "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+      "baseSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "headRef": "feat/direct-board-editor-issue30",
+      "baseRef": "feat/balanced-storyboard-grid",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "bae407ebc42588472f0a3c8fa7bba599066aa99b634d1e794e7f76e10f25b8bd",
+      "prUpdatedAt": "2026-10-07T18:39:49Z",
+      "draft": true,
+      "commits": 1,
+      "changedFiles": 13,
+      "additions": 528,
+      "deletions": 125,
+      "issueBodySha256": "471505b1717a2463b8dba61daf123f433daedd7a075c393ce204847121a43b55",
+      "issueUpdatedAt": "2026-10-07T18:24:39Z",
+      "state": "open",
+      "labels": [],
+      "feedback": [
+        {
+          "kind": "issueComments",
+          "id": 6029143002,
+          "updatedAt": "2026-10-07T01:48:57Z",
+          "bodySha256": "b7cbe1d67bd83bd598429f7ece9dae8e6f42fdcfb127193f103cf70c10cae56a"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029220665,
+          "updatedAt": "2026-10-07T01:55:14Z",
+          "bodySha256": "23c125062d51179e1db234800d6f4a92e4359505b1fbb48a99a78c090a5b6609"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029841739,
+          "updatedAt": "2026-10-07T02:47:37Z",
+          "bodySha256": "c560e9a9ba166fd7cf1632537d36cf04f8f205b54b8fc477c5b394a13a1ef111"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6043387502,
+          "updatedAt": "2026-10-07T17:38:44Z",
+          "bodySha256": "eed975ec6db59743d304506921bdfac6757b387177e310342b75707b0db8a24f"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6044175583,
+          "updatedAt": "2026-10-07T18:24:39Z",
+          "bodySha256": "6419c54874e1842cfdfd0f885771b174841acafb880da3e1b06e31870deb13c8"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030511657,
+          "updatedAt": "2026-10-07T03:48:54Z",
+          "bodySha256": "4683084bdbf417107bce3cea995a76a86167eb6caf7c9c38dcc9209c9946235d"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030514092,
+          "updatedAt": "2026-10-07T03:53:11Z",
+          "bodySha256": "0854ab1bd37e87615496ee2e1b130ddfee7e7089f32ed69947e2b9427a2c5a81"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030553625,
+          "updatedAt": "2026-10-07T03:53:09Z",
+          "bodySha256": "91ef4d20ca05116f07467897827284c1e1ca01ce4f9296cd7d40c5fc80b32624"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030581928,
+          "updatedAt": "2026-10-07T03:55:55Z",
+          "bodySha256": "817d6d75ee3779bd0af2eea7267a02e87d4d8f5516aeca1b4fdfde34549625a7"
+        },
+        {
+          "kind": "prComments",
+          "id": 6031048619,
+          "updatedAt": "2026-10-07T04:39:20Z",
+          "bodySha256": "eb89fa5f62858339c991d56b54ca81ccdf79ee1b76fa046b96a43dfd98bec2d4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6031291236,
+          "updatedAt": "2026-10-07T05:02:29Z",
+          "bodySha256": "0ff7e06972d10224f891a96c28b53b129520001c6fd6c55a1bf5cac42c61c4b5"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032310277,
+          "updatedAt": "2026-10-07T06:26:21Z",
+          "bodySha256": "d7c3044408ef57b85520e88c9d1e5080c20a93e8ea5668f2ab0456ef2102ddc4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032466082,
+          "updatedAt": "2026-10-07T06:38:47Z",
+          "bodySha256": "934c5bf49698e6c84ecead0aa05cb39fc33abae87d2a4c8094c9acbeaf4b4b99"
+        },
+        {
+          "kind": "prComments",
+          "id": 6043684205,
+          "updatedAt": "2026-10-07T17:55:25Z",
+          "bodySha256": "886f18a3e1e4640e3eab3edc52ddb0612315713a528c0b3000cf3c8a61bfc367"
+        },
+        {
+          "kind": "prComments",
+          "id": 6044428670,
+          "updatedAt": "2026-10-07T18:39:48Z",
+          "bodySha256": "4b60b36534f72c83c6832ed10bd900eb37154d56476c2b15663aad8f4a48a534"
+        }
+      ],
+      "checks": [
+        {
+          "id": 112619831465,
+          "headSha": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reviewThreads": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      }
+    },
+    "parent": {
+      "checkedAtUtc": "2026-10-07T18:41:01.435Z",
+      "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+      "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+      "headRef": "feat/balanced-storyboard-grid",
+      "baseRef": "master",
+      "headRepository": "MChartier/little-say",
+      "baseRepository": "MChartier/little-say",
+      "prBodySha256": "d681529992c5ce6ed4d039da9127bbb02e888c513fdf4228221ad3d6b112dd39",
+      "prUpdatedAt": "2026-10-07T07:07:54Z",
+      "draft": false,
+      "commits": 1,
+      "changedFiles": 12,
+      "additions": 331,
+      "deletions": 33,
+      "issueBodySha256": "4f34ccc47941b0e22a48b3ede72cf85ad7a2ba4f204de047293f70620a0ba8d2",
+      "issueUpdatedAt": "2026-10-07T06:45:45Z",
+      "state": "open",
+      "labels": [
+        "human-ready"
+      ],
+      "feedback": [
+        {
+          "kind": "issueComments",
+          "id": 6029167414,
+          "updatedAt": "2026-10-07T01:51:03Z",
+          "bodySha256": "3b76bcd99ff4c086b82587a483c9d2d6e22be94dcd8c26b3db23448ba5b422f8"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029219796,
+          "updatedAt": "2026-10-07T01:55:10Z",
+          "bodySha256": "4335aaceacaa1e306c1050887a7d5d2cbd22a0f925c48c206ac395e56916ba95"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029348137,
+          "updatedAt": "2026-10-07T02:05:47Z",
+          "bodySha256": "048d482bf1d3dacd13cbe46d8d1fe7cda3432bd0a7b3f319aa5fd9cb3e562a02"
+        },
+        {
+          "kind": "issueComments",
+          "id": 6029662109,
+          "updatedAt": "2026-10-07T02:32:23Z",
+          "bodySha256": "1076f1a6663c2ad8a9a5d01f45c1d6e563c1c37a816dd51f0d8a94edd5d41f1d"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029730527,
+          "updatedAt": "2026-10-07T02:38:14Z",
+          "bodySha256": "ab57b1c4d12036b1a3a1ed3351fd2d538fdaada1687cce16b02ed55916cf934a"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029732188,
+          "updatedAt": "2026-10-07T02:38:24Z",
+          "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029795718,
+          "updatedAt": "2026-10-07T02:43:57Z",
+          "bodySha256": "524df1cd539f309a6f49af4ff2fa43788903952cda656ab1a295b71def5d96a2"
+        },
+        {
+          "kind": "prComments",
+          "id": 6029994635,
+          "updatedAt": "2026-10-07T03:00:32Z",
+          "bodySha256": "bcaa53a24b41b311feed306e1c2dba1df7a6168351c9d521ee3bc22caa0b01e6"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030169572,
+          "updatedAt": "2026-10-07T03:16:43Z",
+          "bodySha256": "d67c17534412ac1657793ccf10c0a03e50cb58c347fad175cb3c3ec74c6916d4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030384716,
+          "updatedAt": "2026-10-07T03:37:43Z",
+          "bodySha256": "9a2b2dfc969c6103a756fe9ac5fab2a9cc73a0fe03d8afbfbcbfd229b40b81a4"
+        },
+        {
+          "kind": "prComments",
+          "id": 6030490282,
+          "updatedAt": "2026-10-07T03:46:50Z",
+          "bodySha256": "69a3f009d7c8bfcaa7c1252f7d75268675dff2283e25870dd105110ee9d394e9"
+        },
+        {
+          "kind": "prComments",
+          "id": 6032727047,
+          "updatedAt": "2026-10-07T06:58:54Z",
+          "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4"
+        }
+      ],
+      "checks": [
+        {
+          "id": 112603976685,
+          "headSha": "b21d3ba7370c08468b868385ce9df3d875eee799",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reviewThreads": {
+        "totalCount": 0,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+        },
+        "nodes": []
+      }
+    },
+    "master": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+    "policy": {
+      "id": 6041659686,
+      "updatedAt": "2026-10-07T15:58:13Z",
+      "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b"
+    },
+    "checkedAtUtc": "2026-10-07T18:41:02.211Z"
+  },
+  "evidenceReadback": [
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "README.md",
+      "sha256": "2413a01211875f6f32e73a3c8d3f2afe82a731b063579a69c1f9158738145065",
+      "gitBlob": "658dc825331543f8f62d2b71b7b7ba1900bc6807"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "manifest.json",
+      "sha256": "b2bb771301b2b907748ae92b808e73dc767d4fcffc6df3e324bdff2f50160796",
+      "gitBlob": "22731244f24f684b28dcb461ae018625f472d978"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "bindings.json",
+      "sha256": "a2be32c3718cc47113556e42f4dd7da1d49db669c8b7b9a567be71af86dce87f",
+      "gitBlob": "96e51254bfe62dea667daf620bd241636270a530"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-wide-hold-release.png",
+      "sha256": "efc950f3ec5282c9621ff9050c81c0d427d021ada5bcba4682ccde193886aa5e",
+      "gitBlob": "d531c57e0a6e8b62f2fce6bb255f96c8388fa567"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-portrait-hold-release.png",
+      "sha256": "d7022b3868ddec17f7740ed278578229fc0a252e493177267428aedee61f7521",
+      "gitBlob": "5709f2e41f320c8fa5267ec9427cfd06c1727ecd"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "before-short-landscape-hold-release.png",
+      "sha256": "d618f5cff5be9483b8eacb6256430fd98dc00c9f7976b02cc4021f87f3c3d893",
+      "gitBlob": "31c08d47683f880fa0fc4eb692ef60a8d7f36a71"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-hold-release.png",
+      "sha256": "32aa9fec8cc74b0992e2021f4b4abbc4ea7917e38100b9d25e5f62367d3f0175",
+      "gitBlob": "d0dc109764b75df2beb06e323095f2cc787b2e56"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-returned-idle.png",
+      "sha256": "1ede19c61dddbd3fa7afd6edf175f98aafa6b485b4a12a09946ac606d1384673",
+      "gitBlob": "5cdd44741c53f2fbc49baffe3bd64b0c21919f23"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-hold-release.png",
+      "sha256": "c15b58f1c30132743d32a43dbe2d906baff623b3ae2ba73b912f9c5024f4d42d",
+      "gitBlob": "b7924e83a70d13c09a3de566bcc1f68d4cdb45a6"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-portrait-returned-idle.png",
+      "sha256": "d6c20425fedd8e65ce032f2cb3acd7e8ce7d5593fdcffa2b6250cff79b3ba5e1",
+      "gitBlob": "5b9c1429a7edbabb9ee0b4b52d9b9f3e6971ecfe"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-hold-release.png",
+      "sha256": "c2295314338bd651d186a2fe11dec8ff3395eb267b368ff73f83571af9ed8c6d",
+      "gitBlob": "0fe7c8a5780dd21e5b4d1ea71d39b948af45373e"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-scrolled-controls.png",
+      "sha256": "452db0a3b646e6532382246446629e03e66f873b9260f8744c4ec8ecb623b653",
+      "gitBlob": "8181c17568d1538997378d5d52ab0d0182386552"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-short-landscape-returned-idle.png",
+      "sha256": "d8f4e8c93a52408ec9374e95cf73df8137e05d012b75b305e01222b2c17f0166",
+      "gitBlob": "87c8d2783f5d17799af9d82b8bb12d089fbdea9e"
+    },
+    {
+      "commit": "f6320514d5701ce1cec056eec75e57db6952efe3",
+      "path": "publication/record.json",
+      "sha256": "d8b183618b4530fcbec370797b10fb7a239bc0964b7b2c33d7f1d69409d1e273",
+      "gitBlob": "e6a8892c81c0bf046c395090484db467ecb1ffd3"
+    },
+    {
+      "commit": "4808b714ec210a5ab7d5c8080cd6e6177831503d",
+      "path": "parent-readiness-20261007/record.json",
+      "sha256": "9f9731f40926740fd66de8f5a4061c0cd8c2d223e9665b18ea95723a22c15b77",
+      "gitBlob": "f90cf71bda015db301812c8d5940a6f7c15b3cd2"
+    },
+    {
+      "commit": "6b640f90f986cdff4e4c52e007b9c632c68c5c4e",
+      "path": "record.json",
+      "sha256": "e2f09f17f93195dcec71de3bc1d3d9502a379af3343ad183ef22acbc25011d46",
+      "gitBlob": "42804c5ea68bd00fbd41fc562d63162b0c51edb2"
+    },
+    {
+      "commit": "591a9e8d25e6e1cdafe9fb943a6fee7b58cad432",
+      "path": "communication-final-20261007/record.json",
+      "sha256": "9522386af5e97b40a183b658a1475b89499700d960bd40a96aaffa8c26bb1abc",
+      "gitBlob": "9cef3b127d9134ea4d5135fff9bd2f4197c3d844"
+    },
+    {
+      "commit": "543bf32d96ed514de94ed61236fd4bf33c1c69be",
+      "path": "native-deferral-20261007/final/record.json",
+      "sha256": "eb3cb23db8f41a94ec75b98f08e83d6d8c1931316de5d26e7408b112b8658d6a",
+      "gitBlob": "3e42b6c5a26c7b91c0d9e086db87826ffc041406"
+    },
+    {
+      "commit": "d24a7de3b8c3de6f3f9531581ba2c512f0292a7f",
+      "path": "communication-final-20261007/publication-readback.json",
+      "sha256": "f1f48927d32b83ffe5f11ad60193cf88f30cb2b10ea713afd6b94ec8f62c4a6a",
+      "gitBlob": "b76164ea2ff070558b93f1841ed2927e49eddf60"
+    },
+    {
+      "commit": "d8082c02139ae0ca052119193a7aa837f6b9d519",
+      "path": "metadata-20261007/record.json",
+      "sha256": "0bb12bdae5ffaa565a23171e4dfcb758b7c6b7d5a550d9f890cc919170c2298a",
+      "gitBlob": "b02561ecd195640e5dc9457cf9e4cc0249f5116d"
+    },
+    {
+      "commit": "4532557f137374aee6aad98adcef6ab1ff8029a3",
+      "path": "metadata-20261007/publication-readback.json",
+      "sha256": "7cb42a62737afd1374bb97a673fab6126a67897a88d13a66a9681af11f7fe804",
+      "gitBlob": "e07213762530fb810634a85919b02a73a7342841"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/bindings.json",
+      "sha256": "3b24780789b6d6c5c46439b94862cd9153a72af41b21dd66da9df2cb4510841d",
+      "gitBlob": "967ebae076d64b82e4398c029bbb6fa62f1fd219"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/issue-body.md",
+      "sha256": "f9867c764f21a350915cd0a6e16476fd08655cab62ba5a6049b136c6db21afd1",
+      "gitBlob": "64b2a9f42b97830eb2d114cde0981e1b1e391794"
+    },
+    {
+      "commit": "1abf3afc09df90ffb05062cea18f8aa082906927",
+      "path": "native-deferral-20261007/originals/pr-body.md",
+      "sha256": "9cd7af737a19bd189d709339638023ccb9f31bdc3512102f9c705a96247dc5ab",
+      "gitBlob": "8ba473c550ec51452b6f1237c4415bd3eafd3ddc"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "capture-editor.mjs",
+      "sha256": "086f05388579690cf496537eb965d9dc7de1ded0155f75d96112b3425d0556ad",
+      "gitBlob": "8063b50d1db081e0f60dd4b3c1add690fe696fbd"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "fixture.json",
+      "sha256": "b2244af31830d8022955f3a4c6f705dad817a45e30b9c23b9afdd595a3b0c151",
+      "gitBlob": "dfaff27aae4b0175fb95e06bcceb5648182b29ff"
+    },
+    {
+      "commit": "e4eb01aa9a31ad4c288c9268af9cd6ee4dd4d59a",
+      "path": "after-wide-motion.webm",
+      "sha256": "248246968f345b700dbb6915c2bda60612c9238518d493e0b6a735a270a45458",
+      "gitBlob": "67cc481d78b51d888e62ab1a12ca72d8d22361bd"
+    }
+  ],
+  "sourceScopeRecheck": "Complete ordered commits/parents and13changed paths/renames remain exact; source clean at7e8,base/merge-baseb21,master1f032.",
+  "feedbackDisposition": "All previously assessed feedback bodies/updated_at match, plus only this new append-only QA verdict with exact trusted body/updated_at. No new or edited actionable feedback detected in child or parent.",
+  "policyAndParentReceiptRecheck": {
+    "amendments": [
+      {
+        "id": 5984018358,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5984018358",
+        "updatedAt": "2026-10-04T20:21:21Z",
+        "bodySha256": "457e7755eb1ec94e1552e2192e0a487c308a181cd6920f204f3af1b2ba2c8abf",
+        "verified": true
+      },
+      {
+        "id": 5987999201,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5987999201",
+        "updatedAt": "2026-10-05T04:16:50Z",
+        "bodySha256": "972a4a9e64684bfe8703118c7cc8c33f26980abe65f1e212c05f899d2e65ed63",
+        "verified": true
+      },
+      {
+        "id": 5997739454,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-5997739454",
+        "updatedAt": "2026-10-05T15:35:43Z",
+        "bodySha256": "8ffac98257544b912ec49d1b11259be82d56e50183685364f12e159298f6e396",
+        "verified": true
+      },
+      {
+        "id": 6002971212,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6002971212",
+        "updatedAt": "2026-10-05T21:09:29Z",
+        "bodySha256": "02bd694f3a6fe0bcc7b48a7f16e20f12d8a3db11c04e2ed326a5e11bcb789992",
+        "verified": true
+      },
+      {
+        "id": 6006523068,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6006523068",
+        "updatedAt": "2026-10-06T00:30:46Z",
+        "bodySha256": "445c01c614a0aa767f408e4e98ca79f6525a3dd1a52a6b977a9499384f389481",
+        "verified": true
+      },
+      {
+        "id": 6008280372,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008280372",
+        "updatedAt": "2026-10-06T02:45:58Z",
+        "bodySha256": "53ea8dd801ffd744c1fdaaa625bc959ceb8ae1f4193926339073a0574d1ec4ee",
+        "verified": true
+      },
+      {
+        "id": 6008834896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6008834896",
+        "updatedAt": "2026-10-06T03:38:32Z",
+        "bodySha256": "c7a8391deb149ce166ba49323682fb4f6336e43a941c8164cfb7a12d8c1f3a10",
+        "verified": true
+      },
+      {
+        "id": 6020948896,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6020948896",
+        "updatedAt": "2026-10-06T16:40:54Z",
+        "bodySha256": "b833facef0b79a05c92ffec982480393d1f060e4b741c11136af7c011d680ba6",
+        "verified": true
+      },
+      {
+        "id": 6021105604,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021105604",
+        "updatedAt": "2026-10-06T16:50:11Z",
+        "bodySha256": "d9fc320b61d0238711e14dcb9cb028ba605c16024d64ac6dc97ebe75c7299b48",
+        "verified": true
+      },
+      {
+        "id": 6021281028,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6021281028",
+        "updatedAt": "2026-10-06T17:00:34Z",
+        "bodySha256": "eb9a05a4b43bd4a1f7d9b39e78ddda0a5ad6f0b47af8293768fcef6f5905e0cb",
+        "verified": true
+      },
+      {
+        "id": 6022754087,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6022754087",
+        "updatedAt": "2026-10-06T18:24:41Z",
+        "bodySha256": "1bdb9f683ed1c434d2f5ab20b9621217be7d14f17bbc34e5fc946a9e86c5e161",
+        "verified": true
+      },
+      {
+        "id": 6026521080,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6026521080",
+        "updatedAt": "2026-10-06T22:21:29Z",
+        "bodySha256": "74a486b468a12a67303e9f40b21193c41e10c6485e3a1d9a20431ee02d87a990",
+        "verified": true
+      },
+      {
+        "id": 6041659686,
+        "url": "https://github.com/MChartier/calibrate-health/issues/405#issuecomment-6041659686",
+        "updatedAt": "2026-10-07T15:58:13Z",
+        "bodySha256": "c821f39f0892512600f7547fc610f0565c15dcbd5dd9d2c99c59152c351e860b",
+        "verified": true
+      }
+    ],
+    "parentReceipt": {
+      "id": 6032727047,
+      "url": "https://github.com/MChartier/little-say/pull/34#issuecomment-6032727047",
+      "bodySha256": "95e258582986662be3bdc2778f2405404a0537d73fe047098cdb65e55e30eca4",
+      "updatedAt": "2026-10-07T06:58:54Z"
+    }
+  },
+  "remainingLimitations": [
+    "Native unlock/focus, rotation, OS text scaling, VoiceOver/TalkBack and reduced-motion checks remain unexecuted under6041659686; browser/component/bundle results are not native-device proof.",
+    "Parent34 retains a disclosed browser-only150% label-font risk: dense picture area25.5px to1.5px. This is not native OS-scaling proof or a newly established child regression; the risk is not erased by either deferral.",
+    "Actual GitHub rendered-image page check unperformed under separate6022754087 waiver.",
+    "Synthetic browser speech does not reproduce or fix the separate iPad Expo Go audio-completion hang.",
+    "PR36 is stacked on unmerged PR34; parent-first review and coordinated revalidation on source/base changes remain required. No merge/release/deployment approval."
+  ],
+  "authority": "No product/source branch, readiness, draft, Project, approval, merge, release, deployment, install or child32 mutation. Evidence-only ref and the requested append-only PR verdict are the only remote writes.",
+  "timestampSources": "Check timestamps use host UTC; comment updated_at uses GitHub API time. A small ordering inversion is observed between these independent clocks. Calls executed pre-read, POST, API-readback sequentially; exact timestamp values are preserved."
+}
