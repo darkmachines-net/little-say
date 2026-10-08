@@ -1,0 +1,120 @@
+{
+  "head": "05f3b8977eaf94e49b9afcfe67c33916395442f2",
+  "runId": 37815013722,
+  "jobId": 113441287573,
+  "conclusion": "success",
+  "lines": [
+    "2026-10-08T17:16:30.4025015Z  Test Files  40 passed (40)",
+    "2026-10-08T17:16:30.4026338Z       Tests  314 passed (314)",
+    "2026-10-08T17:17:15.3927515Z Exported: dist",
+    "2026-10-08T17:17:31.0907411Z  Test Files  3 passed (3)",
+    "2026-10-08T17:17:31.0908901Z       Tests  25 passed (25)",
+    "2026-10-08T17:18:46.4693328Z   5 passed (34.1s)"
+  ],
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-10-08T17:14:30Z",
+      "completed_at": "2026-10-08T17:14:31Z"
+    },
+    {
+      "name": "Initialize containers",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-10-08T17:14:31Z",
+      "completed_at": "2026-10-08T17:14:49Z"
+    },
+    {
+      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-10-08T17:14:49Z",
+      "completed_at": "2026-10-08T17:14:50Z"
+    },
+    {
+      "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-10-08T17:14:50Z",
+      "completed_at": "2026-10-08T17:14:55Z"
+    },
+    {
+      "name": "Run npm ci",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-10-08T17:14:55Z",
+      "completed_at": "2026-10-08T17:15:30Z"
+    },
+    {
+      "name": "Run npm run check",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-10-08T17:15:30Z",
+      "completed_at": "2026-10-08T17:17:17Z"
+    },
+    {
+      "name": "Run npm run test:services",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-10-08T17:17:17Z",
+      "completed_at": "2026-10-08T17:17:31Z"
+    },
+    {
+      "name": "Run npx playwright install --with-deps chromium",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-10-08T17:17:31Z",
+      "completed_at": "2026-10-08T17:18:04Z"
+    },
+    {
+      "name": "Run npx firebase emulators:exec --only auth --project demo-little-say \"npm run test:accounts:web\"",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-10-08T17:18:04Z",
+      "completed_at": "2026-10-08T17:18:47Z"
+    },
+    {
+      "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 16,
+      "started_at": "2026-10-08T17:18:47Z",
+      "completed_at": "2026-10-08T17:18:47Z"
+    },
+    {
+      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 17,
+      "started_at": "2026-10-08T17:18:47Z",
+      "completed_at": "2026-10-08T17:18:47Z"
+    },
+    {
+      "name": "Stop containers",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 18,
+      "started_at": "2026-10-08T17:18:47Z",
+      "completed_at": "2026-10-08T17:18:48Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 19,
+      "started_at": "2026-10-08T17:18:48Z",
+      "completed_at": "2026-10-08T17:18:49Z"
+    }
+  ]
+}

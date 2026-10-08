@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-release
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > retains the same release and original assets, records why, and unblocks only a fresh ID
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > cleans an interrupted stale run on the next cut without relying on its failure handler
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > handles cancellation before a PR but preserves review waits and queued merges
+Retired unpublished candidate 123: Run cancelled before preparation or publication. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > closes only an exact owned stale open version PR and retains its branch
+Retired unpublished candidate 123: Default branch moved from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa to cccccccccccccccccccccccccccccccccccccccc. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > refuses changed or foreign PRs and a changed retained asset
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > supports synchronous stale failure cleanup only in its own in-progress prepare job
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > recovers interruption between draft creation and the first plan upload
+Retired unpublished candidate 123: Default branch moved from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa to cccccccccccccccccccccccccccccccccccccccc. Journal and assets retained under abandoned/123.
+
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > retains the same release and original assets, records why, and unblocks only a fresh ID 14ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > recovers a lost rename response idempotently without recreating the candidate 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > keeps retirement intent blocking when cleanup fails before or after rename 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a intent provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a running provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a failed provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a complete provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state prepared.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state receipt.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state ota.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state unknown.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > requires all-attempt job proof, even when no operation asset was saved 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves active runs and mismatched workflow ownership 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > cleans an interrupted stale run on the next cut without relying on its failure handler 7ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > handles cancellation before a PR but preserves review waits and queued merges 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > closes only an exact owned stale open version PR and retains its branch 10ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > refuses changed or foreign PRs and a changed retained asset 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > keeps an exact merged candidate retryable even when later master commits exist 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > supports synchronous stale failure cleanup only in its own in-progress prepare job 10ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > recovers interruption between draft creation and the first plan upload 7ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > keeps duplicate identities, missing byte digests, and foreign journals blocking 1ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  10:13:22
+   Duration  284ms (transform 60ms, setup 0ms, import 93ms, tests 86ms, environment 0ms)
+

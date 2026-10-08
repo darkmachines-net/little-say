@@ -1,0 +1,98 @@
+{
+  "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "totalCommits": 2,
+  "commits": [
+    {
+      "sha": "ca7066cffbee8f5b83cf126eb9e89c7e78a8db76",
+      "parents": [
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ]
+    },
+    {
+      "sha": "05f3b8977eaf94e49b9afcfe67c33916395442f2",
+      "parents": [
+        "ca7066cffbee8f5b83cf126eb9e89c7e78a8db76"
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/cut-release.yml",
+      "sha": "f88ded4d0d286e12611e42a10dc289ccce6f9465",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0
+    },
+    {
+      "path": "docs/releases.md",
+      "sha": "f2dd662c359d85cf223f11d204d4ecf426ef24eb",
+      "status": "modified",
+      "additions": 10,
+      "deletions": 2
+    },
+    {
+      "path": "scripts/release/candidate.test.ts",
+      "sha": "bf1099e30cfe462e53ab43e4b2dba3f7a9ecfaa0",
+      "status": "modified",
+      "additions": 13,
+      "deletions": 1
+    },
+    {
+      "path": "scripts/release/candidate.ts",
+      "sha": "14ead8994b156f4391fd01a011d605f98cb705e6",
+      "status": "modified",
+      "additions": 16,
+      "deletions": 4
+    },
+    {
+      "path": "scripts/release/journal.ts",
+      "sha": "c80da40c2a78f46cbe7c0965f7a291d5c1fb8998",
+      "status": "modified",
+      "additions": 24,
+      "deletions": 1
+    },
+    {
+      "path": "scripts/release/metadata.ts",
+      "sha": "816bbb071b8e6fee3592a0b848befe6476d253e7",
+      "status": "modified",
+      "additions": 6,
+      "deletions": 0
+    },
+    {
+      "path": "scripts/release/planner.test.ts",
+      "sha": "cd1a1f74cf1565c3ff2739400b4ebedc7ad87019",
+      "status": "modified",
+      "additions": 24,
+      "deletions": 0
+    },
+    {
+      "path": "scripts/release/retirement.test.ts",
+      "sha": "4d218023643902153676b5e680e0e3ae6c9f8b9d",
+      "status": "added",
+      "additions": 126,
+      "deletions": 0
+    },
+    {
+      "path": "scripts/release/retirement.ts",
+      "sha": "34106c3d88861e31e6230f5f777ee7ba8133e741",
+      "status": "added",
+      "additions": 117,
+      "deletions": 0
+    },
+    {
+      "path": "scripts/release/unified.test.ts",
+      "sha": "a826ada327cb7ce8281f6cd365bf24ee780f46fc",
+      "status": "modified",
+      "additions": 23,
+      "deletions": 0
+    },
+    {
+      "path": "scripts/release/unified.ts",
+      "sha": "2bddf518dfe9a0a5bd9e8138d86e8795e0e1a9f9",
+      "status": "modified",
+      "additions": 14,
+      "deletions": 2
+    }
+  ]
+}
