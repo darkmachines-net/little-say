@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/42",
+  "issue": "https://github.com/MChartier/little-say/issues/41",
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "mchartier_zbook",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "reviewOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "fullStandardsRead": true,
+  "supersedesVerdictCommentId": 6065558319,
+  "checkedAtUtc": "2026-10-08T17:44:28.357Z",
+  "headSha": "05f3b8977eaf94e49b9afcfe67c33916395442f2",
+  "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "commitParents": [
+    "ca7066cffbee8f5b83cf126eb9e89c7e78a8db76"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "eb059562901d89dcb3b542570288b727c7d2f4fe3937d70bc8f3a61168197bd5",
+  "target": {
+    "repository": "MChartier/little-say",
+    "ref": "master",
+    "sha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  },
+  "findings": [],
+  "reviewDisposition": {
+    "finding": 4221974220,
+    "ownerReply": 4222001687,
+    "threadState": "open; not mutated",
+    "disposition": "Verified justified disagreement; not an outstanding code correction.",
+    "reason": "Issue41 expressly preserves recoverable retries. unified.ts guard requires clean exact prepared commit/tree, prepared commit ancestry of current default, and every other completed release to be an ancestor of prepared. It does not require prepared commit equal default head. prepareCandidate validates the exact candidate/merged tree and metadata. Later commits alone therefore do not make an exact merge terminal; its journal intentionally remains blocking for fresh cuts while retry is recoverable. Historical PR40 is different: independently API-read candidate c63fc27fdc2d4d4a1932db4ef2951f7752ab9907 tree5b36f94d4fce9e6525bd4c32af3119ee728454ea versus merged fabb925cf5ee11171d5668af7c2bab44ec9fc613 treec744f27bb6627a51c189a5eaba94f93229deb611. The mismatch does take the retirement branch. Follow-up only strengthens docs/test; no production change. Green bot comment is not the basis of this disposition."
+  },
+  "gates": {
+    "value": "pass: actual observed failed release and explicitly requested safe recovery",
+    "scope": "pass: all2 published linear commits/parents and11 paths inspected, +374/-10, no unrelated evidence/history churn. Follow-up changes only docs/releases.md and retirement.test.ts.",
+    "code": "No additional actionable implementation finding identified in inspected scope. Fail-closed retirement proof, ownership, asset verification, recovery paths and orchestration reviewed.",
+    "behavior": "Fresh trustworthy Linux CI and maintained fixture source reviewed; no local QA suite or live release execution claimed. See scenario assessments.",
+    "ci": "Run37815013722/job113441287573 success;314unit,25integration,5browser, types and builds independently verified from live logs. Actual CI checkout63c6e1bd13c27f165042905c30d80079f442894e tree3561fc666babf1e01b7a0aa08e8ce59d22336c1d equals head tree; actual published2commit range separately inspected.",
+    "engineeringReview": "Current-head bot6065230111 completed; earlierP1 explicitly independently dispositioned above, not silently resolved.",
+    "evidence": "pass for non-UI release tooling: source/fixtures/remote CI and independently executed required actionlint verified. No missing required capture; no live-release/device evidence claimed.",
+    "communication": "pass: current final body accurately describes actual base-to-final recovery behavior and supports premerge/late-race, cleanup/recovery and uncertain-publication boundaries with expected/observed outcomes and retained evidence; corrected lint and independent review statements agree with actual results. Exact body SHA verified independently.",
+    "linkage": "Issue body links PR42; PR Closes#41 and issue timeline cross-reference verified. closingIssuesReferences/native Development and Project coverage unavailable through exposed connector shape, not certified or equated with text links.",
+    "stack": "No parent PR; actual master/API base/merge-base match."
+  },
+  "scenarioAssessments": [
+    [
+      "Terminal changed source",
+      "Premerge default recheck prevents merge request after validation-time movement; postmerge exact-tree comparison rejects late race before prepared receipt. Retirement independently validates candidate before changed-merge-tree classification."
+    ],
+    [
+      "Uncertain publication",
+      "Allowlist rejects prepared/OTA/receipt/any op including failed or intent, and unknown assets. All-attempt jobs require prepare and complete pagination, terminal matching workflow/source, with every nonprepare job skipped (or unstarted queued only for synchronous current failure). Missing success alone is never proof. Completed release identity also blocks retirement."
+    ],
+    [
+      "Durable tombstone",
+      "retirement.json uploaded/read back before PR closure or rename; Journal.assertActive invoked before planning and by release/create/read/provider journal accesses. abandoned ID or retiring candidate cannot be recreated by new code. Historical checkouts expressly must never be rerun."
+    ],
+    [
+      "Interrupted cleanup",
+      "Rename response loss leaves abandoned identity with incomplete receipt blocking create; fresh reconciliation verifies asset identities/content and completes receipt idempotently. Failed readback/rename, missing hashes/assets and unknown data remain blocking."
+    ],
+    [
+      "Concurrency/cancellation",
+      "Workflow-wide little-say-release group cancel-in-progress:false serializes cuts. Current synchronous cleanup limited to own in-progress prepare; subsequent fresh run handles completed failure/cancelled/timed_out before planning. Active runs and automatic/queued merges fail closed. No live concurrency execution claimed."
+    ],
+    [
+      "Ownership and metadata",
+      "Exact bot/repository/base/head checks before closing only open owned PR, closure readback, no branch deletion or merged version rollback. Exact-merged retries preserved; recovery evidence retained."
+    ],
+    [
+      "Maintained evidence",
+      "21retirement cases,9candidate cases,orchestration tests and real Git dependency/squash regression inspected; CI314includes these. Author40focused and304pass/10EPERM are distinct historical local evidence, not QA executions."
+    ]
+  ],
+  "execution": {
+    "isolation": "After trusted user approval arrived at17:33UTC, the platform approved a command-specific fetch into this QA-owned little-say-qa clone and detached worktree creation at little-say-qa42. Exact head05f3b8977eaf94e49b9afcfe67c33916395442f2 checked out successfully; source/tree/base/parents and clean status verified. No implementer worktree accessed or changed. All11 prior downloaded source blobs independently matched remote identities.",
+    "localVerification": "Normal Python exact Git blob hash checks passed for11 files; exact UTF8 PR digest verified. First helper invocation hit Windows default-codepage decoding error, corrected only QA helper to explicit UTF8 and succeeded. Local exact-head git diff --check passed; head/tree/merge-base/ordered parents confirmed. Fresh trustworthy CI used rather than duplicating expensive suites. Official actionlint1.7.12 now independently passes exit0,empty stdout/stderr; archive/executable hashes and raw output retained.",
+    "notExecuted": [
+      "local QA npm suite (fresh exact-tree CI reused)",
+      "live candidate retirement",
+      "release rerun",
+      "provider calls",
+      "device testing"
+    ],
+    "nativeDevice": "Deferred for review readiness; no device claim."
+  },
+  "retention": {
+    "owner": "independent QA task01a11c7c-11db-70b8-ba73-efe3693b003e",
+    "purpose": "Nonmerged independent review evidence; retain indefinitely with historical evidence and receipts; never merge into product history",
+    "originalEvidenceCommit": "61c3495a890454dd1caa114984b67558576b87b4",
+    "authorEvidenceCommit": "172cd5b96b020b8c82fe14f09b29ec253d0d5b53",
+    "authorEvidenceRef": "evidence/issue41-release-retirement",
+    "originalAssessment": "Both commit trees accessible; original README/focused-tests/scope/unit-tests blob IDs preserved in current retained evidence tree."
+  },
+  "nextAction": "Coordinator independently verifies/saves new exact comment receipt, rechecks source/base/body/evidence/feedback, and alone controls readiness/draft lifecycle with postmutation readback. Merge/release remain human decisions. No live historical candidate retirement authorized by this verdict.",
+  "resolvedFindings": [
+    {
+      "id": "E1",
+      "resolution": "Official pinned actionlint1.7.12 independently executed on exact clean head,exit0,empty stdout/stderr. Prescribed mandatory lint gate passes.",
+      "record": "https://github.com/MChartier/little-say/blob/68df62d91901a2985e8f21614dcc4363dd91410f/actionlint/assessment.json",
+      "sha256": "d1c60781821b2b0bceb0c3a5b76aff12c4c4cfe1800135d92721cb38fcc09255"
+    },
+    {
+      "id": "communication-followup",
+      "resolution": "Current body replaces stale lint/P1 status with accurate links and limitations; exact previous body preserved in6065657471. Actual-base problem/solution and behavioral scenarios remain concise and convincing."
+    }
+  ],
+  "reassessment": {
+    "type": "communication-only continuation plus freshly rechecked bindings/gates/feedback",
+    "unchangedEvidenceReuse": "Head/base/merge-base/source tree and full2commit11path published range unchanged. CI remains successful for same head and equal merge tree. Prior source/fixture review,314unit25integration5browser/types/build results and P1 disposition remain applicable; no unaffected costly suites rerun.",
+    "feedback": "Fresh full issue body/comments, PR conversation comments, submitted reviews and inline thread bodies read. Only additions since initial review are QA/coordinator/history records; no new actionable human request. Thread remains open but has explicit verified justified-disagreement disposition, not a silence/green-bot inference.",
+    "bindingCheck": "Exact head,actualmaster/APIbase/mergebase,ordered parents,body and lint retained record rechecked before publication.",
+    "historicalReceipt": {
+      "commentId": 6065558319,
+      "fullBodySha256": "0064046975938d4582f82bbb0a7e283ecf163ad8a2f225ede65b51d6b90576ec",
+      "updatedAt": "2026-10-08T17:36:15Z",
+      "oldPrBodySha256": "f0c6caa7e73b1f40344a53c1c7558fc1ad981b8cee400b75a02674277d8c66ba",
+      "evidenceCommit": "61f5ad3badd4b8803b61be142072061e823fb602"
+    },
+    "nativeLinkageLimit": "Text and timeline verified; closingIssuesReferences/native Development and Project coverage remain unsupported/unverified by available connector. This ready verdict certifies reviewed code/evidence, not board completion or unsupported association fields."
+  }
+}
