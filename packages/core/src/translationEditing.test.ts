@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
-import { applyProposal, boardContext, migrateLibrary, syncSnapshotSchema, tileSource, type BoardProposal } from './schema';
+import { applyProposal, assertTranslationSourceLanguageChange, boardContext, migrateLibrary, syncSnapshotSchema, tileSource, type BoardProposal } from './schema';
 import { applyTranslations, editTileTranslation, missingTranslations, storedTileTranslation, tileInLanguage, validateTranslations } from './boardLanguages';
 import { speechKey } from './speech';
 import { boardAssetKeys, mergeBoards } from './account';
@@ -19,6 +19,15 @@ function proposal(board: ReturnType<typeof fixture>['board']): BoardProposal {
   return { boardId: board.id, baseRevision: board.revision, proposal: { title: 'Renamed', explanation: 'A change', needsClarification: false, tiles: board.tiles.map(tile => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, emoji: '🐄', color: tile.color, translations: [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] })) } };
 }
 describe('translation corrections', () => {
+  it('guards manual and legacy source collisions while allowing equivalent or unrelated language tags', () => {
+    const { tile } = fixture();
+    for (const origin of [undefined, 'manual'] as const) {
+      const previous = { ...tile, translations: tile.translations!.map(t => ({ ...t, origin })) };
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'ru-ru' })).toThrow('Keep the original language');
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'en-us' })).not.toThrow();
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'fr-FR' })).not.toThrow();
+    }
+  });
   it('round-trips corrections through account snapshots and preserves both versions of a sync conflict', () => {
     const { board, tile } = fixture();
     const corrected = { ...board, revision: board.revision + 1, tiles: [editTileTranslation(tile, 'ru-RU', { speech: 'Corrected words' })] };

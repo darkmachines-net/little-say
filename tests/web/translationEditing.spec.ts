@@ -88,6 +88,27 @@ test('account entry cancellation preserves corrected translations and the guest 
   expect(corrected.tiles[0].translations.find((t: any) => t.language === 'es-ES')).toEqual(original.tiles[0].translations![1]);
 });
 
+test('manual source-language collisions refuse save and duplicate without hiding a saved correction', async ({ page }) => {
+  const original = await openTranslations(page);
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await page.getByRole('button', { name: 'Original words', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
+  await page.getByRole('button', { name: 'Choose tile language Russian', exact: true }).click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByText('Keep the original language and edit its translation instead', { exact: false })).toBeVisible();
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  await page.getByRole('button', { name: 'Duplicate tile', exact: true }).click();
+  await expect(page.getByText('Keep the original language and edit its translation instead', { exact: false })).toBeVisible();
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  await page.getByRole('textbox', { name: 'Language tag', exact: true }).fill('en-US');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue(original.tiles[0].translations![0].speech);
+});
+
 test('late TTS stays on its original key; failure and retry use the corrected input', async ({ page }) => {
   await openTranslations(page);
   const wave = pcmToWav(Buffer.alloc(24000)); const id = createHash('sha256').update(wave).digest('hex');

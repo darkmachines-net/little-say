@@ -182,6 +182,14 @@ export function validateGeneratedBoard(value: GeneratedBoard, context: BoardCont
   return value;
 }
 
+/** Reject a source-language change that would hide a manual or legacy saved translation. */
+export function assertTranslationSourceLanguageChange(previous: Tile | undefined, next: Pick<Tile, 'language'>): void {
+  const changesLanguage = previous && Intl.getCanonicalLocales(previous.language)[0] !== Intl.getCanonicalLocales(next.language)[0];
+  if (changesLanguage && previous.translations?.some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(next.language)[0])) {
+    throw new Error('This changes the original language to one with saved translations. Keep the original language and edit its translation instead, so saved corrections stay protected.');
+  }
+}
+
 /**
  * Apply a revision-bound proposal, preserving saved corrections (including stale words for review).
  * Only a separate parent review may enable replaceTranslations; never derive it from model output.
@@ -202,10 +210,7 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
     tiles: proposal.tiles.map((tile, index) => {
       const previous = current?.tiles.find(t => t.id === tile.existingId);
       const source = tileSource(tile);
-      const changesSourceLanguage = previous && Intl.getCanonicalLocales(previous.language)[0] !== Intl.getCanonicalLocales(tile.language)[0];
-      if (changesSourceLanguage && previous.translations?.some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(tile.language)[0])) {
-        throw new Error('This proposal changes the original language to one with saved translations. Keep the original language and edit its translation instead, so saved corrections stay protected.');
-      }
+      assertTranslationSourceLanguageChange(previous, tile);
       const translations = [...(previous?.translations ?? [])];
       for (const proposed of tile.translations ?? []) {
         const index = translations.findIndex(t => Intl.getCanonicalLocales(t.language)[0] === Intl.getCanonicalLocales(proposed.language)[0]);
