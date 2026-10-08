@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-10/little-say-translations
+
+ Γ¥» packages/core/src/translationEditing.test.ts (10 tests | 2 failed) 21ms
+     ├ù retains an empty undefined correction draft for validation instead of deleting it 8ms
+     ├ù retains an empty manual correction draft for validation instead of deleting it 1ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  packages/core/src/translationEditing.test.ts > translation corrections > retains an empty undefined correction draft for validation instead of deleting it
+ FAIL  packages/core/src/translationEditing.test.ts > translation corrections > retains an empty manual correction draft for validation instead of deleting it
+AssertionError: expected undefined to match object { label: '', speech: '', ΓÇª(1) }
+
+- Expected:
+{
+  "label": "",
+  "origin": "manual",
+  "speech": "",
+}
+
++ Received:
+undefined
+
+ Γ¥» packages/core/src/translationEditing.test.ts:28:51
+     26|     const snapshot = structuredClone(saved);
+     27|     const empty = editTileTranslation(editTileTranslation(saved, 'ru-RΓÇª
+     28|     expect(storedTileTranslation(empty, 'ru-RU')).toMatchObject({ labeΓÇª
+       |                                                   ^
+     29|     expect(tileSchema.safeParse(empty).success).toBe(false);
+     30|     expect(storedTileTranslation(empty, 'es-ES')).toEqual(storedTileTrΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  12:09:21
+   Duration  383ms (transform 143ms, setup 0ms, import 230ms, tests 21ms, environment 0ms)
+
