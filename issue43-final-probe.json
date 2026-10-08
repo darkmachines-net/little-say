@@ -1,0 +1,68 @@
+{
+  "phase": "final",
+  "checkedAtUtc": "2026-10-08T18:50:03.740Z",
+  "host": "MCHARTIER_ZBOOK",
+  "node": "v24.19.0",
+  "root": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation",
+  "nodeModulesRealPath": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules",
+  "nodeModulesIsSymbolicLink": false,
+  "manifestSha256": "0f6d892e7409ebd0d7d001b6f3b40ffc43f17aed3de7d2fb957d27023faac5c6",
+  "lockSha256": "894bfd115fdd3a4b597ba1bfc305f89b98e4a1772d6e9f2aa3308392d4be95a3",
+  "declaredPropTypes": "^15.8.1",
+  "appleVersion": "2.5.1",
+  "appleDependencies": null,
+  "applePeerDependencies": null,
+  "appleButtonSha256": "c2f70e9f415cefa9e98345622c66476465491bc596142c8ad08d29547fa61c1f",
+  "resolution": {
+    "resolved": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules\\prop-types\\index.js",
+    "version": "15.8.1",
+    "oneOf": "function",
+    "number": "function"
+  },
+  "lockEntries": {
+    "node_modules/js-tokens": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz",
+      "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
+      "license": "MIT"
+    },
+    "node_modules/loose-envify": {
+      "version": "1.4.0",
+      "resolved": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz",
+      "integrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
+      "license": "MIT",
+      "dependencies": {
+        "js-tokens": "^3.0.0 || ^4.0.0"
+      },
+      "bin": {
+        "loose-envify": "cli.js"
+      }
+    },
+    "node_modules/object-assign": {
+      "version": "4.1.1",
+      "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
+      "integrity": "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/prop-types": {
+      "version": "15.8.1",
+      "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz",
+      "integrity": "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==",
+      "license": "MIT",
+      "dependencies": {
+        "loose-envify": "^1.4.0",
+        "object-assign": "^4.1.1",
+        "react-is": "^16.13.1"
+      }
+    },
+    "node_modules/prop-types/node_modules/react-is": {
+      "version": "16.13.1",
+      "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
+      "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==",
+      "license": "MIT"
+    }
+  }
+}

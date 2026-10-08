@@ -1,0 +1,67 @@
+{
+  "source": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+  "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "checkedAtUtc": "2026-10-08T18:52:46.875Z",
+  "artifacts": [
+    {
+      "file": ".gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "file": "audit-issue43-lock.mjs",
+      "sha256": "9d161d529ac8b13538c1121dee099086f81c22e73830c0579c4b2521a29f608a"
+    },
+    {
+      "file": "issue43-baseline-install.log",
+      "sha256": "425a6f953ab492b96380e7adf0327554d081aafed58a4ce3509c9c1ce7b36cc5"
+    },
+    {
+      "file": "issue43-baseline-ios.log",
+      "sha256": "d31cffdd76a1044f3e291f70c5e53ed4515808729c3a41ce9d3386c61f6c4386"
+    },
+    {
+      "file": "issue43-baseline-probe.json",
+      "sha256": "4aae8027c3bbfcec896a6f9d128bf1f6c285929ca268bda723b8a8f3cc13af81"
+    },
+    {
+      "file": "issue43-check.log",
+      "sha256": "a321c93ac26ddcefccbc4b79aef101668dda44f38269a06e9917e9a04a08215b"
+    },
+    {
+      "file": "issue43-final-install.log",
+      "sha256": "b8877f2c6199961e7cc7e4a205b805c811b0d389c04517ffa81080450c007aee"
+    },
+    {
+      "file": "issue43-final-probe.json",
+      "sha256": "2a89db53482a55a4accf72dbae06800e8f749d89b35d0d010cd62548826da036"
+    },
+    {
+      "file": "issue43-lock-audit.json",
+      "sha256": "17169afb7a20cc83e771e1535db99f7a66f8535d9ab3f2bc46bcb99fa7a59f89"
+    },
+    {
+      "file": "issue43-lock-generation.log",
+      "sha256": "259c4fa2f9f1d0afd8b4eb23f45f6fdf748b9475b5112992df5bbf33e078dcd4"
+    },
+    {
+      "file": "issue43-native-exports.log",
+      "sha256": "e77b2b52700738ea6d55bf520e8e463d7fb0533cce077bb615453b87bc9cf41e"
+    },
+    {
+      "file": "prepare-issue43-evidence.mjs",
+      "sha256": "a4141f5c70e26454b8c6bc1b759328263fc2cc3a67e4743188fae7ecc1f45196"
+    },
+    {
+      "file": "probe-issue43.mjs",
+      "sha256": "f3e526331973417626d7c3f8903cf38a3963d28c199eed4a8708062e4fee8b61"
+    },
+    {
+      "file": "provenance.json",
+      "sha256": "2f4d36fdfba14aa49784e7e580b9fcd88f84f48664ef7631e28b0248ff022731"
+    },
+    {
+      "file": "README.md",
+      "sha256": "c08a0d1142c3b6d1f265742d8eb365fc4c870cfa8f571b6abfb0b2a34013e46e"
+    }
+  ]
+}

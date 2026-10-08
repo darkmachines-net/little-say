@@ -1,0 +1,101 @@
+{
+  "source": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+  "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "host": "MCHARTIER_ZBOOK",
+  "owner": "01a11ca6-7faa-7628-8031-ac89bc018019",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "checkedAtUtc": "2026-10-08T18:52:46.847Z",
+  "scope": {
+    "commits": 1,
+    "paths": [
+      "apps/mobile/package.json",
+      "package-lock.json"
+    ],
+    "additions": 19,
+    "deletions": 0,
+    "assessment": "Single mobile production dependency and its exact lock graph; no preexisting package version/integrity/classification changed, no source or provider redesign."
+  },
+  "installs": {
+    "baseline": {
+      "source": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "path": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\little-say-issue43",
+      "command": "npm ci --cache <task>/npm-cache --no-audit --no-fund",
+      "initialNodeModulesAbsent": true,
+      "junction": false,
+      "exitCode": 0
+    },
+    "final": {
+      "source": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+      "path": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation",
+      "command": "npm ci --cache <task>/npm-cache --no-audit --no-fund",
+      "initialNodeModulesAbsent": true,
+      "junction": false,
+      "exitCode": 0
+    },
+    "cache": "Integrity-checked npm tarball cache reused; dependency installations are distinct fresh directories, not copied/junctioned trees.",
+    "policy": "Existing npm install-script blocking policy was left unchanged; logs list skipped scripts. Required export/check results passed without security changes."
+  },
+  "commands": [
+    {
+      "cwd": "baseline/apps/mobile",
+      "command": "npm exec -- expo export --platform ios --output-dir dist-ios-baseline --max-workers 2",
+      "exitCode": 1,
+      "result": "Missing prop-types from AppleButton.ios.js"
+    },
+    {
+      "cwd": "final/apps/mobile",
+      "command": "npm exec -- expo export --platform ios --platform android --output-dir dist-native --max-workers 2",
+      "exitCode": 0,
+      "result": "Complete iOS and Android JavaScript/Hermes exports"
+    },
+    {
+      "cwd": "final",
+      "command": "npm run check",
+      "exitCode": 0,
+      "result": "Release metadata, types, unit tests, server build and web export"
+    }
+  ],
+  "bundles": [
+    {
+      "file": "dist/sw.js",
+      "bytes": 2201,
+      "sha256": "38465097df9880350f605fc72b5251eb0a457f5e9d53c307db5023992787a7b8"
+    },
+    {
+      "file": "dist/workbox-9c191d2f.js",
+      "bytes": 15202,
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "file": "dist/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+      "bytes": 6084972,
+      "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab"
+    },
+    {
+      "file": "dist/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+      "bytes": 359876,
+      "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3"
+    },
+    {
+      "file": "dist-native/_expo/static/js/android/index-4414892ebec25a42ee6824feaab591a1.hbc",
+      "bytes": 7330973,
+      "sha256": "0543cf7f3a3153da5e331cb502425802ce86490e083ef9a38f96ceec8ad50b55"
+    },
+    {
+      "file": "dist-native/_expo/static/js/ios/index-f86d263ae8c4fdfa876dac64b221c320.hbc",
+      "bytes": 7323166,
+      "sha256": "f17810e5e3b1416bff28ef10d5157e21d8de60ce792699bc21f84aa2585f7c87"
+    }
+  ],
+  "priorEvidence": {
+    "commit": "524cf7aa5866abf105537e882192325ca812615e",
+    "url": "https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/README.md#results",
+    "assessment": "Preserved original investigation. Its baseline reused a dependency junction; the fresh captures here independently install both baseline and final."
+  },
+  "frozenPr35": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+  "limitations": [
+    "JavaScript exports only: no signed iOS archive, TestFlight/store upload, cloud build, device install or actual Apple sign-in.",
+    "No provider configuration, credential access, release, deployment or merge."
+  ]
+}
