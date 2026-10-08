@@ -1,0 +1,32 @@
+{
+  "topics": [
+    {
+      "id": "farm",
+      "title": "Farm animals",
+      "emoji": "🐄",
+      "prompt": "cow, sheep, horse, pig, chicken, and duck"
+    },
+    {
+      "id": "everyday",
+      "title": "Everyday words",
+      "emoji": "👋",
+      "prompt": "more, water, help, all done, eat, and love you"
+    },
+    {
+      "id": "family",
+      "title": "Family",
+      "emoji": "🏠",
+      "prompt": "mother, father, grandmother, grandfather, sister, and brother"
+    }
+  ],
+  "starters": [
+    "Create a starter soundboard with exactly six cards for these concepts: cow, sheep, horse, pig, chicken, and duck. Use the device language profile. Write the board title and base words in the default language. Every card must work in every selected language, with natural spoken words and labels in each language. Set every card to follow the board language when multiple languages are selected. Family words are generic roles, not specific people's names. Use a clear emoji per card.",
+    "Create a starter soundboard with exactly six cards for these concepts: more, water, help, all done, eat, and love you. Use the device language profile. Write the board title and base words in the default language. Every card must work in every selected language, with natural spoken words and labels in each language. Set every card to follow the board language when multiple languages are selected. Family words are generic roles, not specific people's names. Use a clear emoji per card.",
+    "Create a starter soundboard with exactly six cards for these concepts: mother, father, grandmother, grandfather, sister, and brother. Use the device language profile. Write the board title and base words in the default language. Every card must work in every selected language, with natural spoken words and labels in each language. Set every card to follow the board language when multiple languages are selected. Family words are generic roles, not specific people's names. Use a clear emoji per card."
+  ],
+  "conversation": [
+    "Create six farm animal tiles including cow, sheep, and horse.",
+    "Create six things a toddler might ask for at snack time.",
+    "Create six family tiles for mother, father, grandmother, grandfather, sister, and brother."
+  ]
+}

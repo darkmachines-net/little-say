@@ -1,0 +1,33 @@
+{
+  "checkedAtUtc": "2026-10-08T18:01:29.113Z",
+  "head": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+  "actualTarget": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "apiBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "targetRef": "master",
+  "targetRepository": "MChartier/little-say",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "parentRevisions": [],
+  "draft": true,
+  "labels": [],
+  "commits": [
+    {
+      "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "message": "Extract exact model prompts into versioned resources"
+    },
+    {
+      "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+      "parents": [
+        "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "message": "Merge current master while preserving account and prompt exports"
+    }
+  ],
+  "fileCount": 21,
+  "additions": 342,
+  "deletions": 30,
+  "prBodySha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb"
+}

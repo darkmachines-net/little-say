@@ -1,0 +1,17 @@
+npm notice run little-say-workspace@0.2.1 npx
+npm notice run expo export --platform android --output-dir dist-native --max-workers 2
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+Android Bundled 20840ms apps\mobile\index.ts (2903 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.png (3 variations | 49KB)
+
+ΓÇ║ android bundles (1):
+_expo/static/js/android/index-42e203bf93720c38780bcd89f2137ad1.hbc (7.3MB)
+
+ΓÇ║ Files (1):
+metadata.json (341B)
+
+Exported: dist-native
