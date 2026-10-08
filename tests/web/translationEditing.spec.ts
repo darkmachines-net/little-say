@@ -24,7 +24,7 @@ async function openTranslations(page: Page, missingSpanish = false) {
   board.tiles[0].languageMode = 'board'; board.tiles[1].languageMode = 'fixed';
   board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
   if (missingSpanish) board.tiles[0].translations.pop();
-  library.settings = { ...library.settings, aiConsent: true, autoSpeech: false, boardLanguages: { [board.id]: 'ru-RU' } };
+  library.settings = { ...library.settings, accountChoiceMade: true, aiConsent: true, autoSpeech: false, boardLanguages: { [board.id]: 'ru-RU' } };
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
@@ -61,6 +61,31 @@ test('board selection opens the matching fields, retains drafts across languages
   await page.getByRole('button', { name: 'Edit tile Моя корова', exact: true }).click(); await expect(speech).toHaveValue('коровушка');
   await speech.fill('Discard me'); await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Моя корова', exact: true }).click(); await expect(speech).toHaveValue('коровушка');
+});
+
+test('account entry cancellation preserves corrected translations and the guest library', async ({ page }) => {
+  const original = await openTranslations(page);
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('Saved Russian correction');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('Saved Russian correction');
+  const corrected = await savedBoard(page);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Log in or create an account', exact: true }).click();
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('Saved Russian correction');
+  expect(await savedBoard(page)).toEqual(corrected);
+  expect(corrected.tiles[0]).toMatchObject({ label: original.tiles[0].label, speech: original.tiles[0].speech, illustration: original.tiles[0].illustration });
+  expect(corrected.tiles[1]).toEqual(original.tiles[1]);
+  expect(corrected.tiles[0].translations.find((t: any) => t.language === 'es-ES')).toEqual(original.tiles[0].translations![1]);
 });
 
 test('late TTS stays on its original key; failure and retry use the corrected input', async ({ page }) => {
