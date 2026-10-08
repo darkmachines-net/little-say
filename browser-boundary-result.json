@@ -1,0 +1,117 @@
+{
+  "checkedAtUtc": "2026-10-08T18:51:27.705Z",
+  "head": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+  "runtimeCaptureSource": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+  "browser": "154.0.4258.62",
+  "host": "mchartier_zbook",
+  "viewport": {
+    "width": 1180,
+    "height": 1000
+  },
+  "baseUrl": "http://127.0.0.1:7848",
+  "serverPid": 3980,
+  "serverSha256": "5201cb477d4c2a770b84d2b6e2c667569e73e615e5cebb6bd72e0de2f30a3139",
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-6fbdbbc18e767b9b8efbc95cdcfb88c2.js",
+      "sha256": "e76474d7ae777cb326697c355b8d121be208cebd15e9c6bcec73f4d8b429afc0"
+    },
+    {
+      "path": "/_expo/static/js/web/App-77b8bdedcfb99a7e76869cb29058cee6.js",
+      "sha256": "dc73d21c33f62eca923f5ce0e72a0ce48b79aed582b8a0a47cdfe6df4677cdee"
+    },
+    {
+      "path": "/_expo/static/js/web/index-6fbdbbc18e767b9b8efbc95cdcfb88c2.js",
+      "sha256": "e76474d7ae777cb326697c355b8d121be208cebd15e9c6bcec73f4d8b429afc0"
+    },
+    {
+      "path": "/_expo/static/js/web/App-77b8bdedcfb99a7e76869cb29058cee6.js",
+      "sha256": "dc73d21c33f62eca923f5ce0e72a0ce48b79aed582b8a0a47cdfe6df4677cdee"
+    },
+    {
+      "path": "/_expo/static/js/web/index-6fbdbbc18e767b9b8efbc95cdcfb88c2.js",
+      "sha256": "e76474d7ae777cb326697c355b8d121be208cebd15e9c6bcec73f4d8b429afc0"
+    },
+    {
+      "path": "/_expo/static/js/web/App-77b8bdedcfb99a7e76869cb29058cee6.js",
+      "sha256": "dc73d21c33f62eca923f5ce0e72a0ce48b79aed582b8a0a47cdfe6df4677cdee"
+    }
+  ],
+  "bundleManifestExactMatch": true,
+  "fixtureSha256": "170b20ef8b079e7e3566f485cd75a04a0de173391fbcc1f7428e31b2f085cf0f",
+  "fixtureChange": "Same retained synthetic fixture; Russian origin explicitly manual.",
+  "action": "Clear Russian label and speech; switch to Spanish; Save; inspect IndexedDB; reload.",
+  "before": {
+    "id": "cow",
+    "label": "Cow",
+    "speech": "Cow",
+    "language": "en-US",
+    "languageMode": "board",
+    "color": "sage",
+    "illustration": {
+      "kind": "emoji",
+      "emoji": "🐄"
+    },
+    "translations": [
+      {
+        "language": "ru-RU",
+        "label": "Корова",
+        "speech": "корова",
+        "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+        "origin": "manual"
+      },
+      {
+        "language": "es-ES",
+        "label": "Vaca",
+        "speech": "vaca",
+        "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+      }
+    ]
+  },
+  "saved": {
+    "id": "cow",
+    "label": "Cow",
+    "speech": "Cow",
+    "language": "en-US",
+    "color": "sage",
+    "illustration": {
+      "kind": "emoji",
+      "emoji": "🐄"
+    },
+    "languageMode": "board",
+    "translations": [
+      {
+        "language": "es-ES",
+        "label": "Vaca",
+        "speech": "vaca",
+        "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+      }
+    ]
+  },
+  "reloaded": {
+    "id": "cow",
+    "label": "Cow",
+    "speech": "Cow",
+    "language": "en-US",
+    "color": "sage",
+    "illustration": {
+      "kind": "emoji",
+      "emoji": "🐄"
+    },
+    "languageMode": "board",
+    "translations": [
+      {
+        "language": "es-ES",
+        "label": "Vaca",
+        "speech": "vaca",
+        "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+      }
+    ]
+  },
+  "observed": "Save succeeds and closes editor. Russian protected translation is absent from durable state and remains absent after reload; editor reports translation needs attention. Spanish/source/media/fixed card stay intact.",
+  "expected": "Incomplete replacement draft should remain unsaved and preserve the saved correction; clearing fields should not implicitly delete protected provenance.",
+  "screenshot": {
+    "path": "empty-translation-after-reload.png",
+    "sha256": "59219e26f8871e3e3d1b309a3ed146f1f9355497a1cbe827fc6eb7be04683a78"
+  }
+}

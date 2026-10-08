@@ -1,0 +1,19 @@
+{
+  "sourceUnchanged": true,
+  "oneEmptyFieldValid": false,
+  "bothEmptyFieldsValid": true,
+  "protectedBefore": {
+    "language": "ru-RU",
+    "label": "Корова",
+    "speech": "корова",
+    "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+    "origin": "manual"
+  },
+  "protectedAfter": null,
+  "remainingLanguages": [
+    "es-ES"
+  ],
+  "automaticPreparationTargets": [
+    "ru-RU"
+  ]
+}

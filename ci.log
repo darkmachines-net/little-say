@@ -1,0 +1,1210 @@
+﻿2026-10-08T18:35:47.4416249Z Current runner version: '2.337.0'
+2026-10-08T18:35:47.4463168Z ##[group]Runner Image Provisioner
+2026-10-08T18:35:47.4464277Z Hosted Compute Agent
+2026-10-08T18:35:47.4464849Z Version: 20261002.596
+2026-10-08T18:35:47.4465419Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-08T18:35:47.4466072Z Build Date: 2026-10-02T22:28:27Z
+2026-10-08T18:35:47.4466692Z Worker ID: {99e4d6d1-aea1-468a-8cde-c011d334501c}
+2026-10-08T18:35:47.4467336Z Region: centralus
+2026-10-08T18:35:47.4467843Z Cloud: Azure
+2026-10-08T18:35:47.4468327Z ##[endgroup]
+2026-10-08T18:35:47.4469502Z ##[group]Operating System
+2026-10-08T18:35:47.4470044Z Ubuntu
+2026-10-08T18:35:47.4470515Z 24.04.5
+2026-10-08T18:35:47.4470987Z LTS
+2026-10-08T18:35:47.4471422Z ##[endgroup]
+2026-10-08T18:35:47.4471950Z ##[group]Runner Image
+2026-10-08T18:35:47.4472507Z Image: ubuntu-24.04
+2026-10-08T18:35:47.4473008Z Version: 20261004.327.1
+2026-10-08T18:35:47.4474259Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-08T18:35:47.4475639Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-08T18:35:47.4476465Z ##[endgroup]
+2026-10-08T18:35:47.4477452Z ##[group]GITHUB_TOKEN Permissions
+2026-10-08T18:35:47.4479373Z Contents: read
+2026-10-08T18:35:47.4479934Z Metadata: read
+2026-10-08T18:35:47.4480427Z ##[endgroup]
+2026-10-08T18:35:47.4482152Z Secret source: Actions
+2026-10-08T18:35:47.4483037Z Cache mode: write
+2026-10-08T18:35:47.4483621Z Prepare workflow directory
+2026-10-08T18:35:47.4894813Z Prepare all required actions
+2026-10-08T18:35:47.4938496Z Getting action download info
+2026-10-08T18:35:47.8884391Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-08T18:35:47.9942514Z Download action repository 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-08T18:35:48.2305320Z Complete job name: check
+2026-10-08T18:35:48.2709991Z ##[group]Checking docker version
+2026-10-08T18:35:48.2722279Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+2026-10-08T18:35:48.3527940Z '1.48'
+2026-10-08T18:35:48.3542964Z Docker daemon API version: '1.48'
+2026-10-08T18:35:48.3543748Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+2026-10-08T18:35:48.3709771Z '1.48'
+2026-10-08T18:35:48.3718892Z Docker client API version: '1.48'
+2026-10-08T18:35:48.3725727Z ##[endgroup]
+2026-10-08T18:35:48.3728746Z ##[group]Clean up resources from previous jobs
+2026-10-08T18:35:48.3733472Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=20756f"
+2026-10-08T18:35:48.3878583Z ##[command]/usr/bin/docker network prune --force --filter "label=20756f"
+2026-10-08T18:35:48.4007234Z ##[endgroup]
+2026-10-08T18:35:48.4007874Z ##[group]Create local container network
+2026-10-08T18:35:48.4017298Z ##[command]/usr/bin/docker network create --label 20756f github_network_dc56a851dad0479c8a2df1d7bfd66533
+2026-10-08T18:35:48.4932321Z 9a9a5dad524a63b93e507630067d21a2b1aa9ad17b29c091c3ef4426de9fe5d9
+2026-10-08T18:35:48.4956543Z ##[endgroup]
+2026-10-08T18:35:48.4991085Z ##[group]Starting postgres service container
+2026-10-08T18:35:48.5016312Z ##[command]/usr/bin/docker pull postgres:17-bookworm
+2026-10-08T18:35:49.1469043Z 17-bookworm: Pulling from library/postgres
+2026-10-08T18:35:49.2480333Z 7fd1ebe418b5: Pulling fs layer
+2026-10-08T18:35:49.2481723Z a74c50568115: Pulling fs layer
+2026-10-08T18:35:49.2482984Z 017b31e4ff27: Pulling fs layer
+2026-10-08T18:35:49.2484416Z 146d06bcb573: Pulling fs layer
+2026-10-08T18:35:49.2485897Z e7e8da52359d: Pulling fs layer
+2026-10-08T18:35:49.2487061Z d01ea4064291: Pulling fs layer
+2026-10-08T18:35:49.2488298Z 6d0eb3c6cdb9: Pulling fs layer
+2026-10-08T18:35:49.2489612Z b1cc6947b8a6: Pulling fs layer
+2026-10-08T18:35:49.2490793Z e96ba86f00e5: Pulling fs layer
+2026-10-08T18:35:49.2491962Z a219b7b9b5d4: Pulling fs layer
+2026-10-08T18:35:49.2493235Z 584b3a82e541: Pulling fs layer
+2026-10-08T18:35:49.2494936Z d254c075f128: Pulling fs layer
+2026-10-08T18:35:49.2496240Z fb616fac62de: Pulling fs layer
+2026-10-08T18:35:49.2497593Z 7f82c3d75427: Pulling fs layer
+2026-10-08T18:35:49.2499223Z e7e8da52359d: Waiting
+2026-10-08T18:35:49.2500682Z d01ea4064291: Waiting
+2026-10-08T18:35:49.2502122Z 6d0eb3c6cdb9: Waiting
+2026-10-08T18:35:49.2503482Z b1cc6947b8a6: Waiting
+2026-10-08T18:35:49.2504915Z e96ba86f00e5: Waiting
+2026-10-08T18:35:49.2506233Z a219b7b9b5d4: Waiting
+2026-10-08T18:35:49.2507645Z 584b3a82e541: Waiting
+2026-10-08T18:35:49.2509067Z d254c075f128: Waiting
+2026-10-08T18:35:49.2510539Z fb616fac62de: Waiting
+2026-10-08T18:35:49.2512015Z 7f82c3d75427: Waiting
+2026-10-08T18:35:49.2513276Z 146d06bcb573: Waiting
+2026-10-08T18:35:49.3856405Z a74c50568115: Download complete
+2026-10-08T18:35:49.5218808Z 017b31e4ff27: Verifying Checksum
+2026-10-08T18:35:49.5221322Z 017b31e4ff27: Download complete
+2026-10-08T18:35:49.5298475Z 7fd1ebe418b5: Verifying Checksum
+2026-10-08T18:35:49.5306132Z 7fd1ebe418b5: Download complete
+2026-10-08T18:35:49.6261057Z 146d06bcb573: Verifying Checksum
+2026-10-08T18:35:49.6264444Z 146d06bcb573: Download complete
+2026-10-08T18:35:49.7432182Z d01ea4064291: Verifying Checksum
+2026-10-08T18:35:49.7435215Z d01ea4064291: Download complete
+2026-10-08T18:35:49.7545911Z 6d0eb3c6cdb9: Verifying Checksum
+2026-10-08T18:35:49.7548469Z 6d0eb3c6cdb9: Download complete
+2026-10-08T18:35:49.7956717Z e7e8da52359d: Verifying Checksum
+2026-10-08T18:35:49.7958357Z e7e8da52359d: Download complete
+2026-10-08T18:35:49.8658814Z b1cc6947b8a6: Verifying Checksum
+2026-10-08T18:35:49.8686266Z b1cc6947b8a6: Download complete
+2026-10-08T18:35:49.9266765Z a219b7b9b5d4: Download complete
+2026-10-08T18:35:50.0164865Z 584b3a82e541: Verifying Checksum
+2026-10-08T18:35:50.0195769Z 584b3a82e541: Download complete
+2026-10-08T18:35:50.0912441Z d254c075f128: Verifying Checksum
+2026-10-08T18:35:50.0919206Z d254c075f128: Download complete
+2026-10-08T18:35:50.1632699Z fb616fac62de: Verifying Checksum
+2026-10-08T18:35:50.1637839Z fb616fac62de: Download complete
+2026-10-08T18:35:50.2331230Z 7f82c3d75427: Verifying Checksum
+2026-10-08T18:35:50.2335112Z 7f82c3d75427: Download complete
+2026-10-08T18:35:50.4451299Z e96ba86f00e5: Verifying Checksum
+2026-10-08T18:35:50.4452659Z e96ba86f00e5: Download complete
+2026-10-08T18:35:50.9383443Z 7fd1ebe418b5: Pull complete
+2026-10-08T18:35:59.1383744Z a74c50568115: Pull complete
+2026-10-08T18:35:59.3877090Z 017b31e4ff27: Pull complete
+2026-10-08T18:35:59.4683355Z 146d06bcb573: Pull complete
+2026-10-08T18:35:59.9984599Z e7e8da52359d: Pull complete
+2026-10-08T18:36:00.1090926Z d01ea4064291: Pull complete
+2026-10-08T18:36:00.1208157Z 6d0eb3c6cdb9: Pull complete
+2026-10-08T18:36:00.1354924Z b1cc6947b8a6: Pull complete
+2026-10-08T18:36:06.0692569Z e96ba86f00e5: Pull complete
+2026-10-08T18:36:06.0968413Z a219b7b9b5d4: Pull complete
+2026-10-08T18:36:06.1077645Z 584b3a82e541: Pull complete
+2026-10-08T18:36:06.1184319Z d254c075f128: Pull complete
+2026-10-08T18:36:06.1298764Z fb616fac62de: Pull complete
+2026-10-08T18:36:06.1389088Z 7f82c3d75427: Pull complete
+2026-10-08T18:36:06.1429006Z Digest: sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+2026-10-08T18:36:06.1444897Z Status: Downloaded newer image for postgres:17-bookworm
+2026-10-08T18:36:06.1452933Z docker.io/library/postgres:17-bookworm
+2026-10-08T18:36:06.1505741Z ##[command]/usr/bin/docker create --name 66841dfec5b4491c9b5e2c6e5a14fec8_postgres17bookworm_919b32 --label 20756f --network github_network_dc56a851dad0479c8a2df1d7bfd66533 --network-alias postgres -p 5432:5432 --health-cmd "pg_isready -U little_say_test -d little_say_test" --health-interval 5s --health-timeout 5s --health-retries 20 -e "POSTGRES_USER=little_say_test" -e "POSTGRES_PASSWORD=little_say_test" -e "POSTGRES_DB=little_say_test" -e GITHUB_ACTIONS=true -e CI=true postgres:17-bookworm
+2026-10-08T18:36:06.1777286Z 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:06.1795016Z ##[command]/usr/bin/docker start 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:06.3919825Z 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:06.3961912Z ##[command]/usr/bin/docker ps --all --filter id=109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9 --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+2026-10-08T18:36:06.4148830Z 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9 Up Less than a second (health: starting)
+2026-10-08T18:36:06.4176139Z ##[command]/usr/bin/docker port 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:06.4355627Z 5432/tcp -> 0.0.0.0:5432
+2026-10-08T18:36:06.4357903Z 5432/tcp -> [::]:5432
+2026-10-08T18:36:06.4408246Z ##[endgroup]
+2026-10-08T18:36:06.4419337Z ##[group]Waiting for all services to be ready
+2026-10-08T18:36:06.4438012Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:06.4628844Z starting
+2026-10-08T18:36:06.4651335Z postgres service is starting, waiting 2 seconds before checking again.
+2026-10-08T18:36:08.4642019Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:08.4783810Z starting
+2026-10-08T18:36:08.4792918Z postgres service is starting, waiting 4 seconds before checking again.
+2026-10-08T18:36:12.7481704Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:36:12.7634885Z healthy
+2026-10-08T18:36:12.7646119Z postgres service is healthy.
+2026-10-08T18:36:12.7646776Z ##[endgroup]
+2026-10-08T18:36:12.7902297Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-08T18:36:12.7902896Z with:
+2026-10-08T18:36:12.7903184Z   repository: MChartier/little-say
+2026-10-08T18:36:12.7905525Z   token: ***
+2026-10-08T18:36:12.7905878Z   ssh-strict: true
+2026-10-08T18:36:12.7906145Z   ssh-user: git
+2026-10-08T18:36:12.7906457Z   persist-credentials: true
+2026-10-08T18:36:12.7906746Z   clean: true
+2026-10-08T18:36:12.7907038Z   sparse-checkout-cone-mode: true
+2026-10-08T18:36:12.7907379Z   fetch-depth: 1
+2026-10-08T18:36:12.7907650Z   fetch-tags: false
+2026-10-08T18:36:12.7907934Z   show-progress: true
+2026-10-08T18:36:12.7908207Z   lfs: false
+2026-10-08T18:36:12.7908456Z   submodules: false
+2026-10-08T18:36:12.7908795Z   set-safe-directory: true
+2026-10-08T18:36:12.7909091Z   allow-unsafe-pr-checkout: false
+2026-10-08T18:36:12.7909536Z env:
+2026-10-08T18:36:12.7909794Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:36:12.7910088Z   TEST_PGUSER: little_say_test
+2026-10-08T18:36:12.7910536Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:36:12.7910831Z ##[endgroup]
+2026-10-08T18:36:12.9092328Z Syncing repository: MChartier/little-say
+2026-10-08T18:36:12.9095698Z ##[group]Getting Git version info
+2026-10-08T18:36:12.9096509Z Working directory is '/home/runner/work/little-say/little-say'
+2026-10-08T18:36:12.9097726Z [command]/usr/bin/git version
+2026-10-08T18:36:12.9111776Z git version 2.55.0
+2026-10-08T18:36:12.9187228Z ##[endgroup]
+2026-10-08T18:36:12.9235261Z Temporarily overriding HOME='/home/runner/work/_temp/11ccfde2-24ea-4093-9031-20444b9147dc' before making global git config changes
+2026-10-08T18:36:12.9254916Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-08T18:36:12.9274901Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/little-say/little-say
+2026-10-08T18:36:12.9287052Z Deleting the contents of '/home/runner/work/little-say/little-say'
+2026-10-08T18:36:12.9288331Z ##[group]Initializing the repository
+2026-10-08T18:36:12.9289441Z [command]/usr/bin/git init /home/runner/work/little-say/little-say
+2026-10-08T18:36:12.9346343Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-08T18:36:12.9351214Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-08T18:36:12.9375195Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-08T18:36:12.9385237Z hint: call:
+2026-10-08T18:36:12.9414869Z hint:
+2026-10-08T18:36:12.9442163Z hint: 	git config --global init.defaultBranch <name>
+2026-10-08T18:36:12.9445527Z hint:
+2026-10-08T18:36:12.9446118Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-08T18:36:12.9446965Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-08T18:36:12.9447696Z hint:
+2026-10-08T18:36:12.9448161Z hint: 	git branch -m <name>
+2026-10-08T18:36:12.9448655Z hint:
+2026-10-08T18:36:12.9449313Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-08T18:36:12.9450263Z Initialized empty Git repository in /home/runner/work/little-say/little-say/.git/
+2026-10-08T18:36:12.9452283Z [command]/usr/bin/git remote add origin https://github.com/MChartier/little-say
+2026-10-08T18:36:12.9454248Z ##[endgroup]
+2026-10-08T18:36:12.9455214Z ##[group]Disabling automatic garbage collection
+2026-10-08T18:36:12.9455931Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-08T18:36:12.9555344Z ##[endgroup]
+2026-10-08T18:36:12.9559157Z ##[group]Setting up auth
+2026-10-08T18:36:12.9576262Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-08T18:36:12.9625114Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-08T18:36:13.0056028Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-08T18:36:13.0167113Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-08T18:36:13.0381656Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-08T18:36:13.0423448Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-08T18:36:13.0603046Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-08T18:36:13.0633420Z ##[endgroup]
+2026-10-08T18:36:13.0634572Z ##[group]Fetching the repository
+2026-10-08T18:36:13.0643077Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c34ca210bc1cd3ddcb1c7d8c6480eae607bd59af:refs/remotes/pull/38/merge
+2026-10-08T18:36:14.0469417Z From https://github.com/MChartier/little-say
+2026-10-08T18:36:14.0470879Z  * [new ref]         c34ca210bc1cd3ddcb1c7d8c6480eae607bd59af -> pull/38/merge
+2026-10-08T18:36:14.0491463Z ##[endgroup]
+2026-10-08T18:36:14.0492418Z ##[group]Determining the checkout info
+2026-10-08T18:36:14.0493188Z ##[endgroup]
+2026-10-08T18:36:14.0493782Z [command]/usr/bin/git sparse-checkout disable
+2026-10-08T18:36:14.0535352Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-08T18:36:14.0597391Z ##[group]Checking out the ref
+2026-10-08T18:36:14.0603625Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/38/merge
+2026-10-08T18:36:14.1010923Z Note: switching to 'refs/remotes/pull/38/merge'.
+2026-10-08T18:36:14.1011652Z 
+2026-10-08T18:36:14.1012217Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-08T18:36:14.1013072Z changes and commit them, and you can discard any commits you make in this
+2026-10-08T18:36:14.1014913Z state without impacting any branches by switching back to a branch.
+2026-10-08T18:36:14.1015571Z 
+2026-10-08T18:36:14.1016060Z If you want to create a new branch to retain commits you create, you may
+2026-10-08T18:36:14.1016900Z do so (now or later) by using -c with the switch command. Example:
+2026-10-08T18:36:14.1017561Z 
+2026-10-08T18:36:14.1017782Z   git switch -c <new-branch-name>
+2026-10-08T18:36:14.1018369Z 
+2026-10-08T18:36:14.1018685Z Or undo this operation with:
+2026-10-08T18:36:14.1019093Z 
+2026-10-08T18:36:14.1019355Z   git switch -
+2026-10-08T18:36:14.1019678Z 
+2026-10-08T18:36:14.1020141Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-08T18:36:14.1020659Z 
+2026-10-08T18:36:14.1021307Z HEAD is now at c34ca21 Merge 1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f into fabb925cf5ee11171d5668af7c2bab44ec9fc613
+2026-10-08T18:36:14.1023375Z ##[endgroup]
+2026-10-08T18:36:14.1073130Z [command]/usr/bin/git log -1 --format=%H
+2026-10-08T18:36:14.1087928Z c34ca210bc1cd3ddcb1c7d8c6480eae607bd59af
+2026-10-08T18:36:14.1316783Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+2026-10-08T18:36:14.1317186Z with:
+2026-10-08T18:36:14.1317446Z   node-version: 24
+2026-10-08T18:36:14.1317718Z   cache: npm
+2026-10-08T18:36:14.1317984Z   always-auth: false
+2026-10-08T18:36:14.1318266Z   check-latest: false
+2026-10-08T18:36:14.1320321Z   token: ***
+2026-10-08T18:36:14.1320564Z env:
+2026-10-08T18:36:14.1320829Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:36:14.1321166Z   TEST_PGUSER: little_say_test
+2026-10-08T18:36:14.1321443Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:36:14.1321753Z ##[endgroup]
+2026-10-08T18:36:14.2623345Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-08T18:36:14.2625132Z (node:2376) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-08T18:36:14.2626239Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-08T18:36:14.2628451Z ##[group]Environment details
+2026-10-08T18:36:14.7237042Z node: v24.21.0
+2026-10-08T18:36:14.7237773Z npm: 11.19.0
+2026-10-08T18:36:14.7238477Z yarn: 1.22.22
+2026-10-08T18:36:14.7240275Z ##[endgroup]
+2026-10-08T18:36:14.7257102Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-08T18:36:14.8331669Z /home/runner/.npm
+2026-10-08T18:36:15.0353430Z Cache hit for: node-cache-Linux-x64-npm-7a0bfdc6887e3de1a754c10083f9a904e2db9b0973f7db97d47681685b0be4ad
+2026-10-08T18:36:15.0479060Z (node:2376) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-08T18:36:16.2110232Z Received 83886080 of 318072313 (26.4%), 80.0 MBs/sec
+2026-10-08T18:36:17.2117618Z Received 251658240 of 318072313 (79.1%), 119.9 MBs/sec
+2026-10-08T18:36:18.2117263Z Received 297795584 of 318072313 (93.6%), 94.6 MBs/sec
+2026-10-08T18:36:18.3387313Z Received 318072313 of 318072313 (100.0%), 97.0 MBs/sec
+2026-10-08T18:36:18.3388408Z Cache Size: ~303 MB (318072313 B)
+2026-10-08T18:36:18.3419039Z [command]/usr/bin/tar -xf /home/runner/work/_temp/2743068a-9804-4575-ac51-f552d5a4f844/cache.tzst -P -C /home/runner/work/little-say/little-say --use-compress-program unzstd
+2026-10-08T18:36:18.7989465Z Cache restored successfully
+2026-10-08T18:36:18.8103367Z Cache restored from key: node-cache-Linux-x64-npm-7a0bfdc6887e3de1a754c10083f9a904e2db9b0973f7db97d47681685b0be4ad
+2026-10-08T18:36:18.8319551Z ##[group]Run npm ci
+2026-10-08T18:36:18.8319984Z [36;1mnpm ci[0m
+2026-10-08T18:36:18.8463672Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:36:18.8464040Z env:
+2026-10-08T18:36:18.8464624Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:36:18.8465092Z   TEST_PGUSER: little_say_test
+2026-10-08T18:36:18.8465447Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:36:18.8465754Z ##[endgroup]
+2026-10-08T18:36:31.0335408Z npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2026-10-08T18:36:31.2569811Z npm warn deprecated json-ptr@3.1.1: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+2026-10-08T18:36:31.3680843Z npm warn deprecated uuid@7.0.3: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-10-08T18:36:31.9580091Z npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+2026-10-08T18:36:32.0639349Z npm warn deprecated glob@11.1.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-08T18:36:32.0773678Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-08T18:36:32.0776685Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-08T18:36:32.0785871Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-08T18:36:32.0796347Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+2026-10-08T18:36:45.9850855Z 
+2026-10-08T18:36:45.9852312Z added 1573 packages, and audited 1577 packages in 27s
+2026-10-08T18:36:45.9856008Z 
+2026-10-08T18:36:45.9856655Z 265 packages are looking for funding
+2026-10-08T18:36:45.9882947Z   run `npm fund` for details
+2026-10-08T18:36:46.2957125Z 
+2026-10-08T18:36:46.2958539Z 41 vulnerabilities (1 low, 11 moderate, 28 high, 1 critical)
+2026-10-08T18:36:46.2964895Z 
+2026-10-08T18:36:46.2966034Z To address issues that do not require attention, run:
+2026-10-08T18:36:46.2966839Z   npm audit fix
+2026-10-08T18:36:46.2967235Z 
+2026-10-08T18:36:46.2985449Z npm warn install-scripts 5 packages have install scripts not yet covered by allowScripts:
+2026-10-08T18:36:46.2986526Z To address all issues possible (including breaking changes), run:
+2026-10-08T18:36:46.2993783Z   npm audit fix --force
+2026-10-08T18:36:46.2994964Z 
+2026-10-08T18:36:46.2995461Z Some issues need review, and may require choosing
+2026-10-08T18:36:46.2996147Z a different dependency.
+2026-10-08T18:36:46.2996594Z 
+2026-10-08T18:36:46.2996926Z Run `npm audit` for details.
+2026-10-08T18:36:46.3000409Z npm warn install-scripts   @firebase/util@1.15.3 (postinstall: node ./postinstall.js)
+2026-10-08T18:36:46.3001023Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-10-08T18:36:46.3002083Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-10-08T18:36:46.3004329Z npm warn install-scripts   re2@1.27.0 (install: install-from-cache --artifact build/Release/re2.node --host-var RE2_DOWNLOAD_MIRROR --skip-path-var RE2_DOWNLOAD_SKIP_PATH --skip-ver-var RE2_DOWNLOAD_SKIP_VER --force-build-var RE2_DOWNLOAD_FORCE_BUILD || node-gyp -j max rebuild)
+2026-10-08T18:36:46.3005831Z npm warn install-scripts   esbuild@0.27.7 (postinstall: node install.js)
+2026-10-08T18:36:46.3006323Z npm warn install-scripts
+2026-10-08T18:36:46.3007007Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-10-08T18:36:46.8256761Z ##[group]Run npm run check
+2026-10-08T18:36:46.8257359Z [36;1mnpm run check[0m
+2026-10-08T18:36:46.8296126Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:36:46.8296472Z env:
+2026-10-08T18:36:46.8297248Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:36:46.8297609Z   TEST_PGUSER: little_say_test
+2026-10-08T18:36:46.8297941Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:36:46.8298270Z ##[endgroup]
+2026-10-08T18:36:46.9385001Z 
+2026-10-08T18:36:46.9403886Z > little-say-workspace@0.2.1 check
+2026-10-08T18:36:46.9405312Z > npm run release:check && npm run typecheck && npm test && npm run build
+2026-10-08T18:36:46.9405917Z 
+2026-10-08T18:36:47.0246012Z 
+2026-10-08T18:36:47.0247341Z > little-say-workspace@0.2.1 release:check
+2026-10-08T18:36:47.0250731Z > tsx scripts/release/version.ts check
+2026-10-08T18:36:47.0252226Z 
+2026-10-08T18:36:47.3978734Z 
+2026-10-08T18:36:47.3980015Z > little-say-workspace@0.2.1 typecheck
+2026-10-08T18:36:47.3981274Z > npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json
+2026-10-08T18:36:47.3981970Z 
+2026-10-08T18:36:47.5056665Z 
+2026-10-08T18:36:47.5057790Z > @little-say/app@0.1.1 typecheck
+2026-10-08T18:36:47.5058477Z > tsc -p tsconfig.json
+2026-10-08T18:36:47.5059024Z 
+2026-10-08T18:36:52.7535222Z 
+2026-10-08T18:36:52.7536168Z > @little-say/server@0.2.1 typecheck
+2026-10-08T18:36:52.7536861Z > tsc -p tsconfig.json
+2026-10-08T18:36:52.7537321Z 
+2026-10-08T18:36:57.1208251Z 
+2026-10-08T18:36:57.1209406Z > @little-say/core@0.1.0 typecheck
+2026-10-08T18:36:57.1210556Z > tsc -p tsconfig.json
+2026-10-08T18:36:57.1211029Z 
+2026-10-08T18:37:03.0874923Z 
+2026-10-08T18:37:03.0895587Z > little-say-workspace@0.2.1 test
+2026-10-08T18:37:03.0896415Z > vitest run
+2026-10-08T18:37:03.0904812Z 
+2026-10-08T18:37:03.3805608Z 
+2026-10-08T18:37:03.3816684Z [1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/runner/work/little-say/little-say[39m
+2026-10-08T18:37:03.3817518Z 
+2026-10-08T18:37:05.6068009Z (node:2865) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:05.6075790Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T18:37:05.6373969Z (node:2865) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:05.6647804Z (node:2865) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:06.3328281Z  [32m✓[39m apps/server/test/pictures.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 1277[2mms[22m[39m
+2026-10-08T18:37:06.7682866Z  [32m✓[39m apps/mobile/src/services/pictures.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 88[2mms[22m[39m
+2026-10-08T18:37:07.3376816Z  [32m✓[39m scripts/release/planner.test.ts [2m([22m[2m15 tests[22m[2m)[22m[33m 401[2mms[22m[39m
+2026-10-08T18:37:07.7556975Z [90mstdout[2m | scripts/release/release.test.ts[2m > [22m[2mpublication boundary[2m > [22m[2mverifies deployment, restoring the previous image only when public health fails (healthy=true)
+2026-10-08T18:37:07.7562589Z [22m[39mDeployed and verified server 0.1.1: ghcr.io/org/app@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+2026-10-08T18:37:07.7563943Z 
+2026-10-08T18:37:07.7607253Z [90mstderr[2m | scripts/release/release.test.ts[2m > [22m[2mpublication boundary[2m > [22m[2mverifies deployment, restoring the previous image only when public health fails (healthy=false)
+2026-10-08T18:37:07.7648279Z [22m[39mDeployment failed; restored the previous container image. Speech cache was preserved.
+2026-10-08T18:37:07.7649260Z 
+2026-10-08T18:37:07.7695870Z  [32m✓[39m scripts/release/release.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 269[2mms[22m[39m
+2026-10-08T18:37:08.6682960Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.6687447Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T18:37:08.7011920Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7168657Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7252552Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7373139Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7430278Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7829308Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.7937631Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8012237Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8089467Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8132404Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8179407Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8219821Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8265893Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8667552Z (node:3178) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:08.8740388Z  [32m✓[39m apps/server/test/api.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 239[2mms[22m[39m
+2026-10-08T18:37:09.0675991Z  [32m✓[39m scripts/release/providers.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+2026-10-08T18:37:09.2586373Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mvalidates forced dry-run operations without versions, PRs, or provider mutations
+2026-10-08T18:37:09.2605733Z [22m[39mMode: **force_all**. Client: **internal**. Source: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+2026-10-08T18:37:09.2624787Z 
+2026-10-08T18:37:09.2645035Z - server: forced
+2026-10-08T18:37:09.2646237Z - android build: forced
+2026-10-08T18:37:09.2646652Z - ios build: forced
+2026-10-08T18:37:09.2647260Z - android OTA: forced; eligible runtimes only
+2026-10-08T18:37:09.2647859Z - ios OTA: forced; eligible runtimes only
+2026-10-08T18:37:09.2648423Z - submit: skipped
+2026-10-08T18:37:09.2648838Z {
+2026-10-08T18:37:09.2649219Z   "schema": 1,
+2026-10-08T18:37:09.2649648Z   "runId": "123",
+2026-10-08T18:37:09.2650238Z   "source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2650823Z   "mode": "force_all",
+2026-10-08T18:37:09.2651352Z   "profile": "internal",
+2026-10-08T18:37:09.2651790Z   "bump": "patch",
+2026-10-08T18:37:09.2652175Z   "inputs": {
+2026-10-08T18:37:09.2652677Z     "server": "server-input",
+2026-10-08T18:37:09.2653164Z     "bundle": {
+2026-10-08T18:37:09.2653645Z       "android": "bundle-android",
+2026-10-08T18:37:09.2654410Z       "ios": "bundle-ios"
+2026-10-08T18:37:09.2654857Z     },
+2026-10-08T18:37:09.2655239Z     "native": {
+2026-10-08T18:37:09.2655751Z       "android": "native-android",
+2026-10-08T18:37:09.2656288Z       "ios": "native-ios"
+2026-10-08T18:37:09.2656698Z     },
+2026-10-08T18:37:09.2657208Z     "environmentHash": "env-hash"
+2026-10-08T18:37:09.2657679Z   },
+2026-10-08T18:37:09.2658085Z   "server": true,
+2026-10-08T18:37:09.2658534Z   "native": [
+2026-10-08T18:37:09.2659002Z     "android",
+2026-10-08T18:37:09.2659427Z     "ios"
+2026-10-08T18:37:09.2659839Z   ],
+2026-10-08T18:37:09.2660290Z   "submissions": [],
+2026-10-08T18:37:09.2660717Z   "ota": [
+2026-10-08T18:37:09.2661091Z     "android",
+2026-10-08T18:37:09.2661532Z     "ios"
+2026-10-08T18:37:09.2661936Z   ],
+2026-10-08T18:37:09.2662342Z   "reasons": [
+2026-10-08T18:37:09.2662776Z     "server: forced",
+2026-10-08T18:37:09.2663240Z     "android build: forced",
+2026-10-08T18:37:09.2663760Z     "ios build: forced",
+2026-10-08T18:37:09.2667607Z     "android OTA: forced; eligible runtimes only",
+2026-10-08T18:37:09.2668362Z     "ios OTA: forced; eligible runtimes only",
+2026-10-08T18:37:09.2668868Z     "submit: skipped"
+2026-10-08T18:37:09.2669234Z   ],
+2026-10-08T18:37:09.2669730Z   "serverVersion": "0.2.1",
+2026-10-08T18:37:09.2670161Z   "nativeRelease": {
+2026-10-08T18:37:09.2670618Z     "version": "0.1.1",
+2026-10-08T18:37:09.2671117Z     "androidVersionCode": 2,
+2026-10-08T18:37:09.2671615Z     "iosBuildNumber": "2",
+2026-10-08T18:37:09.2672138Z     "expoOwner": "test",
+2026-10-08T18:37:09.2672769Z     "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+2026-10-08T18:37:09.2674350Z     "serverUrl": "https://test.invalid"
+2026-10-08T18:37:09.2674845Z   },
+2026-10-08T18:37:09.2675312Z   "baselines": [],
+2026-10-08T18:37:09.2675780Z   "previousOta": [],
+2026-10-08T18:37:09.2676188Z   "otaTargets": [
+2026-10-08T18:37:09.2676686Z     {
+2026-10-08T18:37:09.2677084Z       "platform": "android",
+2026-10-08T18:37:09.2677623Z       "runtimeVersion": "0.1.1",
+2026-10-08T18:37:09.2678364Z       "eligible": true,
+2026-10-08T18:37:09.2678911Z       "reason": "new build in this run"
+2026-10-08T18:37:09.2679545Z     },
+2026-10-08T18:37:09.2679903Z     {
+2026-10-08T18:37:09.2680387Z       "platform": "ios",
+2026-10-08T18:37:09.2680920Z       "runtimeVersion": "0.1.1",
+2026-10-08T18:37:09.2681461Z       "eligible": true,
+2026-10-08T18:37:09.2681901Z       "reason": "new build in this run"
+2026-10-08T18:37:09.2682349Z     }
+2026-10-08T18:37:09.2682787Z   ],
+2026-10-08T18:37:09.2683162Z   "comparisons": {
+2026-10-08T18:37:09.2683612Z     "nativeBuildIds": {}
+2026-10-08T18:37:09.2684034Z   },
+2026-10-08T18:37:09.2684744Z   "changes": {
+2026-10-08T18:37:09.2685149Z     "server": true,
+2026-10-08T18:37:09.2685509Z     "native": [
+2026-10-08T18:37:09.2685958Z       "android",
+2026-10-08T18:37:09.2686375Z       "ios"
+2026-10-08T18:37:09.2686720Z     ],
+2026-10-08T18:37:09.2687152Z     "bundle": [
+2026-10-08T18:37:09.2687526Z       "android",
+2026-10-08T18:37:09.2687967Z       "ios"
+2026-10-08T18:37:09.2688417Z     ]
+2026-10-08T18:37:09.2688820Z   },
+2026-10-08T18:37:09.2689215Z   "channelBranch": {
+2026-10-08T18:37:09.2689653Z     "id": "branch-id",
+2026-10-08T18:37:09.2690163Z     "name": "internal"
+2026-10-08T18:37:09.2690581Z   }
+2026-10-08T18:37:09.2690952Z }
+2026-10-08T18:37:09.2691179Z 
+2026-10-08T18:37:09.2692644Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mvalidates forced dry-run operations without versions, PRs, or provider mutations
+2026-10-08T18:37:09.2694306Z [22m[39mDry run complete. No release operations performed.
+2026-10-08T18:37:09.2694712Z 
+2026-10-08T18:37:09.2695950Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mexits an automatic no-change cut without allocating persisted versions or tags
+2026-10-08T18:37:09.2697475Z [22m[39mMode: **auto**. Client: **internal**. Source: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+2026-10-08T18:37:09.2698131Z 
+2026-10-08T18:37:09.2698363Z - server: unchanged verified image
+2026-10-08T18:37:09.2698988Z - android build: unchanged native inputs
+2026-10-08T18:37:09.2699637Z - ios build: unchanged native inputs
+2026-10-08T18:37:09.2700222Z - android OTA: unchanged bundle
+2026-10-08T18:37:09.2700773Z - ios OTA: unchanged bundle
+2026-10-08T18:37:09.2701266Z - submit: skipped
+2026-10-08T18:37:09.2701643Z {
+2026-10-08T18:37:09.2702081Z   "schema": 1,
+2026-10-08T18:37:09.2702482Z   "runId": "123",
+2026-10-08T18:37:09.2703007Z   "source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2703570Z   "mode": "auto",
+2026-10-08T18:37:09.2704002Z   "profile": "internal",
+2026-10-08T18:37:09.2704781Z   "bump": "patch",
+2026-10-08T18:37:09.2705178Z   "inputs": {
+2026-10-08T18:37:09.2705648Z     "server": "server-input",
+2026-10-08T18:37:09.2706083Z     "bundle": {
+2026-10-08T18:37:09.2706513Z       "android": "bundle-android",
+2026-10-08T18:37:09.2707116Z       "ios": "bundle-ios"
+2026-10-08T18:37:09.2707569Z     },
+2026-10-08T18:37:09.2707982Z     "native": {
+2026-10-08T18:37:09.2708483Z       "android": "native-android",
+2026-10-08T18:37:09.2708996Z       "ios": "native-ios"
+2026-10-08T18:37:09.2709467Z     },
+2026-10-08T18:37:09.2709930Z     "environmentHash": "env-hash"
+2026-10-08T18:37:09.2710435Z   },
+2026-10-08T18:37:09.2710817Z   "server": false,
+2026-10-08T18:37:09.2711213Z   "native": [],
+2026-10-08T18:37:09.2711699Z   "submissions": [],
+2026-10-08T18:37:09.2712166Z   "ota": [],
+2026-10-08T18:37:09.2712640Z   "reasons": [
+2026-10-08T18:37:09.2713113Z     "server: unchanged verified image",
+2026-10-08T18:37:09.2713716Z     "android build: unchanged native inputs",
+2026-10-08T18:37:09.2718116Z     "ios build: unchanged native inputs",
+2026-10-08T18:37:09.2718789Z     "android OTA: unchanged bundle",
+2026-10-08T18:37:09.2719281Z     "ios OTA: unchanged bundle",
+2026-10-08T18:37:09.2719755Z     "submit: skipped"
+2026-10-08T18:37:09.2720236Z   ],
+2026-10-08T18:37:09.2720830Z   "serverVersion": "0.2.0",
+2026-10-08T18:37:09.2721334Z   "nativeRelease": {
+2026-10-08T18:37:09.2721741Z     "version": "0.1.0",
+2026-10-08T18:37:09.2722240Z     "androidVersionCode": 1,
+2026-10-08T18:37:09.2722756Z     "iosBuildNumber": "1",
+2026-10-08T18:37:09.2723187Z     "expoOwner": "test",
+2026-10-08T18:37:09.2723776Z     "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+2026-10-08T18:37:09.2724757Z     "serverUrl": "https://test.invalid"
+2026-10-08T18:37:09.2725239Z   },
+2026-10-08T18:37:09.2725625Z   "previousServer": {
+2026-10-08T18:37:09.2726251Z     "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2726887Z     "version": "0.2.0",
+2026-10-08T18:37:09.2727364Z     "image": "ghcr.io/test/app",
+2026-10-08T18:37:09.2727868Z     "digest": "sha256:digest",
+2026-10-08T18:37:09.2728326Z     "input": "server-input"
+2026-10-08T18:37:09.2728674Z   },
+2026-10-08T18:37:09.2729043Z   "baselines": [
+2026-10-08T18:37:09.2729465Z     {
+2026-10-08T18:37:09.2729818Z       "schema": 2,
+2026-10-08T18:37:09.2730196Z       "platform": "android",
+2026-10-08T18:37:09.2730671Z       "profile": "internal",
+2026-10-08T18:37:09.2731101Z       "channel": "internal",
+2026-10-08T18:37:09.2731488Z       "environment": "preview",
+2026-10-08T18:37:09.2731943Z       "release": {
+2026-10-08T18:37:09.2732279Z         "version": "0.1.0",
+2026-10-08T18:37:09.2732612Z         "androidVersionCode": 1,
+2026-10-08T18:37:09.2732948Z         "iosBuildNumber": "1",
+2026-10-08T18:37:09.2733283Z         "expoOwner": "test",
+2026-10-08T18:37:09.2733686Z         "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+2026-10-08T18:37:09.2734477Z         "serverUrl": "https://test.invalid"
+2026-10-08T18:37:09.2735085Z       },
+2026-10-08T18:37:09.2735478Z       "runtimeVersion": "0.1.0",
+2026-10-08T18:37:09.2736059Z       "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2736803Z       "fingerprint": "ffffffffffffffffffffffffffffffffffffffff",
+2026-10-08T18:37:09.2737424Z       "compatibility": "native-android",
+2026-10-08T18:37:09.2737975Z       "environmentHash": "env-hash",
+2026-10-08T18:37:09.2738449Z       "buildId": "android",
+2026-10-08T18:37:09.2739003Z       "artifactUrl": "https://example.invalid/app",
+2026-10-08T18:37:09.2739812Z       "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+2026-10-08T18:37:09.2740558Z     },
+2026-10-08T18:37:09.2741085Z     {
+2026-10-08T18:37:09.2741443Z       "schema": 2,
+2026-10-08T18:37:09.2741876Z       "platform": "ios",
+2026-10-08T18:37:09.2742287Z       "profile": "internal",
+2026-10-08T18:37:09.2742713Z       "channel": "internal",
+2026-10-08T18:37:09.2743205Z       "environment": "preview",
+2026-10-08T18:37:09.2743636Z       "release": {
+2026-10-08T18:37:09.2744231Z         "version": "0.1.0",
+2026-10-08T18:37:09.2744819Z         "androidVersionCode": 1,
+2026-10-08T18:37:09.2745292Z         "iosBuildNumber": "1",
+2026-10-08T18:37:09.2745676Z         "expoOwner": "test",
+2026-10-08T18:37:09.2746304Z         "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+2026-10-08T18:37:09.2746925Z         "serverUrl": "https://test.invalid"
+2026-10-08T18:37:09.2747380Z       },
+2026-10-08T18:37:09.2747810Z       "runtimeVersion": "0.1.0",
+2026-10-08T18:37:09.2748381Z       "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2748990Z       "fingerprint": "ffffffffffffffffffffffffffffffffffffffff",
+2026-10-08T18:37:09.2749558Z       "compatibility": "native-ios",
+2026-10-08T18:37:09.2749983Z       "environmentHash": "env-hash",
+2026-10-08T18:37:09.2750390Z       "buildId": "ios",
+2026-10-08T18:37:09.2750861Z       "artifactUrl": "https://example.invalid/app",
+2026-10-08T18:37:09.2751562Z       "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+2026-10-08T18:37:09.2752140Z     }
+2026-10-08T18:37:09.2752490Z   ],
+2026-10-08T18:37:09.2752794Z   "previousOta": [],
+2026-10-08T18:37:09.2753170Z   "otaTargets": [],
+2026-10-08T18:37:09.2753521Z   "comparisons": {
+2026-10-08T18:37:09.2754251Z     "clientRunId": "122",
+2026-10-08T18:37:09.2754882Z     "serverCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+2026-10-08T18:37:09.2755530Z     "nativeBuildIds": {
+2026-10-08T18:37:09.2755891Z       "android": "android",
+2026-10-08T18:37:09.2756345Z       "ios": "ios"
+2026-10-08T18:37:09.2756689Z     }
+2026-10-08T18:37:09.2757052Z   },
+2026-10-08T18:37:09.2757405Z   "changes": {
+2026-10-08T18:37:09.2757874Z     "server": false,
+2026-10-08T18:37:09.2758252Z     "native": [],
+2026-10-08T18:37:09.2758600Z     "bundle": []
+2026-10-08T18:37:09.2759022Z   }
+2026-10-08T18:37:09.2759323Z }
+2026-10-08T18:37:09.2759488Z 
+2026-10-08T18:37:09.2760624Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mexits an automatic no-change cut without allocating persisted versions or tags
+2026-10-08T18:37:09.2761757Z [22m[39mNo publishable changes. No versions or tags allocated.
+2026-10-08T18:37:09.2762097Z 
+2026-10-08T18:37:09.2763400Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mpreserves a partially finalized release and completes its exact receipt after response loss
+2026-10-08T18:37:09.2764877Z [22m[39mReleased internal from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (auto).
+2026-10-08T18:37:09.2765341Z 
+2026-10-08T18:37:09.2765569Z Server: ghcr.io/test/app@sha256:digest
+2026-10-08T18:37:09.2765881Z 
+2026-10-08T18:37:09.2765891Z 
+2026-10-08T18:37:09.2765897Z 
+2026-10-08T18:37:09.2765903Z 
+2026-10-08T18:37:09.2765910Z 
+2026-10-08T18:37:09.2765917Z 
+2026-10-08T18:37:09.2765923Z 
+2026-10-08T18:37:09.2766697Z Image publication is not deployment. Store processing/public rollout and device installation or OTA uptake have not been verified.
+2026-10-08T18:37:09.2767362Z 
+2026-10-08T18:37:09.2767749Z Release: https://github.com/test/app/releases/tag/release/internal/123
+2026-10-08T18:37:09.2768168Z 
+2026-10-08T18:37:09.2769576Z [90mstdout[2m | scripts/release/unified.test.ts[2m > [22m[2morchestration publication boundaries[2m > [22m[2mpreserves a partially finalized release and completes its exact receipt after response loss
+2026-10-08T18:37:09.2771265Z [22m[39mRelease 123 is already complete; no operations repeated.
+2026-10-08T18:37:09.2771799Z 
+2026-10-08T18:37:09.2772462Z  [32m✓[39m scripts/release/unified.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+2026-10-08T18:37:09.4192561Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mcollects the final data, releases tracks, and returns a multipart recording
+2026-10-08T18:37:09.4197298Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4198185Z 
+2026-10-08T18:37:09.4492822Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases every acquired track after constructor failure
+2026-10-08T18:37:09.4498898Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4499756Z 
+2026-10-08T18:37:09.4519455Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases every acquired track after start failure
+2026-10-08T18:37:09.4528104Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4529796Z 
+2026-10-08T18:37:09.4535238Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases every acquired track after unsupported failure
+2026-10-08T18:37:09.4537171Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4543723Z 
+2026-10-08T18:37:09.4553812Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases tracks and settles stop even when MediaRecorder.stop throws
+2026-10-08T18:37:09.4557052Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4558033Z 
+2026-10-08T18:37:09.4572384Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mcontinues releasing tracks if recorder stop and an individual track stop both throw
+2026-10-08T18:37:09.4577741Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4578533Z 
+2026-10-08T18:37:09.4589130Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreports capture-time error and stops the microphone immediately
+2026-10-08T18:37:09.4591049Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4592685Z 
+2026-10-08T18:37:09.4598914Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreports capture-time unexpected stop and stops the microphone immediately
+2026-10-08T18:37:09.4600998Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4602833Z 
+2026-10-08T18:37:09.4616147Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2msettles a pending stop on cleanup and ignores late events after a new capture
+2026-10-08T18:37:09.4617648Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4618381Z 
+2026-10-08T18:37:09.4643256Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2msettles a pending stop on background and ignores late events after a new capture
+2026-10-08T18:37:09.4645430Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4646264Z 
+2026-10-08T18:37:09.4659916Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2msettles a pending stop on unmount and ignores late events after a new capture
+2026-10-08T18:37:09.4661799Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4662449Z 
+2026-10-08T18:37:09.4666836Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2msettles a pending stop on unmount and ignores late events after a new capture
+2026-10-08T18:37:09.4668648Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4670578Z 
+2026-10-08T18:37:09.4680162Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases a delayed permission result after closing the dialog
+2026-10-08T18:37:09.4682174Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4683814Z 
+2026-10-08T18:37:09.4696185Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mkeeps the latest capture when an older permission request resolves late
+2026-10-08T18:37:09.4698249Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4699199Z 
+2026-10-08T18:37:09.4710599Z [90mstderr[2m | apps/mobile/src/services/useRecording.web.test.ts[2m > [22m[2mbrowser voice recording[2m > [22m[2mreleases the previous session before replacing its stream reference
+2026-10-08T18:37:09.4712690Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.4713420Z 
+2026-10-08T18:37:09.4736935Z  [32m✓[39m apps/mobile/src/services/useRecording.web.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+2026-10-08T18:37:09.6573569Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2muploads a File using the installed Expo multipart encoder
+2026-10-08T18:37:09.6585713Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6586588Z 
+2026-10-08T18:37:09.6717960Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mcan close without ever opening the microphone
+2026-10-08T18:37:09.6721847Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6727654Z 
+2026-10-08T18:37:09.6729123Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mdeletes the saved file after Expo releases an active recorder
+2026-10-08T18:37:09.6730930Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6732866Z 
+2026-10-08T18:37:09.6738966Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mcancels a pending permission request when the dialog closes
+2026-10-08T18:37:09.6740277Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6740640Z 
+2026-10-08T18:37:09.6759252Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mdoes not prepare a released recorder after awaiting audio mode
+2026-10-08T18:37:09.6761092Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6766162Z 
+2026-10-08T18:37:09.6771732Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mdoes not start a released recorder after preparation finishes
+2026-10-08T18:37:09.6775474Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6776490Z 
+2026-10-08T18:37:09.6785641Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mdoes not read a released recorder after stop completes
+2026-10-08T18:37:09.6793269Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6797434Z 
+2026-10-08T18:37:09.6798952Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mstops and cleans up on background, then allows another recording
+2026-10-08T18:37:09.6800764Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6802821Z 
+2026-10-08T18:37:09.6819564Z [90mstderr[2m | apps/mobile/src/services/useRecording.test.ts[2m > [22m[2mnative voice recording[2m > [22m[2mresets audio mode and deletes the file when starting the recorder fails
+2026-10-08T18:37:09.6823295Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:09.6825112Z 
+2026-10-08T18:37:09.6842420Z  [32m✓[39m apps/mobile/src/services/useRecording.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+2026-10-08T18:37:09.9007049Z  [32m✓[39m packages/core/src/translationEditing.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-10-08T18:37:10.0526057Z  [32m✓[39m scripts/dev-config.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-10-08T18:37:10.2141776Z  [32m✓[39m scripts/release/ota.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+2026-10-08T18:37:10.4308230Z  [32m✓[39m packages/core/src/boardLanguages.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+2026-10-08T18:37:10.7533396Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2maccepts release immediately when the label becomes ready
+2026-10-08T18:37:10.7536786Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7537590Z 
+2026-10-08T18:37:10.7673213Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2mreschedules early timers and ignores wall-clock changes
+2026-10-08T18:37:10.7678562Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7679391Z 
+2026-10-08T18:37:10.7710246Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2mresets feedback on movement and cannot show ready for a cancelled gesture
+2026-10-08T18:37:10.7715874Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7718719Z 
+2026-10-08T18:37:10.7739956Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2mrequires a fresh full hold after releasing early and pressing again
+2026-10-08T18:37:10.7744992Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7746169Z 
+2026-10-08T18:37:10.7768642Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2mcancels immediately if another finger joins, even after readiness
+2026-10-08T18:37:10.7772654Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7774608Z 
+2026-10-08T18:37:10.7794747Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2mnative parent unlock feedback[2m > [22m[2mclears readiness on native cancellation and external board/background cancellation
+2026-10-08T18:37:10.7797415Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7798377Z 
+2026-10-08T18:37:10.7828026Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2maccessible timed unlock and bounds[2m > [22m[2mannounces a cancellable two-second alternative, without immediate navigation or a confirmation
+2026-10-08T18:37:10.7830269Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7832975Z 
+2026-10-08T18:37:10.7850911Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2maccessible timed unlock and bounds[2m > [22m[2mcancels assistive activation and backgrounded attempts, then accepts a fresh pointer hold
+2026-10-08T18:37:10.7855233Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7856205Z 
+2026-10-08T18:37:10.7881428Z [90mstderr[2m | apps/mobile/src/ui/ParentControl.test.ts[2m > [22m[2maccessible timed unlock and bounds[2m > [22m[2mrejects a ready release just outside an edge even within the movement tolerance
+2026-10-08T18:37:10.7885899Z [22m[39mreact-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+2026-10-08T18:37:10.7890838Z 
+2026-10-08T18:37:10.7906810Z  [32m✓[39m apps/mobile/src/ui/ParentControl.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+2026-10-08T18:37:11.7370670Z (node:3262) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:37:11.7396053Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T18:37:11.7862249Z  [32m✓[39m apps/server/test/speech.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 165[2mms[22m[39m
+2026-10-08T18:37:12.0266983Z  [32m✓[39m scripts/dev-proxy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 82[2mms[22m[39m
+2026-10-08T18:37:12.1820131Z [90mstdout[2m | scripts/release/candidate.test.ts[2m > [22m[2mprotected version candidate[2m > [22m[2mchecks the combined candidate before push, normal merge, and exact tree readback
+2026-10-08T18:37:12.1845652Z [22m[39mRelease PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+2026-10-08T18:37:12.1846382Z 
+2026-10-08T18:37:12.1866256Z [90mstdout[2m | scripts/release/candidate.test.ts[2m > [22m[2mprotected version candidate[2m > [22m[2mrecovers a pushed branch whose journal/PR response was lost without another increment
+2026-10-08T18:37:12.1886149Z [22m[39mRelease PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+2026-10-08T18:37:12.1894521Z 
+2026-10-08T18:37:12.1901328Z [90mstdout[2m | scripts/release/candidate.test.ts[2m > [22m[2mprotected version candidate[2m > [22m[2mresumes after review and never bypasses it
+2026-10-08T18:37:12.1919032Z [22m[39mRelease PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+2026-10-08T18:37:12.1924619Z 
+2026-10-08T18:37:12.1938010Z [90mstdout[2m | scripts/release/candidate.test.ts[2m > [22m[2mprotected version candidate[2m > [22m[2mreuses a fully prepared candidate without repeating checks or PR mutations
+2026-10-08T18:37:12.1965864Z [22m[39mRelease PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+2026-10-08T18:37:12.1982382Z 
+2026-10-08T18:37:12.1983925Z [90mstdout[2m | scripts/release/candidate.test.ts[2m > [22m[2mprotected version candidate[2m > [22m[2mrejects a queued merge until it actually lands
+2026-10-08T18:37:12.1985854Z [22m[39mRelease PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+2026-10-08T18:37:12.1986531Z 
+2026-10-08T18:37:12.1987300Z  [32m✓[39m scripts/release/candidate.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-10-08T18:37:12.3583206Z  [32m✓[39m packages/core/src/interaction.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+2026-10-08T18:37:12.5146587Z  [32m✓[39m scripts/release/image.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-10-08T18:37:13.1858979Z  [32m✓[39m apps/mobile/src/services/speechLibrary.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 321[2mms[22m[39m
+2026-10-08T18:37:13.3525126Z  [32m✓[39m scripts/release/operation.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-10-08T18:37:13.6896301Z  [32m✓[39m apps/mobile/src/services/accountSync.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+2026-10-08T18:37:13.8964316Z  [32m✓[39m packages/core/src/schema.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+2026-10-08T18:37:14.1146341Z  [32m✓[39m packages/core/src/onboarding.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+2026-10-08T18:37:14.3089433Z  [32m✓[39m packages/core/src/pictures.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+2026-10-08T18:37:14.6478277Z  [32m✓[39m packages/core/src/boardLayout.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 212[2mms[22m[39m
+2026-10-08T18:37:14.7946418Z  [32m✓[39m apps/mobile/src/services/photos.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-10-08T18:37:14.9974797Z  [32m✓[39m packages/core/src/languageProfile.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+2026-10-08T18:37:29.8787079Z  [32m✓[39m scripts/release/fingerprint.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 14739[2mms[22m[39m
+2026-10-08T18:37:29.8791981Z      [33m[2m✓[22m[39m normalizes allocated versions while full fingerprints retain runtime differences [33m 14562[2mms[22m[39m
+2026-10-08T18:37:30.0367384Z  [32m✓[39m scripts/release/journal.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-10-08T18:37:30.2367088Z  [32m✓[39m packages/core/src/account.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+2026-10-08T18:37:30.3652499Z  [32m✓[39m packages/core/src/photo.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-08T18:37:30.6892228Z  [32m✓[39m apps/mobile/src/services/hybridSpeech.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+2026-10-08T18:37:30.8242798Z  [32m✓[39m apps/mobile/src/services/firebasePersistence.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+2026-10-08T18:37:31.1946027Z  [32m✓[39m packages/core/src/emoji.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 99[2mms[22m[39m
+2026-10-08T18:37:31.3558740Z  [32m✓[39m apps/server/test/postgres-fixture.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+2026-10-08T18:37:31.6459998Z  [32m✓[39m apps/mobile/src/services/api.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 172[2mms[22m[39m
+2026-10-08T18:37:31.7655120Z  [32m✓[39m apps/mobile/src/services/backendConfig.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-10-08T18:37:31.9189807Z  [32m✓[39m apps/mobile/src/services/firebaseProviders.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-10-08T18:37:32.0715109Z  [32m✓[39m apps/server/test/database-config.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-10-08T18:37:32.0775659Z 
+2026-10-08T18:37:32.0777924Z [2m Test Files [22m [1m[32m40 passed[39m[22m[90m (40)[39m
+2026-10-08T18:37:32.0779444Z [2m      Tests [22m [1m[32m296 passed[39m[22m[90m (296)[39m
+2026-10-08T18:37:32.0780329Z [2m   Start at [22m 18:37:03
+2026-10-08T18:37:32.0781627Z [2m   Duration [22m 28.68s[2m (transform 1.32s, setup 0ms, import 5.64s, tests 18.63s, environment 3ms)[22m
+2026-10-08T18:37:32.0795521Z 
+2026-10-08T18:37:32.1914831Z 
+2026-10-08T18:37:32.1915647Z > little-say-workspace@0.2.1 build
+2026-10-08T18:37:32.1916488Z > npm run build -w @little-say/server && npm run build:web -w @little-say/app
+2026-10-08T18:37:32.2951132Z 
+2026-10-08T18:37:32.2951186Z 
+2026-10-08T18:37:32.2952021Z > @little-say/server@0.2.1 build
+2026-10-08T18:37:32.2953708Z > tsup
+2026-10-08T18:37:32.2953882Z 
+2026-10-08T18:37:32.5514955Z [34mCLI[39m Building entry: src/database-cli.ts, src/index.ts
+2026-10-08T18:37:32.5523961Z [34mCLI[39m Using tsconfig: tsconfig.json
+2026-10-08T18:37:32.5525049Z [34mCLI[39m tsup v8.5.1
+2026-10-08T18:37:32.5528464Z [34mCLI[39m Using tsup config: /home/runner/work/little-say/little-say/apps/server/tsup.config.ts
+2026-10-08T18:37:32.5542079Z [34mCLI[39m Target: node22
+2026-10-08T18:37:32.5553309Z [34mCLI[39m Cleaning output folder
+2026-10-08T18:37:32.5563455Z [34mESM[39m Build start
+2026-10-08T18:37:32.7656496Z [32mESM[39m [1mdist/database-cli.js   [22m[32m943.00 B[39m
+2026-10-08T18:37:32.7658797Z [32mESM[39m [1mdist/chunk-YJ5TFKWE.js [22m[32m2.98 KB[39m
+2026-10-08T18:37:32.7659787Z [32mESM[39m [1mdist/index.js          [22m[32m3.92 MB[39m
+2026-10-08T18:37:32.7660545Z [32mESM[39m ⚡️ Build success in 208ms
+2026-10-08T18:37:32.8779223Z 
+2026-10-08T18:37:32.8780437Z > @little-say/app@0.1.1 build:web
+2026-10-08T18:37:32.8781661Z > expo export --platform web && node scripts/build-pwa.mjs
+2026-10-08T18:37:32.8782265Z 
+2026-10-08T18:37:33.4177439Z Expo Autolinking module resolution enabled
+2026-10-08T18:37:34.0876086Z Starting Metro Bundler
+2026-10-08T18:37:34.0895072Z 
+2026-10-08T18:38:07.4403794Z Web Bundled 33314ms apps/mobile/index.ts (2422 modules)
+2026-10-08T18:38:07.7585270Z 
+2026-10-08T18:38:07.7591098Z › Assets (3):
+2026-10-08T18:38:07.7666240Z assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+2026-10-08T18:38:07.7668179Z 
+2026-10-08T18:38:07.7669403Z › web bundles (3):
+2026-10-08T18:38:07.7672195Z _expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+2026-10-08T18:38:07.7734267Z _expo/static/js/web/App-a5f7730c5425171e4fac683ba6bda713.js (6.1MB)
+2026-10-08T18:38:07.7745260Z _expo/static/js/web/index-645ef9e3e695f1e707a6a7059ccca985.js (354KB)
+2026-10-08T18:38:07.7746262Z 
+2026-10-08T18:38:07.7746822Z › Files (3):
+2026-10-08T18:38:07.7747898Z favicon.ico (15KB)
+2026-10-08T18:38:07.7752418Z index.html (1.5KB)
+2026-10-08T18:38:07.7752979Z metadata.json (49B)
+2026-10-08T18:38:07.7904614Z 
+2026-10-08T18:38:07.7909111Z Exported: dist
+2026-10-08T18:38:09.5686401Z Offline shell: 14 assets (6702 KiB). Updates wait for parent action.
+2026-10-08T18:38:09.6065794Z ##[group]Run npm run test:services
+2026-10-08T18:38:09.6066178Z [36;1mnpm run test:services[0m
+2026-10-08T18:38:09.6102488Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:38:09.6102858Z env:
+2026-10-08T18:38:09.6103201Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:38:09.6103570Z   TEST_PGUSER: little_say_test
+2026-10-08T18:38:09.6103940Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:38:09.6104489Z ##[endgroup]
+2026-10-08T18:38:09.6974896Z 
+2026-10-08T18:38:09.6976748Z > little-say-workspace@0.2.1 test:services
+2026-10-08T18:38:09.6978050Z > firebase emulators:exec --only auth --project demo-little-say "npm run test:integration"
+2026-10-08T18:38:09.6978872Z 
+2026-10-08T18:38:10.7476236Z [36m[1mi  emulators:[22m[39m Starting emulators: auth
+2026-10-08T18:38:10.7487762Z [36m[1mi  emulators:[22m[39m Detected demo project ID "demo-little-say", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+2026-10-08T18:38:15.6986445Z [36m[1mi [22m[39m Running script: [1mnpm run test:integration[22m
+2026-10-08T18:38:15.8302746Z 
+2026-10-08T18:38:15.8303725Z > little-say-workspace@0.2.1 test:integration
+2026-10-08T18:38:15.8304841Z > vitest run --config vitest.integration.config.ts
+2026-10-08T18:38:15.8305236Z 
+2026-10-08T18:38:16.1310973Z 
+2026-10-08T18:38:16.1312748Z [1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/home/runner/work/little-say/little-say[39m
+2026-10-08T18:38:16.1333867Z 
+2026-10-08T18:38:17.9733029Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:17.9735629Z (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T18:38:18.1853268Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:18.3201280Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:18.3946730Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:18.4063814Z [36m[1mi [22m[39m To verify the email address 5cb8a736-878d-4924-9711-a4276cdb5b26@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=kO32-QTxnI1T2uJx9I6LMWRCJxfSWl8faelqA2Xeo9o6LoieCiRLsW&apiKey=fake-api-key
+2026-10-08T18:38:18.4101656Z [36m[1mi [22m[39m To reset the password for 5cb8a736-878d-4924-9711-a4276cdb5b26@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=resetPassword&lang=en&oobCode=OTFxGsCfDb23l1G3QynWVmSFRGD-t5tjeb3jWjXonKZjAh2HX6Kk-g&apiKey=fake-api-key&newPassword=NEW_PASSWORD_HERE
+2026-10-08T18:38:18.4658066Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:18.5604512Z (node:4215) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:18.6145730Z  [32m✓[39m apps/server/test/firebase.integration.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 723[2mms[22m[39m
+2026-10-08T18:38:19.4807239Z  [32m✓[39m apps/server/test/accounts.integration.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 496[2mms[22m[39m
+2026-10-08T18:38:20.2126534Z  [32m✓[39m apps/server/test/database.integration.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 574[2mms[22m[39m
+2026-10-08T18:38:20.2145094Z 
+2026-10-08T18:38:20.2149356Z [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+2026-10-08T18:38:20.2151917Z [2m      Tests [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+2026-10-08T18:38:20.2153027Z [2m   Start at [22m 18:38:16
+2026-10-08T18:38:20.2154534Z [2m   Duration [22m 4.08s[2m (transform 857ms, setup 0ms, import 1.94s, tests 1.79s, environment 0ms)[22m
+2026-10-08T18:38:20.2155397Z 
+2026-10-08T18:38:20.2464650Z [32m[1m✔ [22m[39m Script exited successfully (code 0)
+2026-10-08T18:38:20.7477050Z [36m[1mi  emulators:[22m[39m Shutting down emulators.
+2026-10-08T18:38:20.7479787Z [36m[1mi  auth:[22m[39m Stopping Authentication Emulator
+2026-10-08T18:38:20.7483990Z [36m[1mi  hub:[22m[39m Stopping emulator hub
+2026-10-08T18:38:20.7492014Z [36m[1mi  logging:[22m[39m Stopping Logging Emulator
+2026-10-08T18:38:20.7933386Z ##[group]Run npx playwright install --with-deps chromium
+2026-10-08T18:38:20.7934315Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-10-08T18:38:20.7975164Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:38:20.7975499Z env:
+2026-10-08T18:38:20.7975762Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:38:20.7976116Z   TEST_PGUSER: little_say_test
+2026-10-08T18:38:20.7976485Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:38:20.7976803Z ##[endgroup]
+2026-10-08T18:38:21.5217662Z Installing dependencies...
+2026-10-08T18:38:21.5325930Z Switching to root user to install dependencies...
+2026-10-08T18:38:21.6546987Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-08T18:38:21.6782727Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-08T18:38:21.7885585Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main all Packages [640 B]
+2026-10-08T18:38:21.7989436Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [531 kB]
+2026-10-08T18:38:21.8063949Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.3 kB]
+2026-10-08T18:38:21.8065453Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-08T18:38:21.8073475Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-08T18:38:21.8186690Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-08T18:38:21.8212184Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [474 kB]
+2026-10-08T18:38:21.8213792Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-08T18:38:21.9142989Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1375 kB]
+2026-10-08T18:38:21.9241413Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [306 kB]
+2026-10-08T18:38:21.9285549Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-08T18:38:21.9445688Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-08T18:38:21.9468956Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1761 kB]
+2026-10-08T18:38:21.9655377Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [401 kB]
+2026-10-08T18:38:21.9685402Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.0 kB]
+2026-10-08T18:38:21.9715281Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-10-08T18:38:22.0400330Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1115 kB]
+2026-10-08T18:38:22.0453895Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [227 kB]
+2026-10-08T18:38:22.0936041Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1218 kB]
+2026-10-08T18:38:22.1055873Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [245 kB]
+2026-10-08T18:38:22.1076689Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1632 kB]
+2026-10-08T18:38:22.1195749Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [376 kB]
+2026-10-08T18:38:22.1216053Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [11.6 kB]
+2026-10-08T18:38:28.2661832Z Fetched 12.2 MB in 1s (8870 kB/s)
+2026-10-08T18:38:29.0785726Z Reading package lists...
+2026-10-08T18:38:29.1205706Z Reading package lists...
+2026-10-08T18:38:29.3075819Z Building dependency tree...
+2026-10-08T18:38:29.3082538Z Reading state information...
+2026-10-08T18:38:29.4653568Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-10-08T18:38:29.4655632Z libasound2t64 set to manually installed.
+2026-10-08T18:38:29.4658106Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:38:29.4659449Z libatk-bridge2.0-0t64 set to manually installed.
+2026-10-08T18:38:29.4660176Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:38:29.4660852Z libatk1.0-0t64 set to manually installed.
+2026-10-08T18:38:29.4661466Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-10-08T18:38:29.4662035Z libatspi2.0-0t64 set to manually installed.
+2026-10-08T18:38:29.4662762Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-10-08T18:38:29.4663316Z libcairo2 set to manually installed.
+2026-10-08T18:38:29.4663963Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-10-08T18:38:29.4665029Z libcups2t64 set to manually installed.
+2026-10-08T18:38:29.4665761Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-10-08T18:38:29.4666393Z libdbus-1-3 set to manually installed.
+2026-10-08T18:38:29.4667014Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-10-08T18:38:29.4667723Z libdrm2 set to manually installed.
+2026-10-08T18:38:29.4668445Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-10-08T18:38:29.4669098Z libgbm1 set to manually installed.
+2026-10-08T18:38:29.4669832Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.9).
+2026-10-08T18:38:29.4670506Z libglib2.0-0t64 set to manually installed.
+2026-10-08T18:38:29.4671186Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-10-08T18:38:29.4671893Z libnspr4 set to manually installed.
+2026-10-08T18:38:29.4672475Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-10-08T18:38:29.4672915Z libnss3 set to manually installed.
+2026-10-08T18:38:29.4673429Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-10-08T18:38:29.4673890Z libpango-1.0-0 set to manually installed.
+2026-10-08T18:38:29.4674658Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-10-08T18:38:29.4675102Z libx11-6 set to manually installed.
+2026-10-08T18:38:29.4675563Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-10-08T18:38:29.4675999Z libxcb1 set to manually installed.
+2026-10-08T18:38:29.4676495Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-10-08T18:38:29.4676949Z libxcomposite1 set to manually installed.
+2026-10-08T18:38:29.4677396Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-10-08T18:38:29.4677899Z libxdamage1 set to manually installed.
+2026-10-08T18:38:29.4678364Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-10-08T18:38:29.4679051Z libxext6 set to manually installed.
+2026-10-08T18:38:29.4679527Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-10-08T18:38:29.4679964Z libxfixes3 set to manually installed.
+2026-10-08T18:38:29.4680450Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-10-08T18:38:29.4680913Z libxkbcommon0 set to manually installed.
+2026-10-08T18:38:29.4681398Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-10-08T18:38:29.4681831Z libxrandr2 set to manually installed.
+2026-10-08T18:38:29.4682321Z xvfb is already the newest version (2:21.1.12-1ubuntu1.8).
+2026-10-08T18:38:29.4682904Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-10-08T18:38:29.4683499Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-10-08T18:38:29.4684031Z libfontconfig1 set to manually installed.
+2026-10-08T18:38:29.4687026Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-10-08T18:38:29.4687564Z fonts-liberation set to manually installed.
+2026-10-08T18:38:29.4688074Z The following additional packages will be installed:
+2026-10-08T18:38:29.4688513Z   xfonts-encodings xfonts-utils
+2026-10-08T18:38:29.4688877Z Recommended packages:
+2026-10-08T18:38:29.4689252Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-10-08T18:38:29.4838674Z The following NEW packages will be installed:
+2026-10-08T18:38:29.4839831Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-10-08T18:38:29.4846279Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-10-08T18:38:29.4847259Z   xfonts-utils
+2026-10-08T18:38:29.4851711Z The following packages will be upgraded:
+2026-10-08T18:38:29.4858055Z   libfreetype6
+2026-10-08T18:38:29.5011735Z 1 upgraded, 9 newly installed, 0 to remove and 20 not upgraded.
+2026-10-08T18:38:29.5012600Z Need to get 21.5 MB of archives.
+2026-10-08T18:38:29.5013487Z After this operation, 79.5 MB of additional disk space will be used.
+2026-10-08T18:38:29.5014864Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-08T18:38:29.5863567Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-10-08T18:38:29.6655799Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-10-08T18:38:29.7430165Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-10-08T18:38:29.7749624Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-10-08T18:38:29.8424407Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-10-08T18:38:29.9596133Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libfreetype6 amd64 2.13.2+dfsg-1ubuntu0.2 [403 kB]
+2026-10-08T18:38:29.9960845Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-10-08T18:38:30.0358534Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-10-08T18:38:30.0726254Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-10-08T18:38:30.1087176Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-10-08T18:38:30.3480952Z Fetched 21.5 MB in 1s (34.8 MB/s)
+2026-10-08T18:38:30.3688165Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-10-08T18:38:30.3857957Z (Reading database ... 
+2026-10-08T18:38:30.3858767Z (Reading database ... 5%
+2026-10-08T18:38:30.3859525Z (Reading database ... 10%
+2026-10-08T18:38:30.3859944Z (Reading database ... 15%
+2026-10-08T18:38:30.3860296Z (Reading database ... 20%
+2026-10-08T18:38:30.3860640Z (Reading database ... 25%
+2026-10-08T18:38:30.3861062Z (Reading database ... 30%
+2026-10-08T18:38:30.3861570Z (Reading database ... 35%
+2026-10-08T18:38:30.3862419Z (Reading database ... 40%
+2026-10-08T18:38:30.3863061Z (Reading database ... 45%
+2026-10-08T18:38:30.3863642Z (Reading database ... 50%
+2026-10-08T18:38:30.3891491Z (Reading database ... 55%
+2026-10-08T18:38:30.4693201Z (Reading database ... 60%
+2026-10-08T18:38:30.7175217Z (Reading database ... 65%
+2026-10-08T18:38:30.8654846Z (Reading database ... 70%
+2026-10-08T18:38:31.0678429Z (Reading database ... 75%
+2026-10-08T18:38:31.2199349Z (Reading database ... 80%
+2026-10-08T18:38:31.3678312Z (Reading database ... 85%
+2026-10-08T18:38:31.5699937Z (Reading database ... 90%
+2026-10-08T18:38:31.7112826Z (Reading database ... 95%
+2026-10-08T18:38:31.7113996Z (Reading database ... 100%
+2026-10-08T18:38:31.7115870Z (Reading database ... 203191 files and directories currently installed.)
+2026-10-08T18:38:31.7160542Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-10-08T18:38:31.7297206Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-08T18:38:32.0582613Z Selecting previously unselected package fonts-freefont-ttf.
+2026-10-08T18:38:32.0699884Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-10-08T18:38:32.0708524Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-08T18:38:32.2272255Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-10-08T18:38:32.2386171Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-10-08T18:38:32.2404481Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-08T18:38:32.2565201Z Selecting previously unselected package fonts-unifont.
+2026-10-08T18:38:32.2681680Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-10-08T18:38:32.2694277Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-10-08T18:38:32.6276936Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-10-08T18:38:32.6391909Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-10-08T18:38:32.6474009Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-08T18:38:33.2701076Z Preparing to unpack .../5-libfreetype6_2.13.2+dfsg-1ubuntu0.2_amd64.deb ...
+2026-10-08T18:38:33.2732487Z Unpacking libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) over (2.13.2+dfsg-1ubuntu0.1) ...
+2026-10-08T18:38:33.2965201Z Selecting previously unselected package xfonts-encodings.
+2026-10-08T18:38:33.3070597Z Preparing to unpack .../6-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-10-08T18:38:33.3079951Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-08T18:38:33.3325115Z Selecting previously unselected package xfonts-utils.
+2026-10-08T18:38:33.3436646Z Preparing to unpack .../7-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-10-08T18:38:33.3443125Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-10-08T18:38:33.3706432Z Selecting previously unselected package xfonts-cyrillic.
+2026-10-08T18:38:33.3822246Z Preparing to unpack .../8-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-10-08T18:38:33.3834990Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-08T18:38:33.4155533Z Selecting previously unselected package xfonts-scalable.
+2026-10-08T18:38:33.4255478Z Preparing to unpack .../9-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-10-08T18:38:33.4265587Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-08T18:38:33.4657708Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-10-08T18:38:33.4761345Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-10-08T18:38:33.4780179Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-10-08T18:38:33.4798472Z Setting up libfreetype6:amd64 (2.13.2+dfsg-1ubuntu0.2) ...
+2026-10-08T18:38:33.4815787Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-10-08T18:38:33.4833572Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-10-08T18:38:33.4887443Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-10-08T18:38:33.4901192Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-10-08T18:38:33.4919497Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-10-08T18:38:33.4955159Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-10-08T18:38:33.5199367Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-10-08T18:38:33.5413738Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-08T18:38:33.7118666Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-08T18:38:33.7137680Z Not building database; man-db/auto-update is not 'true'.
+2026-10-08T18:38:33.7152208Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-10-08T18:38:34.3052723Z 
+2026-10-08T18:38:34.3077290Z Running kernel seems to be up-to-date.
+2026-10-08T18:38:34.3084715Z 
+2026-10-08T18:38:34.3085163Z Restarting services...
+2026-10-08T18:38:34.3121503Z  systemctl restart php8.3-fpm.service
+2026-10-08T18:38:34.3905029Z 
+2026-10-08T18:38:34.3915669Z No containers need to be restarted.
+2026-10-08T18:38:34.3916523Z 
+2026-10-08T18:38:34.3917025Z No user sessions are running outdated binaries.
+2026-10-08T18:38:34.3917434Z 
+2026-10-08T18:38:34.3917973Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-08T18:38:35.2421098Z Downloading Chrome for Testing 153.0.8010.12 (playwright chromium v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-linux64.zip
+2026-10-08T18:38:35.6512984Z |                                                                                |   0% of 186.8 MiB
+2026-10-08T18:38:35.8635289Z |■■■■■■■■                                                                        |  10% of 186.8 MiB
+2026-10-08T18:38:35.9645878Z |■■■■■■■■■■■■■■■■                                                                |  20% of 186.8 MiB
+2026-10-08T18:38:36.1011570Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 186.8 MiB
+2026-10-08T18:38:36.2346046Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 186.8 MiB
+2026-10-08T18:38:36.3835045Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 186.8 MiB
+2026-10-08T18:38:36.5281882Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 186.8 MiB
+2026-10-08T18:38:36.6726508Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 186.8 MiB
+2026-10-08T18:38:36.8993597Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 186.8 MiB
+2026-10-08T18:38:37.0670289Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 186.8 MiB
+2026-10-08T18:38:37.1956512Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 186.8 MiB
+2026-10-08T18:38:40.4550518Z Chrome for Testing 153.0.8010.12 (playwright chromium v1243) downloaded to /home/runner/.cache/ms-playwright/chromium-1243
+2026-10-08T18:38:40.4556778Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-10-08T18:38:40.8243145Z |                                                                                |   0% of 2.3 MiB
+2026-10-08T18:38:40.8552265Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-10-08T18:38:40.8688273Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-10-08T18:38:40.8801212Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-10-08T18:38:40.8895695Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-10-08T18:38:40.8927152Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-10-08T18:38:40.9021682Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-10-08T18:38:40.9055972Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-10-08T18:38:40.9141680Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-10-08T18:38:40.9156616Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-10-08T18:38:40.9180894Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-10-08T18:38:40.9764790Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-10-08T18:38:40.9769216Z Downloading Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip
+2026-10-08T18:38:41.3682692Z |                                                                                |   0% of 114.3 MiB
+2026-10-08T18:38:41.5458470Z |■■■■■■■■                                                                        |  10% of 114.3 MiB
+2026-10-08T18:38:41.6345195Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.3 MiB
+2026-10-08T18:38:41.7021251Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.3 MiB
+2026-10-08T18:38:41.7944341Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.3 MiB
+2026-10-08T18:38:41.8876670Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.3 MiB
+2026-10-08T18:38:41.9563890Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.3 MiB
+2026-10-08T18:38:42.0456601Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.3 MiB
+2026-10-08T18:38:42.1267855Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.3 MiB
+2026-10-08T18:38:42.2024981Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.3 MiB
+2026-10-08T18:38:42.2948387Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.3 MiB
+2026-10-08T18:38:44.7928185Z Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1243
+2026-10-08T18:38:44.9610719Z ##[group]Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"
+2026-10-08T18:38:44.9611689Z [36;1mnpx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"[0m
+2026-10-08T18:38:44.9660958Z shell: /usr/bin/bash -e {0}
+2026-10-08T18:38:44.9661363Z env:
+2026-10-08T18:38:44.9661667Z   TEST_PGDATABASE: little_say_test
+2026-10-08T18:38:44.9662019Z   TEST_PGUSER: little_say_test
+2026-10-08T18:38:44.9662370Z   TEST_PGPASSWORD: little_say_test
+2026-10-08T18:38:44.9662721Z ##[endgroup]
+2026-10-08T18:38:46.1517701Z [36m[1mi  emulators:[22m[39m Starting emulators: auth
+2026-10-08T18:38:46.1519819Z [36m[1mi  emulators:[22m[39m Detected demo project ID "demo-little-say", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+2026-10-08T18:38:51.0782870Z [36m[1mi [22m[39m Running script: [1mnpm run test:accounts:web[22m
+2026-10-08T18:38:51.2107683Z 
+2026-10-08T18:38:51.2108702Z > little-say-workspace@0.2.1 test:accounts:web
+2026-10-08T18:38:51.2115945Z > playwright test --config playwright.accounts.config.ts
+2026-10-08T18:38:51.2116542Z 
+2026-10-08T18:38:53.0241873Z [WebServer] (node:5277) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+2026-10-08T18:38:53.0245861Z [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+2026-10-08T18:38:54.4254754Z 
+2026-10-08T18:38:54.4255828Z Running 5 tests using 1 worker
+2026-10-08T18:39:04.2314301Z ··[36m[1mi [22m[39m To verify the email address family_845e4b18@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=7NlJ3ckcXANqGvo31cl47TQ_LAN-tymyBAWQr8Kdjk7HoZckAPO1bV&apiKey=fake-api-key
+2026-10-08T18:39:14.7876994Z ··[36m[1mi [22m[39m To verify the email address 7d9bbd12-f037-4094-ba7d-74407df23e08@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=khy9YPj8qh5ZbGsxbnmV9J21edMybDHjbTeurs6cQJhcTAhnDWFzKf&apiKey=fake-api-key
+2026-10-08T18:39:14.8014800Z [36m[1mi [22m[39m To verify the email address aa06d7cf-fbf8-4937-a075-e314bcfeb35b@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=c5E9igI09U9fMOUYV1Jwy7jJM-d8zV4SCtLB8NQv1tcYbnTb4Ti1-C&apiKey=fake-api-key
+2026-10-08T18:39:22.7303384Z ·
+2026-10-08T18:39:22.7311835Z   5 passed (31.0s)
+2026-10-08T18:39:22.7457923Z [32m[1m✔ [22m[39m Script exited successfully (code 0)
+2026-10-08T18:39:23.2473522Z [36m[1mi  emulators:[22m[39m Shutting down emulators.
+2026-10-08T18:39:23.2486289Z [36m[1mi  auth:[22m[39m Stopping Authentication Emulator
+2026-10-08T18:39:23.2496360Z [36m[1mi  hub:[22m[39m Stopping emulator hub
+2026-10-08T18:39:23.2497314Z [36m[1mi  logging:[22m[39m Stopping Logging Emulator
+2026-10-08T18:39:23.2995427Z Post job cleanup.
+2026-10-08T18:39:23.4357486Z (node:5630) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-08T18:39:23.4358693Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-08T18:39:23.4360868Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-7a0bfdc6887e3de1a754c10083f9a904e2db9b0973f7db97d47681685b0be4ad, not saving cache.
+2026-10-08T18:39:23.4463078Z Post job cleanup.
+2026-10-08T18:39:23.5335182Z [command]/usr/bin/git version
+2026-10-08T18:39:23.5385279Z git version 2.55.0
+2026-10-08T18:39:23.5419060Z Temporarily overriding HOME='/home/runner/work/_temp/33228bce-be75-48f6-b62c-f0ff7cc13b37' before making global git config changes
+2026-10-08T18:39:23.5425355Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-08T18:39:23.5429016Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/little-say/little-say
+2026-10-08T18:39:23.5496271Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-08T18:39:23.5539083Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-08T18:39:23.5825757Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-08T18:39:23.5865093Z http.https://github.com/.extraheader
+2026-10-08T18:39:23.5866299Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-08T18:39:23.5985831Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-08T18:39:23.6535263Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-08T18:39:23.6610493Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-08T18:39:23.6984392Z Print service container logs: 66841dfec5b4491c9b5e2c6e5a14fec8_postgres17bookworm_919b32
+2026-10-08T18:39:23.6988523Z ##[command]/usr/bin/docker logs --details 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:39:23.7115439Z  initdb: warning: enabling "trust" authentication for local connections
+2026-10-08T18:39:23.7116259Z  The files belonging to this database system will be owned by user "postgres".
+2026-10-08T18:39:23.7117194Z  initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-08T18:39:23.7117965Z  This user must also own the server process.
+2026-10-08T18:39:23.7119798Z  2026-10-08 18:36:08.003 UTC [1] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+2026-10-08T18:39:23.7120594Z  2026-10-08 18:36:08.003 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-08T18:39:23.7121125Z  2026-10-08 18:36:08.003 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-08T18:39:23.7121831Z  2026-10-08 18:36:08.004 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-08T18:39:23.7122434Z  2026-10-08 18:36:08.007 UTC [62] LOG:  database system was shut down at 2026-10-08 18:36:07 UTC
+2026-10-08T18:39:23.7122975Z  2026-10-08 18:36:08.012 UTC [1] LOG:  database system is ready to accept connections
+2026-10-08T18:39:23.7123551Z  2026-10-08 18:38:19.821 UTC [363] ERROR:  relation "pgmigrations" does not exist at character 18
+2026-10-08T18:39:23.7124275Z  2026-10-08 18:38:19.821 UTC [363] STATEMENT:  SELECT name FROM pgmigrations ORDER BY id
+2026-10-08T18:39:23.7124929Z  2026-10-08 18:38:19.905 UTC [371] WARNING:  you don't own a lock of type ExclusiveLock
+2026-10-08T18:39:23.7125635Z  2026-10-08 18:38:20.124 UTC [395] ERROR:  duplicate key value violates unique constraint "atomic_work_pkey"
+2026-10-08T18:39:23.7126284Z  2026-10-08 18:38:20.124 UTC [395] DETAIL:  Key (id)=(1) already exists.
+2026-10-08T18:39:23.7126840Z  2026-10-08 18:38:20.124 UTC [395] STATEMENT:  INSERT INTO atomic_work VALUES (1)
+2026-10-08T18:39:23.7127286Z  
+2026-10-08T18:39:23.7127643Z  The database cluster will be initialized with locale "en_US.utf8".
+2026-10-08T18:39:23.7128053Z  The default database encoding has accordingly been set to "UTF8".
+2026-10-08T18:39:23.7128403Z  The default text search configuration will be set to "english".
+2026-10-08T18:39:23.7128677Z  
+2026-10-08T18:39:23.7128872Z  Data page checksums are disabled.
+2026-10-08T18:39:23.7129303Z  
+2026-10-08T18:39:23.7129562Z  fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2026-10-08T18:39:23.7129892Z  creating subdirectories ... ok
+2026-10-08T18:39:23.7130178Z  selecting dynamic shared memory implementation ... posix
+2026-10-08T18:39:23.7130478Z  selecting default "max_connections" ... 100
+2026-10-08T18:39:23.7130744Z  selecting default "shared_buffers" ... 128MB
+2026-10-08T18:39:23.7131010Z  selecting default time zone ... Etc/UTC
+2026-10-08T18:39:23.7131258Z  creating configuration files ... ok
+2026-10-08T18:39:23.7131502Z  running bootstrap script ... ok
+2026-10-08T18:39:23.7131779Z  performing post-bootstrap initialization ... ok
+2026-10-08T18:39:23.7132037Z  syncing data to disk ... ok
+2026-10-08T18:39:23.7132235Z  
+2026-10-08T18:39:23.7132392Z  
+2026-10-08T18:39:23.7132602Z  Success. You can now start the database server using:
+2026-10-08T18:39:23.7132850Z  
+2026-10-08T18:39:23.7133062Z      pg_ctl -D /var/lib/postgresql/data -l logfile start
+2026-10-08T18:39:23.7133324Z  
+2026-10-08T18:39:23.7133825Z  waiting for server to start....2026-10-08 18:36:07.592 UTC [46] LOG:  starting PostgreSQL 17.11 (Debian 17.11-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit
+2026-10-08T18:39:23.7140481Z  2026-10-08 18:36:07.592 UTC [46] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-08T18:39:23.7141439Z  2026-10-08 18:36:07.595 UTC [49] LOG:  database system was shut down at 2026-10-08 18:36:06 UTC
+2026-10-08T18:39:23.7142073Z  2026-10-08 18:36:07.598 UTC [46] LOG:  database system is ready to accept connections
+2026-10-08T18:39:23.7142524Z   done
+2026-10-08T18:39:23.7142777Z  server started
+2026-10-08T18:39:23.7143021Z  CREATE DATABASE
+2026-10-08T18:39:23.7143203Z  
+2026-10-08T18:39:23.7143364Z  
+2026-10-08T18:39:23.7143648Z  /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2026-10-08T18:39:23.7143972Z  
+2026-10-08T18:39:23.7144483Z  waiting for server to shut down....2026-10-08 18:36:07.782 UTC [46] LOG:  received fast shutdown request
+2026-10-08T18:39:23.7145063Z  2026-10-08 18:36:07.783 UTC [46] LOG:  aborting any active transactions
+2026-10-08T18:39:23.7145751Z  2026-10-08 18:36:07.785 UTC [46] LOG:  background worker "logical replication launcher" (PID 52) exited with exit code 1
+2026-10-08T18:39:23.7146392Z  2026-10-08 18:36:07.786 UTC [47] LOG:  shutting down
+2026-10-08T18:39:23.7146875Z  2026-10-08 18:36:07.787 UTC [47] LOG:  checkpoint starting: shutdown immediate
+2026-10-08T18:39:23.7147706Z  2026-10-08 18:36:07.962 UTC [47] LOG:  checkpoint complete: wrote 921 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.132 s, sync=0.041 s, total=0.176 s; sync files=301, longest=0.022 s, average=0.001 s; distance=4238 kB, estimate=4238 kB; lsn=0/190A9C8, redo lsn=0/190A9C8
+2026-10-08T18:39:23.7148488Z  2026-10-08 18:36:07.966 UTC [46] LOG:  database system is shut down
+2026-10-08T18:39:23.7148760Z   done
+2026-10-08T18:39:23.7148929Z  server stopped
+2026-10-08T18:39:23.7149108Z  
+2026-10-08T18:39:23.7149324Z  PostgreSQL init process complete; ready for start up.
+2026-10-08T18:39:23.7149577Z  
+2026-10-08T18:39:23.7154479Z Stop and remove container: 66841dfec5b4491c9b5e2c6e5a14fec8_postgres17bookworm_919b32
+2026-10-08T18:39:23.7158171Z ##[command]/usr/bin/docker rm --force 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:39:26.9348088Z 109e2c5e2148f9107d0f976dc58af72aea6248b3495f08935f393cdba874f0d9
+2026-10-08T18:39:26.9372657Z Remove container network: github_network_dc56a851dad0479c8a2df1d7bfd66533
+2026-10-08T18:39:26.9376211Z ##[command]/usr/bin/docker network rm github_network_dc56a851dad0479c8a2df1d7bfd66533
+2026-10-08T18:39:27.0055337Z github_network_dc56a851dad0479c8a2df1d7bfd66533
+2026-10-08T18:39:27.0127897Z Cleaning up orphan processes
+2026-10-08T18:39:27.0364687Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

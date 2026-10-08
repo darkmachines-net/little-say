@@ -1,8 +1,0 @@
-{
-  "prBodySha256": "8992e399b74edba5103de92e67403c021a73104f0adfbb6e7e46ee72d8ae63de",
-  "issueBodySha256": "01d4cee68cdd69b370c68c3d50919ee6ab19b428a39d1e796125664b90e719d5",
-  "oldEvidenceCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
-  "oldPublicationCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
-  "oldCaptureManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
-  "applicability": "Original artifacts remain historical with their original source identities. Although a08a723 and cece2ef have equal trees, actual master added accounts, release metadata, dependencies and entry setup. Old captures are not reused for the new baseline; all ten states were freshly captured on actual master/final with the account-choice fixture marker and entry action."
-}
