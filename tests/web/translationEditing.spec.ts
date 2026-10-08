@@ -138,6 +138,17 @@ for (const replace of [false, true]) test(`AI ${replace ? 'uses an explicitly re
   expect((await savedBoard(page)).tiles[0].translations[0].speech).toBe(replace ? 'бурёнка' : 'корова');
 });
 
+test('AI source-language collisions are refused without replacing saved corrections', async ({ page }) => {
+  const original = await openTranslations(page);
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: { boardId: original.id, baseRevision: original.revision, proposal: { title: original.title, explanation: 'Changed the source language.', needsClarification: false, tiles: original.tiles.map(tile => ({ existingId: tile.id, label: tile.languageMode === 'board' ? 'Бурёнка' : tile.label, speech: tile.languageMode === 'board' ? 'бурёнка' : tile.speech, language: tile.languageMode === 'board' ? 'ru-RU' : tile.language, emoji: '🐄', color: tile.color, translations: [] })) } } }));
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Change this board');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByText('Keep the original language and edit its translation instead', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Apply changes', exact: true })).toHaveCount(0);
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+});
+
 test('direct play entry inherits Russian and returns with corrected speech while source labels stay enabled', async ({ page }) => {
   await openTranslations(page);
   await page.getByRole('button', { name: 'Play board', exact: true }).click();

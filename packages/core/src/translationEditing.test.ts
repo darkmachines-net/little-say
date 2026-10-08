@@ -67,6 +67,15 @@ describe('translation corrections', () => {
     expect(() => applyTranslations(board, validateTranslations(request, { translations: [{ tileId: tile.id, language: 'ja-JP', label: '牛', speech: '牛' }] }))).toThrow('six saved translations');
     expect(board.tiles[0].translations).toHaveLength(6);
   });
+  it('refuses an AI source-language change that would shadow a saved correction even without a proposed translation', () => {
+    const { board, tile } = fixture();
+    board.tiles[0] = editTileTranslation(tile, 'ru-RU', { speech: 'коровушка' });
+    const draft = proposal(board);
+    draft.proposal.tiles[0] = { ...draft.proposal.tiles[0], language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка', translations: [] };
+    for (const replaceTranslations of [false, true]) expect(() => applyProposal(board, draft, () => 'unused', undefined, replaceTranslations)).toThrow('Keep the original language');
+    expect(tileInLanguage(board.tiles[0], 'ru-RU').speech).toBe('коровушка');
+    expect(board.tiles[0].language).toBe('en-US');
+  });
   it('changes audio identity for corrected speech, but keeps it for label-only corrections', () => {
     const { tile } = fixture();
     const key = (value: typeof tile) => { const resolved = tileInLanguage(value, 'ru-RU'); return speechKey({ text: resolved.speech, language: resolved.language }); };

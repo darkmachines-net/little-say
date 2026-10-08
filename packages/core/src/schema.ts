@@ -168,6 +168,7 @@ export function validateGeneratedBoard(value: GeneratedBoard, context: BoardCont
 /**
  * Apply a revision-bound proposal, preserving saved corrections (including stale words for review).
  * Only a separate parent review may enable replaceTranslations; never derive it from model output.
+ * Reject source-language changes that would shadow a protected saved translation.
  */
 export function applyProposal(current: Board | null, envelope: BoardProposal, id: () => string, now = new Date().toISOString(), replaceTranslations = false): Board {
   proposalSchema.parse(envelope);
@@ -184,6 +185,10 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
     tiles: proposal.tiles.map((tile, index) => {
       const previous = current?.tiles.find(t => t.id === tile.existingId);
       const source = tileSource(tile);
+      const changesSourceLanguage = previous && Intl.getCanonicalLocales(previous.language)[0] !== Intl.getCanonicalLocales(tile.language)[0];
+      if (changesSourceLanguage && previous.translations?.some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(tile.language)[0])) {
+        throw new Error('This proposal changes the original language to one with saved translations. Keep the original language and edit its translation instead, so saved corrections stay protected.');
+      }
       const translations = [...(previous?.translations ?? [])];
       for (const proposed of tile.translations ?? []) {
         const index = translations.findIndex(t => Intl.getCanonicalLocales(t.language)[0] === Intl.getCanonicalLocales(proposed.language)[0]);
