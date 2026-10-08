@@ -1,0 +1,147 @@
+{
+  "issue": 23,
+  "publishedCommits": 2,
+  "paths": 21,
+  "additions": 342,
+  "deletions": 30,
+  "commitDisposition": {
+    "ea87b78eb6c9e9612cc42b7eec490af9d8216b86": "Original exact prompt extraction; all 21 paths map to issue23.",
+    "0e2758de446674c4874bbce1df4eb51abaee35f4": "Ordinary merge of actual target, preserving both account and prompt-resource exports; remerge diff contains only index.ts conflict resolution."
+  },
+  "incomingTargetCommits": [
+    "e01efebcfe25af144690f3388edc53ef4b8ffc17",
+    "9dd18b856d6d900ab162be3f1544aac0b93d2b71",
+    "b0d2df116db2f5a4e7aaf4edd56017d3d9f664f1",
+    "da45fbdef33cd78abcbbd6a8216ac9b34d460e22",
+    "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  ],
+  "incomingDisposition": "All five commits are already ancestors of actual master. Their complete paths and parents are retained in incoming-target-history.txt, not hidden by the net diff. GitHub ordered PR commit inventory contains only original extraction and integration merge. No branch rewrite or retargeting.",
+  "pathsMapped": [
+    {
+      "path": "apps/mobile/src/ui/AiConversation.tsx",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "apps/server/src/picture-provider.ts",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "apps/server/src/prompts.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "apps/server/src/provider.ts",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "apps/server/src/synthesis.ts",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    },
+    {
+      "path": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    },
+    {
+      "path": "apps/server/test/prompt-payloads.test.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    },
+    {
+      "path": "apps/server/test/prompt-presets.test.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "packages/core/src/onboarding.ts",
+      "status": "modified",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "packages/core/src/promptPresets.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "packages/core/src/promptResources.test.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    },
+    {
+      "path": "packages/core/src/promptResources.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "prompts/README.md",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained caller and substitution guide for extracted resources"
+    },
+    {
+      "path": "prompts/server/board.json",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "prompts/server/pictures.json",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "prompts/server/speech.json",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "prompts/shared/conversation.json",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "prompts/shared/onboarding.json",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+    },
+    {
+      "path": "scripts/prompt-bundle.test.ts",
+      "status": "added",
+      "previousPath": null,
+      "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "checkedAtUtc": "2026-10-08T18:03:08.754Z",
+  "host": "MCHARTIER_ZBOOK",
+  "node": "v24.19.0",
+  "owner": "01a11ca6-7faa-7628-8031-ac89bc018019",
+  "priorOwner": "01a11432-1043-7419-b695-bf3ec9caf02a",
+  "ownership": "Explicit replacement after desktop registration change; prior task latest turn completed, idle verified through native read_thread. No competing local PR35 writer in native task inventory. Original worktrees untouched. This clone and its baseline worktree are under task-9.",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "standard": "workflow-v3 / pr-review-v3 and full supplied direct amendments read",
+  "permissions": "Command-specific supported approvals for Git, locked dependency install, local builds and mocked test subprocesses; no sandbox/proxy/ACL/security changes.",
+  "limitations": [
+    "iOS export fails on corrected head AND actual master: missing prop-types imported by AppleButton.ios.js. Shared identical locked dependency tree used for baseline reproduction; no dependency modification.",
+    "Docker not executed; native devices deferred; no live inference or provider operations.",
+    "Bot refusal 6029846176 is quota-only; no completed bot review claimed."
+  ]
+}

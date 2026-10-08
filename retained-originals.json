@@ -1,0 +1,30 @@
+[
+  {
+    "commit": "e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f",
+    "file": "manifest.json",
+    "url": "https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/manifest.json",
+    "sha256": "96c59178d5fb560a3b6a77e2b95a7ac5ad0034fcd5d53e21bba8efd196f527b3",
+    "unchanged": true
+  },
+  {
+    "commit": "4f53233d5b8e4c4546bcef91515d09a223048646",
+    "file": "publication.json",
+    "url": "https://github.com/MChartier/little-say/blob/4f53233d5b8e4c4546bcef91515d09a223048646/publication.json",
+    "sha256": "6b6eb05abe4ffefcaa84b702ba21bb20e81de28536cd2d90896d5c919c45fc61",
+    "unchanged": true
+  },
+  {
+    "commit": "99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472",
+    "file": "qa-verdict-communication.json",
+    "url": "https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/qa-verdict-communication.json",
+    "sha256": "365804dd546a8276949763c1282fdf84826618e8ca1516371f6b0617ed1adee4",
+    "unchanged": true
+  },
+  {
+    "commit": "8075c9cd71bd98cedf8e9e61380f2b989ad9fda7",
+    "file": "verdict.json",
+    "url": "https://github.com/MChartier/little-say/blob/8075c9cd71bd98cedf8e9e61380f2b989ad9fda7/verdict.json",
+    "sha256": "5a5cb1cea0711edb758d45550dde2130119cd94d17860a3bf1dfbe8f1057a025",
+    "unchanged": true
+  }
+]

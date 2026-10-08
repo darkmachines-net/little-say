@@ -1,0 +1,24 @@
+commit 0e2758de446674c4874bbce1df4eb51abaee35f4
+Merge: ea87b78 fabb925
+Author:     Codex <codex@openai.com>
+AuthorDate: Thu Oct 8 10:56:42 2026 -0700
+Commit:     Codex <codex@openai.com>
+CommitDate: Thu Oct 8 10:56:42 2026 -0700
+
+    Merge current master while preserving account and prompt exports
+
+diff --git a/packages/core/src/index.ts b/packages/core/src/index.ts
+remerge CONFLICT (content): Merge conflict in packages/core/src/index.ts
+index 49b3b14..7032c1b 100644
+--- a/packages/core/src/index.ts
++++ b/packages/core/src/index.ts
+@@ -10,9 +10,6 @@ export * from './languageProfile';
+ export * from './onboarding';
+ export * from './photo';
+ export * from './pictures';
+-<<<<<<< ea87b78 (Extract exact model prompts into versioned resources)
+ export * from './promptResources';
+ export * from './promptPresets';
+-=======
+ export * from './account';
+->>>>>>> fabb925 (Prepare Little Say release 37716705314 (#40))

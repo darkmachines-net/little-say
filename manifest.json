@@ -1,0 +1,175 @@
+{
+  "generatedAtUtc": "2026-10-08T18:03:08.761Z",
+  "source": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+  "baseline": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "artifacts": [
+    {
+      "file": "actual-target.patch",
+      "sha256": "b482e172fa809682a7536a4e6a7165a8e54c4ab5fba3afa5051ce7f289347be0"
+    },
+    {
+      "file": "after/capture-current.config.ts",
+      "sha256": "b81eb8eacabe828d101ffffc654c998c3980d3fa9acb5d899992e07fa2dcf91c"
+    },
+    {
+      "file": "after/capture-payloads.test.ts",
+      "sha256": "41ca4c7ff25e19dfd213f6453db794e559de4a4d0f6627ed0ab0a7a75119cb48"
+    },
+    {
+      "file": "after/capture-presets.test.ts",
+      "sha256": "800666cd45ed2de68a76bc0f0c938eb8868e3d94ea41d84f10fcd2b4ad2512d4"
+    },
+    {
+      "file": "after/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "after/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "after/test.log",
+      "sha256": "27a0ced1000a70cdd93115b2112259f2a012da1c94673dbaaff6814623b746c9"
+    },
+    {
+      "file": "android-export.log",
+      "sha256": "ffa9dfa82fb435fe9b8a14ba1d0df59408493c938aebb70969a2f482d1475308"
+    },
+    {
+      "file": "baseline-ios-export.log",
+      "sha256": "743670bc36d72caa92b6d58a1c833b0900b9c2399725eabd97c14661eb13fa8a"
+    },
+    {
+      "file": "before/capture-current.config.ts",
+      "sha256": "16cac4d7b36062c0c65d795634309c129289a046f07985e053e3abf976bf98b5"
+    },
+    {
+      "file": "before/capture-payloads.test.ts",
+      "sha256": "28aaa8e13f355948a639f9c66145af5c95db5fea0d1d563c888a4a025954df02"
+    },
+    {
+      "file": "before/capture-presets.test.ts",
+      "sha256": "70acb0f8cde8e5febc755410cf792a876aee28bea4ed740366262827ab976998"
+    },
+    {
+      "file": "before/payloads.json",
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4"
+    },
+    {
+      "file": "before/presets.json",
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02"
+    },
+    {
+      "file": "before/test.log",
+      "sha256": "30d6442c4de4344d3550a28a76c24b8347bdc747037fc068091c046ffcabdb8f"
+    },
+    {
+      "file": "bindings.json",
+      "sha256": "e1fe022a68ca86131fb0a49af3009305a1afaa94226c37b8f52a6939cb9100fd"
+    },
+    {
+      "file": "browser-final.log",
+      "sha256": "2af33e69f8538bd41dd67d29fee23f56c428033dcd65942e03ed5a7807b74a42"
+    },
+    {
+      "file": "browser.config.ts",
+      "sha256": "fe51aac78d45b473a6a58224a3ec58e14bcbff88d72a57a419223621f368e859"
+    },
+    {
+      "file": "capture-current.mjs",
+      "sha256": "7d1bffe6a4aef64b09d80159c556a2313f2d78a99d6a5c9497237720311ec88c"
+    },
+    {
+      "file": "check-final.log",
+      "sha256": "9208b3f7bfbc2836c19addd91eaab4ff5888ef05381ae1a2f390bc6cdd7b5a5d"
+    },
+    {
+      "file": "checks.json",
+      "sha256": "aaeab520943519e6cd917c23f3087f0fb9e0087e07e8411655d707bb3cc2a180"
+    },
+    {
+      "file": "comparison.json",
+      "sha256": "ed2b919c7ef681c1411ec92a06a438e4e74f35d49a3d624cf515b4c51cbd44a4"
+    },
+    {
+      "file": "environment.json",
+      "sha256": "092dc2fe12e029042180bcd37a30c3a32323f0bfc989904d988939cbb4b30f6c"
+    },
+    {
+      "file": "feedback.json",
+      "sha256": "6cb6a4ecb5e3f93741760cbc3a398925bc7219e058bfea227d5e7164145bbeab"
+    },
+    {
+      "file": "incoming-target-history.txt",
+      "sha256": "318e105a1748f7efed1cedb64529489f20e875dc282174332b989d5d38fe2397"
+    },
+    {
+      "file": "integration-resolution.patch",
+      "sha256": "abe704658124feb512b593b9d7c0077955fab1ca459878ed0eeed14593bb4ec9"
+    },
+    {
+      "file": "issue-readback.json",
+      "sha256": "c41a5e297a5742f675ec9f86a14b97aba573c5c1d43ce57a707b38ad12f29a2b"
+    },
+    {
+      "file": "native-export.log",
+      "sha256": "1002fd5af06eb5f3a9e0ba5898b5b108c2c33b382a6facfb25c1a8b4f6d35d60"
+    },
+    {
+      "file": "original-commit.patch",
+      "sha256": "52e89601335190951585711b0ae94c43ba4b4ea2c717ff5fb6f61ac78b0793b5"
+    },
+    {
+      "file": "pr-readback.json",
+      "sha256": "93b1bd6a6b6c2c69cf9f7b5c34723ef8af4e276a4fc9145c1e4e7ac678f723f1"
+    },
+    {
+      "file": "prepare-evidence.mjs",
+      "sha256": "f13a0a0ea0bb93cbff3710dad4781121d54b4e8425ebc504f2d1e3c929073aee"
+    },
+    {
+      "file": "prior-pr-body.md",
+      "sha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb"
+    },
+    {
+      "file": "published-commits.json",
+      "sha256": "2fce923664fe69a92c80b05254cb39bebf159bb3e62582e64ace0e9a41e429c7"
+    },
+    {
+      "file": "published-files.json",
+      "sha256": "2bf7a97ae65546323beb46dd6691684bee5194e6e5f67ca02c21e13cd7a2cb53"
+    },
+    {
+      "file": "read-publication.mjs",
+      "sha256": "404eef90570bc23170b81c98a1d2a07078316bcf45f4f9ec08e413d38233a046"
+    },
+    {
+      "file": "README.md",
+      "sha256": "40f82299d2b050faf663f611b77dd296a94f35520cb7c935277334aae83365b0"
+    },
+    {
+      "file": "retained-originals.json",
+      "sha256": "93d5e8ae41c648706271c767a91e5631255c25f6ec0e91a33c1b9c546fd5177c"
+    },
+    {
+      "file": "review-threads.json",
+      "sha256": "0ac838150f3849b127ce04dcfae85928372c1c43bc1b5fffc95240c479593396"
+    },
+    {
+      "file": "runtime-report.json",
+      "sha256": "e7b1708b92779bb5e22f8c3808a99558a5cae89fdf0906b253e2375392898c72"
+    },
+    {
+      "file": "runtime.log",
+      "sha256": "a29a70a7d9ce31cbdd6af057d9e08e9d40042a8b0a7221102d2467c625a6aeaa"
+    },
+    {
+      "file": "scope-assessment.json",
+      "sha256": "f8af4f89cce4f948fe430d7b2259636e7e73cd5ad4ae80e6030fdb90a672c278"
+    },
+    {
+      "file": "verify-runtime-current.mjs",
+      "sha256": "a9fdfc53ac91e02f13c9803bc76a4cf4c00e22fd3ad99127e7decf2c3fd691d6"
+    }
+  ]
+}
