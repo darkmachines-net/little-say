@@ -1,0 +1,66 @@
+{
+  "manifestSha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+  "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+  "harnessSha256": "d4192a3f4860c1c5748b4c34f92ea962dd23ddcf54af89c0e2e0fc1a15a3581a",
+  "capturedSources": [
+    {
+      "side": "before",
+      "sha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+    },
+    {
+      "side": "after",
+      "sha": "b064097ac6a02717adfd7507d8d4cd741353069c"
+    }
+  ],
+  "images": [
+    {
+      "filename": "before-board.png",
+      "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32"
+    },
+    {
+      "filename": "before-existing-translation-controls.png",
+      "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60"
+    },
+    {
+      "filename": "before-card.png",
+      "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2"
+    },
+    {
+      "filename": "after-board.png",
+      "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d"
+    },
+    {
+      "filename": "after-card.png",
+      "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6"
+    },
+    {
+      "filename": "after-empty-correction-refused.png",
+      "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026"
+    },
+    {
+      "filename": "after-manual-source-collision.png",
+      "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd"
+    },
+    {
+      "filename": "after-corrected-audio-failure.png",
+      "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d"
+    },
+    {
+      "filename": "after-stale-correction.png",
+      "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485"
+    },
+    {
+      "filename": "after-phone-board.png",
+      "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4"
+    },
+    {
+      "filename": "after-ai-replacement-review.png",
+      "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98"
+    },
+    {
+      "filename": "after-ai-source-collision.png",
+      "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5"
+    }
+  ],
+  "pixelAssessment": "All 12 fresh final images are byte-identical to the individually inspected prior states, including the empty-draft refusal. Final guard affects same-session collision refusal with unchanged error rendering. New/generated draft scenarios verified in browser tests."
+}

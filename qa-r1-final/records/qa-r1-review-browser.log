@@ -1,0 +1,31 @@
+[WebServer] npm notice run little-say-workspace@0.2.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.2.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:34548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:34548) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 17 tests using 1 worker
+
+(node:33908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:44:1 ΓÇ║ board selection opens the matching fields, retains drafts across languages and saves only corrected words (2.9s)
+  ok  2 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:67:1 ΓÇ║ account entry cancellation preserves corrected translations and the guest library (3.2s)
+  ok  3 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:92:37 ΓÇ║ empty manual corrections refuse save and duplicate; cancel and reload preserve saved words (3.4s)
+  ok  4 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:92:37 ΓÇ║ empty legacy corrections refuse save and duplicate; cancel and reload preserve saved words (3.2s)
+  ok  5 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:126:38 ΓÇ║ source collisions protect newly corrected generated translations in the current draft (2.7s)
+  ok  6 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:126:38 ΓÇ║ source collisions protect new translations in the current draft (2.7s)
+  ok  7 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:146:1 ΓÇ║ manual source-language collisions refuse save and duplicate without hiding a saved correction (2.7s)
+  ok  8 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:167:1 ΓÇ║ late TTS stays on its original key; failure and retry use the corrected input (2.7s)
+  ok  9 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:196:1 ΓÇ║ source edits retain stale corrected text for review and incomplete variants cannot be saved (2.8s)
+  ok 10 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:219:38 ΓÇ║ AI keeps a saved correction when replacement is declined (2.4s)
+  ok 11 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:219:38 ΓÇ║ AI uses an explicitly reviewed replacement (2.4s)
+  ok 12 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:242:1 ΓÇ║ AI source-language collisions are refused without replacing saved corrections (2.0s)
+  ok 13 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:253:1 ΓÇ║ direct play entry inherits Russian and returns with corrected speech while source labels stay enabled (4.9s)
+  ok 14 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:270:1 ΓÇ║ removing the selected language shows original words without deleting its correction (2.2s)
+  ok 15 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:283:1 ΓÇ║ missing variants stay blank, drafts survive switching and cancelled translation results cannot replace a retry (2.8s)
+  ok 16 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:316:1 ΓÇ║ prepared translation review identifies retained stale words instead of presenting English as Russian (2.4s)
+  ok 17 [edge] ΓÇ║ little-say-translations\tests\web\translationEditing.spec.ts:335:1 ΓÇ║ a failed save keeps the corrected board visible and retry persists it before reload (2.5s)
+
+  17 passed (52.5s)
