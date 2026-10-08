@@ -1,0 +1,327 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-release
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > retains the same release and original assets, records why, and unblocks only a fresh ID
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > cleans an interrupted stale run on the next cut without relying on its failure handler
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > handles cancellation before a PR but preserves review waits and queued merges
+Retired unpublished candidate 123: Run cancelled before preparation or publication. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > closes only an exact owned stale open version PR and retains its branch
+Retired unpublished candidate 123: Default branch moved from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa to cccccccccccccccccccccccccccccccccccccccc. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > refuses changed or foreign PRs and a changed retained asset
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > supports synchronous stale failure cleanup only in its own in-progress prepare job
+Retired unpublished candidate 123: Merged source cccccccccccccccccccccccccccccccccccccccc differs from validated candidate bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb. Journal and assets retained under abandoned/123.
+
+stdout | scripts/release/retirement.test.ts > unpublished candidate retirement > recovers interruption between draft creation and the first plan upload
+Retired unpublished candidate 123: Default branch moved from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa to cccccccccccccccccccccccccccccccccccccccc. Journal and assets retained under abandoned/123.
+
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > retains the same release and original assets, records why, and unblocks only a fresh ID 14ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > recovers a lost rename response idempotently without recreating the candidate 9ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > keeps retirement intent blocking when cleanup fails before or after rename 9ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a intent provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a running provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a failed provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > never retires a complete provider operation even without a successful receipt 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state prepared.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state receipt.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state ota.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves publication/unknown state unknown.json 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > requires all-attempt job proof, even when no operation asset was saved 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > preserves active runs and mismatched workflow ownership 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > cleans an interrupted stale run on the next cut without relying on its failure handler 6ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > handles cancellation before a PR but preserves review waits and queued merges 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > closes only an exact owned stale open version PR and retains its branch 7ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > refuses changed or foreign PRs and a changed retained asset 7ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > does not retire an exact merged candidate awaiting a prepare retry 0ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > supports synchronous stale failure cleanup only in its own in-progress prepare job 8ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > recovers interruption between draft creation and the first plan upload 7ms
+ Γ£ô scripts/release/retirement.test.ts > unpublished candidate retirement > keeps duplicate identities, missing byte digests, and foreign journals blocking 1ms
+ Γ£ô scripts/release/journal.test.ts > durable append-only candidate journal > blocks another unresolved run across profiles and allows its own retry 2ms
+ Γ£ô scripts/release/journal.test.ts > durable append-only candidate journal > recovers an upload timeout by reading the accepted immutable asset 5ms
+ Γ£ô scripts/release/journal.test.ts > durable append-only candidate journal > preserves per-platform operation history without overwriting parallel writers 13ms
+ Γ£ô scripts/release/journal.test.ts > durable append-only candidate journal > only completed release receipts advance baselines 0ms
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > retires only terminal stale preparation and preserves the original error if cleanup fails
+Retirement is incomplete: readback unavailable. The next fresh cut must reconcile the protected journal before planning.
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > validates forced dry-run operations without versions, PRs, or provider mutations
+Mode: **force_all**. Client: **internal**. Source: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+
+- server: forced
+- android build: forced
+- ios build: forced
+- android OTA: forced; eligible runtimes only
+- ios OTA: forced; eligible runtimes only
+- submit: skipped
+{
+  "schema": 1,
+  "runId": "123",
+  "source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "mode": "force_all",
+  "profile": "internal",
+  "bump": "patch",
+  "inputs": {
+    "server": "server-input",
+    "bundle": {
+      "android": "bundle-android",
+      "ios": "bundle-ios"
+    },
+    "native": {
+      "android": "native-android",
+      "ios": "native-ios"
+    },
+    "environmentHash": "env-hash"
+  },
+  "server": true,
+  "native": [
+    "android",
+    "ios"
+  ],
+  "submissions": [],
+  "ota": [
+    "android",
+    "ios"
+  ],
+  "reasons": [
+    "server: forced",
+    "android build: forced",
+    "ios build: forced",
+    "android OTA: forced; eligible runtimes only",
+    "ios OTA: forced; eligible runtimes only",
+    "submit: skipped"
+  ],
+  "serverVersion": "0.2.1",
+  "nativeRelease": {
+    "version": "0.1.1",
+    "androidVersionCode": 2,
+    "iosBuildNumber": "2",
+    "expoOwner": "test",
+    "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "serverUrl": "https://test.invalid"
+  },
+  "baselines": [],
+  "previousOta": [],
+  "otaTargets": [
+    {
+      "platform": "android",
+      "runtimeVersion": "0.1.1",
+      "eligible": true,
+      "reason": "new build in this run"
+    },
+    {
+      "platform": "ios",
+      "runtimeVersion": "0.1.1",
+      "eligible": true,
+      "reason": "new build in this run"
+    }
+  ],
+  "comparisons": {
+    "nativeBuildIds": {}
+  },
+  "changes": {
+    "server": true,
+    "native": [
+      "android",
+      "ios"
+    ],
+    "bundle": [
+      "android",
+      "ios"
+    ]
+  },
+  "channelBranch": {
+    "id": "branch-id",
+    "name": "internal"
+  }
+}
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > validates forced dry-run operations without versions, PRs, or provider mutations
+Dry run complete. No release operations performed.
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > exits an automatic no-change cut without allocating persisted versions or tags
+Mode: **auto**. Client: **internal**. Source: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`.
+
+- server: unchanged verified image
+- android build: unchanged native inputs
+- ios build: unchanged native inputs
+- android OTA: unchanged bundle
+- ios OTA: unchanged bundle
+- submit: skipped
+{
+  "schema": 1,
+  "runId": "123",
+  "source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "mode": "auto",
+  "profile": "internal",
+  "bump": "patch",
+  "inputs": {
+    "server": "server-input",
+    "bundle": {
+      "android": "bundle-android",
+      "ios": "bundle-ios"
+    },
+    "native": {
+      "android": "native-android",
+      "ios": "native-ios"
+    },
+    "environmentHash": "env-hash"
+  },
+  "server": false,
+  "native": [],
+  "submissions": [],
+  "ota": [],
+  "reasons": [
+    "server: unchanged verified image",
+    "android build: unchanged native inputs",
+    "ios build: unchanged native inputs",
+    "android OTA: unchanged bundle",
+    "ios OTA: unchanged bundle",
+    "submit: skipped"
+  ],
+  "serverVersion": "0.2.0",
+  "nativeRelease": {
+    "version": "0.1.0",
+    "androidVersionCode": 1,
+    "iosBuildNumber": "1",
+    "expoOwner": "test",
+    "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "serverUrl": "https://test.invalid"
+  },
+  "previousServer": {
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "version": "0.2.0",
+    "image": "ghcr.io/test/app",
+    "digest": "sha256:digest",
+    "input": "server-input"
+  },
+  "baselines": [
+    {
+      "schema": 2,
+      "platform": "android",
+      "profile": "internal",
+      "channel": "internal",
+      "environment": "preview",
+      "release": {
+        "version": "0.1.0",
+        "androidVersionCode": 1,
+        "iosBuildNumber": "1",
+        "expoOwner": "test",
+        "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "serverUrl": "https://test.invalid"
+      },
+      "runtimeVersion": "0.1.0",
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "fingerprint": "ffffffffffffffffffffffffffffffffffffffff",
+      "compatibility": "native-android",
+      "environmentHash": "env-hash",
+      "buildId": "android",
+      "artifactUrl": "https://example.invalid/app",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "schema": 2,
+      "platform": "ios",
+      "profile": "internal",
+      "channel": "internal",
+      "environment": "preview",
+      "release": {
+        "version": "0.1.0",
+        "androidVersionCode": 1,
+        "iosBuildNumber": "1",
+        "expoOwner": "test",
+        "expoProjectId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+        "serverUrl": "https://test.invalid"
+      },
+      "runtimeVersion": "0.1.0",
+      "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "fingerprint": "ffffffffffffffffffffffffffffffffffffffff",
+      "compatibility": "native-ios",
+      "environmentHash": "env-hash",
+      "buildId": "ios",
+      "artifactUrl": "https://example.invalid/app",
+      "artifactSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "previousOta": [],
+  "otaTargets": [],
+  "comparisons": {
+    "clientRunId": "122",
+    "serverCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "nativeBuildIds": {
+      "android": "android",
+      "ios": "ios"
+    }
+  },
+  "changes": {
+    "server": false,
+    "native": [],
+    "bundle": []
+  }
+}
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > exits an automatic no-change cut without allocating persisted versions or tags
+No publishable changes. No versions or tags allocated.
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > preserves a partially finalized release and completes its exact receipt after response loss
+Released internal from aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (auto).
+
+Server: ghcr.io/test/app@sha256:digest
+
+
+
+
+
+
+
+Image publication is not deployment. Store processing/public rollout and device installation or OTA uptake have not been verified.
+
+Release: https://github.com/test/app/releases/tag/release/internal/123
+
+stdout | scripts/release/unified.test.ts > orchestration publication boundaries > preserves a partially finalized release and completes its exact receipt after response loss
+Release 123 is already complete; no operations repeated.
+
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > checks tombstones before planning and reconciles prior runs before allocating new work 3ms
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > retires only terminal stale preparation and preserves the original error if cleanup fails 3ms
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > validates forced dry-run operations without versions, PRs, or provider mutations 1ms
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > exits an automatic no-change cut without allocating persisted versions or tags 1ms
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > rejects non-default branches and stale publication retries 1ms
+ Γ£ô scripts/release/unified.test.ts > orchestration publication boundaries > preserves a partially finalized release and completes its exact receipt after response loss 2ms
+stdout | scripts/release/candidate.test.ts > protected version candidate > checks the combined candidate before push, normal merge, and exact tree readback
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+stdout | scripts/release/candidate.test.ts > protected version candidate > recovers a pushed branch whose journal/PR response was lost without another increment
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+stdout | scripts/release/candidate.test.ts > protected version candidate > resumes after review and never bypasses it
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+stdout | scripts/release/candidate.test.ts > protected version candidate > reuses a fully prepared candidate without repeating checks or PR mutations
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+stdout | scripts/release/candidate.test.ts > protected version candidate > rejects a queued merge until it actually lands
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+stdout | scripts/release/candidate.test.ts > protected version candidate > keeps the exact-tree guard for movement after the last base check
+Release PR: https://github.com/test/app/pull/7. If reviews are required, merge normally and rerun failed jobs in this run.
+
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > checks the combined candidate before push, normal merge, and exact tree readback 3ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > recovers a pushed branch whose journal/PR response was lost without another increment 1ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > resumes after review and never bypasses it 1ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > reuses a fully prepared candidate without repeating checks or PR mutations 0ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > does not record an unreachable commit after failed validation 0ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > rejects moving functional source and abandoned or edited PRs 0ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > rejects a queued merge until it actually lands 0ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > rejects base movement during validation before requesting a merge 0ms
+ Γ£ô scripts/release/candidate.test.ts > protected version candidate > keeps the exact-tree guard for movement after the last base check 0ms
+
+ Test Files  4 passed (4)
+      Tests  40 passed (40)
+   Start at  10:00:34
+   Duration  725ms (transform 117ms, setup 0ms, import 219ms, tests 119ms, environment 0ms)
+

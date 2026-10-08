@@ -1,0 +1,200 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-release
+
+ Γ¥» scripts/release/release.test.ts (18 tests | 4 failed) 79ms
+     ├ù prepares a server-only commit and validates the committed transition 4ms
+     ├ù allocates native version/build numbers without changing server version 1ms
+     ├ù blocks dirty and untracked source before release work 1ms
+     ├ù permits a JS-only descendant but rejects unrelated ancestry and changed native inputs 1ms
+ Γ¥» scripts/release/planner.test.ts (16 tests | 4 failed) 15ms
+     ├ù reproduces an account dependency landing between candidate validation and the version squash merge 4ms
+     ├ù detects deletes/renames and reverts while ignoring documentation changes 2ms
+     ├ù ignores allocated versions but rejects any extra functional candidate change 1ms
+     ├ù does not select native bundles for web-only config or assets 1ms
+ Γ¥» scripts/release/fingerprint.test.ts (3 tests | 2 failed) 6ms
+     ├ù normalizes allocated versions while full fingerprints retain runtime differences 3ms
+     ├ù isolates selected platform config while preserving permissions and native build hooks 1ms
+node : (node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController 
+option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will 
+be removed in `fastify@6`.
+At line:1 char:1
++ node node_modules\vitest\vitest.mjs run --configLoader native --pool  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:14204) [F...in `fastify@6`.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+(node:14204) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option 
+with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be 
+removed in `fastify@6`.
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 10 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  scripts/release/fingerprint.test.ts > shared fingerprint policy > normalizes allocated versions while full 
+fingerprints retain runtime differences
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» nativeFingerprint scripts/release/expo.ts:36:11
+ Γ¥» scripts/release/fingerprint.test.ts:23:12
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/10]ΓÄ»
+
+ FAIL  scripts/release/fingerprint.test.ts > shared fingerprint policy > isolates selected platform config while 
+preserving permissions and native build hooks
+Error: C:\Program Files\nodejs\node.exe failed: spawnSync C:\Program Files\nodejs\node.exe EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» node scripts/release/common.ts:34:104
+ Γ¥» scripts/release/fingerprint.test.ts:32:31
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/10]ΓÄ»
+
+ FAIL  scripts/release/planner.test.ts > real Git snapshots and candidate contracts > reproduces an account dependency 
+landing between candidate validation and the version squash merge
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/planner.test.ts:107:3
+ Γ¥» scripts/release/planner.test.ts:118:27
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/10]ΓÄ»
+
+ FAIL  scripts/release/planner.test.ts > real Git snapshots and candidate contracts > detects deletes/renames and 
+reverts while ignoring documentation changes
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/planner.test.ts:107:3
+ Γ¥» scripts/release/planner.test.ts:142:36
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/10]ΓÄ»
+
+ FAIL  scripts/release/planner.test.ts > real Git snapshots and candidate contracts > ignores allocated versions but 
+rejects any extra functional candidate change
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/planner.test.ts:107:3
+ Γ¥» scripts/release/planner.test.ts:151:42
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/10]ΓÄ»
+
+ FAIL  scripts/release/planner.test.ts > real Git snapshots and candidate contracts > does not select native bundles 
+for web-only config or assets
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/planner.test.ts:107:3
+ Γ¥» scripts/release/planner.test.ts:161:36
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[6/10]ΓÄ»
+
+ FAIL  scripts/release/release.test.ts > independent version ownership > prepares a server-only commit and validates 
+the committed transition
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/release.test.ts:30:3
+ Γ¥» scripts/release/release.test.ts:47:17
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[7/10]ΓÄ»
+
+ FAIL  scripts/release/release.test.ts > independent version ownership > allocates native version/build numbers 
+without changing server version
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/release.test.ts:30:3
+ Γ¥» scripts/release/release.test.ts:54:17
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[8/10]ΓÄ»
+
+ FAIL  scripts/release/release.test.ts > independent version ownership > blocks dirty and untracked source before 
+release work
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/release.test.ts:30:3
+ Γ¥» scripts/release/release.test.ts:66:17
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[9/10]ΓÄ»
+
+ FAIL  scripts/release/release.test.ts > native and OTA baseline proof > permits a JS-only descendant but rejects 
+unrelated ancestry and changed native inputs
+Error: git failed: spawnSync git EPERM.
+ Γ¥» run scripts/release/common.ts:30:50
+
+ Γ¥» git scripts/release/common.ts:39:58
+ Γ¥» fixture scripts/release/release.test.ts:30:3
+ Γ¥» scripts/release/release.test.ts:73:17
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[10/10]ΓÄ»
+
+
+ Test Files  3 failed | 37 passed (40)
+      Tests  10 failed | 304 passed (314)
+   Start at  10:05:19
+   Duration  12.48s (transform 831ms, setup 0ms, import 4.85s, tests 3.42s, environment 3ms)
+
