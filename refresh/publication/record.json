@@ -1,0 +1,363 @@
+{
+  "checkedAtUtc": "2026-10-08T18:44:06.355Z",
+  "ownerTask": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+  "actualHost": "MCHARTIER_ZBOOK",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/38",
+  "issue": "https://github.com/MChartier/little-say/issues/32",
+  "headSha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+  "baseRef": "master",
+  "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "immediateParents": [
+    "1a7fa5e960f200fdae35339972cddad871ea0f06"
+  ],
+  "unmergedParents": [],
+  "prBodySha256": "92c2ef216cbccd697387520810d6dc9d6fdd699caccb61c96b63fab34e9f4c8f",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "humanReady": false,
+  "nativeClosingIssue32Verified": true,
+  "scope": {
+    "evidenceCommit": "c2331b99cc3bc6a71b84ac79442beb8fc45e6222",
+    "path": "refresh/records/scope.json",
+    "totals": {
+      "commits": 8,
+      "files": 15,
+      "additions": 595,
+      "deletions": 69
+    },
+    "commits": [
+      {
+        "sha": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+        "parents": [
+          "9dd18b856d6d900ab162be3f1544aac0b93d2b71"
+        ]
+      },
+      {
+        "sha": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+        "parents": [
+          "926b0f9ba742710e40ec7b8c198a877b5a82927e"
+        ]
+      },
+      {
+        "sha": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+        "parents": [
+          "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+          "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        ]
+      },
+      {
+        "sha": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+        "parents": [
+          "dec27b5044ebce528ef59a499d94f2ccb2f66c0b"
+        ]
+      },
+      {
+        "sha": "1deeea094c08804344d87479c094dac4b302a336",
+        "parents": [
+          "680d1a8a1b3cba93b9c99f3932a251c50651b731"
+        ]
+      },
+      {
+        "sha": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+        "parents": [
+          "1deeea094c08804344d87479c094dac4b302a336"
+        ]
+      },
+      {
+        "sha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "parents": [
+          "ebae155ff0eda3ec611e65dfc937f425b27e60df"
+        ]
+      },
+      {
+        "sha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+        "parents": [
+          "1a7fa5e960f200fdae35339972cddad871ea0f06"
+        ]
+      }
+    ]
+  },
+  "ci": {
+    "id": 37825498340,
+    "headSha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+    "url": "https://github.com/MChartier/little-say/actions/runs/37825498340",
+    "conclusion": "success",
+    "completedSteps": "release/type/unit/build, 25 service integration tests, 5 account browser tests; no release operation"
+  },
+  "engineeringReview": {
+    "commentId": 6066627102,
+    "url": "https://github.com/MChartier/little-say/pull/38#issuecomment-6066627102",
+    "updatedAt": "2026-10-08T18:39:41Z",
+    "fullBodySha256": "68423dfab6a186272ac784dab15586ff8db67ddb881b22c2d7d557ca320b23d6",
+    "headSha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+    "result": "Completed; no major issues"
+  },
+  "feedback": {
+    "issueComments": [
+      {
+        "id": 6029282445,
+        "sha256": "e9163ca6e67d39c18598e513dd5e8ea9f7be064a8c94a847370519e033548219"
+      },
+      {
+        "id": 6030618618,
+        "sha256": "eae9cae04b554512a03e1982d1d13157cb3a00d0976af17c660e2ef7e9310cc2"
+      },
+      {
+        "id": 6030684460,
+        "sha256": "4c7567bd9aa15c7d35068a4c21d9b169d110f9409d93e490aa0ce873b379547e"
+      },
+      {
+        "id": 6049549105,
+        "sha256": "e572ff7a8cae17d80d95a99439dd5a85f08fbaf6f9ef9616b927384b002eab94"
+      },
+      {
+        "id": 6050057070,
+        "sha256": "5473390743a0aaaa2efc1bbfca66c44e45a73e8cbe138741875ab87ee5a0d3d7"
+      }
+    ],
+    "prComments": [
+      {
+        "id": 6049862664,
+        "sha256": "e7f38d5c3f08fd710d1d6d1fefdf935eb2b72c769eaeef45a1f6d15809de9dec"
+      },
+      {
+        "id": 6049866319,
+        "sha256": "08b18c0013d2f90df6aaaf3438c2772aa111dd90a737f4f787e0e0cdd840d30d"
+      },
+      {
+        "id": 6049955396,
+        "sha256": "727ecdebe316ada166fb3c1bf62cae33f8368949250814523a6bdc011be648ec"
+      },
+      {
+        "id": 6049983045,
+        "sha256": "acc47242723f6631d58b03fe70441ef2661cc227c87777a7ba0554ec9c383e9c"
+      },
+      {
+        "id": 6050052349,
+        "sha256": "680bdeb0d22acf05eaa08783711cf548e971737ed157c5ed2771e2f4dbd51739"
+      },
+      {
+        "id": 6066231795,
+        "sha256": "2bfe5e41ee8ae03231202ec4fda6d3021af469f601f8cd78d09f64299df5953f"
+      },
+      {
+        "id": 6066359519,
+        "sha256": "bbb7ad500dc0a9208d82926a5d013d448e2bfcf19913c656e04177003d7f80a5"
+      },
+      {
+        "id": 6066469389,
+        "sha256": "ff5e0a36568f94687a463ed00a1315e918f7ddc0fcdc7590c9679da180ed1bda"
+      },
+      {
+        "id": 6066566994,
+        "sha256": "07a3815295cf778f92627f8a53556d82ab2bb67d76a25dcd68fa9842493e17a3"
+      },
+      {
+        "id": 6066627102,
+        "sha256": "68423dfab6a186272ac784dab15586ff8db67ddb881b22c2d7d557ca320b23d6"
+      }
+    ],
+    "submittedReviews": [
+      {
+        "id": 5450152866,
+        "commit": "502c4de4c527b0f28fff4462f397f2d5b5f7167b",
+        "sha256": "c2f762e23915af665f137fad59651ddc45baa9903c4f4e0478697c62579f1cea"
+      },
+      {
+        "id": 5450178603,
+        "commit": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461140062,
+        "commit": "1deeea094c08804344d87479c094dac4b302a336",
+        "sha256": "b4451740e6495abca2d5003ebac8fbf1f70a26ff93db851fd5fc7f3002b2c8c3"
+      },
+      {
+        "id": 5461221364,
+        "commit": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+        "sha256": "117496634370795f66af296c60946300caef4c7fb0f1cfbd862178dbf861bb1e"
+      },
+      {
+        "id": 5461244547,
+        "commit": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461244847,
+        "commit": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "threads": [
+      {
+        "id": "PRRT_kwDOU65Oyc6qJ0Xi",
+        "isResolved": true,
+        "comments": {
+          "pageInfo": {
+            "hasNextPage": false
+          },
+          "nodes": [
+            {
+              "databaseId": 4213533661,
+              "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Review source-language collisions with saved corrections**\n\nWhen an AI proposal changes an existing board-following card’s source language to the language of a protected correction (for example, `en-US` to `ru-RU`) and omits that language from `tile.translations`, this blindly retains the correction without reporting a replacement. `proposalTranslationReplacements` therefore returns no review item, while `tileInLanguage` chooses the new source words whenever the selected language equals `tile.language`, silently replacing the corrected Russian text and audio in actual use. Treat this source-language collision as a protected replacement or otherwise prevent the new source from shadowing the saved correction.\n\nUseful? React with 👍 / 👎."
+            },
+            {
+              "databaseId": 4213557299,
+              "body": "Addressed in `a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce`. An AI source-language change is now refused when it would shadow a saved manual/legacy translation, including when the proposal omits translations and when ordinary replacement review was approved. The error directs the parent to keep the source language and edit its translation. A core regression passes; a browser regression verifies refusal leaves every saved tile unchanged."
+            }
+          ]
+        }
+      },
+      {
+        "id": "PRRT_kwDOU65Oyc6qf7p-",
+        "isResolved": true,
+        "comments": {
+          "pageInfo": {
+            "hasNextPage": false
+          },
+          "nodes": [
+            {
+              "databaseId": 4222684628,
+              "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Block manual source-language collisions**\n\nWhen a board-following card has a protected Russian translation and a parent changes its original language from English to Russian here, the translation is retained but becomes unreachable: `tileInLanguage` returns the source tile whenever the selected language equals `tile.language`, so playback silently uses the newly relabeled original words instead of the saved correction. The AI path now guards this collision, but this manual path does not; reject the language change or require explicit handling when a protected translation already uses the new source language.\n\nUseful? React with 👍 / 👎."
+            },
+            {
+              "databaseId": 4222773661,
+              "body": "Addressed in 1a7fa5e960f200fdae35339972cddad871ea0f06. Manual Save and Duplicate now use the same protected-source-language guard as AI application. Refusal keeps the saved board unchanged and the draft retryable. Added canonical-tag/manual/legacy unit coverage and a browser save/duplicate/recovery case; the fresh capture demonstrates the refusal. Full check passed with 296 tests; affected browser rerun is completing."
+            }
+          ]
+        }
+      },
+      {
+        "id": "PRRT_kwDOU65Oyc6qgGRp",
+        "isResolved": true,
+        "comments": {
+          "pageInfo": {
+            "hasNextPage": false
+          },
+          "nodes": [
+            {
+              "databaseId": 4222753440,
+              "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document the translation-replacement permission**\n\nDocument that `replaceTranslations` changes the returned board by replacing protected manual or legacy translations and must only be enabled after explicit parent review. The current JSDoc describes picture-preview behavior only, leaving this non-obvious and potentially destructive new public parameter without its authorization contract.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/ebae155ff0eda3ec611e65dfc937f425b27e60df/AGENTS.md#L7-L9)\n\nUseful? React with 👍 / 👎."
+            },
+            {
+              "databaseId": 4222773897,
+              "body": "Addressed in 1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f. proposalPreview JSDoc now says replaceTranslations may replace protected manual/legacy translations only after explicit parent review of this draft, and distinguishes preview construction from persistence. Documentation-only change; runtime behavior is unchanged."
+            }
+          ]
+        }
+      }
+    ],
+    "dispositions": [
+      {
+        "finding": 4213533661,
+        "status": "Retained AI collision guard; current unit/browser checks pass."
+      },
+      {
+        "finding": 4222684628,
+        "status": "Fixed at 1a7fa5e: manual save/duplicate refusal and recovery passed; resolved."
+      },
+      {
+        "finding": 4222753440,
+        "status": "Fixed at 1b4d2eb: explicit parent-review permission documented; resolved."
+      }
+    ],
+    "actionableUnresolved": []
+  },
+  "evidence": {
+    "commitSha": "c2331b99cc3bc6a71b84ac79442beb8fc45e6222",
+    "path": "refresh/current-captures/manifest.json",
+    "sha256": "992d6f2bbea8f4f58375a456472fca4a26ee3895068988b16f3fa755140d0e75",
+    "capturedBefore": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "capturedAfter": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+    "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+    "harnessSha256": "31563f2dad7647b7aab5941a2af46973c493b2a1600db92841643f5b3eb5e8b2",
+    "images": [
+      {
+        "sourceSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "name": "before-board.png",
+        "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32"
+      },
+      {
+        "sourceSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "name": "before-existing-translation-controls.png",
+        "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60"
+      },
+      {
+        "sourceSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "name": "before-card.png",
+        "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-board.png",
+        "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-card.png",
+        "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-manual-source-collision.png",
+        "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-corrected-audio-failure.png",
+        "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-stale-correction.png",
+        "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-phone-board.png",
+        "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-ai-replacement-review.png",
+        "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98"
+      },
+      {
+        "sourceSha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "name": "after-ai-source-collision.png",
+        "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5"
+      }
+    ],
+    "applicability": "Final commit changes proposalPreview JSDoc only. Captured runtime, synthetic fixture and compared behavior unchanged. Original identities preserved.",
+    "authenticatedReadbackFileCount": 70,
+    "originals": {
+      "prBodySha256": "8992e399b74edba5103de92e67403c021a73104f0adfbb6e7e46ee72d8ae63de",
+      "issueBodySha256": "01d4cee68cdd69b370c68c3d50919ee6ab19b428a39d1e796125664b90e719d5",
+      "oldEvidenceCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+      "oldPublicationCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+      "oldCaptureManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+      "applicability": "Original artifacts remain historical with their original source identities. Although a08a723 and cece2ef have equal trees, actual master added accounts, release metadata, dependencies and entry setup. Old captures are not reused for the new baseline; all ten states were freshly captured on actual master/final with the account-choice fixture marker and entry action."
+    }
+  },
+  "checks": {
+    "passed": [
+      "296 unit tests; TypeScript; release-contract checks; server/web builds",
+      "69 affected browser scenarios after manual collision fix",
+      "49 unaffected browser scenarios retained with documented impact assessment",
+      "Final-head Android bundle export",
+      "Final-head GitHub CI and engineering review"
+    ],
+    "failed": [
+      "iOS export: same missing prop-types from AppleButton.ios.js on actual master and integration; unchanged dependency remains an unresolved baseline limitation"
+    ],
+    "unrun": [
+      "Native physical device/emulator execution, deferred for readiness",
+      "Live AI/provider operations",
+      "GitHub rendered PR page, explicitly waived",
+      "Independent QA, coordinator-owned"
+    ]
+  },
+  "checkpoint": "Implementation complete; product/baseline/evidence worktrees clean at handoff; no readiness/merge/release/deployment. Root coordinates independent QA and existing baseline iOS issue."
+}
