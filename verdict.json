@@ -1,87 +1,1055 @@
 {
   "schemaVersion": 1,
-  "verdict": "changes-required",
+  "verdict": "evidence-incomplete",
   "workflowVersion": "workflow-v3",
   "prCommunicationStandard": "pr-review-v3",
   "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
   "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
-  "pullRequest": "https://github.com/MChartier/little-say/pull/35",
+  "acknowledgment": "All full supplied execution texts, QA role, overlay and direct amendments read; repository AGENTS and tracked environment instructions read. Pins unchanged. Native-device deferral is distinct from client export validation.",
   "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
-  "supersedesVerdictCommentId": 6030548675,
-  "checkedAtUtc": "2026-10-08T17:11:17.3661671Z",
-  "headSha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+  "host": "mchartier_zbook",
+  "worktree": "Isolated task7/little-say-qa detached source; original owner worktrees untouched; no product edits.",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/35",
+  "issue": "https://github.com/MChartier/little-say/issues/23",
+  "supersedesVerdictCommentId": 6065143401,
+  "checkedAtUtc": "2026-10-08T18:28:36.615249+00:00",
+  "headSha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
   "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
-  "apiBaseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
-  "targetRef": "refs/heads/master",
+  "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
   "targetRepository": "MChartier/little-say",
-  "ultimateTarget": "MChartier/little-say/refs/heads/master",
-  "mergeBase": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "targetRef": "refs/heads/master",
+  "ultimateTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "refs/heads/master",
+    "sha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  },
   "parentRevisions": [],
   "commitParents": [
-    "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+    "cfea03f0cc56a893a7269677533375e013024349"
   ],
-  "prBodySha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb",
-  "scope": {
-    "paths": 21,
-    "assessment": "All published paths and sole commit inspected. Product extraction, maintained tests/snapshots and prompt guide map to issue23. No unrelated history or ad hoc evidence churn.",
-    "commits": 1,
-    "additions": 342,
-    "deletions": 30
-  },
-  "findings": [
+  "prBodySha256": "618f76acc080dc5172c85ae69ed7ece0edc2bf69b6849075b9fd504b2b9aa146",
+  "draft": true,
+  "labels": [],
+  "historicalReceipts": [
     {
-      "nextAction": "Original owner must safely publish the conflict correction against actual master, preserving account and prompt exports and focused published history. Do not force-push/history-erase as a shortcut.",
-      "severity": "blocking",
-      "expected": "Actual published revision integrates with actual target preserving all exports.",
-      "path": "packages/core/src/index.ts",
-      "observed": "git merge-tree --write-tree HEAD origin/master exits 1 with a content conflict: account export competes with promptResources/promptPresets exports.",
-      "id": "R1"
+      "verdictCommentId": 6030548675,
+      "verdictBodySha256": "cced214d3fac4a44d0c6e704d0bed01ec356174609e77c1c3f94ac0b9da307c0",
+      "verdictUpdatedAt": "2026-10-07T03:52:38Z",
+      "preserved": true
     },
     {
-      "observed": "PR still describes master 1f032905 and PR29 as replaced/not prerequisite without current actual-target advancement or evidence applicability.",
-      "severity": "communication",
-      "nextAction": "Reconcile final body to corrected published head and actual target. Preserve old captured SHAs, explicitly assess reuse and label new observations. Do not relabel historical evidence.",
-      "id": "R2"
+      "verdictCommentId": 6065143401,
+      "verdictBodySha256": "3d4798614e3546d35285ca7f5563c3ce2fbd6fdf55d74dee6018926eeb009d00",
+      "verdictUpdatedAt": "2026-10-08T17:12:04Z",
+      "preserved": true
     }
   ],
-  "impactAssessment": {
-    "affected": "Account commit changes core index/schema, startup, setup flows, dependencies and CI. Release commits change app config/fingerprint/build environment and version metadata. Layout/mobile transitions change surrounding navigation. Old exports/browser/runtime/check results cannot certify the eventual corrected integrated published source.",
-    "rerunRequired": "After owner publishes correction: focused payload/preset/resource/source-free ESM tests; relevant onboarding/conversation regression and web/iOS/Android exports with server-marker boundary checks; current npm run check/release metadata and configured CI. Compare actual target request contract, not a synthetic merge. Scope-based reuse may avoid unrelated tests with explicit assessment.",
-    "unchanged": "provider, picture-provider, synthesis, onboarding and AiConversation existing production files are unchanged from old master to actual master; exact textual extraction and nonrecursive literal substitution remain inspectably applicable.",
-    "reason": "Confirmed unresolved actual integration conflict; no speculative resolved tree or costly obsolete suite used as current evidence.",
-    "testsRerun": false
+  "historicalEvidence": [
+    {
+      "commit": "e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f",
+      "file": "manifest.json",
+      "url": "https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/manifest.json",
+      "sha256": "96c59178d5fb560a3b6a77e2b95a7ac5ad0034fcd5d53e21bba8efd196f527b3",
+      "unchanged": true
+    },
+    {
+      "commit": "4f53233d5b8e4c4546bcef91515d09a223048646",
+      "file": "publication.json",
+      "url": "https://github.com/MChartier/little-say/blob/4f53233d5b8e4c4546bcef91515d09a223048646/publication.json",
+      "sha256": "6b6eb05abe4ffefcaa84b702ba21bb20e81de28536cd2d90896d5c919c45fc61",
+      "unchanged": true
+    },
+    {
+      "commit": "99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472",
+      "file": "qa-verdict-communication.json",
+      "url": "https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/qa-verdict-communication.json",
+      "sha256": "365804dd546a8276949763c1282fdf84826618e8ca1516371f6b0617ed1adee4",
+      "unchanged": true
+    },
+    {
+      "commit": "8075c9cd71bd98cedf8e9e61380f2b989ad9fda7",
+      "file": "verdict.json",
+      "url": "https://github.com/MChartier/little-say/blob/8075c9cd71bd98cedf8e9e61380f2b989ad9fda7/verdict.json",
+      "sha256": "5a5cb1cea0711edb758d45550dde2130119cd94d17860a3bf1dfbe8f1057a025",
+      "unchanged": true
+    },
+    {
+      "commit": "60d8a2a150a5cce88733831f3a76169766c0087e",
+      "file": "manifest.json",
+      "url": "https://github.com/MChartier/little-say/blob/60d8a2a150a5cce88733831f3a76169766c0087e/manifest.json",
+      "sha256": "7d67d0566d60d19f5d013b6df7cfe520876e16f7ed36c811c7dc0e7996227085",
+      "unchanged": true,
+      "scope": "First integration source 0e2758de; superseded by fresh final-source captures without relabeling prior evidence."
+    }
+  ],
+  "priorVerdictExactBytes": {
+    "repo": "MChartier/little-say",
+    "commit": "8075c9cd71bd98cedf8e9e61380f2b989ad9fda7",
+    "path": "verdict.json",
+    "destination": "reassess35/prior-verdict.json",
+    "gitBlobSha": "ec64164165d4b71f2ad41986a11cb5ba6f0a7275",
+    "bytes": 5826,
+    "sha256": "5a5cb1cea0711edb758d45550dde2130119cd94d17860a3bf1dfbe8f1057a025"
   },
+  "resolvedFindings": [
+    {
+      "id": "R1",
+      "result": "Ordinary merge resolves only index.ts conflict, retaining account and both prompt exports. Actual master is ancestor; merge-base/API base/actual target agree."
+    },
+    {
+      "id": "R2",
+      "result": "Final concise body explains actual-base to final extraction and current exact capture/bundle results with honest limitations. Fresh evidence binds actual master and final head; historical captures are not relabeled."
+    }
+  ],
+  "findings": [
+    {
+      "id": "E1",
+      "severity": "blocking evidence gap",
+      "gate": "iOS export / final client packaging",
+      "expected": "Issue23 and prior affected-gate finding require current web/iOS/Android exports and server-only prompt boundary validation.",
+      "observed": "Current iOS Metro export and actual-master export both fail resolving prop-types imported by @invertase/react-native-apple-authentication/lib/AppleButton.ios.js. Dependency inputs, lockfile and account import path are unchanged. No full final iOS bundle exists to inspect.",
+      "impact": "This is a confirmed pre-existing baseline obstacle, not an identified prompt-source defect. Nevertheless the changed shared JSON import boundary is included in iOS; Android/web results do not establish successful iOS export. Native-device deferral does not waive this build/export gate.",
+      "nextAction": "Coordinator route to implementation owner: arrange a focused, authorized resolution of the baseline dependency obstacle and rerun final iOS export plus shared-presence/server-absence checks, rebinding any changed source/base/body. Do not silently expand PR35 scope or claim iOS passed. If the human explicitly accepts this specific missing export evidence, retain the scoped instruction and reassess only its permitted gates; no such waiver is presently recorded."
+    }
+  ],
   "gates": {
-    "ci": "current head check success 2026-10-07T02:48:57Z; not a certificate for corrected integration",
-    "value": "pass",
-    "scope": "pass",
-    "stack": "changes-required: actual master advanced",
-    "engineeringReview": "Full issue/PR comments, reviews and inline threads read. No submitted reviews/inline threads. Quota-only refusal 6029846176 accurately recorded; bot completion not claimed.",
-    "behavior": "historical unchanged text contract only; corrected integration pending",
-    "communication": "Concise problem-first summary and behavioral argument are understandable, but current target context/applicability requires correction",
-    "evidence": "Historical evidence preserved, no rebinding",
-    "code": "changes-required: merge conflict"
+    "value": "pass: requested discoverable versioned prompt text with exact behavior preservation; proportionate scope",
+    "outcome": "partial: exact payload/preset/runtime and web/Android evidence passes; full iOS export remains blocked",
+    "code": "pass for reviewed current published source; no new code defect found",
+    "scope": "pass: full ordered four commits and all21 paths inspected, necessary merge and loader corrections only",
+    "engineeringReview": "Independent full code/scope review performed; quota-only refusal6029846176 remains exception, not completed bot review; zero reviews/inline/native threads",
+    "ci": "pass: current-head check successful; checkout merge tree exactly matches current source tree",
+    "behavior": "pass for inspected contract, runtime, browser and web/Android observations; iOS remains unverified",
+    "evidence": "evidence-incomplete solely E1; all52 retained artifact hashes verified from exact GitHub bytes",
+    "communication": "pass: concise problem/solution and reproducible observable behavior, expected/observed evidence and limitations; no iteration-first account",
+    "stack": "pass: no stacked parent; published actual-target ancestry and integration verified"
   },
-  "historicalReceipt": {
-    "verdictBodySha256": "cced214d3fac4a44d0c6e704d0bed01ec356174609e77c1c3f94ac0b9da307c0",
-    "evidenceCommit": "99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472",
-    "originalReviewer": "01a11461-180f-73dd-8d1c-3e2f64ae7027",
-    "publicationCommit": "b2d16209db665401ba32c071829d7c7dd4027eab",
-    "apiReadbackVerified": true,
-    "verdictUpdatedAt": "2026-10-07T03:52:38Z",
-    "baseSha": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
-    "verdictCommentId": 6030548675
+  "scope": {
+    "counts": {
+      "commits": 4,
+      "files": 21,
+      "additions": 343,
+      "deletions": 30
+    },
+    "allApiPagesComplete": true,
+    "paginationReason": "Collections below100 and metadata totals reconcile; native connections report no next page.",
+    "commits": [
+      {
+        "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+        "parents": [
+          "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+        ],
+        "message": "Extract exact model prompts into versioned resources",
+        "changedPaths": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ]
+      },
+      {
+        "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+        "parents": [
+          "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+          "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        ],
+        "message": "Merge current master while preserving account and prompt exports",
+        "changedPaths": []
+      },
+      {
+        "sha": "cfea03f0cc56a893a7269677533375e013024349",
+        "parents": [
+          "0e2758de446674c4874bbce1df4eb51abaee35f4"
+        ],
+        "message": "Declare prompt JSON import types for native ESM consumers",
+        "changedPaths": [
+          "M\tapps/server/src/prompts.ts",
+          "M\tpackages/core/src/promptPresets.ts"
+        ]
+      },
+      {
+        "sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+        "parents": [
+          "cfea03f0cc56a893a7269677533375e013024349"
+        ],
+        "message": "Load server prompt helpers without unrelated core resources",
+        "changedPaths": [
+          "M\tapps/server/src/prompts.ts"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/ui/AiConversation.tsx",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 2,
+        "deletions": 1
+      },
+      {
+        "path": "apps/server/src/picture-provider.ts",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 6,
+        "deletions": 6
+      },
+      {
+        "path": "apps/server/src/prompts.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 25,
+        "deletions": 0
+      },
+      {
+        "path": "apps/server/src/provider.ts",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 5,
+        "deletions": 18
+      },
+      {
+        "path": "apps/server/src/synthesis.ts",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 2,
+        "deletions": 1
+      },
+      {
+        "path": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 36,
+        "deletions": 0
+      },
+      {
+        "path": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 9,
+        "deletions": 0
+      },
+      {
+        "path": "apps/server/test/prompt-payloads.test.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 100,
+        "deletions": 0
+      },
+      {
+        "path": "apps/server/test/prompt-presets.test.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 12,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/index.ts",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 2,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/onboarding.ts",
+        "status": "modified",
+        "previousFilename": null,
+        "additions": 5,
+        "deletions": 4
+      },
+      {
+        "path": "packages/core/src/promptPresets.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 10,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/promptResources.test.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 22,
+        "deletions": 0
+      },
+      {
+        "path": "packages/core/src/promptResources.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 24,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/README.md",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 19,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/server/board.json",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 6,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/server/pictures.json",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 9,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/server/speech.json",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 3,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/shared/conversation.json",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 5,
+        "deletions": 0
+      },
+      {
+        "path": "prompts/shared/onboarding.json",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 6,
+        "deletions": 0
+      },
+      {
+        "path": "scripts/prompt-bundle.test.ts",
+        "status": "added",
+        "previousFilename": null,
+        "additions": 35,
+        "deletions": 0
+      }
+    ],
+    "ownerMappingIndependentlyAgrees": {
+      "issue": 23,
+      "publishedCommits": 4,
+      "paths": 21,
+      "additions": 343,
+      "deletions": 30,
+      "commitDisposition": {
+        "ea87b78eb6c9e9612cc42b7eec490af9d8216b86": "Original exact prompt extraction; all 21 paths map to issue23.",
+        "0e2758de446674c4874bbce1df4eb51abaee35f4": "Ordinary merge of actual target, preserving both account and prompt-resource exports; remerge diff contains only index.ts conflict resolution.",
+        "cfea03f0cc56a893a7269677533375e013024349": "Explicit JSON import attributes on the five extracted resources for native ESM consumers; fixes the current-account CI discovery failure.",
+        "608b884731bbf243fc4d8cac616fcbc6b965de21": "Narrow server helper runtime import to promptResources rather than the core barrel; avoids evaluating unrelated JSON resources in native ESM. Type-only core import and public exports preserved."
+      },
+      "incomingTargetCommits": [
+        "e01efebcfe25af144690f3388edc53ef4b8ffc17",
+        "9dd18b856d6d900ab162be3f1544aac0b93d2b71",
+        "b0d2df116db2f5a4e7aaf4edd56017d3d9f664f1",
+        "da45fbdef33cd78abcbbd6a8216ac9b34d460e22",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "incomingDisposition": "All five commits are already ancestors of actual master. Their complete paths and parents are retained in incoming-target-history.txt, not hidden by the net diff. GitHub ordered PR commit inventory contains the original extraction, integration merge, and two scoped loader fixes. No branch rewrite or retargeting.",
+      "pathsMapped": [
+        {
+          "path": "apps/mobile/src/ui/AiConversation.tsx",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "apps/server/src/picture-provider.ts",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "apps/server/src/prompts.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "apps/server/src/provider.ts",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "apps/server/src/synthesis.ts",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        },
+        {
+          "path": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        },
+        {
+          "path": "apps/server/test/prompt-payloads.test.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        },
+        {
+          "path": "apps/server/test/prompt-presets.test.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        },
+        {
+          "path": "packages/core/src/index.ts",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "packages/core/src/onboarding.ts",
+          "status": "modified",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "packages/core/src/promptPresets.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "packages/core/src/promptResources.test.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        },
+        {
+          "path": "packages/core/src/promptResources.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "prompts/README.md",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained caller and substitution guide for extracted resources"
+        },
+        {
+          "path": "prompts/server/board.json",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "prompts/server/pictures.json",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "prompts/server/speech.json",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "prompts/shared/conversation.json",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "prompts/shared/onboarding.json",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Product prompt resource, typed loader, shared export, or existing call-site extraction"
+        },
+        {
+          "path": "scripts/prompt-bundle.test.ts",
+          "status": "added",
+          "previousPath": null,
+          "reason": "Maintained regression contract for exact prompt text, invalid inputs or source-free loading"
+        }
+      ]
+    },
+    "incomingTargetHistory": "fabb925cf5ee11171d5668af7c2bab44ec9fc613 da45fbdef33cd78abcbbd6a8216ac9b34d460e22 Prepare Little Say release 37716705314 (#40)\n\nM\tapps/mobile/app.json\nM\tapps/mobile/package.json\nM\tapps/server/package.json\nM\tnative-release.json\nM\tpackage-lock.json\nM\tpackage.json\nM\trelease.json\nda45fbdef33cd78abcbbd6a8216ac9b34d460e22 b0d2df116db2f5a4e7aaf4edd56017d3d9f664f1 Add optional accounts with private backup and restore (#29)\n\nM\t.github/workflows/ci.yml\nM\tapps/mobile/app.config.js\nM\tapps/mobile/package.json\nM\tapps/mobile/src/App.tsx\nM\tapps/mobile/src/data/storage.ts\nM\tapps/mobile/src/data/storage.web.ts\nM\tapps/mobile/src/data/useLibrary.ts\nA\tapps/mobile/src/services/accountSession.ts\nA\tapps/mobile/src/services/accountSession.web.ts\nA\tapps/mobile/src/services/accountSync.test.ts\nA\tapps/mobile/src/services/accountSync.ts\nA\tapps/mobile/src/services/api.test.ts\nM\tapps/mobile/src/services/api.ts\nA\tapps/mobile/src/services/firebase-native.d.ts\nA\tapps/mobile/src/services/firebaseAccount.ts\nA\tapps/mobile/src/services/firebasePersistence.test.ts\nA\tapps/mobile/src/services/firebasePersistence.ts\nA\tapps/mobile/src/services/firebasePersistence.web.ts\nA\tapps/mobile/src/services/firebaseProviders.test.ts\nA\tapps/mobile/src/services/firebaseProviders.ts\nA\tapps/mobile/src/services/firebaseProviders.web.ts\nM\tapps/mobile/src/services/speechLibrary.ts\nA\tapps/mobile/src/services/useAccount.ts\nA\tapps/mobile/src/ui/AccountPanel.tsx\nA\tapps/mobile/src/ui/AccountScreen.tsx\nM\tapps/mobile/src/ui/FirstTimeSetup.tsx\nM\tapps/mobile/src/ui/ParentSettings.tsx\nM\tapps/mobile/src/ui/components.tsx\nA\tapps/server/migrations/1760000000002_accounts.sql\nM\tapps/server/package.json\nA\tapps/server/src/account-routes.ts\nA\tapps/server/src/accounts.ts\nM\tapps/server/src/app.ts\nM\tapps/server/src/database.ts\nA\tapps/server/src/firebase.ts\nM\tapps/server/src/index.ts\nA\tapps/server/test/accounts.integration.test.ts\nM\tapps/server/test/database.integration.test.ts\nA\tapps/server/test/firebase.integration.test.ts\nA\tdocs/ACCOUNTS.md\nM\tdocs/testing.md\nA\tfirebase.json\nM\tpackage-lock.json\nM\tpackage.json\nA\tpackages/core/src/account.test.ts\nA\tpackages/core/src/account.ts\nM\tpackages/core/src/index.ts\nM\tpackages/core/src/schema.ts\nA\tplaywright.accounts.config.ts\nM\tplaywright.config.ts\nM\tscripts/dev-proxy.cjs\nM\tscripts/dev-proxy.test.ts\nA\tscripts/test-server.ts\nA\ttests/web/accounts.spec.ts\nM\ttests/web/existingLibrary.ts\nM\ttests/web/setup.spec.ts\nb0d2df116db2f5a4e7aaf4edd56017d3d9f664f1 9dd18b856d6d900ab162be3f1544aac0b93d2b71 Unify manual server, native, and OTA releases (#37)\n\nA\t.gitattributes\nA\t.github/workflows/cut-release.yml\nD\t.github/workflows/cut-server-release.yml\nM\tREADME.md\nM\tapps/mobile/app.config.js\nM\tapps/mobile/eas.json\nA\tapps/mobile/fingerprint.config.js\nA\tapps/mobile/release-metadata.cjs\nM\tdocs/releases.md\nM\tpackage.json\nA\trelease-policy.json\nA\tscripts/release/README.md\nA\tscripts/release/candidate.test.ts\nA\tscripts/release/candidate.ts\nA\tscripts/release/cloud.ts\nM\tscripts/release/common.ts\nA\tscripts/release/contract.ts\nM\tscripts/release/eas-credentials.ts\nM\tscripts/release/environment.ts\nA\tscripts/release/expo.ts\nA\tscripts/release/fingerprint.test.ts\nM\tscripts/release/fingerprint.ts\nA\tscripts/release/image.test.ts\nA\tscripts/release/image.ts\nA\tscripts/release/inputs.ts\nA\tscripts/release/journal.test.ts\nA\tscripts/release/journal.ts\nA\tscripts/release/metadata.ts\nM\tscripts/release/native-contract.ts\nM\tscripts/release/native.ts\nA\tscripts/release/operation.test.ts\nA\tscripts/release/operation.ts\nA\tscripts/release/ota.test.ts\nA\tscripts/release/ota.ts\nA\tscripts/release/planner.test.ts\nA\tscripts/release/planner.ts\nA\tscripts/release/providers.test.ts\nM\tscripts/release/release.test.ts\nD\tscripts/release/server-cut.test.ts\nD\tscripts/release/server-cut.ts\nD\tscripts/release/server-publish.ts\nA\tscripts/release/unified.test.ts\nA\tscripts/release/unified.ts\n9dd18b856d6d900ab162be3f1544aac0b93d2b71 e01efebcfe25af144690f3388edc53ef4b8ffc17 Open the existing board editor directly from the parent hold (#36)\n\nM\tapps/mobile/src/App.tsx\nM\tapps/mobile/src/ui/BoardEditor.tsx\nA\tapps/mobile/src/ui/BoardTransition.tsx\nM\tapps/mobile/src/ui/ParentControl.test.ts\nM\tapps/mobile/src/ui/ParentControl.tsx\nM\tapps/mobile/src/ui/ParentControl.web.tsx\nM\tapps/mobile/src/ui/ParentSettings.tsx\nM\tapps/mobile/src/ui/PlayBoard.tsx\nA\tapps/mobile/src/ui/screenFocus.ts\nM\tapps/mobile/src/ui/useParentHold.ts\nM\ttests/web/app.spec.ts\nA\ttests/web/editor-transition.spec.ts\nM\ttests/web/recents.spec.ts\ne01efebcfe25af144690f3388edc53ef4b8ffc17 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4 Balance storyboard cards across portrait and landscape (#34)\n\nM\tapps/mobile/src/ui/BoardEditor.tsx\nM\tapps/mobile/src/ui/PlayBoard.tsx\nM\tapps/mobile/src/ui/TileFace.tsx\nM\tapps/mobile/src/ui/TouchSurface.tsx\nM\tapps/mobile/src/ui/TouchSurface.web.tsx\nM\tdocs/DESIGN.md\nA\tpackages/core/src/boardLayout.test.ts\nA\tpackages/core/src/boardLayout.ts\nM\tpackages/core/src/interaction.test.ts\nM\tpackages/core/src/interaction.ts\nM\ttests/web/app.spec.ts\nA\ttests/web/grid.spec.ts\n",
+    "mergeResolution": "commit 0e2758de446674c4874bbce1df4eb51abaee35f4\nMerge: ea87b78 fabb925\nAuthor: Codex <codex@openai.com>\nDate:   Thu Oct 8 10:56:42 2026 -0700\n\n    Merge current master while preserving account and prompt exports\n\ndiff --git a/packages/core/src/index.ts b/packages/core/src/index.ts\nremerge CONFLICT (content): Merge conflict in packages/core/src/index.ts\nindex 49b3b14..7032c1b 100644\n--- a/packages/core/src/index.ts\n+++ b/packages/core/src/index.ts\n@@ -10,9 +10,6 @@ export * from './languageProfile';\n export * from './onboarding';\n export * from './photo';\n export * from './pictures';\n-<<<<<<< ea87b78 (Extract exact model prompts into versioned resources)\n export * from './promptResources';\n export * from './promptPresets';\n-=======\n export * from './account';\n->>>>>>> fabb925 (Prepare Little Say release 37716705314 (#40))\n",
+    "assessment": "Layout/mobile navigation, release orchestration/version and account commits all already belong to actual target. Reviewed complete incoming paths/parents; account/index integration is preserved. New JSON attributes and narrow helper import directly fix loading boundary exposed by account-browser CI. No product-history evidence churn, unrelated commits or synthetic-integration substitute."
   },
-  "provenance": {
-    "manifestPath": "manifest.json",
-    "assessment": "Read exact commit-addressed manifest/runtime report and historical QA/publication records. Original captures remain for original sources; no new capture or bundle execution claimed.",
-    "manifestCommit": "e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f"
+  "evidence": {
+    "manifest": {
+      "repo": "MChartier/little-say",
+      "commit": "524cf7aa5866abf105537e882192325ca812615e",
+      "path": "manifest.json",
+      "destination": "reassess35/owner/manifest.json",
+      "gitBlobSha": "0f71c6d369a2c786b71cec295274d76616420e23",
+      "bytes": 7181,
+      "sha256": "ba7c41ec9ff711a4f9036101d10396b0a6baa409b07e03f7cd1b3434f893695c"
+    },
+    "publication": {
+      "repo": "MChartier/little-say",
+      "commit": "4e0f9b215cad11dd774458d381a5cc6360f18fa3",
+      "path": "publication-final.json",
+      "destination": "reassess35/owner/publication-final.json",
+      "gitBlobSha": "b6a158a760a084c1c0c413cc573277cde6099800",
+      "bytes": 6418,
+      "sha256": "339fa1e2aff198d2fc730034199ad6af7b44f896abbd3080c611c82d0f34dc52"
+    },
+    "all52Artifacts": [
+      {
+        "file": ".gitattributes",
+        "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+        "bytes": 8,
+        "gitBlobSha": "fa1385d99a319b43c06f5309d1aae9fdd3adea46"
+      },
+      {
+        "file": "accounts-discovery-after.log",
+        "sha256": "2c9898709057f379c7633f7bfcebb9b11f96ca27c1cb8d518a02c3ba4ebe4861",
+        "bytes": 404,
+        "gitBlobSha": "9d4e6d075daba71c4bb85ac9b8dd51b8831a7d93"
+      },
+      {
+        "file": "accounts-discovery-before.log",
+        "sha256": "298cf7d23dcca0a6ffc2dd41ff581f86c826ce86b76a763b3742e388a90053af",
+        "bytes": 388,
+        "gitBlobSha": "6462996bce2b7269d4a26fe185bf12519e6643dc"
+      },
+      {
+        "file": "accounts-discovery-final.log",
+        "sha256": "2d31baafe6eebbdd2f60c62aeab55785482234679386aba0992ab6e36d001f13",
+        "bytes": 862,
+        "gitBlobSha": "447c606f6dbc7e0b4080d337bfc4ac09e6c80eba"
+      },
+      {
+        "file": "actual-target.patch",
+        "sha256": "24e056cb84757716e351972f5e9eabd6ed6c866b7b36ae6124718ff2a58bd295",
+        "bytes": 60399,
+        "gitBlobSha": "0e4f7ae70e442f5ab3fab0cae9549b9212ddf9b8"
+      },
+      {
+        "file": "after/capture-current.config.ts",
+        "sha256": "b81eb8eacabe828d101ffffc654c998c3980d3fa9acb5d899992e07fa2dcf91c",
+        "bytes": 440,
+        "gitBlobSha": "556ab56574d0f2c474768304f9a7eeb447477a5a"
+      },
+      {
+        "file": "after/capture-payloads.test.ts",
+        "sha256": "41ca4c7ff25e19dfd213f6453db794e559de4a4d0f6627ed0ab0a7a75119cb48",
+        "bytes": 6934,
+        "gitBlobSha": "adcea9c852f0dd05e2a0d7a3dc7387075282fc46"
+      },
+      {
+        "file": "after/capture-presets.test.ts",
+        "sha256": "800666cd45ed2de68a76bc0f0c938eb8868e3d94ea41d84f10fcd2b4ad2512d4",
+        "bytes": 892,
+        "gitBlobSha": "cbe0066102f404b226d734fbf352bf055317da8d"
+      },
+      {
+        "file": "after/payloads.json",
+        "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+        "bytes": 82019,
+        "gitBlobSha": "bd8c496459f1accbdde556458d90c8c701e11bc2"
+      },
+      {
+        "file": "after/presets.json",
+        "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+        "bytes": 2262,
+        "gitBlobSha": "22a58ef9f5e1d2edb74317ab4b704744ed43ead4"
+      },
+      {
+        "file": "after/test.log",
+        "sha256": "7aa7a578c1f433a5b7eb453bba764f1799528d1a8bea119f31f97ac5f0167306",
+        "bytes": 248,
+        "gitBlobSha": "d54458f116e50f3129226f530bec48d36d3377fb"
+      },
+      {
+        "file": "android-export.log",
+        "sha256": "346940a5771071516df72254cd31c9f2243031b51c2323fbd53617b9e5eb75d9",
+        "bytes": 685,
+        "gitBlobSha": "76b806859dbe452b62436378f4945106377e2575"
+      },
+      {
+        "file": "baseline-ios-export.log",
+        "sha256": "743670bc36d72caa92b6d58a1c833b0900b9c2399725eabd97c14661eb13fa8a",
+        "bytes": 1926,
+        "gitBlobSha": "aa6213a28a0531610aecb0d0a4247aaffed40009"
+      },
+      {
+        "file": "before/capture-current.config.ts",
+        "sha256": "16cac4d7b36062c0c65d795634309c129289a046f07985e053e3abf976bf98b5",
+        "bytes": 440,
+        "gitBlobSha": "90dc7a8b18c95fbb0daf816491c8ffda5c70b6c9"
+      },
+      {
+        "file": "before/capture-payloads.test.ts",
+        "sha256": "28aaa8e13f355948a639f9c66145af5c95db5fea0d1d563c888a4a025954df02",
+        "bytes": 6935,
+        "gitBlobSha": "d55e9cc9582d805c93986c7aa4c1e85db01ddc78"
+      },
+      {
+        "file": "before/capture-presets.test.ts",
+        "sha256": "70acb0f8cde8e5febc755410cf792a876aee28bea4ed740366262827ab976998",
+        "bytes": 997,
+        "gitBlobSha": "e846bc05e2c9af0ba9c7358f1c185f78e7a353cc"
+      },
+      {
+        "file": "before/payloads.json",
+        "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+        "bytes": 82019,
+        "gitBlobSha": "bd8c496459f1accbdde556458d90c8c701e11bc2"
+      },
+      {
+        "file": "before/presets.json",
+        "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+        "bytes": 2262,
+        "gitBlobSha": "22a58ef9f5e1d2edb74317ab4b704744ed43ead4"
+      },
+      {
+        "file": "before/test.log",
+        "sha256": "ccb326363b36a698e7817a89780dc680f37a85ae9468b20792b06806ce0f85ba",
+        "bytes": 248,
+        "gitBlobSha": "282bf233d963e416513f77e76ef0cb94b771c826"
+      },
+      {
+        "file": "bindings.json",
+        "sha256": "755ca003b62924577dfb78bb2ab4af9270de3e6f3a2e85316ce626501313ecb4",
+        "bytes": 1533,
+        "gitBlobSha": "3221b4e79df3159cbacd433c994c07465cf62f21"
+      },
+      {
+        "file": "browser-final.log",
+        "sha256": "7f298a8207a61f49ed2c1b8423b2661cca26c6274829c70356de596dc0f4d8b1",
+        "bytes": 3851,
+        "gitBlobSha": "76743171e0e8f9b326cc9e839164e7f61786bd2b"
+      },
+      {
+        "file": "browser.config.ts",
+        "sha256": "fe51aac78d45b473a6a58224a3ec58e14bcbff88d72a57a419223621f368e859",
+        "bytes": 688,
+        "gitBlobSha": "a6b67eefe328e6b11d1222f4e0b647f5b6cc7097"
+      },
+      {
+        "file": "capture-current.mjs",
+        "sha256": "7d1bffe6a4aef64b09d80159c556a2313f2d78a99d6a5c9497237720311ec88c",
+        "bytes": 4484,
+        "gitBlobSha": "64ac0e6632d3aa7cd491db12517a080eaf631a1f"
+      },
+      {
+        "file": "check-final.log",
+        "sha256": "e345cbd41a5c1af353ac2ebbec8f949a2f7ebabe463f3228df0bc2168690c1d5",
+        "bytes": 7583,
+        "gitBlobSha": "68a28aca74fe41827040d9ced48ad479836332d4"
+      },
+      {
+        "file": "checks.json",
+        "sha256": "f6142717a815ba91021d445424da7100213545402f0eb5c78ff3913dfc2dc547",
+        "bytes": 5078,
+        "gitBlobSha": "4390314a05d5000b7263c872bef191d6e5ae0094"
+      },
+      {
+        "file": "ci-failed.log",
+        "sha256": "f478cd51c9b313a48ff811233bfe31106d7040ad3ff77ed62c4693f7dc25d205",
+        "bytes": 6058,
+        "gitBlobSha": "43141c7f3fc9bd785f636a9b991217e30e18e06b"
+      },
+      {
+        "file": "comparison.json",
+        "sha256": "4c274c69a2f07361d6cbd94cfb7b789dcefbf3f9204df82ecbccff07c309c010",
+        "bytes": 864,
+        "gitBlobSha": "7fdafd9411bee7542f6d5cb235c38f290550caf5"
+      },
+      {
+        "file": "environment.json",
+        "sha256": "3eb8bf01cc89992256d1b0b3672ddab214cc3da5358702a2c5eea1ddbc22e5cf",
+        "bytes": 1361,
+        "gitBlobSha": "6140d16ffec39e392c396c317a6654954a5b8498"
+      },
+      {
+        "file": "evidence-verification.json",
+        "sha256": "940897af79134b16dc3b23830dde2aabb9a2e3820db891df71d9e506ee891f7e",
+        "bytes": 228,
+        "gitBlobSha": "9aad1cc83061885e0c416bebd937925dd63560f8"
+      },
+      {
+        "file": "feedback.json",
+        "sha256": "6cb6a4ecb5e3f93741760cbc3a398925bc7219e058bfea227d5e7164145bbeab",
+        "bytes": 44512,
+        "gitBlobSha": "b79e0c8b09d067132f88214030940f68ae9c6ac8"
+      },
+      {
+        "file": "finalize-evidence.mjs",
+        "sha256": "2b2ffe41d7262d2732def089572b7f42a028444c212f3f3b6bdcf93c9ec32aef",
+        "bytes": 4921,
+        "gitBlobSha": "35cc800f9e6735fa9db35cb624ba4b434d14f941"
+      },
+      {
+        "file": "incoming-target-history.txt",
+        "sha256": "318e105a1748f7efed1cedb64529489f20e875dc282174332b989d5d38fe2397",
+        "bytes": 5010,
+        "gitBlobSha": "05dc8b5fbf335810110be719f9b5b12813ae05d7"
+      },
+      {
+        "file": "integration-resolution.patch",
+        "sha256": "abe704658124feb512b593b9d7c0077955fab1ca459878ed0eeed14593bb4ec9",
+        "bytes": 920,
+        "gitBlobSha": "e9c17cd0333fddb35feff9b3a7e88bb434d0a6f9"
+      },
+      {
+        "file": "issue-readback.json",
+        "sha256": "1a23c97a43b226dfffdf1934e881a666bb45f59012bbd28775f62f57c8aaa828",
+        "bytes": 7873,
+        "gitBlobSha": "56ebc66cb1b49655e886bfd271d7c11ec5de6c1d"
+      },
+      {
+        "file": "loader-correction.patch",
+        "sha256": "adc9cd240c14d2072e623ebe3ae07b8c65e212eb43b69a13fce23f7347168241",
+        "bytes": 2120,
+        "gitBlobSha": "51a4cbc79a7584815269191ae926d8fdeb207c7a"
+      },
+      {
+        "file": "native-export.log",
+        "sha256": "69aa2730b55f4903a77514563814c1646406a9433a5cbbccf00e8d0a92877d15",
+        "bytes": 1903,
+        "gitBlobSha": "4de0eb888a2fa7679f30e0ad66d520467b355e15"
+      },
+      {
+        "file": "original-commit.patch",
+        "sha256": "52e89601335190951585711b0ae94c43ba4b4ea2c717ff5fb6f61ac78b0793b5",
+        "bytes": 60464,
+        "gitBlobSha": "9d60ce16ea1e91e5afda78639818d979c59dfe13"
+      },
+      {
+        "file": "pr-readback.json",
+        "sha256": "635406a131feb0c03b2ff8a1967190875a5c29d318054cc4ec22c3c7734d9682",
+        "bytes": 21648,
+        "gitBlobSha": "73409ab9d2081a780fb0d8161a021a1dcf12d80a"
+      },
+      {
+        "file": "prepare-evidence.mjs",
+        "sha256": "f13a0a0ea0bb93cbff3710dad4781121d54b4e8425ebc504f2d1e3c929073aee",
+        "bytes": 9970,
+        "gitBlobSha": "a0ab6e564964f7460504f5fba1f2fe726a9387e1"
+      },
+      {
+        "file": "prior-pr-body.md",
+        "sha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb",
+        "bytes": 3084,
+        "gitBlobSha": "1489778cadf5689bba512fb1a76260e2c38f14af"
+      },
+      {
+        "file": "published-commits.json",
+        "sha256": "aac7dd75452375da651c2b3c0294f0e2b274c9c58e7271de18bb4f8b6bb6daab",
+        "bytes": 15650,
+        "gitBlobSha": "5a1510d25186eebb939f627a57b8d01665a97cbd"
+      },
+      {
+        "file": "published-files.json",
+        "sha256": "90fbbdf63f4c09af534b46550c56866034d7228de445bb6d4cef061c1c04005e",
+        "bytes": 71283,
+        "gitBlobSha": "8c6451e04d18ac8a19c697e2d5819772c2b07d2b"
+      },
+      {
+        "file": "published-history.txt",
+        "sha256": "86d6b662e830bc76995b5981287dc587efd96f22bf82b206d0a7f151049168b9",
+        "bytes": 1470,
+        "gitBlobSha": "41f576d738eb10e5bec05b86868f48fab661c49f"
+      },
+      {
+        "file": "read-publication-final.mjs",
+        "sha256": "7724097bd418d7f27a5fd039f73d29ef9df3b8860c7bd6fd2be341d019a8561e",
+        "bytes": 2857,
+        "gitBlobSha": "d1b3bccc03d31a9bb404fa5423b99656b853285c"
+      },
+      {
+        "file": "read-publication.mjs",
+        "sha256": "404eef90570bc23170b81c98a1d2a07078316bcf45f4f9ec08e413d38233a046",
+        "bytes": 2857,
+        "gitBlobSha": "f40a6012b85ae8bf3464edec7223f2faa39dc809"
+      },
+      {
+        "file": "README.md",
+        "sha256": "488a12f93edf56f4b5d40202c72c9b4a9533de22441a5cc40ae3587e285e80dd",
+        "bytes": 5251,
+        "gitBlobSha": "a43e9f50e2fb6fd0a7ac7ff626030bda36201b3a"
+      },
+      {
+        "file": "retained-originals.json",
+        "sha256": "5ad6b03c8c41952c9c3bc3c151a8f8e8dc06bec5981a75f8216f9e561c08d170",
+        "bytes": 1737,
+        "gitBlobSha": "2764a30880be09314de425650fa1e51d4884490a"
+      },
+      {
+        "file": "review-threads.json",
+        "sha256": "0ac838150f3849b127ce04dcfae85928372c1c43bc1b5fffc95240c479593396",
+        "bytes": 206,
+        "gitBlobSha": "a6a49c9d13fcab6a16923303f1a30d5d245eca3a"
+      },
+      {
+        "file": "runtime-report.json",
+        "sha256": "02eed52b83c1ce4e934149c516aa7fb086b65ab4131d523c5edf0c5bfa948d21",
+        "bytes": 2477,
+        "gitBlobSha": "5bdd664878376f222d5bb0636f7fcd627674edc6"
+      },
+      {
+        "file": "runtime.log",
+        "sha256": "3d53fcb2c98ac2b8669e73e27c6fe6e9f2fbed1e0ea0e58b5de919f10e98f135",
+        "bytes": 452,
+        "gitBlobSha": "adb2e46e9f1896f0b93d1e84367e746853f68cd1"
+      },
+      {
+        "file": "scope-assessment.json",
+        "sha256": "f272e01d527a17f5df49d9ea6d8ed06674b8c3ec1f5c70f580f6b0e51e371227",
+        "bytes": 6205,
+        "gitBlobSha": "ab240d6824c523b791bd03e60548f87d274ad627"
+      },
+      {
+        "file": "verify-runtime-current.mjs",
+        "sha256": "a9fdfc53ac91e02f13c9803bc76a4cf4c00e22fd3ad99127e7decf2c3fd691d6",
+        "bytes": 4953,
+        "gitBlobSha": "18919620a21209c29c119857417c307a05a5d5d7"
+      }
+    ],
+    "independentProbe": {
+      "node": "v24.19.0",
+      "literalAndInvalidResourceProbe": "pass",
+      "captures": {
+        "payloads.json": {
+          "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+          "keys": [
+            "default/board/plain",
+            "default/board/1",
+            "default/translate",
+            "default/transcribe",
+            "default/analyze",
+            "default/select",
+            "default/generate/color",
+            "default/generate/line",
+            "default/review",
+            "default/speech/en-US",
+            "default/speech/fr-FR",
+            "default/speech/ja-JP",
+            "default/speech/literal-boundary",
+            "default/speech-profile",
+            "configured/board/plain",
+            "configured/board/1",
+            "configured/translate",
+            "configured/transcribe",
+            "configured/analyze",
+            "configured/select",
+            "configured/generate/color",
+            "configured/generate/line",
+            "configured/review",
+            "configured/speech/en-US",
+            "configured/speech/fr-FR",
+            "configured/speech/ja-JP",
+            "configured/speech/literal-boundary",
+            "configured/speech-profile",
+            "client-options",
+            "realtime-options"
+          ]
+        },
+        "presets.json": {
+          "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+          "keys": [
+            "topics",
+            "starters",
+            "conversation"
+          ]
+        }
+      },
+      "bundles": [
+        {
+          "platform": "web",
+          "exactHashesMatch": true,
+          "allServerMarkersAbsent": true,
+          "sharedMarkersPresent": true
+        },
+        {
+          "platform": "android",
+          "exactHashesMatch": true,
+          "allServerMarkersAbsent": true,
+          "sharedMarkersPresent": true
+        }
+      ]
+    },
+    "independentProbeMethod": "Node24 executed actual promptResources.ts from detached QA checkout; hostile substitution and invalid resource cases pass. Independently read before/after exact capture bytes; independently read retained owner web/Android bundle bytes, verify all recorded hashes and server absence/shared presence. Owner paths read only. No expensive suites duplicated.",
+    "captureAssessment": "Read full capture harness and before/after configs/tests. Both actual sources pinned via core alias; only capture sink and baseline literal extraction differ. Thirty request/options captures and all starter/conversation outputs match. Signal identity separately asserted by maintained tests. Synthetic fixtures; no live providers.",
+    "runtime": "Source-free ESM maintained test passes in freshCI; owner relocated dist HTTP200 AI-disabled result/harness verified. No container pass inferred.",
+    "browser": "Read all17 owner mocked Chromium scenarios and dedicated-port config: cancellation, failure, durable save/retry, setup language and partial success included. Not native-device execution.",
+    "ci": {
+      "run": 37821917724,
+      "job": 113464834330,
+      "head": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "checkout": "0702fff97d295b06b80379377ac3234e9511d179",
+      "tree": "3c7db752973b75f82755ac358c34f92ad42198e0",
+      "treeEqualsPublishedHead": true,
+      "observed": "294/294 unit tests43files;25/25 service tests3files;5/5 account browser tests; metadata/types/server/web build successful",
+      "ciLogFile": "ci.log"
+    },
+    "ios": {
+      "beforeLogSha256": "743670bc36d72caa92b6d58a1c833b0900b9c2399725eabd97c14661eb13fa8a",
+      "afterLogSha256": "69aa2730b55f4903a77514563814c1646406a9433a5cbbccf00e8d0a92877d15",
+      "dependencyDiffEmpty": true,
+      "fullExport": "blocked on both revisions; not passed"
+    }
+  },
+  "uiEvidence": {
+    "applicable": false,
+    "nonUiObservableContract": "Only application-authored text is extracted with same payloads/presets; no meaningful changed UI flow. Exact request/preset comparisons are appropriate.",
+    "pairs": [],
+    "provenanceRecords": [
+      {
+        "url": "https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/manifest.json",
+        "commitSha": "524cf7aa5866abf105537e882192325ca812615e",
+        "sha256": "ba7c41ec9ff711a4f9036101d10396b0a6baa409b07e03f7cd1b3434f893695c"
+      }
+    ],
+    "renderedPrInspection": {
+      "observations": "No image-rendering pass claimed; genuinely non-UI contract, general rendering waiver recorded."
+    }
+  },
+  "feedback": {
+    "fullBodies": [
+      {
+        "id": 6029843618,
+        "body": "@codex review",
+        "updated_at": "2026-10-07T02:47:46Z",
+        "bodySha256": "7750379659fbba413136c8bf4f500a59f1e03f0c36c0ab16b0a2475eb13ecb1a"
+      },
+      {
+        "id": 6029846176,
+        "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+        "updated_at": "2026-10-07T02:47:55Z",
+        "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9"
+      },
+      {
+        "id": 6029880624,
+        "body": "The configured bot declined review solely because its code-review quota was reached ([exact refusal](https://github.com/MChartier/little-say/pull/35#issuecomment-6029846176)). No completed bot review is claimed and no retry was requested. Independent review/QA remains required under the recorded quota-only amendment.",
+        "updated_at": "2026-10-07T02:50:40Z",
+        "bodySha256": "94dd4713acf5991637682ed2d870cf812f40d85f4966f5e121ba0107b6ec2dbb"
+      },
+      {
+        "id": 6029924801,
+        "body": "Current-head CI passed, including PostgreSQL integration checks. Local validation also passed 217 tests, 17 mocked Chromium scenarios, web/iOS/Android exports, exact before/after payload comparison and relocated ESM runtime loading. [Published scope, feedback dispositions and revision/body bindings](https://github.com/MChartier/little-say/blob/4f53233d5b8e4c4546bcef91515d09a223048646/publication.json) are retained outside product history. Independent review/QA is pending; this PR remains draft. Docker engine unavailability is disclosed in the test plan.",
+        "updated_at": "2026-10-07T02:54:15Z",
+        "bodySha256": "7c8b43afca69be72d9456f14f76d326fa366bd70b0c116196294c0dc540d09f8"
+      },
+      {
+        "id": 6030212332,
+        "body": "Independent QA assignment is next after completion of the balanced-grid assessment. A separate ZBook reviewer will assess the exact prompt-resource refactor at ea87b78eb6c9e9612cc42b7eec490af9d8216b86 against master 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4, including byte-identical payloads, packaged loading, complete scope and current feedback. Docker execution remains an explicitly unperformed check, not an inferred pass.",
+        "updated_at": "2026-10-07T03:20:59Z",
+        "bodySha256": "e59e5a812db5fff37b2b716656e0cd916675394c47a2cfe987bf57acf51d2322"
+      },
+      {
+        "id": 6030357938,
+        "body": "**Independent QA: changes required — communication only.**\n\nRemove the final PR-body sentence, “Independent review/QA remains pending.” This assessment is complete; the supplied PR standard requires current review status. The same QA can recheck the revised body and full feedback without rerunning unchanged tests.\n\nCode, scope and behavior gates pass at `ea87b78e` against master `1f032905`: all 21 paths/one commit reviewed, exact request/preset recaptures match, six focused tests pass, and source-free ESM plus client-bundle boundaries verify. No product defect found. Docker execution remains unperformed because its engine is unavailable; the unchanged packaging contract and relocated runtime were checked. The bot's quota refusal is not a completed bot review.\n\n[Immutable findings, complete scope, evidence and revision/body bindings](https://github.com/MChartier/little-say/blob/0ddde9ab71f326cfae3b0b261baabb64f149768f/qa-verdict.json) · [Readable evidence summary](https://github.com/MChartier/little-say/blob/0ddde9ab71f326cfae3b0b261baabb64f149768f/README.md). Readiness remains with the coordinator after the communication correction and verified receipt.",
+        "updated_at": "2026-10-07T03:35:21Z",
+        "bodySha256": "8629a966da52d09e0639c625bd6c9b1335c4ae86c5efff8a62ac88ea9c8f0924"
+      },
+      {
+        "id": 6030548675,
+        "body": "**Independent QA: ready.** Supersedes [verdict 6030357938](https://github.com/MChartier/little-say/pull/35#issuecomment-6030357938).\n\nC1 is resolved: the final description now points to revision-scoped QA verdicts and contains no stale pending-review claim. Full issue/PR feedback, refs, evidence and CI were rechecked. Source and all 21 published paths remain unchanged at `ea87b78e` against master `1f032905`; the prior independent code/behavior checks remain applicable, with no test reruns.\n\nDocker execution remains unperformed; the earlier packaging/runtime assessment and honest limitation stand. The quota-refused bot did not complete review.\n\n[Immutable superseding verdict and exact bindings](https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/qa-verdict-communication.json) · [Reassessment summary](https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/README-communication.md). The coordinator retains readiness transitions and separate receipt verification; human merge/release approval is unchanged.",
+        "updated_at": "2026-10-07T03:52:38Z",
+        "bodySha256": "cced214d3fac4a44d0c6e704d0bed01ec356174609e77c1c3f94ac0b9da307c0"
+      },
+      {
+        "id": 6065049812,
+        "body": "The human explicitly approved resuming this readiness work on October 8. A single independent QA lane is claimed for current-source/full-scope and actual-master reassessment, followed serially by canonical workflow PR2. Previous verdicts remain historical; current master advanced beyond their recorded base. Prior QA is completed/idle, and replacement ownership after desktop reinstallation will be recorded explicitly. Task admission and actual execution are not yet confirmed; no readiness transition is implied.",
+        "updated_at": "2026-10-08T17:06:33Z",
+        "bodySha256": "900e032bf6c6e63db52d8f4f27011bb88688f198cb67da3335e96585b404941c"
+      },
+      {
+        "id": 6065096312,
+        "body": "Independent QA admission confirmed: native task `01a11c7c-11db-70b8-ba73-efe3693b003e`, initial turn `01a11c7c-1fdb-75a3-8498-0331263021ab`, receives the full pinned QA packet and handles this PR first, then canonical development-workflow PR2 serially. This explicitly records replacement reviewer ownership after reinstallation; prior receipts remain historical. Actual host/read acknowledgment and execution output are awaited. No QA verdict or readiness transition is implied by admission.",
+        "updated_at": "2026-10-08T17:09:20Z",
+        "bodySha256": "eac84eb764da512e659ac46265802bca04aac6de75e08c160efe286984746ba7"
+      },
+      {
+        "id": 6065143401,
+        "body": "**Independent QA: changes required.** Supersedes [6030548675](https://github.com/MChartier/little-say/pull/35#issuecomment-6030548675), whose exact historical receipt remains preserved for the old target.\n\nPR35 conflicts with current master in `packages/core/src/index.ts`: the owner must preserve both account and prompt-resource exports. Reconcile the final description and evidence applicability to the corrected published revision and actual master, then rerun affected payload, packaging/export, setup/conversation and CI checks. Current-head CI and the focused one-commit/21-path scope pass; they do not resolve this integration conflict.\n\n[Immutable findings, complete inventories, impact assessment and exact bindings](https://github.com/MChartier/little-say/blob/8075c9cd71bd98cedf8e9e61380f2b989ad9fda7/verdict.json). Head `ea87b78e`, actual master `fabb925c`; API base/merge-base remains `1f032905`. This is a replacement independent reviewer reassessment, not migration of the original QA. Docker remains unperformed; native-device checks remain deferred. No readiness/draft/merge transition was made.",
+        "updated_at": "2026-10-08T17:12:04Z",
+        "bodySha256": "3d4798614e3546d35285ca7f5563c3ce2fbd6fdf55d74dee6018926eeb009d00"
+      },
+      {
+        "id": 6065866559,
+        "body": "The scoped integration correction is admitted to replacement owner task `01a11ca6-7faa-7628-8031-ac89bc018019`, initial turn `01a11ca6-8a38-74b2-b854-9c5ec4c8f8b7`, after the prior owner’s completed/idle checkpoint. Preserve both account and prompt-resource exports, prior branch history and complete published scope; no force-push. Full pinned instructions and the narrow execution permission boundary were supplied. Actual host/read acknowledgment and correction results are awaited; admission is not completed execution. The same current independent QA reviewer will recheck the corrected final revision. No readiness or merge is claimed.",
+        "updated_at": "2026-10-08T17:54:25Z",
+        "bodySha256": "e64fe5ec5f7d22ac766ae802e9e1316679a2d21b7d04c0db11a21b0be00cdf08"
+      },
+      {
+        "id": 6066199223,
+        "body": "The integration correction is published at `608b8847` against actual master `fabb925c`, preserving both account and prompt exports and all prior history. The current-account CI also exposed a native ESM loading issue; explicit JSON import types and a narrow prompt-helper import resolve it.\n\nCurrent-head CI passes, including service integration and account-browser checks. Local validation passes 294 tests, 17 mocked setup/conversation scenarios, exact actual-master/final payload and preset equality, source-free ESM loading, and web/Android prompt boundaries. The complete published range is four scoped commits and 21 paths (+343/−30).\n\n**Remaining limitation:** iOS export fails on both actual master and final source because Apple authentication imports missing `prop-types`. Both reproductions are retained; no iOS pass or unrelated dependency fix is claimed. Docker remains unperformed and native-device checks remain deferred.\n\n[Final source/body/CI bindings and feedback dispositions](https://github.com/MChartier/little-say/blob/4e0f9b215cad11dd774458d381a5cc6360f18fa3/publication-final.json) · [Fresh evidence and retained original identities](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/README.md). The source is checkpointed for the same independent QA recheck. This PR remains draft with no readiness label.\n",
+        "updated_at": "2026-10-08T18:14:16Z",
+        "bodySha256": "cebdf2f501ff3dbd5bdcc139b1fe534329b96d5a784f8bcf3a2e25ef1da9a3fa"
+      },
+      {
+        "id": 6029576641,
+        "body": "Pre-dispatch scope checkpoint (2026-10-07T02:26:15.398470+00:00). Current master `1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4` still contains the identified production prompt prose. Intake passes for exact-text resource extraction and packaged-load regression checks; no new product decision is needed. Proposed branch: `refactor/prompt-resources-issue23` from that master (remote branch absent when checked). No branch/worktree created and no implementation dispatched.\n\nImplementation owner remains unassigned; no original native planner/task identity is present in the issue, its retained original, Project or available supported audit records. Coordinator must assign one writer and record its verified task identity before execution; the owner must recheck local/remote ownership and current base. This is a pre-dispatch reservation for #23, not an execution claim.\n\nScope: server prompt resources/helpers, core starter prompt resources, and only preset imports in AiConversation; exclude PlayBoard, BoardEditor, TileEditor, geometry, hold/navigation and translation behavior. Preserve exact assembled text, whitespace, literal substitutions, audio/cache identities and server/client packaging boundaries. Deferred PR20 remains deferred; account completion is not a prerequisite. Coordinate any newly discovered overlap before editing.",
+        "updated_at": "2026-10-07T02:26:13Z",
+        "bodySha256": "e99519fbea60b6a7cd091bf2045081036ba1ecd159e1b7a26a51f80c82c32a2e"
+      }
+    ],
+    "reviews": [],
+    "inline": [],
+    "nativeReadback": {
+      "data": {
+        "repository": {
+          "pullRequest": {
+            "headRefOid": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+            "baseRefOid": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+            "closingIssuesReferences": {
+              "totalCount": 1,
+              "nodes": [
+                {
+                  "number": 23,
+                  "url": "https://github.com/MChartier/little-say/issues/23"
+                }
+              ],
+              "pageInfo": {
+                "hasNextPage": false
+              }
+            },
+            "reviewThreads": {
+              "totalCount": 0,
+              "nodes": [],
+              "pageInfo": {
+                "hasNextPage": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "disposition": "All current full comments read; original C1 communication request remains satisfied. R1/R2 now resolved. Quota refusal exact text retained. Owner iOS limitation accurately reported; E1 remains. No other unresolved human request.",
+    "finalRereadUnchanged": true
   },
   "limitations": [
-    "Docker unperformed; no container pass.",
-    "Native device execution deferred; retained browser/Metro results are not device execution.",
-    "No product source, owner branch, PR body, label/draft/review state or Project writes."
+    "Full iOS export blocked on both baseline/final; E1 preventsready.",
+    "Docker unperformed; native-device testing deferred; no live inference.",
+    "Original reviewers and historical receipts remain distinct; this task is the replacement reassessor.",
+    "No product source/body/branch or readiness/draft/Project/merge mutation."
   ],
-  "acknowledgment": "Full supplied execution standards, review overlay and direct amendments read; runtime pins unchanged. Replacement independent task, not migration of original QA.",
-  "nextAction": "Coordinator route R1/R2 to original owner, retain old receipts, withhold readiness; reassess final published bindings after correction."
+  "nextAction": "Withhold readiness for E1; preserve all prior receipts and current passing observations. Coordinator separately persist this exact append-only receipt; owner resolves only affected export evidence and returns final bindings for reassessment."
 }

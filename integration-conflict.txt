@@ -1,7 +1,0 @@
-4a47d17007250a647bdb8e6efa597efe7402c9ec
-100644 e661b3dfb4f5b7aab3895b9efadc08dc16a488b6 1	packages/core/src/index.ts
-100644 1d6166be4f53184751303a4e5d518c93e77030a9 2	packages/core/src/index.ts
-100644 bab9db852d8b466712c4215e120f8f6b78f6a63e 3	packages/core/src/index.ts
-
-Auto-merging packages/core/src/index.ts
-CONFLICT (content): Merge conflict in packages/core/src/index.ts
