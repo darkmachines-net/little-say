@@ -39,11 +39,12 @@ export function ModalBackdrop({ onClose }: { onClose: () => void }) {
 /**
  * Present a responsive, scrollable modal with an optional fixed footer. Outside taps use the same
  * cancellation path as the close button and system back action, without confirming or saving.
+ * Visibility can hide a parent sheet during full-screen navigation without resetting caller state.
  */
-export function Sheet({ title, subtitle, onClose, children, footer, wide = false }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
+export function Sheet({ title, subtitle, onClose, children, footer, wide = false, visible = true }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; visible?: boolean }) {
   const { width, height } = useWindowDimensions();
-  return <Modal transparent animationType="fade" visible onRequestClose={onClose} statusBarTranslucent>
-    <View style={{ flex: 1, backgroundColor: theme.scrim, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 12 : 30 }}>
+  return <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose} statusBarTranslucent>
+    <View style={{ display: visible ? 'flex' : 'none', flex: 1, backgroundColor: theme.scrim, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 12 : 30 }}>
       <ModalBackdrop onClose={onClose} />
       <View accessibilityViewIsModal style={{ backgroundColor: theme.background, borderRadius: 24, width: '100%', maxWidth: wide ? 860 : 580, maxHeight: height - 48, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
         <View style={{ padding: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}><View style={{ flex: 1, gap: 6 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text>{Boolean(subtitle) && <Text style={styles.body}>{subtitle}</Text>}</View><Button icon={X} kind="ghost" compact onPress={onClose} accessibilityLabel={`Close ${title}`} /></View>
