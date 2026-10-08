@@ -2,9 +2,10 @@
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
-import { applyProposal, boardContext, migrateLibrary, tileSource, type BoardProposal } from './schema';
+import { applyProposal, boardContext, migrateLibrary, syncSnapshotSchema, tileSource, type BoardProposal } from './schema';
 import { applyTranslations, editTileTranslation, missingTranslations, storedTileTranslation, tileInLanguage, validateTranslations } from './boardLanguages';
 import { speechKey } from './speech';
+import { boardAssetKeys, mergeBoards } from './account';
 
 function fixture() {
   const library = starterLibrary();
@@ -18,6 +19,21 @@ function proposal(board: ReturnType<typeof fixture>['board']): BoardProposal {
   return { boardId: board.id, baseRevision: board.revision, proposal: { title: 'Renamed', explanation: 'A change', needsClarification: false, tiles: board.tiles.map(tile => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, emoji: '🐄', color: tile.color, translations: [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] })) } };
 }
 describe('translation corrections', () => {
+  it('round-trips corrections through account snapshots and preserves both versions of a sync conflict', () => {
+    const { board, tile } = fixture();
+    const corrected = { ...board, revision: board.revision + 1, tiles: [editTileTranslation(tile, 'ru-RU', { speech: 'Corrected words' })] };
+    const remote = { ...board, revision: board.revision + 1, title: 'Remote title' };
+    const restored = syncSnapshotSchema.parse(JSON.parse(JSON.stringify({ revision: 1, boards: [corrected], assets: [] })));
+    expect(restored.boards[0]).toEqual(corrected);
+    const merged = mergeBoards([board], restored.boards, [remote], () => 'translation-conflict');
+    expect(merged[0]).toEqual(remote);
+    expect(merged[1].tiles).toEqual(corrected.tiles);
+    expect(merged[1].tiles[0]).toMatchObject({ label: tile.label, speech: tile.speech, illustration: tile.illustration });
+    const keys = boardAssetKeys([restored.boards[0]]).speech;
+    expect(keys.has(speechKey({ text: 'Corrected words', language: 'ru-RU' }))).toBe(true);
+    expect(keys.has(speechKey({ text: tile.translations![0].speech, language: 'ru-RU' }))).toBe(false);
+    expect(keys.has(speechKey({ text: tile.speech, language: tile.language }))).toBe(true);
+  });
   it('edits just the selected variant, retains incomplete drafts and round-trips manual provenance', () => {
     const { library, board, tile } = fixture();
     const corrected = editTileTranslation(tile, 'ru-ru', { label: 'Моя корова', speech: 'коровушка' });
