@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "file": "final-publication.json",
+      "sha256": "c2a55773725355a5149980ce7e64d0aca38727fcf38a3f69049d72e71d961f05"
+    },
+    {
+      "file": "publication.json",
+      "sha256": "43552939bb1d6182bdcae7b7cdc89eb15f4c4d1596d6eeb1929438015817811e"
+    },
+    {
+      "file": "checks.json",
+      "sha256": "836cea90c530699cc1bc49512cb8cac85c367ae5e0b5cde3d12b65f3b26f792e"
+    },
+    {
+      "file": "feedback.json",
+      "sha256": "f59ffc037a96fb0daf3325c97504ad621ee2c14b124b6e6b00e155f6033544d2"
+    },
+    {
+      "file": "issue-readback.json",
+      "sha256": "289816b17f19bbd017fe4bb7066e951ae30e9bc78ca9f937d6de514c38396340"
+    },
+    {
+      "file": "pr-readback.json",
+      "sha256": "a4a1dd8f734471c0380e78305582904996d51a1dec348afb58d6cf808758d659"
+    },
+    {
+      "file": "published-commits.json",
+      "sha256": "b442ec70c8a5909dfdc03af3cf6e62e85827d429fc7eed11024a9e086f9d718f"
+    },
+    {
+      "file": "published-files.json",
+      "sha256": "0a05c5abba827389a9f8e0f3f8bc37ca3b568b7b6222e432c6bf78fe3eb2d086"
+    },
+    {
+      "file": "review-threads-and-linkage.json",
+      "sha256": "969b042660fbb2c09925db6cad8fbb08cb9b34538f9a9f9fb48196b04e135e11"
+    }
+  ]
+}
