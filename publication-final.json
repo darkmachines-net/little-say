@@ -1,0 +1,78 @@
+{
+  "checkedAtUtc": "2026-10-08T18:13:07.967Z",
+  "head": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+  "actualTarget": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "apiBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "targetRef": "master",
+  "targetRepository": "MChartier/little-say",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "parentRevisions": [],
+  "draft": true,
+  "labels": [],
+  "commits": [
+    {
+      "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "message": "Extract exact model prompts into versioned resources"
+    },
+    {
+      "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+      "parents": [
+        "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "message": "Merge current master while preserving account and prompt exports"
+    },
+    {
+      "sha": "cfea03f0cc56a893a7269677533375e013024349",
+      "parents": [
+        "0e2758de446674c4874bbce1df4eb51abaee35f4"
+      ],
+      "message": "Declare prompt JSON import types for native ESM consumers"
+    },
+    {
+      "sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "parents": [
+        "cfea03f0cc56a893a7269677533375e013024349"
+      ],
+      "message": "Load server prompt helpers without unrelated core resources"
+    }
+  ],
+  "fileCount": 21,
+  "additions": 343,
+  "deletions": 30,
+  "prBodySha256": "618f76acc080dc5172c85ae69ed7ece0edc2bf69b6849075b9fd504b2b9aa146",
+  "prBodyUpdatedAt": "2026-10-08T18:10:58Z",
+  "body": "## Summary\n\nLittle Say's model instructions and starter messages are embedded in business logic, making prompt changes difficult to find and review. This moves the existing text into documented top-level JSON resources with typed validation and literal substitution. Models receive the same requests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets use the existing Node/Expo loading paths. The current account exports are preserved. Deferred ChatGPT grants in PR20 remain outside this change.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run matching synthetic requests against actual master and the extracted resources, including Unicode, quotes, dollar signs, braces and newlines. | Complete serialized payloads and all starter/preset outputs are byte-identical across affected operations, both picture styles, speech languages and default/configured models. | [Fresh Before/After captures and comparison](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/README.md#observable-contract) |\n| Load from source and source-free ESM; export clients. | Loading passes; relocated production server returns HTTP 200 with AI disabled. Web/Android contain shared presets and no server prompt markers. Invalid resources/substitutions fail clearly. iOS is blocked as described below. | [Runtime and bundle results](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/runtime-report.json) |\n| Create/refine starter boards and conversations with mocked providers, including cancellation and failed saves. | All 17 Chromium scenarios pass; prompts, drafts, consent and recovery remain intact. | [Browser results](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/browser-final.log) |\n\n### Non-UI observable contract\n\nThis is text/resource separation with unchanged UI and request behavior; exact payload comparison is the relevant Before/After evidence. Fresh captures compare actual master `fabb925c` with corrected source `608b8847`. [Full source/harness bindings](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/manifest.json) and [historical identities](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/retained-originals.json) are retained outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: metadata, types, 294 tests, server build and web export. Android export and source-free ESM checks passed. **iOS export fails on both actual master and this source** because Apple authentication imports missing `prop-types`; [both reproduction logs](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/README.md#results) are retained. No dependency fix or iOS pass is claimed.\n\nDocker execution remains unperformed; its unchanged dist-copy contract and relocated runtime were checked. Native-device checks are deferred, and live inference was not run. [Current-revision CI](https://github.com/MChartier/little-say/actions/runs/37821917724) and revision-scoped independent QA verdicts are recorded separately; the quota-refused bot did not complete review.\n",
+  "evidence": {
+    "evidenceCommit": "524cf7aa5866abf105537e882192325ca812615e",
+    "verifiedArtifacts": 52,
+    "manifestSha256": "ba7c41ec9ff711a4f9036101d10396b0a6baa409b07e03f7cd1b3434f893695c",
+    "checkedAtUtc": "2026-10-08T18:10:31.219Z"
+  },
+  "ci": [
+    {
+      "name": "check",
+      "head": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/MChartier/little-say/actions/runs/37821917724/job/113464834330"
+    }
+  ],
+  "feedbackDisposition": {
+    "R1": "Resolved: ordinary target merge preserves account and prompt exports.",
+    "R2": "Resolved: final body compares actual master with final source and links fresh capture identities.",
+    "nativeEsm": "Resolved: current-head CI account-browser gate passes after scoped JSON/helper loading correction.",
+    "bot": "Quota-only refusal remains accurately disclosed; no completed bot review.",
+    "unresolved": "iOS Metro export missing prop-types in target account dependency; reproduced on both baseline and final source, disclosed, no scope expansion."
+  },
+  "owner": "01a11ca6-7faa-7628-8031-ac89bc018019",
+  "sameIndependentQa": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "sourceFrozenForQa": true,
+  "originalWorktreesUntouched": true,
+  "productTrackedTreeClean": true,
+  "retainedLocalBuildOutput": "apps/mobile/dist-native",
+  "readiness": "Not awarded; draft=true, no labels. Independent QA and coordinator gates remain."
+}

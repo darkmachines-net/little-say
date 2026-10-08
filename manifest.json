@@ -1,7 +1,8 @@
 {
-  "generatedAtUtc": "2026-10-08T18:10:01.403Z",
+  "generatedAtUtc": "2026-10-08T18:13:49.623Z",
   "source": "608b884731bbf243fc4d8cac616fcbc6b965de21",
   "baseline": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "behaviorEvidenceCommit": "524cf7aa5866abf105537e882192325ca812615e",
   "artifacts": [
     {
       "file": ".gitattributes",
@@ -81,7 +82,7 @@
     },
     {
       "file": "bindings.json",
-      "sha256": "755ca003b62924577dfb78bb2ab4af9270de3e6f3a2e85316ce626501313ecb4"
+      "sha256": "633968e2eccfc49b083cdb9ac1258e838ff6f2f56df9f73275ce65e82b7c9652"
     },
     {
       "file": "browser-final.log",
@@ -100,8 +101,12 @@
       "sha256": "e345cbd41a5c1af353ac2ebbec8f949a2f7ebabe463f3228df0bc2168690c1d5"
     },
     {
+      "file": "checkpoint-final.mjs",
+      "sha256": "268f9cee577a7bad9fd3c919f119c281348634dd3e906f095b67b7d8ef6056ca"
+    },
+    {
       "file": "checks.json",
-      "sha256": "f6142717a815ba91021d445424da7100213545402f0eb5c78ff3913dfc2dc547"
+      "sha256": "ccdd1972b1cf7bbe4331db2d311ed5facafe519aa57581132b8c1cdb9d1223f5"
     },
     {
       "file": "ci-failed.log",
@@ -122,6 +127,14 @@
     {
       "file": "feedback.json",
       "sha256": "6cb6a4ecb5e3f93741760cbc3a398925bc7219e058bfea227d5e7164145bbeab"
+    },
+    {
+      "file": "final-body-readback.json",
+      "sha256": "876daa3eb79d6f3339e1c9722228eba3c70ff85d8dceeb956d9ae3730a8aae8f"
+    },
+    {
+      "file": "final-evidence-verification.json",
+      "sha256": "6307d139ed9d23bca932b4b8083c6d1187e5ceafa2c17fb3e1a83728d2aca5ba"
     },
     {
       "file": "finalize-evidence.mjs",
@@ -153,7 +166,7 @@
     },
     {
       "file": "pr-readback.json",
-      "sha256": "635406a131feb0c03b2ff8a1967190875a5c29d318054cc4ec22c3c7734d9682"
+      "sha256": "38985bea60ac167571aec2ba1e40d8b38cae804b6b630939bf12c6f7e554b4df"
     },
     {
       "file": "prepare-evidence.mjs",
@@ -162,6 +175,10 @@
     {
       "file": "prior-pr-body.md",
       "sha256": "6727db19c69986b736b420f45249a904404f18455963829cdc48a5346e64a3fb"
+    },
+    {
+      "file": "publication-final.json",
+      "sha256": "339fa1e2aff198d2fc730034199ad6af7b44f896abbd3080c611c82d0f34dc52"
     },
     {
       "file": "published-commits.json",
