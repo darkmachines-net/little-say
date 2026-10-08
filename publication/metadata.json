@@ -1,0 +1,16 @@
+{
+  "closingIssuesReferences": [],
+  "reviewDecision": "",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-08T00:59:14Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MChartier/little-say/actions/runs/37710438617/job/113094866877",
+      "name": "check",
+      "startedAt": "2026-10-08T00:57:25Z",
+      "status": "COMPLETED",
+      "workflowName": "Check"
+    }
+  ]
+}

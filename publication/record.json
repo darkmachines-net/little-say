@@ -1,0 +1,65 @@
+{
+  "checkedAtUtc": "2026-10-08T01:05:37.117Z",
+  "host": "MCHARTIER_ZBOOK",
+  "ownerTask": "01a1140f-ccd2-765d-a393-3ad6dd4ec02b",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "standard": "workflow-v3 / pr-review-v3",
+  "head": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+  "base": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "grandparent": "b21d3ba7370c08468b868385ce9df3d875eee799",
+  "ultimateMaster": "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4",
+  "pr": "https://github.com/MChartier/little-say/pull/38",
+  "issue": "https://github.com/MChartier/little-say/issues/32",
+  "draft": true,
+  "nativeClosingAssociation": false,
+  "taskArtifactAttachment": "No native Codex artifact attachment capability exposed; verified task ID is recorded in issue and PR.",
+  "evidenceCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+  "manifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+  "identities": {
+    "pr-body.md": "8992e399b74edba5103de92e67403c021a73104f0adfbb6e7e46ee72d8ae63de",
+    "issue-body.md": "01d4cee68cdd69b370c68c3d50919ee6ab19b428a39d1e796125664b90e719d5",
+    "pr.json": "563d333c990b5f7359617d3a1da784eb4112b69530890944096ec90cdb6e9284",
+    "issue.json": "a209dac3d3ad07d89fceb1fd100a757290d1ee7968d83b0b5fa2ed0f68c26678",
+    "pr-comments.json": "8a415d810342fa4b2123c0e9a7440293b9cab1d5a8bbf87f679aa7938afd1c9e",
+    "issue-comments.json": "6b0c1209bf324dbb77d5ab4b1793f2e712da7ebbd7472faffce6d8b82a7b151d",
+    "reviews.json": "e59e6417362769648f9c7e1f8ad87e5f42db3db6fb0c99c479895b3640fa6e82",
+    "inline.json": "d67f94c7145b888374f68ffa798d4d6fa54d0e9c7a82f8447ddbbd0df456c0e8",
+    "threads.json": "2075173fc4f115d6917b347d9dd859318a3679a07c3929fc7a186c572f5f09b4",
+    "files.json": "742756d5cb0298ad4fb27570060870b658abb2b1c30d330b2d5c931b530c3dc0",
+    "commits.json": "ff54ea179b04ce9bc8213b655829c35cad82391f7d78610f780e6ca45c12b00c",
+    "ci.json": "b74a3cf4c261049666ba891afd92fcb6a8978294509bebaf2f19979b8da26d26",
+    "ci-jobs.json": "5d12b58eb7cff55bf2881012fcd56f11b1583c4cd0b7499f4828435e9a334106",
+    "metadata.json": "16092c2b737ad59a8d9ac571066384e6d34271f7904430a4b2ea9fdef0c92523",
+    "evidence-access.json": "7b135692260f48ddf54fdfac89c70a3fd25debae71e38a72a353a6f00bd518ed",
+    "ci-37710438617.log": "cbdfd3933e2d3b2ad6a90cf322da6012b075df1cc171dd2a35bc9b46ed6e0a9e"
+  },
+  "feedback": {
+    "prCommentIds": [
+      6049862664,
+      6049866319,
+      6049955396,
+      6049983045
+    ],
+    "issueCommentIds": [
+      6029282445,
+      6030618618,
+      6030684460,
+      6049549105
+    ],
+    "reviewIds": [
+      5450152866,
+      5450178603
+    ],
+    "inlineIds": [
+      4213533661,
+      4213557299
+    ],
+    "disposition": "Finding4213533661 fixed by a08a723, reply4213557299; thread resolved after exact-head engineering reassessment6049983045 reported no major issues."
+  },
+  "ci": {
+    "runId": 37710438617,
+    "conclusion": "success",
+    "url": "https://github.com/MChartier/little-say/actions/runs/37710438617"
+  }
+}
