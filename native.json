@@ -2,11 +2,17 @@
   "data": {
     "repository": {
       "pullRequest": {
+        "headRefOid": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+        "baseRefOid": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
         "closingIssuesReferences": {
           "nodes": [
             {
               "number": 43,
-              "url": "https://github.com/MChartier/little-say/issues/43"
+              "state": "OPEN",
+              "url": "https://github.com/MChartier/little-say/issues/43",
+              "projectItems": {
+                "nodes": []
+              }
             }
           ],
           "pageInfo": {

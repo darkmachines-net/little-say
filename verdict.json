@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "fullPinnedStandardsAndDirectAmendmentsRead": true,
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "mchartier_zbook",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/44",
+  "issue": "https://github.com/MChartier/little-say/issues/43",
+  "supersedesVerdictCommentId": null,
+  "checkedAtUtc": "2026-10-08T19:10:09.020748+00:00",
+  "headSha": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+  "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "actualTarget": {
+    "repository": "MChartier/little-say",
+    "ref": "refs/heads/master",
+    "sha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  },
+  "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "parentRevisions": [],
+  "headParents": [
+    "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  ],
+  "prBodySha256": "f30c7c067be28357a6ce7eb8ea286410cad0f2c4a07a671416c9ccb82df7fea4",
+  "draft": true,
+  "labels": [],
+  "gates": {
+    "value": "pass: directly approved issue43 corrects a reproduced full iOS export failure introduced by existing Apple authentication dependency; scope is proportionate.",
+    "outcome": "pass: app production manifest supplies the exact missing runtime dependency; fresh locked baseline fails, final iOS/Android/web exports succeed. No real Apple sign-in or signed-build claim.",
+    "code": "pass: independently compared complete JSON lock trees. Only mobile prop-types declaration plus prop-types15.8.1 and nested react-is16.13.1 entries added. Every preexisting version, integrity, classification and other field remains equal. Registry URLs and integrity hashes are present. Existing loose-envify/object-assign/js-tokens reused. No provider source change.",
+    "engineeringReview": "pass: actual current-head configured review completed in comment6066886211; no submitted reviews, inline findings or native threads. This is completion, not quota waiver.",
+    "ci": "pass: current-head check113484989796 successful; run37827788244 checks synthetic GitHub merge3953ea65 whose tree511cd559910c8b5625d9fb870a1fafbc4d2d425d equals actual published head tree. Read workflow and logs:288 unit,25 service,5 account-browser passed, release/types/server/web builds passed. CI merge is applicability evidence only; published scope reviewed independently.",
+    "behavior": "pass: independent read-only Node probe of exact retained baseline/final installations reproduces MODULE_NOT_FOUND versus prop-types15.8.1 with oneOf/number functions. AppleButton bytes identical. Verified six actual web/Android/iOS bundle bytes against manifest and final installation exact head/tracked files. Reviewed both fresh npm-ci logs and full export logs. Did not duplicate expensive successful fresh builds/tests solely for QA.",
+    "evidence": "pass: all43 Git blobs across owner evidence/publication downloaded as base64 and checked by size/Git SHA1/SHA256; all15 manifest-bound artifacts match. Baseline/final probe manifest/lock hashes match exact source Git blobs. Source paths, fresh separate installs, commands, limitations and retained bundle bytes verified.",
+    "communication": "pass: concise actual-base problem, dependency solution and intended export outcome; behavioral table explains baseline failure and final result with immutable evidence. Explicit non-UI contract and signed-build/device/provider limits. Issue follows requested fixed template with verified task and PR.",
+    "stack": "pass: one published commit directly parents actual master; no stacked parent, one commit/two files+19/-0. Native closes issue43 only. No Project item returned, so no Project coverage certified."
+  },
+  "publishedScope": {
+    "orderedCommits": [
+      {
+        "sha": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+        "parents": [
+          "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        ],
+        "message": "Declare Apple authentication runtime prop-types dependency"
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/package.json",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "patch": "@@ -30,6 +30,7 @@\n     \"expo-updates\": \"~57.0.24\",\n     \"idb\": \"^8.0.0\",\n     \"lucide-react-native\": \"^1.51.0\",\n+    \"prop-types\": \"^15.8.1\",\n     \"react\": \"19.2.3\",\n     \"react-dom\": \"19.2.3\",\n     \"react-native\": \"0.86.3\","
+      },
+      {
+        "path": "package-lock.json",
+        "status": "modified",
+        "additions": 18,
+        "deletions": 0,
+        "patch": "@@ -52,6 +52,7 @@\n         \"firebase\": \"^12.19.0\",\n         \"idb\": \"^8.0.0\",\n         \"lucide-react-native\": \"^1.51.0\",\n+        \"prop-types\": \"^15.8.1\",\n         \"react\": \"19.2.3\",\n         \"react-dom\": \"19.2.3\",\n         \"react-native\": \"0.86.3\",\n@@ -18476,6 +18477,23 @@\n         \"node\": \">= 6\"\n       }\n     },\n+    \"node_modules/prop-types\": {\n+      \"version\": \"15.8.1\",\n+      \"resolved\": \"https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz\",\n+      \"integrity\": \"sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==\",\n+      \"license\": \"MIT\",\n+      \"dependencies\": {\n+        \"loose-envify\": \"^1.4.0\",\n+        \"object-assign\": \"^4.1.1\",\n+        \"react-is\": \"^16.13.1\"\n+      }\n+    },\n+    \"node_modules/prop-types/node_modules/react-is\": {\n+      \"version\": \"16.13.1\",\n+      \"resolved\": \"https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz\",\n+      \"integrity\": \"sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==\",\n+      \"license\": \"MIT\"\n+    },\n     \"node_modules/proto-list\": {\n       \"version\": \"1.2.4\",\n       \"resolved\": \"https://registry.npmjs.org/proto-list/-/proto-list-1.2.4.tgz\","
+      }
+    ],
+    "completePagination": "single page counts agree with PR totals:1 commit2 files; no missing/truncated inventory; no unrelated evidence churn or commits."
+  },
+  "feedback": {
+    "issueBody": "## Problem\n\nThe iOS Expo export fails because Apple authentication 2.5.1 imports prop-types without providing it, and Little Say's workspace does not declare the runtime dependency. The same failure reproduces on current master and PR35; it was introduced with the merged account integration and is separate from prompt-resource extraction.\n\nThe user explicitly approved a separate dependency-fix PR on October 8. [Retained baseline and PR35 reproduction logs](https://github.com/MChartier/little-say/blob/524cf7aa5866abf105537e882192325ca812615e/README.md#results) show module resolution failing in AppleButton.ios.js.\n\n## Requirements and acceptance\n\n- Declare the missing maintained runtime dependency in the appropriate mobile application manifest and update the lockfile proportionately.\n- A fresh locked installation must complete the iOS JavaScript export without the missing-module error.\n- Preserve web/Android exports, account provider behavior and applicable repository/release checks.\n- Keep the published change focused: no unrelated dependency upgrades, lockfile churn, provider redesign or PR35 prompt edits.\n- Do not claim signed iOS/TestFlight delivery or real Apple sign-in from a successful JavaScript export.\n\n## Implementation plan\n\nVerify current master and the exact Apple authentication import/dependency graph. Add the smallest production dependency declaration needed by the mobile app, regenerate the lockfile with the repository's expected package-manager version and inspect the complete dependency diff. Reproduce with a fresh locked install and run iOS, web and Android exports plus relevant checks. Keep failed-baseline and successful-final logs in accessible retained evidence outside product history.\n\nNo credentials, signed build, paid cloud build, provider call, release or deployment is needed or authorized.\n\n## Implementing Codex task\n\nVerified implementing task ID: `01a11ca6-7faa-7628-8031-ac89bc018019`. [Original assignment and account-owner history](https://github.com/MChartier/little-say/blob/c66f538eee183044c8a7a65eee7e4900759c9286/original-issue43.json) are preserved.\n\n## Implementing PR\n\n[PR44 \u2014 restore iOS export with the missing Apple authentication runtime dependency](https://github.com/MChartier/little-say/pull/44).\n",
+    "prBody": "## Summary\n\nLittle Say's iOS JavaScript export fails because Apple authentication imports `prop-types`, but the installed dependency graph does not provide it. Declare it as a mobile production dependency so clean locked installations can bundle the existing Apple authentication code.\n\nThe lockfile adds only `prop-types` 15.8.1 and its required nested `react-is` 16.13.1. Existing package versions, integrity hashes and classifications are unchanged; no provider code changes are needed.\n\nCloses #43.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Install baseline and final source independently with `npm ci`, then resolve the import from AppleButton and export iOS. | Baseline fails with missing `prop-types`. Final resolves version 15.8.1 and its required APIs, then completes the full iOS JavaScript export. Neither installation uses copied or junctioned dependencies. | [Before/After output and reproduction](https://github.com/MChartier/little-say/blob/59a85fcf200da63e3a470c8e7847bab347a67161/README.md#before-and-after-observable-contract) |\n| Export Android/web and run repository checks from the fresh final installation. | Both exports pass, along with 288 tests, type checks, server build and release metadata validation. | [Native exports](https://github.com/MChartier/little-say/blob/59a85fcf200da63e3a470c8e7847bab347a67161/issue43-native-exports.log) \u00b7 [Repository checks](https://github.com/MChartier/little-say/blob/59a85fcf200da63e3a470c8e7847bab347a67161/issue43-check.log) |\n\nThis is non-UI dependency resolution; real CLI output is the observable Before/After contract. [Provenance](https://github.com/MChartier/little-say/blob/59a85fcf200da63e3a470c8e7847bab347a67161/provenance.json) binds actual master `fabb925c`, final source `a570b52c`, independent installations, commands and bundle hashes.\n\n## Limitations\n\nJavaScript export success does not establish a signed iOS build, TestFlight readiness, device behavior or real Apple sign-in. Those checks were not performed. No credentials, provider setup, cloud build, release or deployment is included.\n\nImplementing task: `01a11ca6-7faa-7628-8031-ac89bc018019`. Independent review and CI results are recorded in the PR discussion.\n",
+    "issueComments": [
+      {
+        "id": 6066734843,
+        "updated_at": "2026-10-08T18:46:06Z",
+        "body": "The approved separate dependency fix is admitted to the same investigator task `01a11ca6-7faa-7628-8031-ac89bc018019`, turn `01a11cd5-3f5f-730c-abe0-651bf8bab75d`. It must use a distinct branch/PR for issue43; PR35 remains frozen and separate. Full pinned instructions and the exact approval were supplied. Actual execution acknowledgment and results are awaited; this records admission only. No secret setup, signed build, provider operation, release or deployment is authorized."
+      }
+    ],
+    "prComments": [
+      {
+        "id": 6066865893,
+        "updated_at": "2026-10-08T18:53:53Z",
+        "body": "@codex review"
+      },
+      {
+        "id": 6066886211,
+        "updated_at": "2026-10-08T18:55:01Z",
+        "body": "Codex Review: Didn't find any major issues. Breezy!\n\n**Reviewed commit:** `a570b52c35`\n\n<details> <summary>\u2139\ufe0f About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with \ud83d\udc4d.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>"
+      },
+      {
+        "id": 6066887286,
+        "updated_at": "2026-10-08T18:55:04Z",
+        "body": "<!-- codex-pull-request-review-summary -->\n\n## Codex Review Summary\n\nThis comment shows the latest Codex review activity on this pull request.\n\n| Review | Status | Commit | Review trigger |\n| --- | --- | --- | --- |\n| \ud83d\udcdd **Code Review** | \u2705 **Completed** <relative-time datetime=\"2026-10-08T18:55:02.844996Z\">2026-10-08T18:55:02.844996Z</relative-time> | `a570b52` | Manual request |\n\n\n\n<details> <summary>\u2139\ufe0f About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\" or \"@codex security review\".\n\nCodex reacts with \ud83d\udc40 while any review is running, comments if it has suggestions, and reacts with \ud83d\udc4d once all reviews finish with no findings.\n\n</details>"
+      },
+      {
+        "id": 6066963233,
+        "updated_at": "2026-10-08T18:59:34Z",
+        "body": "Fresh independent locked installations reproduced the baseline iOS failure and passed final iOS, Android and web exports. All 288 local tests and [CI](https://github.com/MChartier/little-say/actions/runs/37827788244) pass. [Configured code review](https://github.com/MChartier/little-say/pull/44#issuecomment-6066886211) completed on `a570b52c35` without major issues.\n\n[Final published bindings and retained evidence](https://github.com/MChartier/little-say/blob/7a2aa21386a695adc4fb4899c9f8fa9f0e7985e2/final-publication.json) verify one commit, two files and +19/-0 against actual master. PR35 is unchanged. Signed builds, device behavior and real Apple sign-in remain unexecuted. Implementation is idle for independent QA; this PR remains draft.\r\n"
+      }
+    ],
+    "submittedReviews": [],
+    "inlineComments": [],
+    "native": {
+      "data": {
+        "repository": {
+          "pullRequest": {
+            "headRefOid": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+            "baseRefOid": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+            "closingIssuesReferences": {
+              "nodes": [
+                {
+                  "number": 43,
+                  "state": "OPEN",
+                  "url": "https://github.com/MChartier/little-say/issues/43",
+                  "projectItems": {
+                    "nodes": []
+                  }
+                }
+              ],
+              "pageInfo": {
+                "hasNextPage": false
+              }
+            },
+            "reviewThreads": {
+              "nodes": [],
+              "pageInfo": {
+                "hasNextPage": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "disposition": "All full bodies read; no actionable unresolved request. Immediately prepublication reread unchanged."
+  },
+  "uiEvidence": {
+    "applicable": false,
+    "nonUiObservableContract": "Only dependency manifest/lock additions. Missing module resolution and complete JavaScript exports are the changed observable contract; no meaningful changed UI flow or fabricated screenshots.",
+    "provenanceRecords": [
+      {
+        "url": "https://github.com/MChartier/little-say/blob/59a85fcf200da63e3a470c8e7847bab347a67161/provenance.json",
+        "commitSha": "59a85fcf200da63e3a470c8e7847bab347a67161",
+        "sha256": "2f4d36fdfba14aa49784e7e580b9fcd88f84f48664ef7631e28b0248ff022731"
+      }
+    ],
+    "renderedPrInspection": {
+      "observations": "General GitHub page-rendering waiver applied honestly; rendered-page pass not claimed. Non-UI evidence read directly."
+    }
+  },
+  "ownerEvidence": {
+    "commit": "59a85fcf200da63e3a470c8e7847bab347a67161",
+    "manifestSha256": "41e3f4797f210e64463dc18fd4941d7f11ec87e05218ac29d92f67b51c8233a6",
+    "publicationCommit": "7a2aa21386a695adc4fb4899c9f8fa9f0e7985e2",
+    "publicationSha256": "c2a55773725355a5149980ce7e64d0aca38727fcf38a3f69049d72e71d961f05"
+  },
+  "independentVerification": {
+    "checkedAtUtc": "2026-10-08T19:09:00.878827+00:00",
+    "head": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+    "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "parents": [
+      "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+    ],
+    "scope": "1\t0\tapps/mobile/package.json\n18\t0\tpackage-lock.json\n",
+    "lockChanged": [
+      "apps/mobile"
+    ],
+    "lockAdded": [
+      "node_modules/prop-types",
+      "node_modules/prop-types/node_modules/react-is"
+    ],
+    "allOtherLockContentIdentical": true,
+    "manifestEntriesVerified": 15,
+    "ownerFinalCleanExactHead": true,
+    "retainedBundlesVerified": [
+      {
+        "file": "dist/sw.js",
+        "bytes": 2201,
+        "sha256": "38465097df9880350f605fc72b5251eb0a457f5e9d53c307db5023992787a7b8"
+      },
+      {
+        "file": "dist/workbox-9c191d2f.js",
+        "bytes": 15202,
+        "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+      },
+      {
+        "file": "dist/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+        "bytes": 6084972,
+        "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab"
+      },
+      {
+        "file": "dist/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+        "bytes": 359876,
+        "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3"
+      },
+      {
+        "file": "dist-native/_expo/static/js/android/index-4414892ebec25a42ee6824feaab591a1.hbc",
+        "bytes": 7330973,
+        "sha256": "0543cf7f3a3153da5e331cb502425802ce86490e083ef9a38f96ceec8ad50b55"
+      },
+      {
+        "file": "dist-native/_expo/static/js/ios/index-f86d263ae8c4fdfa876dac64b221c320.hbc",
+        "bytes": 7323166,
+        "sha256": "f17810e5e3b1416bff28ef10d5157e21d8de60ce792699bc21f84aa2585f7c87"
+      }
+    ],
+    "baselineFinalProbeManifestAndLockMatchGitBlobs": true
+  },
+  "probe": {
+    "checkedAtUtc": "2026-10-08T19:08:39.137Z",
+    "results": [
+      {
+        "folder": "little-say-issue43",
+        "nodeModulesRealPath": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\little-say-issue43\\node_modules",
+        "symbolicLink": false,
+        "appleButtonSha256": "c2f70e9f415cefa9e98345622c66476465491bc596142c8ad08d29547fa61c1f",
+        "resolution": {
+          "code": "MODULE_NOT_FOUND"
+        }
+      },
+      {
+        "folder": "issue43-validation",
+        "nodeModulesRealPath": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules",
+        "symbolicLink": false,
+        "appleButtonSha256": "c2f70e9f415cefa9e98345622c66476465491bc596142c8ad08d29547fa61c1f",
+        "resolution": {
+          "path": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules\\prop-types\\index.js",
+          "version": "15.8.1",
+          "oneOf": "function",
+          "number": "function"
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "No signed iOS archive, TestFlight, physical-device or real Apple sign-in execution; native-device readiness deferral does not imply those passed.",
+    "QA reused verified owner fresh install/export evidence and live successful CI; only focused module resolution and byte/scope checks independently rerun.",
+    "Owner validation checkout has only untracked apps/mobile/dist-native export artifacts; tracked source clean at exact head. Initial overly broad QA clean-status assertion failed on these retained artifacts; inspected status and refined assertion, without modifying checkout.",
+    "npm install logs disclose preexisting blocked install scripts/deprecation warnings; no policy or dependency unrelated upgrades made.",
+    "No Project item returned for issue43. Readiness here is not board completion.",
+    "PR35 and PR38 remain evidence-incomplete at their own current revisions until accepted source integration and affected QA; PR38 also retains its separate translation finding."
+  ],
+  "preservedOriginals": [
+    "All historical PR35/PR38 receipts and evidence unchanged.",
+    "524cf7aa5866abf105537e882192325ca812615e retains earlier junction-based investigation; not relabeled fresh.",
+    "c66f538eee183044c8a7a65eee7e4900759c9286/original-issue43.json retained; same blob f7da3a7a8b51e212aa883a82e6e4cbc2d99efa75 present in verified publication; SHA25634f1cfdf05666d514b38e1a7e429744bf85ea80fc7b4d1fecfce05771aa8c5ab."
+  ],
+  "nextAction": "Coordinator separately save exact trusted comment receipt, reread complete feedback/head/base/body/evidence and apply authorized readiness lifecycle only if unchanged. QA makes no label/draft/Project/merge changes.",
+  "retention": "Independent task01a11c7c owns evidence/pr44-independent-qa-20261008. Keep immutable records/ref for audit; never merge evidence into product."
+}

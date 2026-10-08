@@ -1,0 +1,53 @@
+{
+  "checkedAtUtc": "2026-10-08T19:09:00.878827+00:00",
+  "head": "a570b52c357cddf45d2f5371842e8855f32be8b3",
+  "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "parents": [
+    "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+  ],
+  "scope": "1\t0\tapps/mobile/package.json\n18\t0\tpackage-lock.json\n",
+  "lockChanged": [
+    "apps/mobile"
+  ],
+  "lockAdded": [
+    "node_modules/prop-types",
+    "node_modules/prop-types/node_modules/react-is"
+  ],
+  "allOtherLockContentIdentical": true,
+  "manifestEntriesVerified": 15,
+  "ownerFinalCleanExactHead": true,
+  "retainedBundlesVerified": [
+    {
+      "file": "dist/sw.js",
+      "bytes": 2201,
+      "sha256": "38465097df9880350f605fc72b5251eb0a457f5e9d53c307db5023992787a7b8"
+    },
+    {
+      "file": "dist/workbox-9c191d2f.js",
+      "bytes": 15202,
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "file": "dist/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+      "bytes": 6084972,
+      "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab"
+    },
+    {
+      "file": "dist/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+      "bytes": 359876,
+      "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3"
+    },
+    {
+      "file": "dist-native/_expo/static/js/android/index-4414892ebec25a42ee6824feaab591a1.hbc",
+      "bytes": 7330973,
+      "sha256": "0543cf7f3a3153da5e331cb502425802ce86490e083ef9a38f96ceec8ad50b55"
+    },
+    {
+      "file": "dist-native/_expo/static/js/ios/index-f86d263ae8c4fdfa876dac64b221c320.hbc",
+      "bytes": 7323166,
+      "sha256": "f17810e5e3b1416bff28ef10d5157e21d8de60ce792699bc21f84aa2585f7c87"
+    }
+  ],
+  "baselineFinalProbeManifestAndLockMatchGitBlobs": true
+}

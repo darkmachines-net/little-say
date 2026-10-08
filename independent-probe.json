@@ -1,0 +1,26 @@
+{
+  "checkedAtUtc": "2026-10-08T19:08:39.137Z",
+  "results": [
+    {
+      "folder": "little-say-issue43",
+      "nodeModulesRealPath": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\little-say-issue43\\node_modules",
+      "symbolicLink": false,
+      "appleButtonSha256": "c2f70e9f415cefa9e98345622c66476465491bc596142c8ad08d29547fa61c1f",
+      "resolution": {
+        "code": "MODULE_NOT_FOUND"
+      }
+    },
+    {
+      "folder": "issue43-validation",
+      "nodeModulesRealPath": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules",
+      "symbolicLink": false,
+      "appleButtonSha256": "c2f70e9f415cefa9e98345622c66476465491bc596142c8ad08d29547fa61c1f",
+      "resolution": {
+        "path": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\issue43-validation\\node_modules\\prop-types\\index.js",
+        "version": "15.8.1",
+        "oneOf": "function",
+        "number": "function"
+      }
+    }
+  ]
+}
