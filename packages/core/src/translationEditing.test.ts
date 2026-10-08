@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
-import { applyProposal, assertTranslationSourceLanguageChange, boardContext, migrateLibrary, syncSnapshotSchema, tileSource, type BoardProposal } from './schema';
+import { applyProposal, assertTranslationSourceLanguageChange, boardContext, migrateLibrary, syncSnapshotSchema, tileSchema, tileSource, type BoardProposal } from './schema';
 import { applyTranslations, editTileTranslation, missingTranslations, storedTileTranslation, tileInLanguage, validateTranslations } from './boardLanguages';
 import { speechKey } from './speech';
 import { boardAssetKeys, mergeBoards } from './account';
@@ -19,6 +19,20 @@ function proposal(board: ReturnType<typeof fixture>['board']): BoardProposal {
   return { boardId: board.id, baseRevision: board.revision, proposal: { title: 'Renamed', explanation: 'A change', needsClarification: false, tiles: board.tiles.map(tile => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, emoji: '🐄', color: tile.color, translations: [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] })) } };
 }
 describe('translation corrections', () => {
+  it.each([undefined, 'manual'] as const)('retains an empty %s correction draft for validation instead of deleting it', origin => {
+    const { tile } = fixture();
+    tile.translations![0].origin = origin;
+    const saved = editTileTranslation(tile, 'es-ES', { label: 'Vaca', speech: 'vaca' });
+    const snapshot = structuredClone(saved);
+    const empty = editTileTranslation(editTileTranslation(saved, 'ru-RU', { label: '' }), 'ru-RU', { speech: '' });
+    expect(storedTileTranslation(empty, 'ru-RU')).toMatchObject({ label: '', speech: '', origin: 'manual' });
+    expect(tileSchema.safeParse(empty).success).toBe(false);
+    expect(storedTileTranslation(empty, 'es-ES')).toEqual(storedTileTranslation(saved, 'es-ES'));
+    expect(empty).toMatchObject({ label: saved.label, speech: saved.speech, language: saved.language, illustration: saved.illustration });
+    expect(saved).toEqual(snapshot);
+    const completed = editTileTranslation(empty, 'ru-RU', { label: 'Corrected label', speech: 'Corrected words' });
+    expect(tileSchema.parse(JSON.parse(JSON.stringify(completed)))).toEqual(completed);
+  });
   it('guards manual and legacy source collisions while allowing equivalent or unrelated language tags', () => {
     const { tile } = fixture();
     for (const origin of [undefined, 'manual'] as const) {

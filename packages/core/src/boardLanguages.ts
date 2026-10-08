@@ -38,7 +38,7 @@ export function editTileTranslation(tile: Tile, language: string, changes: Parti
   const old = storedTileTranslation(tile, language);
   const next = { language: canonicalLanguage(language), label: old?.label ?? '', speech: old?.speech ?? '', ...changes, source: tileSource(tile), origin: 'manual' as const };
   const translations = (tile.translations ?? []).filter(t => canonicalLanguage(t.language) !== next.language);
-  if (next.label || next.speech) translations.push(next);
+  if (old || next.label || next.speech) translations.push(next);
   return { ...tile, translations };
 }
 /** Check whether the card has either the requested base language or a current translation. */

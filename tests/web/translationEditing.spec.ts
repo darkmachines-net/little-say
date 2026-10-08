@@ -7,7 +7,7 @@ import { starterLibrary } from '../fixtures/library';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { openExistingLibrary } from './existingLibrary';
 
-async function openTranslations(page: Page, missingSpanish = false) {
+async function openTranslations(page: Page, missingSpanish = false, legacy = false) {
   await page.addInitScript(() => {
     const w = window as any; w.__spoken = [];
     w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
@@ -24,6 +24,7 @@ async function openTranslations(page: Page, missingSpanish = false) {
   board.tiles[0].languageMode = 'board'; board.tiles[1].languageMode = 'fixed';
   board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
   if (missingSpanish) board.tiles[0].translations.pop();
+  if (legacy) delete board.tiles[0].translations[0].origin;
   library.settings = { ...library.settings, accountChoiceMade: true, aiConsent: true, autoSpeech: false, boardLanguages: { [board.id]: 'ru-RU' } };
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
@@ -86,6 +87,40 @@ test('account entry cancellation preserves corrected translations and the guest 
   expect(corrected.tiles[0]).toMatchObject({ label: original.tiles[0].label, speech: original.tiles[0].speech, illustration: original.tiles[0].illustration });
   expect(corrected.tiles[1]).toEqual(original.tiles[1]);
   expect(corrected.tiles[0].translations.find((t: any) => t.language === 'es-ES')).toEqual(original.tiles[0].translations![1]);
+});
+
+for (const legacy of [false, true]) test(`empty ${legacy ? 'legacy' : 'manual'} corrections refuse save and duplicate; cancel and reload preserve saved words`, async ({ page }) => {
+  const original = await openTranslations(page, false, legacy);
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await page.getByRole('textbox', { name: 'Russian words on the tile', exact: true }).fill('');
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('');
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByText('Complete both text fields', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Duplicate tile', exact: true })).toBeDisabled();
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await expect(page.getByRole('textbox', { name: 'Russian words on the tile', exact: true })).toHaveValue('');
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('');
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue(original.tiles[0].translations![0].speech);
+  expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  await page.getByRole('textbox', { name: 'Russian words on the tile', exact: true }).fill('');
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('');
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await page.getByRole('textbox', { name: 'Russian words on the tile', exact: true }).fill('Corrected label');
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('Corrected words');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.reload();
+  const saved = await savedBoard(page);
+  expect(saved.tiles[0].translations.find((t: any) => t.language === 'ru-RU')).toMatchObject({ label: 'Corrected label', speech: 'Corrected words', origin: 'manual' });
+  expect(saved.tiles[0].translations.find((t: any) => t.language === 'es-ES')).toEqual(original.tiles[0].translations![1]);
+  expect(saved.tiles[0]).toMatchObject({ label: original.tiles[0].label, speech: original.tiles[0].speech, language: original.tiles[0].language, illustration: original.tiles[0].illustration });
+  expect(saved.tiles[1]).toEqual(original.tiles[1]);
 });
 
 test('manual source-language collisions refuse save and duplicate without hiding a saved correction', async ({ page }) => {
