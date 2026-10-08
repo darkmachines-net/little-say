@@ -1,0 +1,119 @@
+Listing tests:
+  [edge] › app.spec.ts:42:5 › outside modal dismissal › hold opens editing directly and return remains idle at 390px
+  [edge] › app.spec.ts:63:5 › outside modal dismissal › outside taps cancel editing and deletion at 390px
+  [edge] › app.spec.ts:42:5 › outside modal dismissal › hold opens editing directly and return remains idle at 1180px
+  [edge] › app.spec.ts:63:5 › outside modal dismissal › outside taps cancel editing and deletion at 1180px
+  [edge] › app.spec.ts:98:1 › device language profile persists offline and drives French/Spanish board setup without changing fixed cards
+  [edge] › app.spec.ts:155:1 › regional language preferences drive manual cards and AI requests
+  [edge] › app.spec.ts:199:1 › starter library, manual edit, mixed-language data, and persistence
+  [edge] › app.spec.ts:213:1 › complete emoji search finds blueberries for a plum card and persists offline
+  [edge] › app.spec.ts:256:1 › swipes are forgiving, speech is bounded, and parent editing needs a deliberate hold and release
+  [edge] › app.spec.ts:279:1 › unlock readiness matches release at the boundary and cancelled holds reset immediately
+  [edge] › app.spec.ts:305:1 › another touch cancels the ready unlock state without leaving stale feedback
+  [edge] › app.spec.ts:329:1 › active board survives reload and uses Russian pronunciation
+  [edge] › app.spec.ts:338:1 › tap feedback never steals the playing highlight during repeated queued taps
+  [edge] › app.spec.ts:379:1 › board languages translate switchable cards, preserve fixed cards, and save translated audio offline
+  [edge] › app.spec.ts:446:1 › board card menu confirms deletion and preserves other boards after reload
+  [edge] › app.spec.ts:469:1 › board card menu fills missing translated audio, continues when closed, retries failures, and hides when complete
+  [edge] › app.spec.ts:523:1 › board audio retry fills only missing clips with automatic generation disabled
+  [edge] › app.spec.ts:549:1 › numbers 1–9 get a visible bilingual setup and switch speech while preserving digit labels
+  [edge] › app.spec.ts:616:1 › AI proposal requires review, applies safely, and can be undone
+  [edge] › app.spec.ts:633:1 › offline shell and local boards survive a disconnected reload
+  [edge] › app.spec.ts:643:1 › tablet layouts and screenshots stay within the viewport
+  [edge] › app.spec.ts:657:1 › 24 tiles fit in both tablet orientations and remain keyboard accessible
+  [edge] › app.spec.ts:686:1 › photo attachments survive reload and remain on the device
+  [edge] › app.spec.ts:702:1 › failed local writes are visible, retryable, and do not enter play prematurely
+  [edge] › app.spec.ts:720:1 › missing AI configuration retains the parent prompt and existing boards
+  [edge] › conversation.spec.ts:25:1 › manual creation starts from the library and suggestions stay in the conversation without an opt-in screen
+  [edge] › conversation.spec.ts:45:1 › editing routes survive reload and return to their source board without saving a draft
+  [edge] › conversation.spec.ts:59:1 › clarification, draft and refinement stay in one conversation until explicitly saved
+  [edge] › conversation.spec.ts:97:1 › editing refines the latest draft while keeping source IDs, languages and photos private
+  [edge] › conversation.spec.ts:130:1 › stopping and retrying ignores late replies and does not duplicate conversation turns
+  [edge] › conversation.spec.ts:154:1 › failed follow-ups and clarification preserve the previous draft and small-screen controls
+  [edge] › conversation.spec.ts:185:1 › a failed save keeps the draft and retry creates exactly one board
+  [edge] › conversation.spec.ts:200:56 › browser history preserves a pending draft save through failure
+  [edge] › conversation.spec.ts:200:56 › browser history preserves a pending draft save through success
+  [edge] › conversation.spec.ts:250:56 › voice transcripts can be reviewed for follow-ups and page back releases the microphone
+  [edge] › conversation.spec.ts:250:56 › voice transcripts can be reviewed for follow-ups and browser back releases the microphone
+  [edge] › conversation.spec.ts:286:1 › a capture-time recorder error releases the microphone and lets the parent retry
+  [edge] › conversation.spec.ts:314:1 › the compact editor fits tablet orientations and keeps reordering in the tile dialog
+  [edge] › conversation.spec.ts:331:1 › a new phone conversation starts with its full data-use introduction visible
+  [edge] › editor-transition.spec.ts:30:1 › dashboard and reload entry bind the same board, preserve edits and stop active/pending audio
+  [edge] › editor-transition.spec.ts:54:1 › selected play language, missing translations and voice safeguards survive the direct handoff
+  [edge] › editor-transition.spec.ts:88:1 › keyboard requires a continuous hold and cancels repeat, blur, Escape and background interruptions
+  [edge] › editor-transition.spec.ts:108:1 › assistive activation is delayed, cancellable and cannot fire after backgrounding
+  [edge] › editor-transition.spec.ts:121:1 › release outside the control and a second contact elsewhere cannot unlock
+  [edge] › editor-transition.spec.ts:138:1 › a pending return keeps the editor visible and prevents concurrent edits until the save completes
+  [edge] › editor-transition.spec.ts:161:1 › a failed save retains edits and editor until retry, without granting AI consent
+  [edge] › editor-transition.spec.ts:184:3 › existing editing controls and drafts remain usable at 1180x820
+  [edge] › editor-transition.spec.ts:184:3 › existing editing controls and drafts remain usable at 820x1180
+  [edge] › editor-transition.spec.ts:184:3 › existing editing controls and drafts remain usable at 844x390
+  [edge] › editor-transition.spec.ts:184:3 › existing editing controls and drafts remain usable at 390x844
+  [edge] › editor-transition.spec.ts:206:1 › cards shrink toward the measured preview while existing controls are already available
+  [edge] › editor-transition.spec.ts:227:1 › reduced motion and resize during the transition always leave a usable editor
+  [edge] › grid.spec.ts:54:3 › 1 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 2 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 3 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 4 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 5 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 6 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 7 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 8 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 9 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 11 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 23 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:54:3 › 24 cards fill balanced rows across tablet and phone rotation
+  [edge] › grid.spec.ts:83:1 › rotation preserves speech and cancels contacts measured against the old grid
+  [edge] › grid.spec.ts:114:3 › dense phone cards retain whole pictures and long English accessible names
+  [edge] › grid.spec.ts:114:3 › dense phone cards retain whole pictures and long Russian accessible names
+  [edge] › grid.spec.ts:114:3 › dense phone cards retain whole pictures and long Spanish accessible names
+  [edge] › grid.spec.ts:134:3 › 7-card editor preview remains balanced and editable
+  [edge] › grid.spec.ts:134:3 › 24-card editor preview remains balanced and editable
+  [edge] › grid.spec.ts:153:1 › a tiny play window explains its limit and recovers on resize
+  [edge] › landing.spec.ts:6:3 › homepage describes the app without starting it at 1440px
+  [edge] › landing.spec.ts:6:3 › homepage describes the app without starting it at 390px
+  [edge] › landing.spec.ts:6:3 › homepage describes the app without starting it at 320px
+  [edge] › landing.spec.ts:41:1 › homepage navigation works with a keyboard and installed web apps launch into the app
+  [edge] › landing.spec.ts:57:1 › older iOS home-screen installs bypass the homepage at their original root URL
+  [edge] › landing.spec.ts:64:1 › standalone display mode also bypasses the homepage for older installs
+  [edge] › photos.spec.ts:56:1 › fine crop controls match the final photo in the editor, library and rotated offline play board
+  [edge] › photos.spec.ts:89:1 › pinch zoom and one-finger repositioning work without scrolling the crop away
+  [edge] › photos.spec.ts:108:1 › cancelled crops and replacement uploads preserve the saved photo, including after reload
+  [edge] › photos.spec.ts:123:1 › duplicate family cards can frame different people without modifying their shared image
+  [edge] › pictures.spec.ts:43:1 › a complete emoji board is ready to save without suggesting AI illustrations
+  [edge] › pictures.spec.ts:62:1 › Automatic fills only a gap and illustration changes remain available in Picture settings
+  [edge] › pictures.spec.ts:109:1 › construction pictures are staged, generated by default, saved offline, and retained in later text edits
+  [edge] › pictures.spec.ts:140:1 › stopping picture jobs cancels queued work and discards the partial preview without saving it
+  [edge] › pictures.spec.ts:177:1 › manual library selection needs no AI permission and saves attribution plus a protected offline picture
+  [edge] › pictures.spec.ts:195:1 › board restyling previews changes, preserves a protected card, and supports returning to emoji
+  [edge] › pictures.spec.ts:222:1 › picture sources use a compact explained selector with keyboard dismissal and no duplicate generation gate
+  [edge] › pictures.spec.ts:245:1 › card source choices show their inherited value and can return to following the board
+  [edge] › pictures.spec.ts:261:1 › full-page canvas streams finished pictures, distinguishes active and queued work, and keeps settings accessible
+  [edge] › pictures.spec.ts:320:1 › missing library and disabled server generation keep a usable emoji board with one summary
+  [edge] › pictures.spec.ts:343:94 › migrated cards honor inherited Library only and explicit overrides
+  [edge] › pictures.spec.ts:343:94 › migrated cards honor inherited Emoji only and explicit overrides
+  [edge] › pictures.spec.ts:370:59 › saved tile edits survive automatic picture close
+  [edge] › pictures.spec.ts:370:59 › saved tile edits survive automatic picture stop
+  [edge] › pictures.spec.ts:370:59 › saved tile edits survive automatic picture apply
+  [edge] › recents.spec.ts:37:1 › recent play order persists offline and stays independent of edits, undo, copies and deletion
+  [edge] › recents.spec.ts:74:1 › returning from a legacy active session creates an accessible responsive spotlight
+  [edge] › recents.spec.ts:102:1 › favorites stay immediately below the latest board, with recent play order within each group
+  [edge] › recents.spec.ts:134:1 › favorites work before first play, retry failed saves, and are independent of edits, copies and deletion
+  [edge] › setup.spec.ts:41:1 › first-time setup generates chosen languages, resumes partial success, and starts audio after completion
+  [edge] › setup.spec.ts:90:1 › offline setup can save a regional preference and start empty without English sample boards
+  [edge] › setup.spec.ts:111:1 › setup waits for durable saves and retains generated drafts when final saving fails
+  [edge] › speech.spec.ts:11:1 › generates from draft text and language, regenerates, persists offline, and falls back on playback failure
+  [edge] › speech.spec.ts:90:1 › board creation does not wait for background audio and stale generation cannot replace edited words
+  [edge] › translationEditing.spec.ts:43:1 › board selection opens the matching fields, retains drafts across languages and saves only corrected words
+  [edge] › translationEditing.spec.ts:66:1 › account entry cancellation preserves corrected translations and the guest library
+  [edge] › translationEditing.spec.ts:91:1 › late TTS stays on its original key; failure and retry use the corrected input
+  [edge] › translationEditing.spec.ts:120:1 › source edits retain stale corrected text for review and incomplete variants cannot be saved
+  [edge] › translationEditing.spec.ts:143:38 › AI keeps a saved correction when replacement is declined
+  [edge] › translationEditing.spec.ts:143:38 › AI uses an explicitly reviewed replacement
+  [edge] › translationEditing.spec.ts:166:1 › AI source-language collisions are refused without replacing saved corrections
+  [edge] › translationEditing.spec.ts:177:1 › direct play entry inherits Russian and returns with corrected speech while source labels stay enabled
+  [edge] › translationEditing.spec.ts:194:1 › removing the selected language shows original words without deleting its correction
+  [edge] › translationEditing.spec.ts:207:1 › missing variants stay blank, drafts survive switching and cancelled translation results cannot replace a retry
+  [edge] › translationEditing.spec.ts:240:1 › prepared translation review identifies retained stale words instead of presenting English as Russian
+  [edge] › translationEditing.spec.ts:259:1 › a failed save keeps the corrected board visible and retry persists it before reload
+Total: 117 tests in 11 files

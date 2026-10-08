@@ -1,0 +1,50 @@
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:12104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:12104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundling failed 2497ms apps\mobile\index.ts (2901 modules)
+
+Error: Unable to resolve module prop-types from C:\Users\MChar\Documents\Codex\2026-10-08\task-10\little-say-translations\node_modules\@invertase\react-native-apple-authentication\lib\AppleButton.ios.js: prop-types could not be found within the project or in these directories:
+  ..\..\node_modules
+  node_modules
+  ..\..\node_modules
+  17 |
+  18 | import React from 'react';
+> 19 | import PropTypes from 'prop-types';
+     |                        ^
+  20 | import { requireNativeComponent } from 'react-native';
+  21 | import { ButtonTypes, ButtonVariants } from './AppleButton.shared';
+  22 |
+
+Import stack:
+
+ node_modules\@invertase\react-native-apple-authentication\lib\AppleButton.ios.js
+ | import "prop-types"
+
+ node_modules\@invertase\react-native-apple-authentication\lib\index.js
+ | import "./AppleButton"
+
+ apps\mobile\src\services\firebaseProviders.ts
+ | import "@invertase/react-native-apple-authentication"
+
+ apps\mobile\src\services\firebaseAccount.ts
+ | import "./firebaseProviders"
+
+ apps\mobile\src\services\useAccount.ts
+ | import "./firebaseAccount"
+
+ apps\mobile\src\App.tsx
+ | import "./services/useAccount"
+
+ apps\mobile\src\Entry.tsx
+ | import "./App"
+
+ apps\mobile\index.ts
+ | import "./src/Entry"
+
+ 
+ | import "./apps/mobile/index.ts"
+

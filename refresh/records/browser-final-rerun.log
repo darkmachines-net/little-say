@@ -1,0 +1,17 @@
+[WebServer] npm notice run little-say-workspace@0.2.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.2.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:6200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:6200) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 3 tests using 1 worker
+
+(node:8496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [edge] ΓÇ║ little-say-translations\tests\web\conversation.spec.ts:185:1 ΓÇ║ a failed save keeps the draft and retry creates exactly one board (2.1s)
+  ok 2 [edge] ΓÇ║ little-say-translations\tests\web\grid.spec.ts:135:3 ΓÇ║ 7-card editor preview remains balanced and editable (2.4s)
+  ok 3 [edge] ΓÇ║ little-say-translations\tests\web\grid.spec.ts:135:3 ΓÇ║ 24-card editor preview remains balanced and editable (2.9s)
+
+  3 passed (11.0s)
