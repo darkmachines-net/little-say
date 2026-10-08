@@ -171,10 +171,12 @@ test('regional language preferences drive manual cards and AI requests', async (
   await leaveBoard(page);
   await page.setViewportSize({ width: 1180, height: 900 });
   await page.getByRole('button', { name: 'Edit tile Hola', exact: true }).click();
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
   await expect(page.getByRole('button', { name: 'Choose tile language Russian', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
   await page.getByRole('button', { name: 'Add a tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
@@ -407,7 +409,7 @@ test('board languages translate switchable cards, preserve fixed cards, and save
   await expect(page.getByText('Review translations', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Use translations', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
-  await page.getByRole('button', { name: 'Russian', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
   await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('корова');
   await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
   await page.getByRole('button', { name: 'Generate audio', exact: true }).click();
