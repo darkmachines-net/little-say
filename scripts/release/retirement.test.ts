@@ -106,8 +106,9 @@ describe('unpublished candidate retirement', () => {
     pr.user.login = 'github-actions[bot]'; retireCandidate('123'); data.set(1, { altered: true });
     expect(() => new Journal('124').create(source)).toThrow('assets changed');
   });
-  it('does not retire an exact merged candidate awaiting a prepare retry', () => {
-    mergedTree = tree; expect(retireCandidate('123')).toBe(false); expect(data.size).toBe(2);
+  it('keeps an exact merged candidate retryable even when later master commits exist', () => {
+    mergedTree = tree; base = 'e'.repeat(40);
+    expect(retireCandidate('123')).toBe(false); expect(data.size).toBe(2);
   });
   it('supports synchronous stale failure cleanup only in its own in-progress prepare job', () => {
     workflow.status = 'in_progress'; vi.stubEnv('GITHUB_RUN_ID', '123'); expect(retireCandidate('123', true)).toBe(true);
