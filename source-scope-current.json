@@ -1,0 +1,100 @@
+{
+  "head": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+  "base": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "commits": [
+    "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce Reject AI source changes that shadow saved translations",
+    "502c4de4c527b0f28fff4462f397f2d5b5f7167b Edit selected language variants without losing saved corrections"
+  ],
+  "files": [
+    {
+      "file": "apps/mobile/src/App.tsx",
+      "added": 5,
+      "deleted": 4,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/services/pictures.ts",
+      "added": 2,
+      "deleted": 2,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/AiConversation.tsx",
+      "added": 14,
+      "deleted": 4,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardEditor.tsx",
+      "added": 15,
+      "deleted": 6,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/BoardLanguages.tsx",
+      "added": 14,
+      "deleted": 7,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/EditingLanguages.tsx",
+      "added": 16,
+      "deleted": 0,
+      "category": "product"
+    },
+    {
+      "file": "apps/mobile/src/ui/TileEditor.tsx",
+      "added": 37,
+      "deleted": 25,
+      "category": "product"
+    },
+    {
+      "file": "packages/core/src/boardLanguages.test.ts",
+      "added": 1,
+      "deleted": 1,
+      "category": "maintained regression test"
+    },
+    {
+      "file": "packages/core/src/boardLanguages.ts",
+      "added": 29,
+      "deleted": 10,
+      "category": "product"
+    },
+    {
+      "file": "packages/core/src/schema.ts",
+      "added": 34,
+      "deleted": 7,
+      "category": "product"
+    },
+    {
+      "file": "packages/core/src/translationEditing.test.ts",
+      "added": 85,
+      "deleted": 0,
+      "category": "maintained regression test"
+    },
+    {
+      "file": "tests/web/app.spec.ts",
+      "added": 3,
+      "deleted": 1,
+      "category": "maintained regression test"
+    },
+    {
+      "file": "tests/web/speech.spec.ts",
+      "added": 1,
+      "deleted": 0,
+      "category": "maintained regression test"
+    },
+    {
+      "file": "tests/web/translationEditing.spec.ts",
+      "added": 256,
+      "deleted": 0,
+      "category": "maintained regression test"
+    }
+  ],
+  "totals": {
+    "files": 14,
+    "added": 512,
+    "deleted": 67
+  },
+  "assessment": "Complete merge diff and both published child commits inspected: nine product files and five maintained regression files, no transient artifacts or cleanup exceptions. Second commit addresses the source-language collision with one guard and focused unit/browser regressions."
+}

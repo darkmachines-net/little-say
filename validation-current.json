@@ -1,0 +1,21 @@
+{
+  "checkedAtUtc": "2026-10-08T01:03:55.390Z",
+  "head": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+  "base": "7e8ab5993503419e5945c8f304ffab3a6fc91f56",
+  "checks": {
+    "aggregate": "231 unit tests in 27 files, release validation, TypeScript and server/web builds passed",
+    "browser": "116 passed (6.3m)",
+    "native": "iOS and Android bundle exports passed; no device execution",
+    "ci": "GitHub run37710438617 passed for this head, including npm run check and PostgreSQL integration"
+  },
+  "captureManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+  "harnessSha256": "a384a520960365593670852e71186948cf8cce720379bdf16e32b43c18713fea",
+  "fixtureSha256": "b80402905e37595eeaa1a9c013817e552a796fc06e75e99cca6b25f03e4ea34c",
+  "pixelInspection": "All nine previously represented states recaptured and byte-identical to the inspected prior final set. New tenth image, after-ai-source-collision.png, opened and inspected: refusal message visible, previous draft retained, apply disabled while unsent prompt remains. No transformations.",
+  "limitations": [
+    "Native execution deferred by Calibrate405 comment6041659686.",
+    "GitHub rendered page not inspected under comment6022754087 waiver.",
+    "Live paid providers not exercised; requests and audio drivers controlled.",
+    "Native closing association requires coordinator GitHub Development sidebar; text links and task ID already recorded."
+  ]
+}

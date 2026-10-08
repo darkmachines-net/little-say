@@ -1,0 +1,35 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "reviewThreads": {
+          "pageInfo": {
+            "hasNextPage": false
+          },
+          "nodes": [
+            {
+              "id": "PRRT_kwDOU65Oyc6qJ0Xi",
+              "isResolved": false,
+              "comments": {
+                "pageInfo": {
+                  "hasNextPage": false
+                },
+                "nodes": [
+                  {
+                    "databaseId": 4213533661,
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Review source-language collisions with saved corrections**\n\nWhen an AI proposal changes an existing board-following card’s source language to the language of a protected correction (for example, `en-US` to `ru-RU`) and omits that language from `tile.translations`, this blindly retains the correction without reporting a replacement. `proposalTranslationReplacements` therefore returns no review item, while `tileInLanguage` chooses the new source words whenever the selected language equals `tile.language`, silently replacing the corrected Russian text and audio in actual use. Treat this source-language collision as a protected replacement or otherwise prevent the new source from shadowing the saved correction.\n\nUseful? React with 👍 / 👎.",
+                    "path": "packages/core/src/schema.ts",
+                    "line": 187,
+                    "originalCommit": {
+                      "oid": "502c4de4c527b0f28fff4462f397f2d5b5f7167b"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
