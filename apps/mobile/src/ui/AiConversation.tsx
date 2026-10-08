@@ -43,6 +43,8 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
  * Explicit send/record actions enable AI use without an interstitial. Navigation cancels pending work;
  * only an in-progress board save prevents leaving. onAiUse persists the legacy AI-enabled preference.
+ * onApply's second argument authorizes replacing protected manual/legacy translations for this
+ * draft only; it is true only after explicit parent review and must not authorize another draft.
  */
 export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
