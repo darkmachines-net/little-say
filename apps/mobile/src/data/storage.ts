@@ -7,6 +7,7 @@ import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } f
 import { downloadAudio } from './audioDownload';
 import { downloadPicture } from './pictureDownload';
 import { pictureAssetIdSchema } from '@little-say/core';
+import { syncAssetSchema, type SyncAsset } from '@little-say/core';
 
 const database = SQLite.openDatabaseAsync('little-say.db').then(async db => {
   await db.execAsync('PRAGMA journal_mode = WAL; CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY CHECK (id = 1), document TEXT NOT NULL); CREATE TABLE IF NOT EXISTS speech (key TEXT PRIMARY KEY, asset_id TEXT NOT NULL);');
@@ -88,4 +89,23 @@ export async function saveSpeechAsset(key: string, id: string, url: string): Pro
   if (!file.exists) file.write(await downloadAudio(url));
   await (await database).runAsync('INSERT INTO speech (key, asset_id) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET asset_id = excluded.asset_id', key, id);
   return { id, uri: file.uri };
+}
+
+/** Read owned document bytes for backup without exposing native paths to the server. */
+export async function readSyncAsset(asset: Pick<SyncAsset, 'kind' | 'id' | 'key'>): Promise<Uint8Array | null> {
+  syncAssetSchema.parse({ ...asset, hash: '0'.repeat(64) });
+  const folder = asset.kind === 'photo' ? 'tile-photos' : asset.kind === 'picture' ? 'tile-pictures' : 'tile-audio';
+  const extension = asset.kind === 'photo' ? 'jpg' : asset.kind === 'picture' ? 'png' : 'wav';
+  const file = new File(Paths.document, folder, `${asset.id}.${extension}`);
+  return file.exists ? file.bytes() : null;
+}
+
+/** Restore verified backup bytes before publishing board references; persist speech-key mappings too. */
+export async function writeSyncAsset(asset: SyncAsset, bytes: Uint8Array): Promise<void> {
+  syncAssetSchema.parse(asset);
+  const folder = new Directory(Paths.document, asset.kind === 'photo' ? 'tile-photos' : asset.kind === 'picture' ? 'tile-pictures' : 'tile-audio');
+  folder.create({ intermediates: true, idempotent: true });
+  const extension = asset.kind === 'photo' ? 'jpg' : asset.kind === 'picture' ? 'png' : 'wav';
+  new File(folder, `${asset.id}.${extension}`).write(bytes);
+  if (asset.kind === 'speech') await (await database).runAsync('INSERT INTO speech (key, asset_id) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET asset_id = excluded.asset_id', asset.key!, asset.id);
 }

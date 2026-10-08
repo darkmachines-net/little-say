@@ -34,6 +34,7 @@ test.beforeEach(async ({ page }) => {
     Element.prototype.requestFullscreen = async () => {};
   });
   await page.goto('/app');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 

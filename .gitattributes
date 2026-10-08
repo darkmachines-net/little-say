@@ -1,0 +1,2 @@
+# Keep tracked text bytes stable across Windows, Linux, and macOS native fingerprints.
+* text=auto eol=lf

@@ -5,6 +5,7 @@ import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } f
 import { downloadAudio } from './audioDownload';
 import { downloadPicture } from './pictureDownload';
 import { pictureAssetIdSchema } from '@little-say/core';
+import { syncAssetSchema, type SyncAsset } from '@little-say/core';
 const database = openDB('little-say', 3, { upgrade(db, oldVersion) {
   if (oldVersion < 1) { db.createObjectStore('state'); db.createObjectStore('photos'); }
   if (oldVersion < 2) db.createObjectStore('speech');
@@ -94,4 +95,22 @@ export async function saveSpeechAsset(key: string, id: string, url: string): Pro
   const blob = new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'audio/wav' });
   await (await database).put('speech', { id, blob }, key);
   return audioAsset(id, blob);
+}
+
+/** Read IndexedDB blobs directly for backup; object URLs and browser paths never leave this device. */
+export async function readSyncAsset(asset: Pick<SyncAsset, 'kind' | 'id' | 'key'>): Promise<Uint8Array | null> {
+  syncAssetSchema.parse({ ...asset, hash: '0'.repeat(64) });
+  const db = await database;
+  const value = await db.get(asset.kind === 'photo' ? 'photos' : asset.kind === 'picture' ? 'pictures' : 'speech', asset.key ?? asset.id);
+  const blob = asset.kind === 'speech' ? value?.id === asset.id ? value.blob : null : value;
+  return blob instanceof Blob ? new Uint8Array(await blob.arrayBuffer()) : null;
+}
+
+/** Store restored image/audio blobs and refresh object URLs before boards become visible. */
+export async function writeSyncAsset(asset: SyncAsset, bytes: Uint8Array): Promise<void> {
+  syncAssetSchema.parse(asset);
+  const blob = new Blob([bytes as Uint8Array<ArrayBuffer>], { type: asset.kind === 'photo' ? 'image/jpeg' : asset.kind === 'picture' ? 'image/png' : 'audio/wav' });
+  await (await database).put(asset.kind === 'photo' ? 'photos' : asset.kind === 'picture' ? 'pictures' : 'speech', asset.kind === 'speech' ? { id: asset.id, blob } : blob, asset.key ?? asset.id);
+  const cache = asset.kind === 'photo' ? urls : asset.kind === 'picture' ? pictureUrls : audioUrls;
+  const uri = cache.get(asset.id); if (uri) URL.revokeObjectURL(uri); cache.delete(asset.id);
 }

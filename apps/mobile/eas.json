@@ -2,12 +2,12 @@
   "cli": { "version": "22.4.0", "appVersionSource": "local", "requireCommit": true },
   "build": {
     "internal": {
-      "channel": "internal", "environment": "preview", "distribution": "internal", "autoIncrement": false,
+      "channel": "internal", "environment": "preview", "distribution": "internal", "autoIncrement": false, "credentialsSource": "remote",
       "env": { "LITTLE_SAY_CHANNEL": "internal" },
       "android": { "buildType": "apk" }, "ios": { "simulator": false }
     },
     "production": {
-      "channel": "production", "environment": "production", "distribution": "store", "autoIncrement": false,
+      "channel": "production", "environment": "production", "distribution": "store", "autoIncrement": false, "credentialsSource": "remote",
       "env": { "LITTLE_SAY_CHANNEL": "production" }, "android": { "buildType": "app-bundle" }
     }
   },

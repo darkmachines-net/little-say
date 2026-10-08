@@ -11,7 +11,8 @@ import type { NativeRelease } from './native-contract';
 
 // Keep this adapter paired with tools/eas-cli's lockfile. Never log GraphQL payloads:
 // they contain signing keys. No signing credentials are passed to npm or prebuild.
-function graphqlClient() {
+/** Create an authenticated pinned EAS read client; callers must never log returned credential payloads. */
+export function graphqlClient() {
   const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));
   const base = resolve(root, 'tools/eas-cli/node_modules/eas-cli/build');
   const SessionManager = require(resolve(base, 'user/SessionManager.js')).default;

@@ -3,7 +3,8 @@
  * contract.
  */
 
-const release = require('../../native-release.json');
+const { resolveRelease } = require('./release-metadata.cjs');
+const release = resolveRelease(require('../../native-release.json'));
 const colors = require('./assets/brand/colors.json');
 
 /**
@@ -24,9 +25,9 @@ module.exports = ({ config }) => {
       versionCode: release.androidVersionCode,
       adaptiveIcon: { foregroundImage: './assets/brand/adaptive-foreground.png', backgroundColor: colors.background },
     },
-    ios: { ...config.ios, buildNumber: release.iosBuildNumber },
+    ios: { ...config.ios, buildNumber: release.iosBuildNumber, usesAppleSignIn: true, entitlements: { ...config.ios?.entitlements, 'com.apple.developer.applesignin': ['Default'] } },
     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },
-    plugins: [...(config.plugins || []), ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
+    plugins: [...(config.plugins || []), 'expo-secure-store', ...(process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME ? [['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]] : []), ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
     runtimeVersion: { policy: 'appVersion' },
     updates: projectId ? {
       url: `https://u.expo.dev/${projectId}`,
