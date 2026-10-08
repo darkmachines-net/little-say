@@ -3,7 +3,8 @@
 import board from '../../../prompts/server/board.json' with { type: 'json' };
 import pictures from '../../../prompts/server/pictures.json' with { type: 'json' };
 import speech from '../../../prompts/server/speech.json' with { type: 'json' };
-import { loadPromptResource, loadPromptTemplate, type PictureConcept } from '@little-say/core';
+import { loadPromptResource, loadPromptTemplate } from '../../../packages/core/src/promptResources';
+import { type PictureConcept } from '@little-say/core';
 
 export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation', 'transcription'], 'server/board');
 export const picturePrompts = loadPromptResource(pictures, ['visualRules', 'analysis', 'selection', 'review', 'color', 'line', 'generation'], 'server/pictures');
