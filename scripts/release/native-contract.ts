@@ -63,7 +63,15 @@ export function verifyOta(baseline: Baseline, current: { release: NativeRelease;
  * versioning policy.
  */
 export function profileConfig(profile: Profile) {
-  const config = readJson(resolve(mobile, 'eas.json')).build[profile];
+  const eas = readJson(resolve(mobile, 'eas.json'));
+  const config = eas.build[profile];
+  assert(eas.cli.appVersionSource === 'local' && eas.cli.version === '22.4.0' && eas.cli.requireCommit === true, 'EAS must use committed local versions and the pinned CLI.');
   assert(config && config.channel === profile && config.environment === (profile === 'internal' ? 'preview' : 'production') && config.autoIncrement === false, 'EAS profile differs from the release contract.');
+  assert(JSON.stringify(config.env) === JSON.stringify({ LITTLE_SAY_CHANNEL: profile }) && !config.extends, 'Build profile variables must use the canonical release environment.');
+  assert(config.distribution === (profile === 'internal' ? 'internal' : 'store') && config.credentialsSource === 'remote' && !config.developmentClient && !config.ios?.simulator, 'Cloud releases require managed signing and device distribution.');
+  for (const platform of ['android', 'ios']) {
+    const p = config[platform] || {};
+    assert(p.autoIncrement !== true && (p.autoIncrement === undefined || p.autoIncrement === false) && !p.env && !p.channel && !p.environment && !p.credentialsSource, 'Platform profile must not override release-owned version/environment/signing settings.');
+  }
   return config;
 }

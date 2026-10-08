@@ -3,7 +3,8 @@
  * contract.
  */
 
-const release = require('../../native-release.json');
+const { resolveRelease } = require('./release-metadata.cjs');
+const release = resolveRelease(require('../../native-release.json'));
 const colors = require('./assets/brand/colors.json');
 
 /**

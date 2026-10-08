@@ -20,6 +20,7 @@ export function validateExpoEnvironment(profile: Profile, variables: { name: str
   for (const variable of variables) {
     assert(variable.visibility !== 'SECRET' && variable.type === 'STRING' && typeof variable.value === 'string', `EAS variable ${variable.name} cannot be reproduced locally. Use readable string values for native releases; keep backend secrets on the server.`);
     assert(!/^(EXPO_PUBLIC_|AAC_OPENAI_KEY$|OPENAI_API_KEY$|NODE_OPTIONS$|EXPO_NO_DOTENV$|EAS_BUILD_)/i.test(variable.name), `Remove ${variable.name} from the EAS environment. Release configuration is owned by native-release.json; OpenAI keys belong on the server.`);
+    assert(!['LITTLE_SAY_OTA_VERSIONS', 'LITTLE_SAY_FINGERPRINT_PLATFORM', 'EAS_SKIP_AUTO_FINGERPRINT'].includes(variable.name), 'Fingerprint/version metadata is owned by the release wrapper.');
     assert(variable.name !== 'LITTLE_SAY_CHANNEL' || variable.value === profile, 'EAS environment points to a different update channel.');
     values[variable.name] = variable.value;
   }
