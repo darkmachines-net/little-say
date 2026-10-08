@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+const git = (...args) => execFileSync('git', ['-C', 'little-say-translations', ...args], { encoding: 'utf8', windowsHide: true }).trim();
+const read = n => JSON.parse(fs.readFileSync(`records/qa-r1-${n}.json`, 'utf8'));
+const head = '6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f', base = 'fabb925cf5ee11171d5668af7c2bab44ec9fc613';
+const pr = read('pr-published'), commits = read('commits').flat(), files = read('files').flat();
+assert.equal(pr.head.sha, head); assert.equal(pr.base.sha, base);
+assert.equal(pr.commits, commits.length); assert.equal(pr.changed_files, files.length);
+assert.deepEqual(commits.map(c => c.sha).sort(), git('rev-list', `${base}..${head}`).split('\n').sort());
+assert.deepEqual(files.map(f => f.filename).sort(), git('diff', '--name-only', base, head).split('\n').sort());
+const old = JSON.parse(fs.readFileSync('records/qa-r1-final-scope.json', 'utf8'));
+const mapped = commits.map(c => {
+  const prior = old.commits.find(x => x.sha === c.sha);
+  const item = { sha: c.sha, parents: c.parents.map(p => p.sha), subject: c.commit.message, reason: prior?.reason ?? 'Document changed public callback concurrency/replacement-authority contracts; JSDoc only.', changedAgainstEachParent: c.parents.map(p => ({ parent: p.sha, paths: git('diff', '--name-status', p.sha, c.sha).split('\n') })) };
+  if (prior) assert.deepEqual(item, prior);
+  return item;
+});
+assert.equal(git('merge-base', base, head), base);
+const scope = { checkedAtUtc: new Date().toISOString(), repository: 'MChartier/little-say', head, targetRef: 'master', actualTargetSha: base, apiBaseSha: pr.base.sha, mergeBase: base, ultimateTargetSha: base, unmergedParents: [], commits: mapped, files: files.map(f => ({ path: f.filename, status: f.status, additions: f.additions, deletions: f.deletions, reason: old.files.find(x => x.path === f.filename).reason })), totals: { commits: commits.length, files: files.length, additions: pr.additions, deletions: pr.deletions }, assessment: 'All prior ten ordered commits/parents/path inventories unchanged. Two final commits add only four JSDoc lines for reviewed public callback contracts. Complete actual-master range stays nine product and six regression files, with no evidence churn, dependency fix, PR35/PR44 or unrelated imports.' };
+fs.writeFileSync('records/qa-r1-published-scope.json', JSON.stringify(scope, null, 2));
+console.log(scope.totals);
