@@ -1,31 +1,35 @@
-/** @file Keeps unlock readiness and release handling on the same timed gesture state. */
+/** @file Shares one monotonic, cancellable two-second gate across pointer, keyboard and assistive input. */
 
 import { useEffect, useRef, useState } from 'react';
+import { AppState, Platform } from 'react-native';
 import { ParentExitGesture, type ParentHoldState, type Point } from '@little-say/core';
 
-/**
- * Expose hold state and contact handlers using one gesture and monotonic clock for both the label
- * and release check. Cancel the hold when cancelToken changes and clear timers on unmount.
- */
-export function useParentHold(cancelToken: number) {
+/** Require a ready release for contacts, or a cancellable timed assistive activation; reset on interruption. */
+export function useParentHold(cancelToken: number, onUnlock: () => void) {
   const gesture = useRef(new ParentExitGesture()).current;
   const contacts = useRef(new Set<number | string>());
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const generation = useRef(0);
+  const accessibleAttempt = useRef(false);
+  const unlock = useRef(onUnlock); unlock.current = onUnlock;
   const [state, setState] = useState<ParentHoldState>('idle');
+  const [accessible, setAccessible] = useState(false);
   const clearTimer = () => { generation.current++; clearTimeout(timer.current); timer.current = undefined; };
-  const cancel = () => { clearTimer(); gesture.cancel(); setState('idle'); };
+  const cancel = () => { clearTimer(); gesture.cancel(); if (accessibleAttempt.current) contacts.current.delete('accessibility'); accessibleAttempt.current = false; setAccessible(false); setState('idle'); };
+  const reset = () => { contacts.current.clear(); cancel(); };
+  useEffect(() => { reset(); return () => { clearTimer(); gesture.cancel(); }; }, [cancelToken]);
   useEffect(() => {
-    cancel();
-    return () => { clearTimer(); gesture.cancel(); };
-  }, [cancelToken]);
+    const app = AppState.addEventListener('change', state => { if (state !== 'active') reset(); });
+    const blur = () => reset();
+    const hidden = () => { if (document.hidden) reset(); };
+    if (Platform.OS === 'web') { window.addEventListener('blur', blur); document.addEventListener('visibilitychange', hidden); }
+    return () => { app.remove(); if (Platform.OS === 'web') { window.removeEventListener('blur', blur); document.removeEventListener('visibilitychange', hidden); } };
+  }, []);
   const down = (id: number | string, point: Point, touchCount?: number) => {
-    // Native reports all current touches, including after backgrounding. Web
-    // keeps tracking captured pointers until their release/cancellation.
+    if (accessibleAttempt.current) reset();
     if (touchCount === 1) contacts.current.clear();
     if (contacts.current.has(id)) return;
-    contacts.current.add(id);
-    cancel();
+    contacts.current.add(id); cancel();
     if (contacts.current.size !== 1 || (touchCount !== undefined && touchCount !== 1)) return;
     gesture.down(id, point, performance.now()); setState(gesture.state);
     const attempt = generation.current;
@@ -33,19 +37,28 @@ export function useParentHold(cancelToken: number) {
       if (attempt !== generation.current) return;
       const now = performance.now();
       setState(gesture.advance(now));
-      // A timer can run slightly early. Only the gesture can declare readiness.
+      if (gesture.state === 'ready' && accessibleAttempt.current) {
+        const valid = gesture.up('accessibility', now); reset();
+        if (valid) unlock.current();
+        return;
+      }
+      // A timer can run early; the same clock validates both feedback and release.
       if (gesture.state === 'holding') timer.current = setTimeout(update, Math.max(1, gesture.remaining(now)));
     };
     timer.current = setTimeout(update, gesture.remaining(performance.now()));
   };
-  const move = (id: number | string, point: Point) => {
-    gesture.move(id, point);
-    if (gesture.state === 'idle') cancel();
-  };
+  const move = (id: number | string, point: Point) => { gesture.move(id, point); if (gesture.state === 'idle') cancel(); };
   const up = (id: number | string) => {
     const valid = contacts.current.size === 1 && gesture.up(id, performance.now());
     contacts.current.delete(id); cancel(); return valid;
   };
   const cancelContact = (id: number | string) => { contacts.current.delete(id); cancel(); };
-  return { state, label: state === 'ready' ? 'Release to continue' : state === 'holding' ? 'Keep holding…' : 'Hold to unlock', down, move, up, cancel, cancelContact };
+  // Assistive activation has no reliable press duration. It starts the same timed gate,
+  // with announced cancellation, rather than bypassing it or requiring another confirmation.
+  const activateAccessible = () => {
+    if (gesture.state !== 'idle') { reset(); return; }
+    reset(); down('accessibility', { x: 0, y: 0 });
+    accessibleAttempt.current = true; setAccessible(true);
+  };
+  return { state, accessible, label: accessible ? 'Unlocking. Activate to cancel.' : state === 'ready' ? 'Release to edit' : state === 'holding' ? 'Keep holding…' : 'Hold to unlock', down, move, up, cancel, reset, cancelContact, activateAccessible };
 }

@@ -12,3 +12,4 @@ export * from './photo';
 export * from './pictures';
 export * from './promptResources';
 export * from './promptPresets';
+export * from './account';

@@ -61,5 +61,8 @@ export function useLibrary() {
     return next;
   }, []);
   const commitSetup = useCallback((update: (current: Library) => Library) => commit(update, 'Setup could not be saved. Check available device storage and try again.'), [commit]);
-  return { library, current: latest, change, commit, commitSetup, saving, error, loadError, reload: load, retry, flush: () => writes.current };
+  // Sync uses the optimistic serialized path: a foreground edit during the disk write stays newer
+  // than the downloaded snapshot, and the cloud acknowledgement is saved alongside its merge.
+  const mergeSync = change;
+  return { library, current: latest, change, commit, commitSetup, mergeSync, saving, error, loadError, reload: load, retry, flush: () => writes.current };
 }

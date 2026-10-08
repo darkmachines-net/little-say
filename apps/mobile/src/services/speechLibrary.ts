@@ -34,6 +34,8 @@ export class SpeechLibrary {
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   /** Return the revision token used by React external-store subscriptions. */
   snapshot = () => this.revision;
+  /** Refresh restored offline clips without discarding in-flight synthesis or changing board revisions. */
+  async reload() { this.assets = { ...this.assets, ...await this.dependencies.load() }; this.changed(); }
   private changed() { this.revision++; this.listeners.forEach(listener => listener()); }
   /**
    * Read preparation, error, and cached-asset state for the current text and language; invalid input is
