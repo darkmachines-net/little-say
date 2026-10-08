@@ -19,6 +19,8 @@ import { EditingLanguages } from './EditingLanguages';
 /**
  * Show the editable board preview and contextual controls, delegating durable changes, undo, and
  * playback to the parent.
+ * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a
+ * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.
  */
 export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
   const { width, height } = useWindowDimensions();
