@@ -167,5 +167,169 @@
         "html_url": "https://github.com/MChartier/little-say/commit/fabb925cf5ee11171d5668af7c2bab44ec9fc613"
       }
     ]
+  },
+  {
+    "sha": "cfea03f0cc56a893a7269677533375e013024349",
+    "node_id": "C_kwDOU65OydoAKGNmZWEwM2YwY2M1NmE4OTNhNzI2OTY3NzUzMzM3NWUwMTMwMjQzNDk",
+    "commit": {
+      "author": {
+        "name": "Codex",
+        "email": "codex@openai.com",
+        "date": "2026-10-08T18:06:42Z"
+      },
+      "committer": {
+        "name": "Codex",
+        "email": "codex@openai.com",
+        "date": "2026-10-08T18:06:42Z"
+      },
+      "message": "Declare prompt JSON import types for native ESM consumers",
+      "tree": {
+        "sha": "af6f51f1b7a0c6b194d72ffc983e00006b5a162c",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/af6f51f1b7a0c6b194d72ffc983e00006b5a162c"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/cfea03f0cc56a893a7269677533375e013024349",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/cfea03f0cc56a893a7269677533375e013024349",
+    "html_url": "https://github.com/MChartier/little-say/commit/cfea03f0cc56a893a7269677533375e013024349",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/cfea03f0cc56a893a7269677533375e013024349/comments",
+    "author": {
+      "login": "codex",
+      "id": 267193182,
+      "node_id": "U_kgDOD-0LXg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/267193182?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/codex",
+      "html_url": "https://github.com/codex",
+      "followers_url": "https://api.github.com/users/codex/followers",
+      "following_url": "https://api.github.com/users/codex/following{/other_user}",
+      "gists_url": "https://api.github.com/users/codex/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/codex/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/codex/subscriptions",
+      "organizations_url": "https://api.github.com/users/codex/orgs",
+      "repos_url": "https://api.github.com/users/codex/repos",
+      "events_url": "https://api.github.com/users/codex/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/codex/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "codex",
+      "id": 267193182,
+      "node_id": "U_kgDOD-0LXg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/267193182?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/codex",
+      "html_url": "https://github.com/codex",
+      "followers_url": "https://api.github.com/users/codex/followers",
+      "following_url": "https://api.github.com/users/codex/following{/other_user}",
+      "gists_url": "https://api.github.com/users/codex/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/codex/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/codex/subscriptions",
+      "organizations_url": "https://api.github.com/users/codex/orgs",
+      "repos_url": "https://api.github.com/users/codex/repos",
+      "events_url": "https://api.github.com/users/codex/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/codex/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/0e2758de446674c4874bbce1df4eb51abaee35f4",
+        "html_url": "https://github.com/MChartier/little-say/commit/0e2758de446674c4874bbce1df4eb51abaee35f4"
+      }
+    ]
+  },
+  {
+    "sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+    "node_id": "C_kwDOU65OydoAKDYwOGI4ODQ3MzFiYmYyNDNmYzRkOGNhYzYxNmZjYmM2Yjk2NWRlMjE",
+    "commit": {
+      "author": {
+        "name": "Codex",
+        "email": "codex@openai.com",
+        "date": "2026-10-08T18:07:30Z"
+      },
+      "committer": {
+        "name": "Codex",
+        "email": "codex@openai.com",
+        "date": "2026-10-08T18:07:30Z"
+      },
+      "message": "Load server prompt helpers without unrelated core resources",
+      "tree": {
+        "sha": "3c7db752973b75f82755ac358c34f92ad42198e0",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/3c7db752973b75f82755ac358c34f92ad42198e0"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/608b884731bbf243fc4d8cac616fcbc6b965de21",
+    "html_url": "https://github.com/MChartier/little-say/commit/608b884731bbf243fc4d8cac616fcbc6b965de21",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/608b884731bbf243fc4d8cac616fcbc6b965de21/comments",
+    "author": {
+      "login": "codex",
+      "id": 267193182,
+      "node_id": "U_kgDOD-0LXg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/267193182?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/codex",
+      "html_url": "https://github.com/codex",
+      "followers_url": "https://api.github.com/users/codex/followers",
+      "following_url": "https://api.github.com/users/codex/following{/other_user}",
+      "gists_url": "https://api.github.com/users/codex/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/codex/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/codex/subscriptions",
+      "organizations_url": "https://api.github.com/users/codex/orgs",
+      "repos_url": "https://api.github.com/users/codex/repos",
+      "events_url": "https://api.github.com/users/codex/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/codex/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "codex",
+      "id": 267193182,
+      "node_id": "U_kgDOD-0LXg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/267193182?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/codex",
+      "html_url": "https://github.com/codex",
+      "followers_url": "https://api.github.com/users/codex/followers",
+      "following_url": "https://api.github.com/users/codex/following{/other_user}",
+      "gists_url": "https://api.github.com/users/codex/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/codex/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/codex/subscriptions",
+      "organizations_url": "https://api.github.com/users/codex/orgs",
+      "repos_url": "https://api.github.com/users/codex/repos",
+      "events_url": "https://api.github.com/users/codex/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/codex/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "cfea03f0cc56a893a7269677533375e013024349",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/cfea03f0cc56a893a7269677533375e013024349",
+        "html_url": "https://github.com/MChartier/little-say/commit/cfea03f0cc56a893a7269677533375e013024349"
+      }
+    ]
   }
 ]

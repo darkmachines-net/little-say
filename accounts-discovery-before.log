@@ -1,0 +1,9 @@
+npm notice run little-say-workspace@0.2.1 npx
+npm notice run playwright test --list --config playwright.accounts.config.ts
+
+TypeError: Module "file:///C:/Users/MChar/Documents/Codex/2026-10-08/task-9/little-say-pr35/prompts/server/board.json" needs an import attribute of "type: json"
+    at eval (<anonymous>:1:1)
+
+Error: No tests found
+Listing tests:
+Total: 0 tests in 0 files

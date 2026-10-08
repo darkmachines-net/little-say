@@ -1,0 +1,9 @@
+npm notice run little-say-workspace@0.2.1 npx
+npm notice run playwright test --list --config playwright.accounts.config.ts
+Listing tests:
+  [chromium] ΓÇ║ accounts.spec.ts:10:1 ΓÇ║ launch choices, form back/cancel and settings navigation preserve guest state across relaunch
+  [chromium] ΓÇ║ accounts.spec.ts:46:1 ΓÇ║ an existing guest library survives the new launch choice and failed choice persistence
+  [chromium] ΓÇ║ accounts.spec.ts:93:1 ΓÇ║ accounts restore all asset types to a fresh device and merge offline conflicts without losing boards
+  [chromium] ΓÇ║ accounts.spec.ts:180:1 ΓÇ║ a parent can skip accounts and finish setup without an account request
+  [chromium] ΓÇ║ accounts.spec.ts:190:1 ΓÇ║ cross-tab account changes and server switching never silently redirect a backup
+Total: 5 tests in 1 file

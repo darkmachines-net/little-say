@@ -1,0 +1,25 @@
+/** @file Appends final-source evidence after the native ESM correction; earlier committed evidence remains immutable. */
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+const out=path.resolve('evidence-publish'), source='608b884731bbf243fc4d8cac616fcbc6b965de21';
+const git=(...args)=>execFileSync('git',['-C','little-say-pr35',...args]);
+const save=(name,data)=>fs.writeFileSync(path.join(out,name),typeof data==='string'||Buffer.isBuffer(data)?data:JSON.stringify(data,null,2)+'\n');
+for(const name of ['before','after'])fs.cpSync(path.join('evidence-integration',name),path.join(out,name),{recursive:true});
+for(const name of ['comparison.json','runtime-report.json','runtime.log'])fs.copyFileSync(path.join('evidence-integration',name),path.join(out,name));
+for(const [from,to] of [['check-final-v2.log','check-final.log'],['browser-final-v2.log','browser-final.log'],['android-export-v2.log','android-export.log'],['ios-export-v2.log','native-export.log']])fs.copyFileSync(from,path.join(out,to));
+for(const name of ['accounts-discovery-before.log','accounts-discovery-after.log','accounts-discovery-final.log','ci-failed.log','read-publication-final.mjs','finalize-evidence.mjs','evidence-verification.json'])fs.copyFileSync(name,path.join(out,name));
+save('actual-target.patch',git('diff','origin/master','HEAD'));
+save('loader-correction.patch',git('diff','0e2758de446674c4874bbce1df4eb51abaee35f4','HEAD'));
+save('published-history.txt',git('log','--reverse','--format=%H %P %s','--name-status','origin/master..HEAD'));
+const scope=JSON.parse(fs.readFileSync(path.join(out,'scope-assessment.json')));scope.publishedCommits=4;scope.additions=343;
+scope.commitDisposition.cfea03f0cc56a893a7269677533375e013024349='Explicit JSON import attributes on the five extracted resources for native ESM consumers; fixes the current-account CI discovery failure.';
+scope.commitDisposition[source]='Narrow server helper runtime import to promptResources rather than the core barrel; avoids evaluating unrelated JSON resources in native ESM. Type-only core import and public exports preserved.';
+scope.incomingDisposition=scope.incomingDisposition.replace('only original extraction and integration merge','the original extraction, integration merge, and two scoped loader fixes');save('scope-assessment.json',scope);
+const env=JSON.parse(fs.readFileSync(path.join(out,'environment.json')));env.finalSource=source;env.checkedAtUtc=new Date().toISOString();save('environment.json',env);
+const retained=JSON.parse(fs.readFileSync(path.join(out,'retained-originals.json')));retained.push({commit:'60d8a2a150a5cce88733831f3a76169766c0087e',file:'manifest.json',url:'https://github.com/MChartier/little-say/blob/60d8a2a150a5cce88733831f3a76169766c0087e/manifest.json',sha256:'7d67d0566d60d19f5d013b6df7cfe520876e16f7ed36c811c7dc0e7996227085',unchanged:true,scope:'First integration source 0e2758de; superseded by fresh final-source captures without relabeling prior evidence.'});save('retained-originals.json',retained);
+let readme=fs.readFileSync(path.join(out,'README.md'),'utf8').replaceAll('0e2758de446674c4874bbce1df4eb51abaee35f4',source).replaceAll('both published commits','all four published commits').replaceAll('+342/-30','+343/-30').replace('Original extraction plus ordinary integration merge preserve all prior history.','Original extraction, ordinary integration merge and two scoped loader corrections preserve all prior history.');
+readme += '\n## Native ESM integration correction\n\nThe new account browser CI imports speech code through Playwright native ESM. [Original discovery](accounts-discovery-before.log) failed on an extracted JSON resource without an import type. Explicit import attributes then exposed evaluation of unrelated core resources through the barrel; [intermediate discovery](accounts-discovery-after.log) preserves that finding. The final correction uses explicit JSON import attributes and imports only the platform-independent helper at runtime; its type-only core import and public account/prompt exports remain. [Final discovery](accounts-discovery-final.log) finds all five existing account tests. CI executes those existing regression contracts; no replacement test or disabled gate was introduced. The failed earlier CI log is historical for 0e2758de, not the final source.\n';save('README.md',readme);
+const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).filter(e=>e.name!=='.git').flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
+save('manifest.json',{generatedAtUtc:new Date().toISOString(),source,baseline:'fabb925cf5ee11171d5668af7c2bab44ec9fc613',artifacts:walk(out).filter(f=>path.basename(f)!=='manifest.json').map(f=>({file:path.relative(out,f).replaceAll('\\','/'),sha256:createHash('sha256').update(fs.readFileSync(f)).digest('hex')}))});

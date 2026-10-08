@@ -1,0 +1,33 @@
+diff --git a/apps/server/src/prompts.ts b/apps/server/src/prompts.ts
+index 8fbf2f1..1176440 100644
+--- a/apps/server/src/prompts.ts
++++ b/apps/server/src/prompts.ts
+@@ -1,9 +1,10 @@
+ /** @file Loads server-only JSON prompts into source execution and the self-contained Node ESM bundle. */
+ 
+-import board from '../../../prompts/server/board.json';
+-import pictures from '../../../prompts/server/pictures.json';
+-import speech from '../../../prompts/server/speech.json';
+-import { loadPromptResource, loadPromptTemplate, type PictureConcept } from '@little-say/core';
++import board from '../../../prompts/server/board.json' with { type: 'json' };
++import pictures from '../../../prompts/server/pictures.json' with { type: 'json' };
++import speech from '../../../prompts/server/speech.json' with { type: 'json' };
++import { loadPromptResource, loadPromptTemplate } from '../../../packages/core/src/promptResources';
++import { type PictureConcept } from '@little-say/core';
+ 
+ export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation', 'transcription'], 'server/board');
+ export const picturePrompts = loadPromptResource(pictures, ['visualRules', 'analysis', 'selection', 'review', 'color', 'line', 'generation'], 'server/pictures');
+diff --git a/packages/core/src/promptPresets.ts b/packages/core/src/promptPresets.ts
+index fd881c5..5ca8326 100644
+--- a/packages/core/src/promptPresets.ts
++++ b/packages/core/src/promptPresets.ts
+@@ -1,7 +1,7 @@
+ /** @file Loads only client-safe starter concepts/templates and distinct conversation preset messages. */
+ 
+-import onboarding from '../../../prompts/shared/onboarding.json';
+-import conversation from '../../../prompts/shared/conversation.json';
++import onboarding from '../../../prompts/shared/onboarding.json' with { type: 'json' };
++import conversation from '../../../prompts/shared/conversation.json' with { type: 'json' };
+ import { loadPromptResource, loadPromptTemplate } from './promptResources';
+ 
+ export const starterConcepts = loadPromptResource(onboarding, ['farm', 'everyday', 'family', 'template'], 'shared/onboarding');

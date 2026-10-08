@@ -2,7 +2,7 @@
 
 Retained nonmerged evidence, owned by task 01a11ca6-7faa-7628-8031-ac89bc018019. Keep this ref and immutable commits for review and audit. Original worktrees, source, capture records and QA receipts remain preserved.
 
-Actual master: fabb925cf5ee11171d5668af7c2bab44ec9fc613. Corrected source: 0e2758de446674c4874bbce1df4eb51abaee35f4. No stacked parent.
+Actual master: fabb925cf5ee11171d5668af7c2bab44ec9fc613. Corrected source: 608b884731bbf243fc4d8cac616fcbc6b965de21. No stacked parent.
 
 ## Observable contract
 
@@ -22,6 +22,10 @@ This extraction changes no meaningful UI flow. Fresh synthetic captures on isola
 
 Run npm ci with locked dependencies, npm run check, then capture-current.mjs from the task workspace. Export Android from apps/mobile with npm exec -- expo export --platform android --output-dir dist-native --max-workers 2. Repeat with --platform ios to reproduce the blocker. Browser config differs only in isolated paths/port and explicitly disabled providers. Run verify-runtime-current.mjs after builds. Full harnesses, logs and hashes are retained. Native/web bundles remain locally retained under the task clone; their immutable identities are in runtime-report.json.
 
-[Complete published scope](scope-assessment.json) maps every live API path and both published commits; [incoming target history](incoming-target-history.txt) explicitly inventories all five already-merged target commits and their paths. Final actual-target scope remains 21 files, +342/-30. Original extraction plus ordinary integration merge preserve all prior history. No evidence churn or unrelated commit is introduced into the published range.
+[Complete published scope](scope-assessment.json) maps every live API path and all four published commits; [incoming target history](incoming-target-history.txt) explicitly inventories all five already-merged target commits and their paths. Final actual-target scope remains 21 files, +343/-30. Original extraction, ordinary integration merge and two scoped loader corrections preserve all prior history. No evidence churn or unrelated commit is introduced into the published range.
 
 [Historical identities](retained-originals.json), [environment and ownership](environment.json), [live bindings](bindings.json), full feedback and review readbacks are retained here. Current PR body and final CI readback are recorded separately after publication. Same independent QA task 01a11c7c-11db-70b8-ba73-efe3693b003e must reassess; this is implementation evidence, not a readiness verdict.
+
+## Native ESM integration correction
+
+The new account browser CI imports speech code through Playwright native ESM. [Original discovery](accounts-discovery-before.log) failed on an extracted JSON resource without an import type. Explicit import attributes then exposed evaluation of unrelated core resources through the barrel; [intermediate discovery](accounts-discovery-after.log) preserves that finding. The final correction uses explicit JSON import attributes and imports only the platform-independent helper at runtime; its type-only core import and public account/prompt exports remain. [Final discovery](accounts-discovery-final.log) finds all five existing account tests. CI executes those existing regression contracts; no replacement test or disabled gate was introduced. The failed earlier CI log is historical for 0e2758de, not the final source.

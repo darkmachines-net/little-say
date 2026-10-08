@@ -1,0 +1,32 @@
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	﻿2026-10-08T18:05:12.5980886Z ##[group]Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.5982279Z ^[[36;1mnpx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"^[[0m
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6065664Z shell: /usr/bin/bash -e {0}
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6065942Z env:
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6066152Z   TEST_PGDATABASE: little_say_test
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6066430Z   TEST_PGUSER: little_say_test
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6066691Z   TEST_PGPASSWORD: little_say_test
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:12.6066944Z ##[endgroup]
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:14.1500881Z ^[[36m^[[1mi  emulators:^[[22m^[[39m Starting emulators: auth
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:14.1504114Z ^[[36m^[[1mi  emulators:^[[22m^[[39m Detected demo project ID "demo-little-say", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:19.8145907Z ^[[36m^[[1mi ^[[22m^[[39m Running script: ^[[1mnpm run test:accounts:web^[[22m
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:19.9620637Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:19.9642380Z > little-say-workspace@0.2.1 test:accounts:web
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:19.9643546Z > playwright test --config playwright.accounts.config.ts
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:19.9644187Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:22.1567544Z [WebServer] (node:5711) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:22.1580462Z [WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2816726Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2820430Z TypeError: Module "file:///home/runner/work/little-say/little-say/prompts/server/board.json" needs an import attribute of "type: json"
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2822066Z     at eval (<anonymous>:1:1)
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2822797Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2823257Z Error: No tests found
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.2998247Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.3006822Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.3256209Z ^[[33m^[[1m⚠ ^[[22m^[[39m Script exited unsuccessfully (code 1)
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8273738Z ^[[36m^[[1mi  emulators:^[[22m^[[39m Shutting down emulators.
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8280912Z ^[[36m^[[1mi  auth:^[[22m^[[39m Stopping Authentication Emulator
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8284141Z ^[[36m^[[1mi  hub:^[[22m^[[39m Stopping emulator hub
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8287212Z ^[[36m^[[1mi  logging:^[[22m^[[39m Stopping Logging Emulator
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8327731Z 
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:23.8328966Z ^[[1m^[[31mError:^[[39m^[[22m Script "^[[1mnpm run test:accounts:web^[[22m" exited with code 1
+check	Run npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"	2026-10-08T18:05:24.1383761Z ##[error]Process completed with exit code 1.

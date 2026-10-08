@@ -1,12 +1,14 @@
 {
   "issue": 23,
-  "publishedCommits": 2,
+  "publishedCommits": 4,
   "paths": 21,
-  "additions": 342,
+  "additions": 343,
   "deletions": 30,
   "commitDisposition": {
     "ea87b78eb6c9e9612cc42b7eec490af9d8216b86": "Original exact prompt extraction; all 21 paths map to issue23.",
-    "0e2758de446674c4874bbce1df4eb51abaee35f4": "Ordinary merge of actual target, preserving both account and prompt-resource exports; remerge diff contains only index.ts conflict resolution."
+    "0e2758de446674c4874bbce1df4eb51abaee35f4": "Ordinary merge of actual target, preserving both account and prompt-resource exports; remerge diff contains only index.ts conflict resolution.",
+    "cfea03f0cc56a893a7269677533375e013024349": "Explicit JSON import attributes on the five extracted resources for native ESM consumers; fixes the current-account CI discovery failure.",
+    "608b884731bbf243fc4d8cac616fcbc6b965de21": "Narrow server helper runtime import to promptResources rather than the core barrel; avoids evaluating unrelated JSON resources in native ESM. Type-only core import and public exports preserved."
   },
   "incomingTargetCommits": [
     "e01efebcfe25af144690f3388edc53ef4b8ffc17",
@@ -15,7 +17,7 @@
     "da45fbdef33cd78abcbbd6a8216ac9b34d460e22",
     "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
   ],
-  "incomingDisposition": "All five commits are already ancestors of actual master. Their complete paths and parents are retained in incoming-target-history.txt, not hidden by the net diff. GitHub ordered PR commit inventory contains only original extraction and integration merge. No branch rewrite or retargeting.",
+  "incomingDisposition": "All five commits are already ancestors of actual master. Their complete paths and parents are retained in incoming-target-history.txt, not hidden by the net diff. GitHub ordered PR commit inventory contains the original extraction, integration merge, and two scoped loader fixes. No branch rewrite or retargeting.",
   "pathsMapped": [
     {
       "path": "apps/mobile/src/ui/AiConversation.tsx",

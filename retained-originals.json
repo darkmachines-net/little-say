@@ -26,5 +26,13 @@
     "url": "https://github.com/MChartier/little-say/blob/8075c9cd71bd98cedf8e9e61380f2b989ad9fda7/verdict.json",
     "sha256": "5a5cb1cea0711edb758d45550dde2130119cd94d17860a3bf1dfbe8f1057a025",
     "unchanged": true
+  },
+  {
+    "commit": "60d8a2a150a5cce88733831f3a76169766c0087e",
+    "file": "manifest.json",
+    "url": "https://github.com/MChartier/little-say/blob/60d8a2a150a5cce88733831f3a76169766c0087e/manifest.json",
+    "sha256": "7d67d0566d60d19f5d013b6df7cfe520876e16f7ed36c811c7dc0e7996227085",
+    "unchanged": true,
+    "scope": "First integration source 0e2758de; superseded by fresh final-source captures without relabeling prior evidence."
   }
 ]

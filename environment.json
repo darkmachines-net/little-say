@@ -1,5 +1,5 @@
 {
-  "checkedAtUtc": "2026-10-08T18:03:08.754Z",
+  "checkedAtUtc": "2026-10-08T18:10:01.390Z",
   "host": "MCHARTIER_ZBOOK",
   "node": "v24.19.0",
   "owner": "01a11ca6-7faa-7628-8031-ac89bc018019",
@@ -13,5 +13,6 @@
     "iOS export fails on corrected head AND actual master: missing prop-types imported by AppleButton.ios.js. Shared identical locked dependency tree used for baseline reproduction; no dependency modification.",
     "Docker not executed; native devices deferred; no live inference or provider operations.",
     "Bot refusal 6029846176 is quota-only; no completed bot review claimed."
-  ]
+  ],
+  "finalSource": "608b884731bbf243fc4d8cac616fcbc6b965de21"
 }

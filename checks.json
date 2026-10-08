@@ -2,27 +2,27 @@
   "total_count": 1,
   "check_runs": [
     {
-      "id": 113461677719,
+      "id": 113464834330,
       "name": "check",
-      "node_id": "CR_kwDOU65Oyc8AAAAaatfOlw",
-      "head_sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
-      "external_id": "a9cc4e09-55e2-5b70-afbc-437043e59f18",
-      "url": "https://api.github.com/repos/MChartier/little-say/check-runs/113461677719",
-      "html_url": "https://github.com/MChartier/little-say/actions/runs/37820995732/job/113461677719",
-      "details_url": "https://github.com/MChartier/little-say/actions/runs/37820995732/job/113461677719",
-      "status": "queued",
+      "node_id": "CR_kwDOU65Oyc8AAAAaawf5Gg",
+      "head_sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "external_id": "2af2e993-7d3b-50f7-9096-d9a39ca4ceec",
+      "url": "https://api.github.com/repos/MChartier/little-say/check-runs/113464834330",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37821917724/job/113464834330",
+      "details_url": "https://github.com/MChartier/little-say/actions/runs/37821917724/job/113464834330",
+      "status": "in_progress",
       "conclusion": null,
-      "started_at": "2026-10-08T18:00:51Z",
+      "started_at": "2026-10-08T18:08:02Z",
       "completed_at": null,
       "output": {
         "title": null,
         "summary": null,
         "text": null,
         "annotations_count": 0,
-        "annotations_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113461677719/annotations"
+        "annotations_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113464834330/annotations"
       },
       "check_suite": {
-        "id": 102469574810
+        "id": 102472246954
       },
       "app": {
         "id": 15368,
@@ -121,7 +121,7 @@
           "number": 35,
           "head": {
             "ref": "refactor/prompt-resources-issue23",
-            "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+            "sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
             "repo": {
               "id": 1403932361,
               "url": "https://api.github.com/repos/MChartier/little-say",

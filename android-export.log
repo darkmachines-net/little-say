@@ -3,7 +3,9 @@ npm notice run expo export --platform android --output-dir dist-native --max-wor
 Expo Autolinking module resolution enabled
 Starting Metro Bundler
 
-Android Bundled 20840ms apps\mobile\index.ts (2903 modules)
+| (node:26536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android Bundled 21535ms apps\mobile\index.ts (2903 modules)
 
 ΓÇ║ Assets (3):
 assets\brand\mountain.png (3 variations | 49KB)

@@ -1,3 +1,3 @@
-(node:34236) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:34968) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
 (Use `node --trace-warnings ...` to show where the warning was created)
-{"level":30,"time":1791482422834,"pid":34236,"hostname":"mchartier_zbook","msg":"Server listening at http://127.0.0.1:4599"}
+{"level":30,"time":1791482944405,"pid":34968,"hostname":"mchartier_zbook","msg":"Server listening at http://127.0.0.1:4599"}
