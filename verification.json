@@ -1,0 +1,1044 @@
+{
+  "checkedAtUtc": "2026-10-08T20:10:01.378057+00:00",
+  "head": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+  "base": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "parents": [
+    "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+  ],
+  "bodySha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+  "manifestSha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+  "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+  "harnessSha256": "d4192a3f4860c1c5748b4c34f92ea962dd23ddcf54af89c0e2e0fc1a15a3581a",
+  "images": [
+    {
+      "side": "before",
+      "source": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "filename": "before-board.png",
+      "state": "board",
+      "note": "Same saved Russian play selection; fixed Sheep retains English. Play translateLabels=false does not restrict editor labels after the change.",
+      "timeUtc": "2026-10-08T19:19:15.553Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ]
+    },
+    {
+      "side": "before",
+      "source": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "filename": "before-existing-translation-controls.png",
+      "state": "existing-translation-controls",
+      "note": "Baseline-only supplemental state: lower translated text fields already exist and remain distinct from main source fields.",
+      "timeUtc": "2026-10-08T19:19:16.108Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ]
+    },
+    {
+      "side": "before",
+      "source": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "filename": "before-card.png",
+      "state": "card",
+      "note": "Russian selected. Before main fields remain source English; existing lower Russian fields are present separately. After main fields and preview use Russian.",
+      "timeUtc": "2026-10-08T19:19:16.663Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-board.png",
+      "state": "board",
+      "note": "Same saved Russian play selection; fixed Sheep retains English. Play translateLabels=false does not restrict editor labels after the change.",
+      "timeUtc": "2026-10-08T19:19:21.673Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-card.png",
+      "state": "card",
+      "note": "Russian selected. Before main fields remain source English; existing lower Russian fields are present separately. After main fields and preview use Russian.",
+      "timeUtc": "2026-10-08T19:19:22.276Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-empty-correction-refused.png",
+      "state": "empty-correction-refused",
+      "note": "Current-only R1 boundary: both empty Russian fields survive switching to Spanish and back; Save is refused and Duplicate disabled. Cancel preserves the original saved variant.",
+      "timeUtc": "2026-10-08T19:19:22.473Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-manual-source-collision.png",
+      "state": "manual-source-collision",
+      "note": "Current-only recovery: a manual original-language change is refused on save so the saved Russian correction cannot be shadowed.",
+      "timeUtc": "2026-10-08T19:19:22.732Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-corrected-audio-failure.png",
+      "state": "corrected-audio-failure",
+      "note": "Current-only supplemental state: corrected Russian text remains after mocked speech failure.",
+      "timeUtc": "2026-10-08T19:19:22.937Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-stale-correction.png",
+      "state": "stale-correction",
+      "note": "Current-only supplemental state: retained corrected Russian words need review after source speech changes.",
+      "timeUtc": "2026-10-08T19:19:23.068Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-phone-board.png",
+      "state": "phone-board",
+      "note": "Current-only responsive board check; not a native device capture.",
+      "timeUtc": "2026-10-08T19:19:23.625Z",
+      "route": "/app",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-ai-replacement-review.png",
+      "state": "ai-replacement-review",
+      "note": "Current-only supplemental state: a separate explicit review protects saved words from a mocked AI proposal. No changes applied.",
+      "timeUtc": "2026-10-08T19:19:24.218Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    },
+    {
+      "side": "after",
+      "source": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "filename": "after-ai-source-collision.png",
+      "state": "ai-source-collision",
+      "note": "Current-only recovery state: source-language collision is refused; the preceding draft and saved corrections remain intact.",
+      "timeUtc": "2026-10-08T19:19:24.341Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ]
+    }
+  ],
+  "scope": {
+    "checkedAtUtc": "2026-10-08T19:25:31.937Z",
+    "repository": "MChartier/little-say",
+    "head": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+    "targetRef": "master",
+    "actualTargetSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "ultimateTargetSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+    "unmergedParents": [],
+    "commits": [
+      {
+        "sha": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+        "parents": [
+          "9dd18b856d6d900ab162be3f1544aac0b93d2b71"
+        ],
+        "subject": "Edit selected language variants without losing saved corrections",
+        "reason": "Selected-language editors, guarded translation merges and maintained regression scenarios.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "9dd18b856d6d900ab162be3f1544aac0b93d2b71",
+            "paths": [
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/services/pictures.ts",
+              "M\tapps/mobile/src/ui/AiConversation.tsx",
+              "M\tapps/mobile/src/ui/BoardEditor.tsx",
+              "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+              "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/boardLanguages.test.ts",
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/app.spec.ts",
+              "M\ttests/web/speech.spec.ts",
+              "A\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+        "parents": [
+          "926b0f9ba742710e40ec7b8c198a877b5a82927e"
+        ],
+        "subject": "Reject AI source changes that shadow saved translations",
+        "reason": "Retained source-language collision fix and regression.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+            "paths": [
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+        "parents": [
+          "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+          "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        ],
+        "subject": "Merge current master into translation editing",
+        "reason": "Necessary additive integration of actual target master; no sibling or unmerged prerequisite.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+            "paths": [
+              "A\t.gitattributes",
+              "M\t.github/workflows/ci.yml",
+              "A\t.github/workflows/cut-release.yml",
+              "D\t.github/workflows/cut-server-release.yml",
+              "M\tREADME.md",
+              "M\tapps/mobile/app.config.js",
+              "M\tapps/mobile/app.json",
+              "M\tapps/mobile/eas.json",
+              "A\tapps/mobile/fingerprint.config.js",
+              "M\tapps/mobile/package.json",
+              "A\tapps/mobile/release-metadata.cjs",
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/data/storage.ts",
+              "M\tapps/mobile/src/data/storage.web.ts",
+              "M\tapps/mobile/src/data/useLibrary.ts",
+              "A\tapps/mobile/src/services/accountSession.ts",
+              "A\tapps/mobile/src/services/accountSession.web.ts",
+              "A\tapps/mobile/src/services/accountSync.test.ts",
+              "A\tapps/mobile/src/services/accountSync.ts",
+              "A\tapps/mobile/src/services/api.test.ts",
+              "M\tapps/mobile/src/services/api.ts",
+              "A\tapps/mobile/src/services/firebase-native.d.ts",
+              "A\tapps/mobile/src/services/firebaseAccount.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.test.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.web.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.test.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.web.ts",
+              "M\tapps/mobile/src/services/speechLibrary.ts",
+              "A\tapps/mobile/src/services/useAccount.ts",
+              "A\tapps/mobile/src/ui/AccountPanel.tsx",
+              "A\tapps/mobile/src/ui/AccountScreen.tsx",
+              "M\tapps/mobile/src/ui/FirstTimeSetup.tsx",
+              "M\tapps/mobile/src/ui/ParentSettings.tsx",
+              "M\tapps/mobile/src/ui/components.tsx",
+              "A\tapps/server/migrations/1760000000002_accounts.sql",
+              "M\tapps/server/package.json",
+              "A\tapps/server/src/account-routes.ts",
+              "A\tapps/server/src/accounts.ts",
+              "M\tapps/server/src/app.ts",
+              "M\tapps/server/src/database.ts",
+              "A\tapps/server/src/firebase.ts",
+              "M\tapps/server/src/index.ts",
+              "A\tapps/server/test/accounts.integration.test.ts",
+              "M\tapps/server/test/database.integration.test.ts",
+              "A\tapps/server/test/firebase.integration.test.ts",
+              "A\tdocs/ACCOUNTS.md",
+              "M\tdocs/releases.md",
+              "M\tdocs/testing.md",
+              "A\tfirebase.json",
+              "M\tnative-release.json",
+              "M\tpackage-lock.json",
+              "M\tpackage.json",
+              "A\tpackages/core/src/account.test.ts",
+              "A\tpackages/core/src/account.ts",
+              "M\tpackages/core/src/index.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tplaywright.accounts.config.ts",
+              "M\tplaywright.config.ts",
+              "A\trelease-policy.json",
+              "M\trelease.json",
+              "M\tscripts/dev-proxy.cjs",
+              "M\tscripts/dev-proxy.test.ts",
+              "A\tscripts/release/README.md",
+              "A\tscripts/release/candidate.test.ts",
+              "A\tscripts/release/candidate.ts",
+              "A\tscripts/release/cloud.ts",
+              "M\tscripts/release/common.ts",
+              "A\tscripts/release/contract.ts",
+              "M\tscripts/release/eas-credentials.ts",
+              "M\tscripts/release/environment.ts",
+              "A\tscripts/release/expo.ts",
+              "A\tscripts/release/fingerprint.test.ts",
+              "M\tscripts/release/fingerprint.ts",
+              "A\tscripts/release/image.test.ts",
+              "A\tscripts/release/image.ts",
+              "A\tscripts/release/inputs.ts",
+              "A\tscripts/release/journal.test.ts",
+              "A\tscripts/release/journal.ts",
+              "A\tscripts/release/metadata.ts",
+              "M\tscripts/release/native-contract.ts",
+              "M\tscripts/release/native.ts",
+              "A\tscripts/release/operation.test.ts",
+              "A\tscripts/release/operation.ts",
+              "A\tscripts/release/ota.test.ts",
+              "A\tscripts/release/ota.ts",
+              "A\tscripts/release/planner.test.ts",
+              "A\tscripts/release/planner.ts",
+              "A\tscripts/release/providers.test.ts",
+              "M\tscripts/release/release.test.ts",
+              "D\tscripts/release/server-cut.test.ts",
+              "D\tscripts/release/server-cut.ts",
+              "D\tscripts/release/server-publish.ts",
+              "A\tscripts/release/unified.test.ts",
+              "A\tscripts/release/unified.ts",
+              "A\tscripts/test-server.ts",
+              "A\ttests/web/accounts.spec.ts",
+              "M\ttests/web/existingLibrary.ts",
+              "M\ttests/web/setup.spec.ts"
+            ]
+          },
+          {
+            "parent": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+            "paths": [
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/services/pictures.ts",
+              "M\tapps/mobile/src/ui/AiConversation.tsx",
+              "M\tapps/mobile/src/ui/BoardEditor.tsx",
+              "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+              "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/boardLanguages.test.ts",
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/app.spec.ts",
+              "M\ttests/web/speech.spec.ts",
+              "A\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+        "parents": [
+          "dec27b5044ebce528ef59a499d94f2ccb2f66c0b"
+        ],
+        "subject": "Verify translation corrections through account entry cancellation",
+        "reason": "Account-aware browser fixture and correction preservation through cancelled account navigation.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+            "paths": [
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1deeea094c08804344d87479c094dac4b302a336",
+        "parents": [
+          "680d1a8a1b3cba93b9c99f3932a251c50651b731"
+        ],
+        "subject": "Cover corrected translation account snapshots and audio keys",
+        "reason": "Account snapshot/conflict round-trip and exact corrected-language audio-key regression.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+            "paths": [
+              "M\tpackages/core/src/translationEditing.test.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+        "parents": [
+          "1deeea094c08804344d87479c094dac4b302a336"
+        ],
+        "subject": "Preserve account choice in editor grid regression fixtures",
+        "reason": "Preserve account-choice state in the maintained editor-grid fixture after account integration.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1deeea094c08804344d87479c094dac4b302a336",
+            "paths": [
+              "M\ttests/web/grid.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "parents": [
+          "ebae155ff0eda3ec611e65dfc937f425b27e60df"
+        ],
+        "subject": "Reject manual source language changes that hide saved corrections",
+        "reason": "Resolve manual source-language collision finding using the shared guard and save/duplicate/recovery regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+            "paths": [
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+        "parents": [
+          "1a7fa5e960f200fdae35339972cddad871ea0f06"
+        ],
+        "subject": "Document explicit review required for translation replacement previews",
+        "reason": "Document the explicit parent-review authorization contract for translation replacement previews.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+            "paths": [
+              "M\tapps/mobile/src/services/pictures.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "ec849188fd450995149b87ee9bb454ac89388c4b",
+        "parents": [
+          "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+        ],
+        "subject": "Preserve empty translation drafts for required-field validation",
+        "reason": "R1: preserve empty existing correction drafts for Save/Duplicate validation, with manual/legacy unit and browser regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+            "paths": [
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+        "parents": [
+          "ec849188fd450995149b87ee9bb454ac89388c4b"
+        ],
+        "subject": "Guard source language against new draft corrections",
+        "reason": "Guard same-session manual draft corrections against source-language shadowing; core and new/generated browser regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "ec849188fd450995149b87ee9bb454ac89388c4b",
+            "paths": [
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+        "parents": [
+          "b064097ac6a02717adfd7507d8d4cd741353069c"
+        ],
+        "subject": "Document revision-bound editor save callbacks",
+        "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "b064097ac6a02717adfd7507d8d4cd741353069c",
+            "paths": [
+              "M\tapps/mobile/src/ui/BoardEditor.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "parents": [
+          "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+        ],
+        "subject": "Document draft-bound translation replacement callbacks",
+        "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+            "paths": [
+              "M\tapps/mobile/src/ui/AiConversation.tsx"
+            ]
+          }
+        ]
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/App.tsx",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 4,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/services/pictures.ts",
+        "status": "modified",
+        "additions": 7,
+        "deletions": 3,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/AiConversation.tsx",
+        "status": "modified",
+        "additions": 16,
+        "deletions": 4,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "status": "modified",
+        "additions": 17,
+        "deletions": 6,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardLanguages.tsx",
+        "status": "modified",
+        "additions": 14,
+        "deletions": 7,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/EditingLanguages.tsx",
+        "status": "added",
+        "additions": 16,
+        "deletions": 0,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/TileEditor.tsx",
+        "status": "modified",
+        "additions": 38,
+        "deletions": 26,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/boardLanguages.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "packages/core/src/boardLanguages.ts",
+        "status": "modified",
+        "additions": 29,
+        "deletions": 10,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/schema.ts",
+        "status": "modified",
+        "additions": 39,
+        "deletions": 7,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/translationEditing.test.ts",
+        "status": "added",
+        "additions": 131,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 1,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/grid.spec.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/speech.spec.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/translationEditing.spec.ts",
+        "status": "added",
+        "additions": 357,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      }
+    ],
+    "totals": {
+      "commits": 12,
+      "files": 15,
+      "additions": 675,
+      "deletions": 69
+    },
+    "assessment": "All prior ten ordered commits/parents/path inventories unchanged. Two final commits add only four JSDoc lines for reviewed public callback contracts. Complete actual-master range stays nine product and six regression files, with no evidence churn, dependency fix, PR35/PR44 or unrelated imports."
+  },
+  "allParentsPathsVerified": true,
+  "documentationOnlyApplicabilityDiff": "diff --git a/apps/mobile/src/ui/AiConversation.tsx b/apps/mobile/src/ui/AiConversation.tsx\nindex a045fee..750fcce 100644\n--- a/apps/mobile/src/ui/AiConversation.tsx\n+++ b/apps/mobile/src/ui/AiConversation.tsx\n@@ -43,6 +43,8 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea\n  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.\n  * Explicit send/record actions enable AI use without an interstitial. Navigation cancels pending work;\n  * only an in-progress board save prevents leaving. onAiUse persists the legacy AI-enabled preference.\n+ * onApply's second argument authorizes replacing protected manual/legacy translations for this\n+ * draft only; it is true only after explicit parent review and must not authorize another draft.\n  */\n export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {\n   // Keep IDs/revision stable throughout all turns, even as background audio updates.\ndiff --git a/apps/mobile/src/ui/BoardEditor.tsx b/apps/mobile/src/ui/BoardEditor.tsx\nindex 0d09a9a..31fbf2f 100644\n--- a/apps/mobile/src/ui/BoardEditor.tsx\n+++ b/apps/mobile/src/ui/BoardEditor.tsx\n@@ -19,6 +19,8 @@ import { EditingLanguages } from './EditingLanguages';\n /**\n  * Show the editable board preview and contextual controls, delegating durable changes, undo, and\n  * playback to the parent.\n+ * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a\n+ * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.\n  */\n export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {\n   const { width, height } = useWindowDimensions();",
+  "dependenciesUnchanged": true,
+  "instructionsUnchanged": true,
+  "affectedScenarios": [
+    "translationEditing.spec.ts | AI keeps a saved correction when replacement is declined",
+    "translationEditing.spec.ts | AI source-language collisions are refused without replacing saved corrections",
+    "translationEditing.spec.ts | AI uses an explicitly reviewed replacement",
+    "translationEditing.spec.ts | a failed save keeps the corrected board visible and retry persists it before reload",
+    "translationEditing.spec.ts | account entry cancellation preserves corrected translations and the guest library",
+    "translationEditing.spec.ts | board selection opens the matching fields, retains drafts across languages and saves only corrected words",
+    "translationEditing.spec.ts | direct play entry inherits Russian and returns with corrected speech while source labels stay enabled",
+    "translationEditing.spec.ts | empty legacy corrections refuse save and duplicate; cancel and reload preserve saved words",
+    "translationEditing.spec.ts | empty manual corrections refuse save and duplicate; cancel and reload preserve saved words",
+    "translationEditing.spec.ts | late TTS stays on its original key; failure and retry use the corrected input",
+    "translationEditing.spec.ts | manual source-language collisions refuse save and duplicate without hiding a saved correction",
+    "translationEditing.spec.ts | missing variants stay blank, drafts survive switching and cancelled translation results cannot replace a retry",
+    "translationEditing.spec.ts | prepared translation review identifies retained stale words instead of presenting English as Russian",
+    "translationEditing.spec.ts | removing the selected language shows original words without deleting its correction",
+    "translationEditing.spec.ts | source collisions protect new translations in the current draft",
+    "translationEditing.spec.ts | source collisions protect newly corrected generated translations in the current draft",
+    "translationEditing.spec.ts | source edits retain stale corrected text for review and incomplete variants cannot be saved"
+  ],
+  "retainedScenarios": [
+    "app.spec.ts | 24 tiles fit in both tablet orientations and remain keyboard accessible",
+    "app.spec.ts | AI proposal requires review, applies safely, and can be undone",
+    "app.spec.ts | active board survives reload and uses Russian pronunciation",
+    "app.spec.ts | another touch cancels the ready unlock state without leaving stale feedback",
+    "app.spec.ts | board audio retry fills only missing clips with automatic generation disabled",
+    "app.spec.ts | board card menu confirms deletion and preserves other boards after reload",
+    "app.spec.ts | board card menu fills missing translated audio, continues when closed, retries failures, and hides when complete",
+    "app.spec.ts | board languages translate switchable cards, preserve fixed cards, and save translated audio offline",
+    "app.spec.ts | complete emoji search finds blueberries for a plum card and persists offline",
+    "app.spec.ts | device language profile persists offline and drives French/Spanish board setup without changing fixed cards",
+    "app.spec.ts | failed local writes are visible, retryable, and do not enter play prematurely",
+    "app.spec.ts | missing AI configuration retains the parent prompt and existing boards",
+    "app.spec.ts | numbers 1\u0393\u00c7\u00f49 get a visible bilingual setup and switch speech while preserving digit labels",
+    "app.spec.ts | offline shell and local boards survive a disconnected reload",
+    "app.spec.ts | outside modal dismissal \u0393\u00c7\u2551 hold opens editing directly and return remains idle at 1180px",
+    "app.spec.ts | outside modal dismissal \u0393\u00c7\u2551 hold opens editing directly and return remains idle at 390px",
+    "app.spec.ts | outside modal dismissal \u0393\u00c7\u2551 outside taps cancel editing and deletion at 1180px",
+    "app.spec.ts | outside modal dismissal \u0393\u00c7\u2551 outside taps cancel editing and deletion at 390px",
+    "app.spec.ts | photo attachments survive reload and remain on the device",
+    "app.spec.ts | regional language preferences drive manual cards and AI requests",
+    "app.spec.ts | starter library, manual edit, mixed-language data, and persistence",
+    "app.spec.ts | swipes are forgiving, speech is bounded, and parent editing needs a deliberate hold and release",
+    "app.spec.ts | tablet layouts and screenshots stay within the viewport",
+    "app.spec.ts | tap feedback never steals the playing highlight during repeated queued taps",
+    "app.spec.ts | unlock readiness matches release at the boundary and cancelled holds reset immediately",
+    "conversation.spec.ts | a capture-time recorder error releases the microphone and lets the parent retry",
+    "conversation.spec.ts | a failed save keeps the draft and retry creates exactly one board",
+    "conversation.spec.ts | a new phone conversation starts with its full data-use introduction visible",
+    "conversation.spec.ts | browser history preserves a pending draft save through failure",
+    "conversation.spec.ts | browser history preserves a pending draft save through success",
+    "conversation.spec.ts | clarification, draft and refinement stay in one conversation until explicitly saved",
+    "conversation.spec.ts | editing refines the latest draft while keeping source IDs, languages and photos private",
+    "conversation.spec.ts | editing routes survive reload and return to their source board without saving a draft",
+    "conversation.spec.ts | failed follow-ups and clarification preserve the previous draft and small-screen controls",
+    "conversation.spec.ts | manual creation starts from the library and suggestions stay in the conversation without an opt-in screen",
+    "conversation.spec.ts | stopping and retrying ignores late replies and does not duplicate conversation turns",
+    "conversation.spec.ts | the compact editor fits tablet orientations and keeps reordering in the tile dialog",
+    "conversation.spec.ts | voice transcripts can be reviewed for follow-ups and browser back releases the microphone",
+    "conversation.spec.ts | voice transcripts can be reviewed for follow-ups and page back releases the microphone",
+    "editor-transition.spec.ts | a failed save retains edits and editor until retry, without granting AI consent",
+    "editor-transition.spec.ts | a pending return keeps the editor visible and prevents concurrent edits until the save completes",
+    "editor-transition.spec.ts | assistive activation is delayed, cancellable and cannot fire after backgrounding",
+    "editor-transition.spec.ts | cards shrink toward the measured preview while existing controls are already available",
+    "editor-transition.spec.ts | dashboard and reload entry bind the same board, preserve edits and stop active/pending audio",
+    "editor-transition.spec.ts | existing editing controls and drafts remain usable at 1180x820",
+    "editor-transition.spec.ts | existing editing controls and drafts remain usable at 390x844",
+    "editor-transition.spec.ts | existing editing controls and drafts remain usable at 820x1180",
+    "editor-transition.spec.ts | existing editing controls and drafts remain usable at 844x390",
+    "editor-transition.spec.ts | keyboard requires a continuous hold and cancels repeat, blur, Escape and background interruptions",
+    "editor-transition.spec.ts | reduced motion and resize during the transition always leave a usable editor",
+    "editor-transition.spec.ts | release outside the control and a second contact elsewhere cannot unlock",
+    "editor-transition.spec.ts | selected play language, missing translations and voice safeguards survive the direct handoff",
+    "grid.spec.ts | 1 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 11 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 2 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 23 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 24 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 24-card editor preview remains balanced and editable",
+    "grid.spec.ts | 3 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 4 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 5 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 6 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 7 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 7-card editor preview remains balanced and editable",
+    "grid.spec.ts | 8 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | 9 cards fill balanced rows across tablet and phone rotation",
+    "grid.spec.ts | a tiny play window explains its limit and recovers on resize",
+    "grid.spec.ts | dense phone cards retain whole pictures and long English accessible names",
+    "grid.spec.ts | dense phone cards retain whole pictures and long Russian accessible names",
+    "grid.spec.ts | dense phone cards retain whole pictures and long Spanish accessible names",
+    "grid.spec.ts | rotation preserves speech and cancels contacts measured against the old grid",
+    "landing.spec.ts | homepage describes the app without starting it at 1440px",
+    "landing.spec.ts | homepage describes the app without starting it at 320px",
+    "landing.spec.ts | homepage describes the app without starting it at 390px",
+    "landing.spec.ts | homepage navigation works with a keyboard and installed web apps launch into the app",
+    "landing.spec.ts | older iOS home-screen installs bypass the homepage at their original root URL",
+    "landing.spec.ts | standalone display mode also bypasses the homepage for older installs",
+    "photos.spec.ts | cancelled crops and replacement uploads preserve the saved photo, including after reload",
+    "photos.spec.ts | duplicate family cards can frame different people without modifying their shared image",
+    "photos.spec.ts | fine crop controls match the final photo in the editor, library and rotated offline play board",
+    "photos.spec.ts | pinch zoom and one-finger repositioning work without scrolling the crop away",
+    "pictures.spec.ts | Automatic fills only a gap and illustration changes remain available in Picture settings",
+    "pictures.spec.ts | a complete emoji board is ready to save without suggesting AI illustrations",
+    "pictures.spec.ts | board restyling previews changes, preserves a protected card, and supports returning to emoji",
+    "pictures.spec.ts | card source choices show their inherited value and can return to following the board",
+    "pictures.spec.ts | construction pictures are staged, generated by default, saved offline, and retained in later text edits",
+    "pictures.spec.ts | full-page canvas streams finished pictures, distinguishes active and queued work, and keeps settings accessible",
+    "pictures.spec.ts | manual library selection needs no AI permission and saves attribution plus a protected offline picture",
+    "pictures.spec.ts | migrated cards honor inherited Emoji only and explicit overrides",
+    "pictures.spec.ts | migrated cards honor inherited Library only and explicit overrides",
+    "pictures.spec.ts | missing library and disabled server generation keep a usable emoji board with one summary",
+    "pictures.spec.ts | picture sources use a compact explained selector with keyboard dismissal and no duplicate generation gate",
+    "pictures.spec.ts | saved tile edits survive automatic picture apply",
+    "pictures.spec.ts | saved tile edits survive automatic picture close",
+    "pictures.spec.ts | saved tile edits survive automatic picture stop",
+    "pictures.spec.ts | stopping picture jobs cancels queued work and discards the partial preview without saving it",
+    "recents.spec.ts | favorites stay immediately below the latest board, with recent play order within each group",
+    "recents.spec.ts | favorites work before first play, retry failed saves, and are independent of edits, copies and deletion",
+    "recents.spec.ts | recent play order persists offline and stays independent of edits, undo, copies and deletion",
+    "recents.spec.ts | returning from a legacy active session creates an accessible responsive spotlight",
+    "setup.spec.ts | first-time setup generates chosen languages, resumes partial success, and starts audio after completion",
+    "setup.spec.ts | offline setup can save a regional preference and start empty without English sample boards",
+    "setup.spec.ts | setup waits for durable saves and retains generated drafts when final saving fails",
+    "speech.spec.ts | board creation does not wait for background audio and stale generation cannot replace edited words",
+    "speech.spec.ts | generates from draft text and language, regenerates, persists offline, and falls back on playback failure"
+  ],
+  "counts": {
+    "freshOwnerBrowser": 17,
+    "retainedBrowser": 105,
+    "totalDistinct": 122
+  },
+  "allSixThreadsResolved": true
+}

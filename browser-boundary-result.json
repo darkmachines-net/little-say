@@ -1,0 +1,526 @@
+{
+  "checkedAtUtc": "2026-10-08T20:09:26.567Z",
+  "host": "mchartier_zbook",
+  "head": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+  "runtimeSource": "b064097ac6a02717adfd7507d8d4cd741353069c",
+  "browser": "154.0.4258.62",
+  "serverPid": 4656,
+  "serverSha256": "5201cb477d4c2a770b84d2b6e2c667569e73e615e5cebb6bd72e0de2f30a3139",
+  "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+  "bundles": [
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    },
+    {
+      "path": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+      "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a"
+    },
+    {
+      "path": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+      "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5"
+    }
+  ],
+  "results": [
+    {
+      "scenario": "manual empty/partial/cancel/complete/reload",
+      "passed": true,
+      "baseline": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 0,
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T00:00:00.000Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "languageMode": "board",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "manual"
+              },
+              {
+                "language": "es-ES",
+                "label": "Vaca",
+                "speech": "vaca",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "languageMode": "fixed",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            }
+          }
+        ]
+      },
+      "saved": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 1,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "languageMode": "board",
+            "translations": [
+              {
+                "language": "es-ES",
+                "label": "Vaca",
+                "speech": "vaca",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "ru-RU",
+                "label": "QA corrected label",
+                "speech": "QA corrected speech",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "manual"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            },
+            "languageMode": "fixed"
+          }
+        ],
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T20:09:23.563Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false
+      }
+    },
+    {
+      "scenario": "legacy empty/partial/cancel/complete/reload",
+      "passed": true,
+      "baseline": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 0,
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T00:00:00.000Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "languageMode": "board",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "es-ES",
+                "label": "Vaca",
+                "speech": "vaca",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "languageMode": "fixed",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            }
+          }
+        ]
+      },
+      "saved": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 1,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "languageMode": "board",
+            "translations": [
+              {
+                "language": "es-ES",
+                "label": "Vaca",
+                "speech": "vaca",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "ru-RU",
+                "label": "QA corrected label",
+                "speech": "QA corrected speech",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "manual"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            },
+            "languageMode": "fixed"
+          }
+        ],
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T20:09:24.843Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false
+      }
+    },
+    {
+      "scenario": "generated-to-manual draft source collision",
+      "passed": true,
+      "baseline": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 0,
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T00:00:00.000Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "languageMode": "board",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "es-ES",
+                "label": "Vaca",
+                "speech": "vaca",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "generated"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "languageMode": "fixed",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            }
+          }
+        ]
+      },
+      "saved": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 1,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "languageMode": "board",
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "es-ES",
+                "label": "QA Spanish label",
+                "speech": "QA Spanish speech",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "manual"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            },
+            "languageMode": "fixed"
+          }
+        ],
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T20:09:25.665Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false
+      }
+    },
+    {
+      "scenario": "new draft source collision",
+      "passed": true,
+      "baseline": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 0,
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T00:00:00.000Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "languageMode": "board",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "languageMode": "fixed",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            }
+          }
+        ]
+      },
+      "saved": {
+        "id": "farm",
+        "title": "Our farm words",
+        "revision": 1,
+        "tiles": [
+          {
+            "id": "cow",
+            "label": "Cow",
+            "speech": "Cow",
+            "language": "en-US",
+            "color": "sage",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐄"
+            },
+            "languageMode": "board",
+            "translations": [
+              {
+                "language": "ru-RU",
+                "label": "Корова",
+                "speech": "корова",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+              },
+              {
+                "language": "es-ES",
+                "label": "QA Spanish label",
+                "speech": "QA Spanish speech",
+                "source": "[\"Cow\",\"Cow\",\"en-US\"]",
+                "origin": "manual"
+              }
+            ]
+          },
+          {
+            "id": "sheep",
+            "label": "Sheep",
+            "speech": "Sheep",
+            "language": "en-US",
+            "color": "butter",
+            "illustration": {
+              "kind": "emoji",
+              "emoji": "🐑"
+            },
+            "languageMode": "fixed"
+          }
+        ],
+        "createdAt": "2026-10-08T00:00:00.000Z",
+        "updatedAt": "2026-10-08T20:09:26.500Z",
+        "playLanguages": [
+          "en-US",
+          "ru-RU",
+          "es-ES"
+        ],
+        "translateLabels": false
+      }
+    }
+  ]
+}

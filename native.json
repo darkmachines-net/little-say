@@ -1,0 +1,160 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "headRefOid": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "baseRefOid": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "closingIssuesReferences": {
+          "nodes": [
+            {
+              "number": 32
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        },
+        "reviewThreads": {
+          "totalCount": 6,
+          "nodes": [
+            {
+              "id": "PRRT_kwDOU65Oyc6qJ0Xi",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4213533661,
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Review source-language collisions with saved corrections**\n\nWhen an AI proposal changes an existing board-following card\u2019s source language to the language of a protected correction (for example, `en-US` to `ru-RU`) and omits that language from `tile.translations`, this blindly retains the correction without reporting a replacement. `proposalTranslationReplacements` therefore returns no review item, while `tileInLanguage` chooses the new source words whenever the selected language equals `tile.language`, silently replacing the corrected Russian text and audio in actual use. Treat this source-language collision as a protected replacement or otherwise prevent the new source from shadowing the saved correction.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "packages/core/src/schema.ts"
+                  },
+                  {
+                    "databaseId": 4213557299,
+                    "body": "Addressed in `a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce`. An AI source-language change is now refused when it would shadow a saved manual/legacy translation, including when the proposal omits translations and when ordinary replacement review was approved. The error directs the parent to keep the source language and edit its translation. A core regression passes; a browser regression verifies refusal leaves every saved tile unchanged.",
+                    "path": "packages/core/src/schema.ts"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            },
+            {
+              "id": "PRRT_kwDOU65Oyc6qf7p-",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4222684628,
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Block manual source-language collisions**\n\nWhen a board-following card has a protected Russian translation and a parent changes its original language from English to Russian here, the translation is retained but becomes unreachable: `tileInLanguage` returns the source tile whenever the selected language equals `tile.language`, so playback silently uses the newly relabeled original words instead of the saved correction. The AI path now guards this collision, but this manual path does not; reject the language change or require explicit handling when a protected translation already uses the new source language.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "apps/mobile/src/ui/TileEditor.tsx"
+                  },
+                  {
+                    "databaseId": 4222773661,
+                    "body": "Addressed in 1a7fa5e960f200fdae35339972cddad871ea0f06. Manual Save and Duplicate now use the same protected-source-language guard as AI application. Refusal keeps the saved board unchanged and the draft retryable. Added canonical-tag/manual/legacy unit coverage and a browser save/duplicate/recovery case; the fresh capture demonstrates the refusal. Full check passed with 296 tests; affected browser rerun is completing.",
+                    "path": "apps/mobile/src/ui/TileEditor.tsx"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            },
+            {
+              "id": "PRRT_kwDOU65Oyc6qgGRp",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4222753440,
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document the translation-replacement permission**\n\nDocument that `replaceTranslations` changes the returned board by replacing protected manual or legacy translations and must only be enabled after explicit parent review. The current JSDoc describes picture-preview behavior only, leaving this non-obvious and potentially destructive new public parameter without its authorization contract.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/ebae155ff0eda3ec611e65dfc937f425b27e60df/AGENTS.md#L7-L9)\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "apps/mobile/src/services/pictures.ts"
+                  },
+                  {
+                    "databaseId": 4222773897,
+                    "body": "Addressed in 1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f. proposalPreview JSDoc now says replaceTranslations may replace protected manual/legacy translations only after explicit parent review of this draft, and distinguishes preview construction from persistence. Documentation-only change; runtime behavior is unchanged.",
+                    "path": "apps/mobile/src/services/pictures.ts"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            },
+            {
+              "id": "PRRT_kwDOU65Oyc6qhBfh",
+              "isResolved": true,
+              "isOutdated": true,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4223139477,
+                    "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Check the edited draft for source-language collisions**\n\nWhen a parent creates or manually edits a translation and then, in the same editor session, changes the original language to that translation\u2019s language, this guard inspects only `previous.translations`; the new correction is therefore saved but immediately shadowed because `tileInLanguage` prefers the source words for that language. The fresh evidence beyond the earlier collision fix is that `validated.data` can contain a newly protected translation absent from `previous`, so Save and Duplicate should also reject collisions found in the edited draft.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "packages/core/src/schema.ts"
+                  },
+                  {
+                    "databaseId": 4223183370,
+                    "body": "Addressed in b064097ac6a02717adfd7507d8d4cd741353069c. Save and Duplicate now check both persisted corrections and protected translations in the validated manual draft. The AI path does not treat fresh model output as a parent correction. Focused core and browser regressions cover new and newly corrected generated translations, refusal without changing saved state, and recovery after restoring the original source language.\n",
+                    "path": "packages/core/src/schema.ts"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            },
+            {
+              "id": "PRRT_kwDOU65Oyc6qhNHQ",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4223215763,
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document replacement authority on `onApply`**\n\nDocument that the second `onApply` argument is a draft-bound authorization to replace protected manual or legacy translations and is only `true` after explicit parent review. The exported component\u2019s JSDoc currently describes navigation and AI consent but omits this newly destructive callback contract, making it easy for another consumer to ignore, reinterpret, or broaden the permission.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/b064097ac6a02717adfd7507d8d4cd741353069c/AGENTS.md#L7-L9)\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "apps/mobile/src/ui/AiConversation.tsx"
+                  },
+                  {
+                    "databaseId": 4223240463,
+                    "body": "Addressed in 6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f. AiConversation JSDoc now binds the second onApply argument to explicit parent review of this draft and prohibits reusing that permission for another draft. Documentation-only; runtime evidence remains captured at b064097.",
+                    "path": "apps/mobile/src/ui/AiConversation.tsx"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            },
+            {
+              "id": "PRRT_kwDOU65Oyc6qhNHX",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4223215777,
+                    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document the revision-bound `onChange` contract**\n\nDocument that tile and translation saves pass `expectedRevision`, that the parent must reject mismatches, and that the resulting error keeps the editor draft open. The changed public callback signature encodes a non-obvious concurrency contract, but the component JSDoc still only says that durable changes are delegated to the parent.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/b064097ac6a02717adfd7507d8d4cd741353069c/AGENTS.md#L7-L9)\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+                    "path": "apps/mobile/src/ui/BoardEditor.tsx"
+                  },
+                  {
+                    "databaseId": 4223231884,
+                    "body": "Addressed in a0f5f4806f7471ba86b77fb33c5cc27b6b35f472. BoardEditor JSDoc now documents expectedRevision for tile/translation saves, the parent rejection requirement, and keeping the draft open on mismatch. Documentation-only change; the b064097 runtime build, 299 unit/17 browser results and source-bound captures remain applicable without relabeling.",
+                    "path": "apps/mobile/src/ui/BoardEditor.tsx"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      }
+    }
+  }
+}

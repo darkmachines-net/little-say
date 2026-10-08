@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "verdict": "evidence-incomplete",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "acknowledgment": "Full supplied pinned execution texts, QA role, overlay and all direct amendments read and acknowledged, including full feedback, focused published scope, final-state concise communication, exact append-only receipts, rendering waiver and native-device deferral. Current repository AGENTS read; unchanged. Runtime pins not migrated. Sole independent QA lane; no subagents or overlapping suites.",
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "mchartier_zbook",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/38",
+  "issue": "https://github.com/MChartier/little-say/issues/32",
+  "supersedesVerdictCommentId": 6066929182,
+  "checkedAtUtc": "2026-10-08T20:12:34.070504+00:00",
+  "headSha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+  "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "mergeBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "targetRepository": "MChartier/little-say",
+  "targetRef": "refs/heads/master",
+  "ultimateTargetSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+  "headParents": [
+    "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+  ],
+  "targetParents": [
+    "da45fbdef33cd78abcbbd6a8216ac9b34d460e22"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "labels": [],
+  "findings": [
+    {
+      "id": "R1",
+      "status": "resolved",
+      "reason": "Existing translation entries remain in the draft even with both fields empty, so schema validation refuses Save and disables Duplicate. Independent real Edge execution verified manual and legacy variants, switching, partial fields, Cancel/reload and completion/reload, preserving source, Spanish, media and fixed card.",
+      "revisions": [
+        "ec849188fd450995149b87ee9bb454ac89388c4b",
+        "b064097ac6a02717adfd7507d8d4cd741353069c"
+      ],
+      "evidence": "browser-boundary-result.json"
+    },
+    {
+      "id": "C1",
+      "status": "resolved",
+      "reason": "Current final body accurately says prior-head QA completed with R1/E1, identifies R1 correction and pending current reassessment, and preserves E1 as unwaived. Concise actual-base problem/solution and behavioral expected/observed evidence are understandable without operational history."
+    },
+    {
+      "id": "E1",
+      "status": "open",
+      "category": "evidence-incomplete",
+      "reason": "iOS export on actual master and integrated PR38 remains the retained missing prop-types failure from unchanged Apple-authentication inputs. PR44 remains open and unmerged; its isolated success is not PR38 integrated-source evidence. Native-device deferral does not waive bundle export.",
+      "nextAction": "Continue the separately owned issue43/PR44 path. After an authorized actual source/target change, assess published ancestry/scope and rerun affected integrated iOS export. Do not import unrelated scope, claim synthetic integration as current, or request a repeated waiver."
+    }
+  ],
+  "gates": {
+    "value": "pass: accepted issue32 language consistency and preservation of saved corrections",
+    "outcome": "pass for assessed editor and preservation contracts; platform export gate remains E1",
+    "code": "pass: R1 fix and later source-collision guards independently reviewed and exercised; no new defect found",
+    "scope": "pass: all12 ordered commits, allparents and changed paths agree with localGit;15files +675/-69, nine product/six maintained regression files; no evidence churn or PR44 dependency import",
+    "engineeringReview": "pass: exact-head clear review6067487045; all six threads read and code/test dispositions verified, not inferred from resolution status",
+    "ci": "pass: check113498796608/run37831814422 success;299unit,25service,5accountbrowser; actual CI merge tree identical to current source",
+    "behavior": "pass: independent four-case Edge probe plus appropriate retained and current owner/CI evidence",
+    "evidence": "evidence-incomplete solely E1; all12 genuine capture pixels and exact provenance verified",
+    "communication": "pass: concise final-state summary, expected/observed behavioral plan, genuine embedded pairs and honest revision/environment/limitations; C1 resolved",
+    "stack": "pass: actualmaster/APIbase/mergebasefabb; no unmerged parent; native issue32 association verified; PR44 remains separate"
+  },
+  "scope": {
+    "record": "verification.json",
+    "commits": 12,
+    "files": 15,
+    "additions": 675,
+    "deletions": 69,
+    "assessment": "Reviewed the complete live published inventory against local Git, every parent path list and full final paths. Earlier eight-commit source assessment remains applicable; four added commits are two bounded preservation/source-collision fixes with regression coverage and two callback documentation changes. Incoming master remains an actual ancestor; evidence refs stay outside product history. Captured b064 runtime to6990 changes exactly four JSDoc lines, with no executable, fixture or dependency edits."
+  },
+  "validation": {
+    "independent": "Four independent real Edge154.0.4258.62 scenarios using synthetic library and read-only exact owner-built artifacts; clean QA checkout6990. Verified all server/export and fetched bundle bytes against manifest, then launched isolated server with task-local caches and provider credentials unset. Manual/legacy both-empty, partial, language switching, Cancel/reload and complete/save/reload passed. New and newly corrected generated Spanish translation collisions refuse both Save and Duplicate; restoring English allows correction persistence. Server/browser stopped.",
+    "owner": "299unit/types/releasecontracts/server/web;17focused translation browser cases and Android export logs inspected. Scenario identities reconcile to105 previously passing unaffected cases,122distinct; no claim122were freshly run.",
+    "reuseAssessment": "All17 translation cases rerun cover affected guards, delayed/retried audio, explicit AI decisions, stale/missing/retry and account cancellation. Remaining105 cases exercise unchanged navigation, geometry, media, account, audio and ordinary valid edits. Existing account snapshot/conflict provenance and exact audio-key unit checks remain in full passing299 suite. Earlier source review and original iOS failure retained; no duplicate expensive suites or unchanged iOS rerun.",
+    "ciBinding": {
+      "ciCommit": "a70fc0aeb9c3f7208f839f9674c74159fd8fe41f",
+      "parents": [
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f"
+      ],
+      "tree": "fd876848a07ea87885a8be1723f9278a0ed1f4ca",
+      "sourceTree": "fd876848a07ea87885a8be1723f9278a0ed1f4ca"
+    },
+    "ciRun": 37831814422,
+    "ciCheck": 113498796608,
+    "ciLog": "ci-live.log"
+  },
+  "feedback": {
+    "snapshot": "prepublish.json",
+    "native": "native.json",
+    "counts": {
+      "comments": 20,
+      "reviews": 11,
+      "inline": 12,
+      "issueComments": 5
+    },
+    "dispositions": [
+      {
+        "threadFinding": 4213533661,
+        "reason": "AI source collision rejected in applyProposal before replacement, including explicit replacement path; existing saved manual/legacy corrections protected.",
+        "revision": "cece2ef8e029c650bd3ca47df5e08f1394310c7d"
+      },
+      {
+        "threadFinding": 4222684628,
+        "reason": "Manual Save/Duplicate invoke shared collision guard.",
+        "revision": "1a7fa5e960f200fdae35339972cddad871ea0f06"
+      },
+      {
+        "threadFinding": 4222753440,
+        "reason": "Preview permission callback documented and uses same explicit draft-bound permission as apply.",
+        "revision": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+      },
+      {
+        "threadFinding": 4223139477,
+        "reason": "Manual validated draft translations included along with persisted translations; generated AI output not treated as manual draft. Two independent browser cases verify.",
+        "revision": "b064097ac6a02717adfd7507d8d4cd741353069c"
+      },
+      {
+        "threadFinding": 4223215763,
+        "reason": "onApply public contract states second argument only authorizes this explicitly reviewed draft; implementation compares reviewedDraft identity to draft.",
+        "revision": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f"
+      },
+      {
+        "threadFinding": 4223215777,
+        "reason": "BoardEditor public callback contract documents expectedRevision, rejection and draft retention; source passes revision and parent enforces it.",
+        "revision": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+      }
+    ],
+    "assessment": "Full current issue/PR comments, submitted reviews and inline threads read. All six threads resolved and dispositions verified. No unaddressed human request beyond E1. Fresh full prepublication recheck unchanged."
+  },
+  "uiEvidence": {
+    "applicable": true,
+    "pairs": [
+      {
+        "id": "board",
+        "before": {
+          "url": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/before-board.png",
+          "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+          "sourceSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "capturedAtUtc": "2026-10-08T19:19:15.553Z"
+        },
+        "after": {
+          "url": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/after-board.png",
+          "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+          "sourceSha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "capturedAtUtc": "2026-10-08T19:19:21.673Z"
+        },
+        "observation": "Actual master Cow/fixedSheep; final Russian selection displays Корова and unchanged Sheep. Same fixture/theme/media; added selector explains vertical shift."
+      },
+      {
+        "id": "card",
+        "before": {
+          "url": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/before-card.png",
+          "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+          "sourceSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "capturedAtUtc": "2026-10-08T19:19:16.663Z"
+        },
+        "after": {
+          "url": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/after-card.png",
+          "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+          "sourceSha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "capturedAtUtc": "2026-10-08T19:19:22.276Z"
+        },
+        "observation": "Both start at Position1: actualmaster main English Cow/Cow; final selectedRussian main Корова/корова. Baseline already has lower translation fields, separately inspected."
+      }
+    ],
+    "representativeCoverage": "All12 images independently opened: matched board/card, baseline lower translation controls, empty-draft refusal, manual/AI collisions, audio failure, stale review, explicit replacement and narrow browser layout.",
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "board",
+          "card"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/manifest.json",
+        "commitSha": "6aa90658b6de8a015f955f386bafce365d996c83",
+        "sha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+        "harnessUrl": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/capture.mjs",
+        "harnessSha256": "d4192a3f4860c1c5748b4c34f92ea962dd23ddcf54af89c0e2e0fc1a15a3581a",
+        "fixtureUrl": "https://github.com/MChartier/little-say/blob/6aa90658b6de8a015f955f386bafce365d996c83/qa-r1-final/captures/fixture.json",
+        "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193"
+      }
+    ],
+    "provenanceAssessment": "Exact49 owner evidence/publication blobs verified through GitHub trees/base64blobs, size/GitSHA1/SHA256. Manifest/harness/fixture/images and loaded response hashes reconcile. Full harness read; genuine isolated baselinefabb and runtimeb064 builds. Matched1180x1000 scale1light, Edge154, same synthetic account/library and startingclock, controlled voices/providers, fullscreen neutralized and serviceworkers blocked equally. Phone390x844 is supplemental browser evidence. Four final JSDoc lines do not change capture applicability. No relabeling of original sources.",
+    "pixelObservations": {
+      "before-existing-translation-controls": "Existing lower Russian fields visible; no claim translations were absent.",
+      "after-empty-correction-refused": "Empty speech/label region, complete-both-fields warning, disabled Duplicate and available Cancel; consistent with independent live behavior.",
+      "after-manual-source-collision": "Originalru-RU source selection with clear refusal and retry actions.",
+      "after-corrected-audio-failure": "Corrected коровушка remains, failure message and retry control visible.",
+      "after-stale-correction": "Saved correction retained with original-word-change warning and explicit review action.",
+      "after-phone-board": "Russian selector wraps, Корова/fixedSheep and board actions visible at390x844; no device claim.",
+      "after-ai-replacement-review": "Saved/proposed Russian comparison, Keep/Use choice before Apply.",
+      "after-ai-source-collision": "Clear refusal, preceding draft retained and Apply disabled."
+    },
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/38",
+      "observations": "General GitHub page-rendering waiver6022754087 applied honestly; no rendering pass claimed. Current raw body has visible labeled matched pairs beside testplan."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null
+  },
+  "retainedOriginals": {
+    "priorReceipt": {
+      "headSha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+      "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+      "commitParents": [
+        "1a7fa5e960f200fdae35339972cddad871ea0f06"
+      ],
+      "parentRevisions": [],
+      "prBodySha256": "92c2ef216cbccd697387520810d6dc9d6fdd699caccb61c96b63fab34e9f4c8f",
+      "checkedAtUtc": "2026-10-08T18:55:37.218179+00:00",
+      "verdictCommentId": 6066929182,
+      "verdictBodySha256": "8973909d63ec478abf68d1640aa0c75324774a193ce94664c7dc0e1b05f4e83f",
+      "verdictUpdatedAt": "2026-10-08T18:57:31Z",
+      "artifactCommit": "8e946b230afeacb89b9d8ef6be858634f5473f5b",
+      "artifactSha256": "cfc4bafb5d4fa8f09c637bacb8e85ff91eeec3e42e564e057f01a7df8011eca7"
+    },
+    "priorEvidence": "https://github.com/MChartier/little-say/blob/8e946b230afeacb89b9d8ef6be858634f5473f5b/verdict.json",
+    "priorEvidenceSha256": "cfc4bafb5d4fa8f09c637bacb8e85ff91eeec3e42e564e057f01a7df8011eca7",
+    "originals": {
+      "prBodySha256": "8992e399b74edba5103de92e67403c021a73104f0adfbb6e7e46ee72d8ae63de",
+      "issueBodySha256": "01d4cee68cdd69b370c68c3d50919ee6ab19b428a39d1e796125664b90e719d5",
+      "oldEvidenceCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+      "oldPublicationCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+      "oldCaptureManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+      "applicability": "Original artifacts remain historical with their original source identities. Although a08a723 and cece2ef have equal trees, actual master added accounts, release metadata, dependencies and entry setup. Old captures are not reused for the new baseline; all ten states were freshly captured on actual master/final with the account-choice fixture marker and entry action."
+    },
+    "historicalNote": "Prior source a08a723, original9a8f7318 evidence/b2f37412 publication, refreshedc2331b99 evidence and prior QA8e946b23 remain historical and unchanged. Prior comment exact fullbodySHA/updated_at APIverified; no receipt silently rebound."
+  },
+  "evidence": {
+    "ownerEvidenceCommit": "6aa90658b6de8a015f955f386bafce365d996c83",
+    "ownerPublicationCommit": "d43e8482912e87d7f7c422770c163590e4e54ee1",
+    "exactOwnerIdentities": "identities.json",
+    "qaProbe": "browser-boundary-result.json",
+    "completeScopeAndImages": "verification.json",
+    "retention": "Dedicated nonmerged same-repository evidence ref. No product history additions."
+  },
+  "executionFailures": [
+    {
+      "action": "First sandboxed Node browser probe",
+      "exactError": "spawnSync git EPERM, before browser/server execution",
+      "disposition": "Bounded require_escalated process execution explicitly approved and completed; no ACL or sandbox configuration weakened.",
+      "result": "Four independent scenarios passed."
+    },
+    {
+      "action": "Local scope verification pathspec",
+      "exactError": "fatal: .agents: no such path in the working tree",
+      "disposition": "Added Git -- delimiter for absent pathspec; verification then passed."
+    }
+  ],
+  "limitations": [
+    "E1 integrated iOS export incomplete/unwaived; PR44 unmerged.",
+    "Native-device/emulator and live-provider execution remain unrun/deferred; browser, simulated provider and bundles are distinct.",
+    "GitHub image-page rendering waived; real capture/provenance independently verified.",
+    "No source/body/owner branch/Project/readiness/draft/merge/release mutation."
+  ],
+  "nextAction": "Keep readiness withheld solely for E1. Coordinator retain exact new receipt separately, preserve prior receipt, and route actual integration/export reassessment after separately authorized issue43/PR44 progress. No further QA task admitted here."
+}
