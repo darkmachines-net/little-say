@@ -3,7 +3,7 @@
  * actions.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -18,6 +18,7 @@ import { Dashboard } from './ui/Dashboard';
 import { AiConversation } from './ui/AiConversation';
 import { useBoardDraftRoute } from './services/useBoardDraftRoute';
 import { BoardEditor } from './ui/BoardEditor';
+import type { BoardSnapshot } from './ui/BoardTransition';
 import { PlayBoard } from './ui/PlayBoard';
 import { ParentSettings } from './ui/ParentSettings';
 import { FirstTimeSetup } from './ui/FirstTimeSetup';
@@ -36,7 +37,11 @@ function Application() {
   const [voices, setVoices] = useState<Voice[]>([]);
   const [error, setError] = useState('');
   const [soundCheck, setSoundCheck] = useState<Board | null>(null);
-  const [playReady, setPlayReady] = useState(true);
+  const [startingPlay, setStartingPlay] = useState(false);
+  const playRequest = useRef(false);
+  const [returnBoardId, setReturnBoardId] = useState<string | null>(null);
+  const [transition, setTransition] = useState<BoardSnapshot | null>(null);
+  const finishTransition = useCallback(() => setTransition(null), []);
   const [updateReady, setUpdateReady] = useState(false);
   const [undo, setUndo] = useState<Record<string, Board[]>>({});
   const previewQueue = useMemo(() => speechQueue(voices, store.library?.settings.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset), [voices, store.library?.settings.voices, audio]);
@@ -65,16 +70,26 @@ function Application() {
     setUndo(current => { const next = { ...current }; delete next[id]; return next; });
   };
   const play = async (board: Board) => {
-    setPlayReady(false);
-    previewQueue.stop();
+    if (playRequest.current) return;
+    playRequest.current = true; setStartingPlay(true); previewQueue.stop(); setTransition(null);
     if (Platform.OS === 'web' && document.documentElement.requestFullscreen && !document.fullscreenElement) void document.documentElement.requestFullscreen().catch(() => {});
-    await store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [board.id]: Date.now() }, settings: { ...current.settings, activeBoardId: board.id } }));
-    setPlayReady(true);
-    setSoundCheck(null); setError('');
+    try {
+      // Keep the editor and its in-memory edits visible until every required write succeeds.
+      await store.flush();
+      await store.commit(current => {
+        if (!current.boards.some(candidate => candidate.id === board.id)) throw new Error('This board is no longer available.');
+        return { ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [board.id]: Date.now() }, settings: { ...current.settings, activeBoardId: board.id } };
+      });
+      setSoundCheck(null); setError('');
+    } finally { playRequest.current = false; setStartingPlay(false); }
   };
   const preparePlay = (board: Board) => {
-    if (boardPlayTiles(board, store.current.current!.settings).some(tile => !audio.asset(tile) && !matchingVoice(tile, voices, store.current.current!.settings.voices))) setSoundCheck(board);
-    else void play(board).catch(() => setError('The play session could not be saved. Check your device storage and try again.'));
+    const current = store.current.current!;
+    const latest = current.boards.find(candidate => candidate.id === board.id);
+    if (!latest || playRequest.current) return;
+    previewQueue.stop();
+    if (boardPlayTiles(latest, current.settings).some(tile => !audio.asset(tile) && !matchingVoice(tile, voices, current.settings.voices))) setSoundCheck(latest);
+    else void play(latest).catch(() => setError('The play session could not be saved. Your edits are still here. Retry saving, then try again.'));
   };
   const preview = (tile: Tile) => { previewQueue.stop(); previewQueue.enqueue(tile); };
   const previewSystem = (tile: Tile) => {
@@ -89,7 +104,10 @@ function Application() {
   if (library.setup) return <FirstTimeSetup library={library} onCommit={store.commitSetup} />;
   const activeBoard = library.boards.find(board => board.id === library.settings.activeBoardId);
   const selected = library.boards.find(board => board.id === selectedId);
-  if (activeBoard && playReady) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onExit={async () => { await store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })); if (Platform.OS === 'web' && document.fullscreenElement) await document.exitFullscreen().catch(() => {}); }} />;
+  if (activeBoard) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onEdit={snapshot => {
+    setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
+    void store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })).catch(() => {});
+  }} />;
   const accept = async (proposal: BoardProposal) => {
     let candidate!: Board;
     let original: Board | null = null;
@@ -122,7 +140,7 @@ function Application() {
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
-    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onStopPreview={() => previewQueue.stop()} saving={store.saving} onBack={() => { previewQueue.stop(); setSelectedId(null); }} onPlay={() => preparePlay(selected)} onChange={changes => {
+    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onStopPreview={() => previewQueue.stop()} saving={store.saving} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={changes => {
       const current = store.current.current!.boards.find(b => b.id === selected.id)!;
       remember(current);
       const next = reviseBoard(current, changes);

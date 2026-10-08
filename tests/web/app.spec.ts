@@ -26,8 +26,8 @@ async function finishSpeech(page: Page) { await page.evaluate(() => (window as a
 async function leaveBoard(page: Page) {
   const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2); await page.mouse.down();
-  await expect(control).toHaveText('Release to continue', { timeout: 3500 }); await page.mouse.up();
-  await page.getByRole('button', { name: 'Leave board', exact: true }).click();
+  await expect(control).toHaveText('Release to edit', { timeout: 3500 }); await page.mouse.up();
+  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 }
 test.beforeEach(async ({ page }) => { await setupSpeech(page); await openExistingLibrary(page); });
 
@@ -39,33 +39,24 @@ test.describe('outside modal dismissal', () => {
     await page.screenshot({ path: `${directory}/${name}-${width}.png`, animations: 'disabled' });
   }
   for (const viewport of [{ width: 390, height: 700 }, { width: 1180, height: 900 }]) {
-    test(`outside taps keep play active at ${viewport.width}px`, async ({ page, context }) => {
+    test(`hold opens editing directly and return remains idle at ${viewport.width}px`, async ({ page, context }) => {
       await page.setViewportSize(viewport);
       await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
-      const cow = page.getByRole('button', { name: 'Cow', exact: true });
-      const tile = (await cow.boundingBox())!;
-      const control = page.getByTestId('parent-control');
       const session = await context.newCDPSession(page);
       for (let attempt = 0; attempt < 2; attempt++) {
-        const bounds = (await control.boundingBox())!;
+        const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
         await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2, id: 1 }] });
-        await expect(control).toHaveText('Release to continue', { timeout: 3500 });
+        await expect(control).toHaveText('Release to edit', { timeout: 3500 });
         await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-        const heading = page.getByRole('heading', { name: 'Leave this board?', exact: true });
-        await heading.tap();
-        await expect(heading).toBeVisible();
-        if (attempt === 0) await capture(page, 'leave-dialog', viewport.width);
-        // This spot is on a tile behind the scrim, outside the dialog at both sizes.
-        await page.touchscreen.tap(tile.x + 20, tile.y + 20);
-        await expect(heading).toHaveCount(0);
+        await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+        await expect(page.getByText('Leave this board?')).toHaveCount(0);
+        await page.getByRole('button', { name: 'Return to play', exact: true }).click();
         await expect(page.getByTestId('play-board')).toBeVisible();
-        await expect(control).toHaveText('Hold to unlock');
         expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
-        if (attempt === 0) await capture(page, 'still-playing', viewport.width);
       }
-      await cow.tap();
+      await page.getByRole('button', { name: 'Cow', exact: true }).tap();
       expect(await page.evaluate(() => (window as any).__spoken.map((s: any) => s.text))).toEqual(['Cow']);
-      await leaveBoard(page);
+      await leaveBoard(page); await page.getByRole('button', { name: 'Boards', exact: true }).click();
       await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
     });
 
@@ -155,6 +146,7 @@ test('device language profile persists offline and drives French/Spanish board s
   await expect(page.getByRole('button', { name: 'Play in French', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Vaca', exact: true })).toBeVisible();
   await leaveBoard(page);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Play Our family', exact: true }).click();
   await page.getByRole('button', { name: 'Babushka', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'бабушка', lang: 'ru-RU' });
@@ -259,7 +251,7 @@ test('complete emoji search finds blueberries for a plum card and persists offli
   await expect(blueberries).toBeVisible();
 });
 
-test('swipes are forgiving, speech is bounded, and parent exit needs two deliberate steps', async ({ page }) => {
+test('swipes are forgiving, speech is bounded, and parent editing needs a deliberate hold and release', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   const cow = (await page.getByRole('button', { name: 'Cow', exact: true }).boundingBox())!;
   const sheep = (await page.getByRole('button', { name: 'Sheep', exact: true }).boundingBox())!;
@@ -278,7 +270,8 @@ test('swipes are forgiving, speech is bounded, and parent exit needs two deliber
   const control = (await page.getByTestId('parent-control').boundingBox())!;
   await page.mouse.move(control.x + 20, control.y + 20); await page.mouse.down(); await page.mouse.move(control.x - 20, control.y + 20);
   await page.waitForTimeout(2100); await page.mouse.up(); await expect(page.getByText('Leave this board?')).toHaveCount(0);
-  await leaveBoard(page); await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await leaveBoard(page); await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
 
 test('unlock readiness matches release at the boundary and cancelled holds reset immediately', async ({ page }) => {
@@ -294,9 +287,9 @@ test('unlock readiness matches release at the boundary and cancelled holds reset
   await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
   for (let i = 0; i < 3; i++) {
     await down(); await page.clock.runFor(1999); await expect(control).toHaveText('Keep holding…');
-    await page.clock.runFor(1); await expect(control).toHaveText('Release to continue');
-    await page.mouse.up(); await expect(page.getByText('Leave this board?', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Keep playing', exact: true }).click();
+    await page.clock.runFor(1); await expect(control).toHaveText('Release to edit');
+    await page.mouse.up(); await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Return to play', exact: true }).click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
   }
   for (const elapsed of [1500, 2000]) {
     const box = await down(); await page.clock.runFor(elapsed);
@@ -318,7 +311,7 @@ test('another touch cancels the ready unlock state without leaving stale feedbac
   const session = await context.newCDPSession(page);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
   await expect(control).toHaveText('Keep holding…');
-  await page.clock.runFor(2000); await expect(control).toHaveText('Release to continue');
+  await page.clock.runFor(2000); await expect(control).toHaveText('Release to edit');
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }, { x: x + 40, y, id: 2 }] });
   await expect(control).toHaveText('Hold to unlock');
   await page.clock.runFor(3000); await expect(control).toHaveText('Hold to unlock');
@@ -326,9 +319,9 @@ test('another touch cancels the ready unlock state without leaving stale feedbac
   await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 3 }] });
   await expect(control).toHaveText('Keep holding…');
-  await page.clock.runFor(2000); await expect(control).toHaveText('Release to continue');
+  await page.clock.runFor(2000); await expect(control).toHaveText('Release to edit');
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  await expect(page.getByText('Leave this board?', { exact: true })).toBeVisible();
+  await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 });
 
 test('active board survives reload and uses Russian pronunciation', async ({ page }) => {
@@ -716,7 +709,9 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry saving', exact: true })).toHaveCount(0);
   await page.reload();
-  // The retry also durably saves the requested play session; restart resumes it.
+  // Retrying saves the edits without reviving a failed navigation request after restart.
+  await expect(page.getByTestId('play-board')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Play My farm', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible(); await expect(page.getByText('My farm', { exact: true })).toBeVisible();
 });
 
