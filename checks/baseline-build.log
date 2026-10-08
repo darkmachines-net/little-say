@@ -1,0 +1,34 @@
+npm notice run @little-say/server@0.2.0 build
+npm notice run tsup
+CLI Building entry: src/database-cli.ts, src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: C:\Users\MChar\Documents\Codex\2026-10-06\task-10\little-say-before\apps\server\tsup.config.ts
+CLI Target: node22
+CLI Cleaning output folder
+ESM Build start
+ESM dist\database-cli.js 3.36 KB
+ESM dist\index.js        3.90 MB
+ESM ΓÜí∩╕Å Build success in 487ms
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:37832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 5308ms apps\mobile\index.ts (2401 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-ca5b464e28585a84be0cfa68df56bc6e.js (5.8MB)
+_expo/static/js/web/index-5ef8db8f5e636d444cc5426185f0cbcc.js (360KB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (49B)
+
+Exported: dist
+Offline shell: 14 assets (6392 KiB). Updates wait for parent action.

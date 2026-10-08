@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "settings": {
+    "backendUrl": "",
+    "voices": {},
+    "activeBoardId": null,
+    "aiConsent": true,
+    "autoSpeech": false,
+    "boardLanguages": {
+      "farm": "ru-RU"
+    },
+    "languageProfile": {
+      "languages": [
+        "en-US",
+        "ru-RU",
+        "es-ES"
+      ],
+      "defaultLanguage": "en-US"
+    }
+  },
+  "boards": [
+    {
+      "id": "farm",
+      "title": "Our farm words",
+      "revision": 0,
+      "createdAt": "2026-10-08T00:00:00.000Z",
+      "updatedAt": "2026-10-08T00:00:00.000Z",
+      "playLanguages": [
+        "en-US",
+        "ru-RU",
+        "es-ES"
+      ],
+      "translateLabels": false,
+      "tiles": [
+        {
+          "id": "cow",
+          "label": "Cow",
+          "speech": "Cow",
+          "language": "en-US",
+          "languageMode": "board",
+          "color": "sage",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐄"
+          },
+          "translations": [
+            {
+              "language": "ru-RU",
+              "label": "Корова",
+              "speech": "корова",
+              "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+            },
+            {
+              "language": "es-ES",
+              "label": "Vaca",
+              "speech": "vaca",
+              "source": "[\"Cow\",\"Cow\",\"en-US\"]"
+            }
+          ]
+        },
+        {
+          "id": "sheep",
+          "label": "Sheep",
+          "speech": "Sheep",
+          "language": "en-US",
+          "languageMode": "fixed",
+          "color": "butter",
+          "illustration": {
+            "kind": "emoji",
+            "emoji": "🐑"
+          }
+        }
+      ]
+    }
+  ]
+}
