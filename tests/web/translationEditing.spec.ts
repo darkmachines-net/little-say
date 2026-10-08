@@ -123,6 +123,26 @@ for (const legacy of [false, true]) test(`empty ${legacy ? 'legacy' : 'manual'} 
   expect(saved.tiles[1]).toEqual(original.tiles[1]);
 });
 
+for (const missing of [false, true]) test(`source collisions protect ${missing ? 'new' : 'newly corrected generated'} translations in the current draft`, async ({ page }) => {
+  const original = await openTranslations(page, missing);
+  await page.getByRole('button', { name: /^Edit tile / }).first().click();
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await page.getByRole('textbox', { name: 'Spanish words on the tile', exact: true }).fill('Corrected label');
+  await page.getByRole('textbox', { name: 'Spanish spoken words', exact: true }).fill('Corrected words');
+  await page.getByRole('button', { name: 'Original words', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
+  await page.getByRole('button', { name: 'Choose tile language Spanish', exact: true }).click();
+  for (const name of ['Save tile', 'Duplicate tile']) {
+    await page.getByRole('button', { name, exact: true }).click();
+    await expect(page.getByText('Keep the original language and edit its translation instead', { exact: false })).toBeVisible();
+    expect((await savedBoard(page)).tiles).toEqual(original.tiles);
+  }
+  await page.getByRole('textbox', { name: 'Language tag', exact: true }).fill('en-US');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.reload();
+  expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'es-ES')).toMatchObject({ label: 'Corrected label', speech: 'Corrected words', origin: 'manual' });
+});
+
 test('manual source-language collisions refuse save and duplicate without hiding a saved correction', async ({ page }) => {
   const original = await openTranslations(page);
   await page.getByRole('button', { name: /^Edit tile / }).first().click();

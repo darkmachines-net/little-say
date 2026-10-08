@@ -19,6 +19,13 @@ function proposal(board: ReturnType<typeof fixture>['board']): BoardProposal {
   return { boardId: board.id, baseRevision: board.revision, proposal: { title: 'Renamed', explanation: 'A change', needsClarification: false, tiles: board.tiles.map(tile => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, emoji: '🐄', color: tile.color, translations: [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] })) } };
 }
 describe('translation corrections', () => {
+  it('guards newly protected draft translations without treating unreviewed AI output as a manual correction', () => {
+    const { tile } = fixture();
+    const draft = editTileTranslation(tile, 'es-ES', { label: 'Corrected label', speech: 'Corrected words' });
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'es-es' }, draft.translations)).toThrow('Keep the original language');
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'en-us' }, draft.translations)).not.toThrow();
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'es-ES' })).not.toThrow();
+  });
   it.each([undefined, 'manual'] as const)('retains an empty %s correction draft for validation instead of deleting it', origin => {
     const { tile } = fixture();
     tile.translations![0].origin = origin;

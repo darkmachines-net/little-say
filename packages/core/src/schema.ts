@@ -182,10 +182,10 @@ export function validateGeneratedBoard(value: GeneratedBoard, context: BoardCont
   return value;
 }
 
-/** Reject a source-language change that would hide a manual or legacy saved translation. */
-export function assertTranslationSourceLanguageChange(previous: Tile | undefined, next: Pick<Tile, 'language'>): void {
+/** Reject source changes hiding saved corrections or protected translations supplied from a manual editor draft. */
+export function assertTranslationSourceLanguageChange(previous: Tile | undefined, next: Pick<Tile, 'language'>, draftTranslations: Tile['translations'] = []): void {
   const changesLanguage = previous && Intl.getCanonicalLocales(previous.language)[0] !== Intl.getCanonicalLocales(next.language)[0];
-  if (changesLanguage && previous.translations?.some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(next.language)[0])) {
+  if (changesLanguage && [...(previous.translations ?? []), ...draftTranslations].some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(next.language)[0])) {
     throw new Error('This changes the original language to one with saved translations. Keep the original language and edit its translation instead, so saved corrections stay protected.');
   }
 }
