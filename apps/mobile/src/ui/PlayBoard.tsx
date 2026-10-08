@@ -51,7 +51,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
     return () => { document.body.style.overflow = style; window.removeEventListener('popstate', historyGuard); document.removeEventListener('visibilitychange', visibility); };
   }, [queue]);
   const layout = useMemo(() => gridLayout(board.tiles.length, size.width, size.height), [board.tiles.length, size]);
-  const rects = useMemo<TileRect[]>(() => tiles.map((tile, i) => ({ id: tile.id, x: i % layout.columns * (layout.width + 12), y: Math.floor(i / layout.columns) * (layout.height + 12), width: Math.max(0, layout.width), height: Math.max(0, layout.height) })), [tiles, layout]);
+  const rects = useMemo<TileRect[]>(() => layout.rects.map((rect, i) => ({ ...rect, id: tiles[i].id })), [tiles, layout]);
   const activate = useCallback((id: string) => {
     if (exit) return;
     const tile = tiles.find(t => t.id === id); if (!tile) return;
@@ -82,7 +82,9 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
       <ParentControl cancelToken={cancelToken} onExitRequest={() => setExit(true)} />
     </View>
     <View style={{ flex: 1 }} onLayout={event => { const { width, height } = event.nativeEvent.layout; setSize(current => current.width === width && current.height === height ? current : { width, height }); setCancelToken(t => t + 1); }}>
-      {size.width > 0 && size.height > 0 && <TouchSurface tiles={tiles} rects={rects} playingId={active?.id ?? null} tappedId={flash} pendingId={pending?.id ?? null} onActivate={activate} onContact={() => setCancelToken(t => t + 1)} />}
+      {size.width > 0 && size.height > 0 && (layout.fits
+        ? <TouchSurface tiles={tiles} rects={rects} playingId={active?.id ?? null} tappedId={flash} pendingId={pending?.id ?? null} onActivate={activate} onContact={() => setCancelToken(t => t + 1)} />
+        : <Notice>More room is needed for this board. Rotate your device or enlarge the window.</Notice>)}
     </View>
     {exit && <Sheet title="Leave this board?" onClose={() => setExit(false)}>
       {Boolean(error) && <Notice>{error}</Notice>}
