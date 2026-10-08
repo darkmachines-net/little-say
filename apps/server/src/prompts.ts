@@ -1,8 +1,8 @@
 /** @file Loads server-only JSON prompts into source execution and the self-contained Node ESM bundle. */
 
-import board from '../../../prompts/server/board.json';
-import pictures from '../../../prompts/server/pictures.json';
-import speech from '../../../prompts/server/speech.json';
+import board from '../../../prompts/server/board.json' with { type: 'json' };
+import pictures from '../../../prompts/server/pictures.json' with { type: 'json' };
+import speech from '../../../prompts/server/speech.json' with { type: 'json' };
 import { loadPromptResource, loadPromptTemplate, type PictureConcept } from '@little-say/core';
 
 export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation', 'transcription'], 'server/board');
