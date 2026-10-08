@@ -11,7 +11,7 @@
   "reviewOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
   "fullStandardsRead": true,
   "supersedesVerdictCommentId": null,
-  "checkedAtUtc": "2026-10-08T17:33:53.845Z",
+  "checkedAtUtc": "2026-10-08T17:35:10.350Z",
   "headSha": "05f3b8977eaf94e49b9afcfe67c33916395442f2",
   "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
   "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
@@ -87,8 +87,8 @@
     ]
   ],
   "execution": {
-    "isolation": "Independent connector-backed source snapshot in this QA workspace; all11 complete downloaded files verified against remote Git blob IDs. No implementer worktree accessed or changed. Exact-head Git worktree/local test execution was not established in this continuation while root execution permission remained pending; no escalation requested and no bypass attempted.",
-    "localVerification": "Normal Python exact Git blob hash checks passed for11 files; exact UTF8 PR digest verified. First helper invocation hit Windows default-codepage decoding error, corrected only QA helper to explicit UTF8 and succeeded.",
+    "isolation": "After trusted user approval arrived at17:33UTC, the platform approved a command-specific fetch into this QA-owned little-say-qa clone and detached worktree creation at little-say-qa42. Exact head05f3b8977eaf94e49b9afcfe67c33916395442f2 checked out successfully; source/tree/base/parents and clean status verified. No implementer worktree accessed or changed. All11 prior downloaded source blobs independently matched remote identities.",
+    "localVerification": "Normal Python exact Git blob hash checks passed for11 files; exact UTF8 PR digest verified. First helper invocation hit Windows default-codepage decoding error, corrected only QA helper to explicit UTF8 and succeeded. Local exact-head git diff --check passed; head/tree/merge-base/ordered parents confirmed. Fresh trustworthy CI used rather than duplicating expensive suites.",
     "notExecuted": [
       "actionlint",
       "local QA npm suite",
@@ -107,5 +107,5 @@
     "authorEvidenceRef": "evidence/issue41-release-retirement",
     "originalAssessment": "Both commit trees accessible; original README/focused-tests/scope/unit-tests blob IDs preserved in current retained evidence tree."
   },
-  "nextAction": "Owner/coordinator obtain missing mandatory actionlint result, retain exact failures and then request focused reassessment. Coordinator separately records receipt and controls readiness. No source fix requested for the earlier P1. Root pending narrow execution permission remains pending; no new broader request from QA."
+  "nextAction": "Owner/coordinator obtain missing mandatory actionlint result, retain exact failures and then request focused reassessment. Coordinator separately records receipt and controls readiness. No source fix requested for earlier P1. Narrow Git/test request was approved at17:33UTC and command-specific fetch/worktree approval succeeded; no permissions/ACL/protection changes. No new broad approval request."
 }
