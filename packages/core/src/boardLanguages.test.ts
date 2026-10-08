@@ -48,7 +48,7 @@ describe('board languages', () => {
   it('never speaks original words with the wrong language when a translation is missing or stale', () => {
     const board = bilingual(); board.tiles[0].speech = 'Moo';
     expect(tileInLanguage(board.tiles[0], 'ru-RU')).toEqual(board.tiles[0]);
-    expect(missingTranslations(board)?.tiles[0].targets).toEqual(['ru-RU']);
+    expect(missingTranslations(board)).toBeNull(); // Unknown-origin saved words require review, not overwrite.
     expect(boardAudioTiles(board).map(t => t.speech)).toEqual(['Moo', 'Sheep']);
   });
   it('prepares each distinct base and selected translated sound once, skipping fixed variants', () => {

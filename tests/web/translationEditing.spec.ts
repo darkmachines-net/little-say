@@ -1,0 +1,245 @@
+/** @file Exercises selected-language drafts, correction persistence, stale results and explicit AI replacement review. */
+
+import { test, expect, type Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { tileSource } from '../../packages/core/src/schema';
+import { starterLibrary } from '../fixtures/library';
+import { pcmToWav } from '../../apps/server/src/synthesis';
+import { openExistingLibrary } from './existingLibrary';
+
+async function openTranslations(page: Page, missingSpanish = false) {
+  await page.addInitScript(() => {
+    const w = window as any; w.__spoken = [];
+    w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
+    Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
+      getVoices: () => ['en-US', 'ru-RU', 'es-ES'].map(lang => ({ voiceURI: lang, lang, name: lang, localService: true })),
+      speak: (value: any) => { w.__spoken.push({ text: value.text, language: value.lang }); value.onend?.(); },
+      cancel() {}, addEventListener() {}, removeEventListener() {},
+    } });
+    Element.prototype.requestFullscreen = async () => {};
+  });
+  await openExistingLibrary(page);
+  const library = starterLibrary(); const board = library.boards[0]; library.boards = [board];
+  board.tiles = board.tiles.slice(0, 2); board.playLanguages = ['en-US', 'ru-RU', 'es-ES']; board.translateLabels = false;
+  board.tiles[0].languageMode = 'board'; board.tiles[1].languageMode = 'fixed';
+  board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
+  if (missingSpanish) board.tiles[0].translations.pop();
+  library.settings = { ...library.settings, aiConsent: true, autoSpeech: false, boardLanguages: { [board.id]: 'ru-RU' } };
+  await page.evaluate(async library => {
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
+    await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
+  }, library);
+  await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  return board;
+}
+async function savedBoard(page: Page) {
+  return page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
+    return new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => { db.close(); resolve(request.result.boards[0]); }; });
+  });
+}
+
+test('board selection opens the matching fields, retains drafts across languages and saves only corrected words', async ({ page }) => {
+  const original = await openTranslations(page);
+  await expect(page.getByRole('button', { name: 'Edit tile Корова', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit tile Sheep', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  const label = page.getByRole('textbox', { name: 'Russian words on the tile', exact: true });
+  const speech = page.getByRole('textbox', { name: 'Russian spoken words', exact: true });
+  await expect(label).toHaveValue('Корова'); await speech.fill('коровушка'); await label.fill('Моя корова');
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await expect(page.getByRole('textbox', { name: 'Spanish spoken words', exact: true })).toHaveValue('vaca');
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await expect(speech).toHaveValue('коровушка');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect.poll(async () => (await savedBoard(page)).tiles[0].translations[1].speech).toBe('коровушка');
+  const saved = await savedBoard(page);
+  expect(saved.tiles[0]).toMatchObject({ id: original.tiles[0].id, label: 'Cow', speech: 'Cow', language: 'en-US', illustration: original.tiles[0].illustration });
+  expect(saved.tiles[0].translations.find((t: any) => t.language === 'es-ES')).toEqual(original.tiles[0].translations![1]);
+  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Моя корова', exact: true }).click(); await expect(speech).toHaveValue('коровушка');
+  await speech.fill('Discard me'); await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Моя корова', exact: true }).click(); await expect(speech).toHaveValue('коровушка');
+});
+
+test('late TTS stays on its original key; failure and retry use the corrected input', async ({ page }) => {
+  await openTranslations(page);
+  const wave = pcmToWav(Buffer.alloc(24000)); const id = createHash('sha256').update(wave).digest('hex');
+  const requests: any[] = []; let release!: () => void; const gate = new Promise<void>(resolve => { release = resolve; }); let fail = true;
+  await page.route('**/api/speech', async route => {
+    const input = route.request().postDataJSON(); requests.push(input);
+    if (input.text === 'корова') await gate;
+    if (input.text === 'коровушка' && fail) return route.fulfill({ status: 503, json: { error: 'Synthetic audio unavailable' } });
+    await route.fulfill({ json: { ...input, id, cacheHit: false } });
+  });
+  await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await page.getByRole('button', { name: 'Generate audio', exact: true }).click();
+  await expect.poll(() => requests.length).toBe(1);
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click(); release();
+  await expect(page.getByRole('button', { name: 'Generate audio', exact: true })).toBeEnabled();
+  await expect(page.getByRole('textbox', { name: 'Spanish spoken words', exact: true })).toHaveValue('vaca');
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Generate audio', exact: true }).click();
+  await expect(page.getByText('Synthetic audio unavailable').first()).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('коровушка');
+  fail = false; await page.getByRole('button', { name: 'Generate audio', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Regenerate audio', exact: true })).toBeEnabled();
+  expect(requests.slice(-2)).toEqual([{ text: 'коровушка', language: 'ru-RU', regenerate: false }, { text: 'коровушка', language: 'ru-RU', regenerate: false }]);
+  await page.getByRole('textbox', { name: 'Russian words on the tile', exact: true }).fill('Бурёнка');
+  await expect(page.getByRole('button', { name: 'Regenerate audio', exact: true })).toBeEnabled();
+});
+
+test('source edits retain stale corrected text for review and incomplete variants cannot be saved', async ({ page }) => {
+  await openTranslations(page);
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await page.getByRole('button', { name: 'Original words', exact: true }).last().click();
+  await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Moo');
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await expect(page.getByText('The original words changed.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('корова');
+  await expect(page.getByRole('button', { name: 'Generate audio', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow, translation needs attention', exact: true }).click();
+  await page.getByRole('button', { name: 'Use reviewed translation', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('');
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByText('Complete both text fields', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('');
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Корова', exact: true })).toBeVisible();
+});
+
+for (const replace of [false, true]) test(`AI ${replace ? 'uses an explicitly reviewed replacement' : 'keeps a saved correction when replacement is declined'}`, async ({ page }) => {
+  const board = await openTranslations(page);
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: { boardId: board.id, baseRevision: board.revision, proposal: { title: board.title, explanation: 'Updated the title and wording.', needsClarification: false, tiles: board.tiles.map(t => ({ existingId: t.id, label: t.label, speech: t.speech, language: t.language, emoji: '🐄', color: t.color, translations: t.languageMode === 'board' ? [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] : [] })) } } }));
+  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Improve this board');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByText('1 saved translations will be kept.', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Review translation replacements', exact: true }).click();
+  await expect(page.getByText('Saved: Корова / корова', { exact: true })).toBeVisible();
+  await expect(page.getByText('Proposed: Бурёнка / бурёнка', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Use proposed translations', exact: true }).click();
+  await expect(page.getByText('Reviewed translation replacements will be applied.', { exact: true })).toBeVisible();
+  // A new AI turn requires its own decision even when the proposed words happen to match.
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Consider this once more');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByText('1 saved translations will be kept.', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Review translation replacements', exact: true }).click();
+  await page.getByRole('button', { name: replace ? 'Use proposed translations' : 'Keep saved translations', exact: true }).click();
+  await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  await expect(page.getByRole('button', { name: `Edit tile ${replace ? 'Бурёнка' : 'Корова'}`, exact: true })).toBeVisible();
+  expect((await savedBoard(page)).tiles[0].translations[0].speech).toBe(replace ? 'бурёнка' : 'корова');
+});
+
+test('direct play entry inherits Russian and returns with corrected speech while source labels stay enabled', async ({ page }) => {
+  await openTranslations(page);
+  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
+  const control = page.getByTestId('parent-control'), box = (await control.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
+  await expect(control).toHaveText('Release to edit'); await page.mouse.up();
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
+  await page.getByRole('button', { name: 'Listen to translation', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'коровушка', language: 'ru-RU' });
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Cow', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'коровушка', language: 'ru-RU' }, { text: 'коровушка', language: 'ru-RU' }]);
+});
+
+test('removing the selected language shows original words without deleting its correction', async ({ page }) => {
+  const original = await openTranslations(page);
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Choose languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Remove play language Russian', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Original words', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'What it says', exact: true })).toHaveValue('Cow');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  expect((await savedBoard(page)).tiles[0].translations).toEqual(original.tiles[0].translations);
+});
+
+test('missing variants stay blank, drafts survive switching and cancelled translation results cannot replace a retry', async ({ page }) => {
+  await openTranslations(page, true);
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow, translation needs attention', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Spanish spoken words', exact: true })).toHaveValue('');
+  await expect(page.getByRole('button', { name: 'Generate audio', exact: true })).toBeDisabled();
+  await page.getByRole('textbox', { name: 'Spanish words on the tile', exact: true }).fill('Borrador');
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).last().click();
+  await expect(page.getByRole('textbox', { name: 'Spanish words on the tile', exact: true })).toHaveValue('Borrador');
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  let release!: () => void; const gate = new Promise<void>(resolve => { release = resolve; }); let calls = 0;
+  await page.route('**/api/boards/translate', async route => {
+    const input = route.request().postDataJSON(); const call = ++calls;
+    expect(input.tiles[0].targets).toEqual(['es-ES']);
+    if (call === 1) await gate;
+    if (call === 2) return route.fulfill({ status: 503, json: { error: 'Translation unavailable. Try again.' } });
+    await route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: [{ tileId: input.tiles[0].id, language: 'es-ES', label: call === 1 ? 'Obsoleto' : 'Vaca nueva', speech: call === 1 ? 'obsoleto' : 'vaca nueva' }] } }).catch(() => {});
+  });
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await expect.poll(() => calls).toBe(1);
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await expect(page.getByText('Translation unavailable. Try again.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Use translations', exact: true })).toBeVisible();
+  release();
+  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Vaca nueva', exact: true })).toBeVisible();
+  expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('корова');
+});
+
+test('prepared translation review identifies retained stale words instead of presenting English as Russian', async ({ page }) => {
+  await openTranslations(page, true);
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await page.getByRole('button', { name: 'Original words', exact: true }).last().click();
+  await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Moo');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.route('**/api/boards/translate', route => {
+    const input = route.request().postDataJSON();
+    expect(input.tiles[0].targets).toEqual(['es-ES']);
+    return route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: [{ tileId: input.tiles[0].id, language: 'es-ES', label: 'Vaca', speech: 'muu' }] } });
+  });
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await expect(page.getByText('Russian — saved words need review', { exact: true })).toBeVisible();
+  await expect(page.getByText('Корова · says "корова"', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
+  expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('корова');
+});
+
+test('a failed save keeps the corrected board visible and retry persists it before reload', async ({ page }) => {
+  await openTranslations(page);
+  await page.evaluate(() => {
+    const original = IDBObjectStore.prototype.put; (window as any).__failSave = true;
+    IDBObjectStore.prototype.put = function (...args: Parameters<IDBObjectStore['put']>) {
+      if (this.name === 'state' && (window as any).__failSave) throw new DOMException('Synthetic storage failure', 'QuotaExceededError');
+      return original.apply(this, args);
+    };
+  });
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await expect(page.getByText('Not saved — retry saving', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('коровушка');
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.evaluate(() => { (window as any).__failSave = false; });
+  await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
+  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('коровушка');
+});

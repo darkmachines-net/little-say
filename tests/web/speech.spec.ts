@@ -49,6 +49,7 @@ test('generates from draft text and language, regenerates, persists offline, and
   await expect.poll(() => requests.some(input => input.text === 'Привет, бабушка' && input.regenerate)).toBe(true);
   await expect(page.getByRole('button', { name: 'Regenerate audio', exact: true })).toBeEnabled();
   // The language is part of the lookup even while the editor has unsaved changes.
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
   await page.getByRole('textbox', { name: 'Language tag', exact: true }).fill('en-US');
   await expect(page.getByRole('button', { name: 'Generate audio', exact: true })).toBeEnabled();
   await page.getByRole('textbox', { name: 'Language tag', exact: true }).fill('ru-RU');

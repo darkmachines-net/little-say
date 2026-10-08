@@ -26,7 +26,20 @@ export function applyLanguageSetup(current: Board, prepared: Board): BoardChange
 }
 /** Find a translation for the requested language only when it still matches the card source text. */
 export function tileTranslation(tile: Tile, language: string) {
-  return tile.translations?.find(t => canonicalLanguage(t.language) === canonicalLanguage(language) && t.source === tileSource(tile));
+  const translation = storedTileTranslation(tile, language);
+  return translation?.source === tileSource(tile) ? translation : undefined;
+}
+/** Find saved words even when a source edit means they need explicit parent review. */
+export function storedTileTranslation(tile: Tile, language: string) {
+  return tile.translations?.find(t => canonicalLanguage(t.language) === canonicalLanguage(language));
+}
+/** Update one manual variant without filtering other languages; incomplete fields remain draft-only. */
+export function editTileTranslation(tile: Tile, language: string, changes: Partial<Pick<Tile, 'label' | 'speech'>>): Tile {
+  const old = storedTileTranslation(tile, language);
+  const next = { language: canonicalLanguage(language), label: old?.label ?? '', speech: old?.speech ?? '', ...changes, source: tileSource(tile), origin: 'manual' as const };
+  const translations = (tile.translations ?? []).filter(t => canonicalLanguage(t.language) !== next.language);
+  if (next.label || next.speech) translations.push(next);
+  return { ...tile, translations };
 }
 /** Check whether the card has either the requested base language or a current translation. */
 export function hasTileLanguage(tile: Tile, language: string) {
@@ -66,13 +79,16 @@ export type TranslationRequest = z.infer<typeof translationRequestSchema>;
 export type GeneratedTranslations = z.infer<typeof generatedTranslationsSchema>;
 export type TranslationEnvelope = z.infer<typeof translationEnvelopeSchema>;
 /**
- * Build a revision-bound request for missing board-following variants, or return null when all are
- * available.
+ * Request missing or stale generated variants. Saved corrections are kept for explicit review;
+ * null means no variants can be prepared automatically, not necessarily that all are current.
  */
 export function missingTranslations(board: Board): TranslationRequest | null {
   const tiles = board.tiles.filter(tile => tile.languageMode === 'board').map(tile => ({
     id: tile.id, label: tile.label, speech: tile.speech, language: tile.language,
-    targets: (board.playLanguages ?? []).filter(language => !hasTileLanguage(tile, language)),
+    targets: (board.playLanguages ?? []).filter(language => {
+      const saved = storedTileTranslation(tile, language);
+      return !hasTileLanguage(tile, language) && (!saved || saved.origin === 'generated');
+    }),
   })).filter(tile => tile.targets.length > 0);
   return tiles.length ? { boardId: board.id, baseRevision: board.revision, tiles } : null;
 }
@@ -91,8 +107,8 @@ export function validateTranslations(request: TranslationRequest, result: Genera
   return envelope;
 }
 /**
- * Merge validated translations into cards without changing board metadata; reject stale revisions and
- * retain only current, selected language variants.
+ * Merge validated translations without changing board metadata, unrelated variants or saved corrections.
+ * Reject stale revisions and storage overflow rather than silently evicting a language.
  */
 export function applyTranslations(board: Board, envelope: TranslationEnvelope): Tile[] {
   if (board.id !== envelope.boardId || board.revision !== envelope.baseRevision) throw new Error('This board changed while translating. Prepare translations again to keep your latest edits.');
@@ -101,9 +117,12 @@ export function applyTranslations(board: Board, envelope: TranslationEnvelope): 
   const validated = validateTranslations(request, envelope);
   return board.tiles.map(tile => {
     const translated = validated.translations.filter(t => t.tileId === tile.id);
-    return translated.length ? { ...tile, translations: [
-      ...(tile.translations ?? []).filter(t => t.source === tileSource(tile) && board.playLanguages?.some(tag => canonicalLanguage(tag) === canonicalLanguage(t.language)) && !translated.some(next => canonicalLanguage(next.language) === canonicalLanguage(t.language))),
-      ...translated.map(({ tileId, ...translation }) => ({ ...translation, source: tileSource(tile) })),
-    ] } : tile;
+    if (!translated.length) return tile;
+    const translations = [
+      ...(tile.translations ?? []).filter(t => !translated.some(next => canonicalLanguage(next.language) === canonicalLanguage(t.language))),
+      ...translated.map(({ tileId, ...translation }) => ({ ...translation, source: tileSource(tile), origin: 'generated' as const })),
+    ];
+    if (translations.length > 6) throw new Error('This card already has six saved translations. Existing words have been kept; edit a saved language instead.');
+    return { ...tile, translations };
   });
 }
