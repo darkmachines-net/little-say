@@ -1,0 +1,1886 @@
+{
+  "checkedAtUtc": "2026-10-09T01:39:24.396Z",
+  "ownerTask": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+  "host": "mchartier_zbook",
+  "workflowVersion": "workflow-v3",
+  "executionPin": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationPin": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/38",
+  "issue": "https://github.com/MChartier/little-say/issues/32",
+  "headSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "baseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "immediateParents": [
+    "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "unmergedParents": [],
+  "scope": {
+    "checkedAtUtc": "2026-10-09T01:30:56.055Z",
+    "repository": "MChartier/little-say",
+    "targetRef": "refs/heads/master",
+    "head": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "actualTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "ultimateTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "immediateParents": [
+      "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+      "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+    ],
+    "unmergedParents": [],
+    "commits": [
+      {
+        "sha": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+        "parents": [
+          "9dd18b856d6d900ab162be3f1544aac0b93d2b71"
+        ],
+        "subject": "Edit selected language variants without losing saved corrections",
+        "reason": "Selected-language editors, guarded translation merges and maintained regression scenarios.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "9dd18b856d6d900ab162be3f1544aac0b93d2b71",
+            "paths": [
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/services/pictures.ts",
+              "M\tapps/mobile/src/ui/AiConversation.tsx",
+              "M\tapps/mobile/src/ui/BoardEditor.tsx",
+              "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+              "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/boardLanguages.test.ts",
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/app.spec.ts",
+              "M\ttests/web/speech.spec.ts",
+              "A\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+        "parents": [
+          "926b0f9ba742710e40ec7b8c198a877b5a82927e"
+        ],
+        "subject": "Reject AI source changes that shadow saved translations",
+        "reason": "Retained source-language collision fix and regression.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+            "paths": [
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+        "parents": [
+          "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+          "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        ],
+        "subject": "Merge current master into translation editing",
+        "reason": "Necessary additive integration of actual target master; no sibling or unmerged prerequisite.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+            "paths": [
+              "A\t.gitattributes",
+              "M\t.github/workflows/ci.yml",
+              "A\t.github/workflows/cut-release.yml",
+              "D\t.github/workflows/cut-server-release.yml",
+              "M\tREADME.md",
+              "M\tapps/mobile/app.config.js",
+              "M\tapps/mobile/app.json",
+              "M\tapps/mobile/eas.json",
+              "A\tapps/mobile/fingerprint.config.js",
+              "M\tapps/mobile/package.json",
+              "A\tapps/mobile/release-metadata.cjs",
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/data/storage.ts",
+              "M\tapps/mobile/src/data/storage.web.ts",
+              "M\tapps/mobile/src/data/useLibrary.ts",
+              "A\tapps/mobile/src/services/accountSession.ts",
+              "A\tapps/mobile/src/services/accountSession.web.ts",
+              "A\tapps/mobile/src/services/accountSync.test.ts",
+              "A\tapps/mobile/src/services/accountSync.ts",
+              "A\tapps/mobile/src/services/api.test.ts",
+              "M\tapps/mobile/src/services/api.ts",
+              "A\tapps/mobile/src/services/firebase-native.d.ts",
+              "A\tapps/mobile/src/services/firebaseAccount.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.test.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.ts",
+              "A\tapps/mobile/src/services/firebasePersistence.web.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.test.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.ts",
+              "A\tapps/mobile/src/services/firebaseProviders.web.ts",
+              "M\tapps/mobile/src/services/speechLibrary.ts",
+              "A\tapps/mobile/src/services/useAccount.ts",
+              "A\tapps/mobile/src/ui/AccountPanel.tsx",
+              "A\tapps/mobile/src/ui/AccountScreen.tsx",
+              "M\tapps/mobile/src/ui/FirstTimeSetup.tsx",
+              "M\tapps/mobile/src/ui/ParentSettings.tsx",
+              "M\tapps/mobile/src/ui/components.tsx",
+              "A\tapps/server/migrations/1760000000002_accounts.sql",
+              "M\tapps/server/package.json",
+              "A\tapps/server/src/account-routes.ts",
+              "A\tapps/server/src/accounts.ts",
+              "M\tapps/server/src/app.ts",
+              "M\tapps/server/src/database.ts",
+              "A\tapps/server/src/firebase.ts",
+              "M\tapps/server/src/index.ts",
+              "A\tapps/server/test/accounts.integration.test.ts",
+              "M\tapps/server/test/database.integration.test.ts",
+              "A\tapps/server/test/firebase.integration.test.ts",
+              "A\tdocs/ACCOUNTS.md",
+              "M\tdocs/releases.md",
+              "M\tdocs/testing.md",
+              "A\tfirebase.json",
+              "M\tnative-release.json",
+              "M\tpackage-lock.json",
+              "M\tpackage.json",
+              "A\tpackages/core/src/account.test.ts",
+              "A\tpackages/core/src/account.ts",
+              "M\tpackages/core/src/index.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tplaywright.accounts.config.ts",
+              "M\tplaywright.config.ts",
+              "A\trelease-policy.json",
+              "M\trelease.json",
+              "M\tscripts/dev-proxy.cjs",
+              "M\tscripts/dev-proxy.test.ts",
+              "A\tscripts/release/README.md",
+              "A\tscripts/release/candidate.test.ts",
+              "A\tscripts/release/candidate.ts",
+              "A\tscripts/release/cloud.ts",
+              "M\tscripts/release/common.ts",
+              "A\tscripts/release/contract.ts",
+              "M\tscripts/release/eas-credentials.ts",
+              "M\tscripts/release/environment.ts",
+              "A\tscripts/release/expo.ts",
+              "A\tscripts/release/fingerprint.test.ts",
+              "M\tscripts/release/fingerprint.ts",
+              "A\tscripts/release/image.test.ts",
+              "A\tscripts/release/image.ts",
+              "A\tscripts/release/inputs.ts",
+              "A\tscripts/release/journal.test.ts",
+              "A\tscripts/release/journal.ts",
+              "A\tscripts/release/metadata.ts",
+              "M\tscripts/release/native-contract.ts",
+              "M\tscripts/release/native.ts",
+              "A\tscripts/release/operation.test.ts",
+              "A\tscripts/release/operation.ts",
+              "A\tscripts/release/ota.test.ts",
+              "A\tscripts/release/ota.ts",
+              "A\tscripts/release/planner.test.ts",
+              "A\tscripts/release/planner.ts",
+              "A\tscripts/release/providers.test.ts",
+              "M\tscripts/release/release.test.ts",
+              "D\tscripts/release/server-cut.test.ts",
+              "D\tscripts/release/server-cut.ts",
+              "D\tscripts/release/server-publish.ts",
+              "A\tscripts/release/unified.test.ts",
+              "A\tscripts/release/unified.ts",
+              "A\tscripts/test-server.ts",
+              "A\ttests/web/accounts.spec.ts",
+              "M\ttests/web/existingLibrary.ts",
+              "M\ttests/web/setup.spec.ts"
+            ]
+          },
+          {
+            "parent": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+            "paths": [
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/services/pictures.ts",
+              "M\tapps/mobile/src/ui/AiConversation.tsx",
+              "M\tapps/mobile/src/ui/BoardEditor.tsx",
+              "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+              "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/boardLanguages.test.ts",
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/app.spec.ts",
+              "M\ttests/web/speech.spec.ts",
+              "A\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+        "parents": [
+          "dec27b5044ebce528ef59a499d94f2ccb2f66c0b"
+        ],
+        "subject": "Verify translation corrections through account entry cancellation",
+        "reason": "Account-aware browser fixture and correction preservation through cancelled account navigation.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+            "paths": [
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1deeea094c08804344d87479c094dac4b302a336",
+        "parents": [
+          "680d1a8a1b3cba93b9c99f3932a251c50651b731"
+        ],
+        "subject": "Cover corrected translation account snapshots and audio keys",
+        "reason": "Account snapshot/conflict round-trip and exact corrected-language audio-key regression.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+            "paths": [
+              "M\tpackages/core/src/translationEditing.test.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+        "parents": [
+          "1deeea094c08804344d87479c094dac4b302a336"
+        ],
+        "subject": "Preserve account choice in editor grid regression fixtures",
+        "reason": "Preserve account-choice state in the maintained editor-grid fixture after account integration.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1deeea094c08804344d87479c094dac4b302a336",
+            "paths": [
+              "M\ttests/web/grid.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+        "parents": [
+          "ebae155ff0eda3ec611e65dfc937f425b27e60df"
+        ],
+        "subject": "Reject manual source language changes that hide saved corrections",
+        "reason": "Resolve manual source-language collision finding using the shared guard and save/duplicate/recovery regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+            "paths": [
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+        "parents": [
+          "1a7fa5e960f200fdae35339972cddad871ea0f06"
+        ],
+        "subject": "Document explicit review required for translation replacement previews",
+        "reason": "Document the explicit parent-review authorization contract for translation replacement previews.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+            "paths": [
+              "M\tapps/mobile/src/services/pictures.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "ec849188fd450995149b87ee9bb454ac89388c4b",
+        "parents": [
+          "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+        ],
+        "subject": "Preserve empty translation drafts for required-field validation",
+        "reason": "R1: preserve empty existing correction drafts for Save/Duplicate validation, with manual/legacy unit and browser regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+            "paths": [
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+        "parents": [
+          "ec849188fd450995149b87ee9bb454ac89388c4b"
+        ],
+        "subject": "Guard source language against new draft corrections",
+        "reason": "Guard same-session manual draft corrections against source-language shadowing; core and new/generated browser regressions.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "ec849188fd450995149b87ee9bb454ac89388c4b",
+            "paths": [
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/schema.ts",
+              "M\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+        "parents": [
+          "b064097ac6a02717adfd7507d8d4cd741353069c"
+        ],
+        "subject": "Document revision-bound editor save callbacks",
+        "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "b064097ac6a02717adfd7507d8d4cd741353069c",
+            "paths": [
+              "M\tapps/mobile/src/ui/BoardEditor.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "parents": [
+          "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+        ],
+        "subject": "Document draft-bound translation replacement callbacks",
+        "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+            "paths": [
+              "M\tapps/mobile/src/ui/AiConversation.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "sha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+        "parents": [
+          "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+          "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+        ],
+        "subject": "Integrate merged release retirement and iOS runtime dependency",
+        "reason": "Additive integration of human-merged actual master PR42 release retirement and PR44 maintained iOS dependency; no conflict correction or independent product change.",
+        "changedAgainstEachParent": [
+          {
+            "parent": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+            "paths": [
+              "M\t.github/workflows/cut-release.yml",
+              "M\tapps/mobile/package.json",
+              "M\tdocs/releases.md",
+              "M\tpackage-lock.json",
+              "M\tscripts/release/candidate.test.ts",
+              "M\tscripts/release/candidate.ts",
+              "M\tscripts/release/journal.ts",
+              "M\tscripts/release/metadata.ts",
+              "M\tscripts/release/planner.test.ts",
+              "A\tscripts/release/retirement.test.ts",
+              "A\tscripts/release/retirement.ts",
+              "M\tscripts/release/unified.test.ts",
+              "M\tscripts/release/unified.ts"
+            ]
+          },
+          {
+            "parent": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+            "paths": [
+              "M\tapps/mobile/src/App.tsx",
+              "M\tapps/mobile/src/services/pictures.ts",
+              "M\tapps/mobile/src/ui/AiConversation.tsx",
+              "M\tapps/mobile/src/ui/BoardEditor.tsx",
+              "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+              "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+              "M\tapps/mobile/src/ui/TileEditor.tsx",
+              "M\tpackages/core/src/boardLanguages.test.ts",
+              "M\tpackages/core/src/boardLanguages.ts",
+              "M\tpackages/core/src/schema.ts",
+              "A\tpackages/core/src/translationEditing.test.ts",
+              "M\ttests/web/app.spec.ts",
+              "M\ttests/web/grid.spec.ts",
+              "M\ttests/web/speech.spec.ts",
+              "A\ttests/web/translationEditing.spec.ts"
+            ]
+          }
+        ]
+      }
+    ],
+    "files": [
+      {
+        "path": "apps/mobile/src/App.tsx",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 4,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/services/pictures.ts",
+        "status": "modified",
+        "additions": 7,
+        "deletions": 3,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/AiConversation.tsx",
+        "status": "modified",
+        "additions": 16,
+        "deletions": 4,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardEditor.tsx",
+        "status": "modified",
+        "additions": 17,
+        "deletions": 6,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/BoardLanguages.tsx",
+        "status": "modified",
+        "additions": 14,
+        "deletions": 7,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/EditingLanguages.tsx",
+        "status": "added",
+        "additions": 16,
+        "deletions": 0,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "apps/mobile/src/ui/TileEditor.tsx",
+        "status": "modified",
+        "additions": 38,
+        "deletions": 26,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/boardLanguages.test.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "packages/core/src/boardLanguages.ts",
+        "status": "modified",
+        "additions": 29,
+        "deletions": 10,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/schema.ts",
+        "status": "modified",
+        "additions": 39,
+        "deletions": 7,
+        "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+      },
+      {
+        "path": "packages/core/src/translationEditing.test.ts",
+        "status": "added",
+        "additions": 131,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/app.spec.ts",
+        "status": "modified",
+        "additions": 3,
+        "deletions": 1,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/grid.spec.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/speech.spec.ts",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      },
+      {
+        "path": "tests/web/translationEditing.spec.ts",
+        "status": "added",
+        "additions": 357,
+        "deletions": 0,
+        "reason": "Maintained regression for translation behavior or account integration."
+      }
+    ],
+    "totals": {
+      "commits": 13,
+      "files": 15,
+      "additions": 675,
+      "deletions": 69
+    },
+    "masterAdvance": [
+      "18aa7c08615ecf60c8583f0590dcce8ed389f0ea 4fa4ede70103c1827396d222de1c21fbc9938e93 Restore iOS export with the missing Apple authentication runtime dependency (#44)",
+      "4fa4ede70103c1827396d222de1c21fbc9938e93 fabb925cf5ee11171d5668af7c2bab44ec9fc613 Retire stale unpublished release candidates without losing recovery evidence (#42)"
+    ],
+    "integrationPaths": [
+      "M\t.github/workflows/cut-release.yml",
+      "M\tapps/mobile/package.json",
+      "M\tdocs/releases.md",
+      "M\tpackage-lock.json",
+      "M\tscripts/release/candidate.test.ts",
+      "M\tscripts/release/candidate.ts",
+      "M\tscripts/release/journal.ts",
+      "M\tscripts/release/metadata.ts",
+      "M\tscripts/release/planner.test.ts",
+      "A\tscripts/release/retirement.test.ts",
+      "A\tscripts/release/retirement.ts",
+      "M\tscripts/release/unified.test.ts",
+      "M\tscripts/release/unified.ts"
+    ],
+    "assessment": "All prior12 commits/parents/path inventories remain unchanged. New13th merge first-parent imports only13 paths already on actual target; second-parent equals the15-file translation outcome. Net scope675/-69 unchanged, nine product and six maintained regression files. No evidence churn, prompt extraction or unmerged dependency. Release orchestration is not invoked; its maintained mocked tests run in ordinary check. prop-types15.8.1 and nested react-is16.13.1 are the maintained Apple-auth runtime dependency from mergedPR44."
+  },
+  "prBodySha256": "c46fae531da604d402c24f070cd26c9a9db75ac6c4001989f6074363016d7188",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "humanReady": false,
+  "ci": {
+    "id": 37870039933,
+    "url": "https://github.com/MChartier/little-say/actions/runs/37870039933",
+    "conclusion": "success",
+    "headSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+  },
+  "engineeringReview": {
+    "status": "Quota-only refusal; no current-head bot review completed. Independent review required under amendment6006523068.",
+    "commentId": 6072408054,
+    "body": "You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage).\nTo continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/cloud/settings/code-review).",
+    "bodySha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9"
+  },
+  "feedback": {
+    "priorDispositions": {
+      "allIssueComments": [
+        {
+          "id": 6029282445,
+          "bodySha256": "e9163ca6e67d39c18598e513dd5e8ea9f7be064a8c94a847370519e033548219"
+        },
+        {
+          "id": 6030618618,
+          "bodySha256": "eae9cae04b554512a03e1982d1d13157cb3a00d0976af17c660e2ef7e9310cc2"
+        },
+        {
+          "id": 6030684460,
+          "bodySha256": "4c7567bd9aa15c7d35068a4c21d9b169d110f9409d93e490aa0ce873b379547e"
+        },
+        {
+          "id": 6049549105,
+          "bodySha256": "e572ff7a8cae17d80d95a99439dd5a85f08fbaf6f9ef9616b927384b002eab94"
+        },
+        {
+          "id": 6050057070,
+          "bodySha256": "5473390743a0aaaa2efc1bbfca66c44e45a73e8cbe138741875ab87ee5a0d3d7"
+        }
+      ],
+      "allPrComments": [
+        {
+          "id": 6049862664,
+          "bodySha256": "e7f38d5c3f08fd710d1d6d1fefdf935eb2b72c769eaeef45a1f6d15809de9dec"
+        },
+        {
+          "id": 6049866319,
+          "bodySha256": "23195c473c4688670bb4714a27219752a27a1322025153ac323312fea80a8fb8"
+        },
+        {
+          "id": 6049955396,
+          "bodySha256": "727ecdebe316ada166fb3c1bf62cae33f8368949250814523a6bdc011be648ec"
+        },
+        {
+          "id": 6049983045,
+          "bodySha256": "acc47242723f6631d58b03fe70441ef2661cc227c87777a7ba0554ec9c383e9c"
+        },
+        {
+          "id": 6050052349,
+          "bodySha256": "680bdeb0d22acf05eaa08783711cf548e971737ed157c5ed2771e2f4dbd51739"
+        },
+        {
+          "id": 6066231795,
+          "bodySha256": "2bfe5e41ee8ae03231202ec4fda6d3021af469f601f8cd78d09f64299df5953f"
+        },
+        {
+          "id": 6066359519,
+          "bodySha256": "bbb7ad500dc0a9208d82926a5d013d448e2bfcf19913c656e04177003d7f80a5"
+        },
+        {
+          "id": 6066469389,
+          "bodySha256": "ff5e0a36568f94687a463ed00a1315e918f7ddc0fcdc7590c9679da180ed1bda"
+        },
+        {
+          "id": 6066566994,
+          "bodySha256": "07a3815295cf778f92627f8a53556d82ab2bb67d76a25dcd68fa9842493e17a3"
+        },
+        {
+          "id": 6066627102,
+          "bodySha256": "68423dfab6a186272ac784dab15586ff8db67ddb881b22c2d7d557ca320b23d6"
+        },
+        {
+          "id": 6066722209,
+          "bodySha256": "5292977657df0bc19048ae35767aeb0c8c7f8759e8deb3ba392f858354612981"
+        },
+        {
+          "id": 6066823286,
+          "bodySha256": "438d740edbb6b659cfc2b7afd024f5db001ed4f93df915b9f4327e8f12f40bd3"
+        },
+        {
+          "id": 6066929182,
+          "bodySha256": "8973909d63ec478abf68d1640aa0c75324774a193ce94664c7dc0e1b05f4e83f"
+        },
+        {
+          "id": 6066957320,
+          "bodySha256": "4d5a3baba0f60fa6cdfbd40cd87e51f878857e45e3b908bb0ef5435034e2d6ee"
+        },
+        {
+          "id": 6067095268,
+          "bodySha256": "a18e31960534e4fecb7b5775fe7e5de1e7d04b28e5e6207d291390b5cb608f2d"
+        },
+        {
+          "id": 6067179256,
+          "bodySha256": "289a81a58478e8e05568cf02bd3b611250f092c4b44945508995de26858469f0"
+        },
+        {
+          "id": 6067308916,
+          "bodySha256": "2e14891618b78e7031234c640834b1e15e95d3e45f0280072e9cd02b3cf9eb68"
+        },
+        {
+          "id": 6067410242,
+          "bodySha256": "9347fafb8bce9eef3049d2b10916810dac1618942a7dd6ab31cd293371d915f6"
+        },
+        {
+          "id": 6067487045,
+          "bodySha256": "671fb37f91af0085331cbdb7490e1bd2d750422e3d60ca4bdccad957327b9877"
+        }
+      ],
+      "submittedReviews": [
+        {
+          "id": 5450152866,
+          "commit": "502c4de4c527b0f28fff4462f397f2d5b5f7167b",
+          "bodySha256": "c2f762e23915af665f137fad59651ddc45baa9903c4f4e0478697c62579f1cea"
+        },
+        {
+          "id": 5450178603,
+          "commit": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": 5461140062,
+          "commit": "1deeea094c08804344d87479c094dac4b302a336",
+          "bodySha256": "b4451740e6495abca2d5003ebac8fbf1f70a26ff93db851fd5fc7f3002b2c8c3"
+        },
+        {
+          "id": 5461221364,
+          "commit": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+          "bodySha256": "117496634370795f66af296c60946300caef4c7fb0f1cfbd862178dbf861bb1e"
+        },
+        {
+          "id": 5461244547,
+          "commit": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": 5461244847,
+          "commit": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": 5461679817,
+          "commit": "ec849188fd450995149b87ee9bb454ac89388c4b",
+          "bodySha256": "d83c3d06048e7ce71d94ce5d21e4aadfefae7b097cd95f3c064f110c894228dc"
+        },
+        {
+          "id": 5461735178,
+          "commit": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": 5461773539,
+          "commit": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "bodySha256": "a9f6a3ed703246c178fc4a3ca1105bdc4f82640d98abec9086f4b8376432ce2a"
+        },
+        {
+          "id": 5461791924,
+          "commit": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "id": 5461801775,
+          "commit": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "inline": [
+        {
+          "id": 4213533661,
+          "bodySha256": "96c245c0e058095d331df1008ceb84d549c4e936e521f667d5cbeb4a5151872d"
+        },
+        {
+          "id": 4213557299,
+          "bodySha256": "3a3a4a334e79c9387632b95948ade58ea91ffed1faab6f8daa9113413bda8688"
+        },
+        {
+          "id": 4222684628,
+          "bodySha256": "20c32ab02ada8c45f09bfa9819c1db8bab8e2fd6c58d658b5ed916468495ba73"
+        },
+        {
+          "id": 4222753440,
+          "bodySha256": "7915938f34af4d689fc14c2e51147c84363eb98154aad58df452a47d681856cd"
+        },
+        {
+          "id": 4222773661,
+          "bodySha256": "634cdde392a7b7c7729f83dd30a577050631c68414b1be36590d7b1b1fdd35ef"
+        },
+        {
+          "id": 4222773897,
+          "bodySha256": "4f1b2f3cfd87e7c372bb84099d0a053db23e9dd0e163286a554f6cd43518a862"
+        },
+        {
+          "id": 4223139477,
+          "bodySha256": "26730ba1d463bf8e41c41088cfc08d64a5cc50f88bf0643fec03912f10d3f329"
+        },
+        {
+          "id": 4223183370,
+          "bodySha256": "415d686e4d5e2b6918c7de9ee5f4d5cc680b3ecdaf80dcd99f692bdd94b0765b"
+        },
+        {
+          "id": 4223215763,
+          "bodySha256": "1723275db61e8d878c8c73b3211a14a93c0a3706f172db00178ccb54e5931292"
+        },
+        {
+          "id": 4223215777,
+          "bodySha256": "c66de310a231a18bb43713c6d798297e3d051805d61820898eccba7587f73d62"
+        },
+        {
+          "id": 4223231884,
+          "bodySha256": "dfb19c2643ddc76ba457b88e248cde4c03cab7eb9772a07ffeaedbca82863724"
+        },
+        {
+          "id": 4223240463,
+          "bodySha256": "c750430f1619e276af584af178f55554949457aae0a17a31c8adb417ce36cfde"
+        }
+      ],
+      "threads": [
+        {
+          "id": "PRRT_kwDOU65Oyc6qJ0Xi",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4213533661,
+                "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Review source-language collisions with saved corrections**\n\nWhen an AI proposal changes an existing board-following card’s source language to the language of a protected correction (for example, `en-US` to `ru-RU`) and omits that language from `tile.translations`, this blindly retains the correction without reporting a replacement. `proposalTranslationReplacements` therefore returns no review item, while `tileInLanguage` chooses the new source words whenever the selected language equals `tile.language`, silently replacing the corrected Russian text and audio in actual use. Treat this source-language collision as a protected replacement or otherwise prevent the new source from shadowing the saved correction.\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4213557299,
+                "body": "Addressed in `a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce`. An AI source-language change is now refused when it would shadow a saved manual/legacy translation, including when the proposal omits translations and when ordinary replacement review was approved. The error directs the parent to keep the source language and edit its translation. A core regression passes; a browser regression verifies refusal leaves every saved tile unchanged."
+              }
+            ]
+          }
+        },
+        {
+          "id": "PRRT_kwDOU65Oyc6qf7p-",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4222684628,
+                "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Block manual source-language collisions**\n\nWhen a board-following card has a protected Russian translation and a parent changes its original language from English to Russian here, the translation is retained but becomes unreachable: `tileInLanguage` returns the source tile whenever the selected language equals `tile.language`, so playback silently uses the newly relabeled original words instead of the saved correction. The AI path now guards this collision, but this manual path does not; reject the language change or require explicit handling when a protected translation already uses the new source language.\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4222773661,
+                "body": "Addressed in 1a7fa5e960f200fdae35339972cddad871ea0f06. Manual Save and Duplicate now use the same protected-source-language guard as AI application. Refusal keeps the saved board unchanged and the draft retryable. Added canonical-tag/manual/legacy unit coverage and a browser save/duplicate/recovery case; the fresh capture demonstrates the refusal. Full check passed with 296 tests; affected browser rerun is completing."
+              }
+            ]
+          }
+        },
+        {
+          "id": "PRRT_kwDOU65Oyc6qgGRp",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4222753440,
+                "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document the translation-replacement permission**\n\nDocument that `replaceTranslations` changes the returned board by replacing protected manual or legacy translations and must only be enabled after explicit parent review. The current JSDoc describes picture-preview behavior only, leaving this non-obvious and potentially destructive new public parameter without its authorization contract.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/ebae155ff0eda3ec611e65dfc937f425b27e60df/AGENTS.md#L7-L9)\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4222773897,
+                "body": "Addressed in 1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f. proposalPreview JSDoc now says replaceTranslations may replace protected manual/legacy translations only after explicit parent review of this draft, and distinguishes preview construction from persistence. Documentation-only change; runtime behavior is unchanged."
+              }
+            ]
+          }
+        },
+        {
+          "id": "PRRT_kwDOU65Oyc6qhBfh",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4223139477,
+                "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Check the edited draft for source-language collisions**\n\nWhen a parent creates or manually edits a translation and then, in the same editor session, changes the original language to that translation’s language, this guard inspects only `previous.translations`; the new correction is therefore saved but immediately shadowed because `tileInLanguage` prefers the source words for that language. The fresh evidence beyond the earlier collision fix is that `validated.data` can contain a newly protected translation absent from `previous`, so Save and Duplicate should also reject collisions found in the edited draft.\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4223183370,
+                "body": "Addressed in b064097ac6a02717adfd7507d8d4cd741353069c. Save and Duplicate now check both persisted corrections and protected translations in the validated manual draft. The AI path does not treat fresh model output as a parent correction. Focused core and browser regressions cover new and newly corrected generated translations, refusal without changing saved state, and recovery after restoring the original source language.\n"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PRRT_kwDOU65Oyc6qhNHQ",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4223215763,
+                "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document replacement authority on `onApply`**\n\nDocument that the second `onApply` argument is a draft-bound authorization to replace protected manual or legacy translations and is only `true` after explicit parent review. The exported component’s JSDoc currently describes navigation and AI consent but omits this newly destructive callback contract, making it easy for another consumer to ignore, reinterpret, or broaden the permission.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/b064097ac6a02717adfd7507d8d4cd741353069c/AGENTS.md#L7-L9)\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4223240463,
+                "body": "Addressed in 6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f. AiConversation JSDoc now binds the second onApply argument to explicit parent review of this draft and prohibits reusing that permission for another draft. Documentation-only; runtime evidence remains captured at b064097."
+              }
+            ]
+          }
+        },
+        {
+          "id": "PRRT_kwDOU65Oyc6qhNHX",
+          "isResolved": true,
+          "comments": {
+            "pageInfo": {
+              "hasNextPage": false
+            },
+            "nodes": [
+              {
+                "databaseId": 4223215777,
+                "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Document the revision-bound `onChange` contract**\n\nDocument that tile and translation saves pass `expectedRevision`, that the parent must reject mismatches, and that the resulting error keeps the editor draft open. The changed public callback signature encodes a non-obvious concurrency contract, but the component JSDoc still only says that durable changes are delegated to the parent.\n\nAGENTS.md reference: [AGENTS.md:L7-L9](https://github.com/MChartier/little-say/blob/b064097ac6a02717adfd7507d8d4cd741353069c/AGENTS.md#L7-L9)\n\nUseful? React with 👍 / 👎."
+              },
+              {
+                "databaseId": 4223231884,
+                "body": "Addressed in a0f5f4806f7471ba86b77fb33c5cc27b6b35f472. BoardEditor JSDoc now documents expectedRevision for tile/translation saves, the parent rejection requirement, and keeping the draft open on mismatch. Documentation-only change; the b064097 runtime build, 299 unit/17 browser results and source-bound captures remain applicable without relabeling."
+              }
+            ]
+          }
+        }
+      ],
+      "dispositions": [
+        {
+          "id": "R1",
+          "status": "Implemented at ec849188; both-empty manual/legacy drafts fail Save/Duplicate validation and retain cancellation/reload/recovery behavior. Same QA recheck pending."
+        },
+        {
+          "id": 4223139477,
+          "status": "Implemented at b064097; saved and manual-draft protected translations checked on Save/Duplicate; new/generated correction regressions pass. Resolved thread."
+        },
+        {
+          "id": "C1",
+          "status": "Body now explicitly identifies completed prior-head QA and pending correction reassessment."
+        },
+        {
+          "id": "E1",
+          "status": "Open/unwaived iOS export failure; separately owned issue43/PR44. No import or claimed fix."
+        }
+      ],
+      "priorFindings": "4213533661,4222684628,4222753440 retained fixed and resolved;4223215777 fixed a0f5f480 and4223215763 fixed6990cbbb, both JSDoc-only and resolved. Runtime capture/test applicability unchanged from b064097."
+    },
+    "latestQa": {
+      "commentId": 6068206900,
+      "recordCommit": "2b552959e38caeb342fc2a20f4237f1c4af6ce87",
+      "disposition": "R1/C1 cleared on prior revision; E1 now has passing integrated iOS author evidence. Same QA final integration assessment pending."
+    },
+    "unchangedFullFeedbackVerified": true,
+    "comments": [
+      {
+        "id": 6049862664,
+        "sha256": "e7f38d5c3f08fd710d1d6d1fefdf935eb2b72c769eaeef45a1f6d15809de9dec"
+      },
+      {
+        "id": 6049866319,
+        "sha256": "23195c473c4688670bb4714a27219752a27a1322025153ac323312fea80a8fb8"
+      },
+      {
+        "id": 6049955396,
+        "sha256": "727ecdebe316ada166fb3c1bf62cae33f8368949250814523a6bdc011be648ec"
+      },
+      {
+        "id": 6049983045,
+        "sha256": "acc47242723f6631d58b03fe70441ef2661cc227c87777a7ba0554ec9c383e9c"
+      },
+      {
+        "id": 6050052349,
+        "sha256": "680bdeb0d22acf05eaa08783711cf548e971737ed157c5ed2771e2f4dbd51739"
+      },
+      {
+        "id": 6066231795,
+        "sha256": "2bfe5e41ee8ae03231202ec4fda6d3021af469f601f8cd78d09f64299df5953f"
+      },
+      {
+        "id": 6066359519,
+        "sha256": "bbb7ad500dc0a9208d82926a5d013d448e2bfcf19913c656e04177003d7f80a5"
+      },
+      {
+        "id": 6066469389,
+        "sha256": "ff5e0a36568f94687a463ed00a1315e918f7ddc0fcdc7590c9679da180ed1bda"
+      },
+      {
+        "id": 6066566994,
+        "sha256": "07a3815295cf778f92627f8a53556d82ab2bb67d76a25dcd68fa9842493e17a3"
+      },
+      {
+        "id": 6066627102,
+        "sha256": "68423dfab6a186272ac784dab15586ff8db67ddb881b22c2d7d557ca320b23d6"
+      },
+      {
+        "id": 6066722209,
+        "sha256": "5292977657df0bc19048ae35767aeb0c8c7f8759e8deb3ba392f858354612981"
+      },
+      {
+        "id": 6066823286,
+        "sha256": "438d740edbb6b659cfc2b7afd024f5db001ed4f93df915b9f4327e8f12f40bd3"
+      },
+      {
+        "id": 6066929182,
+        "sha256": "8973909d63ec478abf68d1640aa0c75324774a193ce94664c7dc0e1b05f4e83f"
+      },
+      {
+        "id": 6066957320,
+        "sha256": "4d5a3baba0f60fa6cdfbd40cd87e51f878857e45e3b908bb0ef5435034e2d6ee"
+      },
+      {
+        "id": 6067095268,
+        "sha256": "a18e31960534e4fecb7b5775fe7e5de1e7d04b28e5e6207d291390b5cb608f2d"
+      },
+      {
+        "id": 6067179256,
+        "sha256": "289a81a58478e8e05568cf02bd3b611250f092c4b44945508995de26858469f0"
+      },
+      {
+        "id": 6067308916,
+        "sha256": "2e14891618b78e7031234c640834b1e15e95d3e45f0280072e9cd02b3cf9eb68"
+      },
+      {
+        "id": 6067410242,
+        "sha256": "9347fafb8bce9eef3049d2b10916810dac1618942a7dd6ab31cd293371d915f6"
+      },
+      {
+        "id": 6067487045,
+        "sha256": "671fb37f91af0085331cbdb7490e1bd2d750422e3d60ca4bdccad957327b9877"
+      },
+      {
+        "id": 6067522061,
+        "sha256": "9ede54e74423e42c736bf2a43ed3cf44584022cef0e2b62d2d7b3a23b343c757"
+      },
+      {
+        "id": 6068206900,
+        "sha256": "0cb244e937c68dbf20ccbd0df743da1d7c4a7297b6164a1b82158479263df645"
+      },
+      {
+        "id": 6072406602,
+        "sha256": "cbcdd1f2cdc7ad44b3b7b2aa246f0af7c6ccde55ee40125a8876c1e5af027cc2"
+      },
+      {
+        "id": 6072408054,
+        "sha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9"
+      }
+    ],
+    "issueComments": [
+      {
+        "id": 6029282445,
+        "sha256": "e9163ca6e67d39c18598e513dd5e8ea9f7be064a8c94a847370519e033548219"
+      },
+      {
+        "id": 6030618618,
+        "sha256": "eae9cae04b554512a03e1982d1d13157cb3a00d0976af17c660e2ef7e9310cc2"
+      },
+      {
+        "id": 6030684460,
+        "sha256": "4c7567bd9aa15c7d35068a4c21d9b169d110f9409d93e490aa0ce873b379547e"
+      },
+      {
+        "id": 6049549105,
+        "sha256": "e572ff7a8cae17d80d95a99439dd5a85f08fbaf6f9ef9616b927384b002eab94"
+      },
+      {
+        "id": 6050057070,
+        "sha256": "5473390743a0aaaa2efc1bbfca66c44e45a73e8cbe138741875ab87ee5a0d3d7"
+      }
+    ],
+    "reviews": [
+      {
+        "id": 5450152866,
+        "sha256": "c2f762e23915af665f137fad59651ddc45baa9903c4f4e0478697c62579f1cea"
+      },
+      {
+        "id": 5450178603,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461140062,
+        "sha256": "b4451740e6495abca2d5003ebac8fbf1f70a26ff93db851fd5fc7f3002b2c8c3"
+      },
+      {
+        "id": 5461221364,
+        "sha256": "117496634370795f66af296c60946300caef4c7fb0f1cfbd862178dbf861bb1e"
+      },
+      {
+        "id": 5461244547,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461244847,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461679817,
+        "sha256": "d83c3d06048e7ce71d94ce5d21e4aadfefae7b097cd95f3c064f110c894228dc"
+      },
+      {
+        "id": 5461735178,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461773539,
+        "sha256": "a9f6a3ed703246c178fc4a3ca1105bdc4f82640d98abec9086f4b8376432ce2a"
+      },
+      {
+        "id": 5461791924,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": 5461801775,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "inline": [
+      {
+        "id": 4213533661,
+        "sha256": "96c245c0e058095d331df1008ceb84d549c4e936e521f667d5cbeb4a5151872d"
+      },
+      {
+        "id": 4213557299,
+        "sha256": "3a3a4a334e79c9387632b95948ade58ea91ffed1faab6f8daa9113413bda8688"
+      },
+      {
+        "id": 4222684628,
+        "sha256": "20c32ab02ada8c45f09bfa9819c1db8bab8e2fd6c58d658b5ed916468495ba73"
+      },
+      {
+        "id": 4222753440,
+        "sha256": "7915938f34af4d689fc14c2e51147c84363eb98154aad58df452a47d681856cd"
+      },
+      {
+        "id": 4222773661,
+        "sha256": "634cdde392a7b7c7729f83dd30a577050631c68414b1be36590d7b1b1fdd35ef"
+      },
+      {
+        "id": 4222773897,
+        "sha256": "4f1b2f3cfd87e7c372bb84099d0a053db23e9dd0e163286a554f6cd43518a862"
+      },
+      {
+        "id": 4223139477,
+        "sha256": "26730ba1d463bf8e41c41088cfc08d64a5cc50f88bf0643fec03912f10d3f329"
+      },
+      {
+        "id": 4223183370,
+        "sha256": "415d686e4d5e2b6918c7de9ee5f4d5cc680b3ecdaf80dcd99f692bdd94b0765b"
+      },
+      {
+        "id": 4223215763,
+        "sha256": "1723275db61e8d878c8c73b3211a14a93c0a3706f172db00178ccb54e5931292"
+      },
+      {
+        "id": 4223215777,
+        "sha256": "c66de310a231a18bb43713c6d798297e3d051805d61820898eccba7587f73d62"
+      },
+      {
+        "id": 4223231884,
+        "sha256": "dfb19c2643ddc76ba457b88e248cde4c03cab7eb9772a07ffeaedbca82863724"
+      },
+      {
+        "id": 4223240463,
+        "sha256": "c750430f1619e276af584af178f55554949457aae0a17a31c8adb417ce36cfde"
+      }
+    ]
+  },
+  "evidence": {
+    "commit": "19e49364a5814ba30e77e53c96f6f0f72437cdef",
+    "path": "merged-dependencies",
+    "identities": {
+      "checkedAtUtc": "2026-10-09T01:35:03.197Z",
+      "head": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "base": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "manifestSha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+      "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+      "harnessSha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+      "previousPrBodySha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+      "lockSha256": "894bfd115fdd3a4b597ba1bfc305f89b98e4a1772d6e9f2aa3308392d4be95a3",
+      "exports": [
+        {
+          "platform": "ios",
+          "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+          "command": "node ../../node_modules/expo/bin/cli export --platform ios --output-dir ../../../records/integration-ios-export",
+          "cwd": "little-say-translations/apps/mobile",
+          "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-ios-export",
+          "files": [
+            {
+              "path": "metadata.json",
+              "bytes": 333,
+              "sha256": "0d6a5555ef1bc3700b33442264f68f3c37da135072c24c9389f5029d7f830b5b"
+            },
+            {
+              "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+              "bytes": 88603,
+              "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+            },
+            {
+              "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+              "bytes": 14475,
+              "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+            },
+            {
+              "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+              "bytes": 44422,
+              "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+            },
+            {
+              "path": "_expo/static/js/ios/index-6fbfb319bfdd0c30ba55c93058a003f0.hbc",
+              "bytes": 7335867,
+              "sha256": "8c22c1fdeb1c23a2d7fdab77055343ba8e71ece25f5c5842127299e1752c3d2f"
+            }
+          ]
+        },
+        {
+          "platform": "android",
+          "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+          "command": "node ../../node_modules/expo/bin/cli export --platform android --output-dir ../../../records/integration-android-export",
+          "cwd": "little-say-translations/apps/mobile",
+          "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-android-export",
+          "files": [
+            {
+              "path": "metadata.json",
+              "bytes": 341,
+              "sha256": "c4b1423f2342b54b078c3aca070aa923a76898a118921554ba5d1ecef14943bd"
+            },
+            {
+              "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+              "bytes": 88603,
+              "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+            },
+            {
+              "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+              "bytes": 14475,
+              "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+            },
+            {
+              "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+              "bytes": 44422,
+              "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+            },
+            {
+              "path": "_expo/static/js/android/index-9665392d99dee1d23848f1aaba1cce20.hbc",
+              "bytes": 7341305,
+              "sha256": "afe3906ebca4c398f0f1dc841bd16dcbea52f9a90e0df64429be38245ad74c65"
+            }
+          ]
+        }
+      ],
+      "images": [
+        {
+          "filename": "before-board.png",
+          "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "before-existing-translation-controls.png",
+          "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "before-card.png",
+          "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-board.png",
+          "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-card.png",
+          "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-empty-correction-refused.png",
+          "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-manual-source-collision.png",
+          "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-corrected-audio-failure.png",
+          "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-stale-correction.png",
+          "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-phone-board.png",
+          "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-ai-replacement-review.png",
+          "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+          "identicalToPreviouslyInspected": true
+        },
+        {
+          "filename": "after-ai-source-collision.png",
+          "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+          "identicalToPreviouslyInspected": true
+        }
+      ],
+      "oldManifestSha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+      "retention": "Preserve nonmerged evidence/issue32-master-refresh and all preceding evidence/publication commits. Retain local export directories for same-host QA; hashes identify genuine local bundle artifacts, not device execution."
+    },
+    "access": {
+      "checkedAtUtc": "2026-10-09T01:38:30.846Z",
+      "commit": "19e4936",
+      "authenticatedReviewerAccess": true,
+      "files": [
+        {
+          "path": "merged-dependencies/README.md",
+          "sha256": "ec48a58323296f795906925d3add9a0790e09e384ef68e25507fd25ed524ffac",
+          "bytes": 6832,
+          "gitBlob": "a116f7f02590e8fda5d7b68d3ad71cd835e2cea7"
+        },
+        {
+          "path": "merged-dependencies/capture.mjs",
+          "sha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+          "bytes": 18212,
+          "gitBlob": "fcddc2e7d3c444674b9259e738aaaed291320ab2"
+        },
+        {
+          "path": "merged-dependencies/captures/after-ai-replacement-review.png",
+          "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+          "bytes": 63399,
+          "gitBlob": "520e5e68565085aff0885dcf3dfb818c224a647e"
+        },
+        {
+          "path": "merged-dependencies/captures/after-ai-source-collision.png",
+          "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+          "bytes": 60344,
+          "gitBlob": "b2fc62eaf783954de1f0bc7caae27ee384850fea"
+        },
+        {
+          "path": "merged-dependencies/captures/after-board.png",
+          "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+          "bytes": 45184,
+          "gitBlob": "18a71dc45b16fb3d116f90c54989a3402631e25d"
+        },
+        {
+          "path": "merged-dependencies/captures/after-card.png",
+          "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+          "bytes": 64100,
+          "gitBlob": "c7b2ef876bd474cc3eaff7b43181da4b22b07bee"
+        },
+        {
+          "path": "merged-dependencies/captures/after-corrected-audio-failure.png",
+          "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+          "bytes": 67927,
+          "gitBlob": "ea74fd7278eb5dfbd343dfc955baa4d88e849411"
+        },
+        {
+          "path": "merged-dependencies/captures/after-empty-correction-refused.png",
+          "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+          "bytes": 69067,
+          "gitBlob": "598ae73808e901ebdf2a7d373aa695095330e086"
+        },
+        {
+          "path": "merged-dependencies/captures/after-manual-source-collision.png",
+          "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+          "bytes": 72379,
+          "gitBlob": "9f74a196c7dc321a60fa728a462c2b23c933fd96"
+        },
+        {
+          "path": "merged-dependencies/captures/after-phone-board.png",
+          "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+          "bytes": 38789,
+          "gitBlob": "f979e7e471d86a09b20a3873b58f56f6a5b4f1c1"
+        },
+        {
+          "path": "merged-dependencies/captures/after-server.log",
+          "sha256": "71c1171f3f59722b28f6937aea15a3db8eb07a9a74cc6dcc56e7e1ecf9372b7e",
+          "bytes": 452,
+          "gitBlob": "db997b81dfc0a6e0bf876878db9fa8546422270c"
+        },
+        {
+          "path": "merged-dependencies/captures/after-stale-correction.png",
+          "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+          "bytes": 66276,
+          "gitBlob": "58e03a0b237a51ee5e6cdc48a3e98304d4ee5b44"
+        },
+        {
+          "path": "merged-dependencies/captures/before-board.png",
+          "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+          "bytes": 40870,
+          "gitBlob": "e69f71662be821f58b059e867f4d0d22cecc007c"
+        },
+        {
+          "path": "merged-dependencies/captures/before-card.png",
+          "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+          "bytes": 55782,
+          "gitBlob": "2730e3708318f970611da18ca3ea37bee399c410"
+        },
+        {
+          "path": "merged-dependencies/captures/before-existing-translation-controls.png",
+          "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+          "bytes": 69065,
+          "gitBlob": "5ac306f09b01dcecc18293a6ea25771d511cb0a7"
+        },
+        {
+          "path": "merged-dependencies/captures/before-server.log",
+          "sha256": "ea7d8d2f1296f7d07f743642350c721bc12884dd60fd5e7fb29f3b67ac835087",
+          "bytes": 452,
+          "gitBlob": "71e228553eb4b7b04351875a3dff712d4508dd64"
+        },
+        {
+          "path": "merged-dependencies/captures/fixture.json",
+          "sha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+          "bytes": 1721,
+          "gitBlob": "f3fb1b9578bfbef92acd6f8377a0a8fbb29b8789"
+        },
+        {
+          "path": "merged-dependencies/captures/manifest.json",
+          "sha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+          "bytes": 27437,
+          "gitBlob": "01cb0980ce5c86a92f806caa009540c2099df325"
+        },
+        {
+          "path": "merged-dependencies/identities.json",
+          "sha256": "2ed9cdf22438982a80254b992200c21963223b97e9063a17d17e748459444ef8",
+          "bytes": 6050,
+          "gitBlob": "a0ac2390c4531c9755cbb0b764c29e4c2e39c1b6"
+        },
+        {
+          "path": "merged-dependencies/pr-body-before.md",
+          "sha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+          "bytes": 7429,
+          "gitBlob": "315e157457dd6642f32f48f0242afbbf04946890"
+        },
+        {
+          "path": "merged-dependencies/records/integration-admission-comments.json",
+          "sha256": "7a7750cf30cdc7c84c032d61624b08f2fabebdf3f448c9d62b9573cd72b9f4cb",
+          "bytes": 74149,
+          "gitBlob": "3c3f9d502ffaadfabcd9d3a07767d237e3415223"
+        },
+        {
+          "path": "merged-dependencies/records/integration-android.log",
+          "sha256": "b013d79322799d9b34229f3dec7fb08b146a1d7500f1ce04591b2e05fae3e913",
+          "bytes": 752,
+          "gitBlob": "0a1df45ceca6414d48488d5b9d6b78bcdab2d328"
+        },
+        {
+          "path": "merged-dependencies/records/integration-baseline-build.log",
+          "sha256": "2b525912610cc95c184859e41c7b00d5788458cfd878d5499a067a18cf23a13d",
+          "bytes": 1422,
+          "gitBlob": "7f0a725e568c582ad141f20426efe99af22a116c"
+        },
+        {
+          "path": "merged-dependencies/records/integration-baseline-install.log",
+          "sha256": "e66de917b62388161143376fc05905d2302711282ce9d83413dfa9e00f7a7a1a",
+          "bytes": 2931,
+          "gitBlob": "6a1c1bdece9e3494c5ef8bc8f29718e039a659bb"
+        },
+        {
+          "path": "merged-dependencies/records/integration-browser.log",
+          "sha256": "9c4d7a8dfdd76848df054af98d0297977a7f9f205574c64a4b8614b769767e89",
+          "bytes": 4163,
+          "gitBlob": "a5cd1cce6add0db718ad3b11f826a4285fc77db8"
+        },
+        {
+          "path": "merged-dependencies/records/integration-capture.log",
+          "sha256": "a7affc69d6decac49753224af3a88f7985874fe599d310fe0ee1074b37e71c6d",
+          "bytes": 200,
+          "gitBlob": "09ae5f51b65010abf60a593b895678e907c9e753"
+        },
+        {
+          "path": "merged-dependencies/records/integration-check.log",
+          "sha256": "d503508cf85d1e83613403596b492d5af174339bcfe0cfcd657fcfbbfc392d07",
+          "bytes": 7771,
+          "gitBlob": "2b82fae68b5ccd58ba54ef69b837269abad7ecee"
+        },
+        {
+          "path": "merged-dependencies/records/integration-ci-jobs.json",
+          "sha256": "697e02f4732ce408e02ca62e8f86f3ab596036662a4ade5c511afec21479369e",
+          "bytes": 3287,
+          "gitBlob": "e638277580b05bbee9bcaae67cbdcb93ff37771d"
+        },
+        {
+          "path": "merged-dependencies/records/integration-ci.json",
+          "sha256": "a710526848fb9589e843b00abf2ddd0ac1dca15e78a27c685f2ec5a17067d09e",
+          "bytes": 12908,
+          "gitBlob": "d405701e01d26422a20d7a3ed13b5a14c5e9d029"
+        },
+        {
+          "path": "merged-dependencies/records/integration-ci.log",
+          "sha256": "42a40b6d0513b793b26f71a2c9a0ea3b8ac07a7ec3fe06462af662d23a4fc078",
+          "bytes": 168831,
+          "gitBlob": "cd2ae267ce5da1b8d2b43b7e0783331301c3ad46"
+        },
+        {
+          "path": "merged-dependencies/records/integration-comments-current.json",
+          "sha256": "752d47350ec27996e7e0bbbbd3ba6bc74fcd50ba041ac99fea80d5a549aed288",
+          "bytes": 80289,
+          "gitBlob": "21465367752910a5ed19d4991c880f1db031c8c2"
+        },
+        {
+          "path": "merged-dependencies/records/integration-inline-current.json",
+          "sha256": "6698471c5f84c47cc56fe461d54f7d692d58b948a015a1507498528f25eb8c71",
+          "bytes": 60100,
+          "gitBlob": "0331cc8f9becf7c4603911a754daf4ebd7d709e3"
+        },
+        {
+          "path": "merged-dependencies/records/integration-inline.json",
+          "sha256": "ca6fc45009b83c2a1a6ab45691c4957c1735d06704cda813b546390196b0e072",
+          "bytes": 60100,
+          "gitBlob": "65ba6a1318212f6570758ae119d8aabd6f9e8deb"
+        },
+        {
+          "path": "merged-dependencies/records/integration-install.log",
+          "sha256": "e66de917b62388161143376fc05905d2302711282ce9d83413dfa9e00f7a7a1a",
+          "bytes": 2931,
+          "gitBlob": "6a1c1bdece9e3494c5ef8bc8f29718e039a659bb"
+        },
+        {
+          "path": "merged-dependencies/records/integration-ios.log",
+          "sha256": "16c2c89c9c046e283eb64bb5eefa637b857938962c7b45ceffa3bf750cdfa771",
+          "bytes": 1246,
+          "gitBlob": "780e9116cd725f84f8c435f34e23c88a0860999c"
+        },
+        {
+          "path": "merged-dependencies/records/integration-issue-comments.json",
+          "sha256": "2a64450751e93d356f09e4f77dee9d1d144e38a96cf2a3800cadf8542ac99c27",
+          "bytes": 31448,
+          "gitBlob": "07d9754851ee99016b1a414e7bc1c925d41d9021"
+        },
+        {
+          "path": "merged-dependencies/records/integration-pr-before.json",
+          "sha256": "8a5773c93bbff9324c6a6284a921ef47b27e94cf82abba52dbe7e961baf07072",
+          "bytes": 23363,
+          "gitBlob": "8872e81502dd554857bb42c05c30d4c101847574"
+        },
+        {
+          "path": "merged-dependencies/records/integration-qa.json",
+          "sha256": "077069f334a1554af775a2f35aa57671404abc956d050cda4023bd471a177d3b",
+          "bytes": 4422,
+          "gitBlob": "ce61b887cee0a0499a929d922b22f22cacb3ab0d"
+        },
+        {
+          "path": "merged-dependencies/records/integration-reviews-current.json",
+          "sha256": "0688dd159f5bd1bfb212797a0aa7e5b45b48d7da04c160dd973b87d38e73e69c",
+          "bytes": 21597,
+          "gitBlob": "4ef0f6812e6db0a06b52749bd5abe1eda8c23a2d"
+        },
+        {
+          "path": "merged-dependencies/records/integration-reviews.json",
+          "sha256": "0688dd159f5bd1bfb212797a0aa7e5b45b48d7da04c160dd973b87d38e73e69c",
+          "bytes": 21597,
+          "gitBlob": "4ef0f6812e6db0a06b52749bd5abe1eda8c23a2d"
+        },
+        {
+          "path": "merged-dependencies/records/integration-scope.json",
+          "sha256": "0a58ff3cad30fbc5281636250c64a129f4cb735557c5ebd5c9086a5416019f11",
+          "bytes": 21568,
+          "gitBlob": "31eb553c1189fcf892c07b50967250d178a1cf9d"
+        },
+        {
+          "path": "merged-dependencies/scope.mjs",
+          "sha256": "2fa26ce9000dc45d03dc78e8ea928cf5c30b4b475acb0b12946cedddcb7071ae",
+          "bytes": 3064,
+          "gitBlob": "03787753546f6442bcccff1fd815428bbf98c42d"
+        },
+        {
+          "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+          "path": "README-current.md",
+          "sha256": "6ac2c47e71d7e27e989b3832974e09b96dfe708ac54dbc62706b1fa969b14bda",
+          "bytes": 5669
+        },
+        {
+          "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+          "path": "review-fix/manifest.json",
+          "sha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+          "bytes": 24490
+        },
+        {
+          "historicalCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+          "path": "publication/record.json",
+          "sha256": "44341dfe99cf315400ae15a72a41ccc9e89f8f2953bd22cbce44cbe2f69e5336",
+          "bytes": 3106
+        }
+      ]
+    },
+    "retainedOriginals": {
+      "commit": "6aa90658b6de8a015f955f386bafce365d996c83",
+      "path": "qa-r1-final/captures/manifest.json",
+      "manifestSha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+      "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+      "harnessSha256": "d4192a3f4860c1c5748b4c34f92ea962dd23ddcf54af89c0e2e0fc1a15a3581a",
+      "capturedSources": [
+        {
+          "side": "before",
+          "sha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+        },
+        {
+          "side": "after",
+          "sha": "b064097ac6a02717adfd7507d8d4cd741353069c"
+        }
+      ],
+      "images": [
+        {
+          "filename": "before-board.png",
+          "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32"
+        },
+        {
+          "filename": "before-existing-translation-controls.png",
+          "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60"
+        },
+        {
+          "filename": "before-card.png",
+          "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2"
+        },
+        {
+          "filename": "after-board.png",
+          "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d"
+        },
+        {
+          "filename": "after-card.png",
+          "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6"
+        },
+        {
+          "filename": "after-empty-correction-refused.png",
+          "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026"
+        },
+        {
+          "filename": "after-manual-source-collision.png",
+          "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd"
+        },
+        {
+          "filename": "after-corrected-audio-failure.png",
+          "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d"
+        },
+        {
+          "filename": "after-stale-correction.png",
+          "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485"
+        },
+        {
+          "filename": "after-phone-board.png",
+          "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4"
+        },
+        {
+          "filename": "after-ai-replacement-review.png",
+          "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98"
+        },
+        {
+          "filename": "after-ai-source-collision.png",
+          "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5"
+        }
+      ],
+      "pixelAssessment": "All 12 fresh final images are byte-identical to the individually inspected prior states, including the empty-draft refusal. Final guard affects same-session collision refusal with unchanged error rendering. New/generated draft scenarios verified in browser tests.",
+      "access": {
+        "checkedAtUtc": "2026-10-08T19:26:53.660Z",
+        "commit": "6aa90658b6de8a015f955f386bafce365d996c83",
+        "authenticatedReviewerAccess": true,
+        "files": [
+          {
+            "path": "qa-r1-final/README.md",
+            "sha256": "59580451c7cc42275ea248be0c9ba5682619f63fd9d20582f63b549e7003ac61",
+            "bytes": 6075,
+            "gitBlob": "ac74c1292dc7bae12a706e87467ff5e738581c6c"
+          },
+          {
+            "path": "qa-r1-final/capture.mjs",
+            "sha256": "d4192a3f4860c1c5748b4c34f92ea962dd23ddcf54af89c0e2e0fc1a15a3581a",
+            "bytes": 18204,
+            "gitBlob": "89fa5c3e822519663d5b245d810de4d2cfd86a05"
+          },
+          {
+            "path": "qa-r1-final/captures/after-ai-replacement-review.png",
+            "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+            "bytes": 63399,
+            "gitBlob": "520e5e68565085aff0885dcf3dfb818c224a647e"
+          },
+          {
+            "path": "qa-r1-final/captures/after-ai-source-collision.png",
+            "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+            "bytes": 60344,
+            "gitBlob": "b2fc62eaf783954de1f0bc7caae27ee384850fea"
+          },
+          {
+            "path": "qa-r1-final/captures/after-board.png",
+            "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+            "bytes": 45184,
+            "gitBlob": "18a71dc45b16fb3d116f90c54989a3402631e25d"
+          },
+          {
+            "path": "qa-r1-final/captures/after-card.png",
+            "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+            "bytes": 64100,
+            "gitBlob": "c7b2ef876bd474cc3eaff7b43181da4b22b07bee"
+          },
+          {
+            "path": "qa-r1-final/captures/after-corrected-audio-failure.png",
+            "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+            "bytes": 67927,
+            "gitBlob": "ea74fd7278eb5dfbd343dfc955baa4d88e849411"
+          },
+          {
+            "path": "qa-r1-final/captures/after-empty-correction-refused.png",
+            "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+            "bytes": 69067,
+            "gitBlob": "598ae73808e901ebdf2a7d373aa695095330e086"
+          },
+          {
+            "path": "qa-r1-final/captures/after-manual-source-collision.png",
+            "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+            "bytes": 72379,
+            "gitBlob": "9f74a196c7dc321a60fa728a462c2b23c933fd96"
+          },
+          {
+            "path": "qa-r1-final/captures/after-phone-board.png",
+            "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+            "bytes": 38789,
+            "gitBlob": "f979e7e471d86a09b20a3873b58f56f6a5b4f1c1"
+          },
+          {
+            "path": "qa-r1-final/captures/after-server.log",
+            "sha256": "892c1730d888ecd9961c462d4093560aca6177a37b0b1a7eba273ece4b9a7d3f",
+            "bytes": 452,
+            "gitBlob": "24337f9261418de5814f561a07d1d4aec71aab78"
+          },
+          {
+            "path": "qa-r1-final/captures/after-stale-correction.png",
+            "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+            "bytes": 66276,
+            "gitBlob": "58e03a0b237a51ee5e6cdc48a3e98304d4ee5b44"
+          },
+          {
+            "path": "qa-r1-final/captures/before-board.png",
+            "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+            "bytes": 40870,
+            "gitBlob": "e69f71662be821f58b059e867f4d0d22cecc007c"
+          },
+          {
+            "path": "qa-r1-final/captures/before-card.png",
+            "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+            "bytes": 55782,
+            "gitBlob": "2730e3708318f970611da18ca3ea37bee399c410"
+          },
+          {
+            "path": "qa-r1-final/captures/before-existing-translation-controls.png",
+            "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+            "bytes": 69065,
+            "gitBlob": "5ac306f09b01dcecc18293a6ea25771d511cb0a7"
+          },
+          {
+            "path": "qa-r1-final/captures/before-server.log",
+            "sha256": "0601143c79ebb295c45c4a5b24540351828cc123dc5d1d84eaf66135566468f7",
+            "bytes": 452,
+            "gitBlob": "2097a05a6899995b34c77845529789c5c75b092b"
+          },
+          {
+            "path": "qa-r1-final/captures/fixture.json",
+            "sha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+            "bytes": 1721,
+            "gitBlob": "f3fb1b9578bfbef92acd6f8377a0a8fbb29b8789"
+          },
+          {
+            "path": "qa-r1-final/captures/manifest.json",
+            "sha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+            "bytes": 27437,
+            "gitBlob": "682b759d77c9223544112f0c67da8dc4d55c51f5"
+          },
+          {
+            "path": "qa-r1-final/identities.json",
+            "sha256": "df01c3b786c3737e8487abd43ec51b331adb496f41fa3e1f278f0e64eb5b16a1",
+            "bytes": 2505,
+            "gitBlob": "de700c68b22fea67b75ff57810e9cd8f5cd0796f"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-apply-reply-result.json",
+            "sha256": "eec3877383ee9076ae1f2ec8415f42d490d33bf6ec92ad2ca631475de6803181",
+            "bytes": 3329,
+            "gitBlob": "de26b283b87eb1329f45a2a5b76d548f05ec7fd3"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-collision-reply-result.json",
+            "sha256": "fca4d90e6c72cb195d242504c4f6687c90bdea4d64428fb0cbfadc53aeb15203",
+            "bytes": 3343,
+            "gitBlob": "78df29501e01635b95b947a6455c977cb67037eb"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-commits.json",
+            "sha256": "f76e7049046b60cacefabc69374d7b50671a53a8b4850165a65894c74c78eca8",
+            "bytes": 33826,
+            "gitBlob": "d690029971beaace7f4dfe814cf6548108e2726b"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-doc-reply-result.json",
+            "sha256": "404905f719025bed8e5dfbb0392acc9fd2906d0f3354d4455751707a3b4a949a",
+            "bytes": 4561,
+            "gitBlob": "15f42e3ba4e9fe4c356c1c301c7644fd8210ed42"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-files.json",
+            "sha256": "945d5be8471cd72aba045e5a9c149a329d6c47c911d69391e3960897fd73776c",
+            "bytes": 123911,
+            "gitBlob": "d2da8f6880b18678c66c909ca1ad9a21770373e2"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-final-android.log",
+            "sha256": "c977e6aed3b0b43cdf4ab447658b595c18617b7d84e3d622bf02648e48244069",
+            "bytes": 752,
+            "gitBlob": "bf9c7c90bd87eb0d8bf9ae645f79c4290346b36f"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-final-capture.log",
+            "sha256": "a0ad4454ace33f57c86de69edd74f47b37cd355e366cf106c6d5ce228cdd4a32",
+            "bytes": 200,
+            "gitBlob": "9e1bb995afcd8c0f080b92aabc5a58be35b2a959"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-final-scope.json",
+            "sha256": "e51371aacd617967b6b26e5bd6cad0c0a368bc9b86c1e15a044ac6f0739d2408",
+            "bytes": 17123,
+            "gitBlob": "728df1a26f3289fd72878ce6e223dd7b78d9ee4e"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-inline-current.json",
+            "sha256": "38ac61a38ef8989c9590fd3d03e683e362fadc5dcda143c79be411829114e15e",
+            "bytes": 39762,
+            "gitBlob": "6ec54d0b59eb4eda567ee3c029c059862cd95d46"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-pr-published.json",
+            "sha256": "d3eaf95d6cc9a2d6b406137246fece6518ea3a3260e4252dc7d2c956fd7fdcd2",
+            "bytes": 22402,
+            "gitBlob": "28f9d99db37c6fec43dc92ecb73b1abdfd4fa1c9"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-published-scope.json",
+            "sha256": "6730cb3bf1cfe1b3eaa4e24a7f50d69854e8e3fd41c9b599dab4eb6dea6ea1c8",
+            "bytes": 18187,
+            "gitBlob": "292939e24e906c6ce3a52d1322ecf71ccae70e43"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-review-browser.log",
+            "sha256": "d9fa23c5818221dbce2475bfc23b311b86cf7506165f843467ff5ff2e3be49a1",
+            "bytes": 4163,
+            "gitBlob": "a189c2afa3ebe17fbaf8471760445f58dd8914f8"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-review-check.log",
+            "sha256": "f72083e097358f096ee061a3a04d7f83b5b7eb7156cc188accb66da88f1c1217",
+            "bytes": 7771,
+            "gitBlob": "09cbda1aa105707257fa34451eabbfabe6730ab6"
+          },
+          {
+            "path": "qa-r1-final/records/qa-r1-reviews-current.json",
+            "sha256": "862ce150a30828e51a68426516d204343b5956b9b6a9e409ed68c8ba75725ac0",
+            "bytes": 14463,
+            "gitBlob": "623a367322ecccc794e8b965414acd3b9ff8a017"
+          },
+          {
+            "path": "qa-r1-final/scope-published.mjs",
+            "sha256": "6fbf8bc32b9a29515a4e5d46cbba6c640583fbdf78370f3175aafd3c343d0eca",
+            "bytes": 2499,
+            "gitBlob": "dfb5477614db04c302057ea5def4487e09a90b09"
+          },
+          {
+            "path": "qa-r1-final/scope.mjs",
+            "sha256": "93b5c5f2f6aa389b367a11b9741b000f01a177eb1239bc98d46ad664be5c74ee",
+            "bytes": 2544,
+            "gitBlob": "27a76502318badc5052fe8cb49e7edb685204973"
+          },
+          {
+            "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+            "path": "README-current.md",
+            "sha256": "6ac2c47e71d7e27e989b3832974e09b96dfe708ac54dbc62706b1fa969b14bda",
+            "bytes": 5669
+          },
+          {
+            "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+            "path": "review-fix/manifest.json",
+            "sha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+            "bytes": 24490
+          },
+          {
+            "historicalCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+            "path": "publication/record.json",
+            "sha256": "44341dfe99cf315400ae15a72a41ccc9e89f8f2953bd22cbce44cbe2f69e5336",
+            "bytes": 3106
+          }
+        ]
+      },
+      "priorCorrectionEvidence": "106551ba63276fc15981222c86df148c64257a95",
+      "originalEvidence": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+      "originalPublication": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+      "originalSource": "a08a723d87cee4bbb3026f11b3fcfa8c63c6f2ce",
+      "originalManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+      "previousPrBodySha256": "92c2ef216cbccd697387520810d6dc9d6fdd699caccb61c96b63fab34e9f4c8f"
+    },
+    "previousPublication": "d43e8482912e87d7f7c422770c163590e4e54ee1"
+  },
+  "checks": {
+    "passed": [
+      "325 unit tests, TypeScript, release contract, server/web builds",
+      "17 affected translation browser cases",
+      "iOS and Android exports on final exact head",
+      "CI:325 units,25 service cases,5 account browser cases",
+      "12 genuine fresh captures and source/build/fixture binding"
+    ],
+    "reused": [
+      "105 other previously passing browser scenarios with documented impact assessment"
+    ],
+    "failed": [],
+    "unrun": [
+      "Same independent QA integration reassessment",
+      "Native-device/emulator and live providers; native checks deferred",
+      "GitHub rendered-page check waived"
+    ]
+  },
+  "checkpoint": "Product and baseline worktrees clean; evidence publication committed separately. No readiness transition, merge, release, deployment or Project mutation. Owner returns idle after final readback."
+}
