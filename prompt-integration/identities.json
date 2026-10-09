@@ -1,0 +1,152 @@
+{
+  "checkedAtUtc": "2026-10-09T02:12:34.891Z",
+  "head": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+  "base": "768811832bd0b389ba7e24738fb58800ea145000",
+  "previousHead": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "previousBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "previousPrBodySha256": "9d785993081bb52f119546e001a9ef62a69b6cb90d2dc28f6d365d77006d1ee8",
+  "lockSha256": "894bfd115fdd3a4b597ba1bfc305f89b98e4a1772d6e9f2aa3308392d4be95a3",
+  "exports": [
+    {
+      "platform": "ios",
+      "sourceSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+      "command": "node ../../node_modules/expo/bin/cli export --platform ios --output-dir ../../../records/prompt-integration-ios-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\prompt-integration-ios-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 333,
+          "sha256": "32ecca57b3e2b9f9d35fc50ff2bdd8a7e7a657c7dd79b1d12e9e9b1cd8774e79"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/ios/index-c0a03a7190fc4c8a78e08d11e4be3fc3.hbc",
+          "bytes": 7339691,
+          "sha256": "2e850a18dd7bad0cd9632ce039c011b3ae157b7a41c79e64130a1e924fac588a"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "sourceSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+      "command": "node ../../node_modules/expo/bin/cli export --platform android --output-dir ../../../records/prompt-integration-android-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\prompt-integration-android-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 341,
+          "sha256": "04c30ec4049967092119bc8209231b851c93f7dc8cdf9f4d19d9b0d4e4ccb180"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/android/index-856b7397bfd60996d0ac0c128d49ff32.hbc",
+          "bytes": 7342476,
+          "sha256": "9aad34ce5fdb1dd8348bb7729ad4c95656a3d28f0cfa9973832277918afe2fe8"
+        }
+      ]
+    }
+  ],
+  "captures": {
+    "reused": true,
+    "evidenceCommit": "19e49364a5814ba30e77e53c96f6f0f72437cdef",
+    "capturedBefore": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "capturedAfter": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "manifestPath": "merged-dependencies/captures/manifest.json",
+    "manifestSha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+    "harnessSha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+    "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+    "images": [
+      {
+        "filename": "before-board.png",
+        "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "before-existing-translation-controls.png",
+        "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "before-card.png",
+        "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-board.png",
+        "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-card.png",
+        "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-empty-correction-refused.png",
+        "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-manual-source-collision.png",
+        "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-corrected-audio-failure.png",
+        "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-stale-correction.png",
+        "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-phone-board.png",
+        "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-ai-replacement-review.png",
+        "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+        "identicalToPreviouslyInspected": true
+      },
+      {
+        "filename": "after-ai-source-collision.png",
+        "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+        "identicalToPreviouslyInspected": true
+      }
+    ],
+    "assessment": "Exact incoming-master patch on finalhead; UI extraction changes only three byte-identical conversation preset values and their import. Captured board/card/refusal/AI review states and translation merge/audio identity code are unchanged. New resource loading verified by331-unit fullcheck,34 affected browser scenarios and both native exports. No recapture or source relabeling."
+  }
+}

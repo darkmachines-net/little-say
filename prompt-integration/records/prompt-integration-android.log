@@ -1,0 +1,21 @@
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:3808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:3808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android Bundled 23382ms apps\mobile\index.ts (2904 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.png (3 variations | 49KB)
+
+ΓÇ║ android bundles (1):
+_expo/static/js/android/index-856b7397bfd60996d0ac0c128d49ff32.hbc (7.3MB)
+
+ΓÇ║ Files (1):
+metadata.json (341B)
+
+Exported: ../../../records/prompt-integration-android-export
