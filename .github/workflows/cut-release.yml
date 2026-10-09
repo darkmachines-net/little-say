@@ -7,6 +7,16 @@ on:
         description: Run source checks with disposable services only (no release operations)
         type: boolean
         default: false
+      ios_pods_only:
+        description: Only compare iOS pod installation (also requires validation_only)
+        type: boolean
+        default: false
+      ios_pods_head:
+        description: Reviewed full source SHA required for iOS pod validation
+        type: string
+      ios_pods_baseline:
+        description: Full baseline SHA required for iOS pod validation
+        type: string
       build_mode:
         description: Detect changed artifacts or force a fresh complete release
         type: choice
@@ -32,7 +42,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ${{ inputs.validation_only && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}
+  group: ${{ (inputs.validation_only || inputs.ios_pods_only) && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}
   cancel-in-progress: false
 env:
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
@@ -45,8 +55,72 @@ env:
   TEST_PGUSER: little_say_test
   TEST_PGPASSWORD: little_say_test
 jobs:
+  ios-pods:
+    if: inputs.ios_pods_only
+    runs-on: macos-26
+    timeout-minutes: 50
+    permissions:
+      contents: read
+    env:
+      EXPECTED_HEAD: ${{ inputs.ios_pods_head }}
+      BASELINE_SHA: ${{ inputs.ios_pods_baseline }}
+      VALIDATION_ONLY: ${{ inputs.validation_only }}
+      DEVELOPER_DIR: /Applications/Xcode_26.4.1.app/Contents/Developer
+      LITTLE_SAY_GOOGLE_IOS_URL_SCHEME: ''
+      EXPO_NO_TELEMETRY: '1'
+      COCOAPODS_DISABLE_STATS: 'true'
+    steps:
+      - name: Require reviewed immutable sources and validation mode
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$VALIDATION_ONLY" = true
+          [[ "$EXPECTED_HEAD" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$BASELINE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$EXPECTED_HEAD" = "$GITHUB_SHA"
+          test "$BASELINE_SHA" != "$EXPECTED_HEAD"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: fix
+          persist-credentials: false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.ios_pods_baseline }}
+          path: baseline
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.19.0'
+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8
+        with:
+          ruby-version: '3.3.12'
+      - name: Install the diagnostic CocoaPods version
+        run: gem install cocoapods --version 1.16.2 --no-document
+      - name: Reproduce baseline without Google OAuth configuration
+        id: baseline
+        continue-on-error: true
+        run: node fix/scripts/release/ios-pods-check.mjs baseline "$BASELINE_SHA" baseline evidence/baseline
+      - name: Validate fix without Google OAuth configuration
+        id: fix
+        if: ${{ !cancelled() && steps.baseline.outcome != 'skipped' }}
+        run: node fix/scripts/release/ios-pods-check.mjs fix "$EXPECTED_HEAD" fix evidence/fix
+      - name: Retain exact inputs, generated pod files and diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ios-pods-${{ github.sha }}-${{ github.run_attempt }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Require both the diagnosed baseline and passing fix
+        if: ${{ !cancelled() && always() }}
+        env:
+          BASELINE_OUTCOME: ${{ steps.baseline.outcome }}
+          FIX_OUTCOME: ${{ steps.fix.outcome }}
+        run: test "$BASELINE_OUTCOME" = success && test "$FIX_OUTCOME" = success
   validate:
-    if: inputs.validation_only
+    if: inputs.validation_only && !inputs.ios_pods_only
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -75,7 +149,7 @@ jobs:
       - name: Validate exact source with disposable PostgreSQL and demo Auth
         run: npm run release:validate
   prepare:
-    if: ${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -129,7 +203,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     needs: prepare
-    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -156,7 +230,7 @@ jobs:
       - run: npm run release:cut -- server
   native:
     needs: prepare
-    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -183,7 +257,7 @@ jobs:
       - run: npm run release:cut -- native
   submit:
     needs: [prepare, server, native]
-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -210,7 +284,7 @@ jobs:
       - run: npm run release:cut -- submit
   ota:
     needs: [prepare, server, native, submit]
-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -232,7 +306,7 @@ jobs:
       - run: npm run release:cut -- ota
   finalize:
     needs: [prepare, server, native, submit, ota]
-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}
+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:

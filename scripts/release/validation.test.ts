@@ -66,17 +66,45 @@ it('isolates manual branch validation from every release job and credential', ()
   expect(workflow.env.GH_TOKEN).toBeUndefined();
   expect(JSON.stringify(workflow.env)).not.toMatch(/secrets\.|github\.token/);
   const job = workflow.jobs.validate;
-  expect(job.if).toBe('inputs.validation_only');
+  expect(job.if).toBe('inputs.validation_only && !inputs.ios_pods_only');
   expect(job.permissions).toEqual({ contents: 'read' });
   expect(job.needs).toBeUndefined();
   expect(job.steps.map((step: any) => step.run).filter(Boolean)).toEqual(['npm ci', 'npm run release:validate']);
   expect(job.steps[0].with).toEqual({ ref: '${{ github.sha }}', 'persist-credentials': false });
   expect(JSON.stringify(job)).not.toMatch(/secrets\.|github\.token|release:cut|docker\/login|eas-cli/);
   expect(job.services.postgres.image).toBe('postgres:17-bookworm');
-  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);
+  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'ios-pods', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);
   for (const name of ['prepare', 'server', 'native', 'submit', 'ota', 'finalize']) {
-    expect(workflow.jobs[name].if).toMatch(/^\$\{\{ !inputs\.validation_only && /);
+    expect(workflow.jobs[name].if).toMatch(/^\$\{\{ !inputs\.validation_only && !inputs\.ios_pods_only && /);
     expect(workflow.jobs[name].env.GH_TOKEN).toBe('${{ github.token }}');
   }
   expect(workflow.jobs.prepare.if).toContain("github.ref == format('refs/heads/{0}', github.event.repository.default_branch)");
+});
+
+it('bounds manual CocoaPods validation to reviewed source without release access', () => {
+  const workflow = parse(readFileSync(join(root, '.github/workflows/cut-release.yml'), 'utf8'));
+  expect(workflow.on.workflow_dispatch.inputs.ios_pods_only).toEqual({
+    description: 'Only compare iOS pod installation (also requires validation_only)', type: 'boolean', default: false,
+  });
+  const job = workflow.jobs['ios-pods'];
+  expect(job.if).toBe('inputs.ios_pods_only');
+  expect(job.permissions).toEqual({ contents: 'read' });
+  expect(job.needs).toBeUndefined();
+  expect(job.environment).toBeUndefined();
+  expect(job['runs-on']).toBe('macos-26');
+  expect(job['timeout-minutes']).toBe(50);
+  expect(JSON.stringify(job)).not.toMatch(/secrets\.|github\.token|release:cut|docker\/login|eas-cli/);
+  expect(job.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME).toBe('');
+  expect(job.steps[0].run).toContain('test "$VALIDATION_ONLY" = true');
+  expect(job.steps[0].run).toContain('test "$EXPECTED_HEAD" = "$GITHUB_SHA"');
+  const checkouts = job.steps.filter((step: any) => step.uses?.startsWith('actions/checkout@'));
+  expect(checkouts.map((step: any) => step.with)).toEqual([
+    { ref: '${{ github.sha }}', path: 'fix', 'persist-credentials': false },
+    { ref: '${{ inputs.ios_pods_baseline }}', path: 'baseline', 'persist-credentials': false },
+  ]);
+  const baseline = job.steps.find((step: any) => step.id === 'baseline');
+  const fix = job.steps.find((step: any) => step.id === 'fix');
+  expect(baseline['continue-on-error']).toBe(true);
+  expect(fix.run).toBe('node fix/scripts/release/ios-pods-check.mjs fix "$EXPECTED_HEAD" fix evidence/fix');
+  expect(job.steps.at(-1).run).toBe('test "$BASELINE_OUTCOME" = success && test "$FIX_OUTCOME" = success');
 });

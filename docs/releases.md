@@ -6,6 +6,10 @@ To validate a proposed change before merging, select its branch and enable **val
 
 The same source-only boundary can run locally as `npm run release:validate` after `npm ci`, with an isolated PostgreSQL test database and the explicit `TEST_PG*` settings described in [testing](testing.md). It requires no release command or production Firebase project. Existing PR CI coverage is unchanged; validation-only runs are manual.
 
+For the iOS AppCheck module-map diagnostic, enable **both `validation_only` and `ios_pods_only`** on the reviewed branch. Supply its full reviewed SHA as `ios_pods_head` and the failing source SHA as `ios_pods_baseline`. A mismatched head or missing validation flag fails before checkout; either validation flag excludes every release job. Only the macOS pod job runs, using isolated credential-free checkouts, Node 24.19.0, Ruby 3.3.12, CocoaPods 1.16.2 and Xcode 26.4.1. It clears optional Google OAuth configuration and disables dotenv loading, then runs locked dependency installation, iOS prebuild and `pod install`. It does not compile, sign, submit or invoke EAS.
+
+The diagnostic requires the baseline's specific AppCheckCore module-map failure and a passing fix, at GoogleSignIn 10.0.0 / AppCheckCore 11.3.2 / GoogleUtilities 8.1.4 / RecaptchaInterop 101.0.0. Different failures or dependency drift fail visibly rather than certifying the comparison. The `ios-pods-<source>-<attempt>` artifact retains source/tool identities, hashed logs, generated pod configuration and the successful Podfile.lock for 30 days; preserve needed evidence separately before expiry. This manual check is not an automatic PR gate or signed-build validation.
+
 | Input | Choices | Default |
 | --- | --- | --- |
 | Build mode | `auto`, `force_all` | `auto` |
