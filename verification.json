@@ -1,0 +1,47 @@
+{
+  "scope": "scope.json",
+  "ownerExactGitBlobCount": 45,
+  "oldManifestSha256": "0cfe54d5007b936edaac93eabec108d428df812e87d7508ba82d2a5027a98bb6",
+  "currentManifestSha256": "16ba5c3a478f5e8300af3c473cd950b94ed77c08c2d12a59f480b3d16d782756",
+  "allManifestArtifactsVerified": true,
+  "oldManifestEntries": 26,
+  "currentManifestEntries": 15,
+  "all8CurrentSourceFilesMatchPriorManifest": true,
+  "manualRun": {
+    "id": 37872957939,
+    "head": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+    "branch": "fix/release-auth-emulator-issue45",
+    "event": "workflow_dispatch",
+    "workflowPath": ".github/workflows/cut-release.yml",
+    "jobs": {
+      "validate": "success",
+      "prepare": "skipped",
+      "submit": "skipped",
+      "native": "skipped",
+      "server": "skipped",
+      "ota": "skipped",
+      "finalize": "skipped"
+    },
+    "inputs": {
+      "validation_only": true,
+      "build_mode": "auto",
+      "profile": "internal",
+      "bump": "patch",
+      "dry_run": false
+    },
+    "inputEvidence": "REST does not expose raw dispatch inputs. Four ordinary inputs independently resolved from actual job environment, matching workflow expressions. validation_only=true inferred from the evaluated exclusive validate job condition plus six skipped jobs, not from the older dispatch record.",
+    "effectivePermissions": "Actual job log Contents:read and Metadata:read; checkout uses built-in read token transiently with persist-credentials:false. No claim all platform tokens absent; no release/provider secrets exposed to validation env.",
+    "logSha256": "f6a390588776a8e6e8502eb3f96ab0233fd04c7535b70b68f96e9ae70650bda7"
+  },
+  "ciMerge": {
+    "sha": "3f2169fc93c7344f6081ef0eead21442842febb1",
+    "parents": [
+      "768811832bd0b389ba7e24738fb58800ea145000",
+      "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2"
+    ],
+    "tree": "3fd752e4c71fdb2b2f17da00c39666b287c34cfa",
+    "equalsHeadTree": true
+  },
+  "focusedIndependentTests": "14passed, actual shared validation subprocess/failed-exit boundaries plus candidate wiring; mockednpm and mockedcandidateoperations only, no real release operations",
+  "heavyValidationReuse": "Exact current-head hosted source validation and CI read independently; no duplicate expensive suite or additional dispatch. Original real local PostgreSQL17/Auth failure/success/cleanup retained at original373fc57, not rebound to currentcombinedbuild."
+}

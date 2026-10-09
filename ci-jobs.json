@@ -1,0 +1,137 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 113634882088,
+      "run_id": 37872940191,
+      "workflow_name": "Check",
+      "head_branch": "fix/release-auth-emulator-issue45",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37872940191",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadSqyKA",
+      "head_sha": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113634882088",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37872940191/job/113634882088",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-09T02:05:57Z",
+      "started_at": "2026-10-09T02:05:59Z",
+      "completed_at": "2026-10-09T02:10:00Z",
+      "name": "check",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-09T02:06:00Z",
+          "completed_at": "2026-10-09T02:06:01Z"
+        },
+        {
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-09T02:06:01Z",
+          "completed_at": "2026-10-09T02:06:17Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-09T02:06:17Z",
+          "completed_at": "2026-10-09T02:06:18Z"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-09T02:06:18Z",
+          "completed_at": "2026-10-09T02:06:23Z"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-09T02:06:23Z",
+          "completed_at": "2026-10-09T02:06:56Z"
+        },
+        {
+          "name": "Run npm run check",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-09T02:06:56Z",
+          "completed_at": "2026-10-09T02:08:40Z"
+        },
+        {
+          "name": "Run npm run test:services",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-09T02:08:40Z",
+          "completed_at": "2026-10-09T02:08:53Z"
+        },
+        {
+          "name": "Run npx playwright install --with-deps chromium",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-09T02:08:53Z",
+          "completed_at": "2026-10-09T02:09:15Z"
+        },
+        {
+          "name": "Run npx firebase emulators:exec --only auth --project demo-little-say \"npm run test:accounts:web\"",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-09T02:09:15Z",
+          "completed_at": "2026-10-09T02:09:56Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-09T02:09:56Z",
+          "completed_at": "2026-10-09T02:09:56Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-09T02:09:56Z",
+          "completed_at": "2026-10-09T02:09:56Z"
+        },
+        {
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-09T02:09:56Z",
+          "completed_at": "2026-10-09T02:09:58Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-09T02:09:58Z",
+          "completed_at": "2026-10-09T02:09:58Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113634882088",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000014780,
+      "runner_name": "GitHub Actions 1000014780",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg_inUc",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {},
+                  {},
+                  {},
+                  {
+                    "text": "Run release validation with the required local Firebase Auth emulator",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {
+                    "name": "In Progress",
+                    "field": {
+                      "name": "Status"
+                    }
+                  },
+                  {
+                    "text": "01a11c57-01a2-71f9-b53f-cbdee7d9b02e",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {
+                    "text": "2026-10-09T01:58:08Z",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  },
+                  {
+                    "text": "Draft PR46 at 373fc57; local and authorized hosted source validation passed (319 unit/25 integration tests), CI passed, all release jobs skipped. Bot review quota-only refusal recorded. Final evidence/body ready; same independent QA pending.",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/46",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  },
+                  {
+                    "name": "Review / QA",
+                    "field": {
+                      "name": "Pipeline state"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      }
+    }
+  }
+}

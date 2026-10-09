@@ -1,0 +1,161 @@
+{
+  "head": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+  "actualTarget": "768811832bd0b389ba7e24738fb58800ea145000",
+  "apiBase": "768811832bd0b389ba7e24738fb58800ea145000",
+  "mergeBase": "768811832bd0b389ba7e24738fb58800ea145000",
+  "headParents": [
+    "373fc57b9bee58160cbe924019f41161d4c02e48",
+    "768811832bd0b389ba7e24738fb58800ea145000"
+  ],
+  "targetParents": [
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "commits": [
+    {
+      "sha": "373fc57b9bee58160cbe924019f41161d4c02e48",
+      "parents": [
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "subject": "Run release validation with demo Auth emulator and isolated manual mode",
+      "perParentPaths": {
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tdocs/releases.md",
+          "M\tpackage.json",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/release.test.ts",
+          "A\tscripts/release/validation.test.ts",
+          "A\tscripts/release/validation.ts"
+        ]
+      }
+    },
+    {
+      "sha": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+      "parents": [
+        "373fc57b9bee58160cbe924019f41161d4c02e48",
+        "768811832bd0b389ba7e24738fb58800ea145000"
+      ],
+      "subject": "Integrate merged prompt resources for release validation",
+      "perParentPaths": {
+        "373fc57b9bee58160cbe924019f41161d4c02e48": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ],
+        "768811832bd0b389ba7e24738fb58800ea145000": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tdocs/releases.md",
+          "M\tpackage.json",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/release.test.ts",
+          "A\tscripts/release/validation.test.ts",
+          "A\tscripts/release/validation.ts"
+        ]
+      }
+    }
+  ],
+  "incomingTargetCommits": [
+    {
+      "sha": "768811832bd0b389ba7e24738fb58800ea145000",
+      "parents": [
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "subject": "Extract exact model prompts into versioned resources (#35)",
+      "perParentPaths": {
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ]
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/cut-release.yml",
+      "sha256": "5ef4a774108989b1e33bd666f4782ef053e6b894fb898b81a6324bd201ff4918",
+      "purpose": "Shared real command wiring or manually gated validation job"
+    },
+    {
+      "path": "docs/releases.md",
+      "sha256": "82853f7b182c9b8c158c8e651866693b6e2a866ed226a415dccdd9b177c02bc0",
+      "purpose": "Maintained source-validation usage documentation"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5f51be8575618fc245e4ae95bc936c61ee79806c915ab03282c6b92d2df61440",
+      "purpose": "Shared real command wiring or manually gated validation job"
+    },
+    {
+      "path": "scripts/release/candidate.test.ts",
+      "sha256": "f0baba6227fc0e922a94090f893c7dd94a4cf86cc257f0cf0d77635476a2d710",
+      "purpose": "Maintained boundary regression"
+    },
+    {
+      "path": "scripts/release/candidate.ts",
+      "sha256": "511719c9a7967219c91d1a9660e281204797635b6977ce8b2c5d34d100d7e570",
+      "purpose": "Shared real command wiring or manually gated validation job"
+    },
+    {
+      "path": "scripts/release/release.test.ts",
+      "sha256": "93ab2cd59f78b8843956beb0e25fdd1c7817f4dde0229ddfa5fc40a9239a7ea9",
+      "purpose": "Maintained boundary regression"
+    },
+    {
+      "path": "scripts/release/validation.test.ts",
+      "sha256": "d24021da724f04c5d3351362142712de1f8fd86efd1d24166a493863a3be158b",
+      "purpose": "Maintained boundary regression"
+    },
+    {
+      "path": "scripts/release/validation.ts",
+      "sha256": "528bc2ed450609442b0ec4af7ce86c2be2a3783015f514462be2af8cc2920801",
+      "purpose": "Shared real command wiring or manually gated validation job"
+    }
+  ],
+  "totals": {
+    "commits": 2,
+    "files": 8,
+    "additions": 153,
+    "deletions": 16
+  },
+  "priorDiffByteIdentical": true,
+  "automaticCiAndAllIntegrationTestsUnchanged": true
+}

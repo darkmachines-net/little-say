@@ -1,0 +1,40 @@
+{
+  "sha": "3f2169fc93c7344f6081ef0eead21442842febb1",
+  "node_id": "C_kwDOU65OydoAKDNmMjE2OWZjOTNjNzM0NGY2MDgxZWYwZWVhZDIxNDQyODQyZmViYjE",
+  "url": "https://api.github.com/repos/MChartier/little-say/git/commits/3f2169fc93c7344f6081ef0eead21442842febb1",
+  "html_url": "https://github.com/MChartier/little-say/commit/3f2169fc93c7344f6081ef0eead21442842febb1",
+  "author": {
+    "name": "Matthew Chartier",
+    "email": "MChartier@gmail.com",
+    "date": "2026-10-09T02:05:55Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-10-09T02:05:55Z"
+  },
+  "tree": {
+    "sha": "3fd752e4c71fdb2b2f17da00c39666b287c34cfa",
+    "url": "https://api.github.com/repos/MChartier/little-say/git/trees/3fd752e4c71fdb2b2f17da00c39666b287c34cfa"
+  },
+  "message": "Merge 0ba43ba036dddc1ff60dea4b82ee7c8f495066d2 into 768811832bd0b389ba7e24738fb58800ea145000",
+  "parents": [
+    {
+      "sha": "768811832bd0b389ba7e24738fb58800ea145000",
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/768811832bd0b389ba7e24738fb58800ea145000",
+      "html_url": "https://github.com/MChartier/little-say/commit/768811832bd0b389ba7e24738fb58800ea145000"
+    },
+    {
+      "sha": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/0ba43ba036dddc1ff60dea4b82ee7c8f495066d2",
+      "html_url": "https://github.com/MChartier/little-say/commit/0ba43ba036dddc1ff60dea4b82ee7c8f495066d2"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyEwDCRC1aQ7uu5UhlAAAQqYQAIFeEXXxnat4QiBVgRT7ekjk\nFlpKMik/iePK/oMXoKBZbDfud6kogg2MiDSGLU/dV71F/ImPJHhy6z4XnsC306vl\nXT5xStJrcTM3eZH0nviTTUe6TzZ11h5pAJ8qcbow1w8RbvzCvkjXaddtEsvi1Fko\nZAbBhhH9LryW5+2n0rBqKzx5NHb0Rz+z2pHDo3usbCDtdbazbp04aYflBoi+Ti93\nbAxjNP4riU5c/MCtrBU/5mG243eeelG8peSxDlrn0xEA0ghkMCPxFzq6V8Du+Jx7\n88TgL49FSJHX6biDhobFqWizRe6U6U624NUmRd1xH6zjq9lHiPOYK56rvPjwAg4g\nVBx6zAaa0sEMwZ10CL52KLia7h8sFOMq2RU7hOuWhqdnQ60Q++kDRvch+dMeiBSn\nVPVvTtQGVbllffKP32uZQzkUa7HFLbOXkunl7icv+p51jfDqgfbcpJXkcLGYkiCU\nYakZOx5e7NWnpjgGrfUQT3WFIoB++XP+VSUzcXp+hIU5SViJxVYk/rYtXE73Gm4C\niRNLICZf1HsDDIElCLpYS+VLQUdNTd96nJtR+crk6qDQB1OleDQx4hoqQzaDFh5t\nR6vQ6eJOx12PTWvWBc9+cbihiuAw99Vkz/6HRHxomzBP/AEp0eS+bNEqqzva329F\nzgA7+y82AZzh8mER4fAW\n=c8Js\n-----END PGP SIGNATURE-----\n",
+    "payload": "tree 3fd752e4c71fdb2b2f17da00c39666b287c34cfa\nparent 768811832bd0b389ba7e24738fb58800ea145000\nparent 0ba43ba036dddc1ff60dea4b82ee7c8f495066d2\nauthor Matthew Chartier <MChartier@gmail.com> 1791511555 +0000\ncommitter GitHub <noreply@github.com> 1791511555 +0000\n\nMerge 0ba43ba036dddc1ff60dea4b82ee7c8f495066d2 into 768811832bd0b389ba7e24738fb58800ea145000\n",
+    "verified_at": "2026-10-09T02:05:56Z"
+  }
+}
