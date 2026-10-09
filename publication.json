@@ -1,0 +1,164 @@
+{
+  "pr": "https://github.com/MChartier/little-say/pull/50",
+  "issue": 12,
+  "workerTask": "01a11f2d-be63-7093-9808-bad0818a3032",
+  "head": "11d03187ee9ab81a416657c5003fa34b38df86d8",
+  "targetRef": "master",
+  "targetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "parents": [],
+  "ultimateTarget": "master",
+  "draft": true,
+  "bodySha256": "d6540540a281a3e81264119b9d24dffd0d82e2b99a7454f339b4dce2dd8751c5",
+  "body": "## Summary\n\nParents see a generic Apple sign-in action and cannot open Little Say's own data-use information. This adds official Apple artwork, explains known missing native provider configuration, and provides offline privacy information while preserving guest use and the account layout. Local IPA inspection now checks more of the generated signing/configuration metadata, supported by synthetic tests and preparation documentation.\n\nReferences #12. **Partial source preparation:** immediate AI disclosure and shared release-guide integration remain reserved for coordination with PR #38/#49. Neither PR is imported. The legal-policy draft remains incomplete and unpublished; this does not establish TestFlight readiness or close the issue.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed result |\n| --- | --- |\n| Open login; focus provider actions; submit a synthetic failed password; cancel and switch modes | Chrome tests passed: Apple retains its button label/keyboard focus, busy disables actions and Back, failure restores retry, and Cancel/Back preserve guest entry. No real provider was called. |\n| Open privacy information offline at phone/tablet widths, then return | Chrome tests passed: keyboard activation opens readable local information and Back retains the unsaved settings address. Personal-photo exclusion and backup/deletion limits remain explicit. |\n| Inspect synthetic iOS metadata with wrong host/toolchain/signing/identity or missing configuration | Focused tests passed: readable failures reject these inputs; successful reports distinguish ad hoc from store distribution and leave manifest-content, labels, export and device assessments pending. macOS tool execution remains untested. |\n\n### Before / After\n\nGenuine exports: Before `b46e9e83ffacb2e3846486fb7a64a57d1203f372` (actual target master); After/current head `11d03187ee9ab81a416657c5003fa34b38df86d8`. Same synthetic fixtures, light theme, scale and navigation in installed Chrome. [Exact builds, capture provenance, hashes, and additional phone/tablet busy/retry views](https://github.com/MChartier/little-say/blob/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/README.md).\n\n**Phone login:** the official locally bundled Apple artwork replaces the generic action without moving the form.\n\n| Before | After |\n| --- | --- |\n| ![Before: phone login](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/before-phone-login.png) | ![After: phone login](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/after-phone-login.png) |\n\n**Phone busy state:** authentication disables the provider actions and Back; the form retains its layout.\n\n| Before | After |\n| --- | --- |\n| ![Before: busy login](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/before-phone-login-busy.png) | ![After: busy login](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/after-phone-login-busy.png) |\n\n**Tablet privacy entry:** parents gain an in-app information route. Both views use the same bottom-scroll action; the added control shifts preceding content upward naturally.\n\n| Before | After |\n| --- | --- |\n| ![Before: tablet privacy section](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/before-tablet-privacy-entry.png) | ![After: tablet privacy section](https://raw.githubusercontent.com/MChartier/little-say/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/after-tablet-privacy-entry.png) |\n\n## Supporting checks and limitations\n\nPassed: release metadata, TypeScript, 331 unit/regression tests with subsequent focused verifier checks, server/web builds, final focused browser tests, and unsigned iOS JavaScript export. [Exact results and applicability](https://github.com/MChartier/little-say/blob/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/README.md#validation-and-limitations). No dependency, native configuration, release workflow or reserved path changes. The complete two-commit/14-file inventory is [retained separately](https://github.com/MChartier/little-say/blob/19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f/scope.json).\n\nBrowser evidence is not signed-device evidence. Mac archive/tool integration, real social-provider flows, native accessibility/permissions, generated archive manifests, operator/legal/store decisions, upload/processing/tester groups and installation remain unperformed. Existing cloud release and optional local tooling are preserved. GitHub-page image-rendering verification uses the supplied waiver; actual capture pixels were inspected. Independent review/QA and coordinator readiness decisions remain separate.\n",
+  "commits": [
+    {
+      "authoredDate": "2026-10-09T06:03:32Z",
+      "authors": [
+        {
+          "email": "codex@openai.com",
+          "id": "U_kgDOD-0LXg",
+          "login": "codex",
+          "name": "Codex"
+        }
+      ],
+      "committedDate": "2026-10-09T06:03:32Z",
+      "messageBody": "",
+      "messageHeadline": "Prepare account privacy presentation and iOS artifact checks",
+      "oid": "9c50324c4c27edc65f8a628dc902d256b845e14c"
+    },
+    {
+      "authoredDate": "2026-10-09T06:05:53Z",
+      "authors": [
+        {
+          "email": "codex@openai.com",
+          "id": "U_kgDOD-0LXg",
+          "login": "codex",
+          "name": "Codex"
+        }
+      ],
+      "committedDate": "2026-10-09T06:05:53Z",
+      "messageBody": "",
+      "messageHeadline": "Keep provider layout stable while authentication is busy",
+      "oid": "11d03187ee9ab81a416657c5003fa34b38df86d8"
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/mobile/src/services/providerAvailability.test.ts",
+      "additions": 24,
+      "deletions": 0,
+      "purpose": "Synthetic platform/configuration prerequisite regression"
+    },
+    {
+      "path": "apps/mobile/src/services/providerAvailability.ts",
+      "additions": 16,
+      "deletions": 0,
+      "purpose": "Public login-provider availability explanations"
+    },
+    {
+      "path": "apps/mobile/src/ui/AccountPanel.tsx",
+      "additions": 10,
+      "deletions": 3,
+      "purpose": "Use branded Apple action and public prerequisite states"
+    },
+    {
+      "path": "apps/mobile/src/ui/AppleSignInButton.tsx",
+      "additions": 17,
+      "deletions": 0,
+      "purpose": "Offline official artwork and guarded accessible action"
+    },
+    {
+      "path": "apps/mobile/src/ui/LittleSayPrivacyInfo.tsx",
+      "additions": 13,
+      "deletions": 0,
+      "purpose": "Local privacy sheet with return navigation"
+    },
+    {
+      "path": "apps/mobile/src/ui/ParentSettings.tsx",
+      "additions": 5,
+      "deletions": 3,
+      "purpose": "Privacy entry preserving settings draft"
+    },
+    {
+      "path": "apps/mobile/src/ui/privacyInfo.ts",
+      "additions": 7,
+      "deletions": 0,
+      "purpose": "Maintained factual local data-use content"
+    },
+    {
+      "path": "docs/ACCOUNTS.md",
+      "additions": 6,
+      "deletions": 0,
+      "purpose": "Account/provider evidence and privacy route contract"
+    },
+    {
+      "path": "docs/PRIVACY_INVENTORY.md",
+      "additions": 38,
+      "deletions": 0,
+      "purpose": "Source-grounded data and locked SDK manifest inventory"
+    },
+    {
+      "path": "docs/PRIVACY_POLICY_DRAFT.md",
+      "additions": 19,
+      "deletions": 0,
+      "purpose": "Explicitly incomplete unpublished policy draft"
+    },
+    {
+      "path": "docs/TESTFLIGHT_PREPARATION.md",
+      "additions": 35,
+      "deletions": 0,
+      "purpose": "Toolchain separation, partial source status and unverified distribution checklist"
+    },
+    {
+      "path": "scripts/release/verify-ios.test.ts",
+      "additions": 29,
+      "deletions": 0,
+      "purpose": "Synthetic artifact metadata failures without providers"
+    },
+    {
+      "path": "scripts/release/verify-ios.ts",
+      "additions": 53,
+      "deletions": 0,
+      "purpose": "Bounded local IPA metadata inspection preserving existing identity checks"
+    },
+    {
+      "path": "tests/web/accounts.spec.ts",
+      "additions": 48,
+      "deletions": 0,
+      "purpose": "Maintained keyboard/busy/retry and offline privacy browser regressions"
+    }
+  ],
+  "evidenceCommit": "19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f",
+  "provenanceSha256": "51d22e9bb126b7bdd3ad15ab33e4daf7da834421ff390a3d65ea10fc7d3ab986",
+  "manifestSha256": "3c7bfa116e649317d09de8f67f4c3580aa08cb364beae80420aaebd0f4b97563",
+  "issueLink": "Nonclosing cross-reference verified; closing Development association absent, intentionally",
+  "checksAtReadback": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/MChartier/little-say/actions/runs/37892165754/job/113695286503",
+      "name": "check",
+      "startedAt": "2026-10-09T06:10:30Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Check"
+    }
+  ],
+  "comments": [],
+  "reviews": [],
+  "checkedAtUtc": "2026-10-09T06:14:39.6431810Z",
+  "qa": "Not performed; coordinator owns admission",
+  "held": [
+    "PR38 AI disclosure and all other reserved paths",
+    "PR49 release-guide/test and native configuration reservations"
+  ],
+  "unperformed": [
+    "Mac archive and tool integration",
+    "Signed provider and device tests",
+    "Native permission/accessibility execution",
+    "Actual generated archive manifest assessment",
+    "Provider/operator/legal/store decisions",
+    "Upload, processing, group assignment and installation"
+  ]
+}
