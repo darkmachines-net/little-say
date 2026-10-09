@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-issue45
+
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  18:43:45
+   Duration  1.01s (transform 154ms, setup 0ms, import 209ms, tests 820ms, environment 0ms)
+

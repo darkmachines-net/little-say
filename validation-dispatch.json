@@ -1,0 +1,10 @@
+{
+  "inputs": {
+    "validation_only": "true",
+    "bump": "patch",
+    "build_mode": "auto",
+    "profile": "internal",
+    "dry_run": "false"
+  },
+  "ref": "fix/release-auth-emulator-issue45"
+}

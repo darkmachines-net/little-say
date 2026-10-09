@@ -1,0 +1,135 @@
+npm notice run little-say-workspace@0.2.1 release:validate
+npm notice run tsx scripts/release/validation.ts
+npm notice run little-say-workspace@0.2.1 check
+npm notice run npm run release:check && npm run typecheck && npm test && npm run build
+npm notice run little-say-workspace@0.2.1 release:check
+npm notice run tsx scripts/release/version.ts check
+npm notice run little-say-workspace@0.2.1 typecheck
+npm notice run npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json
+npm notice run @little-say/app@0.1.1 typecheck
+npm notice run tsc -p tsconfig.json
+npm notice run @little-say/server@0.2.1 typecheck
+npm notice run @little-say/core@0.1.0 typecheck
+npm notice run little-say-workspace@0.2.1 test
+npm notice run vitest run
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-issue45
+
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:17032) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:38332) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6176) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6176) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:6176) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+ Test Files  41 passed (41)
+      Tests  319 passed (319)
+   Start at  18:51:52
+   Duration  14.83s (transform 15.31s, setup 0ms, import 24.32s, tests 37.28s, environment 4ms)
+
+npm notice run little-say-workspace@0.2.1 build
+npm notice run npm run build -w @little-say/server && npm run build:web -w @little-say/app
+npm notice run @little-say/server@0.2.1 build
+npm notice run tsup
+CLI Building entry: src/database-cli.ts, src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: C:\Users\MChar\Documents\Codex\2026-10-08\task-2\little-say-issue45\apps\server\tsup.config.ts
+CLI Target: node22
+CLI Cleaning output folder
+ESM Build start
+ESM dist\database-cli.js   943.00 B
+ESM dist\chunk-YJ5TFKWE.js 2.98 KB
+ESM dist\index.js          3.92 MB
+ESM ΓÜí∩╕Å Build success in 440ms
+npm notice run @little-say/app@0.1.1 build:web
+npm notice run expo export --platform web && node scripts/build-pwa.mjs
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+Web Bundled 2383ms apps\mobile\index.ts (2421 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js (6.1MB)
+_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js (360KB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (49B)
+
+Exported: dist
+Offline shell: 14 assets (6702 KiB). Updates wait for parent action.
+npm notice run little-say-workspace@0.2.1 test:services
+npm notice run firebase emulators:exec --only auth --project demo-little-say "npm run test:integration"
+i  emulators: Starting emulators: auth
+i  emulators: Detected demo project ID "demo-little-say", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail.
+i  Running script: npm run test:integration
+npm notice run little-say-workspace@0.2.1 test:integration
+npm notice run vitest run --config vitest.integration.config.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-issue45
+
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+i  To verify the email address e66b7176-eb12-4d14-8dea-cd99e37be07b@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=5MLeEdqWwWP7kUVtWGrhgMbMe1ELlJS4p6maS-W0j_BHZlfXQQVzTr&apiKey=fake-api-key
+i  To reset the password for e66b7176-eb12-4d14-8dea-cd99e37be07b@example.test, follow this link: http://127.0.0.1:9099/emulator/action?mode=resetPassword&lang=en&oobCode=BwWFobkR8JZJtSlN3XtFD6xX-1Z5oL-xwDIaFzmIQxFU9YwxSTPHoL&apiKey=fake-api-key&newPassword=NEW_PASSWORD_HERE
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:16864) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+ Γ¥» apps/server/test/accounts.integration.test.ts (8 tests | 1 failed) 2020ms
+   ├ù persists complete owner-scoped backups across pool recreation and rejects missing/corrupt assets 228ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/server/test/accounts.integration.test.ts > persists complete owner-scoped backups across pool recreation and rejects missing/corrupt assets
+error: character with byte sequence 0xf0 0x9f 0x90 0x91 in encoding "UTF8" has no equivalent in encoding "WIN1252"
+ Γ¥» node_modules/pg/lib/client.js:694:17
+ Γ¥» apps/server/src/accounts.ts:117:7
+    115|       const found = await db.query('SELECT hash FROM account_assets WHΓÇª
+    116|       if (found.rowCount !== hashes.length) throw new AccountError('FiΓÇª
+    117|       await db.query('UPDATE account_snapshots SET revision=revision+1ΓÇª
+       |       ^
+    118|       return { ...snapshot, revision: snapshot.revision + 1 };
+    119|     });
+ Γ¥» transaction apps/server/src/database.ts:39:53
+ Γ¥» apps/server/test/accounts.integration.test.ts:36:11
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 24 passed (25)
+   Start at  18:52:24
+   Duration  9.33s (transform 1.16s, setup 0ms, import 2.19s, tests 6.76s, environment 0ms)
+
+!  Script exited unsuccessfully (code 1)
+i  emulators: Shutting down emulators.
+i  auth: Stopping Authentication Emulator
+i  hub: Stopping emulator hub
+i  logging: Stopping Logging Emulator
+
+Error: Script "npm run test:integration" exited with code 1
+C:\Program Files\nodejs\node.exe failed (exit 1).

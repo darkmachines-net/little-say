@@ -1,0 +1,296 @@
+{
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "local": {
+    "cleanup": "0 test schemas; Auth9099 closed; PostgreSQL stopped",
+    "command": "npm run release:validate",
+    "exit": 0,
+    "unitTests": 319,
+    "host": "127.0.0.1",
+    "node": "v24.19.0",
+    "collation": "C",
+    "firebaseTools": "15.32.1",
+    "encoding": "UTF8",
+    "integrationTests": 25,
+    "database": "little_say_issue45_utf8_test",
+    "postgres": "17.6",
+    "firebaseProject": "demo-little-say",
+    "port": 15445,
+    "authPort": 9099
+  },
+  "syntheticEvidence": "Maintained subprocess test uses actual validator/common runner with controlled npm CLI for command selection and startup/test exit propagation. Real local and hosted emulated integration evidence is separate.",
+  "source": "373fc57b9bee58160cbe924019f41161d4c02e48",
+  "evidenceFiles": [
+    {
+      "sha256": "1f9aa75de5ab2e7c949880b5cb1120104d4cb6636761c6343da2fac5a127d776",
+      "path": "ci-check.log"
+    },
+    {
+      "sha256": "e6500ce2b89099ee68ce0efd1c42328467f6ac3faa19f924dc6cde5a6ab0b5f0",
+      "path": "ci-run-final.json"
+    },
+    {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "path": "comments.json"
+    },
+    {
+      "sha256": "b1e754e4c3c91897e050d90c08696af7bd677053760e3eeb0b96d75f7dd4384e",
+      "path": "dispatch-graph-review.json"
+    },
+    {
+      "sha256": "6a9583271707b4add21763ad34de1cd073e516ac5cf2704595df0ac3f99f35c1",
+      "path": "focused-controlled.log"
+    },
+    {
+      "sha256": "9476377c611046af776c13f3247186fd848688e66359ca9195b6cf5b9292cd99",
+      "path": "hosted-validation.log"
+    },
+    {
+      "sha256": "688f346cd1c140f6713dbeb7f6dd08d36e9b811042b921e5296830673186a5aa",
+      "path": "issue.json"
+    },
+    {
+      "sha256": "82c93ca7f8ac14a734e76f5c8b7cf4dc36cfce6e36d16ce6a93d148e62472681",
+      "path": "local-cleanup.log"
+    },
+    {
+      "sha256": "a37c2b0f82ed79faa005aacda981c9c6ec795f9aae3b6d5b46bc0343ca46b04a",
+      "path": "local-real-validation-utf8.log"
+    },
+    {
+      "sha256": "66c835cf52fb008d42f6b84d716bd06046be3ce4d8a655a48282c46c671b9013",
+      "path": "local-real-validation.log"
+    },
+    {
+      "sha256": "a36038d6659674bb4899fff6d071003302840c70e668e36954e3b65384a88bf3",
+      "path": "manual-jobs-final.json"
+    },
+    {
+      "sha256": "934564203677d9e08c6c3323e43763ef8be2eb28751a37c6521c1df07d4d3ca1",
+      "path": "manual-run-final.json"
+    },
+    {
+      "sha256": "77f46796899a20d7b0cf97b3a5beac566205ea224a9da209a5b8d841f389cb3b",
+      "path": "missing-emulator-reproduction.log"
+    },
+    {
+      "sha256": "376259f5ce6f2d99191f3065936e17d0c0eb722005e63b20cfa908aa983b5fce",
+      "path": "old-command-regression.log"
+    },
+    {
+      "sha256": "2ca2b4549a743bd05e12d9abeca0f26b1da8ff77e278963b3c46d33bf492e44c",
+      "path": "original-failure-excerpt.log"
+    },
+    {
+      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a",
+      "path": "pr-comments-current.json"
+    },
+    {
+      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a",
+      "path": "pr-comments-final.json"
+    },
+    {
+      "sha256": "2b24d573e0c393701066f900592bc171338b0d6bc8772778d143f0a1d8cb503b",
+      "path": "pr-commits.json"
+    },
+    {
+      "sha256": "8f9984eb38f360822e888bfa4c79cdf06c25af4e20d913ae919c8c1c288181a5",
+      "path": "pr-files.json"
+    },
+    {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "path": "pr-inline-final.json"
+    },
+    {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "path": "pr-reviews-final.json"
+    },
+    {
+      "sha256": "6f78ff17222c14361dd61aa5b98ad0db68394a2a78ad3a5869bf773d4d807914",
+      "path": "README.md"
+    },
+    {
+      "sha256": "dbf5ca3bd9ea38061de1a5240421ab3884033db411af14359ccbce7d08d05abf",
+      "path": "release-tests.log"
+    },
+    {
+      "sha256": "b805c820d4c8f3ffe4c2ce5ddf4c66fcdd95b9a86ed99cba28dbe8f8d74c3c7a",
+      "path": "retained-originals.txt"
+    },
+    {
+      "sha256": "b7c2f398f9eb297c6a3e1efa54e1b5ad813ba39632318aec505bb0bb46c76c90",
+      "path": "typecheck-final.log"
+    },
+    {
+      "sha256": "4448ac2b75123bc55656f7b7b7d81e1fef2adceb828eca3148c7715f13c182b7",
+      "path": "validation-dispatch.json"
+    }
+  ],
+  "createdAt": "2026-10-09T01:55:25.5782928Z",
+  "orderedCommits": [
+    "373fc57b9bee58160cbe924019f41161d4c02e48"
+  ],
+  "ciJob": 113630387176,
+  "originalFailure": {
+    "fullLogSha256": "a36b38bb96468bc70490acca5829f17652bfa7c257838a2da7e6e680efd864a2",
+    "run": 37869482322,
+    "source": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "job": 113624012903
+  },
+  "ciTestedMerge": "2857548cf3edb230b2a174b8c570ec2496b2ede0",
+  "ownerTask": "01a11c57-01a2-71f9-b53f-cbdee7d9b02e",
+  "buildInventory": [
+    {
+      "sha256": "7b83d1e339f5ed64c5d9124e477b831ebdf602e3a79c442ca816af63a43536e1",
+      "bytes": 3054,
+      "path": "apps\\server\\dist\\chunk-YJ5TFKWE.js"
+    },
+    {
+      "sha256": "1660202a8ae7af506ee072f74a0f0b167cf84494728c01e838c267316b991578",
+      "bytes": 943,
+      "path": "apps\\server\\dist\\database-cli.js"
+    },
+    {
+      "sha256": "132a8b0ba279359692fd8660ce945c24c91032427f11f56647d9fe4e18453fb5",
+      "bytes": 4114518,
+      "path": "apps\\server\\dist\\index.js"
+    },
+    {
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f",
+      "bytes": 21785,
+      "path": "apps\\mobile\\dist\\apple-touch-icon.png"
+    },
+    {
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c",
+      "bytes": 14510,
+      "path": "apps\\mobile\\dist\\favicon.ico"
+    },
+    {
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf",
+      "bytes": 3250,
+      "path": "apps\\mobile\\dist\\favicon.png"
+    },
+    {
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e",
+      "bytes": 23882,
+      "path": "apps\\mobile\\dist\\icon-192.png"
+    },
+    {
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b",
+      "bytes": 129939,
+      "path": "apps\\mobile\\dist\\icon-512.png"
+    },
+    {
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae",
+      "bytes": 65996,
+      "path": "apps\\mobile\\dist\\icon-maskable-512.png"
+    },
+    {
+      "sha256": "92394b26cd7baeed7d83ad8406bae25c821d416df29a8f8d92553fd20873fdc0",
+      "bytes": 2156,
+      "path": "apps\\mobile\\dist\\index.html"
+    },
+    {
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8",
+      "bytes": 762,
+      "path": "apps\\mobile\\dist\\manifest.webmanifest"
+    },
+    {
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991",
+      "bytes": 49,
+      "path": "apps\\mobile\\dist\\metadata.json"
+    },
+    {
+      "sha256": "38465097df9880350f605fc72b5251eb0a457f5e9d53c307db5023992787a7b8",
+      "bytes": 2201,
+      "path": "apps\\mobile\\dist\\sw.js"
+    },
+    {
+      "sha256": "23c9658d1be90deda7c105437344f5f5d928e7623f633ad90bc0f0ab746ecd3d",
+      "bytes": 4907,
+      "path": "apps\\mobile\\dist\\sw.js.map"
+    },
+    {
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b",
+      "bytes": 15202,
+      "path": "apps\\mobile\\dist\\workbox-9c191d2f.js"
+    },
+    {
+      "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8",
+      "bytes": 148989,
+      "path": "apps\\mobile\\dist\\workbox-9c191d2f.js.map"
+    },
+    {
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4",
+      "bytes": 14475,
+      "path": "apps\\mobile\\dist\\assets\\assets\\brand\\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png"
+    },
+    {
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57",
+      "bytes": 44422,
+      "path": "apps\\mobile\\dist\\assets\\assets\\brand\\mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png"
+    },
+    {
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1",
+      "bytes": 88603,
+      "path": "apps\\mobile\\dist\\assets\\assets\\brand\\mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png"
+    },
+    {
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046",
+      "bytes": 8055,
+      "path": "apps\\mobile\\dist\\_expo\\static\\css\\landing-caba40a9d11f2eee17f8ed2c4250ba93.css"
+    },
+    {
+      "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+      "bytes": 6084972,
+      "path": "apps\\mobile\\dist\\_expo\\static\\js\\web\\App-efb566d0deefa8a107fe0893a4f0e770.js"
+    },
+    {
+      "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+      "bytes": 359876,
+      "path": "apps\\mobile\\dist\\_expo\\static\\js\\web\\index-7d886762841e4ae1a0c15d20a46f98ff.js"
+    }
+  ],
+  "changedFiles": [
+    {
+      "sha256": "5ef4a774108989b1e33bd666f4782ef053e6b894fb898b81a6324bd201ff4918",
+      "path": ".github/workflows/cut-release.yml"
+    },
+    {
+      "sha256": "82853f7b182c9b8c158c8e651866693b6e2a866ed226a415dccdd9b177c02bc0",
+      "path": "docs/releases.md"
+    },
+    {
+      "sha256": "5f51be8575618fc245e4ae95bc936c61ee79806c915ab03282c6b92d2df61440",
+      "path": "package.json"
+    },
+    {
+      "sha256": "f0baba6227fc0e922a94090f893c7dd94a4cf86cc257f0cf0d77635476a2d710",
+      "path": "scripts/release/candidate.test.ts"
+    },
+    {
+      "sha256": "511719c9a7967219c91d1a9660e281204797635b6977ce8b2c5d34d100d7e570",
+      "path": "scripts/release/candidate.ts"
+    },
+    {
+      "sha256": "93ab2cd59f78b8843956beb0e25fdd1c7817f4dde0229ddfa5fc40a9239a7ea9",
+      "path": "scripts/release/release.test.ts"
+    },
+    {
+      "sha256": "d24021da724f04c5d3351362142712de1f8fd86efd1d24166a493863a3be158b",
+      "path": "scripts/release/validation.test.ts"
+    },
+    {
+      "sha256": "528bc2ed450609442b0ec4af7ce86c2be2a3783015f514462be2af8cc2920801",
+      "path": "scripts/release/validation.ts"
+    }
+  ],
+  "manualJob": 113630526873,
+  "host": "mchartier_zbook",
+  "actualBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "manualRun": 37871534382,
+  "parents": [
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "limits": "Source validation only; no candidate, retirement, provider, registry, signing, publication or deployment. First local fixture WIN1252 failure retained; UTF8 replacement passed. Docker startup failure left unchanged; existing portable PostgreSQL17 used.",
+  "ciRun": 37871489555
+}

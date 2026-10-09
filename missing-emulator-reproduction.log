@@ -1,0 +1,97 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-issue45
+
+ Γ¥» apps/server/test/firebase.integration.test.ts (7 tests | 6 failed) 6ms
+   ├ù keeps guest APIs available and gates backup on verified email with no password endpoint 3ms
+   ├ù protects cookie exchange and mutation with CSRF, uses secure cookies, and invalidates only logout cookie 0ms
+   ├ù rejects wrong audience, expired tokens, disabled identities and cross-tab expected-account changes 0ms
+   ├ù supports Firebase verification and password reset email actions 0ms
+   ├ù requires matching recent reauthentication, deletes the shared identity, and removes this backend backup 0ms
+   ├ù links providers only to the authenticated UID and preserves both accounts on credential conflict 0ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 6 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > keeps guest APIs available and gates backup on verified email with no password endpoint
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:45:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/6]ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > protects cookie exchange and mutation with CSRF, uses secure cookies, and invalidates only logout cookie
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:55:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/6]ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > rejects wrong audience, expired tokens, disabled identities and cross-tab expected-account changes
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:69:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/6]ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > supports Firebase verification and password reset email actions
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:81:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/6]ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > requires matching recent reauthentication, deletes the shared identity, and removes this backend backup
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:95:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[5/6]ΓÄ»
+
+ FAIL  apps/server/test/firebase.integration.test.ts > links providers only to the authenticated UID and preserves both accounts on credential conflict
+Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+ Γ¥» setup apps/server/test/firebase.integration.test.ts:18:75
+     16| const headers = { 'x-little-say': '1' };
+     17| async function setup() {
+     18|   if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') thΓÇª
+       |                                                                           ^
+     19|   const db = await testDatabase(); cleanup.push(() => db.close());
+     20|   const adminApp = initializeApp({ projectId: project }, randomUUID())ΓÇª
+ Γ¥» apps/server/test/firebase.integration.test.ts:113:19
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[6/6]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  18:46:32
+   Duration  2.19s (transform 1.18s, setup 0ms, import 2.03s, tests 6ms, environment 0ms)
+

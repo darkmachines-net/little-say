@@ -1,0 +1,56 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-2/little-say-issue45
+
+ Γ¥» scripts/release/validation.test.ts (4 tests | 3 failed) 1642ms
+   ├ù runs checks then the maintained emulator wrapper, never bare integration 1083ms
+   ├ù fails closed for startup failure through the command runner 206ms
+   ├ù fails closed for tests failure through the command runner 196ms
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 3 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  scripts/release/validation.test.ts > runs checks then the maintained emulator wrapper, never bare integration
+AssertionError: expected [ [ 'run', 'check' ], ΓÇª(1) ] to deeply equal [ [ 'run', 'check' ], ΓÇª(1) ]
+
+- Expected
++ Received
+
+@@ -3,8 +3,8 @@
+      "run",
+      "check",
+    ],
+    [
+      "run",
+-     "test:services",
++     "test:integration",
+    ],
+  ]
+
+ Γ¥» scripts/release/validation.test.ts:48:27
+     46|   const result = await validate('');
+     47|   expect(result.status, result.stderr).toBe(0);
+     48|   expect(result.commands).toEqual([['run', 'check'], ['run', 'test:serΓÇª
+       |                           ^
+     49|   // Bind the selected package script to the demo-only wrapper and theΓÇª
+     50|   const scripts = JSON.parse(readFileSync(join(root, 'package.json'), ΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»
+
+ FAIL  scripts/release/validation.test.ts > fails closed for startup failure through the command runner
+ FAIL  scripts/release/validation.test.ts > fails closed for tests failure through the command runner
+AssertionError: expected +0 not to be +0 // Object.is equality
+ Γ¥» scripts/release/validation.test.ts:56:29
+     54| it.each([['check', 11], ['startup', 12], ['tests', 13]])('fails closedΓÇª
+     55|   const result = await validate(String(failure));
+     56|   expect(result.status).not.toBe(0);
+       |                             ^
+     57|   expect(result.stderr).toContain(`failed (exit ${status})`);
+     58|   expect(result.commands).toEqual(failure === 'check' ? [['run', 'checΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  18:44:27
+   Duration  1.85s (transform 45ms, setup 0ms, import 66ms, tests 1.64s, environment 0ms)
+

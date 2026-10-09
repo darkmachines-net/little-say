@@ -1,0 +1,2 @@
+The historical PR42 evidence is preserved at172cd5b96b020b8c82fe14f09b29ec253d0d5b53/final-report.md. It verified normal CI and release retirement/source safeguards; it did not invoke the real release validator with release prerequisites. No earlier receipt is reinterpreted as proof of this path.
+Original local PR42 checkout remains untouched atfabb925cf5ee11171d5668af7c2bab44ec9fc613 with the same eleven modified/untracked source files. Issue45 uses its own fresh clone and branch.

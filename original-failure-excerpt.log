@@ -1,0 +1,16 @@
+2026-10-09T01:27:23.5759877Z > little-say-workspace@0.3.0 test:integration
+2026-10-09T01:27:25.9101490Z  [31m❯[39m apps/server/test/firebase.integration.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m6 failed[39m[2m)[22m[32m 13[2mms[22m[39m
+2026-10-09T01:27:27.8256625Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8414887Z [2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m19 passed[39m[22m[90m (25)[39m
+2026-10-09T01:27:27.8561273Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.8581483Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8597372Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8612058Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8627289Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8643663Z [31m[1mError[22m: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.[39m
+2026-10-09T01:27:27.8659797Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.8665759Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.8671310Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.8677305Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.8682671Z ##[error]Error: Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.
+2026-10-09T01:27:27.9001762Z Release stage **prepare** stopped: /opt/hostedtoolcache/node/24.21.0/x64/bin/node failed (exit 1)..

@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-10-09T01:48:03.648Z",
+  "head": "373fc57b9bee58160cbe924019f41161d4c02e48",
+  "workflowSha256": "5ef4a774108989b1e33bd666f4782ef053e6b894fb898b81a6324bd201ff4918",
+  "trigger": {
+    "workflow_dispatch": {
+      "inputs": {
+        "validation_only": {
+          "description": "Run source checks with disposable services only (no release operations)",
+          "type": "boolean",
+          "default": false
+        },
+        "build_mode": {
+          "description": "Detect changed artifacts or force a fresh complete release",
+          "type": "choice",
+          "options": [
+            "auto",
+            "force_all"
+          ],
+          "default": "auto",
+          "required": true
+        },
+        "bump": {
+          "description": "Server version increment (applied only when publishing a new image)",
+          "type": "choice",
+          "options": [
+            "patch",
+            "minor",
+            "major"
+          ],
+          "default": "patch",
+          "required": true
+        },
+        "profile": {
+          "description": "Native distribution profile and OTA channel",
+          "type": "choice",
+          "options": [
+            "internal",
+            "production"
+          ],
+          "default": "internal",
+          "required": true
+        },
+        "dry_run": {
+          "description": "Validate and export without preparing versions or publishing",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "checkout": {
+    "ref": "${{ github.sha }}",
+    "persist-credentials": false
+  },
+  "commands": [
+    "npm ci",
+    "npm run release:validate"
+  ],
+  "releaseJobConditions": {
+    "prepare": "${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}",
+    "server": "${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}",
+    "native": "${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}",
+    "submit": "${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}",
+    "ota": "${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}",
+    "finalize": "${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}"
+  },
+  "finding": "Only validate is eligible when validation_only=true; no release token in global/validation env; no candidate, registry, provider or publication command is reachable."
+}
