@@ -2,6 +2,10 @@
 
 Run **Cut release** in GitHub Actions on the repository default branch (`master`). It plans changes, prepares a protected version PR, and publishes the selected GHCR image, EAS cloud builds, store submissions, and compatible OTA updates. Merges run CI only. Server deployment and device installation remain separate local operations.
 
+To validate a proposed change before merging, select its branch and enable **validation_only** in the same manual workflow. Only the read-only validation job runs: it checks out the exact run SHA without persisted credentials, runs repository checks/builds, and runs all integration tests with disposable PostgreSQL and the local `demo-little-say` Auth emulator. Emulator startup or test failure fails validation; the wrapper stops the emulator afterward. No release credentials, registry login, candidate preparation/retirement, signing, publishing or deployment runs in this mode. Normal release jobs remain restricted to the default branch through preparation. This is source validation, not proof of provider or publication behavior; `dry_run` is a separate release-planning mode with provider prerequisites.
+
+The same source-only boundary can run locally as `npm run release:validate` after `npm ci`, with an isolated PostgreSQL test database and the explicit `TEST_PG*` settings described in [testing](testing.md). It requires no release command or production Firebase project. Existing PR CI coverage is unchanged; validation-only runs are manual.
+
 | Input | Choices | Default |
 | --- | --- | --- |
 | Build mode | `auto`, `force_all` | `auto` |

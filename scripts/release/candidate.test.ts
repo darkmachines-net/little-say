@@ -48,7 +48,7 @@ describe('protected version candidate', () => {
   it('checks the combined candidate before push, normal merge, and exact tree readback', () => {
     expect(prepareCandidate(plan, journal)).toEqual({ commit: merged, candidate, tree });
     expect(writeReleaseDocuments).toHaveBeenCalledExactlyOnceWith(plan);
-    expect(npm).toHaveBeenCalledWith(['run', 'test:integration']);
+    expect(npm).toHaveBeenCalledWith(['run', 'test:services']);
     expect(gh).toHaveBeenCalledWith(['pr', 'merge', pr.url, '--squash', '--match-head-commit', candidate]);
     expect(validateCandidate).toHaveBeenCalledWith(plan, merged);
   });

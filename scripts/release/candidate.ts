@@ -4,10 +4,12 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { writeFileSync } from 'node:fs';
-import { assert, cleanCommit, git, npm, writeJson } from './common';
+import { assert, cleanCommit, git, writeJson } from './common';
 import type { PreparedRelease, ReleasePlan } from './contract';
 import { gh, Journal } from './journal';
 import { releaseFiles, StaleCandidateError, validateCandidate, writeReleaseDocuments } from './metadata';
+import { validateReleaseSource } from './validation';
+export { validateReleaseSource } from './validation';
 
 /** Recheck the live base without replacing the immutable plan or bypassing normal merge protection. */
 export function assertCandidateBase(plan: ReleasePlan): void {
@@ -15,9 +17,6 @@ export function assertCandidateBase(plan: ReleasePlan): void {
   assert(/^[a-f0-9]{40}$/.test(current), 'Cannot verify the default branch.');
   if (current !== plan.source) throw new StaleCandidateError(`Default branch moved from ${plan.source} to ${current}.`);
 }
-
-/** Validate product source and PostgreSQL behavior before recording the normal required check on a bot-created PR. */
-export function validateReleaseSource(): void { npm(['run', 'check']); npm(['run', 'test:integration']); }
 
 /** Prepare the run's candidate once; retries preserve versions and require the same tree after normal squash merge. */
 export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedRelease {
@@ -60,11 +59,11 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR
     journal.put('candidate.json', { candidate, tree });
     const temp = mkdtempSync(resolve(tmpdir(), 'little-say-cut-'));
     const check = resolve(temp, 'check.json');
-    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL integration tests passed on this exact candidate.' } });
+    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL/Auth emulator integration tests passed on this exact candidate.' } });
     gh(['api', `repos/${repo}/check-runs`, '--method', 'POST', '--input', check]);
     if (!pr) {
       const body = resolve(temp, 'body.md');
-      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\n\nOnly version metadata changes. Repository checks and PostgreSQL integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\n`);
+      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth emulator integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\n`);
       gh(['pr', 'create', '--repo', repo, '--base', base, '--head', branch, '--title', `Prepare Little Say release ${plan.runId}`, '--body-file', body]);
     }
     pr = JSON.parse(gh(['pr', 'view', branch, '--repo', repo, '--json', 'url,state,headRefOid,mergeCommit']));
