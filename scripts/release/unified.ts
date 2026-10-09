@@ -16,6 +16,8 @@ import { eas } from './expo';
 import { checkVersions } from './version';
 import { legacyImage, promoteImage, publishImage, verifyImage } from './image';
 import { publishOta } from './ota';
+import { StaleCandidateError } from './metadata';
+import { reconcileCandidates, retireCandidate } from './retirement';
 
 function summary(message: string) {
   console.log(message);
@@ -157,6 +159,7 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
   assert(!dry || ['plan', 'prepare'].includes(command), 'Dry run cannot execute publication stages.');
   if (!dry) assert(process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_REF === `refs/heads/${process.env.DEFAULT_BRANCH}`, 'Cut releases explicitly from the default-branch workflow.');
   const runId = process.env.GITHUB_RUN_ID || '1'; const journal = new Journal(runId);
+  journal.assertActive();
   const done = completedReceipts().find(r => r.runId === runId);
   if (done && !dry) {
     const tag = `release/${done.profile}/${runId}`;
@@ -167,6 +170,7 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     summary(`Release ${runId} is already complete; no operations repeated.`); output('active', false); return;
   }
   if (command === 'prepare' || command === 'plan') {
+    if (!dry) reconcileCandidates(runId);
     const saved = dry ? undefined : journal.read<ReleasePlan>('plan.json');
     const plan = saved || await createPlan(runId);
     assert(plan.schema === 1 && plan.runId === runId, 'Journal plan identity differs from this run.');
@@ -174,7 +178,15 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     if (!saved) await preflight(plan, dry);
     if (dry || !hasWork(plan)) { summary(dry ? 'Dry run complete. No release operations performed.' : 'No publishable changes. No versions or tags allocated.'); output('active', false); return; }
     journal.create(plan.source); journal.put('plan.json', plan);
-    const prepared = prepareCandidate(plan, journal);
+    let prepared: PreparedRelease;
+    try { prepared = prepareCandidate(plan, journal); }
+    catch (error) {
+      if (error instanceof StaleCandidateError) {
+        try { retireCandidate(runId, true); }
+        catch (cleanup) { summary(`Retirement is incomplete: ${cleanup instanceof Error ? cleanup.message : 'unknown outcome'}. The next fresh cut must reconcile the protected journal before planning.`); }
+      }
+      throw error;
+    }
     git(['switch', '--detach', prepared.commit]); guard(plan, prepared);
     validateReleaseSource();
     output('active', true); output('commit', prepared.commit); output('server', plan.server); output('native', plan.native); output('ota', plan.ota.length > 0); output('profile', plan.profile); return;
@@ -193,6 +205,6 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
 }
 
 if (isMain(import.meta.url)) unifiedRelease().catch(error => {
-  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}.\n\nSuccessful operations remain in the candidate/${process.env.GITHUB_RUN_ID} draft journal. Re-run this same workflow after resolving the reported problem; see docs/releases.md for ambiguous outcomes. Completed baselines have not advanced unless the completion release is published.`);
+  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}.\n\nRecovery evidence remains in the candidate/${process.env.GITHUB_RUN_ID} or abandoned/${process.env.GITHUB_RUN_ID} draft journal. Never rerun an abandoned run. Retry only recoverable review/provider states after reconciliation; see docs/releases.md. Completed baselines have not advanced unless the completion release is published.`);
   fail(error);
 });

@@ -49,6 +49,7 @@ jobs:
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
+      actions: read
       contents: write
       packages: read
       pull-requests: write

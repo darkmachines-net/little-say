@@ -30,6 +30,7 @@
     "expo-updates": "~57.0.24",
     "idb": "^8.0.0",
     "lucide-react-native": "^1.51.0",
+    "prop-types": "^15.8.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
