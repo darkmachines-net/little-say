@@ -1,0 +1,30 @@
+{
+  "verdict": "changes-required",
+  "headSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "baseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "ultimateTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "headParents": [
+    "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "targetParents": [
+    "4fa4ede70103c1827396d222de1c21fbc9938e93"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "c46fae531da604d402c24f070cd26c9a9db75ac6c4001989f6074363016d7188",
+  "checkedAtUtc": "2026-10-09T01:51:45.093215+00:00",
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "mchartier_zbook",
+  "supersedesVerdictCommentId": 6068206900,
+  "verdictCommentId": 6072652174,
+  "verdictBodySha256": "a31ebc317776766d61c394ca0476210b2618915990341489c0562fee48d8506e",
+  "verdictUpdatedAt": "2026-10-09T01:54:23Z",
+  "url": "https://github.com/MChartier/little-say/pull/38#issuecomment-6072652174",
+  "evidenceCommit": "f0b4ad600db606ae9f537857520844503b70c925",
+  "evidencePath": "verdict.json",
+  "evidenceSha256": "3bda789d6031cbf5fd82de2ad1da34dbe3217c14a335167f19122728d8ee3379",
+  "postPublicationRecheckedAtUtc": "2026-10-09T01:54:39.676196+00:00",
+  "checkpoint": "Complete and idle. All QA tests stopped; no next QA task or overlapping suite. Product/body/Project/readiness/draft/merge unchanged."
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/README.md",
+    "bytes": 2057,
+    "gitBlobSha": "96979500047601a8e7950dd0bfc1eeacd28bbc0e",
+    "sha256": "34f749d6de896d7e4da62e2a090ad62f0af7a45b2e2696cb183cd06df4edffd3"
+  },
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/description-corrected.md",
+    "bytes": 7173,
+    "gitBlobSha": "0a785377b3d34de21bab1030ba3c4fb2b35bee9a",
+    "sha256": "9d785993081bb52f119546e001a9ef62a69b6cb90d2dc28f6d365d77006d1ee8"
+  },
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/description-feedback.json",
+    "bytes": 236962,
+    "gitBlobSha": "e6284ba25cae8e526401b8d7a35f1778dbef4272",
+    "sha256": "bb40b5e23e98825fdc3d6eae1715c9eefaeef8889614ca02af5688910e8fd190"
+  },
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/description-pr-readback.json",
+    "bytes": 25712,
+    "gitBlobSha": "8c0067c989b86a99574e36c80fd7dce7bb35c293",
+    "sha256": "22f81623544a5348c3e7e93cd0502fd6f3cffdfb596c2d8ba688eba327815ce8"
+  },
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/description-qa.json",
+    "bytes": 5326,
+    "gitBlobSha": "49970dffe8abb9f4cf3caee92dc8eb3ff5ad9cf6",
+    "sha256": "44858437928146d794dc754039d5d8a53ea290f9e8c84bff306ab3e5fcc792e9"
+  },
+  {
+    "commit": "08ba41a38c2be8adb78b6624eec45f44c73808e0",
+    "path": "description-correction/description-verdict.json",
+    "bytes": 22104,
+    "gitBlobSha": "0d47f958c9a1c4106579377b8229711efaa5b823",
+    "sha256": "3bda789d6031cbf5fd82de2ad1da34dbe3217c14a335167f19122728d8ee3379"
+  }
+]
