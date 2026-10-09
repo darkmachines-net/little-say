@@ -21,108 +21,108 @@
   "source": "373fc57b9bee58160cbe924019f41161d4c02e48",
   "evidenceFiles": [
     {
-      "sha256": "1f9aa75de5ab2e7c949880b5cb1120104d4cb6636761c6343da2fac5a127d776",
-      "path": "ci-check.log"
+      "path": "README.md",
+      "sha256": "516c0b9c1d90b16e6a81abde8f1006df502f9942a4a66be0600ffc00f2ce4617"
     },
     {
-      "sha256": "e6500ce2b89099ee68ce0efd1c42328467f6ac3faa19f924dc6cde5a6ab0b5f0",
-      "path": "ci-run-final.json"
+      "path": "ci-check.log",
+      "sha256": "1f9aa75de5ab2e7c949880b5cb1120104d4cb6636761c6343da2fac5a127d776"
     },
     {
-      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-      "path": "comments.json"
+      "path": "ci-run-final.json",
+      "sha256": "e6500ce2b89099ee68ce0efd1c42328467f6ac3faa19f924dc6cde5a6ab0b5f0"
     },
     {
-      "sha256": "b1e754e4c3c91897e050d90c08696af7bd677053760e3eeb0b96d75f7dd4384e",
-      "path": "dispatch-graph-review.json"
+      "path": "comments.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "sha256": "6a9583271707b4add21763ad34de1cd073e516ac5cf2704595df0ac3f99f35c1",
-      "path": "focused-controlled.log"
+      "path": "dispatch-graph-review.json",
+      "sha256": "b1e754e4c3c91897e050d90c08696af7bd677053760e3eeb0b96d75f7dd4384e"
     },
     {
-      "sha256": "9476377c611046af776c13f3247186fd848688e66359ca9195b6cf5b9292cd99",
-      "path": "hosted-validation.log"
+      "path": "focused-controlled.log",
+      "sha256": "6293e65627430dc3f43862a68f3095a357a812deca23ffa6a01307e1db139c22"
     },
     {
-      "sha256": "688f346cd1c140f6713dbeb7f6dd08d36e9b811042b921e5296830673186a5aa",
-      "path": "issue.json"
+      "path": "hosted-validation.log",
+      "sha256": "9476377c611046af776c13f3247186fd848688e66359ca9195b6cf5b9292cd99"
     },
     {
-      "sha256": "82c93ca7f8ac14a734e76f5c8b7cf4dc36cfce6e36d16ce6a93d148e62472681",
-      "path": "local-cleanup.log"
+      "path": "issue.json",
+      "sha256": "688f346cd1c140f6713dbeb7f6dd08d36e9b811042b921e5296830673186a5aa"
     },
     {
-      "sha256": "a37c2b0f82ed79faa005aacda981c9c6ec795f9aae3b6d5b46bc0343ca46b04a",
-      "path": "local-real-validation-utf8.log"
+      "path": "local-cleanup.log",
+      "sha256": "599c7797e13969a52a9515ef02a153007f29fcd30b809e93bbe2f3ff5f35b813"
     },
     {
-      "sha256": "66c835cf52fb008d42f6b84d716bd06046be3ce4d8a655a48282c46c671b9013",
-      "path": "local-real-validation.log"
+      "path": "local-real-validation-utf8.log",
+      "sha256": "2290988f514314be1190cadaa4cd0e4e7dc03143688d47053c907137557c29fc"
     },
     {
-      "sha256": "a36038d6659674bb4899fff6d071003302840c70e668e36954e3b65384a88bf3",
-      "path": "manual-jobs-final.json"
+      "path": "local-real-validation.log",
+      "sha256": "68621b648571bc10256a87ef6e3e127acac3618f9385c8deb353e79140e185c4"
     },
     {
-      "sha256": "934564203677d9e08c6c3323e43763ef8be2eb28751a37c6521c1df07d4d3ca1",
-      "path": "manual-run-final.json"
+      "path": "manual-jobs-final.json",
+      "sha256": "a36038d6659674bb4899fff6d071003302840c70e668e36954e3b65384a88bf3"
     },
     {
-      "sha256": "77f46796899a20d7b0cf97b3a5beac566205ea224a9da209a5b8d841f389cb3b",
-      "path": "missing-emulator-reproduction.log"
+      "path": "manual-run-final.json",
+      "sha256": "934564203677d9e08c6c3323e43763ef8be2eb28751a37c6521c1df07d4d3ca1"
     },
     {
-      "sha256": "376259f5ce6f2d99191f3065936e17d0c0eb722005e63b20cfa908aa983b5fce",
-      "path": "old-command-regression.log"
+      "path": "missing-emulator-reproduction.log",
+      "sha256": "75719df71dde41689f2d67dad42f31631ed60e9ec2201dc13ff2a7e83ace4721"
     },
     {
-      "sha256": "2ca2b4549a743bd05e12d9abeca0f26b1da8ff77e278963b3c46d33bf492e44c",
-      "path": "original-failure-excerpt.log"
+      "path": "old-command-regression.log",
+      "sha256": "540bde96307fb6200a004ab971d366ea3caf1831bbe3d047593cf66367ed135f"
     },
     {
-      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a",
-      "path": "pr-comments-current.json"
+      "path": "original-failure-excerpt.log",
+      "sha256": "5132062fb4db49f753df0f4ffc5a9ffed69d8476789672bcabb6b546972c3ab9"
     },
     {
-      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a",
-      "path": "pr-comments-final.json"
+      "path": "pr-comments-current.json",
+      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a"
     },
     {
-      "sha256": "2b24d573e0c393701066f900592bc171338b0d6bc8772778d143f0a1d8cb503b",
-      "path": "pr-commits.json"
+      "path": "pr-comments-final.json",
+      "sha256": "89df0523718486af959dc72bcc1c1113d64397dce885891a6a37e45341664c7a"
     },
     {
-      "sha256": "8f9984eb38f360822e888bfa4c79cdf06c25af4e20d913ae919c8c1c288181a5",
-      "path": "pr-files.json"
+      "path": "pr-commits.json",
+      "sha256": "2b24d573e0c393701066f900592bc171338b0d6bc8772778d143f0a1d8cb503b"
     },
     {
-      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-      "path": "pr-inline-final.json"
+      "path": "pr-files.json",
+      "sha256": "8f9984eb38f360822e888bfa4c79cdf06c25af4e20d913ae919c8c1c288181a5"
     },
     {
-      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-      "path": "pr-reviews-final.json"
+      "path": "pr-inline-final.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "sha256": "6f78ff17222c14361dd61aa5b98ad0db68394a2a78ad3a5869bf773d4d807914",
-      "path": "README.md"
+      "path": "pr-reviews-final.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "sha256": "dbf5ca3bd9ea38061de1a5240421ab3884033db411af14359ccbce7d08d05abf",
-      "path": "release-tests.log"
+      "path": "release-tests.log",
+      "sha256": "23e07ef50a19c33cde883d832a5d1de1a806929dc74d8cca211ddd7b1a4c31f9"
     },
     {
-      "sha256": "b805c820d4c8f3ffe4c2ce5ddf4c66fcdd95b9a86ed99cba28dbe8f8d74c3c7a",
-      "path": "retained-originals.txt"
+      "path": "retained-originals.txt",
+      "sha256": "04bc25a0867266ae1a1a962b234dfaf476797d4e31e6a3a07d1d9793ee1ffa8f"
     },
     {
-      "sha256": "b7c2f398f9eb297c6a3e1efa54e1b5ad813ba39632318aec505bb0bb46c76c90",
-      "path": "typecheck-final.log"
+      "path": "typecheck-final.log",
+      "sha256": "3a4fdc771d9709d894dde470c0b8721dd0873da464653a670fdaf778013c2855"
     },
     {
-      "sha256": "4448ac2b75123bc55656f7b7b7d81e1fef2adceb828eca3148c7715f13c182b7",
-      "path": "validation-dispatch.json"
+      "path": "validation-dispatch.json",
+      "sha256": "7134ae8ebcbec0074bdf1b147c934ea1a17bf431361f9ebd4447906218da3136"
     }
   ],
   "createdAt": "2026-10-09T01:55:25.5782928Z",
@@ -253,35 +253,43 @@
   "changedFiles": [
     {
       "sha256": "5ef4a774108989b1e33bd666f4782ef053e6b894fb898b81a6324bd201ff4918",
-      "path": ".github/workflows/cut-release.yml"
+      "path": ".github/workflows/cut-release.yml",
+      "workingTreeSha256": "5ef4a774108989b1e33bd666f4782ef053e6b894fb898b81a6324bd201ff4918"
     },
     {
       "sha256": "82853f7b182c9b8c158c8e651866693b6e2a866ed226a415dccdd9b177c02bc0",
-      "path": "docs/releases.md"
+      "path": "docs/releases.md",
+      "workingTreeSha256": "82853f7b182c9b8c158c8e651866693b6e2a866ed226a415dccdd9b177c02bc0"
     },
     {
       "sha256": "5f51be8575618fc245e4ae95bc936c61ee79806c915ab03282c6b92d2df61440",
-      "path": "package.json"
+      "path": "package.json",
+      "workingTreeSha256": "5f51be8575618fc245e4ae95bc936c61ee79806c915ab03282c6b92d2df61440"
     },
     {
       "sha256": "f0baba6227fc0e922a94090f893c7dd94a4cf86cc257f0cf0d77635476a2d710",
-      "path": "scripts/release/candidate.test.ts"
+      "path": "scripts/release/candidate.test.ts",
+      "workingTreeSha256": "f0baba6227fc0e922a94090f893c7dd94a4cf86cc257f0cf0d77635476a2d710"
     },
     {
       "sha256": "511719c9a7967219c91d1a9660e281204797635b6977ce8b2c5d34d100d7e570",
-      "path": "scripts/release/candidate.ts"
+      "path": "scripts/release/candidate.ts",
+      "workingTreeSha256": "511719c9a7967219c91d1a9660e281204797635b6977ce8b2c5d34d100d7e570"
     },
     {
       "sha256": "93ab2cd59f78b8843956beb0e25fdd1c7817f4dde0229ddfa5fc40a9239a7ea9",
-      "path": "scripts/release/release.test.ts"
+      "path": "scripts/release/release.test.ts",
+      "workingTreeSha256": "93ab2cd59f78b8843956beb0e25fdd1c7817f4dde0229ddfa5fc40a9239a7ea9"
     },
     {
       "sha256": "d24021da724f04c5d3351362142712de1f8fd86efd1d24166a493863a3be158b",
-      "path": "scripts/release/validation.test.ts"
+      "path": "scripts/release/validation.test.ts",
+      "workingTreeSha256": "d24021da724f04c5d3351362142712de1f8fd86efd1d24166a493863a3be158b"
     },
     {
       "sha256": "528bc2ed450609442b0ec4af7ce86c2be2a3783015f514462be2af8cc2920801",
-      "path": "scripts/release/validation.ts"
+      "path": "scripts/release/validation.ts",
+      "workingTreeSha256": "528bc2ed450609442b0ec4af7ce86c2be2a3783015f514462be2af8cc2920801"
     }
   ],
   "manualJob": 113630526873,
@@ -292,5 +300,6 @@
     "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
   ],
   "limits": "Source validation only; no candidate, retirement, provider, registry, signing, publication or deployment. First local fixture WIN1252 failure retained; UTF8 replacement passed. Docker startup failure left unchanged; existing portable PostgreSQL17 used.",
-  "ciRun": 37871489555
+  "ciRun": 37871489555,
+  "hashClarification": "Source sha256 and evidenceFiles bind exact Git blob bytes. workingTreeSha256 preserves original Windows checkout byte identity for local builds. Initial evidence commit remains retained; this manifest corrects line-ending normalization in the initial file hashes."
 }
