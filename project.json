@@ -1,0 +1,82 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg_BuRc",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {},
+                  {},
+                  {},
+                  {
+                    "text": "Show editable translations for the selected board and card language",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {
+                    "name": "Review / QA",
+                    "field": {
+                      "name": "Pipeline state"
+                    }
+                  },
+                  {
+                    "text": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/38",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  },
+                  {
+                    "name": "In Progress",
+                    "field": {
+                      "name": "Status"
+                    }
+                  },
+                  {
+                    "text": "PR38 is9cada311; QA6073011337 assessed actual master7688118. Actual master nowb46e9e8 after release fixes/version merge. Preserve the ready receipt as historical and reassess affected target/evidence gates before any readiness transition. Draft/unlabelled state is already safe; Coordinator revalidation remains required.",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "2026-10-09T04:03:06.234Z",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      },
+      "pullRequest": {
+        "projectItems": {
+          "nodes": [],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      }
+    }
+  }
+}
