@@ -7,7 +7,14 @@ import { writeFileSync } from 'node:fs';
 import { assert, cleanCommit, git, npm, writeJson } from './common';
 import type { PreparedRelease, ReleasePlan } from './contract';
 import { gh, Journal } from './journal';
-import { releaseFiles, validateCandidate, writeReleaseDocuments } from './metadata';
+import { releaseFiles, StaleCandidateError, validateCandidate, writeReleaseDocuments } from './metadata';
+
+/** Recheck the live base without replacing the immutable plan or bypassing normal merge protection. */
+export function assertCandidateBase(plan: ReleasePlan): void {
+  const current = git(['ls-remote', 'origin', `refs/heads/${process.env.DEFAULT_BRANCH}`]).split(/\s/)[0];
+  assert(/^[a-f0-9]{40}$/.test(current), 'Cannot verify the default branch.');
+  if (current !== plan.source) throw new StaleCandidateError(`Default branch moved from ${plan.source} to ${current}.`);
+}
 
 /** Validate product source and PostgreSQL behavior before recording the normal required check on a bot-created PR. */
 export function validateReleaseSource(): void { npm(['run', 'check']); npm(['run', 'test:integration']); }
@@ -35,7 +42,7 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR
     git(['fetch', 'origin', `refs/heads/${branch}`]); git(['switch', '--detach', 'FETCH_HEAD']);
   } else {
     assert(!pr && cleanCommit() === plan.source, 'Candidate source moved.');
-    assert(git(['ls-remote', 'origin', `refs/heads/${base}`]).split(/\s/)[0] === plan.source, 'Default branch moved before preparation. Start a fresh explicit cut after abandoning this unstarted candidate.');
+    assertCandidateBase(plan);
     git(['config', 'user.name', 'github-actions[bot]']);
     git(['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
     git(['switch', '-c', branch]); writeReleaseDocuments(plan);
@@ -61,8 +68,11 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR
       gh(['pr', 'create', '--repo', repo, '--base', base, '--head', branch, '--title', `Prepare Little Say release ${plan.runId}`, '--body-file', body]);
     }
     pr = JSON.parse(gh(['pr', 'view', branch, '--repo', repo, '--json', 'url,state,headRefOid,mergeCommit']));
+    assert(pr.headRefOid === candidate, 'Release PR head changed before merge.');
+    // Validation can take minutes; a check made only before preparation misses intervening merges.
+    if (pr.state !== 'MERGED') assertCandidateBase(plan);
     console.log(`Release PR: ${pr.url}. If reviews are required, merge normally and rerun failed jobs in this run.`);
-    gh(['pr', 'merge', pr.url, '--squash', '--match-head-commit', candidate]);
+    if (pr.state !== 'MERGED') gh(['pr', 'merge', pr.url, '--squash', '--match-head-commit', candidate]);
     pr = JSON.parse(gh(['pr', 'view', branch, '--repo', repo, '--json', 'url,state,headRefOid,mergeCommit']));
   }
   assert(pr.state === 'MERGED' && pr.mergeCommit?.oid, 'Release awaits normal merge. Rerun this same workflow after review/merge.');
@@ -70,7 +80,9 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR
   const commit = pr.mergeCommit.oid;
   git(['fetch', 'origin', base]); git(['fetch', 'origin', commit]);
   git(['merge-base', '--is-ancestor', commit, `origin/${base}`]);
+  // Fetch failures remain retryable. A verified different merge tree is terminal, including the last-check race.
+  const mergedTree = git(['rev-parse', `${commit}^{tree}`]);
+  if (mergedTree !== tree) throw new StaleCandidateError('Functional source moved during merge.');
   validateCandidate(plan, commit);
-  assert(git(['rev-parse', `${commit}^{tree}`]) === tree, 'Functional source moved during merge. No artifacts were published; abandon this candidate and cut again.');
   const result = { commit, candidate, tree }; journal.put('prepared.json', result); return result;
 }

@@ -22,6 +22,21 @@ export function readAsset<T>(release: any, name: string): T | undefined {
   return JSON.parse(gh(['api', `repos/${process.env.GITHUB_REPOSITORY}/releases/assets/${asset.id}`, '-H', 'Accept: application/octet-stream']));
 }
 
+export interface Retirement {
+  schema: 1; runId: string; releaseId: number; source: string; reason: string;
+  assets: { id: number; name: string; digest: string; hash: string }[];
+}
+
+/** Verify preserved asset identities and contents before treating an abandoned journal as nonblocking. */
+export function verifyRetirement(release: any, complete = true): Retirement {
+  const record = readAsset<Retirement>(release, 'retirement.json');
+  assert(record?.schema === 1 && record.releaseId === release.id && release.draft && release.tag_name === `abandoned/${record.runId}`, 'Abandoned journal identity is uncertain; reconcile before another cut.');
+  assert(Array.isArray(record.assets) && record.assets.every(a => /^sha256:[a-f0-9]{64}$/.test(a.digest) && release.assets.some((r: any) => r.id === a.id && r.name === a.name && r.digest === a.digest) && hash(readAsset(release, a.name)) === a.hash), 'Retired journal assets changed or are missing.');
+  assert(release.assets.every((a: any) => ['retirement.json', 'retirement-complete.json'].includes(a.name) || record.assets.some(r => r.id === a.id && r.name === a.name)), 'Unexpected retired journal assets; reconcile publication state.');
+  if (complete) assert(readAsset<{ retirementHash: string }>(release, 'retirement-complete.json')?.retirementHash === hash(record), 'Retirement readback is incomplete; reconcile before another cut.');
+  return record;
+}
+
 /** Select completed manifests only; candidate drafts and plain server tags cannot advance client baselines. */
 export function completedReceipts(): ReleaseReceipt[] {
   return releases().filter(r => !r.draft && /^release\/(internal|production)\/\d+$/.test(r.tag_name)).map(r => {
@@ -39,10 +54,18 @@ export class Journal {
     assert(/^[1-9]\d*$/.test(runId), 'Missing GitHub run ID.'); this.tag = `candidate/${runId}`;
   }
   /** Fetch current asset metadata so concurrent jobs writing different keys never overwrite a shared manifest. */
-  release(): any | undefined { return releases().find(r => r.tag_name === this.tag); }
+  release(): any | undefined {
+    const all = releases(); this.assertActive(all); return all.find(r => r.tag_name === this.tag);
+  }
+  /** Reject durable retirement intent and abandoned run IDs before planning, writes, or provider work. */
+  assertActive(all = releases()): void {
+    assert(!all.some(r => r.tag_name === `abandoned/${this.runId}` || r.tag_name === this.tag && r.assets.some((a: any) => a.name === 'retirement.json')), `Release ${this.runId} is abandoned or retiring. Never rerun it; use a fresh cut.`);
+  }
   /** Create the draft before external writes; reject another unresolved release across either client profile. */
   create(source: string): void {
     const all = releases();
+    this.assertActive(all);
+    for (const r of all.filter(r => /^abandoned\/\d+$/.test(r.tag_name))) verifyRetirement(r);
     assert(!all.some(r => r.draft && /^candidate\/\d+$/.test(r.tag_name) && r.tag_name !== this.tag), 'Another release is unresolved. Resume that workflow before starting another cut.');
     if (!all.some(r => r.tag_name === this.tag)) gh(['release', 'create', this.tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft', '--target', source, '--title', `Release candidate ${this.runId}`, '--notes', 'Recoverable release journal. This draft is not a completed release or a publication baseline.']);
   }
