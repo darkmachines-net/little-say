@@ -114,6 +114,30 @@ function fixture() {
   git(['add', '.'], dir); git(['commit', '-m', 'base'], dir); return { dir, docs, write, source: git(['rev-parse', 'HEAD'], dir) };
 }
 describe('real Git snapshots and candidate contracts', () => {
+  it('reproduces an account dependency landing between candidate validation and the version squash merge', () => {
+    const { dir, docs } = fixture();
+    Object.assign(docs['apps/mobile/package.json'], { name: 'app', description: 'App', private: true, main: 'index.js', license: 'UNLICENSED', dependencies: { expo: '~57.0.0' } });
+    writeJson(resolve(dir, 'apps/mobile/package.json'), docs['apps/mobile/package.json']);
+    git(['add', '.'], dir); git(['commit', '-m', 'baseline app metadata'], dir);
+    const source = git(['rev-parse', 'HEAD'], dir);
+    const plan = planRelease({ ...args(), source, mode: 'force_all' });
+    git(['switch', '-c', 'release-candidate'], dir);
+    const after = releaseDocuments(docs, plan);
+    for (const p of releaseFiles) writeJson(resolve(dir, p), after[p]);
+    git(['add', '.'], dir); git(['commit', '-m', 'validated versions'], dir);
+    const candidate = git(['rev-parse', 'HEAD'], dir);
+    expect(() => validateCandidate(plan, candidate, dir)).not.toThrow();
+    git(['switch', 'master'], dir);
+    const mobile = { ...docs['apps/mobile/package.json'], dependencies: { expo: '~57.0.0', 'expo-apple-authentication': '~8.0.0' } };
+    writeJson(resolve(dir, 'apps/mobile/package.json'), mobile);
+    git(['add', '.'], dir); git(['commit', '-m', 'account dependency'], dir);
+    git(['merge', '--squash', 'release-candidate'], dir);
+    git(['add', '.'], dir); git(['commit', '-m', 'squashed versions on advanced base'], dir);
+    const merged = git(['rev-parse', 'HEAD'], dir);
+    expect(git(['rev-parse', `${merged}^{tree}`], dir)).not.toBe(git(['rev-parse', `${candidate}^{tree}`], dir));
+    expect(() => validateCandidate(plan, merged, dir)).toThrow('unexpected metadata changes');
+    expect(JSON.parse(git(['show', `${merged}:apps/mobile/package.json`], dir)).dependencies).toEqual(mobile.dependencies);
+  });
   it('detects deletes/renames and reverts while ignoring documentation changes', () => {
     const { dir, write, source } = fixture(); const before = sourceInputs(source, 'server', dir);
     write('README.md', 'docs'); git(['add', '.'], dir); git(['commit', '-m', 'docs'], dir); expect(sourceInputs('HEAD', 'server', dir)).toBe(before);

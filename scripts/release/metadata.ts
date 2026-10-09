@@ -7,6 +7,12 @@ import { serverDocuments, serverFiles } from './version';
 
 export const releaseFiles = [...serverFiles, 'native-release.json', 'apps/mobile/package.json', 'apps/mobile/app.json'];
 
+/** Identify an immutable source mismatch that retrying the same release cannot repair. */
+export class StaleCandidateError extends Error {
+  /** Preserve the failed guard and explain the fresh-cut recovery boundary. */
+  constructor(message: string) { super(`${message} The immutable release source is stale; do not rerun this candidate. Start a fresh cut after verified retirement.`); }
+}
+
 /** Apply the plan's allocated versions to cloned documents, never changing dependencies or product configuration. */
 export function releaseDocuments(before: Record<string, any>, plan: ReleasePlan): Record<string, any> {
   const docs = plan.server ? serverDocuments(before, plan.serverVersion) : structuredClone(before);

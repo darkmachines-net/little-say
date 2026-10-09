@@ -9,7 +9,7 @@ import type { ReleasePlan } from './contract';
 
 vi.mock('./common', async original => ({ ...await original<typeof import('./common')>(), cleanCommit: vi.fn(), git: vi.fn(), npm: vi.fn(), writeJson: vi.fn() }));
 vi.mock('./journal', () => ({ gh: vi.fn() }));
-vi.mock('./metadata', () => ({ validateCandidate: vi.fn(), writeReleaseDocuments: vi.fn(), releaseFiles: ['release.json'] }));
+vi.mock('./metadata', async original => ({ ...await original<typeof import('./metadata')>(), validateCandidate: vi.fn(), writeReleaseDocuments: vi.fn(), releaseFiles: ['release.json'] }));
 vi.mock('node:fs', async original => ({ ...await original<typeof import('node:fs')>(), writeFileSync: vi.fn(), mkdtempSync: vi.fn(() => '/tmp/candidate') }));
 const source = 'a'.repeat(40), candidate = 'b'.repeat(40), merged = 'c'.repeat(40), tree = 'd'.repeat(40);
 const branch = 'release/unified-run-123';
@@ -80,5 +80,17 @@ describe('protected version candidate', () => {
     const original = vi.mocked(gh).getMockImplementation()!;
     vi.mocked(gh).mockImplementation(args => args[1] === 'merge' ? '' : original(args));
     expect(() => prepareCandidate(plan, journal)).toThrow('awaits normal merge'); expect(records.has('prepared.json')).toBe(false);
+  });
+  it('rejects base movement during validation before requesting a merge', () => {
+    vi.mocked(npm).mockImplementation(() => { defaultHead = merged; return ''; });
+    expect(() => prepareCandidate(plan, journal)).toThrow('Default branch moved');
+    expect(vi.mocked(gh).mock.calls.some(([args]) => args[1] === 'merge')).toBe(false);
+    expect(records.has('prepared.json')).toBe(false);
+  });
+  it('keeps the exact-tree guard for movement after the last base check', () => {
+    const original = vi.mocked(gh).getMockImplementation()!;
+    vi.mocked(gh).mockImplementation(args => { if (args[1] === 'merge') mergedTree = source; return original(args); });
+    expect(() => prepareCandidate(plan, journal)).toThrow('immutable release source is stale');
+    expect(records.has('prepared.json')).toBe(false);
   });
 });
