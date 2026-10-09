@@ -1,0 +1,48 @@
+{
+  "ciRun": "https://github.com/MChartier/little-say/actions/runs/37871489555",
+  "orderedCommits": [
+    "373fc57b9bee58160cbe924019f41161d4c02e48"
+  ],
+  "project": {
+    "before": 41,
+    "readbackAt": "2026-10-09T01:58:11.899494Z",
+    "otherUnchanged": 39,
+    "changed": [
+      "PVTI_lAHOABMy1c4Bl3Eqzg_BuRc",
+      "PVTI_lAHOABMy1c4Bl3Eqzg_inUc"
+    ],
+    "after": 41,
+    "verifiedAt": "2026-10-09T01:58:08Z"
+  },
+  "files": [
+    ".github/workflows/cut-release.yml",
+    "docs/releases.md",
+    "package.json",
+    "scripts/release/candidate.test.ts",
+    "scripts/release/candidate.ts",
+    "scripts/release/release.test.ts",
+    "scripts/release/validation.test.ts",
+    "scripts/release/validation.ts"
+  ],
+  "manualRun": "https://github.com/MChartier/little-say/actions/runs/37871534382",
+  "parents": [
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "reviewRefusal": 6072598630,
+  "checkpoint": "PR46 open draft/unlabelled. Product checkout clean; original PR42 dirty eleven-file copy unchanged. Local PostgreSQL16/17 fixtures stopped; Auth emulator stopped. Same independent QA pending; no readiness or release claim.",
+  "bindings": {
+    "evidenceManifestSha256": "0cfe54d5007b936edaac93eabec108d428df812e87d7508ba82d2a5027a98bb6",
+    "checkedAt": "2026-10-09T01:57:31.3576369Z",
+    "evidenceCommit": "42cfe8fa1b9fd748476253d60d126a913e2c6b5a",
+    "labels": null,
+    "mergeCommit": "2857548cf3edb230b2a174b8c570ec2496b2ede0",
+    "files": 8,
+    "apiBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "draft": true,
+    "commits": 1,
+    "head": "373fc57b9bee58160cbe924019f41161d4c02e48",
+    "bodySha256": "28371348f12fb5b35061be8f189b5a1401a4e14fa6681e270d886f12556e397a"
+  },
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "actualBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+}
