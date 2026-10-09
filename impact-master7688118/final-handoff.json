@@ -1,0 +1,19 @@
+{
+  "apiBase": "768811832bd0b389ba7e24738fb58800ea145000",
+  "bodySha256": "5bfe79fe1b4adc2a6239d9a8139485d9f0f7f4bd042639927dd63722fc3e08df",
+  "actualBase": "768811832bd0b389ba7e24738fb58800ea145000",
+  "commits": 2,
+  "labels": null,
+  "evidenceCommit": "67ca22a9dbb9b7f31bd73e5145b394529455c8cf",
+  "draft": true,
+  "mergeBase": "768811832bd0b389ba7e24738fb58800ea145000",
+  "files": 8,
+  "artifactManifestSha256": "16ba5c3a478f5e8300af3c473cd950b94ed77c08c2d12a59f480b3d16d782756",
+  "checkedAt": "2026-10-09T02:11:16.3777403Z",
+  "parents": [
+    "373fc57b9bee58160cbe924019f41161d4c02e48",
+    "768811832bd0b389ba7e24738fb58800ea145000"
+  ],
+  "ciMerge": "3f2169fc93c7344f6081ef0eead21442842febb1",
+  "head": "0ba43ba036dddc1ff60dea4b82ee7c8f495066d2"
+}
