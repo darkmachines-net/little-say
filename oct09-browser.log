@@ -1,0 +1,33 @@
+npm notice run little-say-workspace@0.2.1 npx
+npm notice run playwright test --config .cache/pr35-oct09.config.ts tests/web/setup.spec.ts tests/web/conversation.spec.ts
+[WebServer] npm notice run little-say-workspace@0.2.1 start
+[WebServer] npm notice run npm run start -w @little-say/server
+[WebServer] npm notice run @little-say/server@0.2.1 start
+[WebServer] npm notice run node dist/index.js
+[WebServer] (node:32816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:32816) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+Running 17 tests using 1 worker
+
+(node:30112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] ΓÇ║ tests\web\conversation.spec.ts:25:1 ΓÇ║ manual creation starts from the library and suggestions stay in the conversation without an opt-in screen (2.0s)
+  ok  2 [chromium] ΓÇ║ tests\web\conversation.spec.ts:45:1 ΓÇ║ editing routes survive reload and return to their source board without saving a draft (1.8s)
+  ok  3 [chromium] ΓÇ║ tests\web\conversation.spec.ts:59:1 ΓÇ║ clarification, draft and refinement stay in one conversation until explicitly saved (3.2s)
+  ok  4 [chromium] ΓÇ║ tests\web\conversation.spec.ts:97:1 ΓÇ║ editing refines the latest draft while keeping source IDs, languages and photos private (2.4s)
+  ok  5 [chromium] ΓÇ║ tests\web\conversation.spec.ts:130:1 ΓÇ║ stopping and retrying ignores late replies and does not duplicate conversation turns (1.7s)
+  ok  6 [chromium] ΓÇ║ tests\web\conversation.spec.ts:154:1 ΓÇ║ failed follow-ups and clarification preserve the previous draft and small-screen controls (2.1s)
+  ok  7 [chromium] ΓÇ║ tests\web\conversation.spec.ts:185:1 ΓÇ║ a failed save keeps the draft and retry creates exactly one board (1.8s)
+  ok  8 [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through failure (1.8s)
+  ok  9 [chromium] ΓÇ║ tests\web\conversation.spec.ts:200:56 ΓÇ║ browser history preserves a pending draft save through success (1.8s)
+  ok 10 [chromium] ΓÇ║ tests\web\conversation.spec.ts:250:56 ΓÇ║ voice transcripts can be reviewed for follow-ups and page back releases the microphone (1.8s)
+  ok 11 [chromium] ΓÇ║ tests\web\conversation.spec.ts:250:56 ΓÇ║ voice transcripts can be reviewed for follow-ups and browser back releases the microphone (1.8s)
+  ok 12 [chromium] ΓÇ║ tests\web\conversation.spec.ts:286:1 ΓÇ║ a capture-time recorder error releases the microphone and lets the parent retry (1.6s)
+  ok 13 [chromium] ΓÇ║ tests\web\conversation.spec.ts:314:1 ΓÇ║ the compact editor fits tablet orientations and keeps reordering in the tile dialog (2.1s)
+  ok 14 [chromium] ΓÇ║ tests\web\conversation.spec.ts:331:1 ΓÇ║ a new phone conversation starts with its full data-use introduction visible (1.4s)
+  ok 15 [chromium] ΓÇ║ tests\web\setup.spec.ts:41:1 ΓÇ║ first-time setup generates chosen languages, resumes partial success, and starts audio after completion (3.9s)
+  ok 16 [chromium] ΓÇ║ tests\web\setup.spec.ts:90:1 ΓÇ║ offline setup can save a regional preference and start empty without English sample boards (2.1s)
+  ok 17 [chromium] ΓÇ║ tests\web\setup.spec.ts:111:1 ΓÇ║ setup waits for durable saves and retains generated drafts when final saving fails (1.9s)
+
+  17 passed (38.6s)

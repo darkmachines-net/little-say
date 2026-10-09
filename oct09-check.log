@@ -1,0 +1,107 @@
+npm notice run little-say-workspace@0.2.1 check
+npm notice run npm run release:check && npm run typecheck && npm test && npm run build
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> little-say-workspace@0.2.1 release:check
+> tsx scripts/release/version.ts check
+
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> little-say-workspace@0.2.1 typecheck
+> npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json
+
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @little-say/app@0.1.1 typecheck
+> tsc -p tsconfig.json
+
+
+> @little-say/server@0.2.1 typecheck
+> tsc -p tsconfig.json
+
+
+> @little-say/core@0.1.0 typecheck
+> tsc -p tsconfig.json
+
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> little-say-workspace@0.2.1 test
+> vitest run
+
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-9/little-say-pr35
+
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:16072) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:36584) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:34828) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34828) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(node:34828) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+
+ Test Files  44 passed (44)
+      Tests  320 passed (320)
+   Start at  18:30:48
+   Duration  16.98s (transform 18.10s, setup 0ms, import 28.29s, tests 38.49s, environment 4ms)
+
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> little-say-workspace@0.2.1 build
+> npm run build -w @little-say/server && npm run build:web -w @little-say/app
+
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @little-say/server@0.2.1 build
+> tsup
+
+CLI Building entry: src/database-cli.ts, src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: C:\Users\MChar\Documents\Codex\2026-10-08\task-9\little-say-pr35\apps\server\tsup.config.ts
+CLI Target: node22
+CLI Cleaning output folder
+ESM Build start
+ESM dist\chunk-YJ5TFKWE.js 2.98 KB
+ESM dist\database-cli.js   943.00 B
+ESM dist\index.js          3.93 MB
+ESM ΓÜí∩╕Å Build success in 254ms
+npm warn Unknown env config "global-ignore-file". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @little-say/app@0.1.1 build:web
+> expo export --platform web && node scripts/build-pwa.mjs
+
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+Web Bundled 2641ms apps\mobile\index.ts (2425 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+
+ΓÇ║ web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-226ca10ecea6b5a3bbde964866b14ec4.js (6.1MB)
+_expo/static/js/web/index-7707c9e8865a25c1ad91b26b4277b52f.js (360KB)
+
+ΓÇ║ Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (49B)
+
+Exported: dist
+Offline shell: 14 assets (6704 KiB). Updates wait for parent action.

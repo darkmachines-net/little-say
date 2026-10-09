@@ -1,0 +1,32 @@
+ea87b78eb6c9e9612cc42b7eec490af9d8216b86 1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4 Extract exact model prompts into versioned resources
+
+M	apps/mobile/src/ui/AiConversation.tsx
+M	apps/server/src/picture-provider.ts
+A	apps/server/src/prompts.ts
+M	apps/server/src/provider.ts
+M	apps/server/src/synthesis.ts
+A	apps/server/test/__snapshots__/prompt-payloads.test.ts.snap
+A	apps/server/test/__snapshots__/prompt-presets.test.ts.snap
+A	apps/server/test/prompt-payloads.test.ts
+A	apps/server/test/prompt-presets.test.ts
+M	packages/core/src/index.ts
+M	packages/core/src/onboarding.ts
+A	packages/core/src/promptPresets.ts
+A	packages/core/src/promptResources.test.ts
+A	packages/core/src/promptResources.ts
+A	prompts/README.md
+A	prompts/server/board.json
+A	prompts/server/pictures.json
+A	prompts/server/speech.json
+A	prompts/shared/conversation.json
+A	prompts/shared/onboarding.json
+A	scripts/prompt-bundle.test.ts
+0e2758de446674c4874bbce1df4eb51abaee35f4 ea87b78eb6c9e9612cc42b7eec490af9d8216b86 fabb925cf5ee11171d5668af7c2bab44ec9fc613 Merge current master while preserving account and prompt exports
+cfea03f0cc56a893a7269677533375e013024349 0e2758de446674c4874bbce1df4eb51abaee35f4 Declare prompt JSON import types for native ESM consumers
+
+M	apps/server/src/prompts.ts
+M	packages/core/src/promptPresets.ts
+608b884731bbf243fc4d8cac616fcbc6b965de21 cfea03f0cc56a893a7269677533375e013024349 Load server prompt helpers without unrelated core resources
+
+M	apps/server/src/prompts.ts
+29e8fa8cf04ce93e28f1c2b98e834283a2b8e389 608b884731bbf243fc4d8cac616fcbc6b965de21 18aa7c08615ecf60c8583f0590dcce8ed389f0ea Integrate merged release and iOS runtime dependencies

@@ -1,0 +1,17 @@
+4fa4ede70103c1827396d222de1c21fbc9938e93 fabb925cf5ee11171d5668af7c2bab44ec9fc613 Retire stale unpublished release candidates without losing recovery evidence (#42)
+
+M	.github/workflows/cut-release.yml
+M	docs/releases.md
+M	scripts/release/candidate.test.ts
+M	scripts/release/candidate.ts
+M	scripts/release/journal.ts
+M	scripts/release/metadata.ts
+M	scripts/release/planner.test.ts
+A	scripts/release/retirement.test.ts
+A	scripts/release/retirement.ts
+M	scripts/release/unified.test.ts
+M	scripts/release/unified.ts
+18aa7c08615ecf60c8583f0590dcce8ed389f0ea 4fa4ede70103c1827396d222de1c21fbc9938e93 Restore iOS export with the missing Apple authentication runtime dependency (#44)
+
+M	apps/mobile/package.json
+M	package-lock.json

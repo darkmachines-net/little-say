@@ -1,0 +1,8 @@
+commit 29e8fa8cf04ce93e28f1c2b98e834283a2b8e389
+Merge: 608b884 18aa7c0
+Author:     Codex <codex@openai.com>
+AuthorDate: Thu Oct 8 18:28:28 2026 -0700
+Commit:     Codex <codex@openai.com>
+CommitDate: Thu Oct 8 18:28:28 2026 -0700
+
+    Integrate merged release and iOS runtime dependencies

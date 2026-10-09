@@ -1,0 +1,19 @@
+{
+  "byteIdentical": true,
+  "records": [
+    {
+      "phase": "before",
+      "source": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "payloadSha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+      "presetsSha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+      "coreResolution": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\baseline-oct09\\packages\\core\\src\\index.ts"
+    },
+    {
+      "phase": "after",
+      "source": "29e8fa8cf04ce93e28f1c2b98e834283a2b8e389",
+      "payloadSha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+      "presetsSha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+      "coreResolution": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-9\\little-say-pr35\\packages\\core\\src\\index.ts"
+    }
+  ]
+}
