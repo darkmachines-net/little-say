@@ -1,0 +1,17 @@
+[
+  {
+    "path": "macos-run-37881372074-manifest.json",
+    "gitBlobSha": "0ae10f0cab034886010b6a1fd40af61ac197d74e",
+    "sha256": "7a488e0c35a2f799fcabe9d4f36081b7331d4417fe2bfe81fe7f6430d66d6fab"
+  },
+  {
+    "path": "macos-run-37881372074.md",
+    "gitBlobSha": "dc47cc7efad2ba1e1035e7f8545776f158fb2f9d",
+    "sha256": "622f268a761a1faa4882694513d3e520cba83b10970b0901772b3e39ba794bf7"
+  },
+  {
+    "path": "macos-run-37881372074.zip",
+    "gitBlobSha": "b1625eb2e8c0ae38ac7ab904ea039ad53ac11d8e",
+    "sha256": "6197a1948f11ed25884fb1ca7d757134c391a9327c454e962ad8d5568054434e"
+  }
+]

@@ -1,0 +1,342 @@
+{
+  "total_count": 8,
+  "jobs": [
+    {
+      "id": 113661590506,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsI76g",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661590506",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661590506",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:54:03Z",
+      "completed_at": "2026-10-09T03:56:02Z",
+      "name": "ios-pods",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-09T03:54:04Z",
+          "completed_at": "2026-10-09T03:54:05Z"
+        },
+        {
+          "name": "Require reviewed immutable sources and validation mode",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-09T03:54:05Z",
+          "completed_at": "2026-10-09T03:54:05Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-09T03:54:05Z",
+          "completed_at": "2026-10-09T03:54:07Z"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-09T03:54:07Z",
+          "completed_at": "2026-10-09T03:54:09Z"
+        },
+        {
+          "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-09T03:54:09Z",
+          "completed_at": "2026-10-09T03:54:13Z"
+        },
+        {
+          "name": "Run ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-09T03:54:13Z",
+          "completed_at": "2026-10-09T03:54:13Z"
+        },
+        {
+          "name": "Install the diagnostic CocoaPods version",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-09T03:54:13Z",
+          "completed_at": "2026-10-09T03:54:15Z"
+        },
+        {
+          "name": "Reproduce baseline without Google OAuth configuration",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-09T03:54:15Z",
+          "completed_at": "2026-10-09T03:55:12Z"
+        },
+        {
+          "name": "Validate fix without Google OAuth configuration",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 9,
+          "started_at": "2026-10-09T03:55:12Z",
+          "completed_at": "2026-10-09T03:55:57Z"
+        },
+        {
+          "name": "Retain exact inputs, generated pod files and diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-09T03:55:57Z",
+          "completed_at": "2026-10-09T03:55:58Z"
+        },
+        {
+          "name": "Require both the diagnosed baseline and passing fix",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 11,
+          "started_at": "2026-10-09T03:55:58Z",
+          "completed_at": "2026-10-09T03:55:58Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 20,
+          "started_at": "2026-10-09T03:55:58Z",
+          "completed_at": "2026-10-09T03:55:58Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-09T03:55:58Z",
+          "completed_at": "2026-10-09T03:55:59Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-09T03:55:59Z",
+          "completed_at": "2026-10-09T03:55:59Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-10-09T03:55:59Z",
+          "completed_at": "2026-10-09T03:56:00Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661590506",
+      "labels": [
+        "macos-26"
+      ],
+      "runner_id": 1000014797,
+      "runner_name": "GitHub Actions 1000014797",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 113661591622,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJARg",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661591622",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661591622",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "validate",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661591622",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661591941,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJBhQ",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661591941",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661591941",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "server",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661591941",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661591983,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJBrw",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661591983",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661591983",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "prepare",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661591983",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661592126,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJCPg",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661592126",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661592126",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "native",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661592126",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661592402,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJDUg",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661592402",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661592402",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "submit",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661592402",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661592914,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJFUg",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661592914",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661592914",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:53:59Z",
+      "started_at": "2026-10-09T03:53:59Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "ota",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661592914",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 113661593544,
+      "run_id": 37881372074,
+      "workflow_name": "Cut release",
+      "head_branch": "fix/ios-appcheck-modular-headers",
+      "run_url": "https://api.github.com/repos/MChartier/little-say/actions/runs/37881372074",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU65Oyc8AAAAadsJHyA",
+      "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "url": "https://api.github.com/repos/MChartier/little-say/actions/jobs/113661593544",
+      "html_url": "https://github.com/MChartier/little-say/actions/runs/37881372074/job/113661593544",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-09T03:54:00Z",
+      "started_at": "2026-10-09T03:54:00Z",
+      "completed_at": "2026-10-09T03:53:59Z",
+      "name": "finalize",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/MChartier/little-say/check-runs/113661593544",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    }
+  ]
+}

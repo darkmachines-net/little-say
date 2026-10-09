@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "verdict": "evidence-incomplete",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "reviewOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "standardsAcknowledgment": "Read the full supplied pinned texts, operative direct amendments and actual repository AGENTS. No runtime migration. Same independent QA task and isolated clone; original owners/worktrees untouched.",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/49",
+  "issue": 48,
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "MCHARTIER_ZBOOK",
+  "hostVerifiedAtUtc": "2026-10-09T04:08:57.9690426Z",
+  "supersedesVerdictCommentId": null,
+  "checkedAtUtc": "2026-10-09T04:11:01.746246+00:00",
+  "headSha": "d88515b08e012acceadeeb9497f062d1964685f8",
+  "baseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "ultimateTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "targetRef": "master",
+  "headParents": [
+    "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+  ],
+  "targetParents": [
+    "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "e5197e3d1aff7cf4a746bc9a6576dbd7066b767efb0e84e1adeb4f1399984862",
+  "findings": [
+    {
+      "id": "E1",
+      "category": "evidence-incomplete",
+      "gate": "engineeringReview",
+      "observed": "Full current discussion has two implementation comments, no submitted reviews, no inline threads and no quota-only refusal. This independent code review is complete, but configured external review completion or an applicable exception is not evidenced.",
+      "expected": "Configured review completion and disposition, or the exact applicable quota-only refusal under the direct amendment. Silence is not completion and generic prior quota history is not a current-head refusal.",
+      "correction": "Coordinator reconcile the configured review requirement for PR49 and supply its actual completion or applicable exact refusal; do not claim bot completion or send repeated quota requests. Return the evidence for affected-gate reassessment. No additional hosted pod run is required for this finding."
+    },
+    {
+      "id": "C1",
+      "category": "changes-required",
+      "gate": "communication",
+      "observed": "The final body ends with Independent final QA remains pending. This assessment is now complete and has concrete remaining gates.",
+      "expected": "Final description agrees with the completed independent assessment and its limitations.",
+      "correction": "Implementation owner replace the stale pending sentence with a concise link to this completed assessment and its outstanding review gate, preserving the failed workflow status, actual successful pod-install observation and native-build limitations. Return the exact final body for communication-only recheck; do not edit source for this correction."
+    }
+  ],
+  "gates": {
+    "value": "Pass: issue48 captures the actual iOS release pod-install failure when optional OAuth scheme is absent. Focused fallback and a bounded unsigned diagnostic were expressly admitted. No speculative account or release expansion.",
+    "outcome": "Pass for scoped pod configuration: actual baseline fails with exact AppCheckCore missing module-map diagnosis; actual fixed product config installs 116 pods successfully with identical relevant versions. Configured Nitro path and Android output remain unchanged. Native compilation/release not certified.",
+    "code": "Pass: complete three-commit published scope and all ten final paths reviewed. Only one Expo SDK build-properties dependency plus conditional extraPods fallback, maintained tests and concise release docs. Existing configured Nitro path preserved. Diagnostic manual-only, read permissions, persist-credentials:false, exact clean SHAs, token-env rejection, no dotenv, no release-job path. Final parser anchors resolved top-level lock entries. No product source edits by QA.",
+    "engineeringReview": "Incomplete E1: no current completion or quota-only refusal in complete live feedback. This task independently inspected all published code and tests. No bot completion inferred and no review request or retry sent.",
+    "ci": "Pass: final-head CI37881717383 success; tested merge tree equals head. 336 unit tests, 25 service-integration tests and five account-browser tests pass along with types and builds. Optional one-shot macOS diagnostic37881372074 remains failure at06b4b00: real fixed pod install succeeded, subsequent old parser rejected nested constraints. All seven non-diagnostic jobs skipped. No new dispatch.",
+    "behavior": "Pass: 32 focused maintained tests independently passed on final source. Separate independent VM replay of actual old/final diagnostic source against raw Actions outputs reproduces old parser failure, final parser success and baseline classification; independent YAML parser agrees on all four versions. No additional CocoaPods execution claimed. Reused fresh actual hosted outputs for expensive behavior.",
+    "evidence": "Pass: exact Actions artifact11594871300 downloaded and SHA256 verified; all33 raw files byte-identical to retained bundle. All40 mac manifest entries and120 original artifacts verified. Source config/lock bytes match actual commits; final product config and workflow unchanged since actual mac execution. Original captures retain original identities. Published inventories complete, no synthetic integration substitute.",
+    "communication": "C1 correction required for stale pending-QA sentence. Otherwise concise final-state problem/solution and scenario/expected/observed/evidence argument pass; the failed workflow versus successful actual pod install, parser-only correction/local replay and absent signed build are accurately distinguished. Issue uses fixed template and actual task/PR association.",
+    "stack": "Pass: head/actual master/API base/merge-base and all parents bound separately. No stacked parent. Three linear scoped commits, ten files +366/-13; no development artifacts in product history. Native closing association to issue48 verified; no Project completion claim."
+  },
+  "feedback": {
+    "fullRead": true,
+    "comments": [
+      6073856737,
+      6074016282
+    ],
+    "submittedReviews": 0,
+    "inlineComments": 0,
+    "issueComments": 0,
+    "reviewThreads": 0,
+    "dispositions": "Both implementation reports read in full; stale-input test correction verified at06b4b00, parser correction and macOS interpretation independently verified atd88515b. No unresolved human request observed. Publisher rereads complete objects before and after comment."
+  },
+  "uiEvidence": {
+    "applicable": false,
+    "nonUiObservableContract": "Build-time pod configuration and diagnostic command/exit-status boundaries; no changed user UI. Real baseline/fixed pod logs, generated configuration and controlled parser replay are the relevant observable contract.",
+    "pairs": [],
+    "provenanceRecords": [],
+    "renderedPrInspection": {
+      "observations": "Not claimed; general GitHub rendering waiver applies. Full exact API-decoded body assessed."
+    }
+  },
+  "verification": {
+    "checkedAtUtc": "2026-10-09T04:10:02.501609+00:00",
+    "head": "d88515b08e012acceadeeb9497f062d1964685f8",
+    "base": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "apiBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "headParents": [
+      "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+    ],
+    "targetParents": [
+      "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+    ],
+    "scope": [
+      {
+        "sha": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+        "parents": [
+          "b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+        ],
+        "subject": "Fix iOS AppCheck pod headers and add isolated manual pod validation",
+        "paths": [
+          ".github/workflows/cut-release.yml",
+          "apps/mobile/app.config.js",
+          "apps/mobile/package.json",
+          "docs/releases.md",
+          "package-lock.json",
+          "scripts/release/ios-pods-check.mjs",
+          "scripts/release/ios-pods-check.test.ts",
+          "scripts/release/ios-pods.test.ts",
+          "scripts/release/validation.test.ts"
+        ]
+      },
+      {
+        "sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+        "parents": [
+          "b7d26c6e302554d33a03553c5c48b5acf392886e"
+        ],
+        "subject": "Keep release input regression aligned with manual pod diagnostics",
+        "paths": [
+          "scripts/release/release.test.ts"
+        ]
+      },
+      {
+        "sha": "d88515b08e012acceadeeb9497f062d1964685f8",
+        "parents": [
+          "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+        ],
+        "subject": "Read resolved pod versions instead of nested dependency constraints",
+        "paths": [
+          "scripts/release/ios-pods-check.mjs",
+          "scripts/release/ios-pods-check.test.ts"
+        ]
+      }
+    ],
+    "paths": [
+      ".github/workflows/cut-release.yml",
+      "apps/mobile/app.config.js",
+      "apps/mobile/package.json",
+      "docs/releases.md",
+      "package-lock.json",
+      "scripts/release/ios-pods-check.mjs",
+      "scripts/release/ios-pods-check.test.ts",
+      "scripts/release/ios-pods.test.ts",
+      "scripts/release/release.test.ts",
+      "scripts/release/validation.test.ts"
+    ],
+    "counts": {
+      "commits": 3,
+      "files": 10,
+      "additions": 366,
+      "deletions": 13
+    },
+    "sourceDigests": {
+      ".github/workflows/cut-release.yml": "3221f65ccda292482d5aef8846fb156e2e9ae5bd871671f8c7939a84754ce264",
+      "apps/mobile/app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+      "apps/mobile/package.json": "5fdf62db3d08c4d2686b6b8a2ecbb488b19df0697050ff144dba63e0fe5067b7",
+      "docs/releases.md": "5faab6855426deb6e888eaf9fc3c9aecb940ec90ed0b44ae938798203ab35472",
+      "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+      "scripts/release/ios-pods-check.mjs": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+      "scripts/release/ios-pods-check.test.ts": "405764f07ab92512fecf9b5e891390e50a0617a6318d9f014646786b686e6eb7",
+      "scripts/release/ios-pods.test.ts": "5140f763489230b378d756b7710b44f3a8264ca32cb86aa1f049af5f7e879e5c",
+      "scripts/release/release.test.ts": "480bb09567f13f1db40b339b2984b6d2f63696012c6ce8bb6eac7a85b3898a1a",
+      "scripts/release/validation.test.ts": "88a8e9610d91891ad8c89425ffcc93145b7a64232e478444633a22b8feab0102"
+    },
+    "actualActionsArtifact": {
+      "id": 11594871300,
+      "digest": "sha256:3b6b285c03cc53ae29c0288160412db4ef3706aab934c9979e1adaf67809a90e",
+      "filesComparedExactly": 33
+    },
+    "verifiedMacManifestFiles": 40,
+    "verifiedOriginalArtifacts": 120,
+    "finalChange": "Only parser and maintained parser regression since actual macOS execution. Product app config, lockfile and workflow unchanged.",
+    "ciMergeTreeMatchesHead": true
+  },
+  "retainedOriginals": [
+    {
+      "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+      "path": "original-manifest.json",
+      "sha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428",
+      "bundlePath": "original-evidence.zip",
+      "bundleSha256": "50a6d95e880e18b94af974af1358599a33aff3a6c349864a6428aba1d64d4b26",
+      "assessment": "Original source-bound generated artifacts and red/green configuration experiment retained unchanged; no actual macOS claim for Windows captures. Android44 files byte-identical; configured Nitro Podfile byte-identical. Final config and lockfile applicability verified unchanged."
+    },
+    {
+      "commit": "73a48868d6df246f4f9b8951dfa4dd8542afe16c",
+      "path": "macos-run-37881372074-manifest.json",
+      "sha256": "7a488e0c35a2f799fcabe9d4f36081b7331d4417fe2bfe81fe7f6430d66d6fab",
+      "bundlePath": "macos-run-37881372074.zip",
+      "bundleSha256": "6197a1948f11ed25884fb1ca7d757134c391a9327c454e962ad8d5568054434e",
+      "assessment": "Raw baselineb46/fix06b records preserve original parser failure. Finald885 parser validated by local replay, never relabeled as macOS executed."
+    },
+    {
+      "path": "original-pre-dispatch-result.json",
+      "sha256": "76b01d9c239c87eaef594ddd98611a93093ba70ac2616ee831c01072bfc00950",
+      "assessment": "Historical native-task safety checkpoint at06b; no prior published PR49 verdict to supersede."
+    }
+  ],
+  "limitations": [
+    "One actual macOS diagnostic remains failed; no second dispatch performed or needed to establish the observed product fix and independently replayed parser correction.",
+    "Actual macOS26.6.2/image20260907.0351.1, Xcode26.4.1, Ruby3.3.12, CocoaPods1.16.2, Node24.19.0. No native compile/archive, signing, EAS build, release retry, store submission or deployment claim.",
+    "Hosted logs show Contents:read and Metadata:read, transient built-in checkout read token; no claim every platform token was absent.",
+    "Independent local32 tests exclude the two generated-config tests needing expo-build-properties missing from old isolated node_modules. Their current-head execution is verified in successful CI; original generated evidence independently verified.",
+    "QA first verification script used nonexistent release.yml path, corrected to observed cut-release.yml before API artifact retrieval; local replay initially hit sandbox git subprocess EPERM, then narrowly approved local execution succeeded. No automatic review denial or weakened ACL.",
+    "No product/body/Project/label/draft/merge mutation. Native-device checks deferred; optional existing ignored dist-qa-ios remains untouched."
+  ],
+  "evidence": [
+    "verification.json",
+    "replay.mjs",
+    "replay-result.json",
+    "focused-tests.log",
+    "identities.json",
+    "actual-artifact.json",
+    "macos-run-37881372074-manifest.json",
+    "mac-run.json",
+    "mac-jobs.json",
+    "mac-113661590506.log",
+    "ci-run.json",
+    "ci-jobs.json",
+    "ci-113662665591.log",
+    "ci-tree.json",
+    "native.json",
+    "prepublish.json",
+    "original-pre-dispatch-result.json",
+    "original-verification.json"
+  ],
+  "nextAction": "Coordinator route C1 to existing owner and reconcile E1. Reassess affected final-body/review gates without rerunning unaffected code or dispatching another macOS workflow. Coordinator separately saves exact API-readback comment receipt; no readiness until all gates and fresh bindings pass."
+}

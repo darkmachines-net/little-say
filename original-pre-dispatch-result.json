@@ -1,0 +1,200 @@
+{
+  "assessment": "Pre-dispatch safety/code review: bounded diagnostic matches approved scope; not a final readiness verdict or dispatch permission",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/49",
+  "issue": 48,
+  "host": "MCHARTIER_ZBOOK",
+  "hostVerifiedAtUtc": "2026-10-09T03:44:31Z",
+  "reviewerTask": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "workflowPin": "f0919b184b6344d6279178b2388190936ca432a9",
+  "reviewOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "acknowledgment": "Read supplied full pinned roles/standards/amendments and actual repository AGENTS; pins unchanged. Sole independent QA lane. No macOS dispatch, provider call, source/readiness/Project/issue mutation.",
+  "checkedAtUtc": "2026-10-09T03:49:12.354723+00:00",
+  "headSha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+  "actualTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "headParents": [
+    "b7d26c6e302554d33a03553c5c48b5acf392886e"
+  ],
+  "targetParents": [
+    "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+  ],
+  "unmergedParents": [],
+  "prBodySha256": "413712bd8fcc8d3212a5fda53ba1421ce65b8ae29ab38e052df80fb4b4bb6fe9",
+  "originalReviewedHead": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+  "sourceDigests": {
+    ".github/workflows/cut-release.yml": "3221f65ccda292482d5aef8846fb156e2e9ae5bd871671f8c7939a84754ce264",
+    "apps/mobile/app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+    "apps/mobile/package.json": "5fdf62db3d08c4d2686b6b8a2ecbb488b19df0697050ff144dba63e0fe5067b7",
+    "docs/releases.md": "5faab6855426deb6e888eaf9fc3c9aecb940ec90ed0b44ae938798203ab35472",
+    "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+    "scripts/release/ios-pods-check.mjs": "c87a22d8ca3d261b9c07ee4a83eb7af120e7b481de4ac5fef912fcaee1a13242",
+    "scripts/release/ios-pods-check.test.ts": "b517489f4fd231cbda715601f136f90eee21a9cad86961eb327ebb76f474e4b4",
+    "scripts/release/ios-pods.test.ts": "5140f763489230b378d756b7710b44f3a8264ca32cb86aa1f049af5f7e879e5c",
+    "scripts/release/validation.test.ts": "88a8e9610d91891ad8c89425ffcc93145b7a64232e478444633a22b8feab0102"
+  },
+  "newTestSha256": "480bb09567f13f1db40b339b2984b6d2f63696012c6ce8bb6eac7a85b3898a1a",
+  "scope": {
+    "commits": [
+      {
+        "sha": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+        "parents": [
+          "b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+        ],
+        "subject": "Fix iOS AppCheck pod headers and add isolated manual pod validation"
+      },
+      {
+        "sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+        "parents": [
+          "b7d26c6e302554d33a03553c5c48b5acf392886e"
+        ],
+        "subject": "Keep release input regression aligned with manual pod diagnostics"
+      }
+    ],
+    "files": [
+      {
+        "path": ".github/workflows/cut-release.yml",
+        "additions": 82,
+        "deletions": 8
+      },
+      {
+        "path": "apps/mobile/app.config.js",
+        "additions": 9,
+        "deletions": 1
+      },
+      {
+        "path": "apps/mobile/package.json",
+        "additions": 1,
+        "deletions": 0
+      },
+      {
+        "path": "docs/releases.md",
+        "additions": 4,
+        "deletions": 0
+      },
+      {
+        "path": "package-lock.json",
+        "additions": 15,
+        "deletions": 0
+      },
+      {
+        "path": "scripts/release/ios-pods-check.mjs",
+        "additions": 71,
+        "deletions": 0
+      },
+      {
+        "path": "scripts/release/ios-pods-check.test.ts",
+        "additions": 68,
+        "deletions": 0
+      },
+      {
+        "path": "scripts/release/ios-pods.test.ts",
+        "additions": 60,
+        "deletions": 0
+      },
+      {
+        "path": "scripts/release/release.test.ts",
+        "additions": 4,
+        "deletions": 1
+      },
+      {
+        "path": "scripts/release/validation.test.ts",
+        "additions": 31,
+        "deletions": 3
+      }
+    ],
+    "additions": 345,
+    "deletions": 13,
+    "assessment": "Complete current published range checked. Original9files remain byte-identical; only extra change is maintained release default-input regression +4/-1. No product evidence churn or unrelated outcome."
+  },
+  "proposedDispatchBinding": {
+    "workflow": ".github/workflows/cut-release.yml",
+    "ref": "fix/ios-appcheck-modular-headers",
+    "inputs": {
+      "validation_only": true,
+      "ios_pods_only": true,
+      "ios_pods_head": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "ios_pods_baseline": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "build_mode": "auto",
+      "bump": "patch",
+      "profile": "internal",
+      "dry_run": true
+    },
+    "requiredRecheck": "Root must re-read branch head/workflow/script/body/full feedback before separately authorizing dispatch. Originalb7d head input will fail guard on current06b branch; never use old receipt to certify a different source."
+  },
+  "safetyFindings": [],
+  "assessmentDetails": {
+    "jobGraph": "Manual workflow_dispatch only; ios-pods has no needs. Proposedflags run only ios-pods. validate excludes ios_pods_only; all6releasejobs require bothflagsfalse. Normalmasterguard preserved. No new automaticheavyCI job. Concurrency is branch validation group, cancel-in-progressfalse, timeout50minutes.",
+    "permissions": "Global/job contents:read, no environment or secrets expressions in ios-pods, no GH_TOKEN/EXPO_TOKEN job/global injection. Checkout has builtin transient readtoken, persist-credentials:false for both exact-SHA checkouts; no claim all platformtokens absent. No releasepermission, candidate, sign/archive/EAS/provider/submission/deploycommands reachable.",
+    "sourceTrust": "Beforecheckout full40lowerhex SHAs, expectedhead==GITHUB_SHA, baseline!=head and validation_onlytrue required. Script checks exact clean gitHEAD percheckout and absent generatedios. Fixedscript used for bothruns. Baseline is independently verified reviewedhead ancestor and exacthumanfailedsource; arbitraryotherbaseline not covered by this assessment.",
+    "commands": "Toolversion commands; npmci --ignore-scripts --no-audit --no-fund; localExpo prebuild --platformios --no-install with dotenvdisabled/GoogleOAuthschemecleared; pod _1.16.2_ install only; xcodebuild -version only. Publicdependency/tool fetching required, not a signedappbuild or serviceprovider operation.",
+    "exitConditions": "Baseline accepted only nonzero podinstall with exactSwiftstaticintegration diagnostic and AppCheckCore/GoogleUtilities/RecaptchaInterop plus all4expectedpodversions. Unexpectedbaselinepass, unrelatedfailure, prebuildfailure and podversiondrift fail. Fixedpodinstall mustexit0. Baselinecontinue-on-error preservesfixedcomparison but finaljobstep requires bothoriginalstepoutcomes success; cannot convert baselinefailure classification/testfailure to jobpass. Cancellation remains cancellation.",
+    "artifactExposure": "Upload only explicit evidence directory with source hashes/version logs/npm/prebuild/pod logs/Podfile/properties/lock/appconfig. No environment dump, credentialfiles, entirecheckout/Pods/cache orsigningarchive. Publishedsources/lock contain public registryURLs and synthetic/public config, no newsecretinput. 30dayretention must be preservedbeforeexpiry. Realfuturelogs still require readback; no assertion futurecontent alreadyverified.",
+    "fix": "Unconfigured path adds only GoogleUtilities/RecaptchaInterop modular_headers via ExpoSDK57 buildproperties57.0.22. Configured path still uses Nitro plugin and its3poddeclarations once each. No globaluse_modular_headers, useFrameworks or auth/account runtimechange. Lockdiff onlyappdependency andsinglepackage entry. All44Androidgeneratedfiles identical; all120manifestartifactsverified.",
+    "tools": "Officialmacos26 image20260824.0517.1 lists Xcode26.4.1 exactpath andNode24.19.0. Pinnedrubyactionversioninventory contains3.3.12; Nodeofficialmanifestincludesdarwinarm64/x64. CocoaPods official1.16.2 tag98b5ac57990114fba4d62ad2105a501e0d1e21bf verified. RunnerdefaultRuby3.4.10/CocoaPods1.17.0 are overridden byexplicitsetup/install/versionselector. Actualscheduledrunner/effectiveversions not observed; futurelogs must establish them."
+  },
+  "tests": {
+    "initial": "13diagnostic classification/workflowisolation passed onb7d",
+    "current": "31focusedrelease/classification/isolation tests passed on06b, updated-tests-correct-cwd.log",
+    "configurationEvidence": "BothactualExpo filebackedmodpaths, baselinefailingregression/fixedpassingregression and44Androidbyteidentical outputs read and verified; not macOSpodexecution",
+    "invocationFailure": "Firstupdatedtestinvocationusedparentcwdwith--root; diagnostic test resolve() failedENOENT,24othertestspassed. Correctrepositorycwd invocation31passed. Bothlogs retained; no denial/no productfailure inferred."
+  },
+  "ci": {
+    "originalRun": 37880398802,
+    "originalResult": "failure",
+    "finding": "scripts/release/release.test.ts:112 expectedold5inputdefaults, received3newdiagnosticinputs.334otherspassed. Ownerfixedonlythisassertionin06b; independently31focusedpass.",
+    "currentChecks": [
+      {
+        "name": "check",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/MChartier/little-say/actions/runs/37880833980/job/113659902185"
+      }
+    ],
+    "boundary": "No finalCIpass inferred; currentCI completion, realmacOSresults and finalbody assessment remain finalreadinessgates."
+  },
+  "feedback": {
+    "fullCurrentRead": true,
+    "comments": [
+      6073856737
+    ],
+    "reviews": 0,
+    "inline": 0,
+    "issueComments": 0,
+    "disposition": "Onlycurrentcomment6073856737 reportsCIcorrection; independentlydiffverified. No unresolved human/code requests visible. Nativeissue48closingassociation verified."
+  },
+  "retainedOriginals": {
+    "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+    "manifestSha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428",
+    "bundleSha256": "50a6d95e880e18b94af974af1358599a33aff3a6c349864a6428aba1d64d4b26",
+    "verifiedManifestArtifacts": 120,
+    "androidFilesByteIdentical": 44,
+    "configuredNitroPodfileByteIdentical": true,
+    "sourceBindingsMatch": true
+  },
+  "toolSourceIdentities": [
+    {
+      "repo": "actions/runner-images",
+      "path": "images/macos/macos-26-Readme.md",
+      "ref": "main",
+      "blobSha": "46488458459c316ca463633b5d3e2c17fc50e5d3",
+      "sha256": "6935a8b7178443a5ee9481899da49e5afa827df151690eb22c8294bd61cc914e"
+    },
+    {
+      "repo": "ruby/setup-ruby",
+      "path": "ruby-builder-versions.json",
+      "ref": "14594264cd68ce8a2345dd349bc3d138a4ef85c8",
+      "blobSha": "f60fe230eb52781de425b3e05db5cfe1c992ca16",
+      "sha256": "7feddd3f83ff5ae10354b67ca837a615e4018a8b02b68b2f51edc5a4868f4db4"
+    },
+    {
+      "repo": "actions/node-versions",
+      "path": "versions-manifest.json",
+      "ref": "main",
+      "blobSha": "4937a84087f420a97d1fe27b23047e23289b26a3",
+      "sha256": "e7891ba3c6fc86ffa8e49a7ee27d7b93bbef7b76f6f8c07a5e90b8bd48f4b4fa"
+    }
+  ],
+  "nextAction": "Return exactboundpre-dispatchassessment to root. Rootseparatelyowns approval and anyone-offdispatch; no automaticretry. Recheckanynewhead/workflow/script/bodychange. Finalreadinessrequires actualspecificbaselinefailure, passingfixedrealpodinstall, logs/tool/depidentities andfinalCI/body/fullfeedback review.",
+  "checkpoint": "Complete and idle; no hosteddiagnostic, release or coordinator mutation performed."
+}

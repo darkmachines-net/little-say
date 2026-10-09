@@ -1,0 +1,329 @@
+{
+  "merge": {
+    "sha": "2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+    "node_id": "C_kwDOU65OydoAKDJlYjQ5OWY2M2YwY2ExMWRiNGY3YTk5ZWJmZGI0ZDQzNDIxYzY0MDc",
+    "commit": {
+      "author": {
+        "name": "Matthew Chartier",
+        "email": "MChartier@gmail.com",
+        "date": "2026-10-09T03:58:32Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-09T03:58:32Z"
+      },
+      "message": "Merge d88515b08e012acceadeeb9497f062d1964685f8 into b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "tree": {
+        "sha": "5151e5a672cfccd73c6e4ebb5b57f1d337ea04a8",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/5151e5a672cfccd73c6e4ebb5b57f1d337ea04a8"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyGZoCRC1aQ7uu5UhlAAAwEAQAELm24fwbrR5MmgIJL5FEMbA\nmGV6u4gkL7KeQ5e3NC4B7RQ5p8/vc7oTcE/Dii15eyR47XLn3EjqGz0kKUAc5ems\n1viZ04pgTnrviWS2RNc0/n0jT8PmtHuGcuWN9dZf1C6tU9FFuz3a2tPLYg0QQ5ka\nZCKFdPtVZG3QFuGCKoflH5ujCM9Q68PKPymY0Kmbzv4fMjFYdjnDhVCEJjh09asS\nPSJPwTOUWdqipaDAQMJlk+meNLaEpx+/9SMkTs2Jqii6Uqqvwx28HXscB5h7tVCJ\ngpWbMDa07hZxr4qkgiDQ219pbLS7GXUy+p4MB3/YC7KFwAWMUOQHfG87KFjDa1Wb\n6gGVq1/5AaZsjf/pcZAiB5nT+CuraCQ+y7SC8/3wg9+YidLXA2QU7xrK25BS4yu6\nJPEm9ssKK+hDUsuZywDIW6sdIBChJ54zj2/8wiIEOJPKu0r7WLYPO95mFMDGyOkw\nciD3zyOmhpEDH1W2mvDI9JopIrFx9AvJte8nyhThtl5rakqQwrVD79rXM4L5SP9U\nwI90oqSqV4VMWZOAzUyYTjRBJ7Ut5tRq8UF7On743JOU24Du+7p5LZ90xBEve+v5\nVU53+xSwzJYreBtuLjO2AUvrRe2lYk7C3kgmU32ZKSjcZs6XHYAn1a50bMkY7asW\nexkyI1Jn9Mss/gJKGjJ8\n=riK1\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 5151e5a672cfccd73c6e4ebb5b57f1d337ea04a8\nparent b46e9e83ffacb2e3846486fb7a64a57d1203f372\nparent d88515b08e012acceadeeb9497f062d1964685f8\nauthor Matthew Chartier <MChartier@gmail.com> 1791518312 +0000\ncommitter GitHub <noreply@github.com> 1791518312 +0000\n\nMerge d88515b08e012acceadeeb9497f062d1964685f8 into b46e9e83ffacb2e3846486fb7a64a57d1203f372\n",
+        "verified_at": "2026-10-09T03:58:33Z"
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+    "html_url": "https://github.com/MChartier/little-say/commit/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/comments",
+    "author": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "html_url": "https://github.com/MChartier/little-say/commit/b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+      },
+      {
+        "sha": "d88515b08e012acceadeeb9497f062d1964685f8",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/d88515b08e012acceadeeb9497f062d1964685f8",
+        "html_url": "https://github.com/MChartier/little-say/commit/d88515b08e012acceadeeb9497f062d1964685f8"
+      }
+    ],
+    "stats": {
+      "total": 379,
+      "additions": 366,
+      "deletions": 13
+    },
+    "files": [
+      {
+        "sha": "6e202d6742aaf7b25bf16ef5d4d2f78bcd174715",
+        "filename": ".github/workflows/cut-release.yml",
+        "status": "modified",
+        "additions": 82,
+        "deletions": 8,
+        "changes": 90,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/.github%2Fworkflows%2Fcut-release.yml",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/.github%2Fworkflows%2Fcut-release.yml",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/.github%2Fworkflows%2Fcut-release.yml?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -7,6 +7,16 @@ on:\n         description: Run source checks with disposable services only (no release operations)\n         type: boolean\n         default: false\n+      ios_pods_only:\n+        description: Only compare iOS pod installation (also requires validation_only)\n+        type: boolean\n+        default: false\n+      ios_pods_head:\n+        description: Reviewed full source SHA required for iOS pod validation\n+        type: string\n+      ios_pods_baseline:\n+        description: Full baseline SHA required for iOS pod validation\n+        type: string\n       build_mode:\n         description: Detect changed artifacts or force a fresh complete release\n         type: choice\n@@ -32,7 +42,7 @@ on:\n permissions:\n   contents: read\n concurrency:\n-  group: ${{ inputs.validation_only && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}\n+  group: ${{ (inputs.validation_only || inputs.ios_pods_only) && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}\n   cancel-in-progress: false\n env:\n   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}\n@@ -45,8 +55,72 @@ env:\n   TEST_PGUSER: little_say_test\n   TEST_PGPASSWORD: little_say_test\n jobs:\n+  ios-pods:\n+    if: inputs.ios_pods_only\n+    runs-on: macos-26\n+    timeout-minutes: 50\n+    permissions:\n+      contents: read\n+    env:\n+      EXPECTED_HEAD: ${{ inputs.ios_pods_head }}\n+      BASELINE_SHA: ${{ inputs.ios_pods_baseline }}\n+      VALIDATION_ONLY: ${{ inputs.validation_only }}\n+      DEVELOPER_DIR: /Applications/Xcode_26.4.1.app/Contents/Developer\n+      LITTLE_SAY_GOOGLE_IOS_URL_SCHEME: ''\n+      EXPO_NO_TELEMETRY: '1'\n+      COCOAPODS_DISABLE_STATS: 'true'\n+    steps:\n+      - name: Require reviewed immutable sources and validation mode\n+        shell: bash\n+        run: |\n+          set -euo pipefail\n+          test \"$VALIDATION_ONLY\" = true\n+          [[ \"$EXPECTED_HEAD\" =~ ^[a-f0-9]{40}$ ]]\n+          [[ \"$BASELINE_SHA\" =~ ^[a-f0-9]{40}$ ]]\n+          test \"$EXPECTED_HEAD\" = \"$GITHUB_SHA\"\n+          test \"$BASELINE_SHA\" != \"$EXPECTED_HEAD\"\n+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n+        with:\n+          ref: ${{ github.sha }}\n+          path: fix\n+          persist-credentials: false\n+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n+        with:\n+          ref: ${{ inputs.ios_pods_baseline }}\n+          path: baseline\n+          persist-credentials: false\n+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020\n+        with:\n+          node-version: '24.19.0'\n+      - uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8\n+        with:\n+          ruby-version: '3.3.12'\n+      - name: Install the diagnostic CocoaPods version\n+        run: gem install cocoapods --version 1.16.2 --no-document\n+      - name: Reproduce baseline without Google OAuth configuration\n+        id: baseline\n+        continue-on-error: true\n+        run: node fix/scripts/release/ios-pods-check.mjs baseline \"$BASELINE_SHA\" baseline evidence/baseline\n+      - name: Validate fix without Google OAuth configuration\n+        id: fix\n+        if: ${{ !cancelled() && steps.baseline.outcome != 'skipped' }}\n+        run: node fix/scripts/release/ios-pods-check.mjs fix \"$EXPECTED_HEAD\" fix evidence/fix\n+      - name: Retain exact inputs, generated pod files and diagnostics\n+        if: ${{ always() }}\n+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n+        with:\n+          name: ios-pods-${{ github.sha }}-${{ github.run_attempt }}\n+          path: evidence/\n+          if-no-files-found: warn\n+          retention-days: 30\n+      - name: Require both the diagnosed baseline and passing fix\n+        if: ${{ !cancelled() && always() }}\n+        env:\n+          BASELINE_OUTCOME: ${{ steps.baseline.outcome }}\n+          FIX_OUTCOME: ${{ steps.fix.outcome }}\n+        run: test \"$BASELINE_OUTCOME\" = success && test \"$FIX_OUTCOME\" = success\n   validate:\n-    if: inputs.validation_only\n+    if: inputs.validation_only && !inputs.ios_pods_only\n     runs-on: ubuntu-latest\n     timeout-minutes: 30\n     permissions:\n@@ -75,7 +149,7 @@ jobs:\n       - name: Validate exact source with disposable PostgreSQL and demo Auth\n         run: npm run release:validate\n   prepare:\n-    if: ${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 60\n     env:\n@@ -129,7 +203,7 @@ jobs:\n     env:\n       GH_TOKEN: ${{ github.token }}\n     needs: prepare\n-    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -156,7 +230,7 @@ jobs:\n       - run: npm run release:cut -- server\n   native:\n     needs: prepare\n-    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -183,7 +257,7 @@ jobs:\n       - run: npm run release:cut -- native\n   submit:\n     needs: [prepare, server, native]\n-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -210,7 +284,7 @@ jobs:\n       - run: npm run release:cut -- submit\n   ota:\n     needs: [prepare, server, native, submit]\n-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     env:\n@@ -232,7 +306,7 @@ jobs:\n       - run: npm run release:cut -- ota\n   finalize:\n     needs: [prepare, server, native, submit, ota]\n-    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}\n+    if: ${{ !inputs.validation_only && !inputs.ios_pods_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     env:"
+      },
+      {
+        "sha": "1832ab76bc80a978512084f3e87b4a38ef8698cb",
+        "filename": "apps/mobile/app.config.js",
+        "status": "modified",
+        "additions": 9,
+        "deletions": 1,
+        "changes": 10,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/apps%2Fmobile%2Fapp.config.js",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/apps%2Fmobile%2Fapp.config.js",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/apps%2Fmobile%2Fapp.config.js?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -15,6 +15,14 @@ module.exports = ({ config }) => {\n   const channel = process.env.LITTLE_SAY_CHANNEL || 'internal';\n   if (!['internal', 'production'].includes(channel)) throw new Error('Unknown update channel.');\n   const projectId = release.expoProjectId;\n+  // The native Google SDK autolinks even without an OAuth scheme. In that case the Nitro\n+  // plugin is absent, so supply only the module maps required by its Swift AppCheck dependency.\n+  const googleIosPlugin = process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME\n+    ? ['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]\n+    : ['expo-build-properties', { ios: { extraPods: [\n+      { name: 'GoogleUtilities', modular_headers: true },\n+      { name: 'RecaptchaInterop', modular_headers: true },\n+    ] } }];\n   return {\n     ...config,\n     version: release.version,\n@@ -27,7 +35,7 @@ module.exports = ({ config }) => {\n     },\n     ios: { ...config.ios, buildNumber: release.iosBuildNumber, usesAppleSignIn: true, entitlements: { ...config.ios?.entitlements, 'com.apple.developer.applesignin': ['Default'] } },\n     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },\n-    plugins: [...(config.plugins || []), 'expo-secure-store', ...(process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME ? [['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]] : []), ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],\n+    plugins: [...(config.plugins || []), 'expo-secure-store', googleIosPlugin, ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],\n     runtimeVersion: { policy: 'appVersion' },\n     updates: projectId ? {\n       url: `https://u.expo.dev/${projectId}`,"
+      },
+      {
+        "sha": "23328ac9bc08cc0732245ff3ff5540efb2cfde16",
+        "filename": "apps/mobile/package.json",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 0,
+        "changes": 1,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/apps%2Fmobile%2Fpackage.json",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/apps%2Fmobile%2Fpackage.json",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/apps%2Fmobile%2Fpackage.json?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -17,6 +17,7 @@\n     \"@react-native-community/slider\": \"5.2.0\",\n     \"expo\": \"~57.0.26\",\n     \"expo-audio\": \"~57.0.5\",\n+    \"expo-build-properties\": \"~57.0.22\",\n     \"expo-constants\": \"~57.0.20\",\n     \"expo-crypto\": \"~57.0.3\",\n     \"expo-file-system\": \"~57.0.7\","
+      },
+      {
+        "sha": "fad014589508cf72694dd14ed212a9280d48fe5f",
+        "filename": "docs/releases.md",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 0,
+        "changes": 4,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/docs%2Freleases.md",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/docs%2Freleases.md",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/docs%2Freleases.md?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -6,6 +6,10 @@ To validate a proposed change before merging, select its branch and enable **val\n \n The same source-only boundary can run locally as `npm run release:validate` after `npm ci`, with an isolated PostgreSQL test database and the explicit `TEST_PG*` settings described in [testing](testing.md). It requires no release command or production Firebase project. Existing PR CI coverage is unchanged; validation-only runs are manual.\n \n+For the iOS AppCheck module-map diagnostic, enable **both `validation_only` and `ios_pods_only`** on the reviewed branch. Supply its full reviewed SHA as `ios_pods_head` and the failing source SHA as `ios_pods_baseline`. A mismatched head or missing validation flag fails before checkout; either validation flag excludes every release job. Only the macOS pod job runs, using isolated credential-free checkouts, Node 24.19.0, Ruby 3.3.12, CocoaPods 1.16.2 and Xcode 26.4.1. It clears optional Google OAuth configuration and disables dotenv loading, then runs locked dependency installation, iOS prebuild and `pod install`. It does not compile, sign, submit or invoke EAS.\n+\n+The diagnostic requires the baseline's specific AppCheckCore module-map failure and a passing fix, at GoogleSignIn 10.0.0 / AppCheckCore 11.3.2 / GoogleUtilities 8.1.4 / RecaptchaInterop 101.0.0. Different failures or dependency drift fail visibly rather than certifying the comparison. The `ios-pods-<source>-<attempt>` artifact retains source/tool identities, hashed logs, generated pod configuration and the successful Podfile.lock for 30 days; preserve needed evidence separately before expiry. This manual check is not an automatic PR gate or signed-build validation.\n+\n | Input | Choices | Default |\n | --- | --- | --- |\n | Build mode | `auto`, `force_all` | `auto` |"
+      },
+      {
+        "sha": "fd08f5c191dedcd8709abe42eb9e6aa5c47277c7",
+        "filename": "package-lock.json",
+        "status": "modified",
+        "additions": 15,
+        "deletions": 0,
+        "changes": 15,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/package-lock.json",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/package-lock.json",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/package-lock.json?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -37,6 +37,7 @@\n         \"@react-native-community/slider\": \"5.2.0\",\n         \"expo\": \"~57.0.26\",\n         \"expo-audio\": \"~57.0.5\",\n+        \"expo-build-properties\": \"~57.0.22\",\n         \"expo-constants\": \"~57.0.20\",\n         \"expo-crypto\": \"~57.0.3\",\n         \"expo-file-system\": \"~57.0.7\",\n@@ -11656,6 +11657,20 @@\n         \"react-native\": \"*\"\n       }\n     },\n+    \"node_modules/expo-build-properties\": {\n+      \"version\": \"57.0.22\",\n+      \"resolved\": \"https://registry.npmjs.org/expo-build-properties/-/expo-build-properties-57.0.22.tgz\",\n+      \"integrity\": \"sha512-A5oRf2I02XDRu2NnqKo7Au5kUu244unvyoRMUsB+xvg/BOlsR+G/oyDFGkjbda1cJbeKm9eqposIXbA2ri5UrQ==\",\n+      \"license\": \"MIT\",\n+      \"dependencies\": {\n+        \"@expo/schema-utils\": \"^57.0.2\",\n+        \"resolve-from\": \"^5.0.0\",\n+        \"semver\": \"^7.6.0\"\n+      },\n+      \"peerDependencies\": {\n+        \"expo\": \"*\"\n+      }\n+    },\n     \"node_modules/expo-constants\": {\n       \"version\": \"57.0.20\",\n       \"resolved\": \"https://registry.npmjs.org/expo-constants/-/expo-constants-57.0.20.tgz\","
+      },
+      {
+        "sha": "d1212fb1765965fe857e4ca825f1c1e609e61784",
+        "filename": "scripts/release/ios-pods-check.mjs",
+        "status": "added",
+        "additions": 71,
+        "deletions": 0,
+        "changes": 71,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods-check.mjs",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods-check.mjs",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fios-pods-check.mjs?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -0,0 +1,71 @@\n+/** @file Runs unsigned, credential-free iOS prebuild/pod diagnostics on an exact disposable macOS checkout. */\n+import { spawnSync } from 'node:child_process';\n+import { closeSync, copyFileSync, existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from 'node:fs';\n+import { createHash } from 'node:crypto';\n+import { resolve, join } from 'node:path';\n+\n+const [checkout, expectedSha, outcome, output] = process.argv.slice(2);\n+if (process.platform !== 'darwin') throw new Error('This check requires macOS; it does not build or sign an app.');\n+if (!checkout || !output || !/^[a-f0-9]{40}$/.test(expectedSha ?? '') || !['baseline', 'fix'].includes(outcome)) {\n+  throw new Error('Usage: node ios-pods-check.mjs CHECKOUT FULL_SHA baseline|fix OUTPUT');\n+}\n+if (process.env.EXPO_TOKEN || process.env.GH_TOKEN || process.env.GITHUB_TOKEN) {\n+  throw new Error('Run this diagnostic without provider or repository tokens in the environment.');\n+}\n+const root = resolve(checkout), evidence = resolve(output), app = join(root, 'apps/mobile');\n+mkdirSync(evidence, { recursive: true });\n+const env = { ...process.env, LITTLE_SAY_GOOGLE_IOS_URL_SCHEME: '', EXPO_NO_DOTENV: '1', EXPO_NO_TELEMETRY: '1', CI: '1', COCOAPODS_DISABLE_STATS: 'true' };\n+const hashes = {};\n+const record = { source: expectedSha, outcome, checkedAt: new Date().toISOString(), tools: {}, commands: [], hashes, result: 'incomplete' };\n+const digest = file => createHash('sha256').update(readFileSync(file)).digest('hex');\n+function run(name, command, args, cwd = root, allowFailure = false) {\n+  const file = join(evidence, `${name}.log`), fd = openSync(file, 'w');\n+  let result;\n+  try { result = spawnSync(command, args, { cwd, env, stdio: ['ignore', fd, fd], timeout: 20 * 60 * 1000 }); }\n+  finally { closeSync(fd); }\n+  record.commands.push({ command, args, status: result.status, error: result.error?.message ?? null });\n+  hashes[`${name}.log`] = digest(file);\n+  if (result.error || (result.status !== 0 && !allowFailure)) throw new Error(`${name} failed; see retained log`);\n+  return { status: result.status, text: readFileSync(file, 'utf8') };\n+}\n+function retain(relative, name) {\n+  const file = join(root, relative);\n+  if (existsSync(file)) { copyFileSync(file, join(evidence, name)); hashes[name] = digest(file); }\n+}\n+try {\n+  const actual = run('source', 'git', ['rev-parse', 'HEAD']).text.trim();\n+  if (actual !== expectedSha || run('status', 'git', ['status', '--porcelain']).text.trim()) throw new Error('Expected exact clean source checkout.');\n+  if (existsSync(join(app, 'ios'))) throw new Error('Use a fresh checkout without generated iOS files.');\n+  for (const [name, command, args] of [\n+    ['node', 'node', ['--version']], ['npm', 'npm', ['--version']], ['ruby', 'ruby', ['--version']],\n+    ['cocoapods', 'pod', ['_1.16.2_', '--version']], ['xcode', 'xcodebuild', ['-version']], ['os', 'sw_vers', []],\n+  ]) record.tools[name] = run(name, command, args).text.trim();\n+  record.runnerImage = { os: process.env.ImageOS, version: process.env.ImageVersion };\n+  retain('package-lock.json', 'package-lock.json');\n+  retain('apps/mobile/app.config.js', 'app.config.js');\n+  hashes['diagnostic-script'] = digest(new URL(import.meta.url));\n+  run('npm-ci', 'npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund']);\n+  run('prebuild', 'node', [join(root, 'node_modules/expo/bin/cli'), 'prebuild', '--platform', 'ios', '--no-install'], app);\n+  retain('apps/mobile/ios/Podfile', 'Podfile');\n+  retain('apps/mobile/ios/Podfile.properties.json', 'Podfile.properties.json');\n+  const pods = run('pod-install', 'pod', ['_1.16.2_', 'install'], join(app, 'ios'), true);\n+  retain('apps/mobile/ios/Podfile.lock', 'Podfile.lock');\n+  const reproduced = pods.status !== 0 && /Swift pods cannot yet be integrated as static libraries/.test(pods.text)\n+    && ['AppCheckCore', 'GoogleUtilities', 'RecaptchaInterop'].every(name => pods.text.includes(name));\n+  record.result = pods.status === 0 ? 'pod-install-passed' : reproduced ? 'module-map-failure-reproduced' : 'other-pod-failure';\n+  // Do not mistake another failure, dependency drift, or an unexpectedly passing baseline for reproduction.\n+  const expectedPods = { GoogleSignIn: '10.0.0', AppCheckCore: '11.3.2', GoogleUtilities: '8.1.4', RecaptchaInterop: '101.0.0' };\n+  const lock = existsSync(join(evidence, 'Podfile.lock')) ? readFileSync(join(evidence, 'Podfile.lock'), 'utf8') : '';\n+  record.podVersions = Object.fromEntries(Object.entries(expectedPods).map(([name, version]) => [name, {\n+    expected: version, observed: (lock.match(new RegExp(`^  - ${name}(?:/[^ ]+)? \\\\(([^)]+)\\\\)`, 'm'))\n+      ?? pods.text.match(new RegExp(`Installing ${name} \\\\(([^)]+)\\\\)`)))?.[1] ?? null,\n+  }]));\n+  if (Object.values(record.podVersions).some(pod => pod.observed !== pod.expected)) throw new Error('Pod versions differ from the diagnosed failure; inspect evidence before interpreting the comparison.');\n+  if (outcome === 'baseline' ? !reproduced : pods.status !== 0) throw new Error(`Unexpected ${outcome} result: ${record.result}`);\n+} catch (error) {\n+  record.error = error.message;\n+  process.exitCode = 1;\n+} finally {\n+  writeFileSync(join(evidence, 'result.json'), JSON.stringify(record, null, 2) + '\\n');\n+  console.log(JSON.stringify({ source: expectedSha, outcome, result: record.result, error: record.error }));\n+}"
+      },
+      {
+        "sha": "6ea20e5552e904819a90ff538004e86d4bedeaf0",
+        "filename": "scripts/release/ios-pods-check.test.ts",
+        "status": "added",
+        "additions": 89,
+        "deletions": 0,
+        "changes": 89,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods-check.test.ts",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods-check.test.ts",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fios-pods-check.test.ts?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -0,0 +1,89 @@\n+/** @file Exercises the macOS diagnostic's failure classification and command boundary with fake subprocess results. */\n+import { expect, it } from 'vitest';\n+import { readFileSync } from 'node:fs';\n+import { resolve, join } from 'node:path';\n+import { runInNewContext } from 'node:vm';\n+import { createHash } from 'node:crypto';\n+\n+const sha = 'a'.repeat(40);\n+const installed = 'Installing GoogleSignIn (10.0.0)\\nInstalling AppCheckCore (11.3.2)\\nInstalling GoogleUtilities (8.1.4)\\nInstalling RecaptchaInterop (101.0.0)\\n';\n+const failure = installed + 'The following Swift pods cannot yet be integrated as static libraries: AppCheckCore depends on GoogleUtilities and RecaptchaInterop';\n+const source = readFileSync(resolve('scripts/release/ios-pods-check.mjs'), 'utf8')\n+  .replace(/^import .*;\\r?$/gm, '').replace('new URL(import.meta.url)', \"'diagnostic-script'\");\n+\n+function diagnostic(outcome: string, podStatus: number, podLog: string, prebuildStatus = 0, podLock = '') {\n+  const files = new Map<string, string>(), descriptors = new Map<number, string>(), commands: string[][] = [];\n+  const process = { platform: 'darwin', argv: ['node', 'check', 'checkout', sha, outcome, 'evidence'], env: {}, exitCode: 0 };\n+  runInNewContext(source, {\n+    process, resolve, join, createHash, console: { log() {} },\n+    mkdirSync() {}, closeSync() {},\n+    existsSync: (path: string) => files.has(path),\n+    openSync(path: string) { const fd = descriptors.size + 1; descriptors.set(fd, path); files.set(path, ''); return fd; },\n+    readFileSync: (path: string) => files.get(path) ?? 'fixture-source',\n+    writeFileSync: (path: string, value: string) => files.set(path, value),\n+    copyFileSync: (from: string, to: string) => files.set(to, files.get(from)!),\n+    spawnSync(command: string, args: string[], options: { stdio: unknown[]; env: Record<string, string> }) {\n+      commands.push([command, ...args]);\n+      expect(options.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME).toBe('');\n+      expect(options.env.EXPO_NO_DOTENV).toBe('1');\n+      let text = '', status = 0;\n+      if (command === 'git' && args[0] === 'rev-parse') text = sha;\n+      if (command === 'node' && args.includes('prebuild')) status = prebuildStatus;\n+      if (command === 'pod' && args.includes('install')) {\n+        status = podStatus; text = podLog;\n+        if (podLock) files.set(resolve('checkout/apps/mobile/ios/Podfile.lock'), podLock);\n+      }\n+      files.set(descriptors.get(options.stdio[1] as number)!, text);\n+      return { status };\n+    },\n+  });\n+  return { status: process.exitCode, result: JSON.parse(files.get(resolve('evidence/result.json'))!), commands };\n+}\n+\n+it('accepts only the diagnosed baseline failure and still records exact pod versions', () => {\n+  const result = diagnostic('baseline', 1, failure);\n+  expect(result.status).toBe(0);\n+  expect(result.result.result).toBe('module-map-failure-reproduced');\n+  expect(result.result.podVersions.AppCheckCore.observed).toBe('11.3.2');\n+});\n+\n+it.each([\n+  ['baseline', 0, installed], ['baseline', 1, installed + 'network failure'],\n+  ['baseline', 1, failure.replace('11.3.2', '11.4.0')], ['fix', 1, failure],\n+])('rejects unexpected %s pod status %s', (outcome, status, log) => {\n+  expect(diagnostic(String(outcome), Number(status), String(log)).status).toBe(1);\n+});\n+\n+it('accepts a passing fix without invoking any build, signing or provider command', () => {\n+  const result = diagnostic('fix', 0, installed);\n+  expect(result.status).toBe(0);\n+  expect(result.commands.filter(([command]) => command === 'pod')).toEqual([\n+    ['pod', '_1.16.2_', '--version'], ['pod', '_1.16.2_', 'install'],\n+  ]);\n+  expect(result.commands.find(command => command.includes('prebuild'))?.slice(-4)).toEqual(['prebuild', '--platform', 'ios', '--no-install']);\n+  expect(result.commands.find(([command]) => command === 'xcodebuild')).toEqual(['xcodebuild', '-version']);\n+});\n+\n+it('stops before CocoaPods when prebuild fails', () => {\n+  const result = diagnostic('fix', 0, installed, 1);\n+  expect(result.status).toBe(1);\n+  expect(result.commands.some(command => command.includes('install'))).toBe(false);\n+});\n+\n+it('reads resolved lockfile versions rather than earlier nested dependency constraints', () => {\n+  const lock = `PODS:\n+  - AppCheckCore (11.3.2):\n+    - GoogleUtilities/Environment (~> 8.0)\n+    - RecaptchaInterop (~> 101.0)\n+  - GoogleSignIn (10.0.0):\n+    - AppCheckCore (~> 11.0)\n+  - GoogleUtilities (8.1.4):\n+    - GoogleUtilities/Environment (= 8.1.4)\n+  - GoogleUtilities/Environment (8.1.4)\n+  - RecaptchaInterop (101.0.0)\n+`;\n+  const result = diagnostic('fix', 0, 'Pod installation complete!', 0, lock);\n+  expect(result.status).toBe(0);\n+  expect(result.result.podVersions.GoogleUtilities.observed).toBe('8.1.4');\n+  expect(result.result.podVersions.RecaptchaInterop.observed).toBe('101.0.0');\n+});"
+      },
+      {
+        "sha": "d51102550c77a9df4bed1ef7d1d930d61ee611c6",
+        "filename": "scripts/release/ios-pods.test.ts",
+        "status": "added",
+        "additions": 60,
+        "deletions": 0,
+        "changes": 60,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods.test.ts",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fios-pods.test.ts",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fios-pods.test.ts?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -0,0 +1,60 @@\n+/** @file Verifies generated iOS pod configuration with and without optional Google OAuth setup. */\n+\n+import { afterEach, expect, it, vi } from 'vitest';\n+import { createRequire } from 'node:module';\n+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';\n+import { tmpdir } from 'node:os';\n+import { resolve } from 'node:path';\n+import { getPrebuildConfigAsync } from '@expo/prebuild-config';\n+import { withDefaultBaseMods, evalModsAsync } from '@expo/config-plugins/build/plugins/mod-compiler';\n+\n+const require = createRequire(import.meta.url);\n+const tar = require('tar');\n+const { resolveExtraBuildDependenciesAsync } = require('expo-modules-autolinking/build/platforms/apple/apple');\n+const appRoot = resolve('apps/mobile');\n+const temporary: string[] = [];\n+afterEach(() => {\n+  vi.unstubAllEnvs();\n+  for (const dir of temporary.splice(0)) rmSync(dir, { recursive: true, force: true });\n+});\n+\n+async function generatePodConfiguration() {\n+  const dir = mkdtempSync(resolve(tmpdir(), 'little-say-ios-pods-'));\n+  temporary.push(dir);\n+  // Use the locked Expo SDK's real Podfile, not a hand-written approximation.\n+  tar.x({ file: resolve(require.resolve('expo/package.json'), '../template.tgz'), cwd: dir, sync: true }, ['package/ios/Podfile']);\n+  mkdirSync(resolve(dir, 'ios'));\n+  writeFileSync(resolve(dir, 'ios/Podfile'), readFileSync(resolve(dir, 'package/ios/Podfile')));\n+  const { exp } = await getPrebuildConfigAsync(appRoot, { platforms: ['ios'] });\n+  const config = withDefaultBaseMods(exp);\n+  // Evaluate the actual file-backed CocoaPods mods; Windows cannot run full iOS prebuild/pod install.\n+  config.mods = { ios: Object.fromEntries(Object.entries(config.mods!.ios!)\n+    .filter(([name]) => ['podfile', 'podfileProperties'].includes(name))) };\n+  await evalModsAsync(config, { projectRoot: dir, platforms: ['ios'] });\n+  return {\n+    podfile: readFileSync(resolve(dir, 'ios/Podfile'), 'utf8'),\n+    properties: JSON.parse(readFileSync(resolve(dir, 'ios/Podfile.properties.json'), 'utf8')),\n+    extraPods: await resolveExtraBuildDependenciesAsync(resolve(dir, 'ios')),\n+  };\n+}\n+\n+it.each(['', 'com.googleusercontent.apps.synthetic-test'])('generates targeted AppCheck module maps with scheme %j', async scheme => {\n+  vi.stubEnv('LITTLE_SAY_GOOGLE_IOS_URL_SCHEME', scheme);\n+  const { podfile, properties, extraPods } = await generatePodConfiguration();\n+  if (scheme) {\n+    // The existing Nitro plugin owns this path; do not duplicate its declarations.\n+    for (const name of ['AppCheckCore', 'GoogleUtilities', 'RecaptchaInterop']) {\n+      expect(podfile.split(`pod '${name}', :modular_headers => true`)).toHaveLength(2);\n+    }\n+    expect(properties['apple.extraPods']).toBeUndefined();\n+  } else {\n+    expect(extraPods ?? []).toEqual([\n+      { name: 'GoogleUtilities', modular_headers: true },\n+      { name: 'RecaptchaInterop', modular_headers: true },\n+    ]);\n+    expect(podfile).toContain('use_expo_modules!');\n+    expect(podfile).not.toContain(\"pod 'AppCheckCore'\");\n+  }\n+  expect(podfile).not.toMatch(/^\\s*use_modular_headers!/m);\n+  expect(properties['ios.useFrameworks']).toBeUndefined();\n+});"
+      },
+      {
+        "sha": "e720bb1f35789b939e258fe8f0b826784c1c2c4e",
+        "filename": "scripts/release/release.test.ts",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 1,
+        "changes": 5,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Frelease.test.ts",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Frelease.test.ts",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Frelease.test.ts?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -109,7 +109,10 @@ describe('publication boundary', () => {\n     const workflow = (name: string) => parse(readFileSync(resolve(root, '.github/workflows', name), 'utf8'));\n     const cut = workflow('cut-release.yml');\n     expect(Object.keys(cut.on)).toEqual(['workflow_dispatch']);\n-    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ validation_only: false, build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });\n+    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({\n+      validation_only: false, ios_pods_only: false, ios_pods_head: undefined, ios_pods_baseline: undefined,\n+      build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false,\n+    });\n     expect(cut.jobs.server.needs).toBe('prepare');\n     expect(cut.jobs.prepare.outputs.commit).toBe('${{ steps.cut.outputs.commit }}');\n     expect(cut.jobs.server.permissions).toEqual({ contents: 'write', packages: 'write' });"
+      },
+      {
+        "sha": "0aa49a14595f31f465dcc401854ab7c4d08bf9a0",
+        "filename": "scripts/release/validation.test.ts",
+        "status": "modified",
+        "additions": 31,
+        "deletions": 3,
+        "changes": 34,
+        "blob_url": "https://github.com/MChartier/little-say/blob/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fvalidation.test.ts",
+        "raw_url": "https://github.com/MChartier/little-say/raw/2eb499f63f0ca11db4f7a99ebfdb4d43421c6407/scripts%2Frelease%2Fvalidation.test.ts",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fvalidation.test.ts?ref=2eb499f63f0ca11db4f7a99ebfdb4d43421c6407",
+        "patch": "@@ -66,17 +66,45 @@ it('isolates manual branch validation from every release job and credential', ()\n   expect(workflow.env.GH_TOKEN).toBeUndefined();\n   expect(JSON.stringify(workflow.env)).not.toMatch(/secrets\\.|github\\.token/);\n   const job = workflow.jobs.validate;\n-  expect(job.if).toBe('inputs.validation_only');\n+  expect(job.if).toBe('inputs.validation_only && !inputs.ios_pods_only');\n   expect(job.permissions).toEqual({ contents: 'read' });\n   expect(job.needs).toBeUndefined();\n   expect(job.steps.map((step: any) => step.run).filter(Boolean)).toEqual(['npm ci', 'npm run release:validate']);\n   expect(job.steps[0].with).toEqual({ ref: '${{ github.sha }}', 'persist-credentials': false });\n   expect(JSON.stringify(job)).not.toMatch(/secrets\\.|github\\.token|release:cut|docker\\/login|eas-cli/);\n   expect(job.services.postgres.image).toBe('postgres:17-bookworm');\n-  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);\n+  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'ios-pods', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);\n   for (const name of ['prepare', 'server', 'native', 'submit', 'ota', 'finalize']) {\n-    expect(workflow.jobs[name].if).toMatch(/^\\$\\{\\{ !inputs\\.validation_only && /);\n+    expect(workflow.jobs[name].if).toMatch(/^\\$\\{\\{ !inputs\\.validation_only && !inputs\\.ios_pods_only && /);\n     expect(workflow.jobs[name].env.GH_TOKEN).toBe('${{ github.token }}');\n   }\n   expect(workflow.jobs.prepare.if).toContain(\"github.ref == format('refs/heads/{0}', github.event.repository.default_branch)\");\n });\n+\n+it('bounds manual CocoaPods validation to reviewed source without release access', () => {\n+  const workflow = parse(readFileSync(join(root, '.github/workflows/cut-release.yml'), 'utf8'));\n+  expect(workflow.on.workflow_dispatch.inputs.ios_pods_only).toEqual({\n+    description: 'Only compare iOS pod installation (also requires validation_only)', type: 'boolean', default: false,\n+  });\n+  const job = workflow.jobs['ios-pods'];\n+  expect(job.if).toBe('inputs.ios_pods_only');\n+  expect(job.permissions).toEqual({ contents: 'read' });\n+  expect(job.needs).toBeUndefined();\n+  expect(job.environment).toBeUndefined();\n+  expect(job['runs-on']).toBe('macos-26');\n+  expect(job['timeout-minutes']).toBe(50);\n+  expect(JSON.stringify(job)).not.toMatch(/secrets\\.|github\\.token|release:cut|docker\\/login|eas-cli/);\n+  expect(job.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME).toBe('');\n+  expect(job.steps[0].run).toContain('test \"$VALIDATION_ONLY\" = true');\n+  expect(job.steps[0].run).toContain('test \"$EXPECTED_HEAD\" = \"$GITHUB_SHA\"');\n+  const checkouts = job.steps.filter((step: any) => step.uses?.startsWith('actions/checkout@'));\n+  expect(checkouts.map((step: any) => step.with)).toEqual([\n+    { ref: '${{ github.sha }}', path: 'fix', 'persist-credentials': false },\n+    { ref: '${{ inputs.ios_pods_baseline }}', path: 'baseline', 'persist-credentials': false },\n+  ]);\n+  const baseline = job.steps.find((step: any) => step.id === 'baseline');\n+  const fix = job.steps.find((step: any) => step.id === 'fix');\n+  expect(baseline['continue-on-error']).toBe(true);\n+  expect(fix.run).toBe('node fix/scripts/release/ios-pods-check.mjs fix \"$EXPECTED_HEAD\" fix evidence/fix');\n+  expect(job.steps.at(-1).run).toBe('test \"$BASELINE_OUTCOME\" = success && test \"$FIX_OUTCOME\" = success');\n+});"
+      }
+    ]
+  },
+  "head": {
+    "sha": "d88515b08e012acceadeeb9497f062d1964685f8",
+    "node_id": "C_kwDOU65OydoAKGQ4ODUxNWIwOGUwMTJhY2NlYWRlZWI5NDk3ZjA2MmQxOTY0Njg1Zjg",
+    "commit": {
+      "author": {
+        "name": "Matthew Chartier",
+        "email": "MChartier@gmail.com",
+        "date": "2026-10-09T03:58:29Z"
+      },
+      "committer": {
+        "name": "Matthew Chartier",
+        "email": "MChartier@gmail.com",
+        "date": "2026-10-09T03:58:29Z"
+      },
+      "message": "Read resolved pod versions instead of nested dependency constraints",
+      "tree": {
+        "sha": "5151e5a672cfccd73c6e4ebb5b57f1d337ea04a8",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/5151e5a672cfccd73c6e4ebb5b57f1d337ea04a8"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/d88515b08e012acceadeeb9497f062d1964685f8",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/d88515b08e012acceadeeb9497f062d1964685f8",
+    "html_url": "https://github.com/MChartier/little-say/commit/d88515b08e012acceadeeb9497f062d1964685f8",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/d88515b08e012acceadeeb9497f062d1964685f8/comments",
+    "author": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+        "html_url": "https://github.com/MChartier/little-say/commit/06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+      }
+    ],
+    "stats": {
+      "total": 27,
+      "additions": 24,
+      "deletions": 3
+    },
+    "files": [
+      {
+        "sha": "d1212fb1765965fe857e4ca825f1c1e609e61784",
+        "filename": "scripts/release/ios-pods-check.mjs",
+        "status": "modified",
+        "additions": 1,
+        "deletions": 1,
+        "changes": 2,
+        "blob_url": "https://github.com/MChartier/little-say/blob/d88515b08e012acceadeeb9497f062d1964685f8/scripts%2Frelease%2Fios-pods-check.mjs",
+        "raw_url": "https://github.com/MChartier/little-say/raw/d88515b08e012acceadeeb9497f062d1964685f8/scripts%2Frelease%2Fios-pods-check.mjs",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fios-pods-check.mjs?ref=d88515b08e012acceadeeb9497f062d1964685f8",
+        "patch": "@@ -57,7 +57,7 @@ try {\n   const expectedPods = { GoogleSignIn: '10.0.0', AppCheckCore: '11.3.2', GoogleUtilities: '8.1.4', RecaptchaInterop: '101.0.0' };\n   const lock = existsSync(join(evidence, 'Podfile.lock')) ? readFileSync(join(evidence, 'Podfile.lock'), 'utf8') : '';\n   record.podVersions = Object.fromEntries(Object.entries(expectedPods).map(([name, version]) => [name, {\n-    expected: version, observed: (lock.match(new RegExp(`  - ${name}(?:/[^ ]+)? \\\\(([^)]+)\\\\)`))\n+    expected: version, observed: (lock.match(new RegExp(`^  - ${name}(?:/[^ ]+)? \\\\(([^)]+)\\\\)`, 'm'))\n       ?? pods.text.match(new RegExp(`Installing ${name} \\\\(([^)]+)\\\\)`)))?.[1] ?? null,\n   }]));\n   if (Object.values(record.podVersions).some(pod => pod.observed !== pod.expected)) throw new Error('Pod versions differ from the diagnosed failure; inspect evidence before interpreting the comparison.');"
+      },
+      {
+        "sha": "6ea20e5552e904819a90ff538004e86d4bedeaf0",
+        "filename": "scripts/release/ios-pods-check.test.ts",
+        "status": "modified",
+        "additions": 23,
+        "deletions": 2,
+        "changes": 25,
+        "blob_url": "https://github.com/MChartier/little-say/blob/d88515b08e012acceadeeb9497f062d1964685f8/scripts%2Frelease%2Fios-pods-check.test.ts",
+        "raw_url": "https://github.com/MChartier/little-say/raw/d88515b08e012acceadeeb9497f062d1964685f8/scripts%2Frelease%2Fios-pods-check.test.ts",
+        "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fios-pods-check.test.ts?ref=d88515b08e012acceadeeb9497f062d1964685f8",
+        "patch": "@@ -11,7 +11,7 @@ const failure = installed + 'The following Swift pods cannot yet be integrated a\n const source = readFileSync(resolve('scripts/release/ios-pods-check.mjs'), 'utf8')\n   .replace(/^import .*;\\r?$/gm, '').replace('new URL(import.meta.url)', \"'diagnostic-script'\");\n \n-function diagnostic(outcome: string, podStatus: number, podLog: string, prebuildStatus = 0) {\n+function diagnostic(outcome: string, podStatus: number, podLog: string, prebuildStatus = 0, podLock = '') {\n   const files = new Map<string, string>(), descriptors = new Map<number, string>(), commands: string[][] = [];\n   const process = { platform: 'darwin', argv: ['node', 'check', 'checkout', sha, outcome, 'evidence'], env: {}, exitCode: 0 };\n   runInNewContext(source, {\n@@ -29,7 +29,10 @@ function diagnostic(outcome: string, podStatus: number, podLog: string, prebuild\n       let text = '', status = 0;\n       if (command === 'git' && args[0] === 'rev-parse') text = sha;\n       if (command === 'node' && args.includes('prebuild')) status = prebuildStatus;\n-      if (command === 'pod' && args.includes('install')) { status = podStatus; text = podLog; }\n+      if (command === 'pod' && args.includes('install')) {\n+        status = podStatus; text = podLog;\n+        if (podLock) files.set(resolve('checkout/apps/mobile/ios/Podfile.lock'), podLock);\n+      }\n       files.set(descriptors.get(options.stdio[1] as number)!, text);\n       return { status };\n     },\n@@ -66,3 +69,21 @@ it('stops before CocoaPods when prebuild fails', () => {\n   expect(result.status).toBe(1);\n   expect(result.commands.some(command => command.includes('install'))).toBe(false);\n });\n+\n+it('reads resolved lockfile versions rather than earlier nested dependency constraints', () => {\n+  const lock = `PODS:\n+  - AppCheckCore (11.3.2):\n+    - GoogleUtilities/Environment (~> 8.0)\n+    - RecaptchaInterop (~> 101.0)\n+  - GoogleSignIn (10.0.0):\n+    - AppCheckCore (~> 11.0)\n+  - GoogleUtilities (8.1.4):\n+    - GoogleUtilities/Environment (= 8.1.4)\n+  - GoogleUtilities/Environment (8.1.4)\n+  - RecaptchaInterop (101.0.0)\n+`;\n+  const result = diagnostic('fix', 0, 'Pod installation complete!', 0, lock);\n+  expect(result.status).toBe(0);\n+  expect(result.result.podVersions.GoogleUtilities.observed).toBe('8.1.4');\n+  expect(result.result.podVersions.RecaptchaInterop.observed).toBe('101.0.0');\n+});"
+      }
+    ]
+  }
+}

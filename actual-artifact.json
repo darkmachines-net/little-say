@@ -1,0 +1,20 @@
+{
+  "id": 11594871300,
+  "node_id": "MDg6QXJ0aWZhY3QxMTU5NDg3MTMwMA==",
+  "name": "ios-pods-06b4b00e6657a9b654bda59ff6561332d0bbabf1-1",
+  "size_in_bytes": 414544,
+  "url": "https://api.github.com/repos/MChartier/little-say/actions/artifacts/11594871300",
+  "archive_download_url": "https://api.github.com/repos/MChartier/little-say/actions/artifacts/11594871300/zip",
+  "expired": false,
+  "digest": "sha256:3b6b285c03cc53ae29c0288160412db4ef3706aab934c9979e1adaf67809a90e",
+  "created_at": "2026-10-09T03:55:58Z",
+  "updated_at": "2026-10-09T03:55:58Z",
+  "expires_at": "2026-11-08T03:55:58Z",
+  "workflow_run": {
+    "id": 37881372074,
+    "repository_id": 1403932361,
+    "head_repository_id": 1403932361,
+    "head_branch": "fix/ios-appcheck-modular-headers",
+    "head_sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+  }
+}

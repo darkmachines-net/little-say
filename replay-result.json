@@ -1,0 +1,482 @@
+{
+  "method": "Actual unchanged old/final scripts in VM with original macOS subprocess outputs and raw Podfile.lock. No macOS execution or new workflow claimed.",
+  "oldSourceSha256": "c87a22d8ca3d261b9c07ee4a83eb7af120e7b481de4ac5fef912fcaee1a13242",
+  "finalSourceSha256": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+  "before": {
+    "status": 1,
+    "record": {
+      "source": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "outcome": "fix",
+      "checkedAt": "2026-10-09T04:10:51.030Z",
+      "tools": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "ruby": "ruby 3.3.12 (2026-07-16 revision 0581089df9) [arm64-darwin23]",
+        "cocoapods": "1.16.2",
+        "xcode": "Xcode 26.4.1\nBuild version 17E202",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83"
+      },
+      "commands": [
+        {
+          "command": "git",
+          "args": [
+            "rev-parse",
+            "HEAD"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "git",
+          "args": [
+            "status",
+            "--porcelain"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "ruby",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "xcodebuild",
+          "args": [
+            "-version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "sw_vers",
+          "args": [],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-7\\checkout\\node_modules\\expo\\bin\\cli",
+            "prebuild",
+            "--platform",
+            "ios",
+            "--no-install"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "install"
+          ],
+          "status": 0,
+          "error": null
+        }
+      ],
+      "hashes": {
+        "source.log": "357c9305db230b47bfa188081bf79a0b1dbc29ef200c250280f44f0c49976d5d",
+        "status.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "node.log": "b7677d3ec37ee1897ba07dc2cfe8292fe421c9ac93396cca5bbece486d1a2a41",
+        "npm.log": "a38e383f1e9080b0dd9001481f6e56b341000de90a05061b66734350ad3adc41",
+        "ruby.log": "0b4c30da18739281af386df163f0d0b1049a43a95a7dc8e99aa9f1e7e87fd228",
+        "cocoapods.log": "c6e6b7a91d2e4a7ad8d6967aca6d10ea98daf4d1927ebf7a7e2f3f23742dcf4b",
+        "xcode.log": "bbe969e3e1760bbc982b73129dcb3b303aa7e410a7a6d7f666d20df96e601bdf",
+        "os.log": "cd5d6399b3785b04ceaae75045a9ca9f80f0bbc3526eff9d0c36b170ed1ec348",
+        "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+        "app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+        "diagnostic-script": "c87a22d8ca3d261b9c07ee4a83eb7af120e7b481de4ac5fef912fcaee1a13242",
+        "npm-ci.log": "1a0d419c09b1096339a431619fdff156da3ee2ba0dadbfe5ff3f595ea882e9b0",
+        "prebuild.log": "8493891dcf654e391c95f9cbecabb6209f03cce9d2b83c046f5e95d78efc9eb5",
+        "Podfile": "c419581cc0b22710a70f0781a68da493d3284d383e614d0d6fe2f473a95d23b0",
+        "Podfile.properties.json": "b746798268f1f5e40a9c647d07ff687ff78c2169c9b3698f647e638cb3d8e8bf",
+        "pod-install.log": "c53e85c23b35ff1c46dffb5279dc2a5a0f17b01eb1982be67df6a7ff703ff50e",
+        "Podfile.lock": "c2e43f80b6475b43f4f6cc12c87010c2d22bf402809bc6d986d1fdd89e9f9d34"
+      },
+      "result": "pod-install-passed",
+      "runnerImage": {
+        "os": "macos26",
+        "version": "20260907.0351.1"
+      },
+      "podVersions": {
+        "GoogleSignIn": {
+          "expected": "10.0.0",
+          "observed": "10.0.0"
+        },
+        "AppCheckCore": {
+          "expected": "11.3.2",
+          "observed": "11.3.2"
+        },
+        "GoogleUtilities": {
+          "expected": "8.1.4",
+          "observed": "~> 8.0"
+        },
+        "RecaptchaInterop": {
+          "expected": "101.0.0",
+          "observed": "~> 101.0"
+        }
+      },
+      "error": "Pod versions differ from the diagnosed failure; inspect evidence before interpreting the comparison."
+    }
+  },
+  "after": {
+    "status": 0,
+    "record": {
+      "source": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "outcome": "fix",
+      "checkedAt": "2026-10-09T04:10:51.039Z",
+      "tools": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "ruby": "ruby 3.3.12 (2026-07-16 revision 0581089df9) [arm64-darwin23]",
+        "cocoapods": "1.16.2",
+        "xcode": "Xcode 26.4.1\nBuild version 17E202",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83"
+      },
+      "commands": [
+        {
+          "command": "git",
+          "args": [
+            "rev-parse",
+            "HEAD"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "git",
+          "args": [
+            "status",
+            "--porcelain"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "ruby",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "xcodebuild",
+          "args": [
+            "-version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "sw_vers",
+          "args": [],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-7\\checkout\\node_modules\\expo\\bin\\cli",
+            "prebuild",
+            "--platform",
+            "ios",
+            "--no-install"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "install"
+          ],
+          "status": 0,
+          "error": null
+        }
+      ],
+      "hashes": {
+        "source.log": "357c9305db230b47bfa188081bf79a0b1dbc29ef200c250280f44f0c49976d5d",
+        "status.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "node.log": "b7677d3ec37ee1897ba07dc2cfe8292fe421c9ac93396cca5bbece486d1a2a41",
+        "npm.log": "a38e383f1e9080b0dd9001481f6e56b341000de90a05061b66734350ad3adc41",
+        "ruby.log": "0b4c30da18739281af386df163f0d0b1049a43a95a7dc8e99aa9f1e7e87fd228",
+        "cocoapods.log": "c6e6b7a91d2e4a7ad8d6967aca6d10ea98daf4d1927ebf7a7e2f3f23742dcf4b",
+        "xcode.log": "bbe969e3e1760bbc982b73129dcb3b303aa7e410a7a6d7f666d20df96e601bdf",
+        "os.log": "cd5d6399b3785b04ceaae75045a9ca9f80f0bbc3526eff9d0c36b170ed1ec348",
+        "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+        "app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+        "diagnostic-script": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+        "npm-ci.log": "1a0d419c09b1096339a431619fdff156da3ee2ba0dadbfe5ff3f595ea882e9b0",
+        "prebuild.log": "8493891dcf654e391c95f9cbecabb6209f03cce9d2b83c046f5e95d78efc9eb5",
+        "Podfile": "c419581cc0b22710a70f0781a68da493d3284d383e614d0d6fe2f473a95d23b0",
+        "Podfile.properties.json": "b746798268f1f5e40a9c647d07ff687ff78c2169c9b3698f647e638cb3d8e8bf",
+        "pod-install.log": "c53e85c23b35ff1c46dffb5279dc2a5a0f17b01eb1982be67df6a7ff703ff50e",
+        "Podfile.lock": "c2e43f80b6475b43f4f6cc12c87010c2d22bf402809bc6d986d1fdd89e9f9d34"
+      },
+      "result": "pod-install-passed",
+      "runnerImage": {
+        "os": "macos26",
+        "version": "20260907.0351.1"
+      },
+      "podVersions": {
+        "GoogleSignIn": {
+          "expected": "10.0.0",
+          "observed": "10.0.0"
+        },
+        "AppCheckCore": {
+          "expected": "11.3.2",
+          "observed": "11.3.2"
+        },
+        "GoogleUtilities": {
+          "expected": "8.1.4",
+          "observed": "8.1.4"
+        },
+        "RecaptchaInterop": {
+          "expected": "101.0.0",
+          "observed": "101.0.0"
+        }
+      }
+    }
+  },
+  "baseline": {
+    "status": 0,
+    "record": {
+      "source": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "outcome": "baseline",
+      "checkedAt": "2026-10-09T04:10:51.044Z",
+      "tools": {
+        "node": "v24.19.0",
+        "npm": "11.17.0",
+        "ruby": "ruby 3.3.12 (2026-07-16 revision 0581089df9) [arm64-darwin23]",
+        "cocoapods": "1.16.2",
+        "xcode": "Xcode 26.4.1\nBuild version 17E202",
+        "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83"
+      },
+      "commands": [
+        {
+          "command": "git",
+          "args": [
+            "rev-parse",
+            "HEAD"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "git",
+          "args": [
+            "status",
+            "--porcelain"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "ruby",
+          "args": [
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "--version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "xcodebuild",
+          "args": [
+            "-version"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "sw_vers",
+          "args": [],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "npm",
+          "args": [
+            "ci",
+            "--ignore-scripts",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "node",
+          "args": [
+            "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-7\\checkout\\node_modules\\expo\\bin\\cli",
+            "prebuild",
+            "--platform",
+            "ios",
+            "--no-install"
+          ],
+          "status": 0,
+          "error": null
+        },
+        {
+          "command": "pod",
+          "args": [
+            "_1.16.2_",
+            "install"
+          ],
+          "status": 1,
+          "error": null
+        }
+      ],
+      "hashes": {
+        "source.log": "481acfe7f02c541fc08d83f87702a354555acf12e9ce935f966a324b227837a4",
+        "status.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "node.log": "b7677d3ec37ee1897ba07dc2cfe8292fe421c9ac93396cca5bbece486d1a2a41",
+        "npm.log": "a38e383f1e9080b0dd9001481f6e56b341000de90a05061b66734350ad3adc41",
+        "ruby.log": "0b4c30da18739281af386df163f0d0b1049a43a95a7dc8e99aa9f1e7e87fd228",
+        "cocoapods.log": "c6e6b7a91d2e4a7ad8d6967aca6d10ea98daf4d1927ebf7a7e2f3f23742dcf4b",
+        "xcode.log": "bbe969e3e1760bbc982b73129dcb3b303aa7e410a7a6d7f666d20df96e601bdf",
+        "os.log": "cd5d6399b3785b04ceaae75045a9ca9f80f0bbc3526eff9d0c36b170ed1ec348",
+        "package-lock.json": "3fea5b78b5ac72261a75139ced26fad335b124f375ed4de77876e5da5c53c95c",
+        "app.config.js": "59d0314a3567791aab9e830cfb7b927d61118491592c801ba0b7b7c001bd43a3",
+        "diagnostic-script": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+        "npm-ci.log": "60a25b6aaad587344a2001ace8e45c119f17626a8c0422a8cccbc9c26a14cf94",
+        "prebuild.log": "8493891dcf654e391c95f9cbecabb6209f03cce9d2b83c046f5e95d78efc9eb5",
+        "Podfile": "c419581cc0b22710a70f0781a68da493d3284d383e614d0d6fe2f473a95d23b0",
+        "Podfile.properties.json": "db1b76c73035d82dc540bd4e3d5f4309a6d93fc46df2f73cc1ac18ca9b8a1c41",
+        "pod-install.log": "d67c00cb7fcf5d912e6b989623a656e75bc3677bd5dd54b720187e658a5251d4"
+      },
+      "result": "module-map-failure-reproduced",
+      "runnerImage": {
+        "os": "macos26",
+        "version": "20260907.0351.1"
+      },
+      "podVersions": {
+        "GoogleSignIn": {
+          "expected": "10.0.0",
+          "observed": "10.0.0"
+        },
+        "AppCheckCore": {
+          "expected": "11.3.2",
+          "observed": "11.3.2"
+        },
+        "GoogleUtilities": {
+          "expected": "8.1.4",
+          "observed": "8.1.4"
+        },
+        "RecaptchaInterop": {
+          "expected": "101.0.0",
+          "observed": "101.0.0"
+        }
+      }
+    }
+  },
+  "independentYamlVersions": {
+    "GoogleSignIn": "10.0.0",
+    "AppCheckCore": "11.3.2",
+    "GoogleUtilities": "8.1.4",
+    "RecaptchaInterop": "101.0.0"
+  }
+}

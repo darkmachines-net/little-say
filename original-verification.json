@@ -1,0 +1,57 @@
+{
+  "checkedAtUtc": "2026-10-09T03:47:40.081345+00:00",
+  "head": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+  "base": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "headParents": [
+    "b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+  ],
+  "targetParents": [
+    "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+  ],
+  "prBodySha256": "413712bd8fcc8d3212a5fda53ba1421ce65b8ae29ab38e052df80fb4b4bb6fe9",
+  "sourceDigests": {
+    ".github/workflows/cut-release.yml": "3221f65ccda292482d5aef8846fb156e2e9ae5bd871671f8c7939a84754ce264",
+    "apps/mobile/app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+    "apps/mobile/package.json": "5fdf62db3d08c4d2686b6b8a2ecbb488b19df0697050ff144dba63e0fe5067b7",
+    "docs/releases.md": "5faab6855426deb6e888eaf9fc3c9aecb940ec90ed0b44ae938798203ab35472",
+    "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+    "scripts/release/ios-pods-check.mjs": "c87a22d8ca3d261b9c07ee4a83eb7af120e7b481de4ac5fef912fcaee1a13242",
+    "scripts/release/ios-pods-check.test.ts": "b517489f4fd231cbda715601f136f90eee21a9cad86961eb327ebb76f474e4b4",
+    "scripts/release/ios-pods.test.ts": "5140f763489230b378d756b7710b44f3a8264ca32cb86aa1f049af5f7e879e5c",
+    "scripts/release/validation.test.ts": "88a8e9610d91891ad8c89425ffcc93145b7a64232e478444633a22b8feab0102"
+  },
+  "scope": {
+    "commits": 1,
+    "files": 9,
+    "additions": 341,
+    "deletions": 12,
+    "paths": [
+      ".github/workflows/cut-release.yml",
+      "apps/mobile/app.config.js",
+      "apps/mobile/package.json",
+      "docs/releases.md",
+      "package-lock.json",
+      "scripts/release/ios-pods-check.mjs",
+      "scripts/release/ios-pods-check.test.ts",
+      "scripts/release/ios-pods.test.ts",
+      "scripts/release/validation.test.ts"
+    ],
+    "mapping": "Fallback app configuration and one locked SDK dependency; isolated existing-workflow manual diagnostic with maintained classification/config/isolation tests; concise maintained release documentation. No evidence churn."
+  },
+  "evidence": {
+    "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+    "manifestSha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428",
+    "bundleSha256": "50a6d95e880e18b94af974af1358599a33aff3a6c349864a6428aba1d64d4b26",
+    "verifiedManifestArtifacts": 120,
+    "androidFilesByteIdentical": 44,
+    "configuredNitroPodfileByteIdentical": true,
+    "sourceBindingsMatch": true
+  },
+  "dependencyChangesOnly": [
+    "node_modules/expo-build-properties",
+    "apps/mobile"
+  ],
+  "independentTests": "13diagnostic classification and release/manual workflow isolation tests passed. CocoaPods not executed; config fixture evidence verified independently without rerunning original owner directory."
+}

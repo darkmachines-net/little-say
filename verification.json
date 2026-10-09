@@ -1,0 +1,93 @@
+{
+  "checkedAtUtc": "2026-10-09T04:10:02.501609+00:00",
+  "head": "d88515b08e012acceadeeb9497f062d1964685f8",
+  "base": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "headParents": [
+    "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+  ],
+  "targetParents": [
+    "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+  ],
+  "scope": [
+    {
+      "sha": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+      "parents": [
+        "b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+      ],
+      "subject": "Fix iOS AppCheck pod headers and add isolated manual pod validation",
+      "paths": [
+        ".github/workflows/cut-release.yml",
+        "apps/mobile/app.config.js",
+        "apps/mobile/package.json",
+        "docs/releases.md",
+        "package-lock.json",
+        "scripts/release/ios-pods-check.mjs",
+        "scripts/release/ios-pods-check.test.ts",
+        "scripts/release/ios-pods.test.ts",
+        "scripts/release/validation.test.ts"
+      ]
+    },
+    {
+      "sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+      "parents": [
+        "b7d26c6e302554d33a03553c5c48b5acf392886e"
+      ],
+      "subject": "Keep release input regression aligned with manual pod diagnostics",
+      "paths": [
+        "scripts/release/release.test.ts"
+      ]
+    },
+    {
+      "sha": "d88515b08e012acceadeeb9497f062d1964685f8",
+      "parents": [
+        "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+      ],
+      "subject": "Read resolved pod versions instead of nested dependency constraints",
+      "paths": [
+        "scripts/release/ios-pods-check.mjs",
+        "scripts/release/ios-pods-check.test.ts"
+      ]
+    }
+  ],
+  "paths": [
+    ".github/workflows/cut-release.yml",
+    "apps/mobile/app.config.js",
+    "apps/mobile/package.json",
+    "docs/releases.md",
+    "package-lock.json",
+    "scripts/release/ios-pods-check.mjs",
+    "scripts/release/ios-pods-check.test.ts",
+    "scripts/release/ios-pods.test.ts",
+    "scripts/release/release.test.ts",
+    "scripts/release/validation.test.ts"
+  ],
+  "counts": {
+    "commits": 3,
+    "files": 10,
+    "additions": 366,
+    "deletions": 13
+  },
+  "sourceDigests": {
+    ".github/workflows/cut-release.yml": "3221f65ccda292482d5aef8846fb156e2e9ae5bd871671f8c7939a84754ce264",
+    "apps/mobile/app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+    "apps/mobile/package.json": "5fdf62db3d08c4d2686b6b8a2ecbb488b19df0697050ff144dba63e0fe5067b7",
+    "docs/releases.md": "5faab6855426deb6e888eaf9fc3c9aecb940ec90ed0b44ae938798203ab35472",
+    "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+    "scripts/release/ios-pods-check.mjs": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+    "scripts/release/ios-pods-check.test.ts": "405764f07ab92512fecf9b5e891390e50a0617a6318d9f014646786b686e6eb7",
+    "scripts/release/ios-pods.test.ts": "5140f763489230b378d756b7710b44f3a8264ca32cb86aa1f049af5f7e879e5c",
+    "scripts/release/release.test.ts": "480bb09567f13f1db40b339b2984b6d2f63696012c6ce8bb6eac7a85b3898a1a",
+    "scripts/release/validation.test.ts": "88a8e9610d91891ad8c89425ffcc93145b7a64232e478444633a22b8feab0102"
+  },
+  "actualActionsArtifact": {
+    "id": 11594871300,
+    "digest": "sha256:3b6b285c03cc53ae29c0288160412db4ef3706aab934c9979e1adaf67809a90e",
+    "filesComparedExactly": 33
+  },
+  "verifiedMacManifestFiles": 40,
+  "verifiedOriginalArtifacts": 120,
+  "finalChange": "Only parser and maintained parser regression since actual macOS execution. Product app config, lockfile and workflow unchanged.",
+  "ciMergeTreeMatchesHead": true
+}
