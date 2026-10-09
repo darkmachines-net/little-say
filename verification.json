@@ -1,0 +1,98 @@
+{
+  "manifestEntriesVerified": 50,
+  "manifestSha256": "5db775a98b1e6aae4e45eaa1ba08e44241f6f81a0e78d602477a77585c161495",
+  "payloads": {
+    "payloads.json": {
+      "sha256": "debef543eaa2f01ef7d072c731ebb9525bbb2679298681cf7b38134cc175f2e4",
+      "records": [
+        "default/board/plain",
+        "default/board/1",
+        "default/translate",
+        "default/transcribe",
+        "default/analyze",
+        "default/select",
+        "default/generate/color",
+        "default/generate/line",
+        "default/review",
+        "default/speech/en-US",
+        "default/speech/fr-FR",
+        "default/speech/ja-JP",
+        "default/speech/literal-boundary",
+        "default/speech-profile",
+        "configured/board/plain",
+        "configured/board/1",
+        "configured/translate",
+        "configured/transcribe",
+        "configured/analyze",
+        "configured/select",
+        "configured/generate/color",
+        "configured/generate/line",
+        "configured/review",
+        "configured/speech/en-US",
+        "configured/speech/fr-FR",
+        "configured/speech/ja-JP",
+        "configured/speech/literal-boundary",
+        "configured/speech-profile",
+        "client-options",
+        "realtime-options"
+      ]
+    },
+    "presets.json": {
+      "sha256": "eedf24596e434208b5bb1f15787bbb4f4cf378d74b702ce382170f2742b89d02",
+      "records": [
+        "topics",
+        "starters",
+        "conversation"
+      ]
+    }
+  },
+  "ownerBundleBytesIndependentlyInspected": [
+    {
+      "platform": "web",
+      "files": [
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\App-226ca10ecea6b5a3bbde964866b14ec4.js",
+          "bytes": 6087166,
+          "sha256": "cd7695cc44a77d668aa3a9028e9b9ffc6e8e82ce0f05ca18fef9bc67ab79bde0"
+        },
+        {
+          "file": "apps\\mobile\\dist\\_expo\\static\\js\\web\\index-7707c9e8865a25c1ad91b26b4277b52f.js",
+          "bytes": 359876,
+          "sha256": "bb045357eebf6583989c9cca1eb9931b7b46fc929a8b711be160ad97979b91ec"
+        }
+      ],
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true
+    },
+    {
+      "platform": "android",
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\android\\index-42e203bf93720c38780bcd89f2137ad1.hbc",
+          "bytes": 7332072,
+          "sha256": "6f891101ea0024397af81349084a607bdf5dc5e2325a78a77ecd758099c565d9"
+        }
+      ],
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true
+    },
+    {
+      "platform": "ios",
+      "files": [
+        {
+          "file": "apps\\mobile\\dist-native\\_expo\\static\\js\\ios\\index-6c723fca95cfed2694566193054397cd.hbc",
+          "bytes": 7329390,
+          "sha256": "4ca4d0ed1fb5eb33d0ce27678354b7a06b9dee8743d70f342186825423424248"
+        }
+      ],
+      "serverMarkersAbsent": true,
+      "sharedMarkersPresent": true
+    }
+  ],
+  "priorReceipt": {
+    "verdictCommentId": 6066462709,
+    "verdictBodySha256": "0a4b2dadb624788e6099fa0de30abbd45cb2a3e3a3e3e7e02e27ef8153381796",
+    "updated_at": "2026-10-08T18:29:54Z"
+  },
+  "provenance": "Exact commit-addressed captures, tests, alias-pinned harness and logs read. Actual master/final dependency graph is identical; capture uses disclosed shared installation with each checkout core alias, preserving baseline source identities. Runtime/exports bind source and exact bytes."
+}

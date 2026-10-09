@@ -1,0 +1,13 @@
+npm notice run @little-say/server@0.2.1 build
+npm notice run tsup
+CLI Building entry: src/database-cli.ts, src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Using tsup config: C:\Users\MChar\Documents\Codex\2026-10-08\task-7\little-say-qa\apps\server\tsup.config.ts
+CLI Target: node22
+CLI Cleaning output folder
+ESM Build start
+ESM dist\database-cli.js   943.00 B
+ESM dist\chunk-YJ5TFKWE.js 2.98 KB
+ESM dist\index.js          3.93 MB
+ESM ΓÜí∩╕Å Build success in 209ms

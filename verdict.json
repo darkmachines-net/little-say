@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "acknowledgment": "Full supplied pinned role/standards/direct amendments read and applied, plus current checkout AGENTS.md; unchanged runtime pins. Same independent replacement reviewer, sole QA slot, original reviewer history distinct.",
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "mchartier_zbook",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/35",
+  "issue": "https://github.com/MChartier/little-say/issues/23",
+  "supersedesVerdictCommentId": 6066462709,
+  "checkedAtUtc": "2026-10-09T01:43:21.429384+00:00",
+  "headSha": "29e8fa8cf04ce93e28f1c2b98e834283a2b8e389",
+  "baseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "targetRef": "master",
+  "targetRepository": "MChartier/little-say",
+  "ultimateTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "headParents": [
+    "608b884731bbf243fc4d8cac616fcbc6b965de21",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "targetParents": [
+    "4fa4ede70103c1827396d222de1c21fbc9938e93"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "e08dcabf024b13ea1d0ed6a91d9bf1e730a9174a0b686a9fa632661145c48bae",
+  "historicalReceipts": [
+    {
+      "verdictCommentId": 6030548675,
+      "verdictBodySha256": "cced214d3fac4a44d0c6e704d0bed01ec356174609e77c1c3f94ac0b9da307c0",
+      "verdictUpdatedAt": "2026-10-07T03:52:38Z",
+      "preserved": true
+    },
+    {
+      "verdictCommentId": 6065143401,
+      "verdictBodySha256": "3d4798614e3546d35285ca7f5563c3ce2fbd6fdf55d74dee6018926eeb009d00",
+      "verdictUpdatedAt": "2026-10-08T17:12:04Z",
+      "preserved": true
+    },
+    {
+      "verdictCommentId": 6066462709,
+      "verdictBodySha256": "0a4b2dadb624788e6099fa0de30abbd45cb2a3e3a3e3e7e02e27ef8153381796",
+      "updated_at": "2026-10-08T18:29:54Z"
+    }
+  ],
+  "historicalEvidence": [
+    {
+      "commit": "e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f",
+      "file": "manifest.json",
+      "url": "https://github.com/MChartier/little-say/blob/e652fa1ed0bd9c8f4d59f7eae05ac9abdb22264f/manifest.json",
+      "sha256": "96c59178d5fb560a3b6a77e2b95a7ac5ad0034fcd5d53e21bba8efd196f527b3",
+      "unchanged": true
+    },
+    {
+      "commit": "4f53233d5b8e4c4546bcef91515d09a223048646",
+      "file": "publication.json",
+      "url": "https://github.com/MChartier/little-say/blob/4f53233d5b8e4c4546bcef91515d09a223048646/publication.json",
+      "sha256": "6b6eb05abe4ffefcaa84b702ba21bb20e81de28536cd2d90896d5c919c45fc61",
+      "unchanged": true
+    },
+    {
+      "commit": "99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472",
+      "file": "qa-verdict-communication.json",
+      "url": "https://github.com/MChartier/little-say/blob/99c3bbbd0c0e791716d10d41dfbe6b70d1fd9472/qa-verdict-communication.json",
+      "sha256": "365804dd546a8276949763c1282fdf84826618e8ca1516371f6b0617ed1adee4",
+      "unchanged": true
+    },
+    {
+      "commit": "8075c9cd71bd98cedf8e9e61380f2b989ad9fda7",
+      "file": "verdict.json",
+      "url": "https://github.com/MChartier/little-say/blob/8075c9cd71bd98cedf8e9e61380f2b989ad9fda7/verdict.json",
+      "sha256": "5a5cb1cea0711edb758d45550dde2130119cd94d17860a3bf1dfbe8f1057a025",
+      "unchanged": true
+    },
+    {
+      "commit": "60d8a2a150a5cce88733831f3a76169766c0087e",
+      "file": "manifest.json",
+      "url": "https://github.com/MChartier/little-say/blob/60d8a2a150a5cce88733831f3a76169766c0087e/manifest.json",
+      "sha256": "7d67d0566d60d19f5d013b6df7cfe520876e16f7ed36c811c7dc0e7996227085",
+      "unchanged": true,
+      "scope": "First integration source 0e2758de; superseded by fresh final-source captures without relabeling prior evidence."
+    },
+    {
+      "commit": "9a86b32076a1189ed99ffede3540cf94f74a9d3d",
+      "file": "verdict.json",
+      "sha256": "c6028b1bfe1085668ce44cf1cc6a1bfb394548b1e0e5733ec5609bca31270081",
+      "status": "Prior E1 verdict preserved; not rebound to current source."
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "R1/R2",
+      "result": "Account and prompt exports and native ESM fixes preserved. Exact published prompt diff remains byte-identical to previously assessed extraction; merge parents and current target now agree. Final narrative binds actual target/final source without stale QA claim."
+    },
+    {
+      "id": "E1",
+      "result": "Merged PR44 supplies production prop-types plus nested react-is. Independent clean lockfile installation and exact-source iOS export pass; fresh bundle contains shared presets and excludes all server prompt markers. No native-device waiver used for export."
+    }
+  ],
+  "findings": [],
+  "gates": {
+    "value": "pass: authorized discoverable versioned prompts with exact behavior preservation; no new product scope.",
+    "outcome": "pass: exact model payload/preset equivalence, typed literal substitution, source and packaged loading, server/client boundaries established.",
+    "code": "pass: complete 21-path extraction and five ordered commits assessed; prior full source review reused only after exact binary-diff equality, account export and actual incoming scope verified.",
+    "scope": "pass: five commits,21 paths,+343/-30; no development evidence in product history. Incoming target commits PR42/44 separately inventoried with all parent/path mappings.",
+    "engineeringReview": "Independent full published code/scope assessment complete. New-head request6072400354 received quota-only refusal6072402436; no bot completion or retry claimed. No submitted/inline reviews.",
+    "ci": "pass: run37870046517 exact head success; actual checkout4004b69 merge tree equals reviewed head. Log verifies 320 maintained tests,25 emulator-wrapped service tests and5 account-browser tests, typecheck/server/web build.",
+    "behavior": "pass: independently reran six payload/preset/invalid-resource/source-free ESM tests, exact-head iOS export and server build; source tsx and relocated ESM HTTP200 verified with AI disabled. Fresh owner actual-master/final 30-payload-record and preset captures are byte-equal, including whitespace/order, Unicode, literal substitutions, schema/options/model, cache profile and data boundaries. Owner17 mocked Chromium scenarios verified from retained log and harness; no unnecessary repeat of unaffected suites.",
+    "evidence": "pass: all50 manifest artifact hashes verified from commit-addressed Git blobs; retained web/android/ios bundle bytes independently matched and inspected; independent iOS/runtime artifacts separately bound.",
+    "communication": "pass: concise base-state problem and final solution, behavioral expected/observed scenarios and direct immutable evidence. Non-UI exception appropriate; Docker/device/live inference limits explicit, no iteration-first or stale pending-QA wording.",
+    "stack": "pass: no stacked parent; actual master/API base/merge-base all18aa7c0; source merge parents608b884 and18aa7c0. Native closing issue23 association and Project Current PRs link verified. Project workflow status is coordinator-owned, not a QA mutation."
+  },
+  "publishedScope": {
+    "commits": 5,
+    "files": 21,
+    "additions": 343,
+    "deletions": 30
+  },
+  "scopeEvidence": "scope-verification.json",
+  "uiEvidence": {
+    "applicable": false,
+    "nonUiObservableContract": "Exact serialized model requests and starter/preset outputs; unchanged UI. Images would not establish prompt byte/order/options equivalence.",
+    "provenanceRecords": [
+      {
+        "commitSha": "49195f9dd70ce9a9842c460e57348c3d73935cb2",
+        "path": "manifest.json",
+        "sha256": "5db775a98b1e6aae4e45eaa1ba08e44241f6f81a0e78d602477a77585c161495",
+        "assessment": "Every listed artifact hash verified. Isolated actual-master/final sources; disclosed same dependency graph, checkout-specific core alias. Retained harness and original identities read."
+      },
+      {
+        "commitSha": "b34b188a324c37543382bd989320185b0cdfb138",
+        "path": "publication-final.json",
+        "sha256": "0dc97b82b625507c022a2ebca9cde872fa1837e5fdb8d574e3038de1f106f3aa"
+      }
+    ]
+  },
+  "dockerAssessment": {
+    "engineExecuted": false,
+    "scope": "Issue23 requires existing Docker layout compatibility, not a changed Docker engine/runtime policy. Dockerfile, server bundler and production dependency contracts equal actual master; static JSON is embedded. Independent source-free ESM tests and newly built dist relocated to server/*.js with package.json/external dependencies return HTTP200 without source/prompts directories.",
+    "judgment": "Sufficient for changed resource-location/copy contract, with container execution explicitly unperformed. This is scoped engineering evidence, not a container pass or waiver of a mandated live engine test."
+  },
+  "issue45Assessment": {
+    "issue": "https://github.com/MChartier/little-say/issues/45",
+    "run": 37869482322,
+    "source": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+    "observed": "prepare fails six local Auth-emulator prerequisite tests;19 pass, downstream publication skipped. validateReleaseSource invokes test:integration directly; normal CI uses test:services.",
+    "impact": "candidate.ts/package scripts/release workflow are byte-identical between target and PR35. Failure occurs in unchanged emulator prerequisites, not resource loading; prompt checks/builds pass before that boundary and integrated normal CI exercises services with emulator. This remains a separate release-execution blocker, not a prerequisite for reviewing exact-text extraction.",
+    "boundary": "No live release rerun/provider access. This verdict certifies PR35 review readiness only; does not certify release command success or close issue45."
+  },
+  "evidence": [
+    "verification.json",
+    "scope-verification.json",
+    "runtime-report.json",
+    "runtime.mjs",
+    "runtime.log",
+    "runtime-check.log",
+    "focused-tests.log",
+    "ios-export.log",
+    "server-build.log",
+    "npm-ci.log",
+    "identities.json",
+    "final.json",
+    "native.json",
+    "project-readback.json",
+    "ci-run.json",
+    "ci-tree.json",
+    "ci.log",
+    "issue45.json",
+    "issue45-failed.log"
+  ],
+  "limitations": [
+    "Docker engine not executed. Native-device testing deferred; exports are not device/signed build execution.",
+    "No live inference, release, deployment, credentials or provider action.",
+    "Implementation tracked source untouched; independent QA retains only untracked export output. Prior receipts and failed iOS evidence preserved.",
+    "Issue45 remains an independently owned release-execution failure. Project workflow-state reconciliation remains with coordinator."
+  ],
+  "nextAction": "Coordinator separately save and compare trusted exact comment receipt, recheck all current bindings/feedback/evidence, then perform any authorized readiness/draft/Project transition and postmutation reread. No further PR35 correction requested."
+}

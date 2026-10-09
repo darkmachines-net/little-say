@@ -1,0 +1,15 @@
+import pathlib,json,subprocess,hashlib
+r=pathlib.Path('recheck35');d=json.loads((r/'prepublish.json').read_bytes());root=pathlib.Path('little-say-qa');head=d['pr']['head']['sha'];base=d['master']['sha']
+def raw(*a):return subprocess.check_output(['git',*a],cwd=root)
+def git(*a):return raw(*a).decode().strip()
+commits=git('rev-list','--reverse',base+'..'+head).splitlines();assert set(commits)=={c['sha'] for c in d['commits']};paths=git('diff','--name-only',base,head).splitlines();assert set(paths)=={x['filename'] for x in d['files']};assert len(paths)==21
+old='608b884731bbf243fc4d8cac616fcbc6b965de21';oldbase='fabb925cf5ee11171d5668af7c2bab44ec9fc613'
+assert raw('diff','--binary',oldbase,old)==raw('diff','--binary',base,head)
+for p in ['Dockerfile','scripts/release/candidate.ts','package.json','.github/workflows/cut-release.yml','apps/mobile/package.json','package-lock.json']:assert raw('show',head+':'+p)==raw('show',base+':'+p)
+assert b"export * from './account'" in raw('show',head+':packages/core/src/index.ts')
+incoming=git('rev-list','--reverse',oldbase+'..'+base).splitlines()
+def inventory(c):return {'sha':c,'parents':git('show','-s','--format=%P',c).split(),'subject':git('show','-s','--format=%s',c),'perParentPaths':{p:git('diff','--name-status',p,c).splitlines() for p in git('show','-s','--format=%P',c).split()}}
+s={'head':head,'actualTarget':base,'apiBase':d['pr']['base']['sha'],'mergeBase':git('merge-base',base,head),'headParents':git('show','-s','--format=%P',head).split(),'targetParents':git('show','-s','--format=%P',base).split(),'commits':[inventory(c) for c in commits],'incomingMasterCommits':[inventory(c) for c in incoming],'files':[{'path':p,'sha256':hashlib.sha256(raw('show',head+':'+p)).hexdigest(),'purpose':'Maintained regression/snapshot' if '/test/' in p or '.test.' in p else 'Exact prompt resources and caller/loading documentation' if p.startswith('prompts/') else 'Typed literal prompt loading and original request/preset substitution'} for p in paths],'totals':{'commits':len(commits),'files':len(paths),'additions':sum(x['additions'] for x in d['files']),'deletions':sum(x['deletions'] for x in d['files'])},'priorDiffByteIdentical':True,'accountExportPreserved':True,'releaseDockerDependencyInputsEqualActualMaster':True,'impact':'PR42 adds release orchestration/retirement and PR44 production prop-types dependency with nested react-is. Both are now actual target ancestry, not extra PR35 commits. Published PR diff remains byte-identical to previously reviewed prompt extraction. New dependency affects iOS gate, rerun independently. Release validation failure belongs to unchanged actual-master release candidate boundary, not prompt resource loading.'}
+(r/'scope-verification.json').write_text(json.dumps(s,indent=2)+'\n');print(json.dumps({'scope':s['totals'],'incoming':[(c['sha'],c['subject']) for c in s['incomingMasterCommits']]}))
+p=r/'owner/49195f9dd70ce9a9842c460e57348c3d73935cb2';m=json.loads((p/'manifest.json').read_bytes());print('manifest keys',list(m));print(hashlib.sha256((p/'manifest.json').read_bytes()).hexdigest())
+

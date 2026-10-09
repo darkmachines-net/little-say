@@ -1,0 +1,19 @@
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:2848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:2848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+iOS Bundled 29628ms apps\mobile\index.ts (2908 modules)
+
+ΓÇ║ Assets (3):
+assets\brand\mountain.png (3 variations | 49KB)
+
+ΓÇ║ ios bundles (1):
+_expo/static/js/ios/index-f8ac226a8e511f04ccf0d4b3aedd522b.hbc (7.3MB)
+
+ΓÇ║ Files (1):
+metadata.json (333B)
+
+Exported: dist-qa-ios

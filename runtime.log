@@ -1,0 +1,3 @@
+(node:32232) [FSTDEP023] FastifyDeprecation: disableRequestLogging option is deprecated. Use the logController option with disableRequestLogging or isLogDisabled override instead. The disableRequestLogging top-level option will be removed in `fastify@6`.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"level":30,"time":1791510105247,"pid":32232,"hostname":"mchartier_zbook","msg":"Server listening at http://127.0.0.1:14673"}

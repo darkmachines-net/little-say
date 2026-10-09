@@ -1,0 +1,429 @@
+{
+  "head": "29e8fa8cf04ce93e28f1c2b98e834283a2b8e389",
+  "actualTarget": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "headParents": [
+    "608b884731bbf243fc4d8cac616fcbc6b965de21",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "targetParents": [
+    "4fa4ede70103c1827396d222de1c21fbc9938e93"
+  ],
+  "commits": [
+    {
+      "sha": "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+      "parents": [
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4"
+      ],
+      "subject": "Extract exact model prompts into versioned resources",
+      "perParentPaths": {
+        "1f0329052bd46b1e953c5adb5ad7e59ba2f2dcc4": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ]
+      }
+    },
+    {
+      "sha": "0e2758de446674c4874bbce1df4eb51abaee35f4",
+      "parents": [
+        "ea87b78eb6c9e9612cc42b7eec490af9d8216b86",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "subject": "Merge current master while preserving account and prompt exports",
+      "perParentPaths": {
+        "ea87b78eb6c9e9612cc42b7eec490af9d8216b86": [
+          "A\t.gitattributes",
+          "M\t.github/workflows/ci.yml",
+          "A\t.github/workflows/cut-release.yml",
+          "D\t.github/workflows/cut-server-release.yml",
+          "M\tREADME.md",
+          "M\tapps/mobile/app.config.js",
+          "M\tapps/mobile/app.json",
+          "M\tapps/mobile/eas.json",
+          "A\tapps/mobile/fingerprint.config.js",
+          "M\tapps/mobile/package.json",
+          "A\tapps/mobile/release-metadata.cjs",
+          "M\tapps/mobile/src/App.tsx",
+          "M\tapps/mobile/src/data/storage.ts",
+          "M\tapps/mobile/src/data/storage.web.ts",
+          "M\tapps/mobile/src/data/useLibrary.ts",
+          "A\tapps/mobile/src/services/accountSession.ts",
+          "A\tapps/mobile/src/services/accountSession.web.ts",
+          "A\tapps/mobile/src/services/accountSync.test.ts",
+          "A\tapps/mobile/src/services/accountSync.ts",
+          "A\tapps/mobile/src/services/api.test.ts",
+          "M\tapps/mobile/src/services/api.ts",
+          "A\tapps/mobile/src/services/firebase-native.d.ts",
+          "A\tapps/mobile/src/services/firebaseAccount.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.test.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.web.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.test.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.web.ts",
+          "M\tapps/mobile/src/services/speechLibrary.ts",
+          "A\tapps/mobile/src/services/useAccount.ts",
+          "A\tapps/mobile/src/ui/AccountPanel.tsx",
+          "A\tapps/mobile/src/ui/AccountScreen.tsx",
+          "M\tapps/mobile/src/ui/BoardEditor.tsx",
+          "A\tapps/mobile/src/ui/BoardTransition.tsx",
+          "M\tapps/mobile/src/ui/FirstTimeSetup.tsx",
+          "M\tapps/mobile/src/ui/ParentControl.test.ts",
+          "M\tapps/mobile/src/ui/ParentControl.tsx",
+          "M\tapps/mobile/src/ui/ParentControl.web.tsx",
+          "M\tapps/mobile/src/ui/ParentSettings.tsx",
+          "M\tapps/mobile/src/ui/PlayBoard.tsx",
+          "M\tapps/mobile/src/ui/TileFace.tsx",
+          "M\tapps/mobile/src/ui/TouchSurface.tsx",
+          "M\tapps/mobile/src/ui/TouchSurface.web.tsx",
+          "M\tapps/mobile/src/ui/components.tsx",
+          "A\tapps/mobile/src/ui/screenFocus.ts",
+          "M\tapps/mobile/src/ui/useParentHold.ts",
+          "A\tapps/server/migrations/1760000000002_accounts.sql",
+          "M\tapps/server/package.json",
+          "A\tapps/server/src/account-routes.ts",
+          "A\tapps/server/src/accounts.ts",
+          "M\tapps/server/src/app.ts",
+          "M\tapps/server/src/database.ts",
+          "A\tapps/server/src/firebase.ts",
+          "M\tapps/server/src/index.ts",
+          "A\tapps/server/test/accounts.integration.test.ts",
+          "M\tapps/server/test/database.integration.test.ts",
+          "A\tapps/server/test/firebase.integration.test.ts",
+          "A\tdocs/ACCOUNTS.md",
+          "M\tdocs/DESIGN.md",
+          "M\tdocs/releases.md",
+          "M\tdocs/testing.md",
+          "A\tfirebase.json",
+          "M\tnative-release.json",
+          "M\tpackage-lock.json",
+          "M\tpackage.json",
+          "A\tpackages/core/src/account.test.ts",
+          "A\tpackages/core/src/account.ts",
+          "A\tpackages/core/src/boardLayout.test.ts",
+          "A\tpackages/core/src/boardLayout.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/interaction.test.ts",
+          "M\tpackages/core/src/interaction.ts",
+          "M\tpackages/core/src/schema.ts",
+          "A\tplaywright.accounts.config.ts",
+          "M\tplaywright.config.ts",
+          "A\trelease-policy.json",
+          "M\trelease.json",
+          "M\tscripts/dev-proxy.cjs",
+          "M\tscripts/dev-proxy.test.ts",
+          "A\tscripts/release/README.md",
+          "A\tscripts/release/candidate.test.ts",
+          "A\tscripts/release/candidate.ts",
+          "A\tscripts/release/cloud.ts",
+          "M\tscripts/release/common.ts",
+          "A\tscripts/release/contract.ts",
+          "M\tscripts/release/eas-credentials.ts",
+          "M\tscripts/release/environment.ts",
+          "A\tscripts/release/expo.ts",
+          "A\tscripts/release/fingerprint.test.ts",
+          "M\tscripts/release/fingerprint.ts",
+          "A\tscripts/release/image.test.ts",
+          "A\tscripts/release/image.ts",
+          "A\tscripts/release/inputs.ts",
+          "A\tscripts/release/journal.test.ts",
+          "A\tscripts/release/journal.ts",
+          "A\tscripts/release/metadata.ts",
+          "M\tscripts/release/native-contract.ts",
+          "M\tscripts/release/native.ts",
+          "A\tscripts/release/operation.test.ts",
+          "A\tscripts/release/operation.ts",
+          "A\tscripts/release/ota.test.ts",
+          "A\tscripts/release/ota.ts",
+          "A\tscripts/release/planner.test.ts",
+          "A\tscripts/release/planner.ts",
+          "A\tscripts/release/providers.test.ts",
+          "M\tscripts/release/release.test.ts",
+          "D\tscripts/release/server-cut.test.ts",
+          "D\tscripts/release/server-cut.ts",
+          "D\tscripts/release/server-publish.ts",
+          "A\tscripts/release/unified.test.ts",
+          "A\tscripts/release/unified.ts",
+          "A\tscripts/test-server.ts",
+          "A\ttests/web/accounts.spec.ts",
+          "M\ttests/web/app.spec.ts",
+          "A\ttests/web/editor-transition.spec.ts",
+          "M\ttests/web/existingLibrary.ts",
+          "A\ttests/web/grid.spec.ts",
+          "M\ttests/web/recents.spec.ts",
+          "M\ttests/web/setup.spec.ts"
+        ],
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ]
+      }
+    },
+    {
+      "sha": "cfea03f0cc56a893a7269677533375e013024349",
+      "parents": [
+        "0e2758de446674c4874bbce1df4eb51abaee35f4"
+      ],
+      "subject": "Declare prompt JSON import types for native ESM consumers",
+      "perParentPaths": {
+        "0e2758de446674c4874bbce1df4eb51abaee35f4": [
+          "M\tapps/server/src/prompts.ts",
+          "M\tpackages/core/src/promptPresets.ts"
+        ]
+      }
+    },
+    {
+      "sha": "608b884731bbf243fc4d8cac616fcbc6b965de21",
+      "parents": [
+        "cfea03f0cc56a893a7269677533375e013024349"
+      ],
+      "subject": "Load server prompt helpers without unrelated core resources",
+      "perParentPaths": {
+        "cfea03f0cc56a893a7269677533375e013024349": [
+          "M\tapps/server/src/prompts.ts"
+        ]
+      }
+    },
+    {
+      "sha": "29e8fa8cf04ce93e28f1c2b98e834283a2b8e389",
+      "parents": [
+        "608b884731bbf243fc4d8cac616fcbc6b965de21",
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "subject": "Integrate merged release and iOS runtime dependencies",
+      "perParentPaths": {
+        "608b884731bbf243fc4d8cac616fcbc6b965de21": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tapps/mobile/package.json",
+          "M\tdocs/releases.md",
+          "M\tpackage-lock.json",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/journal.ts",
+          "M\tscripts/release/metadata.ts",
+          "M\tscripts/release/planner.test.ts",
+          "A\tscripts/release/retirement.test.ts",
+          "A\tscripts/release/retirement.ts",
+          "M\tscripts/release/unified.test.ts",
+          "M\tscripts/release/unified.ts"
+        ],
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/server/src/picture-provider.ts",
+          "A\tapps/server/src/prompts.ts",
+          "M\tapps/server/src/provider.ts",
+          "M\tapps/server/src/synthesis.ts",
+          "A\tapps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+          "A\tapps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+          "A\tapps/server/test/prompt-payloads.test.ts",
+          "A\tapps/server/test/prompt-presets.test.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/onboarding.ts",
+          "A\tpackages/core/src/promptPresets.ts",
+          "A\tpackages/core/src/promptResources.test.ts",
+          "A\tpackages/core/src/promptResources.ts",
+          "A\tprompts/README.md",
+          "A\tprompts/server/board.json",
+          "A\tprompts/server/pictures.json",
+          "A\tprompts/server/speech.json",
+          "A\tprompts/shared/conversation.json",
+          "A\tprompts/shared/onboarding.json",
+          "A\tscripts/prompt-bundle.test.ts"
+        ]
+      }
+    }
+  ],
+  "incomingMasterCommits": [
+    {
+      "sha": "4fa4ede70103c1827396d222de1c21fbc9938e93",
+      "parents": [
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "subject": "Retire stale unpublished release candidates without losing recovery evidence (#42)",
+      "perParentPaths": {
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tdocs/releases.md",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/journal.ts",
+          "M\tscripts/release/metadata.ts",
+          "M\tscripts/release/planner.test.ts",
+          "A\tscripts/release/retirement.test.ts",
+          "A\tscripts/release/retirement.ts",
+          "M\tscripts/release/unified.test.ts",
+          "M\tscripts/release/unified.ts"
+        ]
+      }
+    },
+    {
+      "sha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "parents": [
+        "4fa4ede70103c1827396d222de1c21fbc9938e93"
+      ],
+      "subject": "Restore iOS export with the missing Apple authentication runtime dependency (#44)",
+      "perParentPaths": {
+        "4fa4ede70103c1827396d222de1c21fbc9938e93": [
+          "M\tapps/mobile/package.json",
+          "M\tpackage-lock.json"
+        ]
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/mobile/src/ui/AiConversation.tsx",
+      "sha256": "0d84191ada6bc461e00ab4420404f2882ffe5f94dbeed6ff57c6f5e5f819df04",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "apps/server/src/picture-provider.ts",
+      "sha256": "9e3621df6b44355f665dbdb2747b5087fed34204e5cc9bb45abe4f16b70616cc",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "apps/server/src/prompts.ts",
+      "sha256": "8af49677b8cd305f4767436baa29cf4e6b4cf48301f35081a1a8eebc5f761326",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "apps/server/src/provider.ts",
+      "sha256": "232635dd298e28772764df6781adf54a11cbdad94764d90ccf524104137b1a3d",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "apps/server/src/synthesis.ts",
+      "sha256": "430b82c23484bd265dceb07783c0613fecfc3fc595ba9f7b6d303944a8de3dde",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "apps/server/test/__snapshots__/prompt-payloads.test.ts.snap",
+      "sha256": "5fb9ba6cb112d53755e0e1f7a43f51b1e527f7f58601a839f9840bbe6431cdfe",
+      "purpose": "Maintained regression/snapshot"
+    },
+    {
+      "path": "apps/server/test/__snapshots__/prompt-presets.test.ts.snap",
+      "sha256": "72ae4ec9ca0133bd760518c3c8fe8498584865427bf3bea5aaed3620e13965f4",
+      "purpose": "Maintained regression/snapshot"
+    },
+    {
+      "path": "apps/server/test/prompt-payloads.test.ts",
+      "sha256": "2f09c58a123616e733b343d770fac733cee13de0344cdb1de62ae855f7eb32d0",
+      "purpose": "Maintained regression/snapshot"
+    },
+    {
+      "path": "apps/server/test/prompt-presets.test.ts",
+      "sha256": "4afb4c4dcdb3aae734605a2ea329832f785aedcaacbafc6a503a95ab7e3b5d1f",
+      "purpose": "Maintained regression/snapshot"
+    },
+    {
+      "path": "packages/core/src/index.ts",
+      "sha256": "0a7622081b4a28c7ffc7ad3b2da5182197f35fa189283963dda04ebfe3d5021f",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "packages/core/src/onboarding.ts",
+      "sha256": "8dd309fc3c9bd8d80e1a354b0dd4af59838e28da19edd1a115c9a9558db58dff",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "packages/core/src/promptPresets.ts",
+      "sha256": "1ad197c30db0c749d8f51fc7dffbf1e9dea952f0b6edf0db5a769f10092a002a",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "packages/core/src/promptResources.test.ts",
+      "sha256": "7821e98a9285df6c9b68e5422abc94a471792ca3c265f2399afd59c2b5de8791",
+      "purpose": "Maintained regression/snapshot"
+    },
+    {
+      "path": "packages/core/src/promptResources.ts",
+      "sha256": "d8ba63e8b07461bc9c7b028c108ca51ae9b4f2bc3967e09003fde16b97f84fb4",
+      "purpose": "Typed literal prompt loading and original request/preset substitution"
+    },
+    {
+      "path": "prompts/README.md",
+      "sha256": "ddaedecebec348e6a884286619aa3d89ea2ba12b3791b04b0d479b6d0347722d",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "prompts/server/board.json",
+      "sha256": "8a46cf69ca996215e649a0eaf794eccd71569ed6e9bf2b33aad658747eedda5e",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "prompts/server/pictures.json",
+      "sha256": "33ce20f3624ce4eedcdf9eb87f90d8a465ac03435087210905707a7973f1df42",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "prompts/server/speech.json",
+      "sha256": "691e870f154bdd67e52e972865a97a6cef86ca7d6b7d10069b6ae8b2a3587934",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "prompts/shared/conversation.json",
+      "sha256": "0a737f1fbfc22c06c963108cc14e05155201729e96587e71f15532816f3979bb",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "prompts/shared/onboarding.json",
+      "sha256": "d722b4d06204c4a355fae5358a7fd2fc211fc9dc276c64c0bd9a7bac2cae6257",
+      "purpose": "Exact prompt resources and caller/loading documentation"
+    },
+    {
+      "path": "scripts/prompt-bundle.test.ts",
+      "sha256": "133fb2dca42e7d37a758a30b2009d76097f47eaf7b42db54f00c62a8a319d7d9",
+      "purpose": "Maintained regression/snapshot"
+    }
+  ],
+  "totals": {
+    "commits": 5,
+    "files": 21,
+    "additions": 343,
+    "deletions": 30
+  },
+  "priorDiffByteIdentical": true,
+  "accountExportPreserved": true,
+  "releaseDockerDependencyInputsEqualActualMaster": true,
+  "impact": "PR42 adds release orchestration/retirement and PR44 production prop-types dependency with nested react-is. Both are now actual target ancestry, not extra PR35 commits. Published PR diff remains byte-identical to previously reviewed prompt extraction. New dependency affects iOS gate, rerun independently. Release validation failure belongs to unchanged actual-master release candidate boundary, not prompt resource loading."
+}

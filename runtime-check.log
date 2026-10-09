@@ -1,0 +1,39 @@
+{
+  "sourceHead": "29e8fa8cf04ce93e28f1c2b98e834283a2b8e389",
+  "ios": {
+    "serverMarkersAbsent": true,
+    "sharedMarkersPresent": true,
+    "files": [
+      {
+        "file": "apps\\mobile\\dist-qa-ios\\_expo\\static\\js\\ios\\index-f8ac226a8e511f04ccf0d4b3aedd522b.hbc",
+        "bytes": 7329135,
+        "sha256": "ea1806fe3cf4a86ab344186eec1d51e4cf9beec234aa208ca1468224949f85d5"
+      }
+    ]
+  },
+  "sourceTsx": {
+    "exitCode": 0,
+    "outputSha256": "66d79aaa7cbd192e3ceb33a78c6adb8526e5ffaec0b895a4f6d1595d004db5ac"
+  },
+  "runtime": {
+    "status": 200,
+    "health": {
+      "status": "ok",
+      "aiConfigured": false,
+      "version": "0.2.1",
+      "pictures": {
+        "version": 1,
+        "catalog": true,
+        "analysis": false,
+        "generation": false
+      }
+    },
+    "layout": [
+      "server/*.js",
+      "package.json",
+      "external node_modules junction"
+    ],
+    "sourceOrPromptsDirectoriesCopied": false,
+    "serverBundleSha256": "3efc05e1aff8b7ca6d79a0428f06486f4f6eaaf6d710dd0ec115b1a97d2660c7"
+  }
+}

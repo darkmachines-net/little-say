@@ -1,0 +1,73 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg-yLa8",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {},
+                  {},
+                  {
+                    "text": "Extract agent prompts into versioned resource files",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {
+                    "name": "Queued",
+                    "field": {
+                      "name": "Pipeline state"
+                    }
+                  },
+                  {
+                    "text": "01a11ca6-7faa-7628-8031-ac89bc018019",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {
+                    "name": "In Progress",
+                    "field": {
+                      "name": "Status"
+                    }
+                  },
+                  {
+                    "text": "PR42 and PR44 merged; current master 18aa7c08615ecf60c8583f0590dcce8ed389f0ea. Same-owner integration/affected validation pending verified host acknowledgment and execution evidence, including iOS export and PR42 impact; same independent QA required. Prior QA base fabb925 is historical. Prior QA: https://github.com/MChartier/little-say/pull/35#issuecomment-6066462709",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "2026-10-09T01:30:27Z",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  },
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/35",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      }
+    }
+  }
+}
