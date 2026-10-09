@@ -1,0 +1,227 @@
+{
+  "checkedAtUtc": "2026-10-09T05:04:01.553Z",
+  "host": "mchartier_zbook",
+  "ownerTask": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+  "headSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+  "actualTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "mergeBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "parents": [
+    "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "768811832bd0b389ba7e24738fb58800ea145000"
+  ],
+  "publishedScope": {
+    "commits": 14,
+    "files": 15,
+    "additions": 675,
+    "deletions": 69
+  },
+  "incomingPaths": [
+    ".github/workflows/cut-release.yml",
+    "apps/mobile/app.json",
+    "apps/mobile/package.json",
+    "apps/server/package.json",
+    "docs/releases.md",
+    "native-release.json",
+    "package-lock.json",
+    "package.json",
+    "release.json",
+    "scripts/release/candidate.test.ts",
+    "scripts/release/candidate.ts",
+    "scripts/release/release.test.ts",
+    "scripts/release/validation.test.ts",
+    "scripts/release/validation.ts"
+  ],
+  "incomingCommits": [
+    {
+      "sha": "1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+      "parents": [
+        "768811832bd0b389ba7e24738fb58800ea145000"
+      ],
+      "message": "Fix release Auth emulator validation and add manual branch validation (#46)\n\n## Summary\n\nCut release fails when its integration command runs without the required\nFirebase Auth emulator. Current master includes the merged\nprompt-resource extraction but retains that direct call. Reuse the\nmaintained demo-emulator wrapper while keeping every PostgreSQL and\nauthentication test mandatory.\n\nA manual **validation_only** option runs the same source-validation\nboundary on a selected branch with disposable PostgreSQL. It uses\nread-only checkout permissions without persisted credentials; every\ncandidate, registry and provider/release job is excluded. Normal\nreleases remain restricted to master. Existing PR CI is unchanged.\n\nCloses #45.\n\n## Test plan\n\n- **Current base to proposed source:** after integrating master\n`7688118`, the [exact-head validation-only\nrun](https://github.com/MChartier/little-say/actions/runs/37872957939/job/113634941431)\npassed **325 unit tests, all 25 PostgreSQL/Auth integration tests, types\nand builds**, including source-free prompt-bundle coverage.\nEmulator/database cleanup completed; all six release jobs were skipped.\n- **Affected runtime and failure boundaries:** 11 targeted local tests\npassed for prompt payloads, resources, source-free ESM execution and\nvalidation guards. The original six missing-emulator failures,\nregression rejection of the old command, and real local failure/cleanup\nevidence remain applicable to unchanged validation code. [Actual-base\nimpact analysis, raw results and preserved original\nbody](https://github.com/MChartier/little-say/blob/67ca22a9dbb9b7f31bd73e5145b394529455c8cf/impact-master7688118/README.md).\n\n[Current PR CI\npassed](https://github.com/MChartier/little-say/actions/runs/37872940191),\nincluding five account-browser scenarios. The prior review-bot [quota\nrefusal](https://github.com/MChartier/little-say/pull/46#issuecomment-6072598630)\nis retained; it is not a completed review of this head. Independent\nreview/QA remains required.\n\nThis non-UI change validates the real source-check boundary, **not a\ncomplete release**: candidate creation/retirement, signing, providers,\npublishing and deployment were not exercised. PR42's retained evidence\ncovered normal CI and release safeguards but missed this separate\ncommand path. Earlier run37871534382 remains evidence for its original\nsource, not the new combined build.\n\nCo-authored-by: Codex <codex@openai.com>"
+    },
+    {
+      "sha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "parents": [
+        "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+      ],
+      "message": "Prepare Little Say release 37874954697 (#47)\n\nPrepare the allocated server/native versions for release 37874954697\n(auto, internal).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth\nemulator integration tests passed on this candidate. The original Cut\nrelease run resumes publication after normal merge; rerun its failed\njobs if review is required.\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+    }
+  ],
+  "disjointFromTranslationFiles": true,
+  "dependencyGraphUnchangedAfterRemovingOnlyWorkspaceVersionFields": true,
+  "productRuntimeAndTestsUnchanged": true,
+  "buildIdentityImpact": "Native app version0.1.1->0.1.2 and buildnumber2->3, appVersion OTA identity, server/root version0.2.1->0.3.0. Settings version label and health/readiness version responses change. Different app config/server embedded metadata means previous exported/bundled bytes must not be called b46 builds. No b46 or synthetic combined build was produced.",
+  "captureImpact": "All12 existing exact images show translation/editor states, not Settings version or health responses. Runtime, account routes,fixture/harness/theme/viewport/input behavior unchanged. Keep original18aa Before/6db After identities; reuse only as representative translation-behavior evidence for current target. Preserve all original hashes; no recapture solely for metadata.",
+  "validationImpact": "Existing331units34browsercases,17 independent tests/four Edge scenarios,CI and iOS/Android export results remain bound to9cada/768. Not newly executed against b46. Release validator now calls test:services with Auth emulator; manual validation_only workflow isolated. Existing CI workflow unchanged. PR46 is merged; do not claim issue45 remains uncorrected. PR49 pod fix remains open and excluded; export is not CocoaPods/native compilation/signing/provider success.",
+  "sourceDecision": "No translation source correction established: incoming14 paths and all15 published translation paths are disjoint. No integration or source mutation performed. Actual-target metadata assessment handed to sameQA; cannot claim tested combined build. Any requested integration would need a separately admitted plan.",
+  "historicalQa": {
+    "commentId": 6073011337,
+    "commentBodySha256": "5d23080c9cd2c3e9f8be97bdaee56393ae15d30d4dbd945b9bfe2f4d8cb70ec6",
+    "updatedAt": "2026-10-09T02:27:01Z",
+    "verdictCommit": "841d692fb92a531f9ac5f3fe27cafc2d59523b27",
+    "verdictSha256": "2a69a7c58ab0c4a6248f1d47557f28f5d02e28c7b7c077115ece0da0be05b736",
+    "historicalTarget": "768811832bd0b389ba7e24738fb58800ea145000"
+  },
+  "priorPrBodySha256": "5fd67eab73c71f355b718235d14d9d9afdb4afb5a4a6561223eb18b14009e7ee",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "humanReady": false,
+  "prBodySha256": "26d6a033099e7a62b286ac35fd4e024b0bff7dd78ac88fe09f0cfbc389f4ac51",
+  "prUpdatedAt": "2026-10-09T05:03:25Z",
+  "preservedPriorBodyUrl": "https://github.com/MChartier/little-say/blob/b51b6884ee67afab2fd305fdad90720f517a4094/target-b46-impact/records/pr-body-before.md",
+  "impactEvidenceCommit": "b51b6884ee67afab2fd305fdad90720f517a4094",
+  "impactAccess": {
+    "checkedAtUtc": "2026-10-09T05:03:21.518Z",
+    "commit": "b51b6884ee67afab2fd305fdad90720f517a4094",
+    "authenticatedReviewerAccess": true,
+    "files": [
+      {
+        "path": "target-b46-impact/README.md",
+        "sha256": "f3db560c2d2e3da0e6a144d6b518e8c1650ba7769685052ff7f81b450a4ed7b1",
+        "bytes": 5875,
+        "gitBlob": "9350a16df5d5be8a76dab9b979267043fb77138c"
+      },
+      {
+        "path": "target-b46-impact/assessment.mjs",
+        "sha256": "96c4aae0b76a0bddbfda35bb2a219f640624723f456a7f9f47c7d517d5e03f6c",
+        "bytes": 6499,
+        "gitBlob": "97637b5654a251ee77dc7f354e2b719bb4f9cb65"
+      },
+      {
+        "path": "target-b46-impact/capture-access.json",
+        "sha256": "11f1bd3bf7d2fde4afdd29697e6f9ef30a55e28cd800fab7ce70aede82805372",
+        "bytes": 11203,
+        "gitBlob": "374897682f81c662e569db1adfaee942a56bf56d"
+      },
+      {
+        "path": "target-b46-impact/records/assessment.json",
+        "sha256": "e86ccb3ddecdf6c3ff6a7d9c51ad0c050daeb2cac5ed34325247a040870b3b3e",
+        "bytes": 6769,
+        "gitBlob": "d6a8a67ec4370007b871784b574a624d21c86ab9"
+      },
+      {
+        "path": "target-b46-impact/records/ci.json",
+        "sha256": "e1aca54426d78f5e3391b29e6da779cb8c654e9b6d211a0c1364f195eac771e2",
+        "bytes": 14449,
+        "gitBlob": "8d98b9fe305a41bb726422d56c31ca21df60a91f"
+      },
+      {
+        "path": "target-b46-impact/records/commits.json",
+        "sha256": "db231e14331ee7bb44d14e1f4989b05866b83cd57edbd17a5b1958064b9026f7",
+        "bytes": 56882,
+        "gitBlob": "9cccd0f2412e5e0e832ff6a823989bf072b09701"
+      },
+      {
+        "path": "target-b46-impact/records/compare.json",
+        "sha256": "b00baa9b25927ea65a3f40aefd949b890187bcd6502c17b3f0d1c11b006d9845",
+        "bytes": 71289,
+        "gitBlob": "a99e7e64ec5ce01f20dd3af612c570e9c6d3ad04"
+      },
+      {
+        "path": "target-b46-impact/records/feedback.json",
+        "sha256": "4641160d41170a5478015cbc37da946806fddcc628c058830cada6688fb8c6f0",
+        "bytes": 253993,
+        "gitBlob": "d0afb8cda9b5ebbabb7da97f51e46c3401cd3a5b"
+      },
+      {
+        "path": "target-b46-impact/records/files.json",
+        "sha256": "c3eac65485eb479a651eec17cbc94b7ca112a35f5bde762c1309684ad6191c00",
+        "bytes": 125441,
+        "gitBlob": "37c8c5b9fcf7cfdfbf67beeba229f73e308486c7"
+      },
+      {
+        "path": "target-b46-impact/records/incoming.diff",
+        "sha256": "cba3897a44d34d793451c3345455d603c9849edea531d11826181f80671946e4",
+        "bytes": 23566,
+        "gitBlob": "c7acab44dbf1c15c5521d28c5ef56e6969fc3271"
+      },
+      {
+        "path": "target-b46-impact/records/issue-body-before.md",
+        "sha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+        "bytes": 2907,
+        "gitBlob": "e3184f7dbf9adae7f74247cb9269e332fae00dcc"
+      },
+      {
+        "path": "target-b46-impact/records/issue.json",
+        "sha256": "633fc7e8627de329b8e448a5ef5ee9e51f2e3f2da5d905f461446dd8edebd8b3",
+        "bytes": 8084,
+        "gitBlob": "6302afef84f7d80839dba36336088b1a3ad2768f"
+      },
+      {
+        "path": "target-b46-impact/records/pr-before.json",
+        "sha256": "6e4fb0cf819a78070b9c6de7e4140def39caf58650d40316cca0c5f20f3e830c",
+        "bytes": 26355,
+        "gitBlob": "3c00240aad0cefa23a894ed71697504687d0687b"
+      },
+      {
+        "path": "target-b46-impact/records/pr-body-before.md",
+        "sha256": "5fd67eab73c71f355b718235d14d9d9afdb4afb5a4a6561223eb18b14009e7ee",
+        "bytes": 7816,
+        "gitBlob": "7bb7faf2e810e9c64d072c225581d64e975d84c9"
+      },
+      {
+        "path": "target-b46-impact/records/pr46.json",
+        "sha256": "1890bb6032f4bf070519cff00f015fdc14a11604575ef1c6cc3da097cb0830b6",
+        "bytes": 21751,
+        "gitBlob": "ce4b85773b84e920ad8677c755eec6e600cabba8"
+      },
+      {
+        "path": "target-b46-impact/records/pr47.json",
+        "sha256": "51113de22e7ca3cbca6a3354d6c3fc43e6977984ce3ff47dc42cc8260f6e387d",
+        "bytes": 20022,
+        "gitBlob": "e7fafaebb61a916391de057bb990afc918e22ab1"
+      },
+      {
+        "path": "target-b46-impact/records/pr49.json",
+        "sha256": "f8251cb873b7210289304544e2a1c58bda4e2c50a42178e95f749fc5152fd201",
+        "bytes": 21802,
+        "gitBlob": "cef9621c7559858b26c6dd72ed4fd18abcf646f4"
+      },
+      {
+        "path": "target-b46-impact/records/qa-comment.json",
+        "sha256": "2ef8aea6e09f183e94880a8a7b18d125652ac22f9ebc2e7422407b28bc94a818",
+        "bytes": 5164,
+        "gitBlob": "ff8f51984bc591925f5725ff5cd6527a0ebfb6de"
+      },
+      {
+        "path": "target-b46-impact/records/qa-verdict.json",
+        "sha256": "2a69a7c58ab0c4a6248f1d47557f28f5d02e28c7b7c077115ece0da0be05b736",
+        "bytes": 25561,
+        "gitBlob": "2aa0bad7d5b014dcdaf924f4de60e2fa87629277"
+      },
+      {
+        "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+        "path": "README-current.md",
+        "sha256": "6ac2c47e71d7e27e989b3832974e09b96dfe708ac54dbc62706b1fa969b14bda",
+        "bytes": 5669
+      },
+      {
+        "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+        "path": "review-fix/manifest.json",
+        "sha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+        "bytes": 24490
+      },
+      {
+        "historicalCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+        "path": "publication/record.json",
+        "sha256": "44341dfe99cf315400ae15a72a41ccc9e89f8f2953bd22cbce44cbe2f69e5336",
+        "bytes": 3106
+      }
+    ]
+  },
+  "historicalImpact": "a42da943d5bfbed0d2faf452e0f7833a65f3bc55/prompt-integration/README.md",
+  "historicalPublication": "df823a0631fdf947ad1ce52ba98058b2fabecedc/prompt-publication/record.json",
+  "ci": {
+    "id": 37873230024,
+    "headSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+    "conclusion": "success",
+    "applicability": "Historical actual768 target; no b46 or combined build execution."
+  },
+  "feedbackUnchanged": true,
+  "allSixThreadsResolved": true,
+  "issue32Association": true,
+  "newlyExecutedTests": [],
+  "sourceWrites": [],
+  "checkpoint": "No product source commit/integration, expensive tests, captures, readiness, lifecycle or Project writes. Source worktrees clean. Owner idle after final publication guard; sameQA current-target applicability/body assessment remains required."
+}
