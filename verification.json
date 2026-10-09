@@ -1,0 +1,557 @@
+{
+  "checkedAtUtc": "2026-10-09T01:50:59.202159+00:00",
+  "manifestSha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+  "harnessSha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+  "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+  "captureCount": 12,
+  "captures": [
+    {
+      "filename": "before-board.png",
+      "state": "board",
+      "note": "Same saved Russian play selection; fixed Sheep retains English. Play translateLabels=false does not restrict editor labels after the change.",
+      "timeUtc": "2026-10-09T01:34:40.510Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ],
+      "side": "before",
+      "sourceSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+    },
+    {
+      "filename": "before-existing-translation-controls.png",
+      "state": "existing-translation-controls",
+      "note": "Baseline-only supplemental state: lower translated text fields already exist and remain distinct from main source fields.",
+      "timeUtc": "2026-10-09T01:34:41.044Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ],
+      "side": "before",
+      "sourceSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+    },
+    {
+      "filename": "before-card.png",
+      "state": "card",
+      "note": "Russian selected. Before main fields remain source English; existing lower Russian fields are present separately. After main fields and preview use Russian.",
+      "timeUtc": "2026-10-09T01:34:41.605Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        },
+        {
+          "url": "/_expo/static/js/web/index-7d886762841e4ae1a0c15d20a46f98ff.js",
+          "sha256": "e1b1cac353a445680d970282182a81aac75a19f19a865683af8d93f958e19ef3",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-efb566d0deefa8a107fe0893a4f0e770.js",
+          "sha256": "b0a2bd903bd89fef978996913b7e52e3bc6ce19fc353b0f4490f8dc13e4231ab",
+          "bytes": 6084972
+        }
+      ],
+      "side": "before",
+      "sourceSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+    },
+    {
+      "filename": "after-board.png",
+      "state": "board",
+      "note": "Same saved Russian play selection; fixed Sheep retains English. Play translateLabels=false does not restrict editor labels after the change.",
+      "timeUtc": "2026-10-09T01:34:46.960Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-card.png",
+      "state": "card",
+      "note": "Russian selected. Before main fields remain source English; existing lower Russian fields are present separately. After main fields and preview use Russian.",
+      "timeUtc": "2026-10-09T01:34:47.575Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-empty-correction-refused.png",
+      "state": "empty-correction-refused",
+      "note": "Current-only R1 boundary: both empty Russian fields survive switching to Spanish and back; Save is refused and Duplicate disabled. Cancel preserves the original saved variant.",
+      "timeUtc": "2026-10-09T01:34:47.785Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-manual-source-collision.png",
+      "state": "manual-source-collision",
+      "note": "Current-only recovery: a manual original-language change is refused on save so the saved Russian correction cannot be shadowed.",
+      "timeUtc": "2026-10-09T01:34:48.032Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-corrected-audio-failure.png",
+      "state": "corrected-audio-failure",
+      "note": "Current-only supplemental state: corrected Russian text remains after mocked speech failure.",
+      "timeUtc": "2026-10-09T01:34:48.230Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-stale-correction.png",
+      "state": "stale-correction",
+      "note": "Current-only supplemental state: retained corrected Russian words need review after source speech changes.",
+      "timeUtc": "2026-10-09T01:34:48.346Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-phone-board.png",
+      "state": "phone-board",
+      "note": "Current-only responsive board check; not a native device capture.",
+      "timeUtc": "2026-10-09T01:34:48.921Z",
+      "route": "/app",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-ai-replacement-review.png",
+      "state": "ai-replacement-review",
+      "note": "Current-only supplemental state: a separate explicit review protects saved words from a mocked AI proposal. No changes applied.",
+      "timeUtc": "2026-10-09T01:34:49.515Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    },
+    {
+      "filename": "after-ai-source-collision.png",
+      "state": "ai-source-collision",
+      "note": "Current-only recovery state: source-language collision is refused; the preceding draft and saved corrections remain intact.",
+      "timeUtc": "2026-10-09T01:34:49.640Z",
+      "route": "/app",
+      "viewport": {
+        "width": 1180,
+        "height": 1000
+      },
+      "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+      "loadedBundles": [
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        },
+        {
+          "url": "/_expo/static/js/web/index-d6339be9a6f0b6d1a45245595e4449da.js",
+          "sha256": "f0461d68a69cea6524ca1b2194bf195959021ef37d8a49f35483dc9bc0b465b5",
+          "bytes": 359876
+        },
+        {
+          "url": "/_expo/static/js/web/App-03f812141bd8753096479f45acf11122.js",
+          "sha256": "6646686ce1c18416e82bc06344a8c14dc2378de04592b9499335a1472ef6fb5a",
+          "bytes": 6092159
+        }
+      ],
+      "side": "after",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef"
+    }
+  ],
+  "verifiedBuilds": [
+    {
+      "source": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "side": "before",
+      "localFilesVerified": 21
+    },
+    {
+      "source": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "side": "after",
+      "localFilesVerified": 21
+    }
+  ],
+  "nativeExportArtifactsVerified": [
+    {
+      "platform": "ios",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "command": "node ../../node_modules/expo/bin/cli export --platform ios --output-dir ../../../records/integration-ios-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-ios-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 333,
+          "sha256": "0d6a5555ef1bc3700b33442264f68f3c37da135072c24c9389f5029d7f830b5b"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/ios/index-6fbfb319bfdd0c30ba55c93058a003f0.hbc",
+          "bytes": 7335867,
+          "sha256": "8c22c1fdeb1c23a2d7fdab77055343ba8e71ece25f5c5842127299e1752c3d2f"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "command": "node ../../node_modules/expo/bin/cli export --platform android --output-dir ../../../records/integration-android-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-android-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 341,
+          "sha256": "c4b1423f2342b54b078c3aca070aa923a76898a118921554ba5d1ecef14943bd"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/android/index-9665392d99dee1d23848f1aaba1cce20.hbc",
+          "bytes": 7341305,
+          "sha256": "afe3906ebca4c398f0f1dc841bd16dcbea52f9a90e0df64429be38245ad74c65"
+        }
+      ]
+    }
+  ],
+  "independentIosExport": {
+    "source": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "command": "node ../../node_modules/expo/bin/cli export --platform ios --output-dir ../../../integrated38/qa-ios-export",
+    "exitCode": 0,
+    "files": [
+      {
+        "path": "metadata.json",
+        "bytes": 333,
+        "sha256": "6fc320fa1fcf16d7afca565c38bdca50f8eab4e3473e1fd0870e33d82f1f74f6"
+      },
+      {
+        "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+        "bytes": 88603,
+        "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+      },
+      {
+        "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+        "bytes": 14475,
+        "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+      },
+      {
+        "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+        "bytes": 44422,
+        "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+      },
+      {
+        "path": "_expo/static/js/ios/index-d3709bb24645b8d18b2a676fa5d22d17.hbc",
+        "bytes": 7335865,
+        "sha256": "8d918d68c198c0292ad85cd929b2faa6365d17e6d87346757bdfb6e3b4390eaa"
+      }
+    ]
+  },
+  "scopeCountsAndOrderedParentsReconciled": true,
+  "all55ExactGitBlobs": "identities.json"
+}

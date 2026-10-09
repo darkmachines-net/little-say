@@ -1,0 +1,74 @@
+{
+  "data": {
+    "repository": {
+      "issue": {
+        "projectItems": {
+          "nodes": [
+            {
+              "id": "PVTI_lAHOABMy1c4Bl3Eqzg_BuRc",
+              "project": {
+                "number": 1,
+                "title": "Agentic development pipeline"
+              },
+              "fieldValues": {
+                "nodes": [
+                  {},
+                  {},
+                  {},
+                  {
+                    "text": "Show editable translations for the selected board and card language",
+                    "field": {
+                      "name": "Title"
+                    }
+                  },
+                  {
+                    "name": "Queued",
+                    "field": {
+                      "name": "Pipeline state"
+                    }
+                  },
+                  {
+                    "text": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+                    "field": {
+                      "name": "Owner"
+                    }
+                  },
+                  {
+                    "text": "https://github.com/MChartier/little-say/pull/38",
+                    "field": {
+                      "name": "Current PRs"
+                    }
+                  },
+                  {
+                    "name": "In Progress",
+                    "field": {
+                      "name": "Status"
+                    }
+                  },
+                  {
+                    "text": "PR42 and PR44 merged; current master 18aa7c08615ecf60c8583f0590dcce8ed389f0ea. Same-owner integration/affected validation pending verified host acknowledgment and execution evidence, including iOS export and PR42 impact; same independent QA required. Prior QA base fabb925 is historical. Prior QA: https://github.com/MChartier/little-say/pull/38#issuecomment-6068206900",
+                    "field": {
+                      "name": "Blocked by"
+                    }
+                  },
+                  {
+                    "text": "2026-10-09T01:30:27Z",
+                    "field": {
+                      "name": "Verified at"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false
+                }
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false
+          }
+        }
+      }
+    }
+  }
+}

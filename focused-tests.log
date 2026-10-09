@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-7/little-say-qa
+
+
+ Test Files  2 passed (2)
+      Tests  19 passed (19)
+   Start at  18:51:24
+   Duration  362ms (transform 245ms, setup 0ms, import 407ms, tests 34ms, environment 0ms)
+

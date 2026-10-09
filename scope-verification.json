@@ -1,0 +1,464 @@
+{
+  "head": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "actualTarget": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "headParents": [
+    "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "targetParents": [
+    "4fa4ede70103c1827396d222de1c21fbc9938e93"
+  ],
+  "commits": [
+    {
+      "sha": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+      "parents": [
+        "9dd18b856d6d900ab162be3f1544aac0b93d2b71"
+      ],
+      "subject": "Edit selected language variants without losing saved corrections",
+      "perParentPaths": {
+        "9dd18b856d6d900ab162be3f1544aac0b93d2b71": [
+          "M\tapps/mobile/src/App.tsx",
+          "M\tapps/mobile/src/services/pictures.ts",
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/mobile/src/ui/BoardEditor.tsx",
+          "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+          "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+          "M\tapps/mobile/src/ui/TileEditor.tsx",
+          "M\tpackages/core/src/boardLanguages.test.ts",
+          "M\tpackages/core/src/boardLanguages.ts",
+          "M\tpackages/core/src/schema.ts",
+          "A\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/app.spec.ts",
+          "M\ttests/web/speech.spec.ts",
+          "A\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+      "parents": [
+        "926b0f9ba742710e40ec7b8c198a877b5a82927e"
+      ],
+      "subject": "Reject AI source changes that shadow saved translations",
+      "perParentPaths": {
+        "926b0f9ba742710e40ec7b8c198a877b5a82927e": [
+          "M\tpackages/core/src/schema.ts",
+          "M\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+      "parents": [
+        "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "subject": "Merge current master into translation editing",
+      "perParentPaths": {
+        "cece2ef8e029c650bd3ca47df5e08f1394310c7d": [
+          "A\t.gitattributes",
+          "M\t.github/workflows/ci.yml",
+          "A\t.github/workflows/cut-release.yml",
+          "D\t.github/workflows/cut-server-release.yml",
+          "M\tREADME.md",
+          "M\tapps/mobile/app.config.js",
+          "M\tapps/mobile/app.json",
+          "M\tapps/mobile/eas.json",
+          "A\tapps/mobile/fingerprint.config.js",
+          "M\tapps/mobile/package.json",
+          "A\tapps/mobile/release-metadata.cjs",
+          "M\tapps/mobile/src/App.tsx",
+          "M\tapps/mobile/src/data/storage.ts",
+          "M\tapps/mobile/src/data/storage.web.ts",
+          "M\tapps/mobile/src/data/useLibrary.ts",
+          "A\tapps/mobile/src/services/accountSession.ts",
+          "A\tapps/mobile/src/services/accountSession.web.ts",
+          "A\tapps/mobile/src/services/accountSync.test.ts",
+          "A\tapps/mobile/src/services/accountSync.ts",
+          "A\tapps/mobile/src/services/api.test.ts",
+          "M\tapps/mobile/src/services/api.ts",
+          "A\tapps/mobile/src/services/firebase-native.d.ts",
+          "A\tapps/mobile/src/services/firebaseAccount.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.test.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.ts",
+          "A\tapps/mobile/src/services/firebasePersistence.web.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.test.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.ts",
+          "A\tapps/mobile/src/services/firebaseProviders.web.ts",
+          "M\tapps/mobile/src/services/speechLibrary.ts",
+          "A\tapps/mobile/src/services/useAccount.ts",
+          "A\tapps/mobile/src/ui/AccountPanel.tsx",
+          "A\tapps/mobile/src/ui/AccountScreen.tsx",
+          "M\tapps/mobile/src/ui/FirstTimeSetup.tsx",
+          "M\tapps/mobile/src/ui/ParentSettings.tsx",
+          "M\tapps/mobile/src/ui/components.tsx",
+          "A\tapps/server/migrations/1760000000002_accounts.sql",
+          "M\tapps/server/package.json",
+          "A\tapps/server/src/account-routes.ts",
+          "A\tapps/server/src/accounts.ts",
+          "M\tapps/server/src/app.ts",
+          "M\tapps/server/src/database.ts",
+          "A\tapps/server/src/firebase.ts",
+          "M\tapps/server/src/index.ts",
+          "A\tapps/server/test/accounts.integration.test.ts",
+          "M\tapps/server/test/database.integration.test.ts",
+          "A\tapps/server/test/firebase.integration.test.ts",
+          "A\tdocs/ACCOUNTS.md",
+          "M\tdocs/releases.md",
+          "M\tdocs/testing.md",
+          "A\tfirebase.json",
+          "M\tnative-release.json",
+          "M\tpackage-lock.json",
+          "M\tpackage.json",
+          "A\tpackages/core/src/account.test.ts",
+          "A\tpackages/core/src/account.ts",
+          "M\tpackages/core/src/index.ts",
+          "M\tpackages/core/src/schema.ts",
+          "A\tplaywright.accounts.config.ts",
+          "M\tplaywright.config.ts",
+          "A\trelease-policy.json",
+          "M\trelease.json",
+          "M\tscripts/dev-proxy.cjs",
+          "M\tscripts/dev-proxy.test.ts",
+          "A\tscripts/release/README.md",
+          "A\tscripts/release/candidate.test.ts",
+          "A\tscripts/release/candidate.ts",
+          "A\tscripts/release/cloud.ts",
+          "M\tscripts/release/common.ts",
+          "A\tscripts/release/contract.ts",
+          "M\tscripts/release/eas-credentials.ts",
+          "M\tscripts/release/environment.ts",
+          "A\tscripts/release/expo.ts",
+          "A\tscripts/release/fingerprint.test.ts",
+          "M\tscripts/release/fingerprint.ts",
+          "A\tscripts/release/image.test.ts",
+          "A\tscripts/release/image.ts",
+          "A\tscripts/release/inputs.ts",
+          "A\tscripts/release/journal.test.ts",
+          "A\tscripts/release/journal.ts",
+          "A\tscripts/release/metadata.ts",
+          "M\tscripts/release/native-contract.ts",
+          "M\tscripts/release/native.ts",
+          "A\tscripts/release/operation.test.ts",
+          "A\tscripts/release/operation.ts",
+          "A\tscripts/release/ota.test.ts",
+          "A\tscripts/release/ota.ts",
+          "A\tscripts/release/planner.test.ts",
+          "A\tscripts/release/planner.ts",
+          "A\tscripts/release/providers.test.ts",
+          "M\tscripts/release/release.test.ts",
+          "D\tscripts/release/server-cut.test.ts",
+          "D\tscripts/release/server-cut.ts",
+          "D\tscripts/release/server-publish.ts",
+          "A\tscripts/release/unified.test.ts",
+          "A\tscripts/release/unified.ts",
+          "A\tscripts/test-server.ts",
+          "A\ttests/web/accounts.spec.ts",
+          "M\ttests/web/existingLibrary.ts",
+          "M\ttests/web/setup.spec.ts"
+        ],
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613": [
+          "M\tapps/mobile/src/App.tsx",
+          "M\tapps/mobile/src/services/pictures.ts",
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/mobile/src/ui/BoardEditor.tsx",
+          "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+          "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+          "M\tapps/mobile/src/ui/TileEditor.tsx",
+          "M\tpackages/core/src/boardLanguages.test.ts",
+          "M\tpackages/core/src/boardLanguages.ts",
+          "M\tpackages/core/src/schema.ts",
+          "A\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/app.spec.ts",
+          "M\ttests/web/speech.spec.ts",
+          "A\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+      "parents": [
+        "dec27b5044ebce528ef59a499d94f2ccb2f66c0b"
+      ],
+      "subject": "Verify translation corrections through account entry cancellation",
+      "perParentPaths": {
+        "dec27b5044ebce528ef59a499d94f2ccb2f66c0b": [
+          "M\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "1deeea094c08804344d87479c094dac4b302a336",
+      "parents": [
+        "680d1a8a1b3cba93b9c99f3932a251c50651b731"
+      ],
+      "subject": "Cover corrected translation account snapshots and audio keys",
+      "perParentPaths": {
+        "680d1a8a1b3cba93b9c99f3932a251c50651b731": [
+          "M\tpackages/core/src/translationEditing.test.ts"
+        ]
+      }
+    },
+    {
+      "sha": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+      "parents": [
+        "1deeea094c08804344d87479c094dac4b302a336"
+      ],
+      "subject": "Preserve account choice in editor grid regression fixtures",
+      "perParentPaths": {
+        "1deeea094c08804344d87479c094dac4b302a336": [
+          "M\ttests/web/grid.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+      "parents": [
+        "ebae155ff0eda3ec611e65dfc937f425b27e60df"
+      ],
+      "subject": "Reject manual source language changes that hide saved corrections",
+      "perParentPaths": {
+        "ebae155ff0eda3ec611e65dfc937f425b27e60df": [
+          "M\tapps/mobile/src/ui/TileEditor.tsx",
+          "M\tpackages/core/src/schema.ts",
+          "M\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+      "parents": [
+        "1a7fa5e960f200fdae35339972cddad871ea0f06"
+      ],
+      "subject": "Document explicit review required for translation replacement previews",
+      "perParentPaths": {
+        "1a7fa5e960f200fdae35339972cddad871ea0f06": [
+          "M\tapps/mobile/src/services/pictures.ts"
+        ]
+      }
+    },
+    {
+      "sha": "ec849188fd450995149b87ee9bb454ac89388c4b",
+      "parents": [
+        "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+      ],
+      "subject": "Preserve empty translation drafts for required-field validation",
+      "perParentPaths": {
+        "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f": [
+          "M\tpackages/core/src/boardLanguages.ts",
+          "M\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "parents": [
+        "ec849188fd450995149b87ee9bb454ac89388c4b"
+      ],
+      "subject": "Guard source language against new draft corrections",
+      "perParentPaths": {
+        "ec849188fd450995149b87ee9bb454ac89388c4b": [
+          "M\tapps/mobile/src/ui/TileEditor.tsx",
+          "M\tpackages/core/src/schema.ts",
+          "M\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    },
+    {
+      "sha": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+      "parents": [
+        "b064097ac6a02717adfd7507d8d4cd741353069c"
+      ],
+      "subject": "Document revision-bound editor save callbacks",
+      "perParentPaths": {
+        "b064097ac6a02717adfd7507d8d4cd741353069c": [
+          "M\tapps/mobile/src/ui/BoardEditor.tsx"
+        ]
+      }
+    },
+    {
+      "sha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+      "parents": [
+        "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+      ],
+      "subject": "Document draft-bound translation replacement callbacks",
+      "perParentPaths": {
+        "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472": [
+          "M\tapps/mobile/src/ui/AiConversation.tsx"
+        ]
+      }
+    },
+    {
+      "sha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "parents": [
+        "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "subject": "Integrate merged release retirement and iOS runtime dependency",
+      "perParentPaths": {
+        "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tapps/mobile/package.json",
+          "M\tdocs/releases.md",
+          "M\tpackage-lock.json",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/journal.ts",
+          "M\tscripts/release/metadata.ts",
+          "M\tscripts/release/planner.test.ts",
+          "A\tscripts/release/retirement.test.ts",
+          "A\tscripts/release/retirement.ts",
+          "M\tscripts/release/unified.test.ts",
+          "M\tscripts/release/unified.ts"
+        ],
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea": [
+          "M\tapps/mobile/src/App.tsx",
+          "M\tapps/mobile/src/services/pictures.ts",
+          "M\tapps/mobile/src/ui/AiConversation.tsx",
+          "M\tapps/mobile/src/ui/BoardEditor.tsx",
+          "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+          "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+          "M\tapps/mobile/src/ui/TileEditor.tsx",
+          "M\tpackages/core/src/boardLanguages.test.ts",
+          "M\tpackages/core/src/boardLanguages.ts",
+          "M\tpackages/core/src/schema.ts",
+          "A\tpackages/core/src/translationEditing.test.ts",
+          "M\ttests/web/app.spec.ts",
+          "M\ttests/web/grid.spec.ts",
+          "M\ttests/web/speech.spec.ts",
+          "A\ttests/web/translationEditing.spec.ts"
+        ]
+      }
+    }
+  ],
+  "incomingMasterCommits": [
+    {
+      "sha": "4fa4ede70103c1827396d222de1c21fbc9938e93",
+      "parents": [
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "subject": "Retire stale unpublished release candidates without losing recovery evidence (#42)",
+      "perParentPaths": {
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613": [
+          "M\t.github/workflows/cut-release.yml",
+          "M\tdocs/releases.md",
+          "M\tscripts/release/candidate.test.ts",
+          "M\tscripts/release/candidate.ts",
+          "M\tscripts/release/journal.ts",
+          "M\tscripts/release/metadata.ts",
+          "M\tscripts/release/planner.test.ts",
+          "A\tscripts/release/retirement.test.ts",
+          "A\tscripts/release/retirement.ts",
+          "M\tscripts/release/unified.test.ts",
+          "M\tscripts/release/unified.ts"
+        ]
+      }
+    },
+    {
+      "sha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "parents": [
+        "4fa4ede70103c1827396d222de1c21fbc9938e93"
+      ],
+      "subject": "Restore iOS export with the missing Apple authentication runtime dependency (#44)",
+      "perParentPaths": {
+        "4fa4ede70103c1827396d222de1c21fbc9938e93": [
+          "M\tapps/mobile/package.json",
+          "M\tpackage-lock.json"
+        ]
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "sha256": "375c3774c4def692c6351ee3cc400ded4608e64a99951a02c414cbf096fda8c8",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/services/pictures.ts",
+      "sha256": "4b9b9de5ca1b3d3f5ea3c7ac4b418b2089954a79b38877c624d3dd908eb95cd2",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/ui/AiConversation.tsx",
+      "sha256": "78e750e44f930457ce920aaf86329ed848752f29b7990c737ba6fbb28f89a0fc",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardEditor.tsx",
+      "sha256": "feb732c724842a1022e9ad79dcfe35aee4e0eef42cd61c2866a42fe567ca7a3f",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardLanguages.tsx",
+      "sha256": "6fdc29514cd9e939b1f86229c1720e6cb1659de833c43a293d38107cf318588f",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/ui/EditingLanguages.tsx",
+      "sha256": "ca861ddbf6d8edc0645b3b146433d039105d0f378d4c560cbc4084a67d4b4e34",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "apps/mobile/src/ui/TileEditor.tsx",
+      "sha256": "b137db4a7129083a7f9ed4dbd457e1723921e6e30b80fcdde5b09c6ec197741e",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "packages/core/src/boardLanguages.test.ts",
+      "sha256": "8178971f3654a94458010f79bf388efd366cc182a754132adc8cc8e07b4214b8",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    },
+    {
+      "path": "packages/core/src/boardLanguages.ts",
+      "sha256": "de30b43adc58ee1e5db848f68f32f7e2ce2509980a9ba6781e7a682824abfb1e",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "sha256": "c7e26e2688e29163f1f6b26187ab23ebd5f2f52e9777a86d14c046d3da83e6a0",
+      "purpose": "Selected-language editor or translation preservation contract"
+    },
+    {
+      "path": "packages/core/src/translationEditing.test.ts",
+      "sha256": "5a779eb7383e9e9aee21e47cc7ba83945447bce1fc5f1d3cc148057c22164fc4",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    },
+    {
+      "path": "tests/web/app.spec.ts",
+      "sha256": "070364faf6bd77dea2e833149ff965574efec2269217e2b99f948c0980e0dcc8",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    },
+    {
+      "path": "tests/web/grid.spec.ts",
+      "sha256": "b1d0d63b2ab85e2f4a958678f1c3eed832bf6964b4f9c281cc8df084a471a230",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    },
+    {
+      "path": "tests/web/speech.spec.ts",
+      "sha256": "05e6285a02b073a2c998a8558a9358683bc5761dd6db113aba697d822b33d0f3",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    },
+    {
+      "path": "tests/web/translationEditing.spec.ts",
+      "sha256": "1e0113aa402cad08473e53d6ad0c30b2fb111d388766f7f13e538988ab9e5f73",
+      "purpose": "Maintained translation preservation/account/audio/browser regression"
+    }
+  ],
+  "totals": {
+    "commits": 13,
+    "files": 15,
+    "additions": 675,
+    "deletions": 69
+  },
+  "priorDiffByteIdentical": true,
+  "accountExportPreserved": true,
+  "releaseDockerDependencyInputsEqualActualMaster": true,
+  "impact": "PR42 adds release orchestration/retirement and PR44 production prop-types dependency with nested react-is. Both are now actual target ancestry, not extra PR38 commits. Published PR diff remains byte-identical to previously reviewed translation editing. New dependency affects iOS gate, rerun independently. Release validation failure belongs to unchanged actual-master release candidate boundary, not translation editing."
+}

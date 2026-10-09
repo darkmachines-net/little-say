@@ -1,0 +1,14 @@
+import pathlib,json,subprocess,hashlib
+r=pathlib.Path('integrated38');d=json.loads((r/'initial.json').read_bytes());root=pathlib.Path('little-say-qa');head=d['pr']['head']['sha'];base=d['master']['sha']
+def raw(*a):return subprocess.check_output(['git',*a],cwd=root)
+def git(*a):return raw(*a).decode().strip()
+commits=git('rev-list','--reverse',base+'..'+head).splitlines();assert set(commits)=={c['sha'] for c in d['commits']};paths=git('diff','--name-only',base,head).splitlines();assert set(paths)=={x['filename'] for x in d['files']};assert len(paths)==15
+old='6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f';oldbase='fabb925cf5ee11171d5668af7c2bab44ec9fc613'
+assert raw('diff','--binary',oldbase,old)==raw('diff','--binary',base,head)
+for p in ['Dockerfile','scripts/release/candidate.ts','package.json','.github/workflows/cut-release.yml','apps/mobile/package.json','package-lock.json']:assert raw('show',head+':'+p)==raw('show',base+':'+p)
+assert b"export * from './account'" in raw('show',head+':packages/core/src/index.ts')
+incoming=git('rev-list','--reverse',oldbase+'..'+base).splitlines()
+def inventory(c):return {'sha':c,'parents':git('show','-s','--format=%P',c).split(),'subject':git('show','-s','--format=%s',c),'perParentPaths':{p:git('diff','--name-status',p,c).splitlines() for p in git('show','-s','--format=%P',c).split()}}
+s={'head':head,'actualTarget':base,'apiBase':d['pr']['base']['sha'],'mergeBase':git('merge-base',base,head),'headParents':git('show','-s','--format=%P',head).split(),'targetParents':git('show','-s','--format=%P',base).split(),'commits':[inventory(c) for c in commits],'incomingMasterCommits':[inventory(c) for c in incoming],'files':[{'path':p,'sha256':hashlib.sha256(raw('show',head+':'+p)).hexdigest(),'purpose':'Maintained regression/snapshot' if '/test/' in p or '.test.' in p else 'Translation documentation' if p.startswith('prompts/') else 'Selected-language editor and correction preservation'} for p in paths],'totals':{'commits':len(commits),'files':len(paths),'additions':sum(x['additions'] for x in d['files']),'deletions':sum(x['deletions'] for x in d['files'])},'priorDiffByteIdentical':True,'accountExportPreserved':True,'releaseDockerDependencyInputsEqualActualMaster':True,'impact':'PR42 adds release orchestration/retirement and PR44 production prop-types dependency with nested react-is. Both are now actual target ancestry, not extra PR38 commits. Published PR diff remains byte-identical to previously reviewed translation editing. New dependency affects iOS gate, rerun independently. Release validation failure belongs to unchanged actual-master release candidate boundary, not translation editing.'}
+(r/'scope-verification.json').write_text(json.dumps(s,indent=2)+'\n');print(json.dumps({'scope':s['totals'],'incoming':[(c['sha'],c['subject']) for c in s['incomingMasterCommits']]}))
+
