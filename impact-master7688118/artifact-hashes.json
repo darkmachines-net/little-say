@@ -1,0 +1,66 @@
+{
+  "createdAt": "2026-10-09T02:10:36.856Z",
+  "hashBasis": "exact staged Git blob bytes",
+  "artifacts": [
+    {
+      "path": "impact-master7688118/README.md",
+      "sha256": "237802170d0df92001141e3e47a0c0ebdc7f1b844d45406858c555647cef299f"
+    },
+    {
+      "path": "impact-master7688118/bindings.json",
+      "sha256": "23767e7f5aafb16099cf5926616c04112c60967e70db36f1d7e6470143aa1acf"
+    },
+    {
+      "path": "impact-master7688118/ci-run.json",
+      "sha256": "cbf3e50cf52ff8fbd496a4590a371f9e33c09ba228aaee6f36c1804524060104"
+    },
+    {
+      "path": "impact-master7688118/ci.log",
+      "sha256": "a9c4234a82bde7aa51dbecaa372123d9d2e274dee61afaf0435bec8d30387ae7"
+    },
+    {
+      "path": "impact-master7688118/manual-jobs.json",
+      "sha256": "a80533e70fd0eba42d5c9f97aaadd17ceea13465dad1a5236e3dfc7180e61483"
+    },
+    {
+      "path": "impact-master7688118/manual-run.json",
+      "sha256": "f354cde0bb09600bb5f566a028efa79fcbc4ebe452e242855a25dc3df118bafb"
+    },
+    {
+      "path": "impact-master7688118/manual-validation.log",
+      "sha256": "f6a390588776a8e6e8502eb3f96ab0233fd04c7535b70b68f96e9ae70650bda7"
+    },
+    {
+      "path": "impact-master7688118/master768-affected-local.log",
+      "sha256": "af72bc2ec58cc61d8077d69799a019f16f24b3000568561f24e3d7632fcf758f"
+    },
+    {
+      "path": "impact-master7688118/master768-commits.json",
+      "sha256": "1f936990ae3e364f591066c5a1c7e6623c0f4a49bc3f3d7bc24d6bbb1fd04f7f"
+    },
+    {
+      "path": "impact-master7688118/master768-files.json",
+      "sha256": "708b5afbcbe503787c66610284b0627aaceec97b44b7dc1cc664d1083fbbabaa"
+    },
+    {
+      "path": "impact-master7688118/master768-guards.log",
+      "sha256": "d66ddabf26cb973a15ad2b019e3eb4f37bc0ede01d63f618f5a022e851bed4ad"
+    },
+    {
+      "path": "impact-master7688118/master768-integrated-paths.txt",
+      "sha256": "e2cc3a39e82232be696099bc44cc2420b7a07060880b4c10b885871111fb8ae4"
+    },
+    {
+      "path": "impact-master7688118/unchanged-fix.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pr46-before-master7688118.json",
+      "sha256": "288527b43ae81b63ca8f0903a3f9eac24ab09638c91398bf53b325b54bd98c68"
+    },
+    {
+      "path": "pr46-body-before-master7688118.md",
+      "sha256": "c6adf4328ba0da71e5ce3a67dd21143e04594f4a7ccf76a69dac2a0b5ccf4e68"
+    }
+  ]
+}
