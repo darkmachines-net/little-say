@@ -3,6 +3,11 @@
   "baseline": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
       "path": "after-build.log",
       "bytes": 931,
       "sha256": "da5ac858b8a87ceacff516c808d9ecafc06aded45d97c24020a7f34dc1b88c45"
