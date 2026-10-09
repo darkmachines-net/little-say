@@ -1,6 +1,8 @@
 /** @file Presents optional Firebase accounts, explicit backup consent, verification, linking, and global identity deletion. */
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
+import { providerUnavailable } from '../services/providerAvailability';
+import { AppleSignInButton } from './AppleSignInButton';
 import { type AccountController } from '../services/useAccount';
 import { type Provider } from '../services/firebaseAccount';
 import { Button, Field, Notice } from './components';
@@ -74,8 +76,13 @@ export function AccountPanel({ account, mode, setMode, onContinue }: { account: 
         {mode === 'reset' ? <Button busy={account.busy} disabled={!email.trim()} onPress={() => void account.resetPassword(email).then(() => { setMode('login'); clear(); }).catch(() => {})}>Send password reset email</Button> : <>
           <Text style={styles.body}>Continuing enables backup of this device’s boards, personal photos and saved voices to the selected server after email verification. Existing account boards are added here. The server administrator can access backups.</Text>
           <Button busy={account.busy} disabled={!account.ready || !account.config || !email.trim() || !password || (mode === 'register' && (password.length < 12 || password !== confirmation))} onPress={() => signIn('password')}>{mode === 'register' ? 'Create account & enable backup' : 'Sign in & sync this device'}</Button>
-          {(['google.com', 'apple.com'] as const).filter(provider => providers.includes(provider)).map(provider => <Button key={provider} kind="secondary" disabled={account.busy || !account.socialAvailable} onPress={() => signIn(provider)}>Continue with {names[provider]}</Button>)}
-          {!account.socialAvailable && <Text style={styles.small}>Use a development build for Google and Apple sign-in. Email works in Expo Go.</Text>}
+          {(['google.com', 'apple.com'] as const).filter(provider => providers.includes(provider)).map(provider => {
+            const reason = providerUnavailable(provider, account.config, Platform.OS, account.socialAvailable);
+            return <View key={provider} style={{ gap: 6 }}>
+              {provider === 'apple.com' ? <AppleSignInButton busy={account.busy} disabled={Boolean(reason)} onPress={() => signIn(provider)} /> : <Button kind="secondary" busy={account.busy} disabled={Boolean(reason)} onPress={() => signIn(provider)}>Continue with Google</Button>}
+              {reason && <Text style={styles.small}>{reason}</Text>}
+            </View>;
+          })}
           {mode === 'login' && <Button kind="ghost" disabled={account.busy} onPress={() => { setMode('reset'); clear(); }}>Forgot password?</Button>}
         </>}
         <Button kind="ghost" disabled={account.busy} onPress={() => { setMode(null); clear(); }}>Cancel</Button>

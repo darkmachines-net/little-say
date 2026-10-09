@@ -1,5 +1,11 @@
 # Optional Firebase accounts and backup
 
+Parent settings includes offline-readable **Little Say privacy information**. The [data-flow inventory](PRIVACY_INVENTORY.md) and [unpublished policy draft](PRIVACY_POLICY_DRAFT.md) separate observed application behavior from unresolved operator commitments.
+
+Login and registration use locally bundled official Apple Continue artwork with one accessible action; busy/disabled states suppress activation. No image request to Apple occurs merely to display it. Advertised providers remain selected by server configuration. Native Google login requires its public web client ID and, on iOS, iOS client ID; Android Apple login requires its service ID and callback. Known missing public prerequisites are explained before activation. These checks cannot establish remote provider activation, callback correctness, provisioning, or signed-device support. Account linking and reauthentication retain their existing adapter validation.
+
+Auth-emulator tests validate application identity/session/backup behavior against synthetic accounts. Expo Go supports guest/email behavior, while custom development/release binaries are required for native social modules. Neither emulator nor browser checks prove real Google/Apple credentials, signed callbacks, cancellation/relaunch, linking, revocation or deletion on devices. These remain explicit [TestFlight validation gates](TESTFLIGHT_PREPARATION.md); no provider setup is performed by source preparation.
+
 Little Say works without an account. Guest boards, photos, illustrations and speech remain in the existing device library. Guest setup makes no account request. Firebase is used for identity only; no Firestore or Firebase Storage is involved.
 
 On the first launch without a saved sign-in, a dedicated welcome screen offers **Log in**, **Create an account**, and **Continue without an account**. Continuing saves only a device-local launch preference; subsequent guest launches open the existing setup/library directly. Existing signed-in users and resumed play sessions are not interrupted. Existing guest libraries receive the choice without replacing their boards or settings.
