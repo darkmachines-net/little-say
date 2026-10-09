@@ -57,7 +57,7 @@ try {
   const expectedPods = { GoogleSignIn: '10.0.0', AppCheckCore: '11.3.2', GoogleUtilities: '8.1.4', RecaptchaInterop: '101.0.0' };
   const lock = existsSync(join(evidence, 'Podfile.lock')) ? readFileSync(join(evidence, 'Podfile.lock'), 'utf8') : '';
   record.podVersions = Object.fromEntries(Object.entries(expectedPods).map(([name, version]) => [name, {
-    expected: version, observed: (lock.match(new RegExp(`  - ${name}(?:/[^ ]+)? \\(([^)]+)\\)`))
+    expected: version, observed: (lock.match(new RegExp(`^  - ${name}(?:/[^ ]+)? \\(([^)]+)\\)`, 'm'))
       ?? pods.text.match(new RegExp(`Installing ${name} \\(([^)]+)\\)`)))?.[1] ?? null,
   }]));
   if (Object.values(record.podVersions).some(pod => pod.observed !== pod.expected)) throw new Error('Pod versions differ from the diagnosed failure; inspect evidence before interpreting the comparison.');

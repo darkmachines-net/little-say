@@ -11,7 +11,7 @@ const failure = installed + 'The following Swift pods cannot yet be integrated a
 const source = readFileSync(resolve('scripts/release/ios-pods-check.mjs'), 'utf8')
   .replace(/^import .*;\r?$/gm, '').replace('new URL(import.meta.url)', "'diagnostic-script'");
 
-function diagnostic(outcome: string, podStatus: number, podLog: string, prebuildStatus = 0) {
+function diagnostic(outcome: string, podStatus: number, podLog: string, prebuildStatus = 0, podLock = '') {
   const files = new Map<string, string>(), descriptors = new Map<number, string>(), commands: string[][] = [];
   const process = { platform: 'darwin', argv: ['node', 'check', 'checkout', sha, outcome, 'evidence'], env: {}, exitCode: 0 };
   runInNewContext(source, {
@@ -29,7 +29,10 @@ function diagnostic(outcome: string, podStatus: number, podLog: string, prebuild
       let text = '', status = 0;
       if (command === 'git' && args[0] === 'rev-parse') text = sha;
       if (command === 'node' && args.includes('prebuild')) status = prebuildStatus;
-      if (command === 'pod' && args.includes('install')) { status = podStatus; text = podLog; }
+      if (command === 'pod' && args.includes('install')) {
+        status = podStatus; text = podLog;
+        if (podLock) files.set(resolve('checkout/apps/mobile/ios/Podfile.lock'), podLock);
+      }
       files.set(descriptors.get(options.stdio[1] as number)!, text);
       return { status };
     },
@@ -65,4 +68,22 @@ it('stops before CocoaPods when prebuild fails', () => {
   const result = diagnostic('fix', 0, installed, 1);
   expect(result.status).toBe(1);
   expect(result.commands.some(command => command.includes('install'))).toBe(false);
+});
+
+it('reads resolved lockfile versions rather than earlier nested dependency constraints', () => {
+  const lock = `PODS:
+  - AppCheckCore (11.3.2):
+    - GoogleUtilities/Environment (~> 8.0)
+    - RecaptchaInterop (~> 101.0)
+  - GoogleSignIn (10.0.0):
+    - AppCheckCore (~> 11.0)
+  - GoogleUtilities (8.1.4):
+    - GoogleUtilities/Environment (= 8.1.4)
+  - GoogleUtilities/Environment (8.1.4)
+  - RecaptchaInterop (101.0.0)
+`;
+  const result = diagnostic('fix', 0, 'Pod installation complete!', 0, lock);
+  expect(result.status).toBe(0);
+  expect(result.result.podVersions.GoogleUtilities.observed).toBe('8.1.4');
+  expect(result.result.podVersions.RecaptchaInterop.observed).toBe('101.0.0');
 });
