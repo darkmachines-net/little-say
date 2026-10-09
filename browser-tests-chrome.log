@@ -1,0 +1,41 @@
+
+Running 2 tests using 1 worker
+
+(node:13812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication (9.1s)
+(node:15664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 tests\web\accounts.spec.ts:39:1 ΓÇ║ preparation: privacy information works offline and returns to the unsaved settings draft (1.2s)
+
+
+  1) tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByRole('button', { name: 'Continue with Apple', exact: true })
+    Expected: "true"
+    Received: ""
+    Timeout:  8000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByRole('button', { name: 'Continue with Apple', exact: true }) with timeout 8000ms
+      - waiting for getByRole('button', { name: 'Continue with Apple', exact: true })
+        19 ├ù locator resolved to <button disabled role="button" tabindex="-1" type="button" aria-disabled="true" class="css-g5y9jx r-12vffkv" aria-label="Continue with Apple">ΓÇª</button>
+           - unexpected value "null"
+
+
+      25 |   try {
+      26 |     await expect(apple).toBeDisabled();
+    > 27 |     await expect(apple).toHaveAttribute('aria-busy', 'true');
+         |                         ^
+      28 |     await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeDisabled();
+      29 |     await expect.poll(() => Boolean(finish)).toBe(true);
+      30 |   } finally { finish?.(); }
+        at C:\Users\MChar\Documents\Codex\2026-10-08\task-16\little-say\tests\web\accounts.spec.ts:27:25
+
+    Error Context: test-results\accounts-preparation-provi-6e0cd-th-synthetic-authentication\error-context.md
+
+  1 failed
+    tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication 
+  1 passed (13.1s)

@@ -1,0 +1,34 @@
+{
+  "repository": "MChartier/little-say",
+  "targetRef": "refs/heads/master",
+  "targetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "head": "11d03187ee9ab81a416657c5003fa34b38df86d8",
+  "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "parentRevisions": [],
+  "ultimateTarget": "master",
+  "commits": [
+    "9c50324c4c27edc65f8a628dc902d256b845e14c b46e9e83ffacb2e3846486fb7a64a57d1203f372 Prepare account privacy presentation and iOS artifact checks",
+    "11d03187ee9ab81a416657c5003fa34b38df86d8 9c50324c4c27edc65f8a628dc902d256b845e14c Keep provider layout stable while authentication is busy"
+  ],
+  "files": [
+    "24\t0\tapps/mobile/src/services/providerAvailability.test.ts",
+    "16\t0\tapps/mobile/src/services/providerAvailability.ts",
+    "10\t3\tapps/mobile/src/ui/AccountPanel.tsx",
+    "17\t0\tapps/mobile/src/ui/AppleSignInButton.tsx",
+    "13\t0\tapps/mobile/src/ui/LittleSayPrivacyInfo.tsx",
+    "5\t3\tapps/mobile/src/ui/ParentSettings.tsx",
+    "7\t0\tapps/mobile/src/ui/privacyInfo.ts",
+    "6\t0\tdocs/ACCOUNTS.md",
+    "38\t0\tdocs/PRIVACY_INVENTORY.md",
+    "19\t0\tdocs/PRIVACY_POLICY_DRAFT.md",
+    "35\t0\tdocs/TESTFLIGHT_PREPARATION.md",
+    "29\t0\tscripts/release/verify-ios.test.ts",
+    "53\t0\tscripts/release/verify-ios.ts",
+    "48\t0\ttests/web/accounts.spec.ts"
+  ],
+  "status": null,
+  "held": [
+    "All PR38 changed paths",
+    "All PR49 changed paths"
+  ]
+}

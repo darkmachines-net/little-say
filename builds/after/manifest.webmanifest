@@ -1,0 +1,31 @@
+{
+  "id": "/",
+  "name": "Little Say",
+  "short_name": "Little Say",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F5F6EF",
+  "theme_color": "#F5F6EF",
+  "description": "Personal picture boards for little communicators. Create talking boards with photos, illustrations, and your family’s languages. Try Little Say on the web.",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

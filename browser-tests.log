@@ -1,0 +1,42 @@
+
+Running 2 tests using 1 worker
+
+(node:41328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication (1ms)
+(node:41432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\web\accounts.spec.ts:39:1 ΓÇ║ preparation: privacy information works offline and returns to the unsaved settings draft (1ms)
+
+
+  1) tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\MChar\AppData\Local\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+    Γòæ Looks like Playwright was just installed or updated.       Γòæ
+    Γòæ Please run the following command to download new browsers: Γòæ
+    Γòæ                                                            Γòæ
+    Γòæ     npx playwright install                                 Γòæ
+    Γòæ                                                            Γòæ
+    Γòæ <3 Playwright Team                                         Γòæ
+    ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+
+    Error Context: test-results\accounts-preparation-provi-6e0cd-th-synthetic-authentication\error-context.md
+
+  2) tests\web\accounts.spec.ts:39:1 ΓÇ║ preparation: privacy information works offline and returns to the unsaved settings draft 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\MChar\AppData\Local\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù
+    Γòæ Looks like Playwright was just installed or updated.       Γòæ
+    Γòæ Please run the following command to download new browsers: Γòæ
+    Γòæ                                                            Γòæ
+    Γòæ     npx playwright install                                 Γòæ
+    Γòæ                                                            Γòæ
+    Γòæ <3 Playwright Team                                         Γòæ
+    ΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥
+
+    Error Context: test-results\accounts-preparation-priva-2d3ee--the-unsaved-settings-draft\error-context.md
+
+  2 failed
+    tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication 
+    tests\web\accounts.spec.ts:39:1 ΓÇ║ preparation: privacy information works offline and returns to the unsaved settings draft 

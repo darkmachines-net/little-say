@@ -1,0 +1,11 @@
+npm notice run little-say-workspace@0.3.0 npx
+npm notice run vitest run apps/mobile/src/services/providerAvailability.test.ts scripts/release/verify-ios.test.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-16/little-say
+
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  23:01:42
+   Duration  205ms (transform 92ms, setup 0ms, import 123ms, tests 5ms, environment 0ms)
+

@@ -1,0 +1,9 @@
+
+Running 2 tests using 1 worker
+
+(node:29392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\web\accounts.spec.ts:10:1 ΓÇ║ preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication (1.2s)
+  ok 2 tests\web\accounts.spec.ts:39:1 ΓÇ║ preparation: privacy information works offline and returns to the unsaved settings draft (1.2s)
+
+  2 passed (4.0s)

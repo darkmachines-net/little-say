@@ -1,0 +1,406 @@
+{
+  "head": "11d03187ee9ab81a416657c5003fa34b38df86d8",
+  "baseline": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "files": [
+    {
+      "path": "after-build.log",
+      "bytes": 931,
+      "sha256": "da5ac858b8a87ceacff516c808d9ecafc06aded45d97c24020a7f34dc1b88c45"
+    },
+    {
+      "path": "after-phone-login-busy.png",
+      "bytes": 40138,
+      "sha256": "6a4c72ab3916ec1dc30f1fd0233042e7eeece925e79035fc597f5c41b1e7a5d2"
+    },
+    {
+      "path": "after-phone-login-retry.png",
+      "bytes": 40582,
+      "sha256": "393634828a1e243d43bcfa778ce7d9ea84664e365ce97896486cfd94a9d5ee2d"
+    },
+    {
+      "path": "after-phone-login.png",
+      "bytes": 37699,
+      "sha256": "59702dcfeb0c70bc0db99ddb4c736eb102278d9f272b3fa3e29dd6383518f8e8"
+    },
+    {
+      "path": "after-phone-privacy-content.png",
+      "bytes": 49045,
+      "sha256": "4bd5f9b1b72cff84159926ea1f20fd01575facf97422773edc8a088a6653fae4"
+    },
+    {
+      "path": "after-phone-privacy-entry.png",
+      "bytes": 41817,
+      "sha256": "b8808f06a7503b593281785905ef31528bb9e29c74e8dd9eb5db988944c83738"
+    },
+    {
+      "path": "after-tablet-login-busy.png",
+      "bytes": 46182,
+      "sha256": "5d45afab0ab4911d48bacfbb21a2c933949da6bb756bd82ae926c09e70bad439"
+    },
+    {
+      "path": "after-tablet-login-retry.png",
+      "bytes": 48691,
+      "sha256": "648459adea7bb80b2747478bfe573dd6057783841575574d332b1076547bcf25"
+    },
+    {
+      "path": "after-tablet-login.png",
+      "bytes": 43582,
+      "sha256": "b1adc577c5fd1ce41726a822a13fc23be749a973dbbfc11993fb3c47e4072056"
+    },
+    {
+      "path": "after-tablet-privacy-content.png",
+      "bytes": 92775,
+      "sha256": "3912c1a9fc71176ee5a2d541124368cab47c643fc597670c06bf6e7607aa37ef"
+    },
+    {
+      "path": "after-tablet-privacy-entry.png",
+      "bytes": 94493,
+      "sha256": "c221658048929eaa10a94a1c50b3760bb852c9c9cdf9452d536947fedebe284c"
+    },
+    {
+      "path": "apple-button-reference.png",
+      "bytes": 9454,
+      "sha256": "52027ef825c41db880d4c640d138b3e643e4d091ad3b5fdcd1ef644360df6aa3"
+    },
+    {
+      "path": "before-build.log",
+      "bytes": 3636,
+      "sha256": "41a41af36735959c935821487e7282b7b39fcbe0d38be2bbdeac45a39cb27500"
+    },
+    {
+      "path": "before-phone-login-busy.png",
+      "bytes": 37521,
+      "sha256": "2f0da47d418e1f7c2e1eca3cdcab2a63b310d4f4d0edab48c105600899ef8fb2"
+    },
+    {
+      "path": "before-phone-login-retry.png",
+      "bytes": 38481,
+      "sha256": "d8dabb8d53f3953aaf7d35af09f691532a3a48cf785896fad596dce899cd386e"
+    },
+    {
+      "path": "before-phone-login.png",
+      "bytes": 35518,
+      "sha256": "cf279c3c01a43a0d75bf7f6bb65e52ae28d5bba1a9b615567264ba9fa59c01b2"
+    },
+    {
+      "path": "before-phone-privacy-entry.png",
+      "bytes": 41310,
+      "sha256": "01095f319717e0f7767fa4db2460522ecfd4ac45fb5300d70516c4df2358968e"
+    },
+    {
+      "path": "before-tablet-login-busy.png",
+      "bytes": 43377,
+      "sha256": "2dbe5b2a477fa93b47998c3c237fae1034815bba93006e927a0ec20af1943291"
+    },
+    {
+      "path": "before-tablet-login-retry.png",
+      "bytes": 46335,
+      "sha256": "4e190c4b1cca3c1db1ec102b84e35d5379f0434317b0410dd64506d6c899daa1"
+    },
+    {
+      "path": "before-tablet-login.png",
+      "bytes": 41137,
+      "sha256": "39890b83f3e2edec4a3d904b5900449d2ccffd9674b67733b4073cd203471ea1"
+    },
+    {
+      "path": "before-tablet-privacy-entry.png",
+      "bytes": 96616,
+      "sha256": "96c582a4dbfa6aaa9c6606123c3768c24fdfc1e7d8e64469af79faad2a30c560"
+    },
+    {
+      "path": "browser-tests-chrome.log",
+      "bytes": 2291,
+      "sha256": "17368e1adecd94b2d1405bd684cc61de4f08720a9130dd4026814246417e47aa"
+    },
+    {
+      "path": "browser-tests-final.log",
+      "bytes": 525,
+      "sha256": "ba81fdfd98eb28a22c7a31925eb9fdf3121992f4d3ea6659e1a1d01fa719541b"
+    },
+    {
+      "path": "browser-tests.log",
+      "bytes": 4308,
+      "sha256": "eccaf9b5a65c53b7f2c0ff727f0e2fc205da805270e52674a686e600b01c10fd"
+    },
+    {
+      "path": "capture-record.json",
+      "bytes": 106210,
+      "sha256": "51d22e9bb126b7bdd3ad15ab33e4daf7da834421ff390a3d65ea10fc7d3ab986"
+    },
+    {
+      "path": "capture.mjs",
+      "bytes": 5621,
+      "sha256": "52113562c0bb5e09c40bfd3c6273e5e142f3942bf6ad6c07c11aabcf89e99083"
+    },
+    {
+      "path": "focused-tests.log",
+      "bytes": 414,
+      "sha256": "bb2d5701409cfa04b4c077607e3bd864a2b2bd1196cbf95aab2d811e594dd354"
+    },
+    {
+      "path": "ios-export.log",
+      "bytes": 555,
+      "sha256": "53231ff4ce979552192dd5a774856154a0f3e47cc46271584e27e46cf17d5cf6"
+    },
+    {
+      "path": "playwright.config.mjs",
+      "bytes": 393,
+      "sha256": "7c8feccf0c33582131b68ec171daec790e1e7ff87312a25bdb315f4279f32a4f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6955,
+      "sha256": "954c30ada2feaf1f74f2a52890772b0f8558ef687a7f310c94da2abdcf957022"
+    },
+    {
+      "path": "release-check.log",
+      "bytes": 110,
+      "sha256": "20506fedf9317b5b7de95e751985ae914c750ab692cc0f0314d97db4d6072911"
+    },
+    {
+      "path": "scope.json",
+      "bytes": 1450,
+      "sha256": "d87053beae83a9c87897b01aedc838176312f7da7c80a33edc2dd890c6dc66cb"
+    },
+    {
+      "path": "scripts-typecheck-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "serve.mjs",
+      "bytes": 1102,
+      "sha256": "8cbfdd51648cd9a06a847ad53c5d69e83e331330ca8e7ca61dad160a3cd22941"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 330,
+      "sha256": "ac25674eaf3149c2daecae96ba110fb5ff71b68d7749613719f323520c8e3e39"
+    },
+    {
+      "path": "unit-tests.log",
+      "bytes": 5422,
+      "sha256": "5de2a890ec26deab5f8050bc650772e1bbcb3b992305adf878a73d62d7f864c1"
+    },
+    {
+      "path": "verifier-final.log",
+      "bytes": 359,
+      "sha256": "e48864123f238e6f11ba3850035ceb4725d02bc1d373a1a5af43fe1cae722bda"
+    },
+    {
+      "path": "builds/after/apple-touch-icon.png",
+      "bytes": 21785,
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+    },
+    {
+      "path": "builds/after/favicon.ico",
+      "bytes": 14510,
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+    },
+    {
+      "path": "builds/after/favicon.png",
+      "bytes": 3250,
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+    },
+    {
+      "path": "builds/after/icon-192.png",
+      "bytes": 23882,
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+    },
+    {
+      "path": "builds/after/icon-512.png",
+      "bytes": 129939,
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+    },
+    {
+      "path": "builds/after/icon-maskable-512.png",
+      "bytes": 65996,
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+    },
+    {
+      "path": "builds/after/index.html",
+      "bytes": 2156,
+      "sha256": "31a160f83fcbab7ca49c4962599dda05ad963df07e3c2f64a0b3dafc7f202705"
+    },
+    {
+      "path": "builds/after/manifest.webmanifest",
+      "bytes": 762,
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+    },
+    {
+      "path": "builds/after/metadata.json",
+      "bytes": 49,
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+    },
+    {
+      "path": "builds/after/sw.js",
+      "bytes": 2201,
+      "sha256": "11f534ba39f8e6b4cf32321e0f8fc37cf787a190266209bc98b651a95bf2c718"
+    },
+    {
+      "path": "builds/after/sw.js.map",
+      "bytes": 4865,
+      "sha256": "a2715136eff0a87234dc3547c172710207c00ecc8d63f2cf27f92919e4968eab"
+    },
+    {
+      "path": "builds/after/workbox-9c191d2f.js",
+      "bytes": 15202,
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "path": "builds/after/workbox-9c191d2f.js.map",
+      "bytes": 148989,
+      "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+    },
+    {
+      "path": "builds/after/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+      "bytes": 14475,
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "builds/after/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+      "bytes": 44422,
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "builds/after/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+      "bytes": 88603,
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "builds/after/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+      "bytes": 8055,
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+    },
+    {
+      "path": "builds/after/_expo/static/js/web/App-339b70d4c0aa42fccc9a5837480dc308.js",
+      "bytes": 6104490,
+      "sha256": "529a8139c98dd6b2809ca1bfd306e18d82a606aa20db2f43dad1847f07673e4e"
+    },
+    {
+      "path": "builds/after/_expo/static/js/web/index-d84773d797d5c66b263d5638c22b10c9.js",
+      "bytes": 359876,
+      "sha256": "a7c53bc25124508d38359cdeb0fa25e2d51203f2fc439b6998d5f1374e9a2e56"
+    },
+    {
+      "path": "builds/before/apple-touch-icon.png",
+      "bytes": 21785,
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+    },
+    {
+      "path": "builds/before/favicon.ico",
+      "bytes": 14510,
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+    },
+    {
+      "path": "builds/before/favicon.png",
+      "bytes": 3250,
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+    },
+    {
+      "path": "builds/before/icon-192.png",
+      "bytes": 23882,
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+    },
+    {
+      "path": "builds/before/icon-512.png",
+      "bytes": 129939,
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+    },
+    {
+      "path": "builds/before/icon-maskable-512.png",
+      "bytes": 65996,
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+    },
+    {
+      "path": "builds/before/index.html",
+      "bytes": 2156,
+      "sha256": "52f0899648c417b71e8e3c557c7980ba1659d03e09f57fed01109cb3055850ba"
+    },
+    {
+      "path": "builds/before/manifest.webmanifest",
+      "bytes": 762,
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+    },
+    {
+      "path": "builds/before/metadata.json",
+      "bytes": 49,
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+    },
+    {
+      "path": "builds/before/sw.js",
+      "bytes": 2201,
+      "sha256": "70fafbdc0369cf564d1a864f2c78864119f705f76b3bcf3beec5549fca0b4eea"
+    },
+    {
+      "path": "builds/before/sw.js.map",
+      "bytes": 4865,
+      "sha256": "24f3452515ecb33ccd7bd5345f06d698b16d810808a7a98849f63563d1b70b67"
+    },
+    {
+      "path": "builds/before/workbox-9c191d2f.js",
+      "bytes": 15202,
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "path": "builds/before/workbox-9c191d2f.js.map",
+      "bytes": 149591,
+      "sha256": "53877993cdbafa7c62df3be27e93234622024b4d30b212707824fe280948dd04"
+    },
+    {
+      "path": "builds/before/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+      "bytes": 14475,
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "builds/before/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+      "bytes": 44422,
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "builds/before/assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+      "bytes": 88603,
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "builds/before/_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+      "bytes": 8055,
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+    },
+    {
+      "path": "builds/before/_expo/static/js/web/App-57f10aa9cc7553b7e05ea0d42a0267ba.js",
+      "bytes": 6087465,
+      "sha256": "76b9fdd0b81a767ab973d298be405de8a0704cdb0749c9a105ca83ed099ab2a2"
+    },
+    {
+      "path": "builds/before/_expo/static/js/web/index-137a373fd79b318ad3dca2511d758e8c.js",
+      "bytes": 359876,
+      "sha256": "5d3fd7e6b895e3f4a71b2b2279efb67b654fae9aff34050b2d44bcc0ab2e6292"
+    },
+    {
+      "path": "ios-export/metadata.json",
+      "bytes": 333,
+      "sha256": "e243d4e18f957907774dd8d9768052b804203b10dcdd643ff1ab6713b2bcfbfb"
+    },
+    {
+      "path": "ios-export/assets/562cc2c673b5ead25ec8c5a8b4cda246",
+      "bytes": 88603,
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "ios-export/assets/81e43b3e2de3ffd5767b07cc01399dc1",
+      "bytes": 14475,
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "ios-export/assets/bc441684bcdc239fcd8e998106fed1f1",
+      "bytes": 44422,
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "ios-export/_expo/static/js/ios/index-3e61c1039d1694b9d1affae5405a1f30.hbc",
+      "bytes": 7347192,
+      "sha256": "c2fe70db7da02b9649d96c4ee1ce2aeb1f4915595fc0ff4bc42fde9102bc94d9"
+    }
+  ]
+}

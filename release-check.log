@@ -1,0 +1,2 @@
+npm notice run little-say-workspace@0.3.0 release:check
+npm notice run tsx scripts/release/version.ts check

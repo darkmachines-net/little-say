@@ -1,0 +1,6 @@
+npm notice run little-say-workspace@0.3.0 typecheck
+npm notice run npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json
+npm notice run @little-say/app@0.1.2 typecheck
+npm notice run tsc -p tsconfig.json
+npm notice run @little-say/server@0.3.0 typecheck
+npm notice run @little-say/core@0.1.0 typecheck
