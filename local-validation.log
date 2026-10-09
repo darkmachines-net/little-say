@@ -1,0 +1,11 @@
+npm notice run little-say-workspace@0.3.0 test
+npm notice run vitest run scripts/release/ios-pods.test.ts scripts/release/ios-pods-check.test.ts scripts/release/validation.test.ts
+
+ RUN  v4.1.11 C:/Users/MChar/Documents/Codex/2026-10-08/task-15/little-say
+
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  20:38:36
+   Duration  1.09s (transform 109ms, setup 0ms, import 223ms, tests 1.38s, environment 0ms)
+
