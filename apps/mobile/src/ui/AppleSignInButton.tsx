@@ -1,5 +1,5 @@
 /** @file Displays Apple's official Continue artwork locally with accessible, guarded action semantics. */
-import { ActivityIndicator, Image, Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
 // Official Apple button image, retrieved 2026-10-09 from appleid.cdn-apple.com/appleid/button
 // with type=continue, color=black, border=false, border_radius=15, width=340, height=50, scale=2.
@@ -13,6 +13,5 @@ export function AppleSignInButton({ onPress, disabled = false, busy = false }: {
     <Pressable accessibilityRole="button" accessibilityLabel="Continue with Apple" accessibilityState={{ disabled: blocked, busy }} aria-busy={busy} disabled={blocked} onPress={() => { if (!blocked) onPress(); }} style={({ pressed }) => ({ minHeight: 50, borderRadius: 15, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center', opacity: blocked ? 0.5 : pressed ? 0.8 : 1 })}>
       <Image accessible={false} source={{ uri: artwork }} resizeMode="contain" style={{ width: '100%', maxWidth: 340, height: 50 }} />
     </Pressable>
-    {busy && <ActivityIndicator accessibilityLabel="Signing in" />}
   </View>;
 }

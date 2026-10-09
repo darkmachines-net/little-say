@@ -79,7 +79,7 @@ export function AccountPanel({ account, mode, setMode, onContinue }: { account: 
           {(['google.com', 'apple.com'] as const).filter(provider => providers.includes(provider)).map(provider => {
             const reason = providerUnavailable(provider, account.config, Platform.OS, account.socialAvailable);
             return <View key={provider} style={{ gap: 6 }}>
-              {provider === 'apple.com' ? <AppleSignInButton busy={account.busy} disabled={Boolean(reason)} onPress={() => signIn(provider)} /> : <Button kind="secondary" busy={account.busy} disabled={Boolean(reason)} onPress={() => signIn(provider)}>Continue with Google</Button>}
+              {provider === 'apple.com' ? <AppleSignInButton busy={account.busy} disabled={Boolean(reason)} onPress={() => signIn(provider)} /> : <Button kind="secondary" disabled={account.busy || Boolean(reason)} onPress={() => signIn(provider)}>Continue with Google</Button>}
               {reason && <Text style={styles.small}>{reason}</Text>}
             </View>;
           })}
