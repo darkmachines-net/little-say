@@ -1,0 +1,139 @@
+{
+  "checkedAtUtc": "2026-10-09T06:16:23.8113927Z",
+  "pr": 50,
+  "head": "11d03187ee9ab81a416657c5003fa34b38df86d8",
+  "base": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "isDraft": true,
+  "prBodySha256": "d6540540a281a3e81264119b9d24dffd0d82e2b99a7454f339b4dce2dd8751c5",
+  "ci": {
+    "conclusion": "success",
+    "headSha": "11d03187ee9ab81a416657c5003fa34b38df86d8",
+    "jobs": [
+      {
+        "completedAt": "2026-10-09T06:14:59Z",
+        "conclusion": "success",
+        "databaseId": 113695286503,
+        "name": "check",
+        "startedAt": "2026-10-09T06:10:30Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-09T06:10:32Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-09T06:10:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:10:48Z",
+            "conclusion": "success",
+            "name": "Initialize containers",
+            "number": 2,
+            "startedAt": "2026-10-09T06:10:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:10:51Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 3,
+            "startedAt": "2026-10-09T06:10:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:10:57Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "number": 4,
+            "startedAt": "2026-10-09T06:10:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:11:33Z",
+            "conclusion": "success",
+            "name": "Run npm ci",
+            "number": 5,
+            "startedAt": "2026-10-09T06:10:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:13:25Z",
+            "conclusion": "success",
+            "name": "Run npm run check",
+            "number": 6,
+            "startedAt": "2026-10-09T06:11:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:13:39Z",
+            "conclusion": "success",
+            "name": "Run npm run test:services",
+            "number": 7,
+            "startedAt": "2026-10-09T06:13:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:04Z",
+            "conclusion": "success",
+            "name": "Run npx playwright install --with-deps chromium",
+            "number": 8,
+            "startedAt": "2026-10-09T06:13:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:54Z",
+            "conclusion": "success",
+            "name": "Run npx firebase emulators:exec --only auth --project demo-little-say \"npm run test:accounts:web\"",
+            "number": 9,
+            "startedAt": "2026-10-09T06:14:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:55Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+            "number": 16,
+            "startedAt": "2026-10-09T06:14:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:55Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 17,
+            "startedAt": "2026-10-09T06:14:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:56Z",
+            "conclusion": "success",
+            "name": "Stop containers",
+            "number": 18,
+            "startedAt": "2026-10-09T06:14:55Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T06:14:56Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-09T06:14:56Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/MChartier/little-say/actions/runs/37892165754/job/113695286503"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/MChartier/little-say/actions/runs/37892165754"
+  },
+  "comments": [],
+  "reviews": [],
+  "inlineFeedback": "API returned no inline comments",
+  "scopeRecord": "fed529833c4fd733b9d4a4c43f34bb5260bb3a8b/publication.json",
+  "captureCommit": "19dca98bc7c3c23a2b22b0ac50ca88b4c523c45f",
+  "evidenceVerified": "All published blob identities and 8 actual served JavaScript hashes match retained builds",
+  "clarification": "This successful current-head CI includes PostgreSQL/Auth-emulator and account browser integration; it supersedes the earlier local-only check snapshot, not any signed-native limitation",
+  "logSha256": "7839399140e00cfff41a0c0adc4dc49fa981a0022f9d4fb4469fd733b965073d"
+}
