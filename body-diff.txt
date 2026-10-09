@@ -1,0 +1,11 @@
+--- old
+
++++ new
+
+@@ -17,4 +17,4 @@
+
+ 
+ ## Supporting checks and limitations
+ 
+-The macOS check used Xcode 26.4.1 and CocoaPods 1.16.2; all seven non-diagnostic jobs skipped. Successful pod installation is not native compilation or signed-build validation. No archive, EAS build, release retry, store submission or deployment occurred. Independent final QA remains pending.
++The macOS check used Xcode 26.4.1 and CocoaPods 1.16.2; all seven non-diagnostic jobs skipped. Successful pod installation is not native compilation or signed-build validation. No archive, EAS build, release retry, store submission or deployment occurred. The [independent technical and evidence assessment](https://github.com/MChartier/little-say/pull/49#issuecomment-6074115939) verified the scoped fix, retained native evidence and published scope.

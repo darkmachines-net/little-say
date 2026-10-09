@@ -1,0 +1,477 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ready",
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "reviewOverlay": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "standardsAcknowledgment": "Read the full supplied pinned texts, operative direct amendments and actual repository AGENTS. No runtime migration. Same independent QA task and isolated clone; original owners/worktrees untouched.",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/49",
+  "issue": 48,
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "host": "MCHARTIER_ZBOOK",
+  "hostVerifiedAtUtc": "2026-10-09T04:18:41.6321963Z",
+  "supersedesVerdictCommentId": 6074115939,
+  "checkedAtUtc": "2026-10-09T04:19:37.091153+00:00",
+  "headSha": "d88515b08e012acceadeeb9497f062d1964685f8",
+  "baseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "mergeBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "ultimateTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "targetRef": "master",
+  "headParents": [
+    "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+  ],
+  "targetParents": [
+    "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "e2fb86c0779fd4e3e97ae8dc25cc2830c47553aea6cae7a6697c3d04ce29d91a",
+  "findings": [],
+  "gates": {
+    "value": "Pass: issue48 captures the actual iOS release pod-install failure when optional OAuth scheme is absent. Focused fallback and a bounded unsigned diagnostic were expressly admitted. No speculative account or release expansion.",
+    "outcome": "Pass for scoped pod configuration: actual baseline fails with exact AppCheckCore missing module-map diagnosis; actual fixed product config installs 116 pods successfully with identical relevant versions. Configured Nitro path and Android output remain unchanged. Native compilation/release not certified.",
+    "code": "Pass: complete three-commit published scope and all ten final paths reviewed. Only one Expo SDK build-properties dependency plus conditional extraPods fallback, maintained tests and concise release docs. Existing configured Nitro path preserved. Diagnostic manual-only, read permissions, persist-credentials:false, exact clean SHAs, token-env rejection, no dotenv, no release-job path. Final parser anchors resolved top-level lock entries. No product source edits by QA.",
+    "engineeringReview": "Pass under explicit quota-only amendment: verified current-head request6074140197 and exact quota refusal6074143560. Full independent published code/scope review remains applicable at unchanged source/base; no submitted reviews, inline threads or unresolved human requests. No bot completion claimed.",
+    "ci": "Pass: final-head CI37881717383 success; tested merge tree equals head. 336 unit tests, 25 service-integration tests and five account-browser tests pass along with types and builds. Optional one-shot macOS diagnostic37881372074 remains failure at06b4b00: real fixed pod install succeeded, subsequent old parser rejected nested constraints. All seven non-diagnostic jobs skipped. No new dispatch.",
+    "behavior": "Pass: 32 focused maintained tests independently passed on final source. Separate independent VM replay of actual old/final diagnostic source against raw Actions outputs reproduces old parser failure, final parser success and baseline classification; independent YAML parser agrees on all four versions. No additional CocoaPods execution claimed. Reused fresh actual hosted outputs for expensive behavior.",
+    "evidence": "Pass: exact Actions artifact11594871300 downloaded and SHA256 verified; all33 raw files byte-identical to retained bundle. All40 mac manifest entries and120 original artifacts verified. Source config/lock bytes match actual commits; final product config and workflow unchanged since actual mac execution. Original captures retain original identities. Published inventories complete, no synthetic integration substitute.",
+    "communication": "Pass: full final issue/PR read. Summary explains the real base-state pod failure and scoped fallback; test plan connects actual failure/success with precise retained evidence and distinguishes failed workflow/parser replay from native build. Stale pending-QA sentence is replaced by accurate completed-assessment link. No development diary or misleading release certification.",
+    "stack": "Pass: head/actual master/API base/merge-base and all parents bound separately. No stacked parent. Three linear scoped commits, ten files +366/-13; no development artifacts in product history. Native closing association to issue48 verified; no Project completion claim."
+  },
+  "feedback": {
+    "fullRead": true,
+    "comments": [
+      6073856737,
+      6074016282,
+      6074115939,
+      6074140197,
+      6074143560,
+      6074152554
+    ],
+    "submittedReviews": 0,
+    "inlineComments": 0,
+    "issueComments": 0,
+    "reviewThreads": 0,
+    "dispositions": "All six full PR comments read; implementation fixes verified by prior technical review; E1 quota refusal exact/current and C1 final-body correction independently verified. No actionable unresolved human feedback. Full API objects reread before and after publication."
+  },
+  "uiEvidence": {
+    "applicable": false,
+    "nonUiObservableContract": "Build-time pod configuration and diagnostic command/exit-status boundaries; no changed user UI. Real baseline/fixed pod logs, generated configuration and controlled parser replay are the relevant observable contract.",
+    "pairs": [],
+    "provenanceRecords": [],
+    "renderedPrInspection": {
+      "observations": "Not claimed; general GitHub rendering waiver applies. Full exact API-decoded body assessed."
+    }
+  },
+  "verification": {
+    "checkedAtUtc": "2026-10-09T04:19:37.091153+00:00",
+    "priorReceiptVerified": {
+      "verdict": "evidence-incomplete",
+      "headSha": "d88515b08e012acceadeeb9497f062d1964685f8",
+      "baseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "apiBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "mergeBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "ultimateTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "headParents": [
+        "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+      ],
+      "targetParents": [
+        "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+      ],
+      "parentRevisions": [],
+      "prBodySha256": "e5197e3d1aff7cf4a746bc9a6576dbd7066b767efb0e84e1adeb4f1399984862",
+      "checkedAtUtc": "2026-10-09T04:11:01.746246+00:00",
+      "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+      "host": "MCHARTIER_ZBOOK",
+      "supersedesVerdictCommentId": null,
+      "verdictCommentId": 6074115939,
+      "verdictBodySha256": "361f665523dcf2ea4f00ec8fdf5a6e1d87ba7171228ed7dc2df65a9b902950fd",
+      "verdictUpdatedAt": "2026-10-09T04:13:15Z",
+      "url": "https://github.com/MChartier/little-say/pull/49#issuecomment-6074115939",
+      "evidenceCommit": "8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff",
+      "evidencePath": "verdict.json",
+      "evidenceSha256": "dbd1b5ac43a68a1053d761f576d44e0de7832ae9a2e16f5a4586195038229d2f",
+      "postPublicationRecheckedAtUtc": "2026-10-09T04:13:30.332699+00:00",
+      "checkpoint": "Complete and idle. All QA tests stopped; no next QA task or overlapping suite. Product/body/Project/readiness/draft/merge unchanged."
+    },
+    "priorEvidenceCommit": "8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff",
+    "priorEvidenceArtifactsReverified": [
+      {
+        "path": "README.md",
+        "bytes": 735,
+        "gitBlobSha": "ee14518bb03adbfdc273ab4772afdfa76687773a",
+        "sha256": "984fef9c2c0b56d713ece5f683e71f7c13ad370ac36bf1f5777ee798e681d0c7"
+      },
+      {
+        "path": "actual-artifact.json",
+        "bytes": 850,
+        "gitBlobSha": "12bef7ebcce6454ee66fbf284b9124b2ee3567a3",
+        "sha256": "3fba519c6ce73491b93e08abd8167d90a22064937e7f82ce81a5a4c607971b80"
+      },
+      {
+        "path": "ci-113662665591.log",
+        "bytes": 117448,
+        "gitBlobSha": "3c0abb0737bf2fb7d0a21394e64d93308b10af41",
+        "sha256": "ed2497afbafc339ce1e6950c47ea6e6210a9f665af7c9d105a522dba2a60fa54"
+      },
+      {
+        "path": "ci-jobs.json",
+        "bytes": 4685,
+        "gitBlobSha": "67032313a7aa4bdb62f214b7a39f01e9ace176f1",
+        "sha256": "3914babeb0f02b95a19d61bab2010375aabbfff8bb341ceba990be89ceefcd79"
+      },
+      {
+        "path": "ci-run.json",
+        "bytes": 14417,
+        "gitBlobSha": "b5daac91dcab1c002ea97d441bb43df4a775bfcd",
+        "sha256": "dc62f5ad89bff8091b63653583819bb51b33f34fb561791674c0c546d38c216a"
+      },
+      {
+        "path": "ci-tree.json",
+        "bytes": 53768,
+        "gitBlobSha": "3636c60862e485b1335a7ccd1dfbc3cfcc9a2432",
+        "sha256": "671008ce9890a9d0c9a86927b9ee4c7c5b6da8436307ed136b8230faaae20fc9"
+      },
+      {
+        "path": "focused-tests.log",
+        "bytes": 258,
+        "gitBlobSha": "07df4c04c9ae77b0bc3f70882d7763de292042f1",
+        "sha256": "6e3e665a239aecbc56d288b115a3646cd3cb3b59213be5361502cb18b2851359"
+      },
+      {
+        "path": "identities.json",
+        "bytes": 591,
+        "gitBlobSha": "709bdf4e6f5ba96223297bd73d29909a0d308fc7",
+        "sha256": "091eb2bb52075196259ab20a274fc556179f07b6b41a147ee0acfbb1cffed433"
+      },
+      {
+        "path": "mac-113661590506.log",
+        "bytes": 44439,
+        "gitBlobSha": "75e4e73d786158d961203289ea50b00a1865da97",
+        "sha256": "04abfaf852884084b7c28887fff7673a6093059ae6613f0b20bc3b86baacc484"
+      },
+      {
+        "path": "mac-jobs.json",
+        "bytes": 13025,
+        "gitBlobSha": "101c72e98f4bedd32c0b1eebfb2ec5aff53af9ec",
+        "sha256": "73d0fd623c29578435ee76feee894e44dab3656867bd063e9a4bd5022d445223"
+      },
+      {
+        "path": "mac-run.json",
+        "bytes": 14394,
+        "gitBlobSha": "73af24ed7eefef71bf0e6d62434909601b00d46b",
+        "sha256": "85e1b59c70e96fef110c70e44dab719fc489fff657601caa1ff371811ff31701"
+      },
+      {
+        "path": "macos-run-37881372074-manifest.json",
+        "bytes": 4754,
+        "gitBlobSha": "0ae10f0cab034886010b6a1fd40af61ac197d74e",
+        "sha256": "7a488e0c35a2f799fcabe9d4f36081b7331d4417fe2bfe81fe7f6430d66d6fab"
+      },
+      {
+        "path": "native.json",
+        "bytes": 571,
+        "gitBlobSha": "8b2384de715771b16e8006f0abafc06a8890ac80",
+        "sha256": "ee6a35e9d9dd42934deac68530a1f2f5cc65ac1843506f2c21e96b07d4a25761"
+      },
+      {
+        "path": "original-manifest.json",
+        "bytes": 16517,
+        "gitBlobSha": "6d991ab8ec37bd753f35957fe8347c8949fa0c19",
+        "sha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428"
+      },
+      {
+        "path": "original-pre-dispatch-result.json",
+        "bytes": 11622,
+        "gitBlobSha": "5f61784dba8fb228dfc4a358239fa5ee44846b48",
+        "sha256": "76b01d9c239c87eaef594ddd98611a93093ba70ac2616ee831c01072bfc00950"
+      },
+      {
+        "path": "original-verification.json",
+        "bytes": 2895,
+        "gitBlobSha": "8616a4f573a7d9dd3131e105aee9f503e0b55236",
+        "sha256": "41934e441ef4348798eb025187258ad2cf9bf78baecc893df103a8c750b70181"
+      },
+      {
+        "path": "prepublish.json",
+        "bytes": 109896,
+        "gitBlobSha": "bfa42dd531a0d763c999957ad79a1b2d0ae555b0",
+        "sha256": "ee7287fee60add0e618f7094bf69cf3f62cd512109bc65494f748592a76f1503"
+      },
+      {
+        "path": "replay-result.json",
+        "bytes": 14694,
+        "gitBlobSha": "7d82797711c45d448996f2a7e6deae1fb71c7ef3",
+        "sha256": "dd78004fb7fc0ca90ac9473cf24787fe2aae4e452c44744e9d08fe1a836ee85c"
+      },
+      {
+        "path": "replay.mjs",
+        "bytes": 4075,
+        "gitBlobSha": "f788820979c9828dac43a8452b3de9a22bf38b93",
+        "sha256": "5847766ec782e8b43eaf5007d112601eace4fb27d05a3e477eab16ba7759ab53"
+      },
+      {
+        "path": "report.py",
+        "bytes": 11567,
+        "gitBlobSha": "38636793e705b5b370d43ff3cd52e26beafa1483",
+        "sha256": "1f1fd20a183d09baa37857b32c4a4f6a6f18344e60707c19ef9465abf8431953"
+      },
+      {
+        "path": "verdict.json",
+        "bytes": 14679,
+        "gitBlobSha": "2cad707c54edf87620fb5cc1b29755fe7aef6dae",
+        "sha256": "dbd1b5ac43a68a1053d761f576d44e0de7832ae9a2e16f5a4586195038229d2f"
+      },
+      {
+        "path": "verification.json",
+        "bytes": 3791,
+        "gitBlobSha": "ffc00e298f2af8d3e6f2af547a70b0d59fffb816",
+        "sha256": "61b62ad26b89f14af064499a160af43575fcadba82a856c570e53f4c22cf14fe"
+      },
+      {
+        "path": "verify-final.py",
+        "bytes": 4354,
+        "gitBlobSha": "213126cce6463953157a1d104be878eb342234b3",
+        "sha256": "e3614a387d160e03afb6ccb5ddfe2e18fb34bdbc9a4ad44ead10e5cdd7175e27"
+      }
+    ],
+    "ownerRecordsReverified": [
+      {
+        "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+        "path": "original-manifest.json",
+        "gitBlobSha": "6d991ab8ec37bd753f35957fe8347c8949fa0c19",
+        "sha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428"
+      },
+      {
+        "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+        "path": "original-evidence.zip",
+        "gitBlobSha": "67b0b22e9696b32af85a705cc9b8b7867d726ef9",
+        "sha256": "50a6d95e880e18b94af974af1358599a33aff3a6c349864a6428aba1d64d4b26"
+      },
+      {
+        "commit": "73a48868d6df246f4f9b8951dfa4dd8542afe16c",
+        "path": "macos-run-37881372074-manifest.json",
+        "gitBlobSha": "0ae10f0cab034886010b6a1fd40af61ac197d74e",
+        "sha256": "7a488e0c35a2f799fcabe9d4f36081b7331d4417fe2bfe81fe7f6430d66d6fab"
+      },
+      {
+        "commit": "73a48868d6df246f4f9b8951dfa4dd8542afe16c",
+        "path": "macos-run-37881372074.zip",
+        "gitBlobSha": "b1625eb2e8c0ae38ac7ab904ea039ad53ac11d8e",
+        "sha256": "6197a1948f11ed25884fb1ca7d757134c391a9327c454e962ad8d5568054434e"
+      },
+      {
+        "commit": "677eb018af959e30013e84e7f7d33420db63d24e",
+        "path": "pr49-body-e5197e3d.md",
+        "gitBlobSha": "3fab6fa9f78bc1ceaf45d9f8db87594567a50573",
+        "sha256": "e5197e3d1aff7cf4a746bc9a6576dbd7066b767efb0e84e1adeb4f1399984862"
+      }
+    ],
+    "quotaRefusal": {
+      "id": 6074143560,
+      "updated_at": "2026-10-09T04:15:58Z",
+      "sha256": "e39b189a2ed6388c9d919876a2893ca0216a023301e11d788df190b4366991b9",
+      "login": "chatgpt-codex-connector[bot]",
+      "requestId": 6074140197,
+      "botCompleted": false
+    },
+    "sourceBaseScopeUnchanged": true,
+    "fullFeedbackRead": true,
+    "ciSuccessUnchanged": true,
+    "macFailureAndSevenSkippedJobsPreserved": true,
+    "bodyDiff": "body-diff.txt",
+    "testsRerun": false,
+    "impactAssessment": "Only final description and configured review evidence changed. Prior full code/scope/behavior/evidence assessment and exact artifact identities remain applicable; no expensive suite or new macOS diagnostic required."
+  },
+  "retainedOriginals": [
+    {
+      "commit": "92f219f4fd3bcac29a935726cfb2b74ce699663d",
+      "path": "original-manifest.json",
+      "sha256": "92c2b11e09869cea455e70c05f7a7871b1aecb078dfde4a55d20261d077ac428",
+      "bundlePath": "original-evidence.zip",
+      "bundleSha256": "50a6d95e880e18b94af974af1358599a33aff3a6c349864a6428aba1d64d4b26",
+      "assessment": "Original source-bound generated artifacts and red/green configuration experiment retained unchanged; no actual macOS claim for Windows captures. Android44 files byte-identical; configured Nitro Podfile byte-identical. Final config and lockfile applicability verified unchanged."
+    },
+    {
+      "commit": "73a48868d6df246f4f9b8951dfa4dd8542afe16c",
+      "path": "macos-run-37881372074-manifest.json",
+      "sha256": "7a488e0c35a2f799fcabe9d4f36081b7331d4417fe2bfe81fe7f6430d66d6fab",
+      "bundlePath": "macos-run-37881372074.zip",
+      "bundleSha256": "6197a1948f11ed25884fb1ca7d757134c391a9327c454e962ad8d5568054434e",
+      "assessment": "Raw baselineb46/fix06b records preserve original parser failure. Finald885 parser validated by local replay, never relabeled as macOS executed."
+    },
+    {
+      "path": "original-pre-dispatch-result.json",
+      "sha256": "76b01d9c239c87eaef594ddd98611a93093ba70ac2616ee831c01072bfc00950",
+      "assessment": "Historical native-task safety checkpoint at06b; no prior published PR49 verdict to supersede.",
+      "commit": "8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff"
+    },
+    {
+      "commit": "8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff",
+      "path": "verdict.json",
+      "sha256": "dbd1b5ac43a68a1053d761f576d44e0de7832ae9a2e16f5a4586195038229d2f",
+      "receipt": {
+        "verdict": "evidence-incomplete",
+        "headSha": "d88515b08e012acceadeeb9497f062d1964685f8",
+        "baseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "apiBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "mergeBaseSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "ultimateTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "headParents": [
+          "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+        ],
+        "targetParents": [
+          "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+        ],
+        "parentRevisions": [],
+        "prBodySha256": "e5197e3d1aff7cf4a746bc9a6576dbd7066b767efb0e84e1adeb4f1399984862",
+        "checkedAtUtc": "2026-10-09T04:11:01.746246+00:00",
+        "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+        "host": "MCHARTIER_ZBOOK",
+        "supersedesVerdictCommentId": null,
+        "verdictCommentId": 6074115939,
+        "verdictBodySha256": "361f665523dcf2ea4f00ec8fdf5a6e1d87ba7171228ed7dc2df65a9b902950fd",
+        "verdictUpdatedAt": "2026-10-09T04:13:15Z",
+        "url": "https://github.com/MChartier/little-say/pull/49#issuecomment-6074115939",
+        "evidenceCommit": "8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff",
+        "evidencePath": "verdict.json",
+        "evidenceSha256": "dbd1b5ac43a68a1053d761f576d44e0de7832ae9a2e16f5a4586195038229d2f",
+        "postPublicationRecheckedAtUtc": "2026-10-09T04:13:30.332699+00:00",
+        "checkpoint": "Complete and idle. All QA tests stopped; no next QA task or overlapping suite. Product/body/Project/readiness/draft/merge unchanged."
+      },
+      "assessment": "Exact prior incomplete verdict, body and technical/evidence scope preserved as historical; superseded only by this new comment."
+    },
+    {
+      "commit": "677eb018af959e30013e84e7f7d33420db63d24e",
+      "path": "pr49-body-e5197e3d.md",
+      "sha256": "e5197e3d1aff7cf4a746bc9a6576dbd7066b767efb0e84e1adeb4f1399984862"
+    }
+  ],
+  "limitations": [
+    "One actual macOS diagnostic remains failed; no second dispatch performed or needed to establish the observed product fix and independently replayed parser correction.",
+    "Actual macOS26.6.2/image20260907.0351.1, Xcode26.4.1, Ruby3.3.12, CocoaPods1.16.2, Node24.19.0. No native compile/archive, signing, EAS build, release retry, store submission or deployment claim.",
+    "Hosted logs show Contents:read and Metadata:read, transient built-in checkout read token; no claim every platform token was absent.",
+    "Independent local32 tests exclude the two generated-config tests needing expo-build-properties missing from old isolated node_modules. Their current-head execution is verified in successful CI; original generated evidence independently verified.",
+    "QA first verification script used nonexistent release.yml path, corrected to observed cut-release.yml before API artifact retrieval; local replay initially hit sandbox git subprocess EPERM, then narrowly approved local execution succeeded. No automatic review denial or weakened ACL.",
+    "No product/body/Project/label/draft/merge mutation. Native-device checks deferred; optional existing ignored dist-qa-ios remains untouched.",
+    "Focused E1/C1 reassessment only: no test or hosted diagnostic rerun. Prior32 independent tests and actual native pod evidence apply because all source/base/commit/path identities are unchanged; all prior23 retained QA artifacts and five owner manifest/bundle/body blobs freshly verified."
+  ],
+  "evidence": [
+    "verification.json",
+    "body-diff.txt",
+    "quota-refusal.json",
+    "prior-trusted-receipt.json",
+    "native.json",
+    "prepublish.json",
+    "ci-run.json",
+    "ci-jobs.json",
+    "mac-run.json",
+    "mac-jobs.json",
+    "https://github.com/MChartier/little-say/blob/8d15de5d52d2449eb2a9b8035a9bb59bf4b6d7ff/verdict.json"
+  ],
+  "nextAction": "Coordinator separately saves this exact trusted API-readback receipt and verifies current head/actual target/body/evidence/full feedback and all readiness gates before any authorized readiness transition. QA changes no readiness/draft/Project/merge state. No new human-action blocker from this assessment.",
+  "resolvedFindings": [
+    {
+      "id": "E1",
+      "disposition": "Single configured request6074140197 names unchanged final head. Bot6074143560 explicitly refused solely for code-review quota; exact body, bot identity and updated_at verified. Direct quota-only amendment applies. Bot did not complete review; no retry or billing action."
+    },
+    {
+      "id": "C1",
+      "disposition": "Full final body read and exact diff checked. Only stale pending-QA sentence replaced with accurate linked completed technical/evidence assessment. Clear base-state problem, final solution, behavioral evidence and failed-run/native-build limitations remain. Old body retained exactly at677eb018."
+    }
+  ],
+  "originalTechnicalVerification": {
+    "checkedAtUtc": "2026-10-09T04:10:02.501609+00:00",
+    "head": "d88515b08e012acceadeeb9497f062d1964685f8",
+    "base": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "apiBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "mergeBase": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+    "headParents": [
+      "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+    ],
+    "targetParents": [
+      "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+    ],
+    "scope": [
+      {
+        "sha": "b7d26c6e302554d33a03553c5c48b5acf392886e",
+        "parents": [
+          "b46e9e83ffacb2e3846486fb7a64a57d1203f372"
+        ],
+        "subject": "Fix iOS AppCheck pod headers and add isolated manual pod validation",
+        "paths": [
+          ".github/workflows/cut-release.yml",
+          "apps/mobile/app.config.js",
+          "apps/mobile/package.json",
+          "docs/releases.md",
+          "package-lock.json",
+          "scripts/release/ios-pods-check.mjs",
+          "scripts/release/ios-pods-check.test.ts",
+          "scripts/release/ios-pods.test.ts",
+          "scripts/release/validation.test.ts"
+        ]
+      },
+      {
+        "sha": "06b4b00e6657a9b654bda59ff6561332d0bbabf1",
+        "parents": [
+          "b7d26c6e302554d33a03553c5c48b5acf392886e"
+        ],
+        "subject": "Keep release input regression aligned with manual pod diagnostics",
+        "paths": [
+          "scripts/release/release.test.ts"
+        ]
+      },
+      {
+        "sha": "d88515b08e012acceadeeb9497f062d1964685f8",
+        "parents": [
+          "06b4b00e6657a9b654bda59ff6561332d0bbabf1"
+        ],
+        "subject": "Read resolved pod versions instead of nested dependency constraints",
+        "paths": [
+          "scripts/release/ios-pods-check.mjs",
+          "scripts/release/ios-pods-check.test.ts"
+        ]
+      }
+    ],
+    "paths": [
+      ".github/workflows/cut-release.yml",
+      "apps/mobile/app.config.js",
+      "apps/mobile/package.json",
+      "docs/releases.md",
+      "package-lock.json",
+      "scripts/release/ios-pods-check.mjs",
+      "scripts/release/ios-pods-check.test.ts",
+      "scripts/release/ios-pods.test.ts",
+      "scripts/release/release.test.ts",
+      "scripts/release/validation.test.ts"
+    ],
+    "counts": {
+      "commits": 3,
+      "files": 10,
+      "additions": 366,
+      "deletions": 13
+    },
+    "sourceDigests": {
+      ".github/workflows/cut-release.yml": "3221f65ccda292482d5aef8846fb156e2e9ae5bd871671f8c7939a84754ce264",
+      "apps/mobile/app.config.js": "7a49401b6095d55ab68f837b7a2afc33e92e5e5383559d77848221b9c5ae7834",
+      "apps/mobile/package.json": "5fdf62db3d08c4d2686b6b8a2ecbb488b19df0697050ff144dba63e0fe5067b7",
+      "docs/releases.md": "5faab6855426deb6e888eaf9fc3c9aecb940ec90ed0b44ae938798203ab35472",
+      "package-lock.json": "fbf4df82da632bd4ed1ab7d5b23a5d47ae9b94adb9dd8bd8626befb743cfd42f",
+      "scripts/release/ios-pods-check.mjs": "93e85d7ebec53ff6ee973aea56b5c070ef8bbfc0ae98e7dd76dd8924a140c631",
+      "scripts/release/ios-pods-check.test.ts": "405764f07ab92512fecf9b5e891390e50a0617a6318d9f014646786b686e6eb7",
+      "scripts/release/ios-pods.test.ts": "5140f763489230b378d756b7710b44f3a8264ca32cb86aa1f049af5f7e879e5c",
+      "scripts/release/release.test.ts": "480bb09567f13f1db40b339b2984b6d2f63696012c6ce8bb6eac7a85b3898a1a",
+      "scripts/release/validation.test.ts": "88a8e9610d91891ad8c89425ffcc93145b7a64232e478444633a22b8feab0102"
+    },
+    "actualActionsArtifact": {
+      "id": 11594871300,
+      "digest": "sha256:3b6b285c03cc53ae29c0288160412db4ef3706aab934c9979e1adaf67809a90e",
+      "filesComparedExactly": 33
+    },
+    "verifiedMacManifestFiles": 40,
+    "verifiedOriginalArtifacts": 120,
+    "finalChange": "Only parser and maintained parser regression since actual macOS execution. Product app config, lockfile and workflow unchanged.",
+    "ciMergeTreeMatchesHead": true
+  }
+}
