@@ -1,0 +1,82 @@
+{
+  "sourceSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+  "serverSha256": "04562511d5cc22ebd67b23e1d0be274ecb137cce4af2be17a73ba8a6a8151b36",
+  "exportFiles": [
+    {
+      "path": "apple-touch-icon.png",
+      "sha256": "af89a8fff2147fa307cac66c76069310fc095d81ac1f1bb2fed9c6b522c5fa9f"
+    },
+    {
+      "path": "favicon.ico",
+      "sha256": "a2215310f20f0c7c676f86164865d6116df5830b7a74bf24e21070ff42af641c"
+    },
+    {
+      "path": "favicon.png",
+      "sha256": "2a920f7192bb7bb50f4faea7040295bce7b472dc5dfdb18152fb852876ed3daf"
+    },
+    {
+      "path": "icon-192.png",
+      "sha256": "afe9cfee1d444cea042f1ac6d08d9e753a9fad730ffb75783783487bfe61c21e"
+    },
+    {
+      "path": "icon-512.png",
+      "sha256": "dab8be332c389867f4a0cdccbf318cfb5304a040583f6c7947382e7e6527c13b"
+    },
+    {
+      "path": "icon-maskable-512.png",
+      "sha256": "e8e29472c7c5cd63acaba603453169bc29b5e4663d481fef97cbe3d26fc246ae"
+    },
+    {
+      "path": "index.html",
+      "sha256": "e46604d5f6ea6abe38969b57cd2b6b41a0b1410529e3df80da715570270fc0d6"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "sha256": "c3a68abb07e6f06e8134caab87c02f497217243565a8f43becb35e4fdb2674d8"
+    },
+    {
+      "path": "metadata.json",
+      "sha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+    },
+    {
+      "path": "sw.js",
+      "sha256": "75ab6205764968da40d6bf0b9eb48736d43c6a07933ada6abc43ada13b94864c"
+    },
+    {
+      "path": "sw.js.map",
+      "sha256": "72a1a75d1ad92113723504f8d2abca62d0362fb1cb5fe548cf159a6755212f84"
+    },
+    {
+      "path": "workbox-9c191d2f.js",
+      "sha256": "7e309c8aa685d823ceda00413955fd83e4fb3055db29fc4c9a73610c0fe72d5b"
+    },
+    {
+      "path": "workbox-9c191d2f.js.map",
+      "sha256": "d2d74d2e6cf898a85ac4a42b5d84d40a57466e6548ff3255056fd70b4b3031f8"
+    },
+    {
+      "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png",
+      "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+    },
+    {
+      "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@2x.png",
+      "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+    },
+    {
+      "path": "assets/assets/brand/mountain.cbb7c5d29f9d05209c294fdb6d779f2f@3x.png",
+      "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+    },
+    {
+      "path": "_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css",
+      "sha256": "d8fbcb3048628c60732013ff773877efe645bc722127ec215c33ca083878d046"
+    },
+    {
+      "path": "_expo/static/js/web/App-68103ee74536816b848abd1753b6907b.js",
+      "sha256": "c7aae4e208d76a9922f1bce4ccdf9b142baad45106188c2ae5b1b1f5c1a547b0"
+    },
+    {
+      "path": "_expo/static/js/web/index-866dd66b3e4916a78c50cb6f453f908a.js",
+      "sha256": "02b4ec21b6d59a9629ed300dce87eeefff1065872ef208cef3b298a9a4a01eb3"
+    }
+  ]
+}
