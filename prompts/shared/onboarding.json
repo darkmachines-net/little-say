@@ -1,0 +1,6 @@
+{
+  "farm": "cow, sheep, horse, pig, chicken, and duck",
+  "everyday": "more, water, help, all done, eat, and love you",
+  "family": "mother, father, grandmother, grandfather, sister, and brother",
+  "template": "Create a starter soundboard with exactly six cards for these concepts: {{concepts}}. Use the device language profile. Write the board title and base words in the default language. Every card must work in every selected language, with natural spoken words and labels in each language. Set every card to follow the board language when multiple languages are selected. Family words are generic roles, not specific people's names. Use a clear emoji per card."
+}

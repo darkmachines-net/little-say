@@ -2,6 +2,7 @@
  * @file Hosts a full-page conversation and live board canvas with cancellable work and explicit saves.
  */
 
+import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowUp, Mic, SlidersHorizontal, Square } from 'lucide-react-native';
@@ -207,7 +208,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
           {!history.length && !submitted && <View style={{ gap: 16 }}>
             <Text style={styles.body}>{source ? 'What would you like to change? Your board will update alongside the conversation.' : 'What would you like on your board? Type a message or use the microphone.'}</Text>
             <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording. {pictureDataDisclosure}</Text>
-            {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', 'Create six farm animal tiles including cow, sheep, and horse.'], ['🥣 Snack time', 'Create six things a toddler might ask for at snack time.'], ['👋 My family', 'Create six family tiles for mother, father, grandmother, grandfather, sister, and brother.']].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy) || recording.recording} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
+            {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', conversationPrompts.farm], ['🥣 Snack time', conversationPrompts.snack], ['👋 My family', conversationPrompts.family]].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy) || recording.recording} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
           </View>}
           {history.map((turn, index) => <View key={index} style={{ gap: 14 }}>
             <View style={{ alignSelf: 'flex-end', maxWidth: '96%', borderRadius: 18, borderBottomRightRadius: 5, padding: 14, backgroundColor: theme.accentSoft }}><Text style={{ ...styles.body, color: theme.ink }}>{turn.prompt}</Text></View>
