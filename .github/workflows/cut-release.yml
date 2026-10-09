@@ -3,6 +3,10 @@ name: Cut release
 on:
   workflow_dispatch:
     inputs:
+      validation_only:
+        description: Run source checks with disposable services only (no release operations)
+        type: boolean
+        default: false
       build_mode:
         description: Detect changed artifacts or force a fresh complete release
         type: choice
@@ -28,10 +32,9 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: little-say-release
+  group: ${{ inputs.validation_only && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}
   cancel-in-progress: false
 env:
-  GH_TOKEN: ${{ github.token }}
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   RELEASE_MODE: ${{ inputs.build_mode }}
   RELEASE_PROFILE: ${{ inputs.profile }}
@@ -42,11 +45,41 @@ env:
   TEST_PGUSER: little_say_test
   TEST_PGPASSWORD: little_say_test
 jobs:
+  validate:
+    if: inputs.validation_only
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:17-bookworm
+        env:
+          POSTGRES_USER: little_say_test
+          POSTGRES_PASSWORD: little_say_test
+          POSTGRES_DB: little_say_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U little_say_test -d little_say_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Validate exact source with disposable PostgreSQL and demo Auth
+        run: npm run release:validate
   prepare:
-    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: ${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
+      GH_TOKEN: ${{ github.token }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
       actions: read
@@ -93,8 +126,10 @@ jobs:
         id: cut
         run: npm run release:cut -- prepare
   server:
+    env:
+      GH_TOKEN: ${{ github.token }}
     needs: prepare
-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true'
+    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -121,7 +156,7 @@ jobs:
       - run: npm run release:cut -- server
   native:
     needs: prepare
-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]'
+    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -131,6 +166,7 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
     env:
+      GH_TOKEN: ${{ github.token }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
     steps:
@@ -147,7 +183,7 @@ jobs:
       - run: npm run release:cut -- native
   submit:
     needs: [prepare, server, native]
-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')
+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -157,6 +193,7 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
     env:
+      GH_TOKEN: ${{ github.token }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
     steps:
@@ -173,10 +210,11 @@ jobs:
       - run: npm run release:cut -- submit
   ota:
     needs: [prepare, server, native, submit]
-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')
+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
+      GH_TOKEN: ${{ github.token }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
       contents: write
@@ -194,10 +232,11 @@ jobs:
       - run: npm run release:cut -- ota
   finalize:
     needs: [prepare, server, native, submit, ota]
-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')
+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
+      GH_TOKEN: ${{ github.token }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
       contents: write

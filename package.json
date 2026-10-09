@@ -28,6 +28,7 @@
     "pictures:update": "tsx scripts/update-picture-catalog.ts",
     "eval:pictures": "tsx scripts/evaluate-pictures.ts",
     "release:check": "tsx scripts/release/version.ts check",
+    "release:validate": "tsx scripts/release/validation.ts",
     "release:cut": "tsx scripts/release/unified.ts",
     "release:plan": "tsx scripts/release/unified.ts plan",
     "release:prepare": "tsx scripts/release/version.ts prepare",

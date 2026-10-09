@@ -109,7 +109,7 @@ describe('publication boundary', () => {
     const workflow = (name: string) => parse(readFileSync(resolve(root, '.github/workflows', name), 'utf8'));
     const cut = workflow('cut-release.yml');
     expect(Object.keys(cut.on)).toEqual(['workflow_dispatch']);
-    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });
+    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ validation_only: false, build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });
     expect(cut.jobs.server.needs).toBe('prepare');
     expect(cut.jobs.prepare.outputs.commit).toBe('${{ steps.cut.outputs.commit }}');
     expect(cut.jobs.server.permissions).toEqual({ contents: 'write', packages: 'write' });
