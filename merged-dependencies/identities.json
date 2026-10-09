@@ -1,0 +1,144 @@
+{
+  "checkedAtUtc": "2026-10-09T01:35:03.197Z",
+  "head": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "base": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "manifestSha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+  "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193",
+  "harnessSha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+  "previousPrBodySha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+  "lockSha256": "894bfd115fdd3a4b597ba1bfc305f89b98e4a1772d6e9f2aa3308392d4be95a3",
+  "exports": [
+    {
+      "platform": "ios",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "command": "node ../../node_modules/expo/bin/cli export --platform ios --output-dir ../../../records/integration-ios-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-ios-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 333,
+          "sha256": "0d6a5555ef1bc3700b33442264f68f3c37da135072c24c9389f5029d7f830b5b"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/ios/index-6fbfb319bfdd0c30ba55c93058a003f0.hbc",
+          "bytes": 7335867,
+          "sha256": "8c22c1fdeb1c23a2d7fdab77055343ba8e71ece25f5c5842127299e1752c3d2f"
+        }
+      ]
+    },
+    {
+      "platform": "android",
+      "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "command": "node ../../node_modules/expo/bin/cli export --platform android --output-dir ../../../records/integration-android-export",
+      "cwd": "little-say-translations/apps/mobile",
+      "localArtifacts": "C:\\Users\\MChar\\Documents\\Codex\\2026-10-08\\task-10\\records\\integration-android-export",
+      "files": [
+        {
+          "path": "metadata.json",
+          "bytes": 341,
+          "sha256": "c4b1423f2342b54b078c3aca070aa923a76898a118921554ba5d1ecef14943bd"
+        },
+        {
+          "path": "assets/562cc2c673b5ead25ec8c5a8b4cda246",
+          "bytes": 88603,
+          "sha256": "9662279f06ca48750665ffceffafb8ffef4d655169f2f230ebb5776bca9b6ae1"
+        },
+        {
+          "path": "assets/81e43b3e2de3ffd5767b07cc01399dc1",
+          "bytes": 14475,
+          "sha256": "db94bbfbb1ef58c085b600ccd7a2fb47ad18526893ec0de3e19cf60caaa59ac4"
+        },
+        {
+          "path": "assets/bc441684bcdc239fcd8e998106fed1f1",
+          "bytes": 44422,
+          "sha256": "cdec3fbed36c04095e5d2da66fdd8f3f9051f0fe85af69d4829f2703f46ecd57"
+        },
+        {
+          "path": "_expo/static/js/android/index-9665392d99dee1d23848f1aaba1cce20.hbc",
+          "bytes": 7341305,
+          "sha256": "afe3906ebca4c398f0f1dc841bd16dcbea52f9a90e0df64429be38245ad74c65"
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "filename": "before-board.png",
+      "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "before-existing-translation-controls.png",
+      "sha256": "0f5273317f438aa096901ada6b0087b27e3ae955046e584e0e05a50731ac8b60",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "before-card.png",
+      "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-board.png",
+      "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-card.png",
+      "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-empty-correction-refused.png",
+      "sha256": "3b2f813202a1168fc63986fbbdb4e0fd53a942bf065d8d389eeeefa7411dd026",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-manual-source-collision.png",
+      "sha256": "a6f3728352c4bb286b32fcb58158074af54ae24da27e4a4cc875b74b027823dd",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-corrected-audio-failure.png",
+      "sha256": "538148939c044834e7125fa4f9e00a11dcc6d31ad8d22f5ca1df695e896b9f5d",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-stale-correction.png",
+      "sha256": "ae5572ac8e089f62163a7728fe3623b2ef695ec8844f829d94a625b6af872485",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-phone-board.png",
+      "sha256": "392757df5749e8bcba2f32b4be61f72890b7cd84646c07ca39ed7ffbee4c72c4",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-ai-replacement-review.png",
+      "sha256": "ef6fc3fc7aa1ea528e98277a22972f4d596c3d972b49e0eb9ff297f1f8198d98",
+      "identicalToPreviouslyInspected": true
+    },
+    {
+      "filename": "after-ai-source-collision.png",
+      "sha256": "e19259c5c563e93f9b3f721b8f65080f1ab49b71b532a717bdefea43fa867cf5",
+      "identicalToPreviouslyInspected": true
+    }
+  ],
+  "oldManifestSha256": "56ca57685a2eb7d349a441e8811270f2434e9b4b0f64195da2ec5e6898cc10fa",
+  "retention": "Preserve nonmerged evidence/issue32-master-refresh and all preceding evidence/publication commits. Retain local export directories for same-host QA; hashes identify genuine local bundle artifacts, not device execution."
+}

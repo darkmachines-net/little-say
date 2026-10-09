@@ -1,0 +1,533 @@
+{
+  "checkedAtUtc": "2026-10-09T01:30:56.055Z",
+  "repository": "MChartier/little-say",
+  "targetRef": "refs/heads/master",
+  "head": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+  "actualTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "mergeBase": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "ultimateTargetSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+  "immediateParents": [
+    "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "unmergedParents": [],
+  "commits": [
+    {
+      "sha": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+      "parents": [
+        "9dd18b856d6d900ab162be3f1544aac0b93d2b71"
+      ],
+      "subject": "Edit selected language variants without losing saved corrections",
+      "reason": "Selected-language editors, guarded translation merges and maintained regression scenarios.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "9dd18b856d6d900ab162be3f1544aac0b93d2b71",
+          "paths": [
+            "M\tapps/mobile/src/App.tsx",
+            "M\tapps/mobile/src/services/pictures.ts",
+            "M\tapps/mobile/src/ui/AiConversation.tsx",
+            "M\tapps/mobile/src/ui/BoardEditor.tsx",
+            "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+            "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+            "M\tapps/mobile/src/ui/TileEditor.tsx",
+            "M\tpackages/core/src/boardLanguages.test.ts",
+            "M\tpackages/core/src/boardLanguages.ts",
+            "M\tpackages/core/src/schema.ts",
+            "A\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/app.spec.ts",
+            "M\ttests/web/speech.spec.ts",
+            "A\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+      "parents": [
+        "926b0f9ba742710e40ec7b8c198a877b5a82927e"
+      ],
+      "subject": "Reject AI source changes that shadow saved translations",
+      "reason": "Retained source-language collision fix and regression.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "926b0f9ba742710e40ec7b8c198a877b5a82927e",
+          "paths": [
+            "M\tpackages/core/src/schema.ts",
+            "M\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+      "parents": [
+        "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+        "fabb925cf5ee11171d5668af7c2bab44ec9fc613"
+      ],
+      "subject": "Merge current master into translation editing",
+      "reason": "Necessary additive integration of actual target master; no sibling or unmerged prerequisite.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "cece2ef8e029c650bd3ca47df5e08f1394310c7d",
+          "paths": [
+            "A\t.gitattributes",
+            "M\t.github/workflows/ci.yml",
+            "A\t.github/workflows/cut-release.yml",
+            "D\t.github/workflows/cut-server-release.yml",
+            "M\tREADME.md",
+            "M\tapps/mobile/app.config.js",
+            "M\tapps/mobile/app.json",
+            "M\tapps/mobile/eas.json",
+            "A\tapps/mobile/fingerprint.config.js",
+            "M\tapps/mobile/package.json",
+            "A\tapps/mobile/release-metadata.cjs",
+            "M\tapps/mobile/src/App.tsx",
+            "M\tapps/mobile/src/data/storage.ts",
+            "M\tapps/mobile/src/data/storage.web.ts",
+            "M\tapps/mobile/src/data/useLibrary.ts",
+            "A\tapps/mobile/src/services/accountSession.ts",
+            "A\tapps/mobile/src/services/accountSession.web.ts",
+            "A\tapps/mobile/src/services/accountSync.test.ts",
+            "A\tapps/mobile/src/services/accountSync.ts",
+            "A\tapps/mobile/src/services/api.test.ts",
+            "M\tapps/mobile/src/services/api.ts",
+            "A\tapps/mobile/src/services/firebase-native.d.ts",
+            "A\tapps/mobile/src/services/firebaseAccount.ts",
+            "A\tapps/mobile/src/services/firebasePersistence.test.ts",
+            "A\tapps/mobile/src/services/firebasePersistence.ts",
+            "A\tapps/mobile/src/services/firebasePersistence.web.ts",
+            "A\tapps/mobile/src/services/firebaseProviders.test.ts",
+            "A\tapps/mobile/src/services/firebaseProviders.ts",
+            "A\tapps/mobile/src/services/firebaseProviders.web.ts",
+            "M\tapps/mobile/src/services/speechLibrary.ts",
+            "A\tapps/mobile/src/services/useAccount.ts",
+            "A\tapps/mobile/src/ui/AccountPanel.tsx",
+            "A\tapps/mobile/src/ui/AccountScreen.tsx",
+            "M\tapps/mobile/src/ui/FirstTimeSetup.tsx",
+            "M\tapps/mobile/src/ui/ParentSettings.tsx",
+            "M\tapps/mobile/src/ui/components.tsx",
+            "A\tapps/server/migrations/1760000000002_accounts.sql",
+            "M\tapps/server/package.json",
+            "A\tapps/server/src/account-routes.ts",
+            "A\tapps/server/src/accounts.ts",
+            "M\tapps/server/src/app.ts",
+            "M\tapps/server/src/database.ts",
+            "A\tapps/server/src/firebase.ts",
+            "M\tapps/server/src/index.ts",
+            "A\tapps/server/test/accounts.integration.test.ts",
+            "M\tapps/server/test/database.integration.test.ts",
+            "A\tapps/server/test/firebase.integration.test.ts",
+            "A\tdocs/ACCOUNTS.md",
+            "M\tdocs/releases.md",
+            "M\tdocs/testing.md",
+            "A\tfirebase.json",
+            "M\tnative-release.json",
+            "M\tpackage-lock.json",
+            "M\tpackage.json",
+            "A\tpackages/core/src/account.test.ts",
+            "A\tpackages/core/src/account.ts",
+            "M\tpackages/core/src/index.ts",
+            "M\tpackages/core/src/schema.ts",
+            "A\tplaywright.accounts.config.ts",
+            "M\tplaywright.config.ts",
+            "A\trelease-policy.json",
+            "M\trelease.json",
+            "M\tscripts/dev-proxy.cjs",
+            "M\tscripts/dev-proxy.test.ts",
+            "A\tscripts/release/README.md",
+            "A\tscripts/release/candidate.test.ts",
+            "A\tscripts/release/candidate.ts",
+            "A\tscripts/release/cloud.ts",
+            "M\tscripts/release/common.ts",
+            "A\tscripts/release/contract.ts",
+            "M\tscripts/release/eas-credentials.ts",
+            "M\tscripts/release/environment.ts",
+            "A\tscripts/release/expo.ts",
+            "A\tscripts/release/fingerprint.test.ts",
+            "M\tscripts/release/fingerprint.ts",
+            "A\tscripts/release/image.test.ts",
+            "A\tscripts/release/image.ts",
+            "A\tscripts/release/inputs.ts",
+            "A\tscripts/release/journal.test.ts",
+            "A\tscripts/release/journal.ts",
+            "A\tscripts/release/metadata.ts",
+            "M\tscripts/release/native-contract.ts",
+            "M\tscripts/release/native.ts",
+            "A\tscripts/release/operation.test.ts",
+            "A\tscripts/release/operation.ts",
+            "A\tscripts/release/ota.test.ts",
+            "A\tscripts/release/ota.ts",
+            "A\tscripts/release/planner.test.ts",
+            "A\tscripts/release/planner.ts",
+            "A\tscripts/release/providers.test.ts",
+            "M\tscripts/release/release.test.ts",
+            "D\tscripts/release/server-cut.test.ts",
+            "D\tscripts/release/server-cut.ts",
+            "D\tscripts/release/server-publish.ts",
+            "A\tscripts/release/unified.test.ts",
+            "A\tscripts/release/unified.ts",
+            "A\tscripts/test-server.ts",
+            "A\ttests/web/accounts.spec.ts",
+            "M\ttests/web/existingLibrary.ts",
+            "M\ttests/web/setup.spec.ts"
+          ]
+        },
+        {
+          "parent": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "paths": [
+            "M\tapps/mobile/src/App.tsx",
+            "M\tapps/mobile/src/services/pictures.ts",
+            "M\tapps/mobile/src/ui/AiConversation.tsx",
+            "M\tapps/mobile/src/ui/BoardEditor.tsx",
+            "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+            "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+            "M\tapps/mobile/src/ui/TileEditor.tsx",
+            "M\tpackages/core/src/boardLanguages.test.ts",
+            "M\tpackages/core/src/boardLanguages.ts",
+            "M\tpackages/core/src/schema.ts",
+            "A\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/app.spec.ts",
+            "M\ttests/web/speech.spec.ts",
+            "A\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+      "parents": [
+        "dec27b5044ebce528ef59a499d94f2ccb2f66c0b"
+      ],
+      "subject": "Verify translation corrections through account entry cancellation",
+      "reason": "Account-aware browser fixture and correction preservation through cancelled account navigation.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "dec27b5044ebce528ef59a499d94f2ccb2f66c0b",
+          "paths": [
+            "M\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "1deeea094c08804344d87479c094dac4b302a336",
+      "parents": [
+        "680d1a8a1b3cba93b9c99f3932a251c50651b731"
+      ],
+      "subject": "Cover corrected translation account snapshots and audio keys",
+      "reason": "Account snapshot/conflict round-trip and exact corrected-language audio-key regression.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "680d1a8a1b3cba93b9c99f3932a251c50651b731",
+          "paths": [
+            "M\tpackages/core/src/translationEditing.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+      "parents": [
+        "1deeea094c08804344d87479c094dac4b302a336"
+      ],
+      "subject": "Preserve account choice in editor grid regression fixtures",
+      "reason": "Preserve account-choice state in the maintained editor-grid fixture after account integration.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "1deeea094c08804344d87479c094dac4b302a336",
+          "paths": [
+            "M\ttests/web/grid.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+      "parents": [
+        "ebae155ff0eda3ec611e65dfc937f425b27e60df"
+      ],
+      "subject": "Reject manual source language changes that hide saved corrections",
+      "reason": "Resolve manual source-language collision finding using the shared guard and save/duplicate/recovery regressions.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "ebae155ff0eda3ec611e65dfc937f425b27e60df",
+          "paths": [
+            "M\tapps/mobile/src/ui/TileEditor.tsx",
+            "M\tpackages/core/src/schema.ts",
+            "M\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+      "parents": [
+        "1a7fa5e960f200fdae35339972cddad871ea0f06"
+      ],
+      "subject": "Document explicit review required for translation replacement previews",
+      "reason": "Document the explicit parent-review authorization contract for translation replacement previews.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "1a7fa5e960f200fdae35339972cddad871ea0f06",
+          "paths": [
+            "M\tapps/mobile/src/services/pictures.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "ec849188fd450995149b87ee9bb454ac89388c4b",
+      "parents": [
+        "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+      ],
+      "subject": "Preserve empty translation drafts for required-field validation",
+      "reason": "R1: preserve empty existing correction drafts for Save/Duplicate validation, with manual/legacy unit and browser regressions.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+          "paths": [
+            "M\tpackages/core/src/boardLanguages.ts",
+            "M\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "b064097ac6a02717adfd7507d8d4cd741353069c",
+      "parents": [
+        "ec849188fd450995149b87ee9bb454ac89388c4b"
+      ],
+      "subject": "Guard source language against new draft corrections",
+      "reason": "Guard same-session manual draft corrections against source-language shadowing; core and new/generated browser regressions.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "ec849188fd450995149b87ee9bb454ac89388c4b",
+          "paths": [
+            "M\tapps/mobile/src/ui/TileEditor.tsx",
+            "M\tpackages/core/src/schema.ts",
+            "M\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+      "parents": [
+        "b064097ac6a02717adfd7507d8d4cd741353069c"
+      ],
+      "subject": "Document revision-bound editor save callbacks",
+      "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "b064097ac6a02717adfd7507d8d4cd741353069c",
+          "paths": [
+            "M\tapps/mobile/src/ui/BoardEditor.tsx"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+      "parents": [
+        "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+      ],
+      "subject": "Document draft-bound translation replacement callbacks",
+      "reason": "Document changed public callback concurrency/replacement-authority contracts; JSDoc only.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472",
+          "paths": [
+            "M\tapps/mobile/src/ui/AiConversation.tsx"
+          ]
+        }
+      ]
+    },
+    {
+      "sha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "parents": [
+        "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "subject": "Integrate merged release retirement and iOS runtime dependency",
+      "reason": "Additive integration of human-merged actual master PR42 release retirement and PR44 maintained iOS dependency; no conflict correction or independent product change.",
+      "changedAgainstEachParent": [
+        {
+          "parent": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+          "paths": [
+            "M\t.github/workflows/cut-release.yml",
+            "M\tapps/mobile/package.json",
+            "M\tdocs/releases.md",
+            "M\tpackage-lock.json",
+            "M\tscripts/release/candidate.test.ts",
+            "M\tscripts/release/candidate.ts",
+            "M\tscripts/release/journal.ts",
+            "M\tscripts/release/metadata.ts",
+            "M\tscripts/release/planner.test.ts",
+            "A\tscripts/release/retirement.test.ts",
+            "A\tscripts/release/retirement.ts",
+            "M\tscripts/release/unified.test.ts",
+            "M\tscripts/release/unified.ts"
+          ]
+        },
+        {
+          "parent": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+          "paths": [
+            "M\tapps/mobile/src/App.tsx",
+            "M\tapps/mobile/src/services/pictures.ts",
+            "M\tapps/mobile/src/ui/AiConversation.tsx",
+            "M\tapps/mobile/src/ui/BoardEditor.tsx",
+            "M\tapps/mobile/src/ui/BoardLanguages.tsx",
+            "A\tapps/mobile/src/ui/EditingLanguages.tsx",
+            "M\tapps/mobile/src/ui/TileEditor.tsx",
+            "M\tpackages/core/src/boardLanguages.test.ts",
+            "M\tpackages/core/src/boardLanguages.ts",
+            "M\tpackages/core/src/schema.ts",
+            "A\tpackages/core/src/translationEditing.test.ts",
+            "M\ttests/web/app.spec.ts",
+            "M\ttests/web/grid.spec.ts",
+            "M\ttests/web/speech.spec.ts",
+            "A\ttests/web/translationEditing.spec.ts"
+          ]
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/mobile/src/App.tsx",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 4,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/services/pictures.ts",
+      "status": "modified",
+      "additions": 7,
+      "deletions": 3,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/ui/AiConversation.tsx",
+      "status": "modified",
+      "additions": 16,
+      "deletions": 4,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardEditor.tsx",
+      "status": "modified",
+      "additions": 17,
+      "deletions": 6,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/ui/BoardLanguages.tsx",
+      "status": "modified",
+      "additions": 14,
+      "deletions": 7,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/ui/EditingLanguages.tsx",
+      "status": "added",
+      "additions": 16,
+      "deletions": 0,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "apps/mobile/src/ui/TileEditor.tsx",
+      "status": "modified",
+      "additions": 38,
+      "deletions": 26,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "packages/core/src/boardLanguages.test.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "reason": "Maintained regression for translation behavior or account integration."
+    },
+    {
+      "path": "packages/core/src/boardLanguages.ts",
+      "status": "modified",
+      "additions": 29,
+      "deletions": 10,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "packages/core/src/schema.ts",
+      "status": "modified",
+      "additions": 39,
+      "deletions": 7,
+      "reason": "Selected-language presentation, guarded correction merge, or exact variant preview/audio plumbing."
+    },
+    {
+      "path": "packages/core/src/translationEditing.test.ts",
+      "status": "added",
+      "additions": 131,
+      "deletions": 0,
+      "reason": "Maintained regression for translation behavior or account integration."
+    },
+    {
+      "path": "tests/web/app.spec.ts",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 1,
+      "reason": "Maintained regression for translation behavior or account integration."
+    },
+    {
+      "path": "tests/web/grid.spec.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "reason": "Maintained regression for translation behavior or account integration."
+    },
+    {
+      "path": "tests/web/speech.spec.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 0,
+      "reason": "Maintained regression for translation behavior or account integration."
+    },
+    {
+      "path": "tests/web/translationEditing.spec.ts",
+      "status": "added",
+      "additions": 357,
+      "deletions": 0,
+      "reason": "Maintained regression for translation behavior or account integration."
+    }
+  ],
+  "totals": {
+    "commits": 13,
+    "files": 15,
+    "additions": 675,
+    "deletions": 69
+  },
+  "masterAdvance": [
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea 4fa4ede70103c1827396d222de1c21fbc9938e93 Restore iOS export with the missing Apple authentication runtime dependency (#44)",
+    "4fa4ede70103c1827396d222de1c21fbc9938e93 fabb925cf5ee11171d5668af7c2bab44ec9fc613 Retire stale unpublished release candidates without losing recovery evidence (#42)"
+  ],
+  "integrationPaths": [
+    "M\t.github/workflows/cut-release.yml",
+    "M\tapps/mobile/package.json",
+    "M\tdocs/releases.md",
+    "M\tpackage-lock.json",
+    "M\tscripts/release/candidate.test.ts",
+    "M\tscripts/release/candidate.ts",
+    "M\tscripts/release/journal.ts",
+    "M\tscripts/release/metadata.ts",
+    "M\tscripts/release/planner.test.ts",
+    "A\tscripts/release/retirement.test.ts",
+    "A\tscripts/release/retirement.ts",
+    "M\tscripts/release/unified.test.ts",
+    "M\tscripts/release/unified.ts"
+  ],
+  "assessment": "All prior12 commits/parents/path inventories remain unchanged. New13th merge first-parent imports only13 paths already on actual target; second-parent equals the15-file translation outcome. Net scope675/-69 unchanged, nine product and six maintained regression files. No evidence churn, prompt extraction or unmerged dependency. Release orchestration is not invoked; its maintained mocked tests run in ordinary check. prop-types15.8.1 and nested react-is16.13.1 are the maintained Apple-auth runtime dependency from mergedPR44."
+}
