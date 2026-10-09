@@ -15,6 +15,14 @@ module.exports = ({ config }) => {
   const channel = process.env.LITTLE_SAY_CHANNEL || 'internal';
   if (!['internal', 'production'].includes(channel)) throw new Error('Unknown update channel.');
   const projectId = release.expoProjectId;
+  // The native Google SDK autolinks even without an OAuth scheme. In that case the Nitro
+  // plugin is absent, so supply only the module maps required by its Swift AppCheck dependency.
+  const googleIosPlugin = process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME
+    ? ['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]
+    : ['expo-build-properties', { ios: { extraPods: [
+      { name: 'GoogleUtilities', modular_headers: true },
+      { name: 'RecaptchaInterop', modular_headers: true },
+    ] } }];
   return {
     ...config,
     version: release.version,
@@ -27,7 +35,7 @@ module.exports = ({ config }) => {
     },
     ios: { ...config.ios, buildNumber: release.iosBuildNumber, usesAppleSignIn: true, entitlements: { ...config.ios?.entitlements, 'com.apple.developer.applesignin': ['Default'] } },
     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },
-    plugins: [...(config.plugins || []), 'expo-secure-store', ...(process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME ? [['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]] : []), ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
+    plugins: [...(config.plugins || []), 'expo-secure-store', googleIosPlugin, ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
     runtimeVersion: { policy: 'appVersion' },
     updates: projectId ? {
       url: `https://u.expo.dev/${projectId}`,
