@@ -1,0 +1,70 @@
+{
+  "checkedAtUtc": "2026-10-09T05:01:17.543Z",
+  "host": "mchartier_zbook",
+  "ownerTask": "01a11cbb-ec94-715f-a3e4-7aa82a416016",
+  "headSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+  "actualTargetSha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "apiBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "mergeBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "parents": [
+    "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "768811832bd0b389ba7e24738fb58800ea145000"
+  ],
+  "publishedScope": {
+    "commits": 14,
+    "files": 15,
+    "additions": 675,
+    "deletions": 69
+  },
+  "incomingPaths": [
+    ".github/workflows/cut-release.yml",
+    "apps/mobile/app.json",
+    "apps/mobile/package.json",
+    "apps/server/package.json",
+    "docs/releases.md",
+    "native-release.json",
+    "package-lock.json",
+    "package.json",
+    "release.json",
+    "scripts/release/candidate.test.ts",
+    "scripts/release/candidate.ts",
+    "scripts/release/release.test.ts",
+    "scripts/release/validation.test.ts",
+    "scripts/release/validation.ts"
+  ],
+  "incomingCommits": [
+    {
+      "sha": "1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+      "parents": [
+        "768811832bd0b389ba7e24738fb58800ea145000"
+      ],
+      "message": "Fix release Auth emulator validation and add manual branch validation (#46)\n\n## Summary\n\nCut release fails when its integration command runs without the required\nFirebase Auth emulator. Current master includes the merged\nprompt-resource extraction but retains that direct call. Reuse the\nmaintained demo-emulator wrapper while keeping every PostgreSQL and\nauthentication test mandatory.\n\nA manual **validation_only** option runs the same source-validation\nboundary on a selected branch with disposable PostgreSQL. It uses\nread-only checkout permissions without persisted credentials; every\ncandidate, registry and provider/release job is excluded. Normal\nreleases remain restricted to master. Existing PR CI is unchanged.\n\nCloses #45.\n\n## Test plan\n\n- **Current base to proposed source:** after integrating master\n`7688118`, the [exact-head validation-only\nrun](https://github.com/MChartier/little-say/actions/runs/37872957939/job/113634941431)\npassed **325 unit tests, all 25 PostgreSQL/Auth integration tests, types\nand builds**, including source-free prompt-bundle coverage.\nEmulator/database cleanup completed; all six release jobs were skipped.\n- **Affected runtime and failure boundaries:** 11 targeted local tests\npassed for prompt payloads, resources, source-free ESM execution and\nvalidation guards. The original six missing-emulator failures,\nregression rejection of the old command, and real local failure/cleanup\nevidence remain applicable to unchanged validation code. [Actual-base\nimpact analysis, raw results and preserved original\nbody](https://github.com/MChartier/little-say/blob/67ca22a9dbb9b7f31bd73e5145b394529455c8cf/impact-master7688118/README.md).\n\n[Current PR CI\npassed](https://github.com/MChartier/little-say/actions/runs/37872940191),\nincluding five account-browser scenarios. The prior review-bot [quota\nrefusal](https://github.com/MChartier/little-say/pull/46#issuecomment-6072598630)\nis retained; it is not a completed review of this head. Independent\nreview/QA remains required.\n\nThis non-UI change validates the real source-check boundary, **not a\ncomplete release**: candidate creation/retirement, signing, providers,\npublishing and deployment were not exercised. PR42's retained evidence\ncovered normal CI and release safeguards but missed this separate\ncommand path. Earlier run37871534382 remains evidence for its original\nsource, not the new combined build.\n\nCo-authored-by: Codex <codex@openai.com>"
+    },
+    {
+      "sha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "parents": [
+        "1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+      ],
+      "message": "Prepare Little Say release 37874954697 (#47)\n\nPrepare the allocated server/native versions for release 37874954697\n(auto, internal).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth\nemulator integration tests passed on this candidate. The original Cut\nrelease run resumes publication after normal merge; rerun its failed\njobs if review is required.\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+    }
+  ],
+  "disjointFromTranslationFiles": true,
+  "dependencyGraphUnchangedAfterRemovingOnlyWorkspaceVersionFields": true,
+  "productRuntimeAndTestsUnchanged": true,
+  "buildIdentityImpact": "Native app version0.1.1->0.1.2 and buildnumber2->3, appVersion OTA identity, server/root version0.2.1->0.3.0. Settings version label and health/readiness version responses change. Different app config/server embedded metadata means previous exported/bundled bytes must not be called b46 builds. No b46 or synthetic combined build was produced.",
+  "captureImpact": "All12 existing exact images show translation/editor states, not Settings version or health responses. Runtime, account routes,fixture/harness/theme/viewport/input behavior unchanged. Keep original18aa Before/6db After identities; reuse only as representative translation-behavior evidence for current target. Preserve all original hashes; no recapture solely for metadata.",
+  "validationImpact": "Existing331units34browsercases,17 independent tests/four Edge scenarios,CI and iOS/Android export results remain bound to9cada/768. Not newly executed against b46. Release validator now calls test:services with Auth emulator; manual validation_only workflow isolated. Existing CI workflow unchanged. PR46 is merged; do not claim issue45 remains uncorrected. PR49 pod fix remains open and excluded; export is not CocoaPods/native compilation/signing/provider success.",
+  "sourceDecision": "No translation source correction established: incoming14 paths and all15 published translation paths are disjoint. No integration or source mutation performed. Actual-target metadata assessment handed to sameQA; cannot claim tested combined build. Any requested integration would need a separately admitted plan.",
+  "historicalQa": {
+    "commentId": 6073011337,
+    "commentBodySha256": "5d23080c9cd2c3e9f8be97bdaee56393ae15d30d4dbd945b9bfe2f4d8cb70ec6",
+    "updatedAt": "2026-10-09T02:27:01Z",
+    "verdictCommit": "841d692fb92a531f9ac5f3fe27cafc2d59523b27",
+    "verdictSha256": "2a69a7c58ab0c4a6248f1d47557f28f5d02e28c7b7c077115ece0da0be05b736",
+    "historicalTarget": "768811832bd0b389ba7e24738fb58800ea145000"
+  },
+  "priorPrBodySha256": "5fd67eab73c71f355b718235d14d9d9afdb4afb5a4a6561223eb18b14009e7ee",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "humanReady": false
+}

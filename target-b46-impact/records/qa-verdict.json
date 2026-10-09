@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "workflowVersion": "workflow-v3",
+  "prCommunicationStandard": "pr-review-v3",
+  "workflowCommit": "f0919b184b6344d6279178b2388190936ca432a9",
+  "communicationCommit": "97e5583c8355f3673aad0835c0ce3ca1486aeb8b",
+  "acknowledgment": "Full supplied pinned execution texts, QA role, overlay and all direct amendments read and acknowledged, including full feedback, focused published scope, final-state concise communication, exact append-only receipts, rendering waiver and native-device deferral. Current repository AGENTS read; unchanged. Runtime pins not migrated. Sole independent QA lane; no subagents or overlapping suites.",
+  "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+  "pullRequest": "https://github.com/MChartier/little-say/pull/38",
+  "issue": "https://github.com/MChartier/little-say/issues/32",
+  "host": "MCHARTIER_ZBOOK",
+  "hostVerifiedAtUtc": "2026-10-09T02:21:40Z",
+  "verdict": "ready",
+  "supersedesVerdictCommentId": 6072748216,
+  "checkedAtUtc": "2026-10-09T02:26:05.023140+00:00",
+  "headSha": "9cada3111541357bc720b9ad66ccfeaa7081171e",
+  "baseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "apiBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "mergeBaseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "targetRepository": "MChartier/little-say",
+  "targetRef": "master",
+  "ultimateTargetSha": "768811832bd0b389ba7e24738fb58800ea145000",
+  "headParents": [
+    "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+    "768811832bd0b389ba7e24738fb58800ea145000"
+  ],
+  "targetParents": [
+    "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+  ],
+  "parentRevisions": [],
+  "prBodySha256": "5fd67eab73c71f355b718235d14d9d9afdb4afb5a4a6561223eb18b14009e7ee",
+  "issueBodySha256": "5506a33cded0cec3774a18dfe49884443a5573d3d02ea3991921c0768297234c",
+  "draft": true,
+  "labels": [],
+  "findings": [
+    {
+      "id": "R1",
+      "status": "resolved",
+      "reason": "Final-head independent four-case Edge reproduction confirms empty/partial manual and legacy drafts cannot silently delete protected corrections; cancel/reload and completed corrections preserve source/other variants/media. New/generated-to-manual source collisions refuse Save/Duplicate."
+    },
+    {
+      "id": "E1",
+      "status": "resolved",
+      "reason": "Previously independent iOS export remains historical at6db. Exact current9cada iOS/Android export artifacts and full logs verified; final source JSON imports load successfully. Native export is not device execution."
+    },
+    {
+      "id": "C1",
+      "status": "resolved",
+      "reason": "Current body describes final actual-base behavior, links completed previous assessment and current applicability; obsolete pending-QA narrative removed. Exact source/capture identities and native/provider/rendering limitations are honest."
+    },
+    {
+      "id": "E2",
+      "status": "resolved",
+      "reason": "Actual master768 is an ancestor and equals API base/mergebase. Fourteen ordered commits and every parent/path independently reconciled. New merge patch matches incoming master exactly. Current-head unit/browser/bundle/CI evidence establishes affected prompt integration; unchanged capture provenance and pixel assessment are explicitly reused, not relabeled."
+    }
+  ],
+  "gates": {
+    "value": "pass: directly requested selected-language editing and preservation of parent corrections; issue32 accepted scope unchanged",
+    "outcome": "pass: all acceptance criteria mapped to inspected current/unchanged contracts, fresh focused execution, current owner browser evidence and applicable retained tests",
+    "code": "pass: prior complete review remains applicable to14 byte-identical scoped files; shared AiConversation preset extraction independently inspected along with protected replacement/revision contracts; exact incoming patch verified and new prompt imports/loaders read",
+    "scope": "pass: complete14commits/allparents/15files/+675/-69; all13 prior inventories unchanged; only added actual-master merge. Nine product files and six maintained regressions; no evidence churn in product history",
+    "engineeringReview": "pass under quota-only amendment6006523068: refusal6072408054 read, no current-head bot review claimed. All six actionable historical findings verified resolved in current source; full feedback reread",
+    "ci": "pass: exact-head37873230024 succeeds331unit/25service/5accountbrowser; API merge94598f43f14d6d8f5b8d2f83b0fa9afddfbabaff tree equals head and parents are actualbase/head",
+    "behavior": "pass: independent17focused unit/resource/payload/source-free bundle tests, fresh server/web build and four Edge correction/collision/reload scenarios on hash-bound current-source build. Current owner34affected browser scenarios read;88other cases explicitly reused",
+    "evidence": "pass:24current committed blobs verified; exact current native outputs verified; retained12image/manifest/harness/fixture identities match prior trusted assessment. Both representative Before/After pairs reopened; source impact supports reuse of all12 original-source captures",
+    "communication": "pass: concise base-state problem and final outcome, reproducible expected/observed evidence table, visible genuine matched pairs, explicit capture reuse source identities and current applicability, honest no-device/provider/release claim. Fixed issue template/current native PR association valid",
+    "stack": "pass: actual target/APIbase/mergebase768 agree; no unmerged parent. Full native issue32 closing reference checked; no Project completion certification"
+  },
+  "scope": {
+    "record": "scope-verification.json",
+    "counts": {
+      "commits": 14,
+      "files": 15,
+      "additions": 675,
+      "deletions": 69
+    },
+    "impact": "Prior13 published commits/parents/paths unchanged.14th additive merge exactly matches incoming master patch ID. Net PR patch ID unchanged; all14 other translation files byte-identical. AiConversation only adds shared preset import and replaces3 identical strings. No altered capture state, fixture, layout, correction/audio contract. Native JSON-loading and shared prompt interaction checked on final source; no synthetic integration."
+  },
+  "validation": {
+    "independent": {
+      "tests": "17passed across translationEditing, promptResources, prompt-payloads, prompt-presets, prompt-bundle; own exact-head detached checkout",
+      "build": "npm run build server+web passed; qa-build.log and qa-build-identities.json bind outputs",
+      "browser": "Four fresh Edge boundary cases in browser-boundary-result.json; synthetic fixture, providerless own local server, actual fetched bundle hashes checked; browser/server stopped"
+    },
+    "owner": "Read final331unit/fullcheck,34Edge (17translation+14conversation+3setup), iOS/Android logs. Exact10 native artifact bytes match current-source manifest. Another88priorbrowser cases reused because source paths unaffected, not claimed rerun. Full current CI also exercises account/service integration.",
+    "ci": {
+      "run": 37873230024,
+      "record": "ci-run.json",
+      "jobs": "ci-jobs.json",
+      "log": "ci.log",
+      "merge": "ci-tree.json"
+    },
+    "reusedPrior": "Prior all12pixel/provenance inspection, complete translation source review and historical behavioral evidence at their original source identities; current scope comparison plus affected fresh checks establish applicability."
+  },
+  "feedback": {
+    "counts": {
+      "comments": 28,
+      "reviews": 11,
+      "inline": 12,
+      "issueComments": 5
+    },
+    "fullSnapshot": "prepublish.json",
+    "nativeThreads": "native.json",
+    "dispositions": [
+      {
+        "threadFinding": 4213533661,
+        "reason": "AI source collision rejected in applyProposal before replacement, including explicit replacement path; existing saved manual/legacy corrections protected.",
+        "revision": "cece2ef8e029c650bd3ca47df5e08f1394310c7d"
+      },
+      {
+        "threadFinding": 4222684628,
+        "reason": "Manual Save/Duplicate invoke shared collision guard.",
+        "revision": "1a7fa5e960f200fdae35339972cddad871ea0f06"
+      },
+      {
+        "threadFinding": 4222753440,
+        "reason": "Preview permission callback documented and uses same explicit draft-bound permission as apply.",
+        "revision": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f"
+      },
+      {
+        "threadFinding": 4223139477,
+        "reason": "Manual validated draft translations included along with persisted translations; generated AI output not treated as manual draft. Two independent browser cases verify.",
+        "revision": "b064097ac6a02717adfd7507d8d4cd741353069c"
+      },
+      {
+        "threadFinding": 4223215763,
+        "reason": "onApply public contract states second argument only authorizes this explicitly reviewed draft; implementation compares reviewedDraft identity to draft.",
+        "revision": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f"
+      },
+      {
+        "threadFinding": 4223215777,
+        "reason": "BoardEditor public callback contract documents expectedRevision, rejection and draft retention; source passes revision and parent enforces it.",
+        "revision": "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+      }
+    ],
+    "assessment": "All current issue/PR comments, submitted review bodies and inline threads reread in full. Six source collision/public contract findings remain fixed; R1/C1/E1/E2 dispositions above. New owner handoff is a claim independently assessed. Prepublication exact full feedback comparison unchanged; publication guard and postcomment full reread required."
+  },
+  "uiEvidence": {
+    "applicable": true,
+    "pairs": [
+      {
+        "id": "board",
+        "observation": "Matched actual master to current head: selected Russian replaces English in primary editing controls; source/fixed English intentionally preserved. Both card views start at Position. Added selector accounts for vertical shift.",
+        "before": {
+          "url": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/before-board.png",
+          "sha256": "26cf5c20cb35d7dbaf6f905ab8748ce05d2e75ecb292c1f88f7a0348cd1a0c32",
+          "sourceSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+          "capturedAtUtc": "2026-10-09T01:34:40.510Z"
+        },
+        "after": {
+          "url": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/after-board.png",
+          "sha256": "ab5121543e0fd5c99072e8fe536e5222641446430c2dd8d697404cd31c42d08d",
+          "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+          "capturedAtUtc": "2026-10-09T01:34:46.960Z"
+        }
+      },
+      {
+        "id": "card",
+        "observation": "Matched actual master to current head: selected Russian replaces English in primary editing controls; source/fixed English intentionally preserved. Both card views start at Position. Added selector accounts for vertical shift.",
+        "before": {
+          "url": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/before-card.png",
+          "sha256": "a946c2c6104d0d79b8619b585727ee190ca2c3157f2a4f72eb122f3514e0dac2",
+          "sourceSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+          "capturedAtUtc": "2026-10-09T01:34:41.605Z"
+        },
+        "after": {
+          "url": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/after-card.png",
+          "sha256": "58e879cbe25d3b76ced68be7faa6b0cc1bb1712cf0dde2bda0e0ee9c62a263f6",
+          "sourceSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+          "capturedAtUtc": "2026-10-09T01:34:47.575Z"
+        }
+      }
+    ],
+    "representativeCoverage": "Original12 genuine images retained without recapture. Both matched board/card pairs reopened independently in this reassessment; all12 exact pixels/provenance were independently inspected by this same trusted task in preceding assessment. Eight supplemental states reused with exact identity and verified unchanged behavior.",
+    "provenanceRecords": [
+      {
+        "pairs": [
+          "board",
+          "card"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/manifest.json",
+        "commitSha": "19e49364a5814ba30e77e53c96f6f0f72437cdef",
+        "sha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+        "harnessUrl": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/capture.mjs",
+        "harnessSha256": "d8611e6380f4e73f6fea0279b6ae569fad265bceb1c082e51736960f6211e222",
+        "fixtureUrl": "https://github.com/MChartier/little-say/blob/19e49364a5814ba30e77e53c96f6f0f72437cdef/merged-dependencies/captures/fixture.json",
+        "fixtureSha256": "efb05254fa5cc816101e79e886fae48cea49f56457b0fc618801831725cdf193"
+      },
+      {
+        "pairs": [
+          "board",
+          "card"
+        ],
+        "url": "https://github.com/MChartier/little-say/blob/a42da943d5bfbed0d2faf452e0f7833a65f3bc55/prompt-integration/identities.json",
+        "commitSha": "a42da943d5bfbed0d2faf452e0f7833a65f3bc55",
+        "sha256": "d061313a935a7e2ff8f9f825c719d0b7ef832296b5968235dc7141a0b790c18f",
+        "role": "Current-source impact applicability; original capture source identities unchanged"
+      }
+    ],
+    "provenanceAssessment": "Old captures remain18aa Before/6db After at19e49364. Exact manifest/harness/fixture/all12images verified against preserved identities. Prior actual-source/build/listener/fetched-bundle verification remains historical. Current incoming UI patch only extracts three identical presets; other scoped files/capture inputs unchanged. Current prompt behavior/build/native loading verified. This supports actual768/9cada applicability without relabeling captures or claiming new screenshots.",
+    "pixelObservations": {
+      "before-board": "Cow and fixed Sheep in English, same fixture/layout/theme",
+      "after-board": "Russian selector active, Cow becomes Корова, Sheep unchanged; selector causes expected vertical shift",
+      "before-card": "Position1, Cow preview and bothEnglishprimaryfields",
+      "after-card": "Position1, selectedRussian, Корова/корова in primaryfields",
+      "before-existing-translation-controls": "Baseline already has lowerRussian controls, visibly disclosed",
+      "after-empty-correction-refused": "Both fields empty, upperlabelcaption above viewport; required-fields notice, Duplicate/audio disabled, Cancel/Save visible",
+      "after-manual-source-collision": "ru-RU source selected, clear refusal retains draft/retry actions",
+      "after-corrected-audio-failure": "коровушка retained, failure notice and Generate retry",
+      "after-stale-correction": "Original-word-change warning, savedcorrection retained, explicit Use reviewed translation",
+      "after-phone-board": "390x844responsivebrowser: selectorswrap, RussianCow/fixedSheep/actions visible; notnative",
+      "after-ai-replacement-review": "Saved/proposedRussian compared with separate Keep/Use choice",
+      "after-ai-source-collision": "Sourcecollisionrefused, precedingdraftretained,Applydisabled"
+    },
+    "renderedPrInspection": {
+      "url": "https://github.com/MChartier/little-say/pull/38",
+      "observations": "General rendering waiver6022754087 applied; no GitHub page-rendering pass claimed. API body independently read and exact visible Before/After image markup beside Testplan verified. Pixel/provenance gates fully assessed."
+    },
+    "nonUiObservableContract": null,
+    "scopedHumanBaselineWaiver": null,
+    "currentPixelReinspection": {
+      "board": "Before Cow/Sheep English; After Russian selector and Корова, fixed Sheep English, added selector explains vertical displacement. Same fixture/theme/layout.",
+      "card": "Both begin at Position1; Before Cow primary fields; After selected Russian with Корова/корова primary fields and translation-only explanation.",
+      "rendering": "API markup visibly embeds both pairs beside Testplan; actual GitHub page rendering waived, not claimed passed."
+    }
+  },
+  "retainedOriginals": {
+    "priorTrustedReceipt": {
+      "verdict": "evidence-incomplete",
+      "headSha": "6db60bbf2f7c43a4d9f88c4b22d5b9c2a4e4edef",
+      "baseSha": "768811832bd0b389ba7e24738fb58800ea145000",
+      "apiBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "mergeBaseSha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+      "ultimateTargetSha": "768811832bd0b389ba7e24738fb58800ea145000",
+      "headParents": [
+        "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "targetParents": [
+        "18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      ],
+      "parentRevisions": [],
+      "prBodySha256": "9d785993081bb52f119546e001a9ef62a69b6cb90d2dc28f6d365d77006d1ee8",
+      "checkedAtUtc": "2026-10-09T02:01:41.461273+00:00",
+      "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+      "host": "mchartier_zbook",
+      "supersedesVerdictCommentId": 6072652174,
+      "verdictCommentId": 6072748216,
+      "verdictBodySha256": "77d113a6c967b06393baeea76ba70701f36fe2991f52063d012e55680c314949",
+      "verdictUpdatedAt": "2026-10-09T02:03:29Z",
+      "url": "https://github.com/MChartier/little-say/pull/38#issuecomment-6072748216",
+      "evidenceCommit": "83ea9a01508efb1b279ebfd30840d22d303ec4b9",
+      "evidencePath": "verdict.json",
+      "evidenceSha256": "3fe54a4a6a20bcfc6e6e974bfaaa2cffb6cba7e2f3af27af35636ee5385d0070",
+      "postPublicationRecheckedAtUtc": "2026-10-09T02:03:43.513012+00:00",
+      "checkpoint": "Complete and idle. All QA tests stopped; no next QA task or overlapping suite. Product/body/Project/readiness/draft/merge unchanged."
+    },
+    "priorCommentRecheckedFromApi": true,
+    "priorDetailedRecord": "https://github.com/MChartier/little-say/blob/83ea9a01508efb1b279ebfd30840d22d303ec4b9/verdict.json",
+    "priorTechnicalAssessment": "https://github.com/MChartier/little-say/blob/f0b4ad600db606ae9f537857520844503b70c925/verdict.json",
+    "earlierOriginals": {
+      "priorTrustedReceipt": {
+        "verdict": "evidence-incomplete",
+        "headSha": "6990cbbbeeb70c0c77d50b9c5e15a1fb835c183f",
+        "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "mergeBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "ultimateTargetSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+        "headParents": [
+          "a0f5f4806f7471ba86b77fb33c5cc27b6b35f472"
+        ],
+        "targetParents": [
+          "da45fbdef33cd78abcbbd6a8216ac9b34d460e22"
+        ],
+        "parentRevisions": [],
+        "prBodySha256": "1c3c4fc6211ccec443bf32e19304ae38e875fb0c6a3ca467a24935920ff3aad1",
+        "checkedAtUtc": "2026-10-08T20:12:34.070504+00:00",
+        "reviewerChat": "01a11c7c-11db-70b8-ba73-efe3693b003e",
+        "host": "mchartier_zbook",
+        "supersedesVerdictCommentId": 6066929182,
+        "verdictCommentId": 6068206900,
+        "verdictBodySha256": "0cb244e937c68dbf20ccbd0df743da1d7c4a7297b6164a1b82158479263df645",
+        "verdictUpdatedAt": "2026-10-08T20:13:35Z",
+        "url": "https://github.com/MChartier/little-say/pull/38#issuecomment-6068206900",
+        "evidenceCommit": "2b552959e38caeb342fc2a20f4237f1c4af6ce87",
+        "evidencePath": "verdict.json",
+        "evidenceSha256": "99b165e8b605e5a8e2eee0948ee8ba4dc596e10b81af48a8db136648c4693503",
+        "postPublicationRecheckedAtUtc": "2026-10-08T20:13:55.188166+00:00",
+        "checkpoint": "Complete and idle. Browser/server stopped; no next QA task or overlapping suite. Product/body/Project/readiness/draft/merge unchanged."
+      },
+      "priorExactCommentApiVerified": true,
+      "priorDetailedRecord": "https://github.com/MChartier/little-say/blob/2b552959e38caeb342fc2a20f4237f1c4af6ce87/verdict.json",
+      "priorOwnerEvidenceCommit": "6aa90658b6de8a015f955f386bafce365d996c83",
+      "priorOwnerPublicationCommit": "d43e8482912e87d7f7c422770c163590e4e54ee1",
+      "earlierOriginals": {
+        "priorReceipt": {
+          "headSha": "1b4d2ebf0d5f046eef3dec1d03834e7b09bb707f",
+          "baseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "apiBaseSha": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "mergeBase": "fabb925cf5ee11171d5668af7c2bab44ec9fc613",
+          "commitParents": [
+            "1a7fa5e960f200fdae35339972cddad871ea0f06"
+          ],
+          "parentRevisions": [],
+          "prBodySha256": "92c2ef216cbccd697387520810d6dc9d6fdd699caccb61c96b63fab34e9f4c8f",
+          "checkedAtUtc": "2026-10-08T18:55:37.218179+00:00",
+          "verdictCommentId": 6066929182,
+          "verdictBodySha256": "8973909d63ec478abf68d1640aa0c75324774a193ce94664c7dc0e1b05f4e83f",
+          "verdictUpdatedAt": "2026-10-08T18:57:31Z",
+          "artifactCommit": "8e946b230afeacb89b9d8ef6be858634f5473f5b",
+          "artifactSha256": "cfc4bafb5d4fa8f09c637bacb8e85ff91eeec3e42e564e057f01a7df8011eca7"
+        },
+        "priorEvidence": "https://github.com/MChartier/little-say/blob/8e946b230afeacb89b9d8ef6be858634f5473f5b/verdict.json",
+        "priorEvidenceSha256": "cfc4bafb5d4fa8f09c637bacb8e85ff91eeec3e42e564e057f01a7df8011eca7",
+        "originals": {
+          "prBodySha256": "8992e399b74edba5103de92e67403c021a73104f0adfbb6e7e46ee72d8ae63de",
+          "issueBodySha256": "01d4cee68cdd69b370c68c3d50919ee6ab19b428a39d1e796125664b90e719d5",
+          "oldEvidenceCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+          "oldPublicationCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+          "oldCaptureManifestSha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+          "applicability": "Original artifacts remain historical with their original source identities. Although a08a723 and cece2ef have equal trees, actual master added accounts, release metadata, dependencies and entry setup. Old captures are not reused for the new baseline; all ten states were freshly captured on actual master/final with the account-choice fixture marker and entry action."
+        },
+        "historicalNote": "Prior source a08a723, original9a8f7318 evidence/b2f37412 publication, refreshedc2331b99 evidence and prior QA8e946b23 remain historical and unchanged. Prior comment exact fullbodySHA/updated_at APIverified; no receipt silently rebound."
+      },
+      "preservation": "All originals retain their original source/body/capture/receipt identities, not rebound to integrated head. New reassessment is by this trusted QA task; no claim original task migration."
+    },
+    "captureCommit": "19e49364a5814ba30e77e53c96f6f0f72437cdef",
+    "captureManifestSha256": "bba7939383d7f597e6e2c8ed54019faa2f29582cd2e9f6f0240c972f0ee64eae",
+    "historicalPublication": "5a70021a8d4871ccb038aff9396b4b4f82bc7d13",
+    "currentOwnerEvidence": "a42da943d5bfbed0d2faf452e0f7833a65f3bc55",
+    "currentOwnerPublication": "df823a0631fdf947ad1ce52ba98058b2fabecedc",
+    "currentOwnerPublicationRecordSha256": "c4fbfda40ce59dc5138c1b1a7b7751ddc9dddbad4eaabd18091ca2dc71ee3ef1",
+    "preservation": "New append-only superseding assessment by same trusted independent task; all exact originals remain historical, no rebinding or claim of original conversation migration."
+  },
+  "separateReleaseFailure": {
+    "issue": "https://github.com/MChartier/little-say/issues/45",
+    "run": 37869482322,
+    "failedJob": 113624012903,
+    "observed": "Six auth-emulator prerequisite failures,19passes in prepare; downstreamnative/server/submit/ota/finalize skipped. Release validator calls test:integration directly; normalCIwraps emulator via test:services.",
+    "impact": "Actual target and PR38 retain identical release-validator code. Issue45/PR46 is separately reviewed, not part of this PR range; no release is certified by PR38. No hosted dispatch or provider operations.",
+    "records": [
+      "issue45.json",
+      "issue45-failed.log"
+    ]
+  },
+  "evidence": {
+    "identities": "identities.json",
+    "verification": "verification.json",
+    "scope": "scope-verification.json",
+    "retention": "Dedicated nonmerged same-repository QA evidence ref owned by this QA task, retained for reviewers and exact receipt history; never merge into product."
+  },
+  "limitations": [
+    "Native-device/emulator/live-provider checks unexecuted; native checks deferred. Browser, bundle export and device evidence remain distinct.",
+    "General GitHub rendered-page waiver applied; genuine capture pixels/provenance still verified.",
+    "No release/candidate/provider/publication/deployment execution. Separate issue45 outside scope.",
+    "Coordinator issue/Project/readiness reconciliation remains stopped pending explicit human confirmation. Technical ready verdict does not bypass this stop; no coordinator writes performed.",
+    "No source/body/readiness/draft/merge/Project changes; prior ignored QA export remains preserved."
+  ],
+  "nextAction": "Coordinator retain this exact trusted API receipt separately, verify full current bindings/evidence/feedback and respect its mutation stop. QA technical/communication assessment complete; await separately authorized coordinator action. Same sole QA lane now idle."
+}

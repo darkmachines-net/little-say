@@ -1,0 +1,511 @@
+{
+  "url": "https://api.github.com/repos/MChartier/little-say/compare/768811832bd0b389ba7e24738fb58800ea145000...b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "html_url": "https://github.com/MChartier/little-say/compare/768811832bd0b389ba7e24738fb58800ea145000...b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+  "permalink_url": "https://github.com/MChartier/little-say/compare/MChartier:7688118...MChartier:b46e9e8",
+  "diff_url": "https://github.com/MChartier/little-say/compare/768811832bd0b389ba7e24738fb58800ea145000...b46e9e83ffacb2e3846486fb7a64a57d1203f372.diff",
+  "patch_url": "https://github.com/MChartier/little-say/compare/768811832bd0b389ba7e24738fb58800ea145000...b46e9e83ffacb2e3846486fb7a64a57d1203f372.patch",
+  "base_commit": {
+    "sha": "768811832bd0b389ba7e24738fb58800ea145000",
+    "node_id": "C_kwDOU65OydoAKDc2ODgxMTgzMmJkMGIzODliYTdlMjQ3MzhmYjU4ODAwZWExNDUwMDA",
+    "commit": {
+      "author": {
+        "name": "Matthew Chartier",
+        "email": "MChartier@gmail.com",
+        "date": "2026-10-09T02:00:34Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-09T02:00:34Z"
+      },
+      "message": "Extract exact model prompts into versioned resources (#35)\n\n## Summary\n\nLittle Say's model instructions and starter messages are embedded in\nbusiness logic, making prompt changes difficult to find and review. This\nmoves the existing text into documented top-level JSON resources with\ntyped validation and literal substitution. Models receive the same\nrequests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets use the existing\nNode/Expo loading paths. Account exports are preserved. Deferred ChatGPT\ngrants in PR20 remain outside this change.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run matching synthetic requests on actual master and the extracted\nresources, including Unicode, quotes, dollar signs, braces and newlines.\n| Complete serialized payloads and starter/preset outputs are\nbyte-identical across affected operations, picture styles, speech\nlanguages and model selections. | [Fresh Before/After\ncaptures](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/comparison.json)\n|\n| Load source and source-free ESM; export web, iOS and Android. | All\nthree exports pass. Client bundles contain shared presets and exclude\nserver-prompt markers. The relocated production server returns HTTP 200\nwith AI disabled; invalid resources/substitutions fail clearly. |\n[Runtime and bundle\nchecks](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/runtime-report.json)\n|\n| Create/refine starter boards and conversations with mocked providers,\nincluding cancellation and failed saves. | All 17 Chromium scenarios\npass; prompts, drafts, consent and recovery remain intact. | [Browser\nresults](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/oct09-browser.log)\n|\n\nThis is a non-UI extraction with unchanged request behavior; exact\npayload comparison is its observable Before/After contract. Fresh\ncaptures compare actual master `18aa7c0` with final source `29e8fa8c`.\n[Source, harness and artifact\nidentities](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/manifest.json)\nand [applicability/retained\noriginals](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/applicability.json)\nare preserved outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: metadata, types, 320 tests, server build and web\nexport. The merged runtime dependency supports passing iOS and Android\nexports. [Current-revision\nCI](https://github.com/MChartier/little-say/actions/runs/37870046517)\nand revision-scoped independent QA are recorded separately. The bot\n[declined this revision's review solely for\nquota](https://github.com/MChartier/little-say/pull/35#issuecomment-6072402436);\nno completed bot review is claimed.\n\nDocker engine execution remains unperformed; its unchanged dist-copy\ncontract and relocated runtime were checked. Native-device testing is\ndeferred. No signed build, live inference, release or deployment was\nperformed.\n\n---------\n\nCo-authored-by: Codex <codex@openai.com>",
+      "tree": {
+        "sha": "11518a84e7afb64f6988389d3534c8ae3394504c",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/11518a84e7afb64f6988389d3534c8ae3394504c"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/768811832bd0b389ba7e24738fb58800ea145000",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyErCCRC1aQ7uu5UhlAAAIKEQAH9lkMagV7FlrFjvPZamAAEw\nO1pAGYSJY+bW234LqN0UUZ8JSTud2ZH+w53iXpRkYnSdD5dm8qE93mOzKF6kozQW\n29twwSDG6nwU4mrmPJHSw9QNhIq4A2+RWGsV0WiE6yrYa6LoUFTA6CHEXuC+ARJt\ndItyJ6mSPQoS1ti1dRbcJSuHTCXYtBEQyRaGOW/3lOjIwKUGBJ1wsZhgKa5knRRt\nJ7Ch7hPn8FYtStkqGKCT93A6v9Dr4RNAqs6vSXMkD8q7UML5bigZLEQeawGCfB7G\nqEGDf5M7SLX/t4agn5xSsmfkQTkaBpAv4QdIA8ajQ2LdyuppcqSoVw4loExfQxyh\n0bOw4KorOqmPUgnVGKlniKUg7JEKIhIit6eeTkkj7KWJpO3gczRHAs2H51lOM85Y\n/JxlSneNwjJekxgZB9Nmdf32x4bDC/SD9kFML+m59wUGECZLLOQIZHSNKdYmxBWB\nvEAwVrhn/BDl/3I3GS79nw+fH85Wgg9ghQT+bSK4FBFkhL8AhOnc5VbQ4jWFiAq0\nRDEkM6DthDgguYMBZqRTFsnKkwsZM6C5vHRv4rVbMskXJd6hH11WQGmwEdj26PlO\nDfQrjV4BDApSFqJq2qD8VqDTWk4XFwAHt4+Vwf1hVPLo+h1qzgV/HcYiVpf4iVZK\nzHonv9RCT0iMtZ5y0dld\n=uWoe\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 11518a84e7afb64f6988389d3534c8ae3394504c\nparent 18aa7c08615ecf60c8583f0590dcce8ed389f0ea\nauthor Matthew Chartier <MChartier@gmail.com> 1791511234 -0700\ncommitter GitHub <noreply@github.com> 1791511234 -0700\n\nExtract exact model prompts into versioned resources (#35)\n\n## Summary\n\nLittle Say's model instructions and starter messages are embedded in\nbusiness logic, making prompt changes difficult to find and review. This\nmoves the existing text into documented top-level JSON resources with\ntyped validation and literal substitution. Models receive the same\nrequests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets use the existing\nNode/Expo loading paths. Account exports are preserved. Deferred ChatGPT\ngrants in PR20 remain outside this change.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run matching synthetic requests on actual master and the extracted\nresources, including Unicode, quotes, dollar signs, braces and newlines.\n| Complete serialized payloads and starter/preset outputs are\nbyte-identical across affected operations, picture styles, speech\nlanguages and model selections. | [Fresh Before/After\ncaptures](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/comparison.json)\n|\n| Load source and source-free ESM; export web, iOS and Android. | All\nthree exports pass. Client bundles contain shared presets and exclude\nserver-prompt markers. The relocated production server returns HTTP 200\nwith AI disabled; invalid resources/substitutions fail clearly. |\n[Runtime and bundle\nchecks](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/runtime-report.json)\n|\n| Create/refine starter boards and conversations with mocked providers,\nincluding cancellation and failed saves. | All 17 Chromium scenarios\npass; prompts, drafts, consent and recovery remain intact. | [Browser\nresults](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/oct09-browser.log)\n|\n\nThis is a non-UI extraction with unchanged request behavior; exact\npayload comparison is its observable Before/After contract. Fresh\ncaptures compare actual master `18aa7c0` with final source `29e8fa8c`.\n[Source, harness and artifact\nidentities](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/manifest.json)\nand [applicability/retained\noriginals](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/applicability.json)\nare preserved outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: metadata, types, 320 tests, server build and web\nexport. The merged runtime dependency supports passing iOS and Android\nexports. [Current-revision\nCI](https://github.com/MChartier/little-say/actions/runs/37870046517)\nand revision-scoped independent QA are recorded separately. The bot\n[declined this revision's review solely for\nquota](https://github.com/MChartier/little-say/pull/35#issuecomment-6072402436);\nno completed bot review is claimed.\n\nDocker engine execution remains unperformed; its unchanged dist-copy\ncontract and relocated runtime were checked. Native-device testing is\ndeferred. No signed build, live inference, release or deployment was\nperformed.\n\n---------\n\nCo-authored-by: Codex <codex@openai.com>",
+        "verified_at": "2026-10-09T02:00:34Z"
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/768811832bd0b389ba7e24738fb58800ea145000",
+    "html_url": "https://github.com/MChartier/little-say/commit/768811832bd0b389ba7e24738fb58800ea145000",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/768811832bd0b389ba7e24738fb58800ea145000/comments",
+    "author": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+        "html_url": "https://github.com/MChartier/little-say/commit/18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      }
+    ]
+  },
+  "merge_base_commit": {
+    "sha": "768811832bd0b389ba7e24738fb58800ea145000",
+    "node_id": "C_kwDOU65OydoAKDc2ODgxMTgzMmJkMGIzODliYTdlMjQ3MzhmYjU4ODAwZWExNDUwMDA",
+    "commit": {
+      "author": {
+        "name": "Matthew Chartier",
+        "email": "MChartier@gmail.com",
+        "date": "2026-10-09T02:00:34Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-09T02:00:34Z"
+      },
+      "message": "Extract exact model prompts into versioned resources (#35)\n\n## Summary\n\nLittle Say's model instructions and starter messages are embedded in\nbusiness logic, making prompt changes difficult to find and review. This\nmoves the existing text into documented top-level JSON resources with\ntyped validation and literal substitution. Models receive the same\nrequests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets use the existing\nNode/Expo loading paths. Account exports are preserved. Deferred ChatGPT\ngrants in PR20 remain outside this change.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run matching synthetic requests on actual master and the extracted\nresources, including Unicode, quotes, dollar signs, braces and newlines.\n| Complete serialized payloads and starter/preset outputs are\nbyte-identical across affected operations, picture styles, speech\nlanguages and model selections. | [Fresh Before/After\ncaptures](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/comparison.json)\n|\n| Load source and source-free ESM; export web, iOS and Android. | All\nthree exports pass. Client bundles contain shared presets and exclude\nserver-prompt markers. The relocated production server returns HTTP 200\nwith AI disabled; invalid resources/substitutions fail clearly. |\n[Runtime and bundle\nchecks](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/runtime-report.json)\n|\n| Create/refine starter boards and conversations with mocked providers,\nincluding cancellation and failed saves. | All 17 Chromium scenarios\npass; prompts, drafts, consent and recovery remain intact. | [Browser\nresults](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/oct09-browser.log)\n|\n\nThis is a non-UI extraction with unchanged request behavior; exact\npayload comparison is its observable Before/After contract. Fresh\ncaptures compare actual master `18aa7c0` with final source `29e8fa8c`.\n[Source, harness and artifact\nidentities](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/manifest.json)\nand [applicability/retained\noriginals](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/applicability.json)\nare preserved outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: metadata, types, 320 tests, server build and web\nexport. The merged runtime dependency supports passing iOS and Android\nexports. [Current-revision\nCI](https://github.com/MChartier/little-say/actions/runs/37870046517)\nand revision-scoped independent QA are recorded separately. The bot\n[declined this revision's review solely for\nquota](https://github.com/MChartier/little-say/pull/35#issuecomment-6072402436);\nno completed bot review is claimed.\n\nDocker engine execution remains unperformed; its unchanged dist-copy\ncontract and relocated runtime were checked. Native-device testing is\ndeferred. No signed build, live inference, release or deployment was\nperformed.\n\n---------\n\nCo-authored-by: Codex <codex@openai.com>",
+      "tree": {
+        "sha": "11518a84e7afb64f6988389d3534c8ae3394504c",
+        "url": "https://api.github.com/repos/MChartier/little-say/git/trees/11518a84e7afb64f6988389d3534c8ae3394504c"
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/git/commits/768811832bd0b389ba7e24738fb58800ea145000",
+      "comment_count": 0,
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyErCCRC1aQ7uu5UhlAAAIKEQAH9lkMagV7FlrFjvPZamAAEw\nO1pAGYSJY+bW234LqN0UUZ8JSTud2ZH+w53iXpRkYnSdD5dm8qE93mOzKF6kozQW\n29twwSDG6nwU4mrmPJHSw9QNhIq4A2+RWGsV0WiE6yrYa6LoUFTA6CHEXuC+ARJt\ndItyJ6mSPQoS1ti1dRbcJSuHTCXYtBEQyRaGOW/3lOjIwKUGBJ1wsZhgKa5knRRt\nJ7Ch7hPn8FYtStkqGKCT93A6v9Dr4RNAqs6vSXMkD8q7UML5bigZLEQeawGCfB7G\nqEGDf5M7SLX/t4agn5xSsmfkQTkaBpAv4QdIA8ajQ2LdyuppcqSoVw4loExfQxyh\n0bOw4KorOqmPUgnVGKlniKUg7JEKIhIit6eeTkkj7KWJpO3gczRHAs2H51lOM85Y\n/JxlSneNwjJekxgZB9Nmdf32x4bDC/SD9kFML+m59wUGECZLLOQIZHSNKdYmxBWB\nvEAwVrhn/BDl/3I3GS79nw+fH85Wgg9ghQT+bSK4FBFkhL8AhOnc5VbQ4jWFiAq0\nRDEkM6DthDgguYMBZqRTFsnKkwsZM6C5vHRv4rVbMskXJd6hH11WQGmwEdj26PlO\nDfQrjV4BDApSFqJq2qD8VqDTWk4XFwAHt4+Vwf1hVPLo+h1qzgV/HcYiVpf4iVZK\nzHonv9RCT0iMtZ5y0dld\n=uWoe\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree 11518a84e7afb64f6988389d3534c8ae3394504c\nparent 18aa7c08615ecf60c8583f0590dcce8ed389f0ea\nauthor Matthew Chartier <MChartier@gmail.com> 1791511234 -0700\ncommitter GitHub <noreply@github.com> 1791511234 -0700\n\nExtract exact model prompts into versioned resources (#35)\n\n## Summary\n\nLittle Say's model instructions and starter messages are embedded in\nbusiness logic, making prompt changes difficult to find and review. This\nmoves the existing text into documented top-level JSON resources with\ntyped validation and literal substitution. Models receive the same\nrequests, and parents see the same presets and behavior.\n\nServer prompts stay server-only; shared presets use the existing\nNode/Expo loading paths. Account exports are preserved. Deferred ChatGPT\ngrants in PR20 remain outside this change.\n\nCloses #23.\n\n## Test plan and behavior evidence\n\n| Scenario | Expected and observed | Evidence |\n| --- | --- | --- |\n| Run matching synthetic requests on actual master and the extracted\nresources, including Unicode, quotes, dollar signs, braces and newlines.\n| Complete serialized payloads and starter/preset outputs are\nbyte-identical across affected operations, picture styles, speech\nlanguages and model selections. | [Fresh Before/After\ncaptures](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/comparison.json)\n|\n| Load source and source-free ESM; export web, iOS and Android. | All\nthree exports pass. Client bundles contain shared presets and exclude\nserver-prompt markers. The relocated production server returns HTTP 200\nwith AI disabled; invalid resources/substitutions fail clearly. |\n[Runtime and bundle\nchecks](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/runtime-report.json)\n|\n| Create/refine starter boards and conversations with mocked providers,\nincluding cancellation and failed saves. | All 17 Chromium scenarios\npass; prompts, drafts, consent and recovery remain intact. | [Browser\nresults](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/oct09-browser.log)\n|\n\nThis is a non-UI extraction with unchanged request behavior; exact\npayload comparison is its observable Before/After contract. Fresh\ncaptures compare actual master `18aa7c0` with final source `29e8fa8c`.\n[Source, harness and artifact\nidentities](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/manifest.json)\nand [applicability/retained\noriginals](https://github.com/MChartier/little-say/blob/49195f9dd70ce9a9842c460e57348c3d73935cb2/applicability.json)\nare preserved outside product history.\n\n## Supporting checks and limitations\n\n`npm run check` passed: metadata, types, 320 tests, server build and web\nexport. The merged runtime dependency supports passing iOS and Android\nexports. [Current-revision\nCI](https://github.com/MChartier/little-say/actions/runs/37870046517)\nand revision-scoped independent QA are recorded separately. The bot\n[declined this revision's review solely for\nquota](https://github.com/MChartier/little-say/pull/35#issuecomment-6072402436);\nno completed bot review is claimed.\n\nDocker engine execution remains unperformed; its unchanged dist-copy\ncontract and relocated runtime were checked. Native-device testing is\ndeferred. No signed build, live inference, release or deployment was\nperformed.\n\n---------\n\nCo-authored-by: Codex <codex@openai.com>",
+        "verified_at": "2026-10-09T02:00:34Z"
+      }
+    },
+    "url": "https://api.github.com/repos/MChartier/little-say/commits/768811832bd0b389ba7e24738fb58800ea145000",
+    "html_url": "https://github.com/MChartier/little-say/commit/768811832bd0b389ba7e24738fb58800ea145000",
+    "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/768811832bd0b389ba7e24738fb58800ea145000/comments",
+    "author": {
+      "login": "MChartier",
+      "id": 1258197,
+      "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/MChartier",
+      "html_url": "https://github.com/MChartier",
+      "followers_url": "https://api.github.com/users/MChartier/followers",
+      "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+      "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+      "organizations_url": "https://api.github.com/users/MChartier/orgs",
+      "repos_url": "https://api.github.com/users/MChartier/repos",
+      "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/MChartier/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+        "url": "https://api.github.com/repos/MChartier/little-say/commits/18aa7c08615ecf60c8583f0590dcce8ed389f0ea",
+        "html_url": "https://github.com/MChartier/little-say/commit/18aa7c08615ecf60c8583f0590dcce8ed389f0ea"
+      }
+    ]
+  },
+  "status": "ahead",
+  "ahead_by": 2,
+  "behind_by": 0,
+  "total_commits": 2,
+  "commits": [
+    {
+      "sha": "1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+      "node_id": "C_kwDOU65OydoAKDFmNTk4OTQwYTVjNjkyYTRlNWFlNWY1YzQ5NTZlMzRjZDZjOTQzNDA",
+      "commit": {
+        "author": {
+          "name": "Matthew Chartier",
+          "email": "MChartier@gmail.com",
+          "date": "2026-10-09T02:30:57Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-10-09T02:30:57Z"
+        },
+        "message": "Fix release Auth emulator validation and add manual branch validation (#46)\n\n## Summary\n\nCut release fails when its integration command runs without the required\nFirebase Auth emulator. Current master includes the merged\nprompt-resource extraction but retains that direct call. Reuse the\nmaintained demo-emulator wrapper while keeping every PostgreSQL and\nauthentication test mandatory.\n\nA manual **validation_only** option runs the same source-validation\nboundary on a selected branch with disposable PostgreSQL. It uses\nread-only checkout permissions without persisted credentials; every\ncandidate, registry and provider/release job is excluded. Normal\nreleases remain restricted to master. Existing PR CI is unchanged.\n\nCloses #45.\n\n## Test plan\n\n- **Current base to proposed source:** after integrating master\n`7688118`, the [exact-head validation-only\nrun](https://github.com/MChartier/little-say/actions/runs/37872957939/job/113634941431)\npassed **325 unit tests, all 25 PostgreSQL/Auth integration tests, types\nand builds**, including source-free prompt-bundle coverage.\nEmulator/database cleanup completed; all six release jobs were skipped.\n- **Affected runtime and failure boundaries:** 11 targeted local tests\npassed for prompt payloads, resources, source-free ESM execution and\nvalidation guards. The original six missing-emulator failures,\nregression rejection of the old command, and real local failure/cleanup\nevidence remain applicable to unchanged validation code. [Actual-base\nimpact analysis, raw results and preserved original\nbody](https://github.com/MChartier/little-say/blob/67ca22a9dbb9b7f31bd73e5145b394529455c8cf/impact-master7688118/README.md).\n\n[Current PR CI\npassed](https://github.com/MChartier/little-say/actions/runs/37872940191),\nincluding five account-browser scenarios. The prior review-bot [quota\nrefusal](https://github.com/MChartier/little-say/pull/46#issuecomment-6072598630)\nis retained; it is not a completed review of this head. Independent\nreview/QA remains required.\n\nThis non-UI change validates the real source-check boundary, **not a\ncomplete release**: candidate creation/retirement, signing, providers,\npublishing and deployment were not exercised. PR42's retained evidence\ncovered normal CI and release safeguards but missed this separate\ncommand path. Earlier run37871534382 remains evidence for its original\nsource, not the new combined build.\n\nCo-authored-by: Codex <codex@openai.com>",
+        "tree": {
+          "sha": "3fd752e4c71fdb2b2f17da00c39666b287c34cfa",
+          "url": "https://api.github.com/repos/MChartier/little-say/git/trees/3fd752e4c71fdb2b2f17da00c39666b287c34cfa"
+        },
+        "url": "https://api.github.com/repos/MChartier/little-say/git/commits/1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+        "comment_count": 0,
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyFHhCRC1aQ7uu5UhlAAAT/wQAHUeHpkfVCimbtswbuHya5NW\neqNmdEfAzjOPnF2m+POrRLLAO6aKtNX/hzqIeXC/4mMa5BjahvW0PyULTEe0v1Ul\nKSrltThTkPzzUdvtZbTQepEwSGocI2wf9rNUvvGKLjXiW8nnAv0HsACaoErvKgeU\nkg2EBcHdYhhILHi0jEFLks9s4IzwuR2Opu9QCnU+3f+ISQcj7e92lezcSSfmPA4Z\ntk44bJK3FMThn/y4INfYS0FBP5mg20bTQ/4JWZVqn9eug5PIhJr2fFlHe57C7a1G\neA2ORYCDVx4E1m9DOQrAAOLsW88V/HJJmIlHKc6w8/cGy0sg5gKRGr6I2Zf7Ta0X\nn9qiPDbuZGNy1F7qFdYTePr6BD9iOCH3ijOdwuG1ockb/Rsb6CN5xJJgVhgWlytO\nSiQN06fXGNxJxi2RkgiOjCbZvaxS16XCdwdte4h3xBWiN0BrQt3UfqXfOyGKdy1u\nNP4if4a4UuEzgoOAZqreG+D4ZTUkLcAnsurwmVCvk2eEyo8HeMiJ87enZJOQ2NRj\nxlziSxxh2EWjgZ/EJBDUjH1qLYyIpwruPo5ygzXIbVBgtoS/wgVLyheherHAX3im\nzH/oh/VV4I6QNSg24QaMmIeBbQxXxsFEAD5G/LyRBc08O2CGjZpAZOcFdeQfa/na\n2zu/GhfDKP7dqtEMlJJx\n=ycHF\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree 3fd752e4c71fdb2b2f17da00c39666b287c34cfa\nparent 768811832bd0b389ba7e24738fb58800ea145000\nauthor Matthew Chartier <MChartier@gmail.com> 1791513057 -0700\ncommitter GitHub <noreply@github.com> 1791513057 -0700\n\nFix release Auth emulator validation and add manual branch validation (#46)\n\n## Summary\n\nCut release fails when its integration command runs without the required\nFirebase Auth emulator. Current master includes the merged\nprompt-resource extraction but retains that direct call. Reuse the\nmaintained demo-emulator wrapper while keeping every PostgreSQL and\nauthentication test mandatory.\n\nA manual **validation_only** option runs the same source-validation\nboundary on a selected branch with disposable PostgreSQL. It uses\nread-only checkout permissions without persisted credentials; every\ncandidate, registry and provider/release job is excluded. Normal\nreleases remain restricted to master. Existing PR CI is unchanged.\n\nCloses #45.\n\n## Test plan\n\n- **Current base to proposed source:** after integrating master\n`7688118`, the [exact-head validation-only\nrun](https://github.com/MChartier/little-say/actions/runs/37872957939/job/113634941431)\npassed **325 unit tests, all 25 PostgreSQL/Auth integration tests, types\nand builds**, including source-free prompt-bundle coverage.\nEmulator/database cleanup completed; all six release jobs were skipped.\n- **Affected runtime and failure boundaries:** 11 targeted local tests\npassed for prompt payloads, resources, source-free ESM execution and\nvalidation guards. The original six missing-emulator failures,\nregression rejection of the old command, and real local failure/cleanup\nevidence remain applicable to unchanged validation code. [Actual-base\nimpact analysis, raw results and preserved original\nbody](https://github.com/MChartier/little-say/blob/67ca22a9dbb9b7f31bd73e5145b394529455c8cf/impact-master7688118/README.md).\n\n[Current PR CI\npassed](https://github.com/MChartier/little-say/actions/runs/37872940191),\nincluding five account-browser scenarios. The prior review-bot [quota\nrefusal](https://github.com/MChartier/little-say/pull/46#issuecomment-6072598630)\nis retained; it is not a completed review of this head. Independent\nreview/QA remains required.\n\nThis non-UI change validates the real source-check boundary, **not a\ncomplete release**: candidate creation/retirement, signing, providers,\npublishing and deployment were not exercised. PR42's retained evidence\ncovered normal CI and release safeguards but missed this separate\ncommand path. Earlier run37871534382 remains evidence for its original\nsource, not the new combined build.\n\nCo-authored-by: Codex <codex@openai.com>",
+          "verified_at": "2026-10-09T02:30:57Z"
+        }
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/commits/1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+      "html_url": "https://github.com/MChartier/little-say/commit/1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+      "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/1f598940a5c692a4e5ae5f5c4956e34cd6c94340/comments",
+      "author": {
+        "login": "MChartier",
+        "id": 1258197,
+        "node_id": "MDQ6VXNlcjEyNTgxOTc=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/1258197?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/MChartier",
+        "html_url": "https://github.com/MChartier",
+        "followers_url": "https://api.github.com/users/MChartier/followers",
+        "following_url": "https://api.github.com/users/MChartier/following{/other_user}",
+        "gists_url": "https://api.github.com/users/MChartier/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/MChartier/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/MChartier/subscriptions",
+        "organizations_url": "https://api.github.com/users/MChartier/orgs",
+        "repos_url": "https://api.github.com/users/MChartier/repos",
+        "events_url": "https://api.github.com/users/MChartier/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/MChartier/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "web-flow",
+        "id": 19864447,
+        "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+        "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/web-flow",
+        "html_url": "https://github.com/web-flow",
+        "followers_url": "https://api.github.com/users/web-flow/followers",
+        "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+        "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+        "organizations_url": "https://api.github.com/users/web-flow/orgs",
+        "repos_url": "https://api.github.com/users/web-flow/repos",
+        "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/web-flow/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "768811832bd0b389ba7e24738fb58800ea145000",
+          "url": "https://api.github.com/repos/MChartier/little-say/commits/768811832bd0b389ba7e24738fb58800ea145000",
+          "html_url": "https://github.com/MChartier/little-say/commit/768811832bd0b389ba7e24738fb58800ea145000"
+        }
+      ]
+    },
+    {
+      "sha": "b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "node_id": "C_kwDOU65OydoAKGI0NmU5ZTgzZmZhY2IyZTM4NDY0ODZmYjdhNjRhNTdkMTIwM2YzNzI",
+      "commit": {
+        "author": {
+          "name": "github-actions[bot]",
+          "email": "41898282+github-actions[bot]@users.noreply.github.com",
+          "date": "2026-10-09T02:35:28Z"
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "date": "2026-10-09T02:35:28Z"
+        },
+        "message": "Prepare Little Say release 37874954697 (#47)\n\nPrepare the allocated server/native versions for release 37874954697\n(auto, internal).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth\nemulator integration tests passed on this candidate. The original Cut\nrelease run resumes publication after normal merge; rerun its failed\njobs if review is required.\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+        "tree": {
+          "sha": "bb7f54a4ad5a01262b1259c9ae59a4636a90f2e2",
+          "url": "https://api.github.com/repos/MChartier/little-say/git/trees/bb7f54a4ad5a01262b1259c9ae59a4636a90f2e2"
+        },
+        "url": "https://api.github.com/repos/MChartier/little-say/git/commits/b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+        "comment_count": 0,
+        "verification": {
+          "verified": true,
+          "reason": "valid",
+          "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyFLwCRC1aQ7uu5UhlAAAVcEQAAD9pr9/ixkqZ4qgEfEwqPML\n/HwlpaS0hKxWejN0QHbm4Apq8aQ3jaur9EB3MdWU8trMy6wUNZFLFbIGvAOM3D17\n6wRTKo3lqCCgBetfYvVpGaE+haf/31tOYvrI2d17H3wwwF1LfZhzsD1XcLRhbOPS\neZC3m5f0BLTV8KVzJO9GDuAahvDx2WnFYis0CCJn5hvc844XM3tCpsE17DA8TUpe\ngWiulJSdjjB20j5ZCaR8HJHWfwenwNlI6b6BzWcO0cUbf1reCwwdflYGWJ3UTpht\nmfHeYqEvY9/TQcy8GEJ8TLsfw0Leie2fWu8elHN4SSU5hT53rOeAxei5aFbEpEhW\nu4CgWJB+B8sSevrE0lj4oC+rU4RBluns6oVxjToMQMf2dL9NYvv+zXrxp47IbVxl\n81X6e+xkhRV8Adt+xiT3Avxnap+Bx2Dsg1Yc2UPUYRRbJwPNG7pCVs2Naye/pzjP\nEJrpjF+KvQhxaf8XGYvZubo2IQZo3AdkFoHPL8CyM5PhDdtijFRwv4rWGbdp96RU\nPpft/s7adLhm1xxMCHWC8/HmGgQ5e5XbOrovPlQ0XvI1b1XCW3a4aNANwUkqRs0t\nwxRI6bq788APa6EXwjiuQcoLnWwRxNZ6oP0wZQJ0PRfrlgvwGvIUDWTUaVS5ZWJe\nUvDcZmaNZfPvxnTu0WVm\n=QyaH\n-----END PGP SIGNATURE-----\n",
+          "payload": "tree bb7f54a4ad5a01262b1259c9ae59a4636a90f2e2\nparent 1f598940a5c692a4e5ae5f5c4956e34cd6c94340\nauthor github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> 1791513328 +0000\ncommitter GitHub <noreply@github.com> 1791513328 +0000\n\nPrepare Little Say release 37874954697 (#47)\n\nPrepare the allocated server/native versions for release 37874954697\n(auto, internal).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth\nemulator integration tests passed on this candidate. The original Cut\nrelease run resumes publication after normal merge; rerun its failed\njobs if review is required.\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "verified_at": "2026-10-09T02:35:29Z"
+        }
+      },
+      "url": "https://api.github.com/repos/MChartier/little-say/commits/b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "html_url": "https://github.com/MChartier/little-say/commit/b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "comments_url": "https://api.github.com/repos/MChartier/little-say/commits/b46e9e83ffacb2e3846486fb7a64a57d1203f372/comments",
+      "author": {
+        "login": "github-actions[bot]",
+        "id": 41898282,
+        "node_id": "MDM6Qm90NDE4OTgyODI=",
+        "avatar_url": "https://avatars.githubusercontent.com/in/15368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/github-actions%5Bbot%5D",
+        "html_url": "https://github.com/apps/github-actions",
+        "followers_url": "https://api.github.com/users/github-actions%5Bbot%5D/followers",
+        "following_url": "https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}",
+        "gists_url": "https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/github-actions%5Bbot%5D/subscriptions",
+        "organizations_url": "https://api.github.com/users/github-actions%5Bbot%5D/orgs",
+        "repos_url": "https://api.github.com/users/github-actions%5Bbot%5D/repos",
+        "events_url": "https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/github-actions%5Bbot%5D/received_events",
+        "type": "Bot",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "web-flow",
+        "id": 19864447,
+        "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
+        "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/web-flow",
+        "html_url": "https://github.com/web-flow",
+        "followers_url": "https://api.github.com/users/web-flow/followers",
+        "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+        "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+        "organizations_url": "https://api.github.com/users/web-flow/orgs",
+        "repos_url": "https://api.github.com/users/web-flow/repos",
+        "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/web-flow/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+          "url": "https://api.github.com/repos/MChartier/little-say/commits/1f598940a5c692a4e5ae5f5c4956e34cd6c94340",
+          "html_url": "https://github.com/MChartier/little-say/commit/1f598940a5c692a4e5ae5f5c4956e34cd6c94340"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "sha": "33390fde4af2fe96644a0a81b06ac81b544b0112",
+      "filename": ".github/workflows/cut-release.yml",
+      "status": "modified",
+      "additions": 47,
+      "deletions": 8,
+      "changes": 55,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/.github%2Fworkflows%2Fcut-release.yml",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/.github%2Fworkflows%2Fcut-release.yml",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/.github%2Fworkflows%2Fcut-release.yml?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -3,6 +3,10 @@ name: Cut release\n on:\n   workflow_dispatch:\n     inputs:\n+      validation_only:\n+        description: Run source checks with disposable services only (no release operations)\n+        type: boolean\n+        default: false\n       build_mode:\n         description: Detect changed artifacts or force a fresh complete release\n         type: choice\n@@ -28,10 +32,9 @@ on:\n permissions:\n   contents: read\n concurrency:\n-  group: little-say-release\n+  group: ${{ inputs.validation_only && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}\n   cancel-in-progress: false\n env:\n-  GH_TOKEN: ${{ github.token }}\n   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}\n   RELEASE_MODE: ${{ inputs.build_mode }}\n   RELEASE_PROFILE: ${{ inputs.profile }}\n@@ -42,11 +45,41 @@ env:\n   TEST_PGUSER: little_say_test\n   TEST_PGPASSWORD: little_say_test\n jobs:\n+  validate:\n+    if: inputs.validation_only\n+    runs-on: ubuntu-latest\n+    timeout-minutes: 30\n+    permissions:\n+      contents: read\n+    services:\n+      postgres:\n+        image: postgres:17-bookworm\n+        env:\n+          POSTGRES_USER: little_say_test\n+          POSTGRES_PASSWORD: little_say_test\n+          POSTGRES_DB: little_say_test\n+        ports: ['5432:5432']\n+        options: >-\n+          --health-cmd \"pg_isready -U little_say_test -d little_say_test\"\n+          --health-interval 5s --health-timeout 5s --health-retries 20\n+    steps:\n+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262\n+        with:\n+          ref: ${{ github.sha }}\n+          persist-credentials: false\n+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020\n+        with:\n+          node-version: '24'\n+          cache: npm\n+      - run: npm ci\n+      - name: Validate exact source with disposable PostgreSQL and demo Auth\n+        run: npm run release:validate\n   prepare:\n-    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)\n+    if: ${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 60\n     env:\n+      GH_TOKEN: ${{ github.token }}\n       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}\n     permissions:\n       actions: read\n@@ -93,8 +126,10 @@ jobs:\n         id: cut\n         run: npm run release:cut -- prepare\n   server:\n+    env:\n+      GH_TOKEN: ${{ github.token }}\n     needs: prepare\n-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true'\n+    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -121,7 +156,7 @@ jobs:\n       - run: npm run release:cut -- server\n   native:\n     needs: prepare\n-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]'\n+    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -131,6 +166,7 @@ jobs:\n       matrix:\n         platform: ${{ fromJSON(needs.prepare.outputs.native) }}\n     env:\n+      GH_TOKEN: ${{ github.token }}\n       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}\n       RELEASE_PLATFORM: ${{ matrix.platform }}\n     steps:\n@@ -147,7 +183,7 @@ jobs:\n       - run: npm run release:cut -- native\n   submit:\n     needs: [prepare, server, native]\n-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')\n+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     permissions:\n@@ -157,6 +193,7 @@ jobs:\n       matrix:\n         platform: ${{ fromJSON(needs.prepare.outputs.native) }}\n     env:\n+      GH_TOKEN: ${{ github.token }}\n       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}\n       RELEASE_PLATFORM: ${{ matrix.platform }}\n     steps:\n@@ -173,10 +210,11 @@ jobs:\n       - run: npm run release:cut -- submit\n   ota:\n     needs: [prepare, server, native, submit]\n-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')\n+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     env:\n+      GH_TOKEN: ${{ github.token }}\n       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}\n     permissions:\n       contents: write\n@@ -194,10 +232,11 @@ jobs:\n       - run: npm run release:cut -- ota\n   finalize:\n     needs: [prepare, server, native, submit, ota]\n-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')\n+    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}\n     runs-on: ubuntu-latest\n     timeout-minutes: 90\n     env:\n+      GH_TOKEN: ${{ github.token }}\n       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}\n     permissions:\n       contents: write"
+    },
+    {
+      "sha": "64aed0da84ea67df04e40003d1da2ba3b0ca4ef6",
+      "filename": "apps/mobile/app.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fmobile%2Fapp.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fmobile%2Fapp.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/apps%2Fmobile%2Fapp.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -2,7 +2,7 @@\n   \"expo\": {\n     \"name\": \"Little Say\",\n     \"slug\": \"little-say\",\n-    \"version\": \"0.1.1\",\n+    \"version\": \"0.1.2\",\n     \"orientation\": \"default\",\n     \"userInterfaceStyle\": \"light\",\n     \"scheme\": \"littlesay\","
+    },
+    {
+      "sha": "38c3eed442866c8d90138113add0347bd95e04ea",
+      "filename": "apps/mobile/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fmobile%2Fpackage.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fmobile%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/apps%2Fmobile%2Fpackage.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -1,6 +1,6 @@\n {\n   \"name\": \"@little-say/app\",\n-  \"version\": \"0.1.1\",\n+  \"version\": \"0.1.2\",\n   \"private\": true,\n   \"main\": \"index.ts\",\n   \"scripts\": {"
+    },
+    {
+      "sha": "d373a77d7c2d9f6133962282185fb74e4ca14d37",
+      "filename": "apps/server/package.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fserver%2Fpackage.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/apps%2Fserver%2Fpackage.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/apps%2Fserver%2Fpackage.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -1,6 +1,6 @@\n {\n   \"name\": \"@little-say/server\",\n-  \"version\": \"0.2.1\",\n+  \"version\": \"0.3.0\",\n   \"private\": true,\n   \"type\": \"module\",\n   \"scripts\": {"
+    },
+    {
+      "sha": "a376905de772ce99243cc0171ee9428f4cf97483",
+      "filename": "docs/releases.md",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 0,
+      "changes": 4,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/docs%2Freleases.md",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/docs%2Freleases.md",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/docs%2Freleases.md?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -2,6 +2,10 @@\n \n Run **Cut release** in GitHub Actions on the repository default branch (`master`). It plans changes, prepares a protected version PR, and publishes the selected GHCR image, EAS cloud builds, store submissions, and compatible OTA updates. Merges run CI only. Server deployment and device installation remain separate local operations.\n \n+To validate a proposed change before merging, select its branch and enable **validation_only** in the same manual workflow. Only the read-only validation job runs: it checks out the exact run SHA without persisted credentials, runs repository checks/builds, and runs all integration tests with disposable PostgreSQL and the local `demo-little-say` Auth emulator. Emulator startup or test failure fails validation; the wrapper stops the emulator afterward. No release credentials, registry login, candidate preparation/retirement, signing, publishing or deployment runs in this mode. Normal release jobs remain restricted to the default branch through preparation. This is source validation, not proof of provider or publication behavior; `dry_run` is a separate release-planning mode with provider prerequisites.\n+\n+The same source-only boundary can run locally as `npm run release:validate` after `npm ci`, with an isolated PostgreSQL test database and the explicit `TEST_PG*` settings described in [testing](testing.md). It requires no release command or production Firebase project. Existing PR CI coverage is unchanged; validation-only runs are manual.\n+\n | Input | Choices | Default |\n | --- | --- | --- |\n | Build mode | `auto`, `force_all` | `auto` |"
+    },
+    {
+      "sha": "7816caabc47563c4af1704eda9990b063a929a17",
+      "filename": "native-release.json",
+      "status": "modified",
+      "additions": 3,
+      "deletions": 3,
+      "changes": 6,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/native-release.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/native-release.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/native-release.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -1,7 +1,7 @@\n {\n-  \"version\": \"0.1.1\",\n-  \"androidVersionCode\": 2,\n-  \"iosBuildNumber\": \"2\",\n+  \"version\": \"0.1.2\",\n+  \"androidVersionCode\": 3,\n+  \"iosBuildNumber\": \"3\",\n   \"expoOwner\": \"matthewchartier\",\n   \"expoProjectId\": \"a0336055-a9d6-46b1-8eb4-120944304685\",\n   \"serverUrl\": \"https://littlesay.darkmachines.net\""
+    },
+    {
+      "sha": "7c0719dce23d1077b1a468a1a6904398403b9af4",
+      "filename": "package-lock.json",
+      "status": "modified",
+      "additions": 4,
+      "deletions": 4,
+      "changes": 8,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/package-lock.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/package-lock.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/package-lock.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -1,12 +1,12 @@\n {\n   \"name\": \"little-say-workspace\",\n-  \"version\": \"0.2.1\",\n+  \"version\": \"0.3.0\",\n   \"lockfileVersion\": 3,\n   \"requires\": true,\n   \"packages\": {\n     \"\": {\n       \"name\": \"little-say-workspace\",\n-      \"version\": \"0.2.1\",\n+      \"version\": \"0.3.0\",\n       \"workspaces\": [\n         \"apps/*\",\n         \"packages/*\"\n@@ -29,7 +29,7 @@\n     },\n     \"apps/mobile\": {\n       \"name\": \"@little-say/app\",\n-      \"version\": \"0.1.1\",\n+      \"version\": \"0.1.2\",\n       \"dependencies\": {\n         \"@expo/metro-runtime\": \"~57.0.16\",\n         \"@invertase/react-native-apple-authentication\": \"^2.5.1\",\n@@ -86,7 +86,7 @@\n     },\n     \"apps/server\": {\n       \"name\": \"@little-say/server\",\n-      \"version\": \"0.2.1\",\n+      \"version\": \"0.3.0\",\n       \"dependencies\": {\n         \"@fastify/cors\": \"^11.0.0\",\n         \"@fastify/multipart\": \"^9.0.0\","
+    },
+    {
+      "sha": "3472a145a916ec90ad5f2b3996a46ef798b3c212",
+      "filename": "package.json",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 1,
+      "changes": 3,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/package.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/package.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/package.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -2,7 +2,7 @@\n   \"name\": \"little-say-workspace\",\n   \"private\": true,\n   \"type\": \"module\",\n-  \"version\": \"0.2.1\",\n+  \"version\": \"0.3.0\",\n   \"workspaces\": [\n     \"apps/*\",\n     \"packages/*\"\n@@ -28,6 +28,7 @@\n     \"pictures:update\": \"tsx scripts/update-picture-catalog.ts\",\n     \"eval:pictures\": \"tsx scripts/evaluate-pictures.ts\",\n     \"release:check\": \"tsx scripts/release/version.ts check\",\n+    \"release:validate\": \"tsx scripts/release/validation.ts\",\n     \"release:cut\": \"tsx scripts/release/unified.ts\",\n     \"release:plan\": \"tsx scripts/release/unified.ts plan\",\n     \"release:prepare\": \"tsx scripts/release/version.ts prepare\","
+    },
+    {
+      "sha": "dfcc3af19b23a000e07174cf0d29f88a4cd05633",
+      "filename": "release.json",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/release.json",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/release.json",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/release.json?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -1,3 +1,3 @@\n {\n-  \"version\": \"0.2.1\"\n+  \"version\": \"0.3.0\"\n }"
+    },
+    {
+      "sha": "fd634848242d215e6722ac10c55f92e5175d5c59",
+      "filename": "scripts/release/candidate.test.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fcandidate.test.ts",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fcandidate.test.ts",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fcandidate.test.ts?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -48,7 +48,7 @@ describe('protected version candidate', () => {\n   it('checks the combined candidate before push, normal merge, and exact tree readback', () => {\n     expect(prepareCandidate(plan, journal)).toEqual({ commit: merged, candidate, tree });\n     expect(writeReleaseDocuments).toHaveBeenCalledExactlyOnceWith(plan);\n-    expect(npm).toHaveBeenCalledWith(['run', 'test:integration']);\n+    expect(npm).toHaveBeenCalledWith(['run', 'test:services']);\n     expect(gh).toHaveBeenCalledWith(['pr', 'merge', pr.url, '--squash', '--match-head-commit', candidate]);\n     expect(validateCandidate).toHaveBeenCalledWith(plan, merged);\n   });"
+    },
+    {
+      "sha": "d3c49ea48d7a43452f85a8de3ebeffa7d4b7be6b",
+      "filename": "scripts/release/candidate.ts",
+      "status": "modified",
+      "additions": 5,
+      "deletions": 6,
+      "changes": 11,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fcandidate.ts",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fcandidate.ts",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fcandidate.ts?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -4,10 +4,12 @@ import { mkdtempSync } from 'node:fs';\n import { tmpdir } from 'node:os';\n import { resolve } from 'node:path';\n import { writeFileSync } from 'node:fs';\n-import { assert, cleanCommit, git, npm, writeJson } from './common';\n+import { assert, cleanCommit, git, writeJson } from './common';\n import type { PreparedRelease, ReleasePlan } from './contract';\n import { gh, Journal } from './journal';\n import { releaseFiles, StaleCandidateError, validateCandidate, writeReleaseDocuments } from './metadata';\n+import { validateReleaseSource } from './validation';\n+export { validateReleaseSource } from './validation';\n \n /** Recheck the live base without replacing the immutable plan or bypassing normal merge protection. */\n export function assertCandidateBase(plan: ReleasePlan): void {\n@@ -16,9 +18,6 @@ export function assertCandidateBase(plan: ReleasePlan): void {\n   if (current !== plan.source) throw new StaleCandidateError(`Default branch moved from ${plan.source} to ${current}.`);\n }\n \n-/** Validate product source and PostgreSQL behavior before recording the normal required check on a bot-created PR. */\n-export function validateReleaseSource(): void { npm(['run', 'check']); npm(['run', 'test:integration']); }\n-\n /** Prepare the run's candidate once; retries preserve versions and require the same tree after normal squash merge. */\n export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedRelease {\n   const base = process.env.DEFAULT_BRANCH!; const repo = process.env.GITHUB_REPOSITORY!;\n@@ -60,11 +59,11 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR\n     journal.put('candidate.json', { candidate, tree });\n     const temp = mkdtempSync(resolve(tmpdir(), 'little-say-cut-'));\n     const check = resolve(temp, 'check.json');\n-    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL integration tests passed on this exact candidate.' } });\n+    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL/Auth emulator integration tests passed on this exact candidate.' } });\n     gh(['api', `repos/${repo}/check-runs`, '--method', 'POST', '--input', check]);\n     if (!pr) {\n       const body = resolve(temp, 'body.md');\n-      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\\n\\nOnly version metadata changes. Repository checks and PostgreSQL integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\\n`);\n+      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\\n\\nOnly version metadata changes. Repository checks and PostgreSQL/Auth emulator integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\\n`);\n       gh(['pr', 'create', '--repo', repo, '--base', base, '--head', branch, '--title', `Prepare Little Say release ${plan.runId}`, '--body-file', body]);\n     }\n     pr = JSON.parse(gh(['pr', 'view', branch, '--repo', repo, '--json', 'url,state,headRefOid,mergeCommit']));"
+    },
+    {
+      "sha": "e7bce432cd1b7bd7ce64f88fb926570d2993db79",
+      "filename": "scripts/release/release.test.ts",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Frelease.test.ts",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Frelease.test.ts",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Frelease.test.ts?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -109,7 +109,7 @@ describe('publication boundary', () => {\n     const workflow = (name: string) => parse(readFileSync(resolve(root, '.github/workflows', name), 'utf8'));\n     const cut = workflow('cut-release.yml');\n     expect(Object.keys(cut.on)).toEqual(['workflow_dispatch']);\n-    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });\n+    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ validation_only: false, build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });\n     expect(cut.jobs.server.needs).toBe('prepare');\n     expect(cut.jobs.prepare.outputs.commit).toBe('${{ steps.cut.outputs.commit }}');\n     expect(cut.jobs.server.permissions).toEqual({ contents: 'write', packages: 'write' });"
+    },
+    {
+      "sha": "557016d31d11ab8c730997d507da8b817c16d2f1",
+      "filename": "scripts/release/validation.test.ts",
+      "status": "added",
+      "additions": 82,
+      "deletions": 0,
+      "changes": 82,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fvalidation.test.ts",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fvalidation.test.ts",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fvalidation.test.ts?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -0,0 +1,82 @@\n+/** @file Exercises the real release validator and subprocess runner against a controlled npm CLI, without release side effects. */\n+import { spawn } from 'node:child_process';\n+import { closeSync, mkdtempSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs';\n+import { tmpdir } from 'node:os';\n+import { join } from 'node:path';\n+import { afterEach, expect, it } from 'vitest';\n+import { parse } from 'yaml';\n+import { root } from './common';\n+\n+const directories: string[] = [];\n+afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });\n+\n+// A real child process substitutes only the external npm CLI. candidate/common are not mocked:\n+// this catches command selection and failure propagation through their actual spawnSync boundary.\n+async function validate(failure: string) {\n+  const directory = mkdtempSync(join(tmpdir(), 'release-validation-')); directories.push(directory);\n+  const cli = join(directory, 'npm.cjs'), log = join(directory, 'commands.jsonl');\n+  writeFileSync(cli, `const fs = require('node:fs');\n+fs.appendFileSync(process.env.VALIDATION_LOG, JSON.stringify(process.argv.slice(2)) + '\\\\n');\n+const script = process.argv[3];\n+if (script === 'check' && process.env.VALIDATION_FAILURE === 'check') process.exit(11);\n+if (script === 'test:services') {\n+  if (process.env.VALIDATION_FAILURE === 'startup') process.exit(12);\n+  if (process.env.VALIDATION_FAILURE === 'tests') process.exit(13);\n+}\n+`);\n+  // Windows treats environment names case-insensitively; remove npm's inherited spelling\n+  // before selecting the fixture so this regression cannot recursively launch real checks.\n+  const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toLowerCase() !== 'npm_execpath'));\n+  // File-backed output avoids nested synchronous pipe inheritance on Windows.\n+  const output = join(directory, 'output.log'), descriptor = openSync(output, 'w');\n+  let status: number | null;\n+  try {\n+    status = await new Promise<number | null>((resolve, reject) => {\n+      const child = spawn(process.execPath, ['--import', 'tsx', 'scripts/release/validation.ts'], {\n+        cwd: root, stdio: ['ignore', descriptor, descriptor], timeout: 15000, windowsHide: true,\n+        env: { ...environment, npm_execpath: cli, VALIDATION_LOG: log, VALIDATION_FAILURE: failure },\n+      });\n+      child.once('error', reject);\n+      child.once('close', resolve);\n+    });\n+  } finally { closeSync(descriptor); }\n+  return { status, stderr: readFileSync(output, 'utf8'), commands: readFileSync(log, 'utf8').trim().split('\\n').map(line => JSON.parse(line)) };\n+}\n+\n+it('runs checks then the maintained emulator wrapper, never bare integration', async () => {\n+  const result = await validate('');\n+  expect(result.status, result.stderr).toBe(0);\n+  expect(result.commands).toEqual([['run', 'check'], ['run', 'test:services']]);\n+  // Bind the selected package script to the demo-only wrapper and the complete integration suite.\n+  const scripts = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).scripts;\n+  expect(scripts['test:services']).toBe('firebase emulators:exec --only auth --project demo-little-say \"npm run test:integration\"');\n+});\n+\n+it.each([['check', 11], ['startup', 12], ['tests', 13]])('fails closed for %s failure through the command runner', async (failure, status) => {\n+  const result = await validate(String(failure));\n+  expect(result.status).not.toBe(0);\n+  expect(result.stderr).toContain(`failed (exit ${status})`);\n+  expect(result.commands).toEqual(failure === 'check' ? [['run', 'check']] : [['run', 'check'], ['run', 'test:services']]);\n+});\n+\n+it('isolates manual branch validation from every release job and credential', () => {\n+  const workflow = parse(readFileSync(join(root, '.github/workflows/cut-release.yml'), 'utf8'));\n+  expect(Object.keys(workflow.on)).toEqual(['workflow_dispatch']);\n+  expect(workflow.on.workflow_dispatch.inputs.validation_only).toMatchObject({ type: 'boolean', default: false });\n+  expect(workflow.env.GH_TOKEN).toBeUndefined();\n+  expect(JSON.stringify(workflow.env)).not.toMatch(/secrets\\.|github\\.token/);\n+  const job = workflow.jobs.validate;\n+  expect(job.if).toBe('inputs.validation_only');\n+  expect(job.permissions).toEqual({ contents: 'read' });\n+  expect(job.needs).toBeUndefined();\n+  expect(job.steps.map((step: any) => step.run).filter(Boolean)).toEqual(['npm ci', 'npm run release:validate']);\n+  expect(job.steps[0].with).toEqual({ ref: '${{ github.sha }}', 'persist-credentials': false });\n+  expect(JSON.stringify(job)).not.toMatch(/secrets\\.|github\\.token|release:cut|docker\\/login|eas-cli/);\n+  expect(job.services.postgres.image).toBe('postgres:17-bookworm');\n+  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);\n+  for (const name of ['prepare', 'server', 'native', 'submit', 'ota', 'finalize']) {\n+    expect(workflow.jobs[name].if).toMatch(/^\\$\\{\\{ !inputs\\.validation_only && /);\n+    expect(workflow.jobs[name].env.GH_TOKEN).toBe('${{ github.token }}');\n+  }\n+  expect(workflow.jobs.prepare.if).toContain(\"github.ref == format('refs/heads/{0}', github.event.repository.default_branch)\");\n+});"
+    },
+    {
+      "sha": "04ac63e8f71a46e514fdd9940e1de9786524a959",
+      "filename": "scripts/release/validation.ts",
+      "status": "added",
+      "additions": 12,
+      "deletions": 0,
+      "changes": 12,
+      "blob_url": "https://github.com/MChartier/little-say/blob/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fvalidation.ts",
+      "raw_url": "https://github.com/MChartier/little-say/raw/b46e9e83ffacb2e3846486fb7a64a57d1203f372/scripts%2Frelease%2Fvalidation.ts",
+      "contents_url": "https://api.github.com/repos/MChartier/little-say/contents/scripts%2Frelease%2Fvalidation.ts?ref=b46e9e83ffacb2e3846486fb7a64a57d1203f372",
+      "patch": "@@ -0,0 +1,12 @@\n+/** @file Runs shared PR/release source validation only, without release planning, credentials or publication. */\n+import { fail, isMain, npm } from './common';\n+\n+/** Run repository checks and all PostgreSQL/Auth contracts; test:services owns demo emulator startup and cleanup. */\n+export function validateReleaseSource(): void {\n+  npm(['run', 'check']);\n+  npm(['run', 'test:services']);\n+}\n+\n+if (isMain(import.meta.url)) {\n+  try { validateReleaseSource(); } catch (error) { fail(error); }\n+}"
+    }
+  ]
+}

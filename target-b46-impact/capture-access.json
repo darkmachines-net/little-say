@@ -1,0 +1,73 @@
+{
+  "checkedAtUtc": "2026-10-09T02:15:43.241Z",
+  "commit": "df823a0631fdf947ad1ce52ba98058b2fabecedc",
+  "authenticatedReviewerAccess": true,
+  "files": [
+    {
+      "path": "prompt-publication/ci.json",
+      "sha256": "e1aca54426d78f5e3391b29e6da779cb8c654e9b6d211a0c1364f195eac771e2",
+      "bytes": 14449,
+      "gitBlob": "8d98b9fe305a41bb726422d56c31ca21df60a91f"
+    },
+    {
+      "path": "prompt-publication/ci.log",
+      "sha256": "6c323cd7aadbf2e6045f2df3fbb732859549320bccdc43de92884e55691bcecc",
+      "bytes": 169596,
+      "gitBlob": "c31391244a9d6ae21fd4ee61881295db7a011890"
+    },
+    {
+      "path": "prompt-publication/feedback.json",
+      "sha256": "e3a04c91e5bfa89d9525e507eb2a29da64e93ba8bf559ea66fb1f0a87240a31a",
+      "bytes": 245305,
+      "gitBlob": "ac67587180f5efc7c501342a5ca6335bba341ee9"
+    },
+    {
+      "path": "prompt-publication/issue.json",
+      "sha256": "633fc7e8627de329b8e448a5ef5ee9e51f2e3f2da5d905f461446dd8edebd8b3",
+      "bytes": 8084,
+      "gitBlob": "6302afef84f7d80839dba36336088b1a3ad2768f"
+    },
+    {
+      "path": "prompt-publication/pr-body.md",
+      "sha256": "5fd67eab73c71f355b718235d14d9d9afdb4afb5a4a6561223eb18b14009e7ee",
+      "bytes": 7816,
+      "gitBlob": "7bb7faf2e810e9c64d072c225581d64e975d84c9"
+    },
+    {
+      "path": "prompt-publication/pr.json",
+      "sha256": "e02fb2d845404652132c8f6fa6d24995ee277ebaefb2631138d8bfeec8e836a4",
+      "bytes": 26355,
+      "gitBlob": "ce575f654f424ac7cfcb02dbf391508b7b87a7b9"
+    },
+    {
+      "path": "prompt-publication/record.json",
+      "sha256": "c4fbfda40ce59dc5138c1b1a7b7751ddc9dddbad4eaabd18091ca2dc71ee3ef1",
+      "bytes": 310948,
+      "gitBlob": "6c56463bc36dd77a61920127f1a48dc79729d11f"
+    },
+    {
+      "path": "prompt-publication/threads.json",
+      "sha256": "1a8e793ed14d1d93b0c1fc1ba25c7cfcd49fa1862ffbc4c682910d4f453c64dc",
+      "bytes": 9267,
+      "gitBlob": "b39c5133cc0c9ce7420ea49e11de1d1976cf743c"
+    },
+    {
+      "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+      "path": "README-current.md",
+      "sha256": "6ac2c47e71d7e27e989b3832974e09b96dfe708ac54dbc62706b1fa969b14bda",
+      "bytes": 5669
+    },
+    {
+      "historicalCommit": "9a8f7318d925dab559f2992a2b47525f691d18ff",
+      "path": "review-fix/manifest.json",
+      "sha256": "240f2955b99d138d9b3382762a97de7e33d3a47731597458236a860b2a9135a8",
+      "bytes": 24490
+    },
+    {
+      "historicalCommit": "b2f37412d8449e1c4a38d358612711b794c4fb8d",
+      "path": "publication/record.json",
+      "sha256": "44341dfe99cf315400ae15a72a41ccc9e89f8f2953bd22cbce44cbe2f69e5336",
+      "bytes": 3106
+    }
+  ]
+}

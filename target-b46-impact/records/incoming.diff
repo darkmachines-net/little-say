@@ -1,0 +1,450 @@
+diff --git a/.github/workflows/cut-release.yml b/.github/workflows/cut-release.yml
+index f88ded4..33390fd 100644
+--- a/.github/workflows/cut-release.yml
++++ b/.github/workflows/cut-release.yml
+@@ -3,6 +3,10 @@ name: Cut release
+ on:
+   workflow_dispatch:
+     inputs:
++      validation_only:
++        description: Run source checks with disposable services only (no release operations)
++        type: boolean
++        default: false
+       build_mode:
+         description: Detect changed artifacts or force a fresh complete release
+         type: choice
+@@ -28,10 +32,9 @@ on:
+ permissions:
+   contents: read
+ concurrency:
+-  group: little-say-release
++  group: ${{ inputs.validation_only && format('little-say-validation-{0}', github.ref) || 'little-say-release' }}
+   cancel-in-progress: false
+ env:
+-  GH_TOKEN: ${{ github.token }}
+   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+   RELEASE_MODE: ${{ inputs.build_mode }}
+   RELEASE_PROFILE: ${{ inputs.profile }}
+@@ -42,11 +45,41 @@ env:
+   TEST_PGUSER: little_say_test
+   TEST_PGPASSWORD: little_say_test
+ jobs:
++  validate:
++    if: inputs.validation_only
++    runs-on: ubuntu-latest
++    timeout-minutes: 30
++    permissions:
++      contents: read
++    services:
++      postgres:
++        image: postgres:17-bookworm
++        env:
++          POSTGRES_USER: little_say_test
++          POSTGRES_PASSWORD: little_say_test
++          POSTGRES_DB: little_say_test
++        ports: ['5432:5432']
++        options: >-
++          --health-cmd "pg_isready -U little_say_test -d little_say_test"
++          --health-interval 5s --health-timeout 5s --health-retries 20
++    steps:
++      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
++        with:
++          ref: ${{ github.sha }}
++          persist-credentials: false
++      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
++        with:
++          node-version: '24'
++          cache: npm
++      - run: npm ci
++      - name: Validate exact source with disposable PostgreSQL and demo Auth
++        run: npm run release:validate
+   prepare:
+-    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
++    if: ${{ !inputs.validation_only && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 60
+     env:
++      GH_TOKEN: ${{ github.token }}
+       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+     permissions:
+       actions: read
+@@ -93,8 +126,10 @@ jobs:
+         id: cut
+         run: npm run release:cut -- prepare
+   server:
++    env:
++      GH_TOKEN: ${{ github.token }}
+     needs: prepare
+-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true'
++    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true') }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     permissions:
+@@ -121,7 +156,7 @@ jobs:
+       - run: npm run release:cut -- server
+   native:
+     needs: prepare
+-    if: needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]'
++    if: ${{ !inputs.validation_only && (needs.prepare.outputs.active == 'true' && needs.prepare.outputs.native != '[]') }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     permissions:
+@@ -131,6 +166,7 @@ jobs:
+       matrix:
+         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
+     env:
++      GH_TOKEN: ${{ github.token }}
+       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+       RELEASE_PLATFORM: ${{ matrix.platform }}
+     steps:
+@@ -147,7 +183,7 @@ jobs:
+       - run: npm run release:cut -- native
+   submit:
+     needs: [prepare, server, native]
+-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')
++    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped')) }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     permissions:
+@@ -157,6 +193,7 @@ jobs:
+       matrix:
+         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
+     env:
++      GH_TOKEN: ${{ github.token }}
+       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+       RELEASE_PLATFORM: ${{ matrix.platform }}
+     steps:
+@@ -173,10 +210,11 @@ jobs:
+       - run: npm run release:cut -- submit
+   ota:
+     needs: [prepare, server, native, submit]
+-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')
++    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped')) }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     env:
++      GH_TOKEN: ${{ github.token }}
+       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+     permissions:
+       contents: write
+@@ -194,10 +232,11 @@ jobs:
+       - run: npm run release:cut -- ota
+   finalize:
+     needs: [prepare, server, native, submit, ota]
+-    if: always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')
++    if: ${{ !inputs.validation_only && (always() && !cancelled() && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped')) }}
+     runs-on: ubuntu-latest
+     timeout-minutes: 90
+     env:
++      GH_TOKEN: ${{ github.token }}
+       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+     permissions:
+       contents: write
+diff --git a/apps/mobile/app.json b/apps/mobile/app.json
+index 93dece9..64aed0d 100644
+--- a/apps/mobile/app.json
++++ b/apps/mobile/app.json
+@@ -2,7 +2,7 @@
+   "expo": {
+     "name": "Little Say",
+     "slug": "little-say",
+-    "version": "0.1.1",
++    "version": "0.1.2",
+     "orientation": "default",
+     "userInterfaceStyle": "light",
+     "scheme": "littlesay",
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index 0677991..38c3eed 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "@little-say/app",
+-  "version": "0.1.1",
++  "version": "0.1.2",
+   "private": true,
+   "main": "index.ts",
+   "scripts": {
+diff --git a/apps/server/package.json b/apps/server/package.json
+index 6a53b23..d373a77 100644
+--- a/apps/server/package.json
++++ b/apps/server/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "@little-say/server",
+-  "version": "0.2.1",
++  "version": "0.3.0",
+   "private": true,
+   "type": "module",
+   "scripts": {
+diff --git a/docs/releases.md b/docs/releases.md
+index f2dd662..a376905 100644
+--- a/docs/releases.md
++++ b/docs/releases.md
+@@ -2,6 +2,10 @@
+ 
+ Run **Cut release** in GitHub Actions on the repository default branch (`master`). It plans changes, prepares a protected version PR, and publishes the selected GHCR image, EAS cloud builds, store submissions, and compatible OTA updates. Merges run CI only. Server deployment and device installation remain separate local operations.
+ 
++To validate a proposed change before merging, select its branch and enable **validation_only** in the same manual workflow. Only the read-only validation job runs: it checks out the exact run SHA without persisted credentials, runs repository checks/builds, and runs all integration tests with disposable PostgreSQL and the local `demo-little-say` Auth emulator. Emulator startup or test failure fails validation; the wrapper stops the emulator afterward. No release credentials, registry login, candidate preparation/retirement, signing, publishing or deployment runs in this mode. Normal release jobs remain restricted to the default branch through preparation. This is source validation, not proof of provider or publication behavior; `dry_run` is a separate release-planning mode with provider prerequisites.
++
++The same source-only boundary can run locally as `npm run release:validate` after `npm ci`, with an isolated PostgreSQL test database and the explicit `TEST_PG*` settings described in [testing](testing.md). It requires no release command or production Firebase project. Existing PR CI coverage is unchanged; validation-only runs are manual.
++
+ | Input | Choices | Default |
+ | --- | --- | --- |
+ | Build mode | `auto`, `force_all` | `auto` |
+diff --git a/native-release.json b/native-release.json
+index eece2d7..7816caa 100644
+--- a/native-release.json
++++ b/native-release.json
+@@ -1,7 +1,7 @@
+ {
+-  "version": "0.1.1",
+-  "androidVersionCode": 2,
+-  "iosBuildNumber": "2",
++  "version": "0.1.2",
++  "androidVersionCode": 3,
++  "iosBuildNumber": "3",
+   "expoOwner": "matthewchartier",
+   "expoProjectId": "a0336055-a9d6-46b1-8eb4-120944304685",
+   "serverUrl": "https://littlesay.darkmachines.net"
+diff --git a/package-lock.json b/package-lock.json
+index ad651cb..7c0719d 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "little-say-workspace",
+-  "version": "0.2.1",
++  "version": "0.3.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "little-say-workspace",
+-      "version": "0.2.1",
++      "version": "0.3.0",
+       "workspaces": [
+         "apps/*",
+         "packages/*"
+@@ -29,7 +29,7 @@
+     },
+     "apps/mobile": {
+       "name": "@little-say/app",
+-      "version": "0.1.1",
++      "version": "0.1.2",
+       "dependencies": {
+         "@expo/metro-runtime": "~57.0.16",
+         "@invertase/react-native-apple-authentication": "^2.5.1",
+@@ -86,7 +86,7 @@
+     },
+     "apps/server": {
+       "name": "@little-say/server",
+-      "version": "0.2.1",
++      "version": "0.3.0",
+       "dependencies": {
+         "@fastify/cors": "^11.0.0",
+         "@fastify/multipart": "^9.0.0",
+diff --git a/package.json b/package.json
+index 6b6d5de..3472a14 100644
+--- a/package.json
++++ b/package.json
+@@ -2,7 +2,7 @@
+   "name": "little-say-workspace",
+   "private": true,
+   "type": "module",
+-  "version": "0.2.1",
++  "version": "0.3.0",
+   "workspaces": [
+     "apps/*",
+     "packages/*"
+@@ -28,6 +28,7 @@
+     "pictures:update": "tsx scripts/update-picture-catalog.ts",
+     "eval:pictures": "tsx scripts/evaluate-pictures.ts",
+     "release:check": "tsx scripts/release/version.ts check",
++    "release:validate": "tsx scripts/release/validation.ts",
+     "release:cut": "tsx scripts/release/unified.ts",
+     "release:plan": "tsx scripts/release/unified.ts plan",
+     "release:prepare": "tsx scripts/release/version.ts prepare",
+diff --git a/release.json b/release.json
+index b7938ce..dfcc3af 100644
+--- a/release.json
++++ b/release.json
+@@ -1,3 +1,3 @@
+ {
+-  "version": "0.2.1"
++  "version": "0.3.0"
+ }
+diff --git a/scripts/release/candidate.test.ts b/scripts/release/candidate.test.ts
+index bf1099e..fd63484 100644
+--- a/scripts/release/candidate.test.ts
++++ b/scripts/release/candidate.test.ts
+@@ -48,7 +48,7 @@ describe('protected version candidate', () => {
+   it('checks the combined candidate before push, normal merge, and exact tree readback', () => {
+     expect(prepareCandidate(plan, journal)).toEqual({ commit: merged, candidate, tree });
+     expect(writeReleaseDocuments).toHaveBeenCalledExactlyOnceWith(plan);
+-    expect(npm).toHaveBeenCalledWith(['run', 'test:integration']);
++    expect(npm).toHaveBeenCalledWith(['run', 'test:services']);
+     expect(gh).toHaveBeenCalledWith(['pr', 'merge', pr.url, '--squash', '--match-head-commit', candidate]);
+     expect(validateCandidate).toHaveBeenCalledWith(plan, merged);
+   });
+diff --git a/scripts/release/candidate.ts b/scripts/release/candidate.ts
+index 14ead89..d3c49ea 100644
+--- a/scripts/release/candidate.ts
++++ b/scripts/release/candidate.ts
+@@ -4,10 +4,12 @@ import { mkdtempSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { resolve } from 'node:path';
+ import { writeFileSync } from 'node:fs';
+-import { assert, cleanCommit, git, npm, writeJson } from './common';
++import { assert, cleanCommit, git, writeJson } from './common';
+ import type { PreparedRelease, ReleasePlan } from './contract';
+ import { gh, Journal } from './journal';
+ import { releaseFiles, StaleCandidateError, validateCandidate, writeReleaseDocuments } from './metadata';
++import { validateReleaseSource } from './validation';
++export { validateReleaseSource } from './validation';
+ 
+ /** Recheck the live base without replacing the immutable plan or bypassing normal merge protection. */
+ export function assertCandidateBase(plan: ReleasePlan): void {
+@@ -16,9 +18,6 @@ export function assertCandidateBase(plan: ReleasePlan): void {
+   if (current !== plan.source) throw new StaleCandidateError(`Default branch moved from ${plan.source} to ${current}.`);
+ }
+ 
+-/** Validate product source and PostgreSQL behavior before recording the normal required check on a bot-created PR. */
+-export function validateReleaseSource(): void { npm(['run', 'check']); npm(['run', 'test:integration']); }
+-
+ /** Prepare the run's candidate once; retries preserve versions and require the same tree after normal squash merge. */
+ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedRelease {
+   const base = process.env.DEFAULT_BRANCH!; const repo = process.env.GITHUB_REPOSITORY!;
+@@ -60,11 +59,11 @@ export function prepareCandidate(plan: ReleasePlan, journal: Journal): PreparedR
+     journal.put('candidate.json', { candidate, tree });
+     const temp = mkdtempSync(resolve(tmpdir(), 'little-say-cut-'));
+     const check = resolve(temp, 'check.json');
+-    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL integration tests passed on this exact candidate.' } });
++    writeJson(check, { name: 'check', head_sha: candidate, status: 'completed', conclusion: 'success', output: { title: 'Release candidate validated', summary: 'npm run check and PostgreSQL/Auth emulator integration tests passed on this exact candidate.' } });
+     gh(['api', `repos/${repo}/check-runs`, '--method', 'POST', '--input', check]);
+     if (!pr) {
+       const body = resolve(temp, 'body.md');
+-      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\n\nOnly version metadata changes. Repository checks and PostgreSQL integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\n`);
++      writeFileSync(body, `Prepare the allocated server/native versions for release ${plan.runId} (${plan.mode}, ${plan.profile}).\n\nOnly version metadata changes. Repository checks and PostgreSQL/Auth emulator integration tests passed on this candidate. The original Cut release run resumes publication after normal merge; rerun its failed jobs if review is required.\n`);
+       gh(['pr', 'create', '--repo', repo, '--base', base, '--head', branch, '--title', `Prepare Little Say release ${plan.runId}`, '--body-file', body]);
+     }
+     pr = JSON.parse(gh(['pr', 'view', branch, '--repo', repo, '--json', 'url,state,headRefOid,mergeCommit']));
+diff --git a/scripts/release/release.test.ts b/scripts/release/release.test.ts
+index bedb91c..e7bce43 100644
+--- a/scripts/release/release.test.ts
++++ b/scripts/release/release.test.ts
+@@ -109,7 +109,7 @@ describe('publication boundary', () => {
+     const workflow = (name: string) => parse(readFileSync(resolve(root, '.github/workflows', name), 'utf8'));
+     const cut = workflow('cut-release.yml');
+     expect(Object.keys(cut.on)).toEqual(['workflow_dispatch']);
+-    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });
++    expect(Object.fromEntries(Object.entries(cut.on.workflow_dispatch.inputs).map(([key, value]: [string, any]) => [key, value.default]))).toEqual({ validation_only: false, build_mode: 'auto', bump: 'patch', profile: 'internal', dry_run: false });
+     expect(cut.jobs.server.needs).toBe('prepare');
+     expect(cut.jobs.prepare.outputs.commit).toBe('${{ steps.cut.outputs.commit }}');
+     expect(cut.jobs.server.permissions).toEqual({ contents: 'write', packages: 'write' });
+diff --git a/scripts/release/validation.test.ts b/scripts/release/validation.test.ts
+new file mode 100644
+index 0000000..557016d
+--- /dev/null
++++ b/scripts/release/validation.test.ts
+@@ -0,0 +1,82 @@
++/** @file Exercises the real release validator and subprocess runner against a controlled npm CLI, without release side effects. */
++import { spawn } from 'node:child_process';
++import { closeSync, mkdtempSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
++import { tmpdir } from 'node:os';
++import { join } from 'node:path';
++import { afterEach, expect, it } from 'vitest';
++import { parse } from 'yaml';
++import { root } from './common';
++
++const directories: string[] = [];
++afterEach(() => { for (const directory of directories.splice(0)) rmSync(directory, { recursive: true, force: true }); });
++
++// A real child process substitutes only the external npm CLI. candidate/common are not mocked:
++// this catches command selection and failure propagation through their actual spawnSync boundary.
++async function validate(failure: string) {
++  const directory = mkdtempSync(join(tmpdir(), 'release-validation-')); directories.push(directory);
++  const cli = join(directory, 'npm.cjs'), log = join(directory, 'commands.jsonl');
++  writeFileSync(cli, `const fs = require('node:fs');
++fs.appendFileSync(process.env.VALIDATION_LOG, JSON.stringify(process.argv.slice(2)) + '\\n');
++const script = process.argv[3];
++if (script === 'check' && process.env.VALIDATION_FAILURE === 'check') process.exit(11);
++if (script === 'test:services') {
++  if (process.env.VALIDATION_FAILURE === 'startup') process.exit(12);
++  if (process.env.VALIDATION_FAILURE === 'tests') process.exit(13);
++}
++`);
++  // Windows treats environment names case-insensitively; remove npm's inherited spelling
++  // before selecting the fixture so this regression cannot recursively launch real checks.
++  const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toLowerCase() !== 'npm_execpath'));
++  // File-backed output avoids nested synchronous pipe inheritance on Windows.
++  const output = join(directory, 'output.log'), descriptor = openSync(output, 'w');
++  let status: number | null;
++  try {
++    status = await new Promise<number | null>((resolve, reject) => {
++      const child = spawn(process.execPath, ['--import', 'tsx', 'scripts/release/validation.ts'], {
++        cwd: root, stdio: ['ignore', descriptor, descriptor], timeout: 15000, windowsHide: true,
++        env: { ...environment, npm_execpath: cli, VALIDATION_LOG: log, VALIDATION_FAILURE: failure },
++      });
++      child.once('error', reject);
++      child.once('close', resolve);
++    });
++  } finally { closeSync(descriptor); }
++  return { status, stderr: readFileSync(output, 'utf8'), commands: readFileSync(log, 'utf8').trim().split('\n').map(line => JSON.parse(line)) };
++}
++
++it('runs checks then the maintained emulator wrapper, never bare integration', async () => {
++  const result = await validate('');
++  expect(result.status, result.stderr).toBe(0);
++  expect(result.commands).toEqual([['run', 'check'], ['run', 'test:services']]);
++  // Bind the selected package script to the demo-only wrapper and the complete integration suite.
++  const scripts = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).scripts;
++  expect(scripts['test:services']).toBe('firebase emulators:exec --only auth --project demo-little-say "npm run test:integration"');
++});
++
++it.each([['check', 11], ['startup', 12], ['tests', 13]])('fails closed for %s failure through the command runner', async (failure, status) => {
++  const result = await validate(String(failure));
++  expect(result.status).not.toBe(0);
++  expect(result.stderr).toContain(`failed (exit ${status})`);
++  expect(result.commands).toEqual(failure === 'check' ? [['run', 'check']] : [['run', 'check'], ['run', 'test:services']]);
++});
++
++it('isolates manual branch validation from every release job and credential', () => {
++  const workflow = parse(readFileSync(join(root, '.github/workflows/cut-release.yml'), 'utf8'));
++  expect(Object.keys(workflow.on)).toEqual(['workflow_dispatch']);
++  expect(workflow.on.workflow_dispatch.inputs.validation_only).toMatchObject({ type: 'boolean', default: false });
++  expect(workflow.env.GH_TOKEN).toBeUndefined();
++  expect(JSON.stringify(workflow.env)).not.toMatch(/secrets\.|github\.token/);
++  const job = workflow.jobs.validate;
++  expect(job.if).toBe('inputs.validation_only');
++  expect(job.permissions).toEqual({ contents: 'read' });
++  expect(job.needs).toBeUndefined();
++  expect(job.steps.map((step: any) => step.run).filter(Boolean)).toEqual(['npm ci', 'npm run release:validate']);
++  expect(job.steps[0].with).toEqual({ ref: '${{ github.sha }}', 'persist-credentials': false });
++  expect(JSON.stringify(job)).not.toMatch(/secrets\.|github\.token|release:cut|docker\/login|eas-cli/);
++  expect(job.services.postgres.image).toBe('postgres:17-bookworm');
++  expect(Object.keys(workflow.jobs).sort()).toEqual(['finalize', 'native', 'ota', 'prepare', 'server', 'submit', 'validate']);
++  for (const name of ['prepare', 'server', 'native', 'submit', 'ota', 'finalize']) {
++    expect(workflow.jobs[name].if).toMatch(/^\$\{\{ !inputs\.validation_only && /);
++    expect(workflow.jobs[name].env.GH_TOKEN).toBe('${{ github.token }}');
++  }
++  expect(workflow.jobs.prepare.if).toContain("github.ref == format('refs/heads/{0}', github.event.repository.default_branch)");
++});
+diff --git a/scripts/release/validation.ts b/scripts/release/validation.ts
+new file mode 100644
+index 0000000..04ac63e
+--- /dev/null
++++ b/scripts/release/validation.ts
+@@ -0,0 +1,12 @@
++/** @file Runs shared PR/release source validation only, without release planning, credentials or publication. */
++import { fail, isMain, npm } from './common';
++
++/** Run repository checks and all PostgreSQL/Auth contracts; test:services owns demo emulator startup and cleanup. */
++export function validateReleaseSource(): void {
++  npm(['run', 'check']);
++  npm(['run', 'test:services']);
++}
++
++if (isMain(import.meta.url)) {
++  try { validateReleaseSource(); } catch (error) { fail(error); }
++}
