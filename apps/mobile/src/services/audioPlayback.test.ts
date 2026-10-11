@@ -1,0 +1,102 @@
+/** @file Verifies native clip terminal events, error fallback, queue recovery and cancellation. */
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AudioStatus } from 'expo-audio';
+import { LatestSpeechQueue, type Tile } from '@little-say/core';
+import { starterLibrary } from '../../../../tests/fixtures/library';
+import { audioPlayback } from './audioPlayback';
+import { hybridSpeech } from './hybridSpeech';
+
+const native = vi.hoisted(() => ({ create: vi.fn(), mode: vi.fn() }));
+vi.mock('expo-audio', () => ({ createAudioPlayer: native.create, setAudioModeAsync: native.mode }));
+
+function player() {
+  let callback!: (status: AudioStatus) => void;
+  const subscription = { remove: vi.fn() };
+  return {
+    play: vi.fn(), remove: vi.fn(), subscription,
+    addListener: vi.fn((_event: string, listener: typeof callback) => { callback = listener; return subscription; }),
+    emit: (status: Partial<AudioStatus>) => callback({ isLoaded: true, didJustFinish: false, error: null, playbackState: 'ready', ...status } as AudioStatus),
+  };
+}
+
+describe('native audio terminal events', () => {
+  beforeEach(() => { vi.useFakeTimers(); native.create.mockReset(); native.mode.mockReset().mockResolvedValue(undefined); });
+  afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); });
+
+  it.each(['idle', 'failed'])('falls back immediately for an Expo error with playbackState=%s after loading', async playbackState => {
+    const clip = player(); const nextClip = player();
+    native.create.mockReturnValueOnce(clip).mockReturnValueOnce(nextClip);
+    const system = { speak: vi.fn(), stop: vi.fn() };
+    const changes = vi.fn(); const error = vi.fn();
+    const tile = starterLibrary().boards[0].tiles[0];
+    const next = { ...tile, id: 'next' };
+    const queue = new LatestSpeechQueue<Tile>(hybridSpeech(system, audioPlayback(), () => ({ id: 'clip', uri: 'file:///clip.wav' })), changes, error);
+    queue.enqueue(tile); await Promise.resolve();
+    clip.emit({ isLoaded: true });
+    queue.enqueue(next);
+    // Expo 57 Android emits an error string with idle; iOS emits its error with failed.
+    clip.emit({ playbackState, isLoaded: false, error: 'Decoder failed' });
+    expect(system.speak).toHaveBeenCalledOnce();
+    expect(clip.subscription.remove).toHaveBeenCalledOnce();
+    expect(clip.remove).toHaveBeenCalledOnce();
+    system.speak.mock.calls[0][1]();
+    expect(changes).toHaveBeenLastCalledWith(next, null);
+    clip.emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(next, null);
+    nextClip.emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(null, null);
+    expect(error).not.toHaveBeenCalled();
+    queue.stop();
+  });
+
+  it('completes a clip and advances only to the latest pending card, then allows a repeat', async () => {
+    const clips = [player(), player(), player()];
+    for (const clip of clips) native.create.mockReturnValueOnce(clip);
+    const system = { speak: vi.fn(), stop: vi.fn() }; const changes = vi.fn();
+    const tile = starterLibrary().boards[0].tiles[0];
+    const latest = { ...tile, id: 'latest' };
+    const queue = new LatestSpeechQueue<Tile>(hybridSpeech(system, audioPlayback(), () => ({ id: 'clip', uri: 'file:///clip.wav' })), changes);
+    queue.enqueue(tile); await Promise.resolve();
+    queue.enqueue({ ...tile, id: 'discard' }); queue.enqueue(latest);
+    clips[0].emit({ didJustFinish: true }); await Promise.resolve();
+    expect(changes).toHaveBeenLastCalledWith(latest, null);
+    expect(native.create).toHaveBeenCalledTimes(2);
+    clips[0].emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(latest, null);
+    clips[1].emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(null, null);
+    queue.enqueue(latest); await Promise.resolve();
+    expect(clips[2].play).toHaveBeenCalledOnce();
+    clips[2].emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(null, null);
+    expect(system.speak).not.toHaveBeenCalled(); queue.stop();
+  });
+
+  it('ignores late status and audio-mode resolution after cancellation', async () => {
+    let ready!: () => void;
+    native.mode.mockReturnValue(new Promise<void>(resolve => { ready = resolve; }));
+    const clip = player(); native.create.mockReturnValue(clip);
+    const driver = audioPlayback(); const done = vi.fn(); const failed = vi.fn();
+    driver.speak('file:///clip.wav', done, failed); driver.stop();
+    ready(); await Promise.resolve();
+    clip.emit({ didJustFinish: true }); clip.emit({ error: 'Late error' });
+    vi.advanceTimersByTime(4000);
+    expect(clip.play).not.toHaveBeenCalled(); expect(done).not.toHaveBeenCalled(); expect(failed).not.toHaveBeenCalled();
+    expect(clip.remove).toHaveBeenCalledOnce();
+  });
+
+  it('releases the queue when native audio and fallback speech both fail', async () => {
+    const clip = player(); native.create.mockReturnValue(clip);
+    const system = { speak: vi.fn(), stop: vi.fn() }; const changes = vi.fn(); const failure = vi.fn();
+    const tile = starterLibrary().boards[0].tiles[0];
+    const queue = new LatestSpeechQueue<Tile>(hybridSpeech(system, audioPlayback(), () => ({ id: 'clip', uri: 'file:///clip.wav' })), changes, failure);
+    queue.enqueue(tile); await Promise.resolve(); clip.emit({ error: 'Decoder failed', playbackState: 'idle' });
+    system.speak.mock.calls[0][2]();
+    expect(failure).toHaveBeenCalledExactlyOnceWith(tile);
+    expect(changes).toHaveBeenLastCalledWith(null, null);
+    queue.enqueue(tile); await Promise.resolve(); clip.emit({ didJustFinish: true });
+    expect(changes).toHaveBeenLastCalledWith(null, null);
+    queue.stop();
+  });
+});
