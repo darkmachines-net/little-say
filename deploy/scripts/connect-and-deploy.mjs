@@ -1,0 +1,99 @@
+/** @file Connects a Linux CI runner through WireGuard to the restricted SSH deployment command. */
+
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import { isIPv4 } from 'node:net';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const INTERFACE = 'little-say-ci';
+const KEY_PATTERN = /^[A-Za-z0-9+/]{43}=$/;
+
+/** Validate deployment environment values before writing credentials or changing runner networking. */
+export function deploymentInputs(env) {
+  for (const key of ['DEPLOY_HOST', 'DEPLOY_WG_ADDRESS']) {
+    if (!isIPv4(env[key] || '')) throw new Error(`${key} must be a single IPv4 address.`);
+  }
+  if (env.DEPLOY_HOST === env.DEPLOY_WG_ADDRESS) throw new Error('Use separate server and CI peer addresses.');
+  if (!/^[a-z_][a-z0-9_-]*$/.test(env.DEPLOY_SSH_USER || '')) throw new Error('Set DEPLOY_SSH_USER.');
+  if (!/^[a-zA-Z0-9][a-zA-Z0-9.-]*:[0-9]{1,5}$/.test(env.DEPLOY_WG_ENDPOINT || '')) {
+    throw new Error('DEPLOY_WG_ENDPOINT must be a reachable hostname/IPv4 and UDP port.');
+  }
+  const port = Number(env.DEPLOY_WG_ENDPOINT.split(':')[1]);
+  if (port < 1 || port > 65535) throw new Error('Invalid WireGuard endpoint port.');
+  for (const key of ['DEPLOY_WG_PRIVATE_KEY', 'DEPLOY_WG_PUBLIC_KEY']) {
+    if (!KEY_PATTERN.test(env[key] || '')) throw new Error(`Set ${key} to one WireGuard key.`);
+  }
+  for (const key of ['DEPLOY_SSH_PRIVATE_KEY', 'DEPLOY_SSH_KNOWN_HOSTS']) {
+    if (!env[key]?.trim()) throw new Error(`Set ${key} in the self-hosted-testing environment.`);
+  }
+}
+
+/**
+ * Create a host-only WireGuard route, invoke the SSH account's forced command, and clean up.
+ * Requires a Linux runner with passwordless sudo for ip/wg. Credentials and the interface are
+ * removed after success or command failure; errors never include captured subprocess diagnostics.
+ * @param {NodeJS.ProcessEnv} env Deployment secrets, addresses, and optional GitHub summary path.
+ * @param {Function} run Synchronous command executor; tests inject a fake to avoid network access.
+ */
+export function connectAndDeploy(env = process.env, run = execFileSync) {
+  deploymentInputs(env);
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'little-say-deploy-'));
+  const wireguardKey = path.join(directory, 'wireguard.key');
+  const sshKey = path.join(directory, 'id_ed25519');
+  const knownHosts = path.join(directory, 'known_hosts');
+  const command = (binary, args, options = {}) => run(binary, args, {
+    stdio: ['ignore', 'ignore', 'pipe'], timeout: 30000, ...options,
+  });
+  let tunnelCreated = false;
+  let failure;
+  try {
+    fs.chmodSync(directory, 0o700);
+    for (const [filename, value] of [
+      [wireguardKey, env.DEPLOY_WG_PRIVATE_KEY],
+      [sshKey, env.DEPLOY_SSH_PRIVATE_KEY],
+      [knownHosts, env.DEPLOY_SSH_KNOWN_HOSTS],
+    ]) fs.writeFileSync(filename, `${value.trim()}\n`, { mode: 0o600 });
+    command('sudo', ['ip', 'link', 'add', 'dev', INTERFACE, 'type', 'wireguard']);
+    tunnelCreated = true;
+    command('sudo', ['ip', 'address', 'add', `${env.DEPLOY_WG_ADDRESS}/32`, 'dev', INTERFACE]);
+    command('sudo', ['wg', 'set', INTERFACE, 'private-key', wireguardKey, 'peer', env.DEPLOY_WG_PUBLIC_KEY,
+      'allowed-ips', `${env.DEPLOY_HOST}/32`, 'endpoint', env.DEPLOY_WG_ENDPOINT, 'persistent-keepalive', '25']);
+    command('sudo', ['ip', 'link', 'set', 'dev', INTERFACE, 'mtu', '1420', 'up']);
+    command('sudo', ['ip', 'route', 'add', `${env.DEPLOY_HOST}/32`, 'dev', INTERFACE]);
+    command('ssh', ['-F', '/dev/null', '-n', '-T', '-i', sshKey,
+      '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes',
+      '-o', `UserKnownHostsFile=${knownHosts}`, '-o', 'GlobalKnownHostsFile=/dev/null',
+      '-o', 'ConnectTimeout=15', '-o', 'ConnectionAttempts=3', '-o', 'ServerAliveInterval=15',
+      '-o', 'ServerAliveCountMax=3', `${env.DEPLOY_SSH_USER}@${env.DEPLOY_HOST}`], {
+      stdio: ['ignore', 'inherit', 'inherit'], timeout: 20 * 60 * 1000,
+    });
+  } catch {
+    failure = new Error('Deployment failed. Check environment configuration, peer routing, SSH host key, and application health on the host.');
+  } finally {
+    try {
+      if (tunnelCreated) command('sudo', ['ip', 'link', 'delete', INTERFACE]);
+    } catch {
+      failure ??= new Error('Deployment tunnel cleanup failed. Inspect runner networking before retrying.');
+    } finally {
+      try { fs.rmSync(directory, { recursive: true, force: true }); } catch {
+        failure ??= new Error('Deployment credential cleanup failed. Inspect the temporary runner directory.');
+      }
+    }
+  }
+  if (failure) throw failure;
+  if (env.GITHUB_STEP_SUMMARY) {
+    fs.appendFileSync(env.GITHUB_STEP_SUMMARY, 'Compose little-say upgrade and application health check succeeded.\n');
+  }
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    if (process.argv.length !== 2) throw new Error('No command-line arguments are accepted.');
+    connectAndDeploy();
+  } catch (error) {
+    console.error(`[deploy] ${error.message}`);
+    process.exitCode = 1;
+  }
+}

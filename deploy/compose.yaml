@@ -1,8 +1,8 @@
 # Runs a published server image with external configuration and persistent speech/picture caches.
-# Used only by the local server:deploy command. No source build runs on the host.
+# Supports host upgrades following latest and the local server:deploy command's explicit digest.
 services:
   little-say:
-    image: ${LITTLE_SAY_SERVER_IMAGE:?An immutable image digest is required}
+    image: ${LITTLE_SAY_SERVER_IMAGE:?A published server image tag or digest is required}
     restart: unless-stopped
     init: true
     ports:

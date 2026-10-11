@@ -17,6 +17,7 @@ import { channelBranch, localOtaEnvironment, otaEnvironment, updateGroup } from 
 import { artifactHash, verifyBuildIdentity } from './cloud';
 import { validateCloudBaseline, type NativeBuildBaseline, type ReleasePlan } from './contract';
 import { bundlePayload, verifyUpdate } from './ota';
+import { deployServerBeforeOta } from './ota-deployment';
 import { checkVersions } from './version';
 
 const cli = resolve(root, 'tools/eas-cli/node_modules/eas-cli/bin/run');
@@ -191,7 +192,10 @@ async function main() {
   requireSameSource(commit);
   assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during export. Run the command again.');
   if (args['dry-run']) { console.log(`OTA dry run passed. ${platform}, ${profile}, runtime ${runtimeVersion}, source ${commit}.\nBaseline: ${file}\nNo update was published.`); return; }
-  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during export.');
+  await deployServerBeforeOta();
+  requireSameSource(commit);
+  assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during server deployment. Run the command again.');
+  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during export or server deployment.');
   const result = JSON.parse(eas(['update', '--branch', branch.name, '--environment', profileConfig(profile).environment, '--platform', platform, '--message', args.message, '--input-dir', exportDir, '--skip-bundler', '--non-interactive', '--json'], { env: otaEnv, capture: true }));
   const updates = Array.isArray(result) ? result : [result];
   const group = updates[0]?.group;

@@ -1,0 +1,7 @@
+{
+  "projectName": "little-say",
+  "projectDirectory": "/srv/little-say",
+  "composeFiles": ["compose.yaml"],
+  "envFile": ".env",
+  "waitTimeoutSeconds": 300
+}

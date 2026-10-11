@@ -1,4 +1,4 @@
-/** @file Verifies preview/no-op boundaries, historical plan compatibility, source guards, and recoverable finalization. */
+/** @file Verifies planning boundaries, protected promotion before deployment/OTA, and recoverable release completion. */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { appendFileSync } from 'node:fs';
@@ -128,12 +128,42 @@ describe('orchestration publication boundaries', () => {
     await expect(unifiedRelease('prepare')).rejects.toThrow('Run inputs differ');
     expect(prepareCandidate).not.toHaveBeenCalled(); expect(journal.put).not.toHaveBeenCalled();
   });
-  it('rejects non-default branches and stale publication retries', async () => {
+  it.each(['server', 'promote-server'])('rejects non-default branches and stale %s retries', async command => {
     vi.stubEnv('GITHUB_REF', 'refs/heads/feature'); await expect(unifiedRelease('prepare')).rejects.toThrow('default-branch'); vi.stubEnv('GITHUB_REF', 'refs/heads/master');
     records.set('plan.json', { ...previous().plan, runId: '123' }); records.set('prepared.json', previous().prepared); history.push({ ...previous(), commit: 'e'.repeat(40) });
     const gitImpl = vi.mocked(git).getMockImplementation()!;
     vi.mocked(git).mockImplementation(args => { if (args[0] === 'merge-base' && args[2] === 'e'.repeat(40)) throw Error('newer completion'); return gitImpl(args); });
-    await expect(unifiedRelease('server')).rejects.toThrow('newer completion'); expect(publishImage).not.toHaveBeenCalled();
+    await expect(unifiedRelease(command)).rejects.toThrow('newer completion'); expect(publishImage).not.toHaveBeenCalled(); expect(promoteImage).not.toHaveBeenCalled();
+  });
+  it.each(['missing', 'running', 'failed', 'wrong-commit', 'wrong-version', 'wrong-input', 'wrong-image', 'unplanned'])('requires the matching completed server publication before promotion: %s', async state => {
+    const old = previous();
+    const plan = { ...old.plan, runId: '123', server: state !== 'unplanned', serverVersion: old.server!.version };
+    records.set('plan.json', plan); records.set('prepared.json', old.prepared);
+    const receipt = { ...old.server! };
+    if (state === 'wrong-commit') receipt.commit = 'c'.repeat(40);
+    if (state === 'wrong-version') receipt.version = '9.0.0';
+    if (state === 'wrong-input') receipt.input = 'other-source';
+    if (state === 'wrong-image') receipt.image = 'ghcr.io/other/app';
+    if (state !== 'missing') records.set('op-server', { status: state === 'running' || state === 'failed' ? state : 'complete', result: receipt });
+    await expect(unifiedRelease('promote-server')).rejects.toThrow(/publication|not planned/);
+    expect(promoteImage).not.toHaveBeenCalled(); expect(publishImage).not.toHaveBeenCalled();
+  });
+  it('retries promotion and OTA without rebuilding or advancing latest again during finalization', async () => {
+    const old = previous();
+    const plan: ReleasePlan = { ...old.plan, runId: '123', server: true, serverVersion: old.server!.version, native: [], submissions: [], ota: ['android'], baselines: old.baselines };
+    records.set('plan.json', plan); records.set('prepared.json', old.prepared);
+    records.set('op-server', { status: 'complete', result: old.server });
+    vi.mocked(promoteImage).mockImplementationOnce(() => { throw Error('latest response lost'); });
+    await expect(unifiedRelease('promote-server')).rejects.toThrow('latest response lost');
+    await unifiedRelease('promote-server');
+    expect(promoteImage).toHaveBeenCalledTimes(2); expect(promoteImage).toHaveBeenLastCalledWith(old.server);
+    expect(records.has('receipt.json')).toBe(false);
+    vi.mocked(publishOta).mockRejectedValueOnce(Error('OTA provider unavailable')).mockResolvedValue({ receipts: [], skipped: [] });
+    await expect(unifiedRelease('ota')).rejects.toThrow('OTA provider unavailable');
+    expect(records.has('receipt.json')).toBe(false); expect(history).toEqual([]);
+    await unifiedRelease('ota'); await unifiedRelease('finalize');
+    expect(promoteImage).toHaveBeenCalledTimes(2); expect(publishImage).not.toHaveBeenCalled();
+    expect(history).toHaveLength(1); expect(history[0].server).toEqual(old.server);
   });
   it('preserves a partially finalized release and completes its exact receipt after response loss', async () => {
     const old = previous(); const plan: ReleasePlan = { ...old.plan, runId: '123', server: false, native: [], submissions: [], ota: [], previousServer: old.server, baselines: old.baselines };

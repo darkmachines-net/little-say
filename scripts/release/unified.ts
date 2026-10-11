@@ -1,4 +1,4 @@
-/** @file Coordinates explicit release planning, protected preparation, provider jobs, and verified completion without merge triggers. */
+/** @file Coordinates protected releases, server promotion before deployment, provider jobs, and verified completion. */
 
 import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -126,7 +126,6 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
     assert(hash(verified) === hash(ota), 'OTA readback changed before completion.');
   }
   guard(plan, prepared);
-  if (plan.server && server) promoteImage(server);
   const receipt: ReleaseReceipt = journal.read<ReleaseReceipt>('receipt.json') || {
     schema: 1, runId: plan.runId, profile: plan.profile, commit: prepared.commit, completedAt: new Date().toISOString(), plan, prepared, server, baselines,
     ota: [...plan.previousOta.filter(old => !ota?.receipts.some(o => o.platform === old.platform && o.runtimeVersion === old.runtimeVersion)), ...(ota?.receipts || [])],
@@ -138,7 +137,8 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
   else { git(['tag', tag, prepared.commit]); git(['push', 'origin', `refs/tags/${tag}`]); }
   const temp = mkdtempSync(resolve(tmpdir(), 'little-say-complete-'));
   const notes = resolve(temp, 'notes.md');
-  const message = `Released ${plan.profile} from \`${prepared.commit}\`.\n\n${releaseSummary(plan, { server, baselines, ota: ota?.receipts || [], skipped: ota?.skipped || [] })}\n\nImage publication is not deployment. Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
+  const deployment = plan.server || plan.ota.length ? 'The preceding workflow deployment upgraded the self-hosted testing Compose server and passed readiness checks. This receipt does not attest the deployed image digest.' : 'This native-only cut did not run a server deployment.';
+  const message = `Released ${plan.profile} from \`${prepared.commit}\`.\n\n${releaseSummary(plan, { server, baselines, ota: ota?.receipts || [], skipped: ota?.skipped || [] })}\n\n${deployment} Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
   writeFileSync(notes, message);
   let release = releases().find(r => r.tag_name === tag);
   if (!release) { gh(['release', 'create', tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft', '--verify-tag', '--title', `Little Say ${plan.profile} ${plan.runId}`, '--notes-file', notes]); release = releases().find(r => r.tag_name === tag); }
@@ -152,7 +152,7 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
   summary(`${message}\nRelease: https://github.com/${process.env.GITHUB_REPOSITORY}/releases/tag/${tag}`);
 }
 
-/** Run an automatic release stage or the separate read-only plan command; retries retain all recorded allocations and operations. */
+/** Run a workflow release stage or read-only plan; server promotion precedes deployment, and retries retain recorded operations. */
 export async function unifiedRelease(command = process.argv[2] || 'prepare'): Promise<void> {
   assert(process.env.GITHUB_REPOSITORY && /^[\w.-]+\/[\w.-]+$/.test(process.env.GITHUB_REPOSITORY), 'Set GITHUB_REPOSITORY.');
   const dry = command === 'plan';
@@ -197,13 +197,20 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
   assert(plan && prepared, 'Release has not been prepared. Resume its prepare job first.');
   assert(plan.schema === 1 && plan.runId === runId, 'Journal plan identity differs from this run.'); guard(plan, prepared);
   if (command === 'server') { assert(plan.server, 'Server publication is not planned.'); publishImage(plan, prepared.commit, journal); }
+  else if (command === 'promote-server') {
+    assert(plan.server, 'Server promotion is not planned.');
+    const published = journal.operation<ServerReceipt>('server'); const server = published?.result;
+    assert(published?.status === 'complete' && server, 'Missing verified server publication before promotion.');
+    assert(server.commit === prepared.commit && server.version === plan.serverVersion && server.input === plan.inputs.server && server.image === `ghcr.io/${process.env.GITHUB_REPOSITORY!.toLowerCase()}`, 'Server publication differs from the prepared release.');
+    promoteImage(server);
+  }
   else if (command === 'native' || command === 'submit') {
     const platform = process.env.RELEASE_PLATFORM as Platform; assert(plan.native.includes(platform), 'Native platform is not planned.');
     if (command === 'native') await cloudBuild(plan, prepared.commit, platform, journal);
     else { const b = journal.operation<NativeBuildBaseline>(`build-${platform}`)?.result; assert(b, 'Native build is not complete.'); await submitBuild(plan, b, journal); }
   } else if (command === 'ota') journal.put('ota.json', await publishOta(plan, prepared.commit, nativeResults(plan, journal), journal));
   else if (command === 'finalize') await finalize(plan, prepared, journal);
-  else throw new Error('Usage: release:cut -- plan|prepare|server|native|submit|ota|finalize');
+  else throw new Error('Usage: release:cut -- plan|prepare|server|promote-server|native|submit|ota|finalize');
 }
 
 if (isMain(import.meta.url)) unifiedRelease().catch(error => {
