@@ -18,7 +18,7 @@ let plan: ReleasePlan, build: any, baseline: NativeBuildBaseline, submissions: a
 let starts: number, loseResponse: boolean;
 beforeEach(() => {
   vi.resetAllMocks(); starts = 0; loseResponse = false; submissions = []; operations = new Map();
-  plan = planRelease({ runId: '123', source: commit, mode: 'force_all', profile: 'internal', bump: 'patch', nativeRelease: release, serverVersion: '0.2.0', inputs: { server: 's', bundle: { android: 'a', ios: 'i' }, native: { android: compatibility, ios: compatibility }, environmentHash } });
+  plan = planRelease({ runId: '123', source: commit, profile: 'internal', bump: 'patch', nativeRelease: release, serverVersion: '0.2.0', inputs: { server: 's', bundle: { android: 'a', ios: 'i' }, native: { android: compatibility, ios: compatibility }, environmentHash } });
   build = { id: '12345678-1234-1234-1234-123456789abc', status: 'FINISHED', platform: 'ANDROID', gitCommitHash: commit, buildProfile: 'internal', distribution: 'INTERNAL', app: { id: release.expoProjectId }, appIdentifier: 'net.darkmachines.littlesay', appVersion: plan.nativeRelease.version, appBuildVersion: '2', runtime: { version: plan.nativeRelease.version }, updateChannel: { name: 'internal' }, fingerprint: { hash: fingerprint }, artifacts: { applicationArchiveUrl: 'https://example.invalid/artifact.apk' }, message: 'little-say:123:build:android' };
   baseline = { schema: 2, platform: 'android', profile: 'internal', channel: 'internal', environment: 'preview', commit, release: plan.nativeRelease, runtimeVersion: plan.nativeRelease.version, fingerprint, compatibility, environmentHash, buildId: build.id, artifactUrl: build.artifacts.applicationArchiveUrl, artifactSha256: 'e'.repeat(64) };
   journal = {

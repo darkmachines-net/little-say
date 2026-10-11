@@ -1,4 +1,4 @@
-/** @file Verifies dry-run/no-op mutation boundaries, stale-source guards, and finalization recovery after lost GitHub responses. */
+/** @file Verifies preview/no-op boundaries, historical plan compatibility, source guards, and recoverable finalization. */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { appendFileSync } from 'node:fs';
@@ -35,7 +35,7 @@ const inputs = { server: 'server-input', native: { android: 'native-android', io
 let records: Map<string, any>, journal: any, remote: any[], history: ReleaseReceipt[], tags: Set<string>, loseUpload: boolean;
 beforeEach(() => {
   vi.resetAllMocks(); records = new Map(); remote = []; history = []; tags = new Set(); loseUpload = false;
-  for (const [key, value] of Object.entries({ GITHUB_ACTIONS: 'true', DEFAULT_BRANCH: 'master', GITHUB_REF: 'refs/heads/master', GITHUB_REPOSITORY: 'test/app', GITHUB_RUN_ID: '123', GITHUB_OUTPUT: '/tmp/outputs', RELEASE_MODE: 'auto', RELEASE_PROFILE: 'internal', RELEASE_BUMP: 'patch', RELEASE_DRY_RUN: 'false' })) vi.stubEnv(key, value);
+  for (const [key, value] of Object.entries({ GITHUB_ACTIONS: 'true', DEFAULT_BRANCH: 'master', GITHUB_REF: 'refs/heads/master', GITHUB_REPOSITORY: 'test/app', GITHUB_RUN_ID: '123', GITHUB_OUTPUT: '/tmp/outputs', RELEASE_PROFILE: 'internal', RELEASE_BUMP: 'patch' })) vi.stubEnv(key, value);
   journal = { tag: 'candidate/123', release: vi.fn(() => records.size ? { tag_name: 'candidate/123' } : undefined), create: vi.fn(), read: vi.fn((name: string) => records.get(name)), put: vi.fn((name: string, value: any) => { if (records.has(name)) expect(records.get(name)).toEqual(value); else records.set(name, value); }), operation: vi.fn((key: string) => records.get(`op-${key}`)) };
   vi.mocked(Journal).mockImplementation(function () { return journal; });
   journal.assertActive = vi.fn();
@@ -63,7 +63,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 function previous(): ReleaseReceipt {
-  const plan = planRelease({ runId: '122', source: commit, mode: 'auto', profile: 'internal', bump: 'patch', inputs, nativeRelease: release, serverVersion: '0.2.0' });
+  const plan = planRelease({ runId: '122', source: commit, profile: 'internal', bump: 'patch', inputs, nativeRelease: release, serverVersion: '0.2.0' });
   const baselines = (['android', 'ios'] as const).map(platform => ({ schema: 2, platform, profile: 'internal', channel: 'internal', environment: 'preview', release, runtimeVersion: release.version, commit, fingerprint: 'f'.repeat(40), compatibility: inputs.native[platform], environmentHash: inputs.environmentHash, buildId: platform, artifactUrl: 'https://example.invalid/app', artifactSha256: 'a'.repeat(64) }) as NativeBuildBaseline);
   return { schema: 1, runId: '122', profile: 'internal', commit, completedAt: '2026-10-01', plan, prepared: { commit, candidate: commit, tree }, baselines, ota: [], server: { commit, version: '0.2.0', image: 'ghcr.io/test/app', digest: 'sha256:digest', input: inputs.server } };
 }
@@ -87,16 +87,46 @@ describe('orchestration publication boundaries', () => {
     await expect(unifiedRelease('prepare')).rejects.toThrow('Required review');
     expect(retireCandidate).not.toHaveBeenCalled(); expect(publishImage).not.toHaveBeenCalled();
   });
-  it('validates forced dry-run operations without versions, PRs, or provider mutations', async () => {
-    vi.stubEnv('RELEASE_MODE', 'force_all'); vi.stubEnv('RELEASE_DRY_RUN', 'true'); await unifiedRelease('prepare');
+  it('previews detected operations outside Actions without versions, PRs, or provider mutations', async () => {
+    vi.stubEnv('GITHUB_ACTIONS', 'false'); vi.stubEnv('GITHUB_REF', 'refs/heads/feature'); await unifiedRelease('plan');
     expect(validateReleaseSource).toHaveBeenCalledOnce(); expect(exportBundle).toHaveBeenCalledTimes(2);
     expect(journal.create).not.toHaveBeenCalled(); expect(journal.put).not.toHaveBeenCalled(); expect(prepareCandidate).not.toHaveBeenCalled();
     for (const mutation of [publishImage, cloudBuild, submitBuild, publishOta, gh]) expect(mutation).not.toHaveBeenCalled();
-    await expect(unifiedRelease('native')).rejects.toThrow('Dry run');
+    expect(reconcileCandidates).not.toHaveBeenCalled(); expect(retireCandidate).not.toHaveBeenCalled();
+    await expect(unifiedRelease('native')).rejects.toThrow('default-branch');
   });
   it('exits an automatic no-change cut without allocating persisted versions or tags', async () => {
+    vi.stubEnv('RELEASE_MODE', 'force_all');
     history.push(previous()); await unifiedRelease('prepare'); expect(journal.create).not.toHaveBeenCalled(); expect(prepareCandidate).not.toHaveBeenCalled();
     expect(appendFileSync).toHaveBeenCalledWith('/tmp/outputs', 'active=false\n');
+    expect(reconcileCandidates).toHaveBeenCalledOnce();
+  });
+  it('rejects the removed dry-run switch before any publication-side effects', async () => {
+    vi.stubEnv('RELEASE_DRY_RUN', 'true');
+    await expect(unifiedRelease('prepare')).rejects.toThrow('Use npm run release:plan');
+    expect(reconcileCandidates).not.toHaveBeenCalled(); expect(journal.create).not.toHaveBeenCalled(); expect(expoEnvironment).not.toHaveBeenCalled();
+    await unifiedRelease('plan');
+    expect(journal.create).not.toHaveBeenCalled(); expect(prepareCandidate).not.toHaveBeenCalled();
+  });
+  it.each(['auto', 'force_all'] as const)('resumes a historical %s plan with its original patch allocation and provider records', async mode => {
+    const old = previous();
+    const saved: ReleasePlan = { ...old.plan, runId: '123', mode, bump: 'major', nativeRelease: { ...release, version: '0.1.1', androidVersionCode: 2, iosBuildNumber: '2' } };
+    const recordedBuild = { status: 'complete', ids: ['original-build'], result: old.baselines[0] };
+    records.set('plan.json', saved); records.set('prepared.json', old.prepared); records.set('op-build-android', recordedBuild);
+    const before = structuredClone([...records.entries()]);
+    vi.stubEnv('RELEASE_BUMP', 'major'); vi.mocked(prepareCandidate).mockReturnValue(old.prepared);
+    await unifiedRelease('prepare');
+    expect(prepareCandidate).toHaveBeenCalledWith(saved, journal);
+    expect([...records.entries()]).toEqual(before);
+    expect(expoEnvironment).not.toHaveBeenCalled(); expect(sourceInputs).not.toHaveBeenCalled(); expect(nativeFingerprint).not.toHaveBeenCalled();
+    expect(cloudBuild).not.toHaveBeenCalled(); expect(publishImage).not.toHaveBeenCalled(); expect(publishOta).not.toHaveBeenCalled();
+    expect(appendFileSync).toHaveBeenCalledWith('/tmp/outputs', 'active=true\n');
+  });
+  it.each([{ RELEASE_BUMP: 'minor' }, { RELEASE_PROFILE: 'production' }])('rejects changed inputs when resuming a saved plan: %j', async change => {
+    records.set('plan.json', { ...previous().plan, runId: '123' });
+    for (const [key, value] of Object.entries(change)) vi.stubEnv(key, value);
+    await expect(unifiedRelease('prepare')).rejects.toThrow('Run inputs differ');
+    expect(prepareCandidate).not.toHaveBeenCalled(); expect(journal.put).not.toHaveBeenCalled();
   });
   it('rejects non-default branches and stale publication retries', async () => {
     vi.stubEnv('GITHUB_REF', 'refs/heads/feature'); await expect(unifiedRelease('prepare')).rejects.toThrow('default-branch'); vi.stubEnv('GITHUB_REF', 'refs/heads/master');

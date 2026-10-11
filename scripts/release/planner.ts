@@ -1,39 +1,38 @@
 /** @file Selects releases from verified component baselines and allocates versions exactly once per cut. */
 
 import { assert } from './common';
-import { platforms, type BuildMode, type Inputs, type NativeBuildBaseline, type OtaTarget, type ReleasePlan, type ReleaseReceipt, type RetiredRuntime, type ServerReceipt } from './contract';
+import { platforms, type Inputs, type NativeBuildBaseline, type OtaTarget, type ReleasePlan, type ReleaseReceipt, type RetiredRuntime, type ServerReceipt } from './contract';
 import type { NativeRelease, Platform, Profile } from './native-contract';
 import { bump } from './version';
 
-/** Build an immutable plan; force bypasses change detection but never runtime compatibility or profile boundaries. */
+/** Detect required artifacts and allocate the requested increment only to components needing a release; saved plans are never replanned. */
 export function planRelease(args: {
-  runId: string; source: string; mode: BuildMode; profile: Profile; bump: string; inputs: Inputs;
+  runId: string; source: string; profile: Profile; bump: string; inputs: Inputs;
   serverVersion: string; nativeRelease: NativeRelease; previous?: ReleaseReceipt; server?: ServerReceipt;
   imported?: NativeBuildBaseline[];
   retired?: RetiredRuntime[];
 }): ReleasePlan {
-  assert(['auto', 'force_all'].includes(args.mode) && ['internal', 'production'].includes(args.profile), 'Unknown release mode/profile.');
+  assert(['internal', 'production'].includes(args.profile), 'Unknown release profile.');
   bump(args.serverVersion, args.bump);
-  const force = args.mode === 'force_all';
   const baselines = [...new Map([...(args.imported || []), ...(args.previous?.baselines || [])].filter(b => b.profile === args.profile).map(b => [b.buildId, b])).values()];
   const reasons: string[] = [];
-  const server = force || args.server?.input !== args.inputs.server;
-  reasons.push(`server: ${force ? 'forced' : server ? 'changed inputs or missing verified image' : 'unchanged verified image'}`);
+  const server = args.server?.input !== args.inputs.server;
+  reasons.push(`server: ${server ? 'changed inputs or missing verified image' : 'unchanged verified image'}`);
   const native: Platform[] = platforms.filter(platform => {
     const known = baselines.filter(b => b.platform === platform);
     const latest = known.at(-1);
-    const needed = force || !latest || latest.compatibility !== args.inputs.native[platform] || latest.environmentHash !== args.inputs.environmentHash;
-    reasons.push(`${platform} build: ${force ? 'forced' : needed ? 'changed native inputs/environment or missing baseline' : 'unchanged native inputs'}`);
+    const needed = !latest || latest.compatibility !== args.inputs.native[platform] || latest.environmentHash !== args.inputs.environmentHash;
+    reasons.push(`${platform} build: ${needed ? 'changed native inputs/environment or missing baseline' : 'unchanged native inputs'}`);
     return needed;
   });
   const ota = platforms.filter(platform => {
-    const changed = force || args.previous?.plan.inputs.bundle[platform] !== args.inputs.bundle[platform];
-    reasons.push(`${platform} OTA: ${force ? 'forced; eligible runtimes only' : changed ? 'changed bundle; eligible runtimes only' : 'unchanged bundle'}`);
+    const changed = args.previous?.plan.inputs.bundle[platform] !== args.inputs.bundle[platform];
+    reasons.push(`${platform} OTA: ${changed ? 'changed bundle; eligible runtimes only' : 'unchanged bundle'}`);
     return changed;
   });
   const release = structuredClone(args.nativeRelease);
   if (native.length) {
-    release.version = bump(release.version, 'patch');
+    release.version = bump(release.version, args.bump);
     if (native.includes('android')) release.androidVersionCode++;
     if (native.includes('ios')) release.iosBuildNumber = String(Number(release.iosBuildNumber) + 1);
   }
@@ -44,7 +43,7 @@ export function planRelease(args: {
   });
   for (const platform of native.filter(p => ota.includes(p))) otaTargets.push({ platform, runtimeVersion: release.version, eligible: true, reason: 'new build in this run' });
   reasons.push(args.profile === 'production' && native.length ? `submit: exact successful ${native.join(', ')} build IDs` : 'submit: skipped');
-  return structuredClone({ schema: 1, runId: args.runId, source: args.source, mode: args.mode, profile: args.profile, bump: args.bump,
+  return structuredClone({ schema: 1, runId: args.runId, source: args.source, mode: 'auto', profile: args.profile, bump: args.bump,
     inputs: args.inputs, server, native, submissions: args.profile === 'production' ? [...native] : [], ota, reasons, serverVersion: server ? bump(args.serverVersion, args.bump) : args.serverVersion,
     nativeRelease: release, previousServer: args.server, baselines, previousOta: args.previous?.ota || [], otaTargets,
     comparisons: { clientRunId: args.previous?.runId, serverCommit: args.server?.commit, nativeBuildIds: Object.fromEntries(platforms.map(p => [p, baselines.filter(b => b.platform === p).at(-1)?.buildId])) },
