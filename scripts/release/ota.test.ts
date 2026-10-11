@@ -1,4 +1,4 @@
-/** @file Exercises fresh forced OTA groups, automatic reuse, runtime deduplication, and lost-response recovery against exported bytes. */
+/** @file Exercises historical forced OTA plans, automatic reuse, runtime deduplication, and lost-response recovery against exported bytes. */
 
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -16,7 +16,7 @@ const commit = 'a'.repeat(40), release = { version: '0.1.0', androidVersionCode:
 let plan: ReleasePlan, baselines: NativeBuildBaseline[], groups: any[], journal: Journal, operations: Map<string, Operation<any>>, loseResponse: boolean;
 beforeEach(() => {
   vi.resetAllMocks(); groups = []; operations = new Map(); loseResponse = false;
-  plan = planRelease({ runId: '123', source: commit, mode: 'force_all', profile: 'internal', bump: 'patch', inputs: { server: 's', native: { android: 'compat', ios: 'compat' }, bundle: { android: 'bundle', ios: 'bundle' }, environmentHash: 'env' }, nativeRelease: release, serverVersion: '0.2.0' });
+  plan = planRelease({ runId: '123', source: commit, profile: 'internal', bump: 'patch', inputs: { server: 's', native: { android: 'compat', ios: 'compat' }, bundle: { android: 'bundle', ios: 'bundle' }, environmentHash: 'env' }, nativeRelease: release, serverVersion: '0.2.0' });
   plan.ota = ['android']; plan.channelBranch = { id: 'branch', name: 'internal' };
   baselines = ['0.1.0', '0.1.1'].map(runtimeVersion => ({ schema: 2, platform: 'android', profile: 'internal', channel: 'internal', environment: 'preview', commit, release: { ...release, version: runtimeVersion }, runtimeVersion, fingerprint: 'fingerprint', compatibility: 'compat', environmentHash: 'env', buildId: runtimeVersion, artifactUrl: 'https://example.invalid/app', artifactSha256: 'hash' }));
   journal = { operation: (key: string) => operations.get(key), save: (state: any) => { const value = { ...state, schema: 1, sequence: (operations.get(state.key)?.sequence || 0) + 1 }; operations.set(state.key, value); return value; } } as unknown as Journal;
@@ -41,7 +41,8 @@ beforeEach(() => {
 });
 afterAll(() => rmSync(fixture.root, { recursive: true, force: true }));
 describe('OTA operation recovery', () => {
-  it('force publishes fresh groups even for unchanged bundle inputs, then reuses them on retries', async () => {
+  it('preserves a historical forced plan and reuses its fresh groups on retries', async () => {
+    plan.mode = 'force_all';
     plan.previousOta = [{ commit, platform: 'android', runtimeVersion: '0.1.0', input: 'bundle', group: 'previous-run', payloadHash: 'old' }];
     const result = await publishOta(plan, commit, [...baselines, baselines[0]], journal);
     expect(result.receipts.map(r => r.group)).toEqual(['group-1', 'group-2']); expect(eas).toHaveBeenCalledTimes(2);

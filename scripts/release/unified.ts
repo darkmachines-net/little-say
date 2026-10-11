@@ -4,7 +4,7 @@ import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { assert, cleanCommit, fail, git, isMain, readJson, root, writeJson } from './common';
-import { assertCommit, validateCloudBaseline, type BuildMode, type Inputs, type NativeBuildBaseline, type OtaReceipt, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
+import { assertCommit, validateCloudBaseline, type Inputs, type NativeBuildBaseline, type OtaReceipt, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
 import { type Platform, type Profile, releaseConfig } from './native-contract';
 import { hash, sourceInputs } from './inputs';
 import { hasWork, planRelease } from './planner';
@@ -18,6 +18,7 @@ import { legacyImage, promoteImage, publishImage, verifyImage } from './image';
 import { publishOta } from './ota';
 import { StaleCandidateError } from './metadata';
 import { reconcileCandidates, retireCandidate } from './retirement';
+import { releaseSummary } from './summary';
 
 function summary(message: string) {
   console.log(message);
@@ -60,7 +61,6 @@ async function verifyImports(profile: Profile): Promise<NativeBuildBaseline[]> {
 async function createPlan(runId: string): Promise<ReleasePlan> {
   checkVersions();
   const source = cleanCommit();
-  const mode = (process.env.RELEASE_MODE || 'auto') as BuildMode;
   const profile = (process.env.RELEASE_PROFILE || 'internal') as Profile;
   const remote = await expoEnvironment(profile);
   const inputs: Inputs = { server: sourceInputs(source, 'server'), bundle: { android: sourceInputs(source, 'android'), ios: sourceInputs(source, 'ios') },
@@ -69,13 +69,13 @@ async function createPlan(runId: string): Promise<ReleasePlan> {
   const image = `ghcr.io/${process.env.GITHUB_REPOSITORY!.toLowerCase()}`;
   const server = receipts.map(r => r.server).filter((r): r is ServerReceipt => !!r).at(-1) || legacyImage(image, source);
   if (server) assert(server.image === image && verifyImage(server.image, server.version, server.commit) === server.digest, 'Previous image receipt no longer verifies.');
-  const plan = planRelease({ runId, source, mode, profile, bump: process.env.RELEASE_BUMP || 'patch', inputs, serverVersion: readJson(resolve(root, 'release.json')).version,
+  const plan = planRelease({ runId, source, profile, bump: process.env.RELEASE_BUMP || 'patch', inputs, serverVersion: readJson(resolve(root, 'release.json')).version,
     nativeRelease: releaseConfig(), previous: receipts.filter(r => r.profile === profile).at(-1), server, imported: await verifyImports(profile), retired: readJson(resolve(root, 'release-policy.json')).retiredRuntimes });
   if (plan.otaTargets.some(t => t.eligible)) plan.channelBranch = await channelBranch(profile);
   return plan;
 }
 async function preflight(plan: ReleasePlan, dry: boolean) {
-  summary(`Mode: **${plan.mode}**. Client: **${plan.profile}**. Source: \`${plan.source}\`.\n\n${plan.reasons.map(r => `- ${r}`).join('\n')}`);
+  summary(releaseSummary(plan));
   writeJson(resolve(root, 'artifacts', 'release-plan.json'), plan);
   console.log(JSON.stringify(plan, null, 2));
   if (!hasWork(plan)) return;
@@ -138,7 +138,7 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
   else { git(['tag', tag, prepared.commit]); git(['push', 'origin', `refs/tags/${tag}`]); }
   const temp = mkdtempSync(resolve(tmpdir(), 'little-say-complete-'));
   const notes = resolve(temp, 'notes.md');
-  const message = `Released ${plan.profile} from ${prepared.commit} (${plan.mode}).\n\n${server ? `Server: ${server.image}@${server.digest}\n\n` : ''}${baselines.filter(b => plan.native.includes(b.platform) && b.commit === prepared.commit).map(b => `- ${b.platform}: https://expo.dev/accounts/${b.release.expoOwner}/projects/little-say/builds/${b.buildId}${b.submissionId ? `; submission ${b.submissionId}` : ''}`).join('\n')}\n\n${ota?.receipts.map(o => `- OTA ${o.platform}/${o.runtimeVersion}: ${o.group}`).join('\n') || ''}\n\n${ota?.skipped.join('\n') || ''}\n\nImage publication is not deployment. Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
+  const message = `Released ${plan.profile} from \`${prepared.commit}\`.\n\n${releaseSummary(plan, { server, baselines, ota: ota?.receipts || [], skipped: ota?.skipped || [] })}\n\nImage publication is not deployment. Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
   writeFileSync(notes, message);
   let release = releases().find(r => r.tag_name === tag);
   if (!release) { gh(['release', 'create', tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft', '--verify-tag', '--title', `Little Say ${plan.profile} ${plan.runId}`, '--notes-file', notes]); release = releases().find(r => r.tag_name === tag); }
@@ -152,11 +152,11 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
   summary(`${message}\nRelease: https://github.com/${process.env.GITHUB_REPOSITORY}/releases/tag/${tag}`);
 }
 
-/** Run one workflow stage; planning/dry-run paths perform no remote writes or tracked source edits. */
+/** Run an automatic release stage or the separate read-only plan command; retries retain all recorded allocations and operations. */
 export async function unifiedRelease(command = process.argv[2] || 'prepare'): Promise<void> {
   assert(process.env.GITHUB_REPOSITORY && /^[\w.-]+\/[\w.-]+$/.test(process.env.GITHUB_REPOSITORY), 'Set GITHUB_REPOSITORY.');
-  const dry = command === 'plan' || process.env.RELEASE_DRY_RUN === 'true';
-  assert(!dry || ['plan', 'prepare'].includes(command), 'Dry run cannot execute publication stages.');
+  const dry = command === 'plan';
+  assert(dry || process.env.RELEASE_DRY_RUN !== 'true', 'RELEASE_DRY_RUN was removed. Use npm run release:plan to preview without publication.');
   if (!dry) assert(process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_REF === `refs/heads/${process.env.DEFAULT_BRANCH}`, 'Cut releases explicitly from the default-branch workflow.');
   const runId = process.env.GITHUB_RUN_ID || '1'; const journal = new Journal(runId);
   journal.assertActive();
@@ -174,8 +174,10 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     const saved = dry ? undefined : journal.read<ReleasePlan>('plan.json');
     const plan = saved || await createPlan(runId);
     assert(plan.schema === 1 && plan.runId === runId, 'Journal plan identity differs from this run.');
-    assert(plan.mode === (process.env.RELEASE_MODE || 'auto') && plan.profile === (process.env.RELEASE_PROFILE || 'internal') && plan.bump === (process.env.RELEASE_BUMP || 'patch'), 'Run inputs differ from the original immutable plan.');
+    // Historical force-all and native patch allocations belong to the saved plan, not today's planner.
+    assert(['auto', 'force_all'].includes(plan.mode) && plan.profile === (process.env.RELEASE_PROFILE || 'internal') && plan.bump === (process.env.RELEASE_BUMP || 'patch'), 'Run inputs differ from the original immutable plan.');
     if (!saved) await preflight(plan, dry);
+    else summary(`Resuming recorded release ${runId}.\n\n${releaseSummary(plan)}`);
     if (dry || !hasWork(plan)) { summary(dry ? 'Dry run complete. No release operations performed.' : 'No publishable changes. No versions or tags allocated.'); output('active', false); return; }
     journal.create(plan.source); journal.put('plan.json', plan);
     let prepared: PreparedRelease;

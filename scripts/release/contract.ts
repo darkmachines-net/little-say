@@ -4,6 +4,7 @@ import { assert } from './common';
 import type { NativeRelease, Platform, Profile } from './native-contract';
 
 export const platforms: Platform[] = ['android', 'ios'];
+/** Persisted modes remain readable for historical receipts and retries; new plans always use auto. */
 export type BuildMode = 'auto' | 'force_all';
 export interface Inputs {
   server: string;

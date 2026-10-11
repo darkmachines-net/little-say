@@ -1,4 +1,4 @@
-/** @file Verifies selective/forced release plans, profile isolation, dependency inputs, and strict version-only candidate metadata. */
+/** @file Verifies automatic release plans and semantic increments, profile isolation, dependency inputs, and strict version-only candidate metadata. */
 
 import { afterEach, describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
@@ -20,36 +20,56 @@ function baseline(platform: Platform, profile: Profile = 'internal'): NativeBuil
     runtimeVersion: release.version, buildId: platform, artifactUrl: 'https://example.invalid/app', artifactSha256: 'b'.repeat(64) };
 }
 function args() {
-  const initial = { runId: '123', source: commit, mode: 'auto' as const, profile: 'internal' as const, bump: 'patch', inputs: structuredClone(inputs), serverVersion: '0.2.0', nativeRelease: release, server };
+  const initial = { runId: '123', source: commit, profile: 'internal' as const, bump: 'patch', inputs: structuredClone(inputs), serverVersion: '0.2.0', nativeRelease: release, server };
   const previous: ReleaseReceipt = { schema: 1, runId: '122', profile: 'internal', commit, completedAt: new Date(0).toISOString(), server, baselines: platforms.map(p => baseline(p)), ota: [], plan: planRelease(initial), prepared: { commit, candidate: commit, tree: commit } };
   return { ...initial, previous };
 }
 
 describe('artifact selection and version allocation', () => {
-  it('does nothing when verified inputs are unchanged', () => {
-    const plan = planRelease(args()); expect(hasWork(plan)).toBe(false);
+  it.each(['patch', 'minor', 'major'])('does nothing for %s when verified inputs are unchanged', bump => {
+    const plan = planRelease({ ...args(), bump }); expect(hasWork(plan)).toBe(false);
+    expect(plan.mode).toBe('auto');
     expect(plan.serverVersion).toBe('0.2.0'); expect(plan.nativeRelease).toEqual(release);
   });
   it('builds only the image for server/web changes', () => {
     const a = args(); a.inputs.server = 'changed'; const plan = planRelease(a);
     expect(plan.server).toBe(true); expect(plan.native).toEqual([]); expect(plan.ota).toEqual([]); expect(plan.serverVersion).toBe('0.2.1');
   });
-  it('publishes JS changes without allocating native versions', () => {
-    const a = args(); a.inputs.bundle.android = 'new UI'; const plan = planRelease(a);
+  it.each(['patch', 'minor', 'major'])('publishes JS changes without allocating versions for %s', bump => {
+    const a = args(); a.inputs.bundle.android = 'new UI'; const plan = planRelease({ ...a, bump });
     expect(plan.ota).toEqual(['android']); expect(plan.native).toEqual([]); expect(plan.nativeRelease).toEqual(release);
+    expect(plan.serverVersion).toBe('0.2.0'); expect(plan.server).toBe(false);
+    expect(plan.otaTargets).toEqual([expect.objectContaining({ runtimeVersion: '0.1.0', eligible: true })]);
   });
   it('allocates only the affected platform build number', () => {
     const a = args(); a.inputs.native.android = 'new native'; const plan = planRelease(a);
     expect(plan.native).toEqual(['android']); expect(plan.nativeRelease).toMatchObject({ version: '0.1.1', androidVersionCode: 2, iosBuildNumber: '1' }); expect(plan.server).toBe(false);
   });
-  it('forces fresh artifacts and independent versions on unchanged inputs', () => {
-    const plan = planRelease({ ...args(), mode: 'force_all', bump: 'major' });
+  it('selects every required artifact when server, native and bundle inputs change together', () => {
+    const a = args(); a.inputs.server = 'new server'; a.inputs.native = { android: 'new android', ios: 'new ios' }; a.inputs.bundle = { android: 'new JS', ios: 'new JS' };
+    const plan = planRelease({ ...a, bump: 'major' });
     expect(plan.server).toBe(true); expect(plan.native).toEqual(platforms); expect(plan.ota).toEqual(platforms);
-    expect(plan.serverVersion).toBe('1.0.0'); expect(plan.nativeRelease).toMatchObject({ version: '0.1.1', androidVersionCode: 2, iosBuildNumber: '2' });
+    expect(plan.serverVersion).toBe('1.0.0'); expect(plan.nativeRelease).toMatchObject({ version: '1.0.0', androidVersionCode: 2, iosBuildNumber: '2' });
+    expect(plan.otaTargets.filter(t => t.eligible)).toEqual(platforms.map(platform => ({ platform, runtimeVersion: '1.0.0', eligible: true, reason: 'new build in this run' })));
+  });
+  it.each(['server', 'android', 'ios', 'combined'] as const)('applies each requested increment only to selected %s components', target => {
+    for (const [bump, serverVersion, nativeVersion] of [['patch', '0.2.1', '0.1.1'], ['minor', '0.3.0', '0.2.0'], ['major', '1.0.0', '1.0.0']]) {
+      const a = args();
+      const image = target === 'server' || target === 'combined';
+      const android = target === 'android' || target === 'combined', ios = target === 'ios' || target === 'combined';
+      if (image) a.inputs.server = 'changed';
+      if (android) a.inputs.native.android = 'changed';
+      if (ios) a.inputs.native.ios = 'changed';
+      const plan = planRelease({ ...a, bump });
+      expect(plan.serverVersion).toBe(image ? serverVersion : '0.2.0');
+      expect(plan.nativeRelease).toEqual({ ...release, version: android || ios ? nativeVersion : release.version, androidVersionCode: android ? 2 : 1, iosBuildNumber: ios ? '2' : '1' });
+      expect(plan.ota).toEqual([]);
+    }
   });
   it('keeps client profiles independent while reusing the global image', () => {
     const plan = planRelease({ ...args(), profile: 'production', previous: undefined });
     expect(plan.server).toBe(false); expect(plan.native).toEqual(platforms); expect(plan.ota).toEqual(platforms); expect(plan.baselines).toEqual([]);
+    expect(plan.submissions).toEqual(platforms); expect(planRelease(args()).submissions).toEqual([]);
   });
   it('requires native builds after environment drift and bootstraps missing evidence', () => {
     const a = args(); a.inputs.environmentHash = 'changed'; expect(planRelease(a).native).toEqual(platforms);
@@ -120,7 +140,7 @@ describe('real Git snapshots and candidate contracts', () => {
     writeJson(resolve(dir, 'apps/mobile/package.json'), docs['apps/mobile/package.json']);
     git(['add', '.'], dir); git(['commit', '-m', 'baseline app metadata'], dir);
     const source = git(['rev-parse', 'HEAD'], dir);
-    const plan = planRelease({ ...args(), source, mode: 'force_all' });
+    const plan = planRelease({ ...args(), source, previous: undefined, server: undefined });
     git(['switch', '-c', 'release-candidate'], dir);
     const after = releaseDocuments(docs, plan);
     for (const p of releaseFiles) writeJson(resolve(dir, p), after[p]);
@@ -149,7 +169,7 @@ describe('real Git snapshots and candidate contracts', () => {
   });
   it('ignores allocated versions but rejects any extra functional candidate change', () => {
     const { dir, docs, source, write } = fixture(); const before = sourceInputs(source, 'server', dir);
-    const plan = planRelease({ ...args(), source, mode: 'force_all' }); const after = releaseDocuments(docs, plan);
+    const plan = planRelease({ ...args(), source, previous: undefined, server: undefined }); const after = releaseDocuments(docs, plan);
     for (const p of releaseFiles) writeJson(resolve(dir, p), after[p]);
     git(['add', '.'], dir); git(['commit', '-m', 'versions'], dir); const candidate = git(['rev-parse', 'HEAD'], dir);
     expect(() => validateCandidate(plan, candidate, dir)).not.toThrow(); expect(sourceInputs(candidate, 'server', dir)).toBe(before);
