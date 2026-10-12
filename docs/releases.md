@@ -195,7 +195,11 @@ The wrapper verifies clean source, baseline ancestry, Expo owner/project, server
 
 A dry run exports the actual JS bundle but neither deploys nor publishes. Real publication requires authenticated `gh` access to the checkout's GitHub repository with Actions read/write permission. It dispatches **Deploy self-hosted server** on the default branch and waits up to 40 minutes for that exact run's success. Failure, cancellation or an unconfirmed result blocks upload. WireGuard and webhook credentials stay in GitHub's environment. Source, EAS environment and channel are rechecked after deployment; then publication uploads the already exported bundle, verifies the raw group's payload/platform/runtime/source/destination, and saves a receipt. Local and CI OTA share fingerprint and baseline validation: only target version fields can be overlaid, and the full native fingerprint must match. Changed native dependencies, plugins, permissions, or selected native configuration require a new build. Committed runtime retirements apply to local OTA too.
 
-Native updates check/download on launch and apply on a subsequent launch, without forcing a reload during a child's board session. A successful publication does not prove that a specific device has downloaded or applied it. Validate the actual target device after reopening the app.
+Native updates check/download on launch and apply on a subsequent launch, without forcing a reload during a child's board session.
+
+On iOS and Android, parents can also open **Parent settings → App updates → Check for updates** to check, download, and immediately install a compatible OTA update. The action saves the current settings draft before restarting and reports when the app is up to date or a check, download, save, or restart fails. Leaving settings stops the manual flow from restarting the app; an already-started Expo download can still finish for a later launch. The button is disabled in development, Expo Go, and builds with updates disabled. Browser updates continue to use the existing update banner.
+
+A successful publication does not prove that a specific device has downloaded or applied it. Validate the actual target device after reopening the app.
 
 ## Deploy the server from your machine
 

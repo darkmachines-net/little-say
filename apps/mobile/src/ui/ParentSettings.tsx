@@ -14,10 +14,11 @@ import { styles, theme } from './theme';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
 import { defaultPicturePolicy } from '@little-say/core';
 import { PictureCredits, PictureGenerationInfo, PicturePreferences } from './PicturePreferences';
+import { AppUpdateSettings } from './AppUpdateSettings';
 
 /**
  * Edit settings in a local draft, preview voices, and save through the supplied callback; show
- * navigation-lock instructions only on applicable native platforms.
+ * navigation-lock instructions and manual OTA installation only on applicable native platforms.
  */
 export function ParentSettings({ account, onAccount, visible, settings, languages, voices, onSave, onPreview, onClose }: { account: AccountController; visible: boolean; onAccount: () => void; settings: Settings; languages: string[]; voices: Voice[]; onSave: (settings: Settings) => Promise<void>; onPreview: (tile: Tile) => void; onClose: () => void }) {
   const [url, setUrl] = useState(settings.backendUrl);
@@ -31,13 +32,14 @@ export function ParentSettings({ account, onAccount, visible, settings, language
   const [voiceList, setVoiceList] = useState(false);
   const [pictureDefaults, setPictureDefaults] = useState(settings.pictureDefaults ?? defaultPicturePolicy);
   const matches = voices.filter(v => v.language.split('-')[0] === language.split('-')[0]);
+  const saveSettings = () => onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults });
   const testConnection = async () => {
     setBusy(true); setError(''); setMessage('');
     try { const health = await apiFetch(url, '/api/health'); setMessage(health.aiConfigured ? 'Connected. Your home server is ready to create boards.' : 'Connected. Add OPENAI_API_KEY on the home server to enable AI.'); }
     catch (e) { setError((e as Error).message); }
     finally { setBusy(false); }
   };
-  return <Sheet visible={visible} title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void onSave({ ...settings, backendUrl: url.trim().replace(/\/+$/, ''), voices: selected, languageProfile: profile, pictureDefaults }).then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
+  return <Sheet visible={visible} title="Parent settings" onClose={onClose} footer={<Button onPress={() => { void saveSettings().then(onClose).catch(() => setError('Settings could not be saved. Check your device storage.')); }}>Save settings</Button>}>
     {Boolean(error) && <Notice>{error}</Notice>}
     <View style={{ gap: 12 }}>
       <Text accessibilityRole="header" style={styles.title}>Account & backup</Text>
@@ -76,6 +78,8 @@ export function ParentSettings({ account, onAccount, visible, settings, language
     <View style={styles.divider} />
     <View style={{ gap: 12 }}><Text style={styles.title}>Pictures for new boards</Text><PicturePreferences value={pictureDefaults} onChange={setPictureDefaults} /><PictureGenerationInfo /><Text style={styles.small}>Source choices apply to new boards. Existing boards keep their saved pictures.</Text><PictureCredits /></View>
     {(Platform.OS === 'ios' || Platform.OS === 'android') && <>
+      <View style={styles.divider} />
+      <AppUpdateSettings visible={visible} onBeforeRestart={saveSettings} />
       <View style={styles.divider} />
       <View style={{ gap: 12 }}><Text style={{ fontSize: 17, color: theme.ink, fontWeight: '700' }}>Lock the screen</Text><Text style={styles.body}>Hold the parent button for two seconds and release to edit. With a screen reader, activation starts a two-second unlock; activate again to cancel. To prevent system gestures from leaving the app, enable {Platform.OS === 'ios' ? 'Guided Access' : 'screen pinning'} before handing it over.</Text>{Platform.OS === 'ios' ? <Button kind="secondary" onPress={() => void Linking.openURL('https://support.apple.com/en-us/111795')}>Guided Access instructions</Button> : <Button kind="secondary" onPress={() => void Linking.openURL('https://support.google.com/android/answer/9455138?hl=en')}>Screen pinning instructions</Button>}</View>
     </>}
