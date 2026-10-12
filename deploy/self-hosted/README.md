@@ -1,7 +1,7 @@
 # Private deployment webhook
 
 GitHub-hosted Actions open a temporary WireGuard tunnel using the supplied peer settings and call the shared
-[darkmachines deployment service](https://github.com/MChartier/darkmachines). That service owns the fixed Compose
+[darkmachines deployer service](https://github.com/MChartier/darkmachines/pull/5). That service owns the fixed Compose
 upgrade for `little-say` on the Debian host. This repository contains only the caller; it does not provision
 peers, install a host helper, configure accounts, run SSH, or change homelab settings.
 
@@ -58,7 +58,7 @@ These names and value formats match Calibrate's webhook client:
 | Environment variable | Value |
 | --- | --- |
 | `DEPLOY_HOST` | Private IPv4 of the reachable Traefik HTTPS endpoint |
-| `DEPLOY_URL` | Full URL: `https://deploy.darkmachines.net/deploy/little-say` |
+| `DEPLOY_URL` | Full URL: `https://deployer.darkmachines.net/deploy/little-say` |
 | `DEPLOY_WG_ADDRESS` | Supplied little-say runner IPv4 **without** CIDR suffix |
 | `DEPLOY_WG_PUBLIC_KEY` | WireGuard server public key |
 
@@ -81,7 +81,8 @@ permission. WireGuard and webhook secrets are never downloaded to the developer 
 
 ## Rollout and recovery
 
-1. Complete the shared service's operator rollout in darkmachines and supply the environment values above. No
+1. Complete the shared service's [operator rollout](https://github.com/MChartier/darkmachines/blob/3d4c4ae688be4d4ea9202a0c0158e68e34cd7151/deployer/ROLLOUT.md)
+   in darkmachines and supply the environment values above. No
    little-say-specific server installer, user, sudo rule or SSH key is required.
 2. Publish a Little Say image containing the Dockerfile's `/api/ready` healthcheck before relying on database
    readiness. The existing `/api/health` image probe checks HTTP responsiveness only. The new probe requires
@@ -99,7 +100,9 @@ database/proxy services, rewrites application configuration, nor installs applic
 
 A connection failure, timeout, cancellation or lost response can leave the server still deploying even though
 Actions failed. Inspect the shared service's logs and the application state before explicitly retrying. The
-controller continues accepted work after a caller disconnects and returns 409 for an overlapping deployment.
+controller continues accepted work after a caller disconnects. HTTP 409 can mean an overlapping deployment or
+`deployment_requires_reconciliation` after an uncertain Docker command. Follow `deployer/ROLLOUT.md` to reconcile
+and clear that service-side block; restarting the controller alone does not establish successful deployment.
 Once reconciled, rerun the failed job in the original release or dispatch the standalone workflow again. A
 standalone success does not resume an older failed release or local OTA command. The local OTA command waits up
 to 40 minutes including queue time and blocks publication if the exact run cannot be confirmed.

@@ -12,7 +12,7 @@ const runnerEnvironment = {
   DEPLOY_HOST: '10.8.0.1', DEPLOY_WG_ADDRESS: '10.8.0.20',
   DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820',
   DEPLOY_WG_PUBLIC_KEY: `${'a'.repeat(43)}=`, DEPLOY_WG_PRIVATE_KEY: `${'b'.repeat(43)}=`,
-  DEPLOY_URL: 'https://deploy.example.test/deploy/little-say', DEPLOY_TOKEN: '0123456789abcdef'.repeat(4),
+  DEPLOY_URL: 'https://deployer.darkmachines.net/deploy/little-say', DEPLOY_TOKEN: '0123456789abcdef'.repeat(4),
 };
 const successResponse = { service: 'little-say', status: 'succeeded', healthy: true };
 const successOutput = `${JSON.stringify(successResponse)}\n200`;
@@ -108,7 +108,7 @@ describe('deployment configuration', () => {
 
 describe('private deployment request', () => {
   it.each([
-    ['https://deploy.example.test/deploy/little-say', 'deploy.example.test:443:10.8.0.1'],
+    ['https://deployer.darkmachines.net/deploy/little-say', 'deployer.darkmachines.net:443:10.8.0.1'],
     ['https://deploy.example.test:8443/deploy/little-say', 'deploy.example.test:8443:10.8.0.1'],
     ['https://10.8.0.1/deploy/little-say', '10.8.0.1:443:10.8.0.1'],
   ])('POSTs once to %s with private resolution and verified TLS', (url, resolve) => {
