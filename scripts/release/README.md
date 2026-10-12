@@ -10,7 +10,7 @@ The only publication workflow is `.github/workflows/cut-release.yml`. `npm run r
 | `journal.ts`, `operation.ts` | Immutable draft-release assets, per-operation sequence/IDs, recovery reconciliation and ambiguity stops |
 | `retirement.ts`, `reconciliation.ts` | Automatic retirement of unpublished stale candidates; separate preview/apply audit for terminal internal image/build cuts, preserving partial publications without claiming completion |
 | `image.ts` | Legacy image verification, multi-architecture immutable publication, and guarded `latest` promotion |
-| `expo.ts`, `eas-credentials.ts`, `environment.ts` | Pinned EAS reads, remote identities/credentials/environment, runtime resolution and export |
+| `expo.ts`, `eas-credentials.ts`, `ios-signing.ts`, `environment.ts` | Pinned EAS reads, remote identities/credentials/environment, selected iOS profile entitlement checks, runtime resolution and export |
 | `cloud.ts` | Finished platform builds, artifact SHA-256 proof, and exact-ID production submissions |
 | `ota.ts` | Runtime eligibility/retirement/deduplication, validated exports, raw group/payload verification |
 | `summary.ts` | Selected/skipped component decisions, versions, runtime exclusions, and verified artifact links |

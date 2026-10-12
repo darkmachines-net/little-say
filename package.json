@@ -60,6 +60,7 @@
   "devDependencies": {
     "@expo/fingerprint": "0.20.13",
     "@expo/image-utils": "0.11.5",
+    "@expo/plist": "0.8.1",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.23.1",

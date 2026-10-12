@@ -18,7 +18,7 @@ For standalone source validation, run the existing **Check** workflow on the des
 1. Merge this workflow into the default branch before using **Cut release**. Preview with `npm run release:plan`, then use the internal channel for initial publication.
 2. In GitHub **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. The workflow creates release PRs but does not approve reviews. Keep the default token permissions read-only: the jobs explicitly request `contents: write`, `pull-requests: write`, and `checks: write` for cutting a release, and `packages: write` for publication. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
 3. Use the committed Expo project in `native-release.json`: `@matthewchartier/little-say`, UUID `a0336055-a9d6-46b1-8eb4-120944304685`, server `https://littlesay.darkmachines.net`. The workflow verifies the remote project identity. Add an Expo access token as the GitHub repository secret `EXPO_TOKEN`; keep signing and submission credentials in EAS. Put deployment credentials only in the protected `self-hosted-testing` environment as described in the [webhook configuration guide](../deploy/self-hosted/README.md).
-4. Install locked dependencies and CLI, then configure **both** platforms' EAS-managed internal signing. Register iOS test devices and ensure an unexpired ad hoc provisioning profile includes them. Android needs one default keystore. Perform Expo's initial interactive cloud-build setup before relying on noninteractive CI; see [Expo CI prerequisites](https://docs.expo.dev/build/building-on-ci/). Queuing a build alone is not successful onboarding.
+4. Install locked dependencies and CLI, then configure **both** platforms' EAS-managed internal signing. Register iOS test devices and ensure an unexpired ad hoc provisioning profile includes them and the `com.apple.developer.applesignin: ["Default"]` entitlement required by the app. Planning checks the selected distribution profile's entitlement in memory without logging its contents. Android needs one default keystore. Perform Expo's initial interactive cloud-build setup before relying on noninteractive CI; see [Expo CI prerequisites](https://docs.expo.dev/build/building-on-ci/). Queuing a build alone is not successful onboarding.
 
 ```powershell
 npm ci
@@ -90,6 +90,26 @@ Image names remain `ghcr.io/<owner>/<repository>:vX.Y.Z`, `:sha-<full-commit>`, 
 The `latest` alias and running server can advance before native/OTA work finishes. A later failure leaves those changes in place and the candidate recoverable. The existing darkmachines Compose startup command runs application migrations; no automatic server or database rollback is attempted. A timeout or lost webhook response can mean deployment is still running: inspect the shared service before explicitly retrying the original release. The caller never retries POST automatically. See the [deployment guide](../deploy/self-hosted/README.md) for the supplied environment settings, health limits and recovery.
 
 For review or a merge queue whose source remains valid, complete the normal review/merge process and select **Re-run failed jobs on the original run**. Do the same for reconciled provider failures or queued builds that outlive the job's bounded wait. Re-running all jobs also reuses the run's immutable plan. Resume the original run for a recoverable cut instead of dispatching a duplicate release. A moved base or different merged tree is terminal for that immutable plan; do not rerun it.
+
+If Xcode reports that the provisioning profile lacks Sign In with Apple, refresh the selected profile through `credentials:configure-build --platform ios --profile internal` (or `production`) after authenticating with Apple. Preserve the distribution certificate and, for internal distribution, the registered devices. Decline reuse of the stale profile, select the same devices, and verify the regenerated profile contains the entitlement before retrying the failed jobs. Keep the original candidate and successful operations. Changing signing credentials does not require changing the saved source, version, or release plan; disabling the app capability is not a signing repair. See [Expo's capability synchronization guide](https://docs.expo.dev/build-reference/ios-capabilities/).
+
+The pinned EAS 22.4.0 client can fail Apple login with `iTunes service key is empty`; Expo [fixed that authentication failure in 24.4.2](https://github.com/expo/eas-cli/issues/4394). For this credential-only repair, install the exact fixed version into an ignored recovery directory, temporarily allow that version only for the interactive credential command, and restore the environment afterward:
+
+```powershell
+# Run from the repository root. This installs a separate credential-repair client.
+npm install --prefix artifacts/eas-login-cli --no-save --package-lock=false --ignore-scripts --no-audit --no-fund eas-cli@24.4.2
+$previousVersionCheck = $env:EAS_SKIP_CLI_VERSION_CHECK
+Push-Location apps/mobile
+try {
+  $env:EAS_SKIP_CLI_VERSION_CHECK = '1'
+  node ../../artifacts/eas-login-cli/node_modules/eas-cli/bin/run credentials:configure-build --platform ios --profile internal
+} finally {
+  $env:EAS_SKIP_CLI_VERSION_CHECK = $previousVersionCheck
+  Pop-Location
+}
+```
+
+Enter the Apple password and verification code only in the CLI. This command manages credentials; it does not start a build. Release publication continues to use the locked 22.4.0 toolchain and original plan.
 
 Base movement is terminal before the version PR merges, or when it changes the merged tree. Once the exact validated candidate has merged, later default-branch commits alone do not invalidate that source. Its retry still requires source ancestry, unchanged artifacts/environment and no newer completed release; retain this recoverable journal rather than automatically retiring it by age or default-head inequality.
 
