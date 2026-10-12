@@ -96,6 +96,12 @@ export async function updateGroup(groupId: string): Promise<any[]> {
   return require(resolve(root, 'tools/eas-cli/node_modules/eas-cli/build/graphql/queries/UpdateQuery.js')).UpdateQuery.viewUpdateGroupAsync(graphqlClient(), { groupId });
 }
 
+/** Resolve authenticated download locations for an update's exact asset keys; callers must not log signed URLs or headers. */
+export async function updateAssetUrls(updateId: string, storageKeys: string[]): Promise<{ storageKey: string; url: string; headers: Record<string, string> }[]> {
+  const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));
+  return require(resolve(root, 'tools/eas-cli/node_modules/eas-cli/build/graphql/queries/AssetQuery.js')).AssetQuery.getSignedUrlsAsync(graphqlClient(), updateId, storageKeys);
+}
+
 /** List raw update groups; the human-readable EAS CLI list truncates and decorates messages, so it cannot reconcile IDs. */
 export async function updateGroups(branchName: string, platform: Platform, runtime: string, offset: number): Promise<any[][]> {
   const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));

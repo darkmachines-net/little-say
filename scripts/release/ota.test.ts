@@ -19,7 +19,7 @@ beforeEach(() => {
   plan = planRelease({ runId: '123', source: commit, profile: 'internal', bump: 'patch', inputs: { server: 's', native: { android: 'compat', ios: 'compat' }, bundle: { android: 'bundle', ios: 'bundle' }, environmentHash: 'env' }, nativeRelease: release, serverVersion: '0.2.0' });
   plan.ota = ['android']; plan.channelBranch = { id: 'branch', name: 'internal' };
   baselines = ['0.1.0', '0.1.1'].map(runtimeVersion => ({ schema: 2, platform: 'android', profile: 'internal', channel: 'internal', environment: 'preview', commit, release: { ...release, version: runtimeVersion }, runtimeVersion, fingerprint: 'fingerprint', compatibility: 'compat', environmentHash: 'env', buildId: runtimeVersion, artifactUrl: 'https://example.invalid/app', artifactSha256: 'hash' }));
-  journal = { operation: (key: string) => operations.get(key), save: (state: any) => { const value = { ...state, schema: 1, sequence: (operations.get(state.key)?.sequence || 0) + 1 }; operations.set(state.key, value); return value; } } as unknown as Journal;
+  journal = { read: () => undefined, operation: (key: string) => operations.get(key), save: (state: any) => { const value = { ...state, schema: 1, sequence: (operations.get(state.key)?.sequence || 0) + 1 }; operations.set(state.key, value); return value; } } as unknown as Journal;
   writeJson(resolve(fixture.root, 'release-policy.json'), { schema: 1, retiredRuntimes: [] });
   vi.mocked(cleanCommit).mockReturnValue(commit);
   vi.mocked(channelBranch).mockResolvedValue(plan.channelBranch);

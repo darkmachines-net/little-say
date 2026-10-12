@@ -19,10 +19,10 @@ export function verifyBuildIdentity(build: any, plan: ReleasePlan, commit: strin
   assert(build.distribution === (plan.profile === 'internal' ? 'INTERNAL' : 'STORE') && !build.isForIosSimulator, 'EAS distribution differs.');
 }
 
-/** Read and hash the exact downloadable artifact, proving availability rather than trusting a queued build URL. */
-export async function artifactHash(url: string): Promise<string> {
+/** Read and hash the exact HTTPS artifact, optionally using provider-supplied download headers without logging them. */
+export async function artifactHash(url: string, headers?: Record<string, string>): Promise<string> {
   assert(new URL(url).protocol === 'https:', 'Artifact URL must use HTTPS.');
-  const response = await fetch(url, { signal: AbortSignal.timeout(300000) });
+  const response = await fetch(url, { headers, signal: AbortSignal.timeout(300000) });
   assert(response.ok && response.body, 'EAS build artifact is unavailable.');
   const hash = createHash('sha256'); let bytes = 0;
   for await (const chunk of response.body as any) { hash.update(chunk); bytes += chunk.length; }

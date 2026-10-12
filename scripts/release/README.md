@@ -1,6 +1,6 @@
 # Release implementation
 
-The only publication workflow is `.github/workflows/cut-release.yml`. `npm run release:cut -- <stage>` invokes `unified.ts`; `release:plan` runs the read-only plan/check/export path. The workflow exposes only `bump` and `profile`; new plans always use automatic selection. Use the workflow for mutations. Standalone source checks use **Check** or `release:validate`. All provider commands use pinned dependencies and the exact protected source tree.
+Artifact publication uses `.github/workflows/cut-release.yml`. `npm run release:cut -- <stage>` invokes `unified.ts`; `release:plan` runs the read-only plan/check/export path. The workflow exposes only `bump` and `profile`; new plans always use automatic selection. Use the workflow for mutations. `recover-release.yml` can audit a terminal internal cut and publish only its missing completion receipt after all original operations are verified. Standalone source checks use **Check** or `release:validate`. Provider commands use pinned dependencies and publication uses the exact protected source tree.
 
 | File | Responsibility |
 | --- | --- |
@@ -14,6 +14,7 @@ The only publication workflow is `.github/workflows/cut-release.yml`. `npm run r
 | `cloud.ts` | Finished platform builds, artifact SHA-256 proof, and exact-ID production submissions |
 | `ota.ts` | Runtime eligibility/retirement/deduplication, validated exports, raw group/payload verification |
 | `summary.ts` | Selected/skipped component decisions, versions, runtime exclusions, and verified artifact links |
+| `completion.ts`, `completion-recovery.ts` | Verified completion receipt and full journal archive; restricted recovery of fully published and deployed internal cuts |
 | `unified.ts` | Stage boundaries, source/destination guards, completed baseline selection and final release readback |
 | `native.ts`, `native-contract.ts` | Existing local build/install/submit operations and local/cloud baseline OTA validation |
 | `ota-deployment.ts` | Local OTA gate: dispatch and await one correlated private-server workflow before uploading |

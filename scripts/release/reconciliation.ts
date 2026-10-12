@@ -43,7 +43,8 @@ function originals(release: any): Retirement['assets'] {
     return { id: a.id, name: a.name, digest: a.digest, hash: hash(readAsset(release, a.name)) };
   }).sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
 }
-function operation<T>(release: any, key: string): Operation<T> {
+/** Validate contiguous append-only operation history and return its terminal state, retaining all earlier provider IDs. */
+export function readOperationHistory<T>(release: any, key: string): Operation<T> {
   const names = release.assets.map((a: any) => a.name as string).filter((n: string) => n.startsWith(`op.${key}.`)).sort();
   assert(names.length > 0, `Missing ${key} operation history.`);
   let previous: Operation<T> | undefined;
@@ -80,14 +81,14 @@ export async function inspectPartialRelease(runId: string, reason: string): Prom
   assert(jobPages.length > 0 && jobs.length === jobPages[0].total_count && jobs.every(j => j.status === 'completed'), 'Incomplete/active workflow job evidence.');
   assert(jobs.every(j => ['prepare', 'server', 'native (android)', 'native (ios)'].includes(j.name) || j.conclusion === 'skipped'), 'Deployment, OTA, submission, or unknown jobs may have run; unsupported recovery.');
   for (const name of ['prepare', 'server']) assert(jobs.some(j => j.name === name && j.conclusion === 'success'), `Missing successful ${name} job proof.`);
-  const serverOp = operation<ServerReceipt>(release, 'server');
+  const serverOp = readOperationHistory<ServerReceipt>(release, 'server');
   const server = serverOp.result;
   assert(serverOp.status === 'complete' && server && serverOp.ids.length === 1 && serverOp.ids[0] === prepared.commit && server.commit === prepared.commit && server.version === plan.serverVersion && server.input === plan.inputs.server && server.image === `ghcr.io/${process.env.GITHUB_REPOSITORY!.toLowerCase()}` && /^sha256:[a-f0-9]{64}$/.test(server.digest), 'Server publication lacks a matching verified receipt.');
   const tag = api(`git/ref/tags/v${server.version}`);
   assert(tag.object?.type === 'commit' && tag.object.sha === prepared.commit, 'Server version tag differs from the receipt.');
   const builds: Reconciliation['builds'] = [];
   for (const platform of ['android', 'ios'] as const) {
-    const op = operation<NativeBuildBaseline>(release, `build-${platform}`);
+    const op = readOperationHistory<NativeBuildBaseline>(release, `build-${platform}`);
     assert(jobs.some(j => j.name === `native (${platform})` && j.conclusion === (op.status === 'complete' ? 'success' : 'failure')), `Missing terminal ${platform} job proof.`);
     const matching: any[] = [];
     for (let offset = 0; ; offset += 50) {
