@@ -214,6 +214,6 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
 }
 
 if (isMain(import.meta.url)) unifiedRelease().catch(error => {
-  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}.\n\nRecovery evidence remains in the candidate/${process.env.GITHUB_RUN_ID} or abandoned/${process.env.GITHUB_RUN_ID} draft journal. Never rerun an abandoned run. Retry only recoverable review/provider states after reconciliation; see docs/releases.md. Completed baselines have not advanced unless the completion release is published.`);
+  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}\n\nRecovery evidence is retained in candidate/<run-id> or abandoned/<run-id> draft journals. During preparation, use the blocking journal named above; it can belong to an earlier run. Never rerun an abandoned run. Retry only recoverable review/provider states after reconciliation; see docs/releases.md. Completed baselines have not advanced unless the completion release is published.`);
   fail(error);
 });

@@ -30,6 +30,7 @@
     "release:check": "tsx scripts/release/version.ts check",
     "release:validate": "tsx scripts/release/validation.ts",
     "release:cut": "tsx scripts/release/unified.ts",
+    "release:reconcile": "tsx scripts/release/reconciliation.ts",
     "release:plan": "tsx scripts/release/unified.ts plan",
     "release:prepare": "tsx scripts/release/version.ts prepare",
     "native:setup": "tsx scripts/release/native.ts setup",

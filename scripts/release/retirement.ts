@@ -11,7 +11,8 @@ import { validateCandidate } from './metadata';
 
 function api(path: string): any { return JSON.parse(gh(['api', `repos/${process.env.GITHUB_REPOSITORY}/${path}`])); }
 function pages(path: string): any[] { return JSON.parse(gh(['api', '--paginate', '--slurp', `repos/${process.env.GITHUB_REPOSITORY}/${path}`])); }
-function upload(release: any, name: string, value: unknown): void {
+/** Append immutable recovery evidence and verify readback, including after a lost upload response. */
+export function uploadRetirementAsset(release: any, name: string, value: unknown): void {
   const existing = readAsset(release, name);
   if (existing !== undefined) { assert(hash(existing) === hash(value), 'Retirement record conflicts.'); return; }
   const file = resolve(mkdtempSync(resolve(tmpdir(), 'little-say-retire-')), name); writeJson(file, value);
@@ -60,7 +61,7 @@ export function retireCandidate(runId: string, currentFailure = false): boolean 
   let record = readAsset<Retirement>(release, 'retirement.json');
   if (release.tag_name === `abandoned/${runId}`) {
     const verified = verifyRetirement(release, false);
-    upload(release, 'retirement-complete.json', { retirementHash: hash(verified) });
+    uploadRetirementAsset(release, 'retirement-complete.json', { retirementHash: hash(verified) });
     verifyRetirement(api(`releases/${release.id}`)); return true;
   }
   const candidate = readAsset<{ candidate: string; tree: string }>(release, 'candidate.json');
@@ -90,7 +91,7 @@ export function retireCandidate(runId: string, currentFailure = false): boolean 
   assert(record.runId === runId && record.source === identity.source && record.releaseId === release.id, 'Retirement intent conflicts.');
   assert(record.assets.every(a => /^sha256:[a-f0-9]{64}$/.test(a.digest)), 'Original asset byte digests are unavailable; preserve the candidate for reconciliation.');
   // Persist the tombstone before closing the PR or moving the journal; retries can never recreate this run.
-  upload(release, 'retirement.json', record);
+  uploadRetirementAsset(release, 'retirement.json', record);
   if (pr && !pr.merged && pr.state === 'open') {
     const fresh = versionPr(identity); assert(fresh?.head.sha === candidate!.candidate && !fresh.merged && fresh.state === 'open', 'Version PR changed during retirement.');
     gh(['api', `repos/${process.env.GITHUB_REPOSITORY}/pulls/${pr.number}`, '--method', 'PATCH', '-f', 'state=closed']);
@@ -99,7 +100,7 @@ export function retireCandidate(runId: string, currentFailure = false): boolean 
   unpublished(api(`releases/${release.id}`), identity, currentFailure);
   gh(['api', `repos/${process.env.GITHUB_REPOSITORY}/releases/${release.id}`, '--method', 'PATCH', '-f', `tag_name=abandoned/${runId}`]);
   release = api(`releases/${release.id}`); verifyRetirement(release, false);
-  upload(release, 'retirement-complete.json', { retirementHash: hash(record) });
+  uploadRetirementAsset(release, 'retirement-complete.json', { retirementHash: hash(record) });
   verifyRetirement(api(`releases/${release.id}`));
   assert(!releases().some(r => r.tag_name === `candidate/${runId}`), 'Candidate retirement is still blocking.');
   console.log(`Retired unpublished candidate ${runId}: ${record.reason} Journal and assets retained under abandoned/${runId}.`);
@@ -112,6 +113,10 @@ export function reconcileCandidates(currentRunId: string): void {
     const runId = release.tag_name.split('/')[1];
     if (runId === currentRunId) continue;
     if (release.tag_name.startsWith('abandoned/') && readAsset(release, 'retirement-complete.json')) { verifyRetirement(release); continue; }
-    assert(retireCandidate(runId), `Release ${runId} is retryable or unresolved. Resume/reconcile it before another cut.`);
+    try {
+      assert(retireCandidate(runId), 'Release is retryable or unresolved. Resume/reconcile it before another cut.');
+    } catch (error) {
+      throw new Error(`Blocking journal ${release.tag_name} (https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}): ${error instanceof Error ? error.message : 'reconciliation failed'}`);
+    }
   }
 }

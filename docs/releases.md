@@ -103,7 +103,29 @@ The workflow-wide `little-say-release` concurrency group serializes cuts. A fres
 
 Cleanup writes a durable tombstone before changing the PR or release. Lost responses, failed closure, missing assets, or uncertain readback leave the candidate/abandoned record blocking; a subsequent fresh run rechecks and finishes verified cleanup. Abandoned IDs are rejected before planning or journal creation and cannot be resurrected by the new code. **Never rerun an abandoned historical workflow:** old checkouts do not inherit this safeguard. Do not delete recovery evidence or manually remove the blocker to start a duplicate publication. Ambiguous provider outcomes and expired/unreadable run history still require operator reconciliation.
 
-The investigation on October 10, 2026 found [run 37874954697](https://github.com/MChartier/little-say/actions/runs/37874954697) partially published: its journal records a successful server `0.3.0` image and Android build, a failed iOS build, and no completion receipt. Its prepared state and provider operations block new cuts and cannot be retired as unpublished work. Recovery is a separate task; retain its evidence and completed operations. The two-input workflow change does not recover it. [GitHub reruns retain the original source](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs), so rerunning it does not acquire newer workflow or iOS fixes.
+The investigation on October 10, 2026 found [run 37874954697](https://github.com/MChartier/little-say/actions/runs/37874954697) partially published: server `0.3.0` and Android build `d7f73be2-de65-4016-a0f2-5ec7317905b0` succeeded; iOS build `adde78c5-19e6-40d5-8e58-d3b89abf6d46` failed. On October 12, explicit reconciliation verified the terminal provider outcomes and all workflow attempts, then preserved all 11 original assets in the same draft under `abandoned/37874954697`, with reconciliation and retirement evidence. No completion receipt or baseline was created. Never rerun that abandoned run. [GitHub reruns retain the original source](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs), so it cannot acquire the later iOS source fix.
+
+### Explicit recovery of a terminal partial internal cut
+
+When the remaining native work requires a source fix, the immutable old plan cannot acquire it. `npm run release:reconcile` provides a separate operator path for abandoning that remaining work while preserving successful publications. Automatic preparation still refuses to retire partial publications. Its error identifies the actual blocking journal and run, which may differ from the run currently failing preparation.
+
+The supported scope is deliberately narrow: an internal server-plus-Android/iOS cut with a verified server receipt, terminal recorded builds, and no executed deployment, promotion, OTA, submission, or unknown jobs across **any** attempt. The command verifies journal ownership, original asset identities and hashes, workflow history, the server Git tag, every recorded EAS build's identity/status, marker matches, and absence of submissions. Missing IDs, extra matching builds, active operations, unknown assets, and changed evidence stop recovery. Other partial cuts require separate operator reconciliation.
+
+Keep release dispatches stopped throughout this manual operation. Both preview and apply check for active cuts; this local command does not acquire GitHub's workflow concurrency lock. Install locked root/EAS dependencies and authenticate `gh` and EAS for repository and project reads. GitHub release write access is needed only for apply.
+
+```powershell
+$env:GITHUB_REPOSITORY = 'MChartier/little-say'
+$reason = 'Abandon remaining internal work so a fresh cut can include the merged iOS pod fix.'
+npm run release:reconcile -- --run 37874954697 --reason $reason
+# Review artifacts/reconciliation-37874954697.json, then explicitly apply that same evidence.
+npm run release:reconcile -- --run 37874954697 --reason $reason --apply
+```
+
+Apply repeats the audit and requires it to match the preview. It appends `reconciliation.json`, then a `retirement.json` tombstone with `kind: "reconciled-partial"`, preserves the same draft and every original asset under `abandoned/<run-id>`, and verifies `retirement-complete.json`. If interrupted, repeat the same apply command with the retained evidence; never delete or overwrite assets. Ordinary automatic retirement cannot finish an interrupted partial reconciliation. Successful artifacts, version tags, branches, running servers, and channel mappings are left in place. No provider request, deployment, rollback, or completion receipt is created.
+
+This audit relies on the original successful server job and verified journal receipt to establish its terminal outcome; it does not revalidate GHCR artifact bytes or promote the server. It checks native identity and status without downloading the build again. Future planning must still independently verify any image or explicitly imported native baseline it reuses. The abandoned draft never advances completion baselines. A fresh cut may allocate new native versions; retaining an old build's evidence does not automatically import it as an OTA target.
+
+After confirmed archival, use **Cut release** from current `master`. A recent run that stopped solely at reconciliation, created no candidate, and still pins current `master` can instead rerun its failed jobs. Never rerun the abandoned partial run. The original successful publications remain available for audit.
 
 ## Build, install and submit native apps
 

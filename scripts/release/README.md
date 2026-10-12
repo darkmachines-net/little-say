@@ -8,6 +8,7 @@ The only publication workflow is `.github/workflows/cut-release.yml`. `npm run r
 | `inputs.ts`, `planner.ts` | Committed component/dependency identities, per-profile comparisons, automatic selection and the requested server/native version increment |
 | `metadata.ts`, `candidate.ts` | Combined version-only PR, normal protection/review, full repository/PostgreSQL checks, and exact merged-tree validation |
 | `journal.ts`, `operation.ts` | Immutable draft-release assets, per-operation sequence/IDs, recovery reconciliation and ambiguity stops |
+| `retirement.ts`, `reconciliation.ts` | Automatic retirement of unpublished stale candidates; separate preview/apply audit for terminal internal image/build cuts, preserving partial publications without claiming completion |
 | `image.ts` | Legacy image verification, multi-architecture immutable publication, and guarded `latest` promotion |
 | `expo.ts`, `eas-credentials.ts`, `environment.ts` | Pinned EAS reads, remote identities/credentials/environment, runtime resolution and export |
 | `cloud.ts` | Finished platform builds, artifact SHA-256 proof, and exact-ID production submissions |
