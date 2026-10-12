@@ -1,7 +1,7 @@
 # Private deployment webhook
 
 GitHub-hosted Actions open a temporary WireGuard tunnel using the supplied peer settings and call the shared
-[darkmachines deployer service](https://github.com/MChartier/darkmachines/pull/5). That service owns the fixed Compose
+[darkmachines deployer service](https://github.com/MChartier/darkmachines/tree/4ae5621727b21dddf0614059046bad991cdd97e2/deployer). That service owns the fixed Compose
 upgrade for `little-say` on the Debian host. This repository contains only the caller; it does not provision
 peers, install a host helper, configure accounts, run SSH, or change homelab settings.
 
@@ -52,6 +52,9 @@ Create/use GitHub environment **`self-hosted-testing`**, restricted to branch **
 default branch), with no tag rules. Keep required review policy as desired; unattended deployment requires no
 environment approval/wait timer. Put deployment credentials at environment scope. The reusable workflow's caller
 explicitly forwards the three secret names; values resolve from the deployment job's protected environment.
+GitHub requires that named forwarding even when the secrets exist only in the environment; no repository-level
+copies are needed. The required declarations check that the names were passed, while the connector validates
+the values before opening the tunnel. See [GitHub's environment-secret contract](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows#using-inputs-and-secrets-in-a-reusable-workflow).
 
 These names and value formats match Calibrate's webhook client:
 
@@ -81,7 +84,7 @@ permission. WireGuard and webhook secrets are never downloaded to the developer 
 
 ## Rollout and recovery
 
-1. Complete the shared service's [operator rollout](https://github.com/MChartier/darkmachines/blob/3d4c4ae688be4d4ea9202a0c0158e68e34cd7151/deployer/ROLLOUT.md)
+1. Complete the shared service's [operator rollout](https://github.com/MChartier/darkmachines/blob/4ae5621727b21dddf0614059046bad991cdd97e2/deployer/ROLLOUT.md)
    in darkmachines and supply the environment values above. No
    little-say-specific server installer, user, sudo rule or SSH key is required.
 2. Publish a Little Say image containing the Dockerfile's `/api/ready` healthcheck before relying on database

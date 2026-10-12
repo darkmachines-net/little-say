@@ -142,6 +142,7 @@ jobs:
     uses: ./.github/workflows/deploy-self-hosted.yml
     permissions:
       contents: read
+    # GitHub requires forwarding these names even when values exist only in the called job's environment.
     secrets:
       DEPLOY_WG_ENDPOINT: ${{ secrets.DEPLOY_WG_ENDPOINT }}
       DEPLOY_WG_PRIVATE_KEY: ${{ secrets.DEPLOY_WG_PRIVATE_KEY }}
