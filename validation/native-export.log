@@ -1,0 +1,34 @@
+npm notice run little-say-workspace@0.3.1 npx
+npm notice run expo export --platform all --output-dir ../../artifacts/review-validation/platform-export --max-workers 2
+Expo Autolinking module resolution enabled
+Starting Metro Bundler
+
+| (node:64796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:64796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 27574ms apps\mobile\index.ts (2423 modules)
+iOS Bundled 48980ms apps\mobile\index.ts (2918 modules)
+Android Bundled 70528ms apps\mobile\index.ts (2913 modules)
+
+› Assets (6):
+assets\brand\mountain.cbb7c5d29f9d05209c294fdb6d779f2f.png (3 variations | 49KB)
+assets\brand\mountain.png (3 variations | 49KB)
+
+› web bundles (3):
+_expo/static/css/landing-caba40a9d11f2eee17f8ed2c4250ba93.css (8.1KB)
+_expo/static/js/web/App-d7eb719a22f70966b22df79b637df2d7.js (6.1MB)
+_expo/static/js/web/index-aa55247a3416345dc8f50249fbfb02fe.js (360KB)
+
+› ios bundles (1):
+_expo/static/js/ios/index-d8e6e2ab439d826eedc72963fcbfd0f8.hbc (7.4MB)
+
+› android bundles (1):
+_expo/static/js/android/index-8fb52d5ea625f791fda09dcefb14b6c0.hbc (7.4MB)
+
+› Files (3):
+favicon.ico (15KB)
+index.html (1.5KB)
+metadata.json (626B)
+
+Exported: ../../artifacts/review-validation/platform-export

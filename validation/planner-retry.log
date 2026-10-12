@@ -1,0 +1,11 @@
+npm notice run little-say-workspace@0.3.1 npx
+npm notice run vitest run scripts/release/planner.test.ts --testTimeout 30000 --maxWorkers 1
+
+ RUN  v4.1.11 C:/Users/MChar/.codex/worktrees/manual-ota-updates/little-say
+
+
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Start at  15:44:38
+   Duration  44.46s (transform 249ms, setup 0ms, import 294ms, tests 43.92s, environment 0ms)
+

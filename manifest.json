@@ -1,0 +1,184 @@
+{
+  "capturedAt": "2026-10-12T22:45:42.306Z",
+  "baseCommit": "b394f50e35771aa7494058c24f5705486717ff8b",
+  "sourceCommit": "929321bbba82c93b8cc1f0d7539fb5277d1c778f",
+  "sourceHashes": {
+    "apps/mobile/src/ui/ParentSettings.tsx": "9c6b7fc2cf6275e8dc496214a07e2e72db8006c3cfa01df8ee0c4b1a6d83ed45",
+    "apps/mobile/src/ui/AppUpdateSettings.tsx": "071574366d90138adb300064b62a47fc418baf268ae8eacca7d5b147de541db3",
+    "apps/mobile/src/ui/AppUpdateSettings.web.tsx": "85770d504d49412713259f53f086ee564b78f921d001f478a11e5b9a2ca2a70b",
+    "apps/mobile/src/ui/AppUpdateSettings.test.ts": "5131c176d95746d253270e9b730024f7dfa4a562fdadf49bd6b0ea43b6ab92fe",
+    "docs/releases.md": "e63e73189a45c890e1a6253f7e871303abe714ec8834fe336707eb8f8cf34d14"
+  },
+  "buildHashes": {
+    "before": "bcdce5f4238c885dc0e777022a0752b7585663632739d2d178494b49fa3ccc70",
+    "after": "a0543991253e2a63fd8c1cb361aa9f9b88450f1997075904c46a005dbdbc5384"
+  },
+  "browser": "155.0.4283.45",
+  "renderer": "Microsoft Edge / React Native Web",
+  "screenshotsEdited": false,
+  "limitations": [
+    "Browser-rendered real ParentSettings and AppUpdateSettings; not Android/iOS runtime screenshots.",
+    "Platform.OS and expo-updates are fixture adapters. OTA results are simulated and no real update is fetched.",
+    "Account data, native storage, and restart are simulated. Reload is recorded, not executed."
+  ],
+  "pageErrors": [],
+  "captures": [
+    {
+      "name": "before-android-phone",
+      "mode": "before",
+      "scenario": "idle",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/before-android-phone.png",
+      "sha256": "33c5a3097d9754a938e726da7c34feae27d011e55e15705a7089abfb55a94950",
+      "trace": {
+        "events": [],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-idle",
+      "mode": "after",
+      "scenario": "idle",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-idle.png",
+      "sha256": "fd2461030489c28224cfbbd2fa0759d11b6a5d32dcafaed84e36ca3576b3ed67",
+      "trace": {
+        "events": [],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-checking",
+      "mode": "after",
+      "scenario": "checking",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-checking.png",
+      "sha256": "13d316c29f4e57e985bf8f9237c43ca1f529be47257015c0fc8c1922bd07788e",
+      "trace": {
+        "events": [
+          "check"
+        ],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-downloading",
+      "mode": "after",
+      "scenario": "downloading",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-downloading.png",
+      "sha256": "4301c3cce5a26282c76c9889bff0bb6fb7408e0695b1a47a9bd3fd2b273b019d",
+      "trace": {
+        "events": [
+          "check",
+          "fetch"
+        ],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-up-to-date",
+      "mode": "after",
+      "scenario": "up-to-date",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-up-to-date.png",
+      "sha256": "ee500b48976881165970c02fe600bceef1cdb38e61ec84fe1599a5fa14ec54d8",
+      "trace": {
+        "events": [
+          "check"
+        ],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-error",
+      "mode": "after",
+      "scenario": "error",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-error.png",
+      "sha256": "b6810e0f7d11c26cbbd2facecd95ff29d05d4f20bb7a6200e4863ffbe569f8e5",
+      "trace": {
+        "events": [
+          "check"
+        ],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-android-phone-restart",
+      "mode": "after",
+      "scenario": "restart",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-restart.png",
+      "sha256": "e485e37669a6061ab08323ae49f17e484c288211c8c0ac72d80ff2e9977ca761",
+      "trace": {
+        "events": [
+          "check",
+          "fetch",
+          "save",
+          "reload-requested"
+        ],
+        "saved": {
+          "backendUrl": "https://example.invalid",
+          "voices": {},
+          "activeBoardId": null,
+          "aiConsent": false,
+          "autoSpeech": true,
+          "languageProfile": {
+            "languages": [
+              "en-US"
+            ],
+            "defaultLanguage": "en-US"
+          },
+          "pictureDefaults": {
+            "mode": "auto",
+            "style": "color",
+            "consistent": false
+          }
+        }
+      }
+    },
+    {
+      "name": "after-android-phone-disabled",
+      "mode": "after",
+      "scenario": "disabled",
+      "platform": "android",
+      "width": 390,
+      "height": 844,
+      "file": "screenshots/after-android-phone-disabled.png",
+      "sha256": "2eab92d20d6d9a85934abad0aec08146bea2ac5fa77e46a73a419ce0b7a47501",
+      "trace": {
+        "events": [],
+        "saved": null
+      }
+    },
+    {
+      "name": "after-ios-tablet-idle",
+      "mode": "after",
+      "scenario": "idle",
+      "platform": "ios",
+      "width": 820,
+      "height": 1180,
+      "file": "screenshots/after-ios-tablet-idle.png",
+      "sha256": "6b1b79f4f34f4001ee5c12b5d6aec4d29f8b0c7b4c71a59d626a38637e340a38",
+      "trace": {
+        "events": [],
+        "saved": null
+      }
+    }
+  ]
+}
