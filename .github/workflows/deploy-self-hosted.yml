@@ -1,4 +1,4 @@
-# Upgrades the existing Compose server over a restricted WireGuard/SSH connection and requires readiness.
+# Calls the shared authenticated deployment webhook over WireGuard and waits for its readiness result.
 name: Deploy self-hosted server
 run-name: Deploy little-say server (${{ inputs.request_id || github.run_id }})
 on:
@@ -14,16 +14,14 @@ on:
         required: true
       DEPLOY_WG_PRIVATE_KEY:
         required: true
-      DEPLOY_SSH_PRIVATE_KEY:
-        required: true
-      DEPLOY_SSH_KNOWN_HOSTS:
+      DEPLOY_TOKEN:
         required: true
 permissions:
   contents: read
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     environment: self-hosted-testing
     # One dedicated little-say CI peer; never interrupt an in-progress upgrade.
     concurrency:
@@ -50,16 +48,15 @@ jobs:
             sudo apt-get update -qq
             sudo apt-get install -y --no-install-recommends wireguard-tools
           fi
-      - name: Upgrade Compose server and wait for readiness
+      - name: Call shared deployment webhook and wait for readiness
         env:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_SSH_USER: ${{ vars.DEPLOY_SSH_USER }}
+          DEPLOY_URL: ${{ vars.DEPLOY_URL }}
           DEPLOY_WG_ADDRESS: ${{ vars.DEPLOY_WG_ADDRESS }}
           DEPLOY_WG_PUBLIC_KEY: ${{ vars.DEPLOY_WG_PUBLIC_KEY }}
           DEPLOY_WG_ENDPOINT: ${{ secrets.DEPLOY_WG_ENDPOINT }}
           DEPLOY_WG_PRIVATE_KEY: ${{ secrets.DEPLOY_WG_PRIVATE_KEY }}
-          DEPLOY_SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          DEPLOY_SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: node deploy/scripts/connect-and-deploy.mjs
       - name: Remove tunnel after cancellation or failure
         if: always()

@@ -55,8 +55,8 @@ const defaultIo: DeploymentIo = {
 /**
  * Dispatch the default-branch server deployment through the authenticated GitHub CLI, then require
  * success from that exact request before returning. Poll for at most 40 minutes, including queue
- * time; failed, skipped, cancelled, ambiguous, or unobservable runs block OTA publication. Deployment
- * credentials remain in GitHub's protected environment and are never downloaded to this machine.
+ * time; failed, skipped, cancelled, ambiguous, or unobservable runs block OTA publication.
+ * WireGuard and scoped webhook credentials remain in GitHub's protected environment, never on this machine.
  */
 export async function deployServerBeforeOta(io: DeploymentIo = defaultIo): Promise<void> {
   const origin = io.run('git', ['remote', 'get-url', 'origin']);

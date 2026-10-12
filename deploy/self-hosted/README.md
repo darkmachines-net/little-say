@@ -1,176 +1,116 @@
-# Automatic private-server deployment
+# Private deployment webhook
 
-GitHub-hosted Actions connect over WireGuard and SSH to the existing Linux Compose host. The fixed host command
-pulls the image configured in Compose, upgrades only `little-say`, waits for Docker health, and checks `/api/ready`
-inside the container. The Compose files and environment stay unchanged; configure the application image as
-`ghcr.io/mchartier/little-say:latest`.
+GitHub-hosted Actions open a temporary WireGuard tunnel using the supplied peer settings and call the shared
+[darkmachines deployment service](https://github.com/MChartier/darkmachines). That service owns the fixed Compose
+upgrade for `little-say` on the Debian host. This repository contains only the caller; it does not provision
+peers, install a host helper, configure accounts, run SSH, or change homelab settings.
 
-**Cut release** promotes a verified server image to `latest` before deployment. Server releases and OTA releases
-run this deployment; internal and production OTA publication wait for its success. Native-only releases and
-no-op cuts do not deploy. **Deploy self-hosted server** also runs the same upgrade independently. The local
-`npm run ota:publish` command dispatches that workflow and waits for its exact successful run before uploading.
-Its `--dry-run` only validates/exports and does not deploy. There is no opt-out switch for the OTA gate.
+**Cut release** promotes its verified server image to `latest` before calling the webhook. Server and OTA releases
+require successful deployment; native-only releases and no-op cuts do not deploy. Both internal and production
+OTA publication, and required release completion, depend on deployment success. **Deploy self-hosted server**
+also invokes the same caller independently. Local `npm run ota:publish` dispatches that workflow and waits for
+its exact successful run before uploading. Local `--dry-run` validates/exports without deploying or publishing.
 
-This follows [GitHub's WireGuard networking guidance](https://docs.github.com/en/actions/how-tos/manage-runners/github-hosted-runners/connect-to-a-private-network/connect-with-wireguard).
-The application and SSH ports can remain private; only the VPN endpoint's UDP port needs to be reachable by
-the GitHub runner. No persistent GitHub Actions runner is installed on the application host.
+## Request and success contract
 
-## Install the host upgrade command
+The runner sends one empty HTTPS request with Little Say's scoped token:
 
-The host needs Docker Engine, Compose v2 with `pull --policy always` and `up --wait`, OpenSSH, `sudo`, and Node 24
-at `/usr/bin/node`. Provision the database, proxy, service environment and existing stack normally first.
-The CI command neither builds source nor manages database/proxy services. Accounts require their configured
-database and explicit migrations before the new server starts; see [accounts](../../docs/ACCOUNTS.md) and
-[database commands](../../docs/POSTGRES.md#explicit-migrations).
-
-From a reviewed checkout on the host:
-
-```sh
-sudo install -d -o root -g root -m 0700 /etc/little-say /etc/little-say/registry
-sudo install -o root -g root -m 0644 deploy/scripts/self-hosted-deploy.mjs /usr/local/lib/little-say-deploy.mjs
-sudo install -o root -g root -m 0755 deploy/self-hosted/little-say-deploy /usr/local/sbin/little-say-deploy
-sudo install -o root -g root -m 0600 deploy/self-hosted/deploy.example.json /etc/little-say/deploy.json
-sudoedit /etc/little-say/deploy.json
+```http
+POST /deploy/little-say
+Authorization: Bearer <little-say-scoped-token>
 ```
 
-Set `projectName` to the existing name from `docker compose ls`; changing it changes the named cache volumes.
-Set `projectDirectory` to the existing stack directory and `composeFiles` / `envFile` to the files used by your
-normal Compose command (relative to that directory). The example uses `/srv/little-say/compose.yaml` and `.env`.
-Keep existing proxy/network/credential-mount overrides in `composeFiles`. `waitTimeoutSeconds` defaults in the
-example to 300 and accepts 1–480 seconds. The fixed service name must be `little-say`.
+Only HTTP 200 with this JSON result permits the release to continue:
 
-If setting up a new published-image stack, install `deploy/compose.yaml` as `/srv/little-say/compose.yaml`.
-The root-level repository Compose file builds source and is for local development. For the published-image file,
-use a root-owned `/srv/little-say/.env` such as:
-
-```dotenv
-LITTLE_SAY_SERVER_IMAGE=ghcr.io/mchartier/little-say:latest
-LITTLE_SAY_SERVER_ENV_FILE=/etc/little-say/server.env
-BIND_ADDRESS=127.0.0.1
-PORT=8787
+```json
+{"service":"little-say","status":"succeeded","healthy":true}
 ```
 
-Create `/etc/little-say/server.env` with the existing application settings: backend API key, `ALLOWED_ORIGINS`,
-model settings, and any Firebase/PostgreSQL configuration. Keep any required credential mounts in your existing
-Compose override. Do not copy server secrets into GitHub or Git. Start a new stack manually before enabling CI.
-For private GHCR packages, provision a read-only pull credential on the host using
-`sudo docker --config /etc/little-say/registry login ghcr.io`; public packages need no login.
+The shared service pulls the configured `latest` image, recreates only the existing `little-say` Compose service,
+and requires exactly one running container with the expected project/service labels and affirmative Docker
+health. It owns Compose paths, registry access and server-side configuration. There are no caller-selected
+commands, images, request parameters or deployment jobs to poll. The token authorizes only `/deploy/little-say`,
+and must differ from Calibrate's token. It is separate from the WireGuard key and any GHCR pull credential.
 
-Keep the wrapper, module, config, Compose files, application environment and all their parent directories owned
-by root and unwritable by the deployment account. The wrapper clears its environment, ignores stdin and accepts
-no arguments. The remote caller cannot choose a command, image, environment file, or Docker context.
+The caller rejects redirects, non-200 results (including 202/409), malformed or incomplete JSON, wrong service
+identity and negative health. It makes no automatic retry. Curl verifies HTTPS normally, pins the endpoint
+hostname to `DEPLOY_HOST` for this request with `--resolve`, disables proxies, and routes only that private IPv4
+through WireGuard. No DNS changes, default tunnel route or insecure TLS option is needed. Authorization is
+passed on stdin rather than in process arguments; response bodies and raw subprocess errors are not logged.
 
-## Restrict SSH
+The HTTP deadline is 780 seconds, exceeding the service's 660-second maximum subprocess budget and Traefik's
+720-second response-header timeout. The Actions job is bounded to 20 minutes. The existing
+`little-say-self-hosted-deploy` concurrency group serializes all callers in this repository without cancelling
+an active upgrade. Runner keys and the temporary interface are removed after success or failure; the workflow
+also removes the interface after cancellation. Hard runner termination can skip cleanup; the hosted runner
+is ephemeral.
 
-Create a dedicated account and separate unencrypted Ed25519 CI key. Example Debian/Ubuntu setup:
+## GitHub configuration
 
-```sh
-sudo useradd --create-home --shell /bin/sh little-say-deploy
-sudo install -d -o root -g root -m 0755 /etc/ssh/authorized_keys
-sudoedit /etc/ssh/authorized_keys/little-say-deploy
-```
+The operator deploys the shared service, provisions reachable WireGuard peers, and supplies the values below.
+Create/use GitHub environment **`self-hosted-testing`**, restricted to branch **`master`** (the repository's protected
+default branch), with no tag rules. Keep required review policy as desired; unattended deployment requires no
+environment approval/wait timer. Put deployment credentials at environment scope. The reusable workflow's caller
+explicitly forwards the three secret names; values resolve from the deployment job's protected environment.
 
-The root-owned authorized-keys file contains only the CI public key with this forced command:
-
-```text
-restrict,command="sudo -n /usr/local/sbin/little-say-deploy" ssh-ed25519 REPLACE_WITH_CI_PUBLIC_KEY little-say-ci
-```
-
-Add `/etc/ssh/sshd_config.d/little-say-deploy.conf`:
-
-```text
-Match User little-say-deploy
-    AuthorizedKeysFile /etc/ssh/authorized_keys/little-say-deploy
-    AuthenticationMethods publickey
-    PasswordAuthentication no
-    KbdInteractiveAuthentication no
-    PermitTTY no
-    AllowTcpForwarding no
-    AllowAgentForwarding no
-    X11Forwarding no
-Match all
-```
-
-Validate with `sudo sshd -t`, then reload the distribution's SSH service while retaining your administrative
-session. Ensure the dedicated account can authenticate under the host's account policy. It must not belong to
-the Docker group or have other sudo privileges. With `sudo visudo -f /etc/sudoers.d/little-say-deploy`, add:
-
-```sudoers
-little-say-deploy ALL=(root) NOPASSWD: /usr/local/sbin/little-say-deploy ""
-```
-
-The empty argument string permits the wrapper only without arguments.
-
-## Configure WireGuard and GitHub
-
-Use a **separate little-say CI peer/key/address**, even if Calibrate uses the same VPN gateway. The two repositories'
-concurrency groups cannot serialize a shared peer. On the gateway, configure this peer's allowed source as its
-unique `/32`. Firewall its traffic to TCP port 22 on the little-say Docker host only, including forwarded traffic
-if gateway and host differ. Client `AllowedIPs` routing is not a firewall.
-
-Create GitHub environment **`self-hosted-testing`**. Under deployment branches/tags, select only branch **`master`**
-(or the repository's actual default branch), with no tag rules. Protect that branch and review workflow changes.
-Leave reviewers/wait timers off if deployments should run automatically. Store deployment credentials only in this
-environment. The reusable deployment job receives these explicitly forwarded names as described by
-[GitHub's environment-secret rules](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows#using-inputs-and-secrets-in-a-reusable-workflow).
+These names and value formats match Calibrate's webhook client:
 
 | Environment variable | Value |
 | --- | --- |
-| `DEPLOY_HOST` | Docker host's reachable IPv4, e.g. `192.168.1.10` |
-| `DEPLOY_SSH_USER` | `little-say-deploy` |
-| `DEPLOY_WG_ADDRESS` | Dedicated little-say CI peer IPv4 without CIDR, e.g. `10.8.0.21` |
-| `DEPLOY_WG_PUBLIC_KEY` | WireGuard gateway's public key |
+| `DEPLOY_HOST` | Private IPv4 of the reachable Traefik HTTPS endpoint |
+| `DEPLOY_URL` | Full URL: `https://deploy.darkmachines.net/deploy/little-say` |
+| `DEPLOY_WG_ADDRESS` | Supplied little-say runner IPv4 **without** CIDR suffix |
+| `DEPLOY_WG_PUBLIC_KEY` | WireGuard server public key |
 
 | Environment secret | Value |
 | --- | --- |
-| `DEPLOY_WG_ENDPOINT` | Public VPN hostname/IPv4 and UDP port, e.g. `vpn.example.com:51820` |
-| `DEPLOY_WG_PRIVATE_KEY` | Dedicated little-say CI peer private key |
-| `DEPLOY_SSH_PRIVATE_KEY` | Dedicated unencrypted CI SSH private key |
-| `DEPLOY_SSH_KNOWN_HOSTS` | Verified host-key line for `DEPLOY_HOST`, e.g. `192.168.1.10 ssh-ed25519 AAAA...` |
+| `DEPLOY_WG_ENDPOINT` | Reachable VPN hostname/IPv4 and UDP port, e.g. `vpn.example.com:51820` |
+| `DEPLOY_WG_PRIVATE_KEY` | Supplied little-say runner peer's private key |
+| `DEPLOY_TOKEN` | Little Say's token from the shared service, 43–128 base64url characters (64-character hex also works) |
 
-Obtain the SSH host key through a trusted administrative connection. CI requires that pinned key and never trusts
-an in-job `ssh-keyscan`. Keep existing `EXPO_TOKEN` and EAS settings for OTA; the deployment job does not receive
-Expo credentials. Local OTA additionally needs `gh` authenticated for this repository with Actions read/write
-permission to dispatch and inspect the deployment workflow. VPN and SSH private keys stay in GitHub's environment.
+`DEPLOY_HOST` is the private HTTPS destination and can differ from the VPN gateway. The endpoint URL includes
+the application's path; it is not just an origin. The runner address has no `/32` suffix because the caller
+adds it. Use Little Say's separate supplied peer/address and token; concurrency groups do not coordinate peers
+across repositories. The shared service's Traefik allowlist must see the configured runner source address.
+
+To replace the previous SSH configuration, add `DEPLOY_URL` and `DEPLOY_TOKEN`, remove `DEPLOY_SSH_USER`,
+`DEPLOY_SSH_PRIVATE_KEY`, and `DEPLOY_SSH_KNOWN_HOSTS`, and point `DEPLOY_HOST` at the HTTPS destination. Keep the
+existing WireGuard setting names. Keep repository `EXPO_TOKEN` and EAS settings for publication; the webhook job
+receives no Expo credentials. Local OTA additionally needs authenticated `gh` with repository Actions read/write
+permission. WireGuard and webhook secrets are never downloaded to the developer machine.
 
 ## Rollout and recovery
 
-1. Install the host files and configure Compose, application settings, SSH restrictions and WireGuard routing.
-2. Apply any required schema migration explicitly with the release image before upgrading an accounts-enabled
-   server. The helper does not run migrations or roll them back. `/api/ready` fails if the configured database
-   is unavailable or its migration history differs from the server.
-3. Run `sudo /usr/local/sbin/little-say-deploy` on the host. This performs a real upgrade to the configured image.
-4. Configure the protected GitHub environment, merge the workflow, then run **Deploy self-hosted server** on
-   `master` (leave `request_id` blank). Confirm a successful run before using **Cut release** or local OTA publication.
+1. Complete the shared service's operator rollout in darkmachines and supply the environment values above. No
+   little-say-specific server installer, user, sudo rule or SSH key is required.
+2. Publish a Little Say image containing the Dockerfile's `/api/ready` healthcheck before relying on database
+   readiness. The existing `/api/health` image probe checks HTTP responsiveness only. The new probe requires
+   JSON `status: ok` and checks database/schema readiness when accounts/database integration is enabled.
+   A source change alone does not change the published image. **Cut release** publishes/promotes this image
+   before its deployment step; standalone deployment uses whatever `latest` currently contains.
+3. After merge, dispatch **Deploy self-hosted server** from `master` with `request_id` blank, or use a server cut
+   that publishes the readiness image first. Confirm the webhook reports success. Verify a failed deployment
+   blocks OTA before relying on the full release path.
 
-The host command is identical for manual and CI upgrades:
+The shared service uses the existing darkmachines Compose file unchanged. That stack already runs Little Say's
+database migration in its application startup command. Startup may therefore change the schema; deployment
+failure is not an automatic database or image rollback. The controller itself neither migrates nor upgrades
+database/proxy services, rewrites application configuration, nor installs application code on the host.
 
-```sh
-docker compose pull --policy always little-say
-docker compose up -d --no-deps --no-build --pull never --wait --wait-timeout 300 little-say
-```
+A connection failure, timeout, cancellation or lost response can leave the server still deploying even though
+Actions failed. Inspect the shared service's logs and the application state before explicitly retrying. The
+controller continues accepted work after a caller disconnects and returns 409 for an overlapping deployment.
+Once reconciled, rerun the failed job in the original release or dispatch the standalone workflow again. A
+standalone success does not resume an older failed release or local OTA command. The local OTA command waits up
+to 40 minutes including queue time and blocks publication if the exact run cannot be confirmed.
 
-The installed helper supplies your configured project/file arguments, then requires exactly one healthy container
-and a successful in-container `/api/ready` response. It does not test proxy/DNS/TLS availability, external AI/Firebase
-requests, or exact OTA/server version identity. It follows whatever `latest` resolves to when pulled.
-
-A connection, pull, startup or readiness failure blocks OTA and release completion. Inspect the stack locally with
-the usual Compose `ps` and `logs --tail 100 little-say` commands. Fix the cause and rerun failed jobs in the original
-release, or rerun the standalone deployment. A standalone success does not resume a failed release/OTA command.
-Each deployment pulls the current configured image again. `latest` can already be advanced and the server upgraded
-even if a later OTA/build/submission fails; retry the original release to finish its existing operations.
-
-There are no deployment locks, backup prerequisites, image overrides, deployment receipts, automatic rollback,
-volume removal or image pruning. Avoid overlapping manual upgrades with CI. GitHub serializes this repository's
-deploy jobs and does not cancel a running upgrade when a new one is queued. Local OTA times out rather than publish
-when deployment cannot be confirmed; the dispatched job may still run and must be inspected before retrying.
-
-The older `server:deploy --digest ...` command remains an explicit local operation with its existing image rollback
-behavior. Use the installed host wrapper for routine upgrades to this managed stack so manual and CI paths agree.
-Install later host helper/config updates explicitly; the workflow never updates installed host code.
+`latest` and the server can advance before a later native/OTA operation fails; retry the original release using
+its retained journal. Docker health confirms the image's configured probe, not exact image/OTA version identity,
+public application proxy/DNS/TLS availability, or external AI/Firebase health. The older explicit local
+`server:deploy --digest ...` command retains its existing behavior and is separate from this webhook path.
 
 ## Validation
 
-`npm run check` includes mocked Docker/SSH/WireGuard failure and cleanup coverage, affirmative readiness checks,
-workflow gating, promotion ordering and the local OTA dispatch gate. These checks do not deploy to the private
-server. Host setup and the successful standalone workflow run above are required rollout checks.
+`npm run check` includes mocked webhook/connection failures, strict completed-success validation, token handling,
+tunnel cleanup, workflow dependency gates and local OTA run correlation. Tests make no homelab calls and change
+no real secrets. Live shared-service, routing, registry and application health checks remain operator rollout work.

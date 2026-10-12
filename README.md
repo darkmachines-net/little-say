@@ -80,7 +80,7 @@ For a production web preview without Docker, run `npm run build` then `npm start
 - [Testing](docs/testing.md): automated checks, opt-in live AI evaluation and native validation.
 - [PostgreSQL foundation](docs/POSTGRES.md): shared connection, migration and transaction tools for server storage features.
 - [Releases](docs/releases.md): server, EAS cloud build and compatible OTA releases; private-server deployment and local build/install tools.
-- [Deployment setup](deploy/self-hosted/README.md): WireGuard, restricted SSH, environment secrets, and server readiness before OTA.
+- [Deployment setup](deploy/self-hosted/README.md): shared homelab webhook, supplied WireGuard settings, scoped token, and health before OTA.
 - [Interface conventions](docs/DESIGN.md) and [mountain assets](apps/mobile/assets/brand/README.md).
 
 `apps/mobile` contains the UI and platform adapters, `apps/server` the API and web host, and `packages/core` the schemas and shared behavior. `tests/fixtures` contains sample libraries used only by tests and evaluations. Native projects, build output, recordings, local credentials and generated test artifacts are ignored.

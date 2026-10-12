@@ -1,7 +1,0 @@
-#!/bin/sh
-# Runs the fixed root-owned deployment helper with an empty environment and no caller arguments.
-set -eu
-
-[ "$#" -eq 0 ] || exit 1
-exec /usr/bin/env -i PATH=/usr/bin:/bin DOCKER_CONFIG=/etc/little-say/registry \
-  /usr/bin/node /usr/local/lib/little-say-deploy.mjs </dev/null

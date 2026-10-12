@@ -1,16 +1,25 @@
-/** @file Verifies host deployment health gates and CI tunnel credential cleanup without Docker or network access. */
+/** @file Verifies private webhook request boundaries, affirmative deployment results, and runner cleanup without network access. */
 
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { runInNewContext } from 'node:vm';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-// @ts-expect-error The dependency-free host entrypoint runs directly in Node and has no declaration package.
-import { deploy } from '../../deploy/scripts/self-hosted-deploy.mjs';
 // @ts-expect-error The dependency-free Linux runner entrypoint has no declaration package.
 import { connectAndDeploy, deploymentInputs } from '../../deploy/scripts/connect-and-deploy.mjs';
 
 const temporaryDirectories: string[] = [];
+const runnerEnvironment = {
+  DEPLOY_HOST: '10.8.0.1', DEPLOY_WG_ADDRESS: '10.8.0.20',
+  DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820',
+  DEPLOY_WG_PUBLIC_KEY: `${'a'.repeat(43)}=`, DEPLOY_WG_PRIVATE_KEY: `${'b'.repeat(43)}=`,
+  DEPLOY_URL: 'https://deploy.example.test/deploy/little-say', DEPLOY_TOKEN: '0123456789abcdef'.repeat(4),
+};
+const successResponse = { service: 'little-say', status: 'succeeded', healthy: true };
+const successOutput = `${JSON.stringify(successResponse)}\n200`;
+const cleanupCommand = ['ip', 'link', 'delete', 'little-say-ci'];
+
+interface CommandOptions { stdio: string[]; timeout: number; input?: string; maxBuffer?: number; encoding?: string; }
+interface Command { binary: string; args: string[]; options: CommandOptions; }
 
 function directory() {
   const result = fs.mkdtempSync(path.join(os.tmpdir(), 'little-say-deployment-test-'));
@@ -23,210 +32,204 @@ afterEach(() => {
   for (const temporary of temporaryDirectories.splice(0)) fs.rmSync(temporary, { recursive: true, force: true });
 });
 
-function hostFixture(options: { failure?: string; health?: string; ids?: string } = {}) {
-  const projectDirectory = directory();
-  const compose = 'services:\n  little-say:\n    image: ghcr.io/mchartier/little-say:latest\n';
-  const environment = 'SECRET=keep-me\nLITTLE_SAY_SERVER_IMAGE=ghcr.io/mchartier/little-say:latest\n';
-  fs.writeFileSync(path.join(projectDirectory, 'compose.yaml'), compose);
-  fs.writeFileSync(path.join(projectDirectory, '.env'), environment);
-  const config = { projectDirectory, projectName: 'existing-little-say', composeFiles: ['compose.yaml'], envFile: '.env', waitTimeoutSeconds: 300 };
-  const calls: string[][] = [];
-  const logs: string[] = [];
-  const runDocker = (args: string[], cwd: string) => {
-    expect(cwd).toBe(projectDirectory);
-    calls.push(args);
-    if (args[0] === 'compose') {
-      expect(args[args.indexOf('--project-name') + 1]).toBe(config.projectName);
-      if (args.includes('pull')) {
-        if (options.failure === 'pull') throw new Error('SECRET=registry-password');
-        return '';
-      }
-      if (args.includes('up')) {
-        if (options.failure === 'up') throw new Error('SECRET=startup-password');
-        return '';
-      }
-      if (args.includes('ps')) return options.ids ?? 'c'.repeat(64);
+function runnerFixture({ response = successOutput, failure = '', cleanupFailure = false } = {}) {
+  const runnerDirectory = directory();
+  vi.spyOn(os, 'tmpdir').mockReturnValue(runnerDirectory);
+  const summary = path.join(runnerDirectory, 'summary.md');
+  const creation = vi.spyOn(fs, 'mkdtempSync');
+  const calls: Command[] = [];
+  let keyContents = '';
+  let privateFiles: string[] = [];
+  let keyMode = 0;
+  let directoryMode = 0;
+  const run = (binary: string, args: string[], options: CommandOptions) => {
+    calls.push({ binary, args, options });
+    const stage = binary === 'curl' ? 'request' : args[0] === 'wg' ? 'wireguard'
+      : args[1] === 'address' ? 'address' : args[1] === 'route' ? 'route'
+        : args[2] === 'add' ? 'create' : args[2] === 'set' ? 'up' : 'cleanup';
+    if (stage === 'wireguard') {
+      const key = args[args.indexOf('private-key') + 1];
+      keyContents = fs.readFileSync(key, 'utf8');
+      keyMode = fs.statSync(key).mode & 0o777;
+      directoryMode = fs.statSync(path.dirname(key)).mode & 0o777;
+      privateFiles = fs.readdirSync(path.dirname(key));
     }
-    if (args[0] === 'inspect') return options.health ?? 'healthy';
-    if (args[0] === 'exec') {
-      if (options.failure === 'probe') throw new Error('SECRET=application-password');
-      return '';
+    if (stage === failure || (stage === 'cleanup' && cleanupFailure)) {
+      throw new Error(`SECRET=${runnerEnvironment.DEPLOY_TOKEN}; response and private diagnostics`);
     }
-    throw new Error('Unexpected Docker command.');
+    return binary === 'curl' ? response : '';
   };
-  return { config, calls, logs, compose, environment, run: () => deploy(config, { runDocker, log: (message: string) => logs.push(message) }) };
+  const env = { ...runnerEnvironment, GITHUB_STEP_SUMMARY: summary };
+  return {
+    runnerDirectory, summary, creation, calls, env, run,
+    invoke: () => connectAndDeploy(env, run),
+    credentials: () => ({ keyContents, keyMode, directoryMode, privateFiles }),
+  };
 }
 
-describe('private host deployment', () => {
-  it('pulls and upgrades only little-say using existing files and requires Docker and API health', () => {
-    const fixture = hostFixture();
-    const originalConfig = structuredClone(fixture.config);
-    fixture.run();
-    const [pull, up, ps, inspect, probe] = fixture.calls;
-    expect(pull.slice(pull.indexOf('pull'))).toEqual(['pull', '--policy', 'always', 'little-say']);
-    expect(up.slice(up.indexOf('up'))).toEqual([
-      'up', '-d', '--no-deps', '--no-build', '--pull', 'never', '--wait', '--wait-timeout', '300', 'little-say',
-    ]);
-    expect(up.filter(value => value === '--env-file')).toHaveLength(1);
-    expect(up[up.indexOf('--env-file') + 1]).toBe(path.join(fixture.config.projectDirectory, '.env'));
-    expect(up[up.indexOf('-f') + 1]).toBe(path.join(fixture.config.projectDirectory, 'compose.yaml'));
-    expect(ps.slice(-4)).toEqual(['ps', '--all', '--quiet', 'little-say']);
-    expect(inspect).toEqual(['inspect', '--format', '{{.State.Health.Status}}', 'c'.repeat(64)]);
-    expect(probe.slice(0, 5)).toEqual(['exec', 'c'.repeat(64), 'node', '--input-type=module', '-e']);
-    expect(fixture.config).toEqual(originalConfig);
-    expect(fs.readFileSync(path.join(fixture.config.projectDirectory, 'compose.yaml'), 'utf8')).toBe(fixture.compose);
-    expect(fs.readFileSync(path.join(fixture.config.projectDirectory, '.env'), 'utf8')).toBe(fixture.environment);
-    expect(fs.readdirSync(fixture.config.projectDirectory).sort()).toEqual(['.env', 'compose.yaml']);
-    expect(fixture.logs.at(-1)).toBe('Deployment and application health check succeeded.');
-  });
+function value(args: string[], option: string) { return args[args.indexOf(option) + 1]; }
 
-  it('repeats normal deployment on retry without writing deployment state', () => {
-    const fixture = hostFixture();
-    fixture.run();
-    fixture.run();
-    expect(fixture.calls.filter(args => args.includes('pull'))).toHaveLength(2);
-    expect(fixture.calls.filter(args => args.includes('up'))).toHaveLength(2);
-    expect(fs.readdirSync(fixture.config.projectDirectory).sort()).toEqual(['.env', 'compose.yaml']);
-  });
-
-  it.each(['pull', 'up', 'probe'])('stops on %s failure and suppresses captured secrets', failure => {
-    const fixture = hostFixture({ failure });
-    expect(fixture.run).toThrow(/^Docker (compose|exec) failed;/);
-    expect(fixture.logs.join('\n')).not.toMatch(/SECRET|succeeded/);
-    if (failure === 'pull') expect(fixture.calls.some(args => args.includes('up'))).toBe(false);
-    if (failure === 'up') expect(fixture.calls.some(args => args[0] === 'inspect')).toBe(false);
-  });
-
-  it.each(['unhealthy', 'starting', '<no value>', ''])('rejects Docker health %j before the API probe', health => {
-    const fixture = hostFixture({ health });
-    expect(fixture.run).toThrow('health check did not succeed');
-    expect(fixture.calls.some(args => args[0] === 'exec')).toBe(false);
-    expect(fixture.logs.join('\n')).not.toContain('succeeded');
-  });
-
-  it.each(['', `${'c'.repeat(64)}\n${'d'.repeat(64)}`, '--container', 'too-short'])('requires exactly one container, rejecting %j', ids => {
-    const fixture = hostFixture({ ids });
-    expect(fixture.run).toThrow('Expected exactly one');
-    expect(fixture.calls.some(args => args[0] === 'inspect')).toBe(false);
+describe('deployment configuration', () => {
+  it.each(['0123456789abcdef'.repeat(4), `${'a'.repeat(41)}_-`, 'a'.repeat(128)])('accepts a shared-service token format: %s', token => {
+    const url = deploymentInputs({ ...runnerEnvironment, DEPLOY_TOKEN: token });
+    expect(url.href).toBe(runnerEnvironment.DEPLOY_URL);
   });
 
   it.each([
-    { composeFiles: [] }, { composeFiles: ['../compose.yaml'] }, { composeFiles: ['missing.yaml'] },
-    { envFile: '../.env' }, { envFile: 'missing.env' }, { projectDirectory: 'relative' },
-    { projectName: '--other' }, { waitTimeoutSeconds: 0 }, { waitTimeoutSeconds: 481 }, { waitTimeoutSeconds: 1.5 },
-  ])('rejects invalid configuration before Docker: %j', override => {
-    const fixture = hostFixture();
-    Object.assign(fixture.config, override);
-    expect(fixture.run).toThrow();
-    expect(fixture.calls).toHaveLength(0);
-  });
-
-  it('uses each configured Compose file in order', () => {
-    const fixture = hostFixture();
-    fs.writeFileSync(path.join(fixture.config.projectDirectory, 'override.yaml'), 'services: {}\n');
-    fixture.config.composeFiles.push('override.yaml');
-    fixture.run();
-    const files = fixture.calls[0].flatMap((value, index, args) => value === '-f' ? [args[index + 1]] : []);
-    expect(files).toEqual(fixture.config.composeFiles.map(file => path.join(fixture.config.projectDirectory, file)));
-  });
-
-  it.each([
-    { ok: true, body: { status: 'ok' }, success: true },
-    { ok: false, body: { status: 'ok' }, success: false },
-    { ok: true, body: { status: 'degraded' }, success: false },
-    { ok: true, body: {}, success: false },
-    { ok: true, body: null, success: false },
-  ])('requires an affirmative API response: %j', async ({ ok, body, success }) => {
-    const fixture = hostFixture();
-    fixture.run();
-    const probe = fixture.calls.find(args => args[0] === 'exec')!.at(-1)!;
-    const fetch = vi.fn(async () => ({ ok, json: async () => body }));
-    const timeout = vi.fn(() => 'timeout-signal');
-    const result = runInNewContext(`(async () => { ${probe} })()`, { fetch, AbortSignal: { timeout } });
-    if (success) await expect(result).resolves.toBeUndefined();
-    else await expect(result).rejects.toThrow('Application health check did not succeed');
-    expect(timeout).toHaveBeenCalledWith(10000);
-    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:8787/api/ready', { cache: 'no-store', signal: 'timeout-signal' });
-  });
-});
-
-const runnerEnvironment = {
-  DEPLOY_HOST: '10.8.0.1', DEPLOY_WG_ADDRESS: '10.8.0.20',
-  DEPLOY_SSH_USER: 'little-say-deploy', DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820',
-  DEPLOY_WG_PUBLIC_KEY: `${'a'.repeat(43)}=`, DEPLOY_WG_PRIVATE_KEY: `${'b'.repeat(43)}=`,
-  DEPLOY_SSH_PRIVATE_KEY: 'test-only-private-ssh-key', DEPLOY_SSH_KNOWN_HOSTS: '10.8.0.1 ssh-ed25519 test-key',
-};
-
-describe('CI connection', () => {
-  it.each([
-    { DEPLOY_HOST: '0.0.0.0/0' }, { DEPLOY_HOST: '-oProxyCommand=id' },
+    { DEPLOY_HOST: '' }, { DEPLOY_HOST: '0.0.0.0/0' }, { DEPLOY_HOST: '-oProxyCommand=id' },
     { DEPLOY_WG_ADDRESS: '10.8.0.1' }, { DEPLOY_WG_ADDRESS: '10.8.0.20/24' },
-    { DEPLOY_SSH_USER: 'root; id' }, { DEPLOY_WG_ENDPOINT: 'vpn.example.test:0' },
-    { DEPLOY_WG_ENDPOINT: 'vpn.example.test:65536' }, { DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820\nextra' },
+    { DEPLOY_WG_ENDPOINT: 'vpn.example.test:0' }, { DEPLOY_WG_ENDPOINT: 'vpn.example.test:65536' },
+    { DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820\n' }, { DEPLOY_WG_ENDPOINT: 'vpn.example.test:51820;id' },
     { DEPLOY_WG_PRIVATE_KEY: '' }, { DEPLOY_WG_PUBLIC_KEY: '' },
-    { DEPLOY_SSH_PRIVATE_KEY: '' }, { DEPLOY_SSH_KNOWN_HOSTS: '' },
-  ])('rejects unsafe or missing network configuration before commands: %j', override => {
-    expect(() => deploymentInputs(runnerEnvironment)).not.toThrow();
+    { DEPLOY_WG_PRIVATE_KEY: `${runnerEnvironment.DEPLOY_WG_PRIVATE_KEY}\n` },
+    { DEPLOY_TOKEN: '' }, { DEPLOY_TOKEN: 'a'.repeat(42) }, { DEPLOY_TOKEN: 'a'.repeat(129) },
+    { DEPLOY_TOKEN: `${'a'.repeat(43)}\n` }, { DEPLOY_TOKEN: `${'a'.repeat(43)}"` },
+    { DEPLOY_TOKEN: `${'a'.repeat(43)}\\` }, { DEPLOY_TOKEN: `${'a'.repeat(43)}=` },
+    { DEPLOY_URL: '' }, { DEPLOY_URL: '/deploy/little-say' },
+    { DEPLOY_URL: 'http://deploy.example.test/deploy/little-say' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/calibratehealth' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say/' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say?image=latest' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say?' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say#fragment' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say#' },
+    { DEPLOY_URL: 'https://user:password@deploy.example.test/deploy/little-say' },
+    { DEPLOY_URL: 'https://10.8.0.2/deploy/little-say' },
+    { DEPLOY_URL: 'https://[::1]/deploy/little-say' },
+    { DEPLOY_URL: 'https://deploy.example.test/deploy/little-say\n' },
+  ])('rejects invalid configuration before files or networking: %j', override => {
     const run = vi.fn();
+    const create = vi.spyOn(fs, 'mkdtempSync');
     expect(() => connectAndDeploy({ ...runnerEnvironment, ...override }, run)).toThrow();
     expect(run).not.toHaveBeenCalled();
-  });
-
-  it.each(['success', 'link', 'wg', 'ssh', 'cleanup', 'ssh-and-cleanup'])('pins SSH and cleans credentials and networking after %s', failureStage => {
-    const runnerDirectory = directory();
-    vi.spyOn(os, 'tmpdir').mockReturnValue(runnerDirectory);
-    const summary = path.join(runnerDirectory, 'summary.md');
-    const calls: { binary: string; args: string[] }[] = [];
-    const run = (binary: string, args: string[], options: { stdio: string[]; timeout: number; input?: unknown }) => {
-      calls.push({ binary, args });
-      const isLinkCreation = args[0] === 'ip' && args[1] === 'link' && args[2] === 'add';
-      if (isLinkCreation && failureStage === 'link') throw new Error('SECRET=link-error');
-      if (args[0] === 'wg') {
-        const keyPath = args[args.indexOf('private-key') + 1];
-        expect(fs.readFileSync(keyPath, 'utf8')).toBe(`${runnerEnvironment.DEPLOY_WG_PRIVATE_KEY}\n`);
-        expect(args[args.indexOf('allowed-ips') + 1]).toBe('10.8.0.1/32');
-        expect(args[2]).toBe('little-say-ci');
-        expect(args[2].length).toBeLessThanOrEqual(15);
-        if (process.platform !== 'win32') {
-          expect(fs.statSync(keyPath).mode & 0o777).toBe(0o600);
-          expect(fs.statSync(path.dirname(keyPath)).mode & 0o777).toBe(0o700);
-        }
-        if (failureStage === 'wg') throw new Error('SECRET=wireguard-error');
-      }
-      if (binary === 'ssh') {
-        expect(args).toEqual(expect.arrayContaining(['-F', '/dev/null', '-n', '-T', 'StrictHostKeyChecking=yes', 'BatchMode=yes', 'IdentitiesOnly=yes', 'GlobalKnownHostsFile=/dev/null']));
-        expect(args.at(-1)).toBe('little-say-deploy@10.8.0.1');
-        expect(args.join(' ')).not.toContain(runnerEnvironment.DEPLOY_SSH_PRIVATE_KEY);
-        expect(options.input).toBeUndefined();
-        expect(options.stdio[0]).toBe('ignore');
-        expect(options.timeout).toBe(20 * 60 * 1000);
-        const sshKey = args[args.indexOf('-i') + 1];
-        const knownHosts = args.find(value => value.startsWith('UserKnownHostsFile='))!.split('=')[1];
-        expect(fs.readFileSync(sshKey, 'utf8')).toBe(`${runnerEnvironment.DEPLOY_SSH_PRIVATE_KEY}\n`);
-        expect(fs.readFileSync(knownHosts, 'utf8')).toBe(`${runnerEnvironment.DEPLOY_SSH_KNOWN_HOSTS}\n`);
-        if (failureStage.startsWith('ssh')) throw new Error('SECRET=ssh-error');
-      }
-      if (args[2] === 'delete' && failureStage.includes('cleanup')) throw new Error('SECRET=cleanup-error');
-      return '';
-    };
-    const invoke = () => connectAndDeploy({ ...runnerEnvironment, GITHUB_STEP_SUMMARY: summary }, run);
-    if (failureStage === 'success') invoke();
-    else expect(invoke).toThrow(/^Deployment (failed|tunnel cleanup failed)\./);
-    const cleanup = { binary: 'sudo', args: ['ip', 'link', 'delete', 'little-say-ci'] };
-    if (failureStage === 'link') expect(calls).not.toContainEqual(cleanup);
-    else expect(calls.at(-1)).toEqual(cleanup);
-    if (failureStage === 'success') {
-      expect(calls).toContainEqual({ binary: 'sudo', args: ['ip', 'route', 'add', '10.8.0.1/32', 'dev', 'little-say-ci'] });
-      expect(fs.readFileSync(summary, 'utf8')).toContain('application health check succeeded');
-      expect(fs.readdirSync(runnerDirectory)).toEqual(['summary.md']);
-    } else expect(fs.readdirSync(runnerDirectory)).toEqual([]);
+    expect(create).not.toHaveBeenCalled();
   });
 });
 
-it('keeps the privileged wrapper fixed, argument-free, and isolated from the SSH environment', () => {
-  const wrapper = fs.readFileSync(new URL('../../deploy/self-hosted/little-say-deploy', import.meta.url), 'utf8');
-  expect(wrapper).toContain('[ "$#" -eq 0 ] || exit 1');
-  expect(wrapper).toContain('/usr/bin/env -i PATH=/usr/bin:/bin DOCKER_CONFIG=/etc/little-say/registry');
-  expect(wrapper).toContain('/usr/bin/node /usr/local/lib/little-say-deploy.mjs </dev/null');
-  expect(wrapper).not.toMatch(/SSH_ORIGINAL_COMMAND|\$@|\$\*/);
+describe('private deployment request', () => {
+  it.each([
+    ['https://deploy.example.test/deploy/little-say', 'deploy.example.test:443:10.8.0.1'],
+    ['https://deploy.example.test:8443/deploy/little-say', 'deploy.example.test:8443:10.8.0.1'],
+    ['https://10.8.0.1/deploy/little-say', '10.8.0.1:443:10.8.0.1'],
+  ])('POSTs once to %s with private resolution and verified TLS', (url, resolve) => {
+    const fixture = runnerFixture();
+    fixture.env.DEPLOY_URL = url;
+    const before = structuredClone(fixture.env);
+    fixture.invoke();
+    expect(fixture.env).toEqual(before);
+    const requests = fixture.calls.filter(call => call.binary === 'curl');
+    expect(requests).toHaveLength(1);
+    const { args, options } = requests[0];
+    expect(args[0]).toBe('--disable');
+    expect(value(args, '--proto')).toBe('=https');
+    expect(value(args, '--noproxy')).toBe('*');
+    expect(value(args, '--request')).toBe('POST');
+    expect(value(args, '--resolve')).toBe(resolve);
+    expect(value(args, '--url')).toBe(url);
+    expect(value(args, '--connect-timeout')).toBe('15');
+    expect(value(args, '--max-time')).toBe('780');
+    expect(value(args, '--retry')).toBe('0');
+    expect(value(args, '--write-out')).toBe('\n%{http_code}');
+    expect(value(args, '--config')).toBe('-');
+    for (const forbidden of ['--insecure', '-k', '--location', '-L', '--location-trusted', '--proxy']) expect(args).not.toContain(forbidden);
+    expect(args.some(arg => /^--(data|form|upload|json)/.test(arg))).toBe(false);
+    expect(args.join(' ')).not.toContain(runnerEnvironment.DEPLOY_TOKEN);
+    expect(args.join(' ')).not.toContain(runnerEnvironment.DEPLOY_WG_PRIVATE_KEY);
+    expect(options.input).toBe(`header = "Authorization: Bearer ${runnerEnvironment.DEPLOY_TOKEN}"\n`);
+    expect(options.stdio).toEqual(['pipe', 'pipe', 'pipe']);
+    expect(options.encoding).toBe('utf8');
+    expect(options.timeout).toBe(790000);
+    expect(options.maxBuffer).toBe(65536);
+    expect(fixture.calls.some(call => call.binary === 'ssh')).toBe(false);
+    expect(fixture.calls.find(call => call.args[0] === 'wg')?.args).toEqual(expect.arrayContaining([
+      'little-say-ci', 'allowed-ips', '10.8.0.1/32', 'endpoint', 'vpn.example.test:51820',
+    ]));
+    expect(fixture.calls.some(call => call.args.join(' ') === 'ip route add 10.8.0.1/32 dev little-say-ci')).toBe(true);
+    expect(fixture.calls.at(-1)?.args).toEqual(cleanupCommand);
+    expect(fixture.credentials().keyContents).toBe(`${runnerEnvironment.DEPLOY_WG_PRIVATE_KEY}\n`);
+    expect(fixture.credentials().privateFiles).toEqual(['wireguard.key']);
+    if (process.platform !== 'win32') {
+      expect(fixture.credentials().keyMode).toBe(0o600);
+      expect(fixture.credentials().directoryMode).toBe(0o700);
+    }
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual(['summary.md']);
+    expect(fs.readFileSync(fixture.summary, 'utf8')).toBe('Homelab webhook confirmed Little Say deployment and application health.\n');
+  });
+
+  it.each(['000', '201', '202', '204', '301', '302', '401', '409', '502', '504'])('rejects HTTP %s without retrying even with a success body', status => {
+    const fixture = runnerFixture({ response: `${JSON.stringify(successResponse)}\n${status}` });
+    expect(fixture.invoke).toThrow('Deployment failed or health was not confirmed');
+    expect(fixture.calls.filter(call => call.binary === 'curl')).toHaveLength(1);
+    expect(fixture.calls.at(-1)?.args).toEqual(cleanupCommand);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it.each([
+    '{}', 'null', '[]', 'true', 'not JSON with SECRET=raw-response',
+    JSON.stringify({ ...successResponse, service: 'calibratehealth' }),
+    JSON.stringify({ ...successResponse, status: 'accepted' }),
+    JSON.stringify({ ...successResponse, status: 'failed' }),
+    JSON.stringify({ ...successResponse, healthy: false }),
+    JSON.stringify({ ...successResponse, healthy: 'true' }),
+    JSON.stringify({ service: 'little-say', status: 'succeeded' }),
+  ])('requires completed service-specific affirmative JSON: %s', body => {
+    const fixture = runnerFixture({ response: `${body}\n200` });
+    expect(fixture.invoke).toThrow(/^Deployment failed or health was not confirmed\./);
+    expect(fixture.calls.filter(call => call.binary === 'curl')).toHaveLength(1);
+    expect(fixture.calls.at(-1)?.args).toEqual(cleanupCommand);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it.each([JSON.stringify(successResponse), `${successOutput}\n`, '200', ''])('rejects malformed HTTP framing: %j', response => {
+    const fixture = runnerFixture({ response });
+    expect(fixture.invoke).toThrow(/^Deployment failed or health was not confirmed\./);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+});
+
+describe('runner cleanup and safe errors', () => {
+  it.each(['create', 'address', 'wireguard', 'up', 'route', 'request'])('cleans only its own interface and private files after %s fails', failure => {
+    const fixture = runnerFixture({ failure });
+    expect(fixture.invoke).toThrow(/^Deployment failed or health was not confirmed\./);
+    expect(fixture.calls.filter(call => call.binary === 'curl')).toHaveLength(failure === 'request' ? 1 : 0);
+    if (failure === 'create') expect(fixture.calls.some(call => call.args[2] === 'delete')).toBe(false);
+    else expect(fixture.calls.at(-1)?.args).toEqual(cleanupCommand);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it('withholds success if tunnel cleanup fails and still removes credentials', () => {
+    const fixture = runnerFixture({ cleanupFailure: true });
+    expect(fixture.invoke).toThrow('Deployment tunnel cleanup failed. Inspect runner networking before retrying.');
+    expect(fixture.calls.filter(call => call.binary === 'curl')).toHaveLength(1);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it('preserves a safe request failure when tunnel cleanup also fails', () => {
+    const fixture = runnerFixture({ failure: 'request', cleanupFailure: true });
+    expect(fixture.invoke).toThrow(/^Deployment failed or health was not confirmed\./);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it('withholds success and redacts credential cleanup failures', () => {
+    const fixture = runnerFixture();
+    vi.spyOn(fs, 'rmSync').mockImplementation(() => { throw new Error('SECRET=private-path'); });
+    expect(fixture.invoke).toThrow('Deployment credential cleanup failed. Inspect the temporary runner directory.');
+    expect(fixture.calls.at(-1)?.args).toEqual(cleanupCommand);
+    expect(fs.existsSync(fixture.summary)).toBe(false);
+  });
+
+  it('cleans the temporary directory without networking if writing the WireGuard key fails', () => {
+    const fixture = runnerFixture();
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => { throw new Error('SECRET=private-key'); });
+    expect(fixture.invoke).toThrow(/^Deployment failed or health was not confirmed\./);
+    expect(fixture.calls).toHaveLength(0);
+    expect(fixture.creation).toHaveBeenCalledOnce();
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
+
+  it('does not require a GitHub summary path for an otherwise successful call', () => {
+    const fixture = runnerFixture();
+    connectAndDeploy(runnerEnvironment, fixture.run);
+    expect(fs.readdirSync(fixture.runnerDirectory)).toEqual([]);
+  });
 });

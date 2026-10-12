@@ -1,4 +1,4 @@
-/** @file Verifies parsed deployment workflow boundaries and release gating across selected work, failures, and cancellation. */
+/** @file Verifies shared webhook workflow credentials and release gating across selected work, failures, and cancellation. */
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -9,7 +9,8 @@ import { root } from './common';
 const readWorkflow = (file: string) => parse(readFileSync(resolve(root, '.github/workflows', file), 'utf8'));
 const cut = readWorkflow('cut-release.yml');
 const deployment = readWorkflow('deploy-self-hosted.yml');
-const secretNames = ['DEPLOY_WG_ENDPOINT', 'DEPLOY_WG_PRIVATE_KEY', 'DEPLOY_SSH_PRIVATE_KEY', 'DEPLOY_SSH_KNOWN_HOSTS'];
+const secretNames = ['DEPLOY_WG_ENDPOINT', 'DEPLOY_WG_PRIVATE_KEY', 'DEPLOY_TOKEN'];
+const variableNames = ['DEPLOY_HOST', 'DEPLOY_URL', 'DEPLOY_WG_ADDRESS', 'DEPLOY_WG_PUBLIC_KEY'];
 type Result = 'success' | 'failure' | 'cancelled' | 'skipped';
 type Needs = Record<string, { result: Result; outputs?: Record<string, string> }>;
 
@@ -80,16 +81,18 @@ describe('deployment before release OTA', () => {
   });
 });
 
-describe('restricted reusable deployment', () => {
+describe('restricted shared webhook deployment', () => {
   it('uses manual/reusable entry points, a bounded hosted runner, and serialized protected environment', () => {
     expect(Object.keys(deployment.on)).toEqual(['workflow_dispatch', 'workflow_call']);
+    expect(deployment['run-name']).toBe('Deploy little-say server (${{ inputs.request_id || github.run_id }})');
+    expect(deployment.on.workflow_dispatch.inputs.request_id).toMatchObject({ type: 'string', required: false });
     expect(deployment.on.workflow_call.secrets).toEqual(Object.fromEntries(secretNames.map(name => [name, { required: true }])));
     expect(deployment.permissions).toEqual({ contents: 'read' });
     expect(deployment.env).toBeUndefined();
     expect(Object.keys(deployment.jobs)).toEqual(['deploy']);
     const job = deployment.jobs.deploy;
     expect(job['runs-on']).toBe('ubuntu-latest');
-    expect(job['timeout-minutes']).toBe(25);
+    expect(job['timeout-minutes']).toBe(20);
     expect(job.environment).toBe('self-hosted-testing');
     expect(job.concurrency).toEqual({ group: 'little-say-self-hosted-deploy', 'cancel-in-progress': false });
     expect(job.env).toBeUndefined();
@@ -106,9 +109,12 @@ describe('restricted reusable deployment', () => {
     const sensitive = steps.filter((step: any) => JSON.stringify(step).includes('secrets.'));
     expect(sensitive).toHaveLength(1);
     expect(sensitive[0].run).toBe('node deploy/scripts/connect-and-deploy.mjs');
-    expect(Object.keys(sensitive[0].env).filter(name => secretNames.includes(name))).toEqual(secretNames);
-    for (const name of secretNames) expect(sensitive[0].env[name]).toBe('${{ secrets.' + name + ' }}');
-    expect(JSON.stringify(deployment)).not.toMatch(/secrets: inherit|EXPO_TOKEN|GH_TOKEN|OPENAI_API_KEY|docker login/);
+    expect(sensitive[0].env).toEqual({
+      ...Object.fromEntries(variableNames.map(name => [name, '${{ vars.' + name + ' }}'])),
+      ...Object.fromEntries(secretNames.map(name => [name, '${{ secrets.' + name + ' }}'])),
+    });
+    expect(JSON.stringify(deployment)).not.toMatch(/secrets: inherit|EXPO_TOKEN|GH_TOKEN|OPENAI_API_KEY|docker login|DEPLOY_SSH_|self-hosted-deploy\.mjs/);
+    expect(JSON.stringify(cut.jobs.deploy)).not.toMatch(/DEPLOY_SSH_|secrets: inherit/);
   });
 
   it('removes the fixed tunnel even after failure or cancellation', () => {
