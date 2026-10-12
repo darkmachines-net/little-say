@@ -24,6 +24,7 @@ export function readAsset<T>(release: any, name: string): T | undefined {
 
 export interface Retirement {
   schema: 1; runId: string; releaseId: number; source: string; reason: string;
+  kind?: 'reconciled-partial'; evidenceHash?: string;
   assets: { id: number; name: string; digest: string; hash: string }[];
 }
 
@@ -33,6 +34,7 @@ export function verifyRetirement(release: any, complete = true): Retirement {
   assert(record?.schema === 1 && record.releaseId === release.id && release.draft && release.tag_name === `abandoned/${record.runId}`, 'Abandoned journal identity is uncertain; reconcile before another cut.');
   assert(Array.isArray(record.assets) && record.assets.every(a => /^sha256:[a-f0-9]{64}$/.test(a.digest) && release.assets.some((r: any) => r.id === a.id && r.name === a.name && r.digest === a.digest) && hash(readAsset(release, a.name)) === a.hash), 'Retired journal assets changed or are missing.');
   assert(release.assets.every((a: any) => ['retirement.json', 'retirement-complete.json'].includes(a.name) || record.assets.some(r => r.id === a.id && r.name === a.name)), 'Unexpected retired journal assets; reconcile publication state.');
+  if (record.kind === 'reconciled-partial') assert(record.evidenceHash === hash(readAsset(release, 'reconciliation.json')), 'Partial-release reconciliation evidence changed or is missing.');
   if (complete) assert(readAsset<{ retirementHash: string }>(release, 'retirement-complete.json')?.retirementHash === hash(record), 'Retirement readback is incomplete; reconcile before another cut.');
   return record;
 }

@@ -47,6 +47,11 @@ beforeEach(() => {
 });
 afterEach(() => { vi.unstubAllEnvs(); for (const path of paths) rmSync(path, { recursive: true, force: true }); });
 describe('unpublished candidate retirement', () => {
+  it('identifies the actual blocking run instead of attributing its journal to the new run', () => {
+    asset('prepared.json', {});
+    expect(() => reconcileCandidates('124')).toThrow('Blocking journal candidate/123 (https://github.com/test/app/actions/runs/123): Publication or unknown');
+    expect(remote[0].tag_name).toBe('candidate/123');
+  });
   it('retains the same release and original assets, records why, and unblocks only a fresh ID', () => {
     const originals = structuredClone(remote[0].assets);
     expect(retireCandidate('123')).toBe(true); verifyRetirement(remote[0]);

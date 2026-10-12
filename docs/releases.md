@@ -18,7 +18,7 @@ For standalone source validation, run the existing **Check** workflow on the des
 1. Merge this workflow into the default branch before using **Cut release**. Preview with `npm run release:plan`, then use the internal channel for initial publication.
 2. In GitHub **Settings → Actions → General → Workflow permissions**, enable **Allow GitHub Actions to create and approve pull requests**. The workflow creates release PRs but does not approve reviews. Keep the default token permissions read-only: the jobs explicitly request `contents: write`, `pull-requests: write`, and `checks: write` for cutting a release, and `packages: write` for publication. All use `GITHUB_TOKEN`. Enable squash merges. Keep any required reviews; the workflow never bypasses them.
 3. Use the committed Expo project in `native-release.json`: `@matthewchartier/little-say`, UUID `a0336055-a9d6-46b1-8eb4-120944304685`, server `https://littlesay.darkmachines.net`. The workflow verifies the remote project identity. Add an Expo access token as the GitHub repository secret `EXPO_TOKEN`; keep signing and submission credentials in EAS. Put deployment credentials only in the protected `self-hosted-testing` environment as described in the [webhook configuration guide](../deploy/self-hosted/README.md).
-4. Install locked dependencies and CLI, then configure **both** platforms' EAS-managed internal signing. Register iOS test devices and ensure an unexpired ad hoc provisioning profile includes them. Android needs one default keystore. Perform Expo's initial interactive cloud-build setup before relying on noninteractive CI; see [Expo CI prerequisites](https://docs.expo.dev/build/building-on-ci/). Queuing a build alone is not successful onboarding.
+4. Install locked dependencies and CLI, then configure **both** platforms' EAS-managed internal signing. Register iOS test devices and ensure an unexpired ad hoc provisioning profile includes them and the `com.apple.developer.applesignin: ["Default"]` entitlement required by the app. Planning checks the selected distribution profile's entitlement in memory without logging its contents. Android needs one default keystore. Perform Expo's initial interactive cloud-build setup before relying on noninteractive CI; see [Expo CI prerequisites](https://docs.expo.dev/build/building-on-ci/). Queuing a build alone is not successful onboarding.
 
 ```powershell
 npm ci
@@ -91,9 +91,33 @@ The `latest` alias and running server can advance before native/OTA work finishe
 
 For review or a merge queue whose source remains valid, complete the normal review/merge process and select **Re-run failed jobs on the original run**. Do the same for reconciled provider failures or queued builds that outlive the job's bounded wait. Re-running all jobs also reuses the run's immutable plan. Resume the original run for a recoverable cut instead of dispatching a duplicate release. A moved base or different merged tree is terminal for that immutable plan; do not rerun it.
 
+If Xcode reports that the provisioning profile lacks Sign In with Apple, refresh the selected profile through `credentials:configure-build --platform ios --profile internal` (or `production`) after authenticating with Apple. Preserve the distribution certificate and, for internal distribution, the registered devices. Decline reuse of the stale profile, select the same devices, and verify the regenerated profile contains the entitlement before retrying the failed jobs. Keep the original candidate and successful operations. Changing signing credentials does not require changing the saved source, version, or release plan; disabling the app capability is not a signing repair. See [Expo's capability synchronization guide](https://docs.expo.dev/build-reference/ios-capabilities/).
+
+The pinned EAS 22.4.0 client can fail Apple login with `iTunes service key is empty`; Expo [fixed that authentication failure in 24.4.2](https://github.com/expo/eas-cli/issues/4394). For this credential-only repair, install the exact fixed version into an ignored recovery directory, temporarily allow that version only for the interactive credential command, and restore the environment afterward:
+
+```powershell
+# Run from the repository root. This installs a separate credential-repair client.
+npm install --prefix artifacts/eas-login-cli --no-save --package-lock=false --ignore-scripts --no-audit --no-fund eas-cli@24.4.2
+$previousVersionCheck = $env:EAS_SKIP_CLI_VERSION_CHECK
+Push-Location apps/mobile
+try {
+  $env:EAS_SKIP_CLI_VERSION_CHECK = '1'
+  node ../../artifacts/eas-login-cli/node_modules/eas-cli/bin/run credentials:configure-build --platform ios --profile internal
+} finally {
+  $env:EAS_SKIP_CLI_VERSION_CHECK = $previousVersionCheck
+  Pop-Location
+}
+```
+
+Enter the Apple password and verification code only in the CLI. This command manages credentials; it does not start a build. Release publication continues to use the locked 22.4.0 toolchain and original plan.
+
 Base movement is terminal before the version PR merges, or when it changes the merged tree. Once the exact validated candidate has merged, later default-branch commits alone do not invalidate that source. Its retry still requires source ancestry, unchanged artifacts/environment and no newer completed release; retain this recoverable journal rather than automatically retiring it by age or default-head inequality.
 
 The draft journal uses immutable `plan.json`, `candidate.json`, `prepared.json`, `ota.json`, `receipt.json`, and append-only `op.<key>.<six-digit-sequence>.json` assets. Each operation has its own writer, so parallel platform jobs cannot overwrite each other's evidence. Intent is recorded before a request, its provider ID immediately after acceptance, and verified results before dependent work. Lost build/update responses are reconciled by exact run/source/payload markers; submissions are found on the exact build. Successful operations are never repeated. Partial publication is visible and is not an atomic transaction across providers.
+
+Finalization verifies published OTA metadata and downloads every asset to compare its bytes with the original export hashes retained in the operation receipts. It does not recompile Hermes for this readback: Hermes embeds temporary source filenames in bytecode, so identical JavaScript can produce different binary hashes. Initial OTA publication still compares the uploaded manifest with its validated local export. Completion publishes both `receipt.json` and a full `journal.json` archive before removing the candidate draft, preserving failed-provider and recovery history.
+
+If an older pinned cut published and deployed all artifacts but failed only at finalization, use **Recover release completion** on `master` with its original `run_id`. Leave `apply` false for a read-only audit, then run with `apply` true after that audit succeeds. This workflow shares the release concurrency group and supports only internal server-plus-both-new-native/OTA cuts with no submissions or imported baselines. It requires successful original preparation, server publication/promotion, deployment/readiness, native builds, and OTA jobs; any active cut, missing job proof, unknown journal data, unrecorded provider operation, changed artifact, destination, or environment blocks recovery. It reads both image architectures, all exact build IDs, artifact hashes, and OTA asset bytes, then repeats the journal/job audit before appending `completion-recovery.json` and publishing the original receipt. It does not rebuild, redeploy, republish OTA, change the plan, or advance aliases. The published receipt establishes completion; the original failed workflow can then rerun its finalization job, which recognizes that receipt and performs no provider operations.
 
 If an outcome is **unknown or ambiguous**, the workflow sends no second request. Keep the candidate draft. Inspect its latest operation asset and the EAS dashboard/API (build marker `little-say:<run-id>:build:<platform>`, OTA marker `little-say:<run-id>:ota:<platform>-<runtime>:<payload-hash>`, or submissions attached to the recorded build). Retry after the unique accepted operation becomes visible. If the provider confirms no operation was accepted, an operator can append the next operation asset with `status: "failed"`, preserving all earlier IDs, together with a separate recovery-evidence JSON asset; this explicitly authorizes retry after reconciliation. Never edit/clobber earlier journal assets or mark an existing successful operation failed. Multiple matching operations, changed artifacts, or immutable-tag conflicts require resolving the provider state, not blind uploads.
 
@@ -103,7 +127,29 @@ The workflow-wide `little-say-release` concurrency group serializes cuts. A fres
 
 Cleanup writes a durable tombstone before changing the PR or release. Lost responses, failed closure, missing assets, or uncertain readback leave the candidate/abandoned record blocking; a subsequent fresh run rechecks and finishes verified cleanup. Abandoned IDs are rejected before planning or journal creation and cannot be resurrected by the new code. **Never rerun an abandoned historical workflow:** old checkouts do not inherit this safeguard. Do not delete recovery evidence or manually remove the blocker to start a duplicate publication. Ambiguous provider outcomes and expired/unreadable run history still require operator reconciliation.
 
-The investigation on October 10, 2026 found [run 37874954697](https://github.com/MChartier/little-say/actions/runs/37874954697) partially published: its journal records a successful server `0.3.0` image and Android build, a failed iOS build, and no completion receipt. Its prepared state and provider operations block new cuts and cannot be retired as unpublished work. Recovery is a separate task; retain its evidence and completed operations. The two-input workflow change does not recover it. [GitHub reruns retain the original source](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs), so rerunning it does not acquire newer workflow or iOS fixes.
+The investigation on October 10, 2026 found [run 37874954697](https://github.com/MChartier/little-say/actions/runs/37874954697) partially published: server `0.3.0` and Android build `d7f73be2-de65-4016-a0f2-5ec7317905b0` succeeded; iOS build `adde78c5-19e6-40d5-8e58-d3b89abf6d46` failed. On October 12, explicit reconciliation verified the terminal provider outcomes and all workflow attempts, then preserved all 11 original assets in the same draft under `abandoned/37874954697`, with reconciliation and retirement evidence. No completion receipt or baseline was created. Never rerun that abandoned run. [GitHub reruns retain the original source](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs), so it cannot acquire the later iOS source fix.
+
+### Explicit recovery of a terminal partial internal cut
+
+When the remaining native work requires a source fix, the immutable old plan cannot acquire it. `npm run release:reconcile` provides a separate operator path for abandoning that remaining work while preserving successful publications. Automatic preparation still refuses to retire partial publications. Its error identifies the actual blocking journal and run, which may differ from the run currently failing preparation.
+
+The supported scope is deliberately narrow: an internal server-plus-Android/iOS cut with a verified server receipt, terminal recorded builds, and no executed deployment, promotion, OTA, submission, or unknown jobs across **any** attempt. The command verifies journal ownership, original asset identities and hashes, workflow history, the server Git tag, every recorded EAS build's identity/status, marker matches, and absence of submissions. Missing IDs, extra matching builds, active operations, unknown assets, and changed evidence stop recovery. Other partial cuts require separate operator reconciliation.
+
+Keep release dispatches stopped throughout this manual operation. Both preview and apply check for active cuts; this local command does not acquire GitHub's workflow concurrency lock. Install locked root/EAS dependencies and authenticate `gh` and EAS for repository and project reads. GitHub release write access is needed only for apply.
+
+```powershell
+$env:GITHUB_REPOSITORY = 'MChartier/little-say'
+$reason = 'Abandon remaining internal work so a fresh cut can include the merged iOS pod fix.'
+npm run release:reconcile -- --run 37874954697 --reason $reason
+# Review artifacts/reconciliation-37874954697.json, then explicitly apply that same evidence.
+npm run release:reconcile -- --run 37874954697 --reason $reason --apply
+```
+
+Apply repeats the audit and requires it to match the preview. It appends `reconciliation.json`, then a `retirement.json` tombstone with `kind: "reconciled-partial"`, preserves the same draft and every original asset under `abandoned/<run-id>`, and verifies `retirement-complete.json`. If interrupted, repeat the same apply command with the retained evidence; never delete or overwrite assets. Ordinary automatic retirement cannot finish an interrupted partial reconciliation. Successful artifacts, version tags, branches, running servers, and channel mappings are left in place. No provider request, deployment, rollback, or completion receipt is created.
+
+This audit relies on the original successful server job and verified journal receipt to establish its terminal outcome; it does not revalidate GHCR artifact bytes or promote the server. It checks native identity and status without downloading the build again. Future planning must still independently verify any image or explicitly imported native baseline it reuses. The abandoned draft never advances completion baselines. A fresh cut may allocate new native versions; retaining an old build's evidence does not automatically import it as an OTA target.
+
+After confirmed archival, use **Cut release** from current `master`. A recent run that stopped solely at reconciliation, created no candidate, and still pins current `master` can instead rerun its failed jobs. Never rerun the abandoned partial run. The original successful publications remain available for audit.
 
 ## Build, install and submit native apps
 

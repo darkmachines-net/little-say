@@ -3,11 +3,14 @@
 import { resolve, relative, isAbsolute } from 'node:path';
 import { assert, cleanCommit, readJson, root, sha256 } from './common';
 import { type NativeBuildBaseline, type OtaReceipt, type ReleasePlan, runtimeKey } from './contract';
-import { channelBranch, eas, expoEnvironment, exportBundle, otaEnvironment, updateGroup, updateGroups } from './expo';
+import { channelBranch, eas, expoEnvironment, exportBundle, otaEnvironment, updateAssetUrls, updateGroup, updateGroups } from './expo';
 import { hash } from './inputs';
 import { Journal } from './journal';
 import type { Platform } from './native-contract';
 import { runOperation } from './operation';
+import { artifactHash } from './cloud';
+
+export interface OtaResults { receipts: OtaReceipt[]; skipped: string[]; }
 
 /** Fingerprint the exported JavaScript and assets exactly as the pinned EAS manifest represents them. */
 export function bundlePayload(directory: string, platform: Platform): { launch: string; assets: string[] } {
@@ -32,6 +35,49 @@ export function verifyUpdate(update: any, args: { baseline: Pick<NativeBuildBase
   assert(manifest.extra?.expoClient?.extra?.eas?.projectId === b.release.expoProjectId && manifest.extra.expoClient.extra.serverUrl === b.release.serverUrl, 'OTA manifest project/server differs.');
 }
 
+/** Verify the recorded export against provider metadata and every downloaded asset, without recompiling nondeterministic Hermes bytecode or publishing anything. */
+export async function verifyPublishedOta(plan: ReleasePlan, commit: string, baselines: NativeBuildBaseline[], journal: Journal, saved: OtaResults): Promise<OtaResults> {
+  assert(saved && Array.isArray(saved.receipts) && Array.isArray(saved.skipped), 'Missing OTA completion record.');
+  assert((await expoEnvironment(plan.profile)).hash === plan.inputs.environmentHash, 'Environment changed before OTA readback.');
+  const branch = await channelBranch(plan.profile);
+  assert(hash(branch) === hash(plan.channelBranch), 'Channel mapping differs from the planned destination.');
+  const { eligible, skipped } = eligibleBaselines(plan, baselines);
+  for (const platform of plan.ota) if (!eligible.some(b => b.platform === platform)) skipped.push(`${platform}: no supported compatible runtime`);
+  assert(hash(skipped) === hash(saved.skipped) && saved.receipts.length === eligible.length, 'Recorded OTA target coverage differs.');
+  const visited = new Set<string>();
+  for (const receipt of saved.receipts) {
+    const key = runtimeKey(receipt.platform, receipt.runtimeVersion);
+    const baseline = eligible.find(b => runtimeKey(b.platform, b.runtimeVersion) === key);
+    assert(baseline && !visited.has(key) && receipt.input === plan.inputs.bundle[receipt.platform] && /^[a-f0-9]{64}$/.test(receipt.payloadHash), 'Recorded OTA identity/input differs.');
+    visited.add(key);
+    const previous = plan.previousOta.find(o => hash(o) === hash(receipt));
+    const reused = plan.mode === 'auto' && previous?.input === plan.inputs.bundle[receipt.platform];
+    if (!reused) {
+      const operation = journal.operation<OtaReceipt>(`ota-${key}`);
+      assert(operation?.status === 'complete' && operation.ids.at(-1) === receipt.group && hash(operation.result) === hash(receipt) && receipt.commit === commit, 'OTA operation lacks matching completed proof.');
+    }
+    const updates = await updateGroup(receipt.group);
+    assert(updates.length === 1 && updates[0].group === receipt.group && !updates[0].isRollBackToEmbedded, 'Unexpected OTA group contents.');
+    const update = updates[0];
+    const manifest = JSON.parse(update.manifestFragment);
+    const assets = [manifest.launchAsset, ...(manifest.assets || [])];
+    assert(assets.every(a => a && typeof a.storageKey === 'string' && /^[A-Za-z0-9_-]{43}$/.test(a.fileSHA256)), 'Missing OTA asset identity/hash.');
+    const payload = { launch: manifest.launchAsset.fileSHA256, assets: [...new Set<string>((manifest.assets || []).map((a: any) => a.fileSHA256))].sort() };
+    assert(hash(payload) === receipt.payloadHash, 'Published OTA payload differs from its original verified receipt.');
+    const marker = reused ? update.message : `little-say:${plan.runId}:ota:${key}:${receipt.payloadHash}`;
+    verifyUpdate(update, { baseline, commit: receipt.commit, branchId: branch.id, marker, payload });
+    const keys = [...new Set<string>(assets.map(a => a.storageKey))];
+    const urls = await updateAssetUrls(update.id, keys);
+    assert(urls.length === keys.length && new Set(urls.map(a => a.storageKey)).size === keys.length && urls.every(a => keys.includes(a.storageKey)), 'OTA asset download identities differ.');
+    for (const location of urls) {
+      const actual = Buffer.from(await artifactHash(location.url, location.headers), 'hex').toString('base64url');
+      assert(assets.filter(a => a.storageKey === location.storageKey).every(a => a.fileSHA256 === actual), 'Downloaded OTA bytes differ from the original verified export.');
+    }
+  }
+  assert(hash(await channelBranch(plan.profile)) === hash(branch) && (await expoEnvironment(plan.profile)).hash === plan.inputs.environmentHash, 'OTA destination/environment changed during readback.');
+  return saved;
+}
+
 /** Select supported current-profile runtimes; incompatible fingerprints are skipped, but corrupted baseline proof fails. */
 export function eligibleBaselines(plan: ReleasePlan, baselines: NativeBuildBaseline[]): { eligible: NativeBuildBaseline[]; skipped: string[] } {
   const policy = readJson(resolve(root, 'release-policy.json'));
@@ -52,6 +98,8 @@ export function eligibleBaselines(plan: ReleasePlan, baselines: NativeBuildBasel
 
 /** Publish one validated export per supported platform/runtime, reconciling lost update responses by operation marker. */
 export async function publishOta(plan: ReleasePlan, commit: string, baselines: NativeBuildBaseline[], journal: Journal): Promise<{ receipts: OtaReceipt[]; skipped: string[] }> {
+  const completed = journal.read<OtaResults>('ota.json');
+  if (completed) return verifyPublishedOta(plan, commit, baselines, journal, completed);
   const remote = await expoEnvironment(plan.profile);
   assert(remote.hash === plan.inputs.environmentHash, 'Environment changed before OTA.');
   const branch = await channelBranch(plan.profile);

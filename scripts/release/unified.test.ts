@@ -2,13 +2,13 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { appendFileSync } from 'node:fs';
-import { cleanCommit, git, readJson } from './common';
+import { cleanCommit, git, readJson, writeJson } from './common';
 import { completedReceipts, gh, Journal, readAsset, releases } from './journal';
 import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint } from './expo';
 import { prepareCandidate, validateReleaseSource } from './candidate';
 import { legacyImage, promoteImage, publishImage, verifyImage } from './image';
 import { cloudBuild, submitBuild } from './cloud';
-import { publishOta } from './ota';
+import { publishOta, verifyPublishedOta } from './ota';
 import { sourceInputs } from './inputs';
 import { releaseConfig } from './native-contract';
 import { unifiedRelease } from './unified';
@@ -24,7 +24,7 @@ vi.mock('./expo', async original => ({ ...await original<typeof import('./expo')
 vi.mock('./candidate', () => ({ prepareCandidate: vi.fn(), validateReleaseSource: vi.fn() }));
 vi.mock('./image', () => ({ legacyImage: vi.fn(), promoteImage: vi.fn(), publishImage: vi.fn(), verifyImage: vi.fn() }));
 vi.mock('./cloud', () => ({ cloudBuild: vi.fn(), submitBuild: vi.fn() }));
-vi.mock('./ota', () => ({ publishOta: vi.fn() }));
+vi.mock('./ota', () => ({ publishOta: vi.fn(), verifyPublishedOta: vi.fn() }));
 vi.mock('./version', async original => ({ ...await original<typeof import('./version')>(), checkVersions: vi.fn() }));
 vi.mock('./native-contract', async original => ({ ...await original<typeof import('./native-contract')>(), releaseConfig: vi.fn() }));
 vi.mock('./inputs', async original => ({ ...await original<typeof import('./inputs')>(), sourceInputs: vi.fn() }));
@@ -36,7 +36,7 @@ let records: Map<string, any>, journal: any, remote: any[], history: ReleaseRece
 beforeEach(() => {
   vi.resetAllMocks(); records = new Map(); remote = []; history = []; tags = new Set(); loseUpload = false;
   for (const [key, value] of Object.entries({ GITHUB_ACTIONS: 'true', DEFAULT_BRANCH: 'master', GITHUB_REF: 'refs/heads/master', GITHUB_REPOSITORY: 'test/app', GITHUB_RUN_ID: '123', GITHUB_OUTPUT: '/tmp/outputs', RELEASE_PROFILE: 'internal', RELEASE_BUMP: 'patch' })) vi.stubEnv(key, value);
-  journal = { tag: 'candidate/123', release: vi.fn(() => records.size ? { tag_name: 'candidate/123' } : undefined), create: vi.fn(), read: vi.fn((name: string) => records.get(name)), put: vi.fn((name: string, value: any) => { if (records.has(name)) expect(records.get(name)).toEqual(value); else records.set(name, value); }), operation: vi.fn((key: string) => records.get(`op-${key}`)) };
+  journal = { tag: 'candidate/123', release: vi.fn(() => records.size ? { id: 1, draft: true, tag_name: 'candidate/123', assets: [...records.keys()].map((name, id) => ({ id, name, digest: 'sha256:fixture' })) } : undefined), create: vi.fn(), read: vi.fn((name: string) => records.get(name)), put: vi.fn((name: string, value: any) => { if (records.has(name)) expect(records.get(name)).toEqual(value); else records.set(name, value); }), operation: vi.fn((key: string) => records.get(`op-${key}`)) };
   vi.mocked(Journal).mockImplementation(function () { return journal; });
   journal.assertActive = vi.fn();
   vi.mocked(cleanCommit).mockReturnValue(commit); vi.mocked(releaseConfig).mockReturnValue(release);
@@ -53,11 +53,12 @@ beforeEach(() => {
     if (args[0] === 'push') tags.add(args.at(-1)!); return '';
   });
   vi.mocked(releases).mockImplementation(() => remote);
-  vi.mocked(readAsset).mockImplementation((r: any) => r?.receipt);
+  vi.mocked(readAsset).mockImplementation((r: any, name) => r?.tag_name === 'candidate/123' ? records.get(name) : r?.documents?.[name]);
+  vi.mocked(verifyPublishedOta).mockImplementation(async (_plan, _commit, _baselines, _journal, saved) => saved);
   vi.mocked(gh).mockImplementation(args => {
-    if (args[1] === 'create') remote.push({ tag_name: args[2], draft: true });
-    if (args[1] === 'upload') { remote[0].receipt = records.get('receipt.json'); if (loseUpload) { loseUpload = false; throw Error('lost completion upload response'); } }
-    if (args[1] === 'edit') { remote[0].draft = false; history.push(remote[0].receipt); }
+    if (args[1] === 'create') remote.push({ tag_name: args[2], draft: true, documents: {} });
+    if (args[1] === 'upload') { remote[0].documents[args[3].split(/[\\/]/).at(-1)!] = [...vi.mocked(writeJson).mock.calls].reverse().find(([path]) => path === args[3])![1]; if (loseUpload) { loseUpload = false; throw Error('lost completion upload response'); } }
+    if (args[1] === 'edit') { remote[0].draft = false; history.push(remote[0].documents['receipt.json']); }
     return '';
   });
 });
@@ -162,6 +163,7 @@ describe('orchestration publication boundaries', () => {
     await expect(unifiedRelease('ota')).rejects.toThrow('OTA provider unavailable');
     expect(records.has('receipt.json')).toBe(false); expect(history).toEqual([]);
     await unifiedRelease('ota'); await unifiedRelease('finalize');
+    expect(verifyPublishedOta).toHaveBeenCalledOnce(); expect(publishOta).toHaveBeenCalledTimes(2);
     expect(promoteImage).toHaveBeenCalledTimes(2); expect(publishImage).not.toHaveBeenCalled();
     expect(history).toHaveLength(1); expect(history[0].server).toEqual(old.server);
   });
@@ -170,7 +172,8 @@ describe('orchestration publication boundaries', () => {
     records.set('plan.json', plan); records.set('prepared.json', old.prepared); loseUpload = true;
     await expect(unifiedRelease('finalize')).rejects.toThrow('lost completion'); expect(history).toEqual([]); expect(records.has('receipt.json')).toBe(true);
     const receipt = records.get('receipt.json'); await unifiedRelease('finalize'); expect(history).toEqual([receipt]);
-    expect(vi.mocked(gh).mock.calls.filter(([args]) => args[1] === 'upload')).toHaveLength(1);
+    expect(vi.mocked(gh).mock.calls.filter(([args]) => args[1] === 'upload')).toHaveLength(2);
+    expect(remote[0].documents['journal.json'].assets.some((a: any) => a.name === 'receipt.json' && a.content === receipt)).toBe(true);
     expect(promoteImage).not.toHaveBeenCalled(); expect(cloudBuild).not.toHaveBeenCalled();
     await unifiedRelease('prepare'); expect(prepareCandidate).not.toHaveBeenCalled();
   });

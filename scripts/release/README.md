@@ -1,6 +1,6 @@
 # Release implementation
 
-The only publication workflow is `.github/workflows/cut-release.yml`. `npm run release:cut -- <stage>` invokes `unified.ts`; `release:plan` runs the read-only plan/check/export path. The workflow exposes only `bump` and `profile`; new plans always use automatic selection. Use the workflow for mutations. Standalone source checks use **Check** or `release:validate`. All provider commands use pinned dependencies and the exact protected source tree.
+Artifact publication uses `.github/workflows/cut-release.yml`. `npm run release:cut -- <stage>` invokes `unified.ts`; `release:plan` runs the read-only plan/check/export path. The workflow exposes only `bump` and `profile`; new plans always use automatic selection. Use the workflow for mutations. `recover-release.yml` can audit a terminal internal cut and publish only its missing completion receipt after all original operations are verified. Standalone source checks use **Check** or `release:validate`. Provider commands use pinned dependencies and publication uses the exact protected source tree.
 
 | File | Responsibility |
 | --- | --- |
@@ -8,11 +8,13 @@ The only publication workflow is `.github/workflows/cut-release.yml`. `npm run r
 | `inputs.ts`, `planner.ts` | Committed component/dependency identities, per-profile comparisons, automatic selection and the requested server/native version increment |
 | `metadata.ts`, `candidate.ts` | Combined version-only PR, normal protection/review, full repository/PostgreSQL checks, and exact merged-tree validation |
 | `journal.ts`, `operation.ts` | Immutable draft-release assets, per-operation sequence/IDs, recovery reconciliation and ambiguity stops |
+| `retirement.ts`, `reconciliation.ts` | Automatic retirement of unpublished stale candidates; separate preview/apply audit for terminal internal image/build cuts, preserving partial publications without claiming completion |
 | `image.ts` | Legacy image verification, multi-architecture immutable publication, and guarded `latest` promotion |
-| `expo.ts`, `eas-credentials.ts`, `environment.ts` | Pinned EAS reads, remote identities/credentials/environment, runtime resolution and export |
+| `expo.ts`, `eas-credentials.ts`, `ios-signing.ts`, `environment.ts` | Pinned EAS reads, remote identities/credentials/environment, selected iOS profile entitlement checks, runtime resolution and export |
 | `cloud.ts` | Finished platform builds, artifact SHA-256 proof, and exact-ID production submissions |
 | `ota.ts` | Runtime eligibility/retirement/deduplication, validated exports, raw group/payload verification |
 | `summary.ts` | Selected/skipped component decisions, versions, runtime exclusions, and verified artifact links |
+| `completion.ts`, `completion-recovery.ts` | Verified completion receipt and full journal archive; restricted recovery of fully published and deployed internal cuts |
 | `unified.ts` | Stage boundaries, source/destination guards, completed baseline selection and final release readback |
 | `native.ts`, `native-contract.ts` | Existing local build/install/submit operations and local/cloud baseline OTA validation |
 | `ota-deployment.ts` | Local OTA gate: dispatch and await one correlated private-server workflow before uploading |

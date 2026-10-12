@@ -8,6 +8,7 @@ import { validateExpoEnvironment } from './environment';
 import { profileConfig, releaseConfig, verifyOta, type Baseline, type NativeRelease, type Platform, type Profile } from './native-contract';
 import { type NativeBuildBaseline, validateCloudBaseline } from './contract';
 import { hash } from './inputs';
+import { verifyAppleSignInProfile } from './ios-signing';
 
 const cli = resolve(root, 'tools/eas-cli/node_modules/eas-cli/bin/run');
 
@@ -95,6 +96,12 @@ export async function updateGroup(groupId: string): Promise<any[]> {
   return require(resolve(root, 'tools/eas-cli/node_modules/eas-cli/build/graphql/queries/UpdateQuery.js')).UpdateQuery.viewUpdateGroupAsync(graphqlClient(), { groupId });
 }
 
+/** Resolve authenticated download locations for an update's exact asset keys; callers must not log signed URLs or headers. */
+export async function updateAssetUrls(updateId: string, storageKeys: string[]): Promise<{ storageKey: string; url: string; headers: Record<string, string> }[]> {
+  const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));
+  return require(resolve(root, 'tools/eas-cli/node_modules/eas-cli/build/graphql/queries/AssetQuery.js')).AssetQuery.getSignedUrlsAsync(graphqlClient(), updateId, storageKeys);
+}
+
 /** List raw update groups; the human-readable EAS CLI list truncates and decorates messages, so it cannot reconcile IDs. */
 export async function updateGroups(branchName: string, platform: Platform, runtime: string, offset: number): Promise<any[][]> {
   const require = createRequire(resolve(root, 'tools/eas-cli/package.json'));
@@ -103,7 +110,7 @@ export async function updateGroups(branchName: string, platform: Platform, runti
   });
 }
 
-/** Verify required EAS signing and submission records exist using identifiers only, before any publication. */
+/** Verify signing/submission records and the selected iOS profile's Apple sign-in entitlement; keep profile contents in memory without logging them. */
 export async function preflightCredentials(profile: Profile, selected: Platform[]): Promise<void> {
   if (!selected.length) return;
   const release = releaseConfig();
@@ -116,7 +123,7 @@ export async function preflightCredentials(profile: Profile, selected: Platform[
       iosAppCredentials {
         appleAppIdentifier { bundleIdentifier }
         appStoreConnectApiKeyForSubmissions { id }
-        iosAppBuildCredentialsList { iosDistributionType distributionCertificate { id } provisioningProfile { id expiration } }
+        iosAppBuildCredentialsList { iosDistributionType distributionCertificate { id } provisioningProfile { id expiration provisioningProfile } }
       }
     } }
   }`, { id: release.expoProjectId }, { noRetry: true }).toPromise();
@@ -131,7 +138,9 @@ export async function preflightCredentials(profile: Profile, selected: Platform[
     const records = app.iosAppCredentials.filter((r: any) => r.appleAppIdentifier?.bundleIdentifier === 'net.darkmachines.littlesay');
     assert(records.length === 1, 'Configure iOS signing for the Little Say bundle identifier.');
     const kind = profile === 'internal' ? 'AD_HOC' : 'APP_STORE';
-    assert(records[0].iosAppBuildCredentialsList.some((c: any) => c.iosDistributionType === kind && c.distributionCertificate?.id && c.provisioningProfile?.id && Date.parse(c.provisioningProfile.expiration) > Date.now()), `Configure unexpired ${kind} iOS signing in EAS.`);
+    const credentials = records[0].iosAppBuildCredentialsList.filter((c: any) => c.iosDistributionType === kind);
+    assert(credentials.length === 1 && credentials[0].distributionCertificate?.id && credentials[0].provisioningProfile?.id && Date.parse(credentials[0].provisioningProfile.expiration) > Date.now(), `Configure one unexpired ${kind} iOS signing credential in EAS.`);
+    verifyAppleSignInProfile(credentials[0].provisioningProfile.provisioningProfile);
     if (profile === 'production') {
       assert(records[0].appStoreConnectApiKeyForSubmissions?.id, 'Configure App Store Connect submission credentials in EAS.');
       assert(/^\d+$/.test(readJson(resolve(mobile, 'eas.json')).submit.production.ios.ascAppId || ''), 'Set submit.production.ios.ascAppId before production releases.');

@@ -30,6 +30,7 @@
     "release:check": "tsx scripts/release/version.ts check",
     "release:validate": "tsx scripts/release/validation.ts",
     "release:cut": "tsx scripts/release/unified.ts",
+    "release:reconcile": "tsx scripts/release/reconciliation.ts",
     "release:plan": "tsx scripts/release/unified.ts plan",
     "release:prepare": "tsx scripts/release/version.ts prepare",
     "native:setup": "tsx scripts/release/native.ts setup",
@@ -59,6 +60,7 @@
   "devDependencies": {
     "@expo/fingerprint": "0.20.13",
     "@expo/image-utils": "0.11.5",
+    "@expo/plist": "0.8.1",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.23.1",

@@ -1,24 +1,24 @@
 /** @file Coordinates protected releases, server promotion before deployment, provider jobs, and verified completion. */
 
-import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { appendFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { assert, cleanCommit, fail, git, isMain, readJson, root, writeJson } from './common';
 import { assertCommit, validateCloudBaseline, type Inputs, type NativeBuildBaseline, type OtaReceipt, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
 import { type Platform, type Profile, releaseConfig } from './native-contract';
 import { hash, sourceInputs } from './inputs';
 import { hasWork, planRelease } from './planner';
-import { completedReceipts, gh, Journal, readAsset, releases } from './journal';
+import { completedReceipts, gh, Journal } from './journal';
 import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint, otaEnvironment, preflightCredentials, versionEnvironment } from './expo';
 import { prepareCandidate, validateReleaseSource } from './candidate';
 import { artifactHash, cloudBuild, submitBuild, verifyBuildIdentity } from './cloud';
 import { eas } from './expo';
 import { checkVersions } from './version';
 import { legacyImage, promoteImage, publishImage, verifyImage } from './image';
-import { publishOta } from './ota';
+import { publishOta, verifyPublishedOta } from './ota';
 import { StaleCandidateError } from './metadata';
 import { reconcileCandidates, retireCandidate } from './retirement';
 import { releaseSummary } from './summary';
+import { publishCompletion } from './completion';
 
 function summary(message: string) {
   console.log(message);
@@ -122,34 +122,11 @@ async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: J
     if (plan.profile === 'production') await submitBuild(plan, b, journal);
   }
   if (plan.ota.length) {
-    const verified = await publishOta(plan, prepared.commit, baselines, journal);
+    const verified = await verifyPublishedOta(plan, prepared.commit, baselines, journal, ota!);
     assert(hash(verified) === hash(ota), 'OTA readback changed before completion.');
   }
   guard(plan, prepared);
-  const receipt: ReleaseReceipt = journal.read<ReleaseReceipt>('receipt.json') || {
-    schema: 1, runId: plan.runId, profile: plan.profile, commit: prepared.commit, completedAt: new Date().toISOString(), plan, prepared, server, baselines,
-    ota: [...plan.previousOta.filter(old => !ota?.receipts.some(o => o.platform === old.platform && o.runtimeVersion === old.runtimeVersion)), ...(ota?.receipts || [])],
-  };
-  journal.put('receipt.json', receipt);
-  const tag = `release/${plan.profile}/${plan.runId}`;
-  const existingTag = git(['ls-remote', '--tags', 'origin', `refs/tags/${tag}`]);
-  if (existingTag) assert(existingTag.split(/\s/)[0] === prepared.commit, 'Completion tag conflicts.');
-  else { git(['tag', tag, prepared.commit]); git(['push', 'origin', `refs/tags/${tag}`]); }
-  const temp = mkdtempSync(resolve(tmpdir(), 'little-say-complete-'));
-  const notes = resolve(temp, 'notes.md');
-  const deployment = plan.server || plan.ota.length ? 'The preceding workflow deployment upgraded the self-hosted testing Compose server and passed readiness checks. This receipt does not attest the deployed image digest.' : 'This native-only cut did not run a server deployment.';
-  const message = `Released ${plan.profile} from \`${prepared.commit}\`.\n\n${releaseSummary(plan, { server, baselines, ota: ota?.receipts || [], skipped: ota?.skipped || [] })}\n\n${deployment} Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
-  writeFileSync(notes, message);
-  let release = releases().find(r => r.tag_name === tag);
-  if (!release) { gh(['release', 'create', tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft', '--verify-tag', '--title', `Little Say ${plan.profile} ${plan.runId}`, '--notes-file', notes]); release = releases().find(r => r.tag_name === tag); }
-  const existing = readAsset(release, 'receipt.json');
-  if (existing) assert(hash(existing) === hash(receipt), 'Completion manifest conflicts.');
-  else { const file = resolve(temp, 'receipt.json'); writeJson(file, receipt); gh(['release', 'upload', tag, file, '--repo', process.env.GITHUB_REPOSITORY!]); }
-  assert(hash(readAsset(releases().find(r => r.tag_name === tag), 'receipt.json')) === hash(receipt), 'Completion receipt readback failed.');
-  gh(['release', 'edit', tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft=false', '--latest=false']);
-  assert(completedReceipts().some(r => r.runId === plan.runId), 'Completed release is not readable.');
-  gh(['release', 'delete', journal.tag, '--repo', process.env.GITHUB_REPOSITORY!, '--yes']);
-  summary(`${message}\nRelease: https://github.com/${process.env.GITHUB_REPOSITORY}/releases/tag/${tag}`);
+  publishCompletion(plan, prepared, journal, baselines, ota, server);
 }
 
 /** Run a workflow release stage or read-only plan; server promotion precedes deployment, and retries retain recorded operations. */
@@ -214,6 +191,6 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
 }
 
 if (isMain(import.meta.url)) unifiedRelease().catch(error => {
-  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}.\n\nRecovery evidence remains in the candidate/${process.env.GITHUB_RUN_ID} or abandoned/${process.env.GITHUB_RUN_ID} draft journal. Never rerun an abandoned run. Retry only recoverable review/provider states after reconciliation; see docs/releases.md. Completed baselines have not advanced unless the completion release is published.`);
+  summary(`Release stage **${process.argv[2] || 'prepare'}** stopped: ${error instanceof Error ? error.message : 'unknown failure'}\n\nRecovery evidence is retained in candidate/<run-id> or abandoned/<run-id> draft journals. During preparation, use the blocking journal named above; it can belong to an earlier run. Never rerun an abandoned run. Retry only recoverable review/provider states after reconciliation; see docs/releases.md. Completed baselines have not advanced unless the completion release is published.`);
   fail(error);
 });
