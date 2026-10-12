@@ -7,6 +7,54 @@ import { pcmToWav } from '../../apps/server/src/synthesis';
 
 const password = 'a test family passphrase';
 
+test('preparation: provider actions preserve keyboard, busy and retry behavior with synthetic authentication', async ({ page }) => {
+  await page.route('**/api/account/config', route => route.fulfill({ json: { projectId: 'demo-preparation', apiKey: 'synthetic-public-key', appId: 'synthetic-app', authDomain: 'example.test', providers: ['password', 'google.com', 'apple.com'] } }));
+  let finish: (() => void) | undefined;
+  await page.route('https://identitytoolkit.googleapis.com/**', async route => {
+    await new Promise<void>(resolve => { finish = resolve; });
+    await route.fulfill({ status: 400, json: { error: { message: 'INVALID_LOGIN_CREDENTIALS' } } });
+  });
+  await page.goto('/app');
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  const apple = page.getByRole('button', { name: 'Continue with Apple', exact: true });
+  await expect(apple).toBeEnabled();
+  await apple.focus(); await expect(apple).toBeFocused();
+  await page.getByLabel('Email', { exact: true }).fill('synthetic@example.test');
+  await page.getByLabel('Password', { exact: true }).fill('synthetic password');
+  await page.getByRole('button', { name: 'Sign in & sync this device', exact: true }).click();
+  try {
+    await expect(apple).toBeDisabled();
+    await expect(apple).toHaveAttribute('aria-busy', 'true');
+    await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeDisabled();
+    await expect.poll(() => Boolean(finish)).toBe(true);
+  } finally { finish?.(); }
+  await expect(apple).toBeEnabled();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('button', { name: 'Create an account', exact: true }).click();
+  await expect(apple).toBeEnabled();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toBeEnabled();
+});
+
+test('preparation: privacy information works offline and returns to the unsaved settings draft', async ({ page }) => {
+  await page.goto('/app');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByLabel('Private server address', { exact: true }).fill('https://unsaved.example.test');
+  await page.context().setOffline(true);
+  for (const width of [390, 820]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const entry = page.getByRole('button', { name: 'Little Say privacy information', exact: true });
+    await entry.focus(); await entry.press('Enter');
+    await expect(page.getByRole('heading', { name: 'Little Say privacy information', exact: true })).toBeVisible();
+    await expect(page.getByText(/Personal photos are never sent to AI/)).toBeVisible();
+    await page.getByRole('button', { name: 'Back to settings', exact: true }).click();
+    await expect(page.getByLabel('Private server address', { exact: true })).toHaveValue('https://unsaved.example.test');
+  }
+});
+
 test('launch choices, form back/cancel and settings navigation preserve guest state across relaunch', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app');

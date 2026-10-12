@@ -1,0 +1,7 @@
+/** @file Holds factual in-app privacy information; operator policy decisions remain in the unpublished draft. */
+export const privacyInfo = [
+  { title: 'On this device', text: 'Guest boards, personal photos, downloaded pictures and saved voices are stored on this device. They work offline. Removing the app or clearing its storage can remove them. Device settings and play history stay local.' },
+  { title: 'When you use AI', text: 'Prompts, voice recordings and necessary board words go through your selected server to OpenAI. Picture matching and generation can send descriptions and library or generated picture pixels. Personal photos are never sent to AI. Generated pictures and speech are cached on the server and downloaded for offline use.' },
+  { title: 'Optional accounts and backup', text: 'Firebase handles sign-in. Enabling account backup uploads boards, personal photos, illustrations and saved voices to your selected server after email verification. The server administrator can access backups; they are not end-to-end encrypted. Guest use does not create an account.' },
+  { title: 'Keeping and removing data', text: 'Sign-out keeps local boards and files. Delete account removes the shared Firebase login and the selected server backup; other servers need separate cleanup. Downloaded device copies and shared AI caches remain. The server does not retain microphone recordings, but picture and speech caches have no automatic expiry.' },
+] as const;
