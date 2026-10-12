@@ -78,8 +78,8 @@ describe('unpublished candidate retirement', () => {
   it.each(['prepared.json', 'receipt.json', 'ota.json', 'unknown.json'])('preserves publication/unknown state %s', name => {
     asset(name, {}); expect(() => retireCandidate('123')).toThrow('Publication or unknown');
   });
-  it('requires all-attempt job proof, even when no operation asset was saved', () => {
-    jobs.push({ name: 'native (android)', conclusion: 'cancelled' });
+  it.each(['native (android)', 'promote-server', 'deploy / deploy'])('requires all-attempt job proof for %s, even without a saved operation asset', name => {
+    jobs.push({ name, conclusion: 'cancelled' });
     expect(() => retireCandidate('123')).toThrow('non-prepare job');
     expect(data.size).toBe(2);
   });

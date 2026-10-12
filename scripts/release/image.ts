@@ -78,7 +78,7 @@ export function publishImage(plan: ReleasePlan, commit: string, journal: Journal
   journal.save({ key: 'server', status: 'complete', ids: [commit], result: receipt }); return receipt;
 }
 
-/** Advance latest only after the full cut succeeds and only if no newer server version has been prepared. */
+/** Advance latest before host deployment, only if no newer server version has been prepared; verify the alias readback. */
 export function promoteImage(receipt: ServerReceipt): void {
   const version = JSON.parse(git(['show', `origin/${process.env.DEFAULT_BRANCH}:release.json`])).version;
   assert(version === receipt.version && readJson(resolve(root, 'release.json')).version === receipt.version, 'A newer server version exists; refusing stale latest promotion.');

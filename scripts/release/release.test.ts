@@ -113,7 +113,7 @@ describe('publication boundary', () => {
       bump: { description: 'Version increment for server and native releases when needed', type: 'choice', options: ['patch', 'minor', 'major'], default: 'patch', required: true },
       profile: { description: 'Native distribution channel', type: 'choice', options: ['internal', 'production'], default: 'internal', required: true },
     });
-    expect(Object.keys(cut.jobs)).toEqual(['prepare', 'server', 'native', 'submit', 'ota', 'finalize']);
+    expect(Object.keys(cut.jobs)).toEqual(['prepare', 'server', 'promote-server', 'deploy', 'native', 'submit', 'ota', 'finalize']);
     expect(JSON.stringify(cut)).not.toMatch(/validation_only|ios_pods|build_mode|dry_run|RELEASE_MODE|RELEASE_DRY_RUN/);
     expect(cut.concurrency.group).toBe('little-say-release');
     expect(cut.jobs.prepare.steps.find((s: any) => s.uses?.startsWith('actions/checkout')).with.ref).toBe('${{ github.sha }}');
@@ -122,13 +122,13 @@ describe('publication boundary', () => {
     expect(cut.jobs.server.permissions).toEqual({ contents: 'write', packages: 'write' });
     expect(cut.concurrency['cancel-in-progress']).toBe(false);
     const commit = '${{ needs.prepare.outputs.commit }}';
-    for (const name of ['server', 'native', 'submit', 'ota', 'finalize']) expect(cut.jobs[name].steps.find((s: any) => s.uses?.startsWith('actions/checkout')).with.ref).toBe(commit);
+    for (const name of ['server', 'promote-server', 'native', 'submit', 'ota', 'finalize']) expect(cut.jobs[name].steps.find((s: any) => s.uses?.startsWith('actions/checkout')).with.ref).toBe(commit);
     expect(cut.jobs.native.strategy['fail-fast']).toBe(false);
     expect(cut.jobs.submit.if).toContain("needs.prepare.outputs.profile == 'production'");
-    expect(cut.jobs.ota.needs).toEqual(['prepare', 'server', 'native', 'submit']);
+    expect(cut.jobs.ota.needs).toEqual(['prepare', 'server', 'deploy', 'native', 'submit']);
     expect(cut.jobs.prepare.if).toContain('github.event.repository.default_branch');
     expect(cut.env.GH_TOKEN).toBeUndefined();
-    for (const job of Object.values(cut.jobs) as any[]) expect(job.env.GH_TOKEN).toBe('${{ github.token }}');
+    for (const job of Object.values(cut.jobs) as any[]) if (job.steps) expect(job.env.GH_TOKEN).toBe('${{ github.token }}');
     expect(JSON.stringify(workflow('ci.yml'))).not.toMatch(/release:cut|eas (build|submit|update)|EXPO_TOKEN|server:deploy/);
     for (const file of ['ci.yml', 'cut-release.yml']) {
       const doc = workflow(file);

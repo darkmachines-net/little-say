@@ -1,4 +1,4 @@
-# Builds the web app and API into a non-root server image with writable speech and picture caches.
+# Builds the web app and API into a non-root server image with durable caches and database readiness checks.
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -30,5 +30,5 @@ ENV SPEECH_CACHE_DIR=/app/data/speech
 ENV PICTURE_CACHE_DIR=/app/data/pictures
 USER node
 EXPOSE 8787
-HEALTHCHECK --interval=30s --timeout=5s CMD node -e "fetch('http://127.0.0.1:8787/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+HEALTHCHECK --interval=30s --timeout=5s CMD node -e "fetch('http://127.0.0.1:8787/api/ready',{signal:AbortSignal.timeout(4000)}).then(async r=>{if(!r.ok||(await r.json()).status!=='ok')process.exit(1)}).catch(()=>process.exit(1))"
 CMD ["node", "server/index.js"]
