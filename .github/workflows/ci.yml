@@ -36,4 +36,5 @@ jobs:
       - run: npm run check
       - run: npm run test:services
       - run: npx playwright install --with-deps chromium
+      - run: npm run test:web -- tests/web/safe-area.spec.ts
       - run: npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"

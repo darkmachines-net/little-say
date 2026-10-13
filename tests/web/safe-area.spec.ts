@@ -72,8 +72,13 @@ test('play controls and tiles use the inset viewport', async ({ page, context })
   await page.setViewportSize(portrait);
   const device = await context.newCDPSession(page);
   await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
+  await page.addInitScript(() => {
+    Object.defineProperty(window.speechSynthesis, 'getVoices', { configurable: true, value: () => [
+      { voiceURI: 'safe-area-en', name: 'Test English', lang: 'en-US', localService: true, default: true },
+    ] });
+    Element.prototype.requestFullscreen = async () => {};
+  });
   await openExistingLibrary(page);
-  await page.evaluate(() => { Element.prototype.requestFullscreen = async () => {}; });
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   await expectInsideSafeArea(page.getByTestId('parent-control'), page, bars);
   for (const name of ['Cow', 'Pig', 'Sheep', 'Horse', 'Chicken', 'Duck']) {

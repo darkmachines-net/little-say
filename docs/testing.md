@@ -13,7 +13,7 @@ npm run test:web
 
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. Selected [PR review screenshots](screenshots/little-say-branding/README.md) are retained separately.
 
-`tests/web/safe-area.spec.ts` overrides browser safe-area environment values to check account/setup,
+CI runs `tests/web/safe-area.spec.ts`, which overrides browser safe-area environment values to check account/setup,
 dialog close/save, and play control bounds, including changing bottom insets and rotating an open
 dialog. This exercises real layout but does not replace Android checks: verify status-bar/cutout and
 gesture/three-button navigation clearance in portrait and landscape, open a long settings or tile
