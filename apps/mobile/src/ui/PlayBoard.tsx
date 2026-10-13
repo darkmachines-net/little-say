@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
-import { gridLayout, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
+import { gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
 import { speechQueue, type Voice } from '../services/speech';
 import { TouchSurface } from './TouchSurface';
 import { ParentControl } from './ParentControl';
@@ -40,7 +40,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   const playLanguages = board.playLanguages ?? [];
   const compactLanguages = width < 700 || playLanguages.length > 3;
   const tiles = useMemo(() => board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false)), [board.tiles, board.translateLabels, language]);
-  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. A parent can check the volume and selected voice.'), audioAsset), [voices, settings.voices, audioAsset]);
+  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and selected voice in Settings.'), audioAsset, tag => speechSource(settings, tag)), [voices, settings, audioAsset]);
   useEffect(() => {
     const back = BackHandler.addEventListener('hardwareBackPress', () => true);
     const appState = AppState.addEventListener('change', state => { if (state !== 'active') { queue.stop(); clearTimeout(flashTimer.current); setFlash(null); setCancelToken(t => t + 1); } });

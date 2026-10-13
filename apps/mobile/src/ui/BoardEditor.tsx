@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
-import { MAX_TILES, boardAudioTiles, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
+import { MAX_TILES, speechSource, boardAudioTiles, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
 import { BoardLanguages } from './BoardLanguages';
 import { TileFace } from './TileFace';
 import { TileEditor } from './TileEditor';
@@ -54,7 +54,7 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   };
   const layout = gridLayout(board.tiles.length, Math.max(44, area.width - 24), Math.max(1, area.height - 24), 8,
     { minHeight: 64, maxWidth: 164, maxHeight: 148, scroll: true });
-  const audioTiles = boardAudioTiles(board);
+  const audioTiles = boardAudioTiles(board).filter(tile => speechSource(settings, tile.language) === 'ai');
   const readyAudio = audioTiles.filter(tile => audio.asset(tile)).length;
   const preparingAudio = audioTiles.filter(tile => audio.status(tile).state === 'preparing').length;
   const failedAudio = audioTiles.filter(tile => audio.status(tile).state === 'error' && !audio.asset(tile)).length;
@@ -90,12 +90,11 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
         <View testID="editor-actions" onLayout={event => setActionsHeight(event.nativeEvent.layout.height)} style={{ width: wide ? 280 : '100%', gap: 12 }}>
           <Button kind="secondary" disabled={startingPlay} onPress={() => { setAutomaticPictures(false); setPictureTarget(undefined); setPictures(board); }}>Pictures</Button>
           <View style={{ flexDirection: wide ? 'column' : 'row', gap: 10 }}><View style={{ flex: wide ? undefined : 1 }}><Button icon={WandSparkles} disabled={startingPlay} onPress={() => { onStopPreview(); onCompose(); }}>Edit with AI</Button></View>{board.tiles.length < MAX_TILES && <View style={{ flex: wide ? undefined : 1 }}><Button kind="secondary" icon={Plus} disabled={startingPlay} onPress={addTile}>Add a tile</Button></View>}</View>
-          <View style={{ backgroundColor: theme.surface, padding: 14, borderRadius: 18, gap: 8 }}>
+          {audioTiles.length > 0 && <View style={{ backgroundColor: theme.surface, padding: 14, borderRadius: 18, gap: 8 }}>
             <Text accessibilityLiveRegion="polite" style={styles.small}>{readyAudio} of {audioTiles.length} voices saved{preparingAudio ? ` · Preparing ${preparingAudio}…` : ''}{failedAudio ? ` · ${failedAudio} failed. Check your connection and retry.` : ''}</Text>
-            {!settings.aiConsent && <Text style={styles.small}>Words go to OpenAI. Audio is saved for offline play.</Text>}
-            <Button kind="secondary" icon={Volume2} disabled={startingPlay || !missingAudio.length} onPress={() => { setAudioError(''); void (async () => { if (!settings.aiConsent) await onConsent(); await Promise.allSettled(missingAudio.map(tile => audio.generate(tile, settings.backendUrl))); })().catch(() => setAudioError('Could not prepare audio. Check storage and try again.')); }}>{missingAudio.length ? `${failedAudio ? 'Retry' : 'Prepare'} missing audio (${missingAudio.length})` : preparingAudio ? 'Preparing audio…' : 'All audio saved'}</Button>
+            <Button kind="secondary" icon={Volume2} disabled={startingPlay || !missingAudio.length} onPress={() => { setAudioError(''); void (async () => { await Promise.allSettled(missingAudio.map(tile => audio.generate(tile, settings.backendUrl))); })().catch(() => setAudioError('Could not prepare audio. Check storage and try again.')); }}>{missingAudio.length ? `${failedAudio ? 'Retry' : 'Prepare'} missing audio (${missingAudio.length})` : preparingAudio ? 'Preparing audio…' : 'All audio saved'}</Button>
             {Boolean(audioError) && <Notice>{audioError}</Notice>}
-          </View>
+          </View>}
           <View style={{ flexDirection: wide ? 'column' : 'row', justifyContent: 'space-between', gap: 8, ...(wide ? { marginTop: 'auto' } : {}) }}><Button kind="ghost" icon={Copy} disabled={startingPlay} onPress={onDuplicate}>Duplicate board</Button><Button kind="danger" icon={Trash2} disabled={startingPlay} onPress={() => setDeleting(true)}>Delete board</Button></View>
         </View>
       </ScrollView>

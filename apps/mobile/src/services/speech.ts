@@ -19,15 +19,15 @@ export function matchingVoice(tile: Pick<Tile, 'language'>, voices: Voice[], pre
     ?? voices.find(v => v.language.split('-')[0] === tile.language.split('-')[0]);
 }
 /**
- * Create a queue that finishes the active word and retains only the newest pending tile, using cached
+ * Create a queue that finishes the active word and retains only the newest pending tile, honoring the per-language source and otherwise using cached
  * audio before native TTS. Call stop when leaving playback.
  */
-export function speechQueue(voices: Voice[], preferences: Settings['voices'], change: (active: Tile | null, pending: Tile | null) => void, failure: (tile: Tile) => void, asset: (tile: Tile) => SpeechAsset | undefined = () => undefined) {
+export function speechQueue(voices: Voice[], preferences: Settings['voices'], change: (active: Tile | null, pending: Tile | null) => void, failure: (tile: Tile) => void, asset: (tile: Tile) => SpeechAsset | undefined = () => undefined, source: (language: string) => 'ai' | 'device' = () => 'ai') {
   return new LatestSpeechQueue<Tile>(hybridSpeech({
     speak(tile, done, error) {
       const voice = matchingVoice(tile, voices, preferences);
       Speech.speak(tile.speech, { language: tile.language, voice: voice?.identifier, rate: 0.88, onDone: done, onStopped: done, onError: error });
     },
     stop() { void Speech.stop(); },
-  }, audioPlayback(), asset), change, failure);
+  }, audioPlayback(), asset, tile => source(tile.language) === 'device'), change, failure);
 }

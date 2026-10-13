@@ -294,7 +294,8 @@ test('the compact editor fits tablet orientations and keeps reordering in the ti
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveCount(0);
   for (const size of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }, { width: 1024, height: 768 }]) {
     await page.setViewportSize(size);
-    for (const name of ['Edit with AI', 'Add a tile', 'Prepare missing audio (6)', 'Duplicate board', 'Delete board', 'Languages', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    for (const name of ['Edit with AI', 'Add a tile', 'Duplicate board', 'Delete board', 'Languages', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole('button', { name: /^(Prepare missing audio \(6\)|Preparing audio…|Retry missing audio \(6\))$/ })).toBeInViewport({ ratio: 1 });
     await expect(page.getByRole('button', { name: 'Edit tile Duck', exact: true })).toBeInViewport({ ratio: 1 });
     await page.screenshot({ path: `artifacts/screenshots/editor-${size.width}.png` });
   }

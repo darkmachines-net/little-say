@@ -8,7 +8,8 @@ import { styles, theme } from './theme';
 
 export interface AppUpdateSettingsProps {
   visible: boolean;
-  /** Persist the latest settings draft and await local writes before allowing an update restart. */
+  showHeading?: boolean;
+  /** Await durable local writes before allowing an update restart. */
   onBeforeRestart: () => Promise<void>;
 }
 
@@ -16,7 +17,7 @@ export interface AppUpdateSettingsProps {
  * Check and install compatible native updates only on a parent press. Save before restarting, and
  * abandon further actions when settings are hidden or unmounted; Expo downloads cannot be cancelled.
  */
-export function AppUpdateSettings({ visible, onBeforeRestart }: AppUpdateSettingsProps) {
+export function AppUpdateSettings({ visible, onBeforeRestart, showHeading = true }: AppUpdateSettingsProps) {
   const [progress, setProgress] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -66,7 +67,7 @@ export function AppUpdateSettings({ visible, onBeforeRestart }: AppUpdateSetting
   };
 
   return <View style={{ gap: 12 }}>
-    <Text accessibilityRole="header" style={styles.title}>App updates</Text>
+    {showHeading && <Text accessibilityRole="header" style={styles.title}>App updates</Text>}
     <Text style={styles.body}>If an update is available, your settings will be saved and the app will restart to install it. Saved boards stay on this device.</Text>
     <Button kind="secondary" disabled={!enabled} busy={Boolean(progress)} onPress={() => void check()}>{progress || 'Check for updates'}</Button>
     {!enabled && <Text style={styles.small}>Update checks are unavailable in this build. Use an installed release build with app updates enabled.</Text>}

@@ -10,7 +10,7 @@ export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
   ? (Platform.OS === 'web' && process.env.EXPO_PUBLIC_WEB_API_URL ? window.location.origin : process.env.EXPO_PUBLIC_API_URL || '')
   : '';
 
-/** Resolve the development override, saved server, or platform default into the backend address. */
+/** Resolve the build's service address, retaining same-origin web hosting and development overrides. */
 export function backendUrl(configured: string) {
   const fallback = Platform.OS === 'web' ? window.location.origin : Constants.expoConfig?.extra?.serverUrl;
   return resolveBackendUrl(configured, developmentApiUrl, fallback);
@@ -34,12 +34,12 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
   try {
     const server = exactServer ? configured : backendUrl(configured);
     const response = await fetch(`${server}${path}`, { ...init, signal: abort.signal, headers: { 'X-Little-Say': '1', ...init.headers } });
-    const data = await response.json().catch(() => { throw new Error('That server did not return a valid response. Check its address in Parent settings.'); });
+    const data = await response.json().catch(() => { throw new Error('Little Say’s service returned an unexpected response. Please try again.'); });
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
     return data;
   } catch (error) {
     if (abort.signal.aborted) throw new Error(externalSignal?.aborted ? 'Request cancelled. Your board is unchanged.' : 'The server took too long. Your prompt is still here to try again.');
-    if (error instanceof TypeError) throw new Error('Cannot reach your home server. Check Wi-Fi and the server address, or create a board manually.');
+    if (error instanceof TypeError) throw new Error('Cannot reach Little Say. Check your connection and try again, or create a board manually.');
     throw error;
   } finally { clearTimeout(timeout); externalSignal?.removeEventListener('abort', cancel); }
 }

@@ -4,13 +4,13 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { Check, ChevronLeft, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
 import { configureSetup, finishSetup, getLanguageProfile, languageName, profileLanguages, saveStarterDraft, starterBoard, starterPrompt, starterTopics, type Library, type StarterTopic } from '@little-say/core';
-import { developmentApiUrl, proposeBoard } from '../services/api';
+import { proposeBoard } from '../services/api';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
-import { Button, Field, Notice } from './components';
+import { Button, Notice } from './components';
 import { styles, theme } from './theme';
 import { Brand } from './Brand';
 import { defaultPicturePolicy } from '@little-say/core';
@@ -25,8 +25,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
   const setup = library.setup!;
   const [profile, setProfile] = useState(() => getLanguageProfile(library.settings));
   const [topics, setTopics] = useState(setup.topics);
-  const [url, setUrl] = useState(library.settings.backendUrl);
-  const [connection, setConnection] = useState(false);
+  const url = ''; // The service is selected by the build, never by a setup form.
   const [working, setWorking] = useState<'saving' | 'generating' | null>(null);
   const [error, setError] = useState('');
   const [jobs, setJobs] = useState<Partial<Record<StarterTopic, string>>>({});
@@ -80,7 +79,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
       <View style={[styles.container, styles.row, { minHeight: 76, justifyContent: 'space-between', flexWrap: 'wrap' }]}><Brand /><Button kind="ghost" disabled={Boolean(working)} onPress={onAccount}>Sign in or restore boards</Button></View>
     </View>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
-      <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Parent settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
+      <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
       {Boolean(error) && <Notice>{error}</Notice>}
       {languageStep ? <LanguageProfileEditor value={profile} onChange={setProfile} disabled={Boolean(working)} expanded /> : <>
         {starterTopics.map(topic => {
@@ -97,9 +96,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
           </View>;
         })}
         {working !== 'generating' && <View style={{ gap: 12 }}>
-          <Button kind="ghost" disabled={Boolean(working)} onPress={() => setConnection(value => !value)}>Connection settings</Button>
-          {connection && (developmentApiUrl ? <Field label="Development server address" value={developmentApiUrl} editable={false} /> : <Field label="Private server address" value={url} onChangeText={setUrl} autoCapitalize="none" autoCorrect={false} keyboardType="url" placeholder={Platform.OS === 'web' ? 'Automatic — this website’s server' : 'https://say.your-home-domain.com'} />)}
-          {missing.length > 0 && <Text style={styles.small}>Generation uses OpenAI through your server. Your language choices and board topics are sent to create the cards. Boards stay on this device. Automatic may generate paid AI pictures. {pictureDataDisclosure} AI audio prepares in the background after setup; device speech works while clips are missing.</Text>}
+          {missing.length > 0 && <Text style={styles.small}>Generation uses OpenAI through Little Say. Your language choices and board topics are sent to create the cards. Boards stay on this device. Automatic may generate AI pictures. {pictureDataDisclosure} AI audio prepares in the background after setup; device speech works while clips are missing.</Text>}
         </View>}
       </>}
     </ScrollView>

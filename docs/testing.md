@@ -9,6 +9,8 @@ npx playwright install chromium
 npm run test:web
 ```
 
+Settings navigation, preference migration and per-language voice-source contracts are described in [SETTINGS.md](SETTINGS.md). Run `npm run test:web -- tests/web/settings.spec.ts` after building for grouped phone/desktop screenshots and focused route, save-failure, offline and speech-source checks.
+
 `check` validates release-version mirrors, TypeScript (including unused locals/parameters), unit/component/service tests, and server/web builds. GitHub runs this check for pull requests. Browser tests use the production web build from `check`, start a temporary API on port 4175, and use isolated device libraries. They run without an API key and mock AI and speech services where appropriate. Existing development processes and user boards are not used.
 
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. CI runs the conversation scenarios and uploads their screenshots as the `conversation-screenshots` artifact with seven-day retention.

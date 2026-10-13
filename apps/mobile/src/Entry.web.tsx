@@ -9,7 +9,7 @@ const App = lazy(() => import('./App'));
 export default function WebEntry() {
   const standalone = window.matchMedia('(display-mode: standalone)').matches
     || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-  const appPath = /^\/app\/?$/.test(window.location.pathname);
+  const appPath = /^\/app(?:\/|$)/.test(window.location.pathname);
   const legacyInstall = standalone && ['/', '/index.html'].includes(window.location.pathname);
   return appPath || legacyInstall
     ? <Suspense fallback={<div role="status">Opening Little Say…</div>}><App /></Suspense>

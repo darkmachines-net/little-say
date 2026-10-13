@@ -4,12 +4,11 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, Text, View } from 'react-native';
+import { ActivityIndicator, AppState, Platform, Text, View } from 'react-native';
 import { initialWindowMetrics, SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Crypto from 'expo-crypto';
-import * as Speech from 'expo-speech';
-import { applyProposal, boardPlayTiles, firstWord, getLanguageProfile, languageName, profileLanguages, reviseBoard, type Board, type BoardProposal, type Settings, type Tile } from '@little-say/core';
+import { applyProposal, speechSource, boardPlayTiles, firstWord, getLanguageProfile, languageName, profileLanguages, reviseBoard, type Board, type BoardProposal, type Settings, type Tile } from '@little-say/core';
 import { useLibrary } from './data/useLibrary';
 import { getVoices, matchingVoice, speechQueue, type Voice } from './services/speech';
 import { useSpeechLibrary } from './services/useSpeechLibrary';
@@ -20,7 +19,8 @@ import { useBoardDraftRoute } from './services/useBoardDraftRoute';
 import { BoardEditor } from './ui/BoardEditor';
 import type { BoardSnapshot } from './ui/BoardTransition';
 import { PlayBoard } from './ui/PlayBoard';
-import { ParentSettings } from './ui/ParentSettings';
+import { SettingsScreen } from './ui/SettingsScreen';
+import { useSettingsRoute } from './services/useSettingsRoute';
 import { FirstTimeSetup } from './ui/FirstTimeSetup';
 import { Button, Notice, Sheet } from './ui/components';
 import { theme, styles } from './ui/theme';
@@ -35,7 +35,7 @@ function Application() {
   const audio = useSpeechLibrary(store.library);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useEffect(() => { if (draftRoute.route?.boardId) setSelectedId(draftRoute.route.boardId); }, [draftRoute.route?.boardId]);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRoute = useSettingsRoute();
   const [accountOpen, setAccountOpen] = useState(false);
   const [entryChecked, setEntryChecked] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
@@ -52,9 +52,9 @@ function Application() {
   useEffect(() => {
     if (entryChecked || !store.library || !account.ready) return;
     setEntryChecked(true);
-    if (!account.session && !store.library.settings.accountChoiceMade && !store.library.settings.activeBoardId && !draftRoute.route) setAccountOpen(true);
-  }, [entryChecked, store.library, account.ready, account.session, draftRoute.route]);
-  const previewQueue = useMemo(() => speechQueue(voices, store.library?.settings.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset), [voices, store.library?.settings.voices, audio]);
+    if (!account.session && !store.library.settings.accountChoiceMade && !store.library.settings.activeBoardId && !draftRoute.route && !settingsRoute.route) setAccountOpen(true);
+  }, [entryChecked, store.library, account.ready, account.session, draftRoute.route, settingsRoute.route]);
+  const previewQueue = useMemo(() => speechQueue(voices, store.library?.settings.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset, tag => store.library ? speechSource(store.library.settings, tag) : 'ai'), [voices, store.library?.settings, audio]);
   useEffect(() => () => previewQueue.stop(), [previewQueue]);
   const consent = () => store.change(current => ({ ...current, settings: { ...current.settings, aiConsent: true } }));
   useEffect(() => {
@@ -62,13 +62,14 @@ function Application() {
     const refresh = () => { void getVoices().then(list => { if (active) setVoices(old => JSON.stringify(old) === JSON.stringify(list) ? old : list); }).catch(() => {}); };
     refresh();
     const timer = setTimeout(refresh, 1000);
+    const foreground = AppState.addEventListener('change', state => { if (state === 'active') refresh(); });
     if (Platform.OS === 'web') window.speechSynthesis?.addEventListener('voiceschanged', refresh);
     let cleanup: (() => void) | undefined;
     void initializeUpdates(() => setUpdateReady(true)).then(fn => { if (active) cleanup = fn; else fn(); }).catch(() => {});
-    return () => { active = false; clearTimeout(timer); cleanup?.(); if (Platform.OS === 'web') window.speechSynthesis?.removeEventListener('voiceschanged', refresh); };
+    return () => { active = false; clearTimeout(timer); foreground.remove(); cleanup?.(); if (Platform.OS === 'web') window.speechSynthesis?.removeEventListener('voiceschanged', refresh); };
   }, []);
   const remember = (board: Board) => setUndo(current => ({ ...current, [board.id]: [...(current[board.id] ?? []).slice(-19), board] }));
-  const setSettings = (settings: Settings) => store.change(current => ({ ...current, settings: { ...settings, activeBoardId: current.settings.activeBoardId, accountChoiceMade: current.settings.accountChoiceMade } }));
+  const setSettings = (patch: Partial<Settings>) => settingsRoute.save(() => store.commit(current => ({ ...current, settings: { ...current.settings, ...patch, activeBoardId: current.settings.activeBoardId, accountChoiceMade: current.settings.accountChoiceMade } })));
   const deleteBoard = (id: string) => {
     previewQueue.stop();
     void store.change(current => {
@@ -98,16 +99,10 @@ function Application() {
     const latest = current.boards.find(candidate => candidate.id === board.id);
     if (!latest || playRequest.current) return;
     previewQueue.stop();
-    if (boardPlayTiles(latest, current.settings).some(tile => !audio.asset(tile) && !matchingVoice(tile, voices, current.settings.voices))) setSoundCheck(latest);
+    if (boardPlayTiles(latest, current.settings).some(tile => (speechSource(current.settings, tile.language) === 'device' || !audio.asset(tile)) && !matchingVoice(tile, voices, current.settings.voices))) setSoundCheck(latest);
     else void play(latest).catch(() => setError('The play session could not be saved. Your edits are still here. Retry saving, then try again.'));
   };
   const preview = (tile: Tile) => { previewQueue.stop(); previewQueue.enqueue(tile); };
-  const previewSystem = (tile: Tile) => {
-    previewQueue.stop();
-    const settings = store.current.current!.settings;
-    const voice = matchingVoice(tile, voices, settings.voices);
-    void Speech.stop().then(() => Speech.speak(tile.speech, { language: tile.language, voice: voice?.identifier, rate: 0.88, onError: () => setError('This voice could not play. Check your device’s voice settings and volume.') }));
-  };
   if (store.loadError) return <View style={[styles.page, { justifyContent: 'center', padding: 30, gap: 20 }]}><Notice>{store.loadError}</Notice><Button onPress={() => void store.reload()}>Try opening again</Button></View>;
   if (!store.library || !entryChecked) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
   const library = store.library;
@@ -115,6 +110,7 @@ function Application() {
     if (!store.current.current!.settings.accountChoiceMade) await store.commit(current => ({ ...current, settings: { ...current.settings, accountChoiceMade: true } }));
     setAccountOpen(false);
   }} />;
+  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} voices={voices} audio={audio} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
   if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
   const activeBoard = library.boards.find(board => board.id === library.settings.activeBoardId);
   const selected = library.boards.find(board => board.id === selectedId);
@@ -151,7 +147,7 @@ function Application() {
   }
   return <><View style={styles.page}>
     <StatusBar style="dark" />
-    {!selected && account.session && <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={styles.small}>{account.error ? 'Backup needs attention' : account.busy ? 'Syncing account backup…' : account.savedAt ? 'Account backup enabled' : 'Account backup pending'}</Text><Button compact kind="ghost" onPress={() => setSettingsOpen(true)}>Account & backup</Button></View>}
+    {!selected && account.session && <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={styles.small}>{account.error ? 'Backup needs attention' : account.busy ? 'Syncing account backup…' : account.savedAt ? 'Account backup enabled' : 'Account backup pending'}</Text><Button compact kind="ghost" onPress={() => settingsRoute.open({ page: 'account' })}>Account & backup</Button></View>}
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
@@ -171,15 +167,15 @@ function Application() {
       const restored = { ...previous, revision: current.revision + 1, updatedAt: new Date().toISOString() };
       void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) })).catch(() => {});
       setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
-    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => setSettingsOpen(true)} onCompose={() => draftRoute.open()} onManual={manual} onConsent={consent} onDelete={deleteBoard} onFavorite={id => {
+    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onManual={manual} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
         return { ...current, favoriteBoardIds: [...favorites] };
       }).catch(() => {});
     }} />}
-    {settingsOpen && <ParentSettings visible={!accountOpen} account={account} onAccount={() => setAccountOpen(true)} settings={library.settings} voices={voices} languages={Array.from(new Set(library.boards.flatMap(b => [...(b.playLanguages ?? []), ...b.tiles.map(t => t.language)])))} onSave={setSettings} onPreview={previewSystem} onClose={() => { previewQueue.stop(); setSettingsOpen(false); }} />}
-    {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => !audio.asset(t) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => { setSoundCheck(null); setSettingsOpen(true); }}>Check parent settings</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
+
+    {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => (speechSource(library.settings, t.language) === 'device' || !audio.asset(t)) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => { setSoundCheck(null); settingsRoute.open({ page: 'voices' }); }}>Check voices</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
   </View>{accountScreen}</>;
 }
 /**

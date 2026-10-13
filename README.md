@@ -13,7 +13,7 @@ npm.cmd run dev
 
 On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a tablet on the same LAN. The launcher starts the API on port 8788 and Expo on 8081, and injects the backend URL. The key stays on the backend. Windows User environment variables are supported even when the current terminal has not inherited them.
 
-Choose `npm run dev:local` (also `npm run dev`) for full-stack changes, or `npm run dev:remote` for client changes against **https://littlesay.darkmachines.net**. Remote mode starts only Expo and needs no local API key. Stop the current session with Ctrl+C before switching modes; the selected backend overrides the saved app address for that development session.
+Choose `npm run dev:local` (also `npm run dev`) for full-stack changes, or `npm run dev:remote` for client changes against **https://littlesay.darkmachines.net**. Remote mode starts only Expo and needs no local API key. Stop the current session with Ctrl+C before switching modes; the launcher selects the backend for that development session. End users cannot change the service address in the app.
 
 `npm run dev:web` opens the website with the local API; choose **Open web app** to enter `/app`. `npm run dev:web:remote` uses the deployed API through Expo's development proxy. `npm run dev:doctor` checks local connectivity; append `-- --remote` for the deployed backend. The same launchers are available as Codex environment actions. See [local development](docs/LOCAL_DEVELOPMENT.md) for commands, device setup and troubleshooting. Without a local key, choose **Start without starter boards** and create boards manually.
 
@@ -27,11 +27,13 @@ The website homepage (`/`) introduces Little Say and its features, with **Coming
 - The library spotlights the most recently used board and puts favorites immediately below it. Each board's **…** menu includes deletion and missing-audio generation.
 - Set a board's **Languages** to offer a toggle during play. Individual cards can follow that toggle or keep their own language, useful for family names. Review generated translations or edit them manually.
 - Playback accepts taps and swipes that start or end on a tile. It finishes the current utterance and keeps only the latest queued selection. Touch feedback and the speaking highlight are separate. Hold **Hold to unlock**, release when prompted, then confirm to leave.
-- Synthetic speech is prepared in the background and saved for offline playback. Tile editors support **Generate audio** and **Regenerate audio** for the selected text/language; board controls fill missing clips. Device TTS is the fallback. **Automatic AI audio** in Parent settings controls background generation.
+- AI speech is prepared in the background for languages using AI and saved for offline playback. Tile editors support **Generate audio** and **Regenerate audio** for the selected text/language; board controls fill missing clips. Device TTS is the fallback. **Settings → Voices** chooses AI or device speech independently for each language. A device choice bypasses downloaded AI clips and stops background generation for that language.
 
 Photos use the platform picker/cropper on native and an in-app cropper on web. Later adjustments support dragging, pinch/slider zoom, and a preview matching the board framing. Photos stay on the device. Native adjustment starts from the system crop; choose the original again to recover cropped-out areas.
 
-Use iOS Guided Access or Android screen pinning to restrict system navigation during play. The app cannot suppress operating-system gestures. Browser storage is tied to the URL's origin; development and production URLs have separate libraries. There is no export or cloud backup, so uninstalling or clearing storage removes local boards and audio.
+Use iOS Guided Access or Android screen pinning to restrict system navigation during play. The app cannot suppress operating-system gestures. Browser storage is tied to the URL's origin; development and production URLs have separate libraries. Account backup is optional; without a saved backup, uninstalling or clearing storage removes local boards and audio.
+
+Settings is a dedicated page at `/app/settings`, with grouped links to Languages, Voices, Pictures, Account & backup, screen guidance and Privacy Policy. Language defaults and voice choices save on their own pages. See [Settings navigation and preference contracts](docs/SETTINGS.md).
 
 ## Backend and privacy
 
@@ -67,7 +69,7 @@ Copy-Item .env.example .env
 docker compose up -d --build
 ```
 
-This is an unauthenticated service for a trusted private network. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and use that URL in Parent settings; web uses its own origin. If binding to another host interface, restrict access to the trusted network.
+This is an unauthenticated service for a trusted private network. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and configure that origin in `native-release.json` when building the native app; web uses its own origin. If binding to another host interface, restrict access to the trusted network.
 
 The container runs as a non-root user with a read-only filesystem. Its named `speech-cache` volume preserves audio across replacements; removing volumes deletes the cache. Board libraries remain on each device.
 

@@ -14,6 +14,8 @@ async function savedLibrary(page: Page) {
   });
 }
 async function leaveBoard(page: Page) {
+  // Allow the screen's scheduled entry focus to finish before holding a keyboard control.
+  await expect(page.getByTestId('play-board').getByRole('heading')).toBeFocused();
   await page.getByTestId('parent-control').focus(); await page.keyboard.down('Enter');
   await expect(page.getByTestId('parent-control')).toHaveText('Release to edit'); await page.keyboard.up('Enter');
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
@@ -59,7 +61,7 @@ test('recent play order persists offline and stays independent of edits, undo, c
   await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words', 'Our family (copy)']);
   expect((await savedLibrary(page)).boardLastPlayedAt).toEqual(before.boardLastPlayedAt);
   await page.getByRole('button', { name: 'More options for Our family', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Generate missing audio (6)', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /(?:Generate missing|Retry missing) audio \(6\)/ })).toBeVisible();
   await page.getByRole('button', { name: 'Delete board', exact: true }).click();
   await page.getByRole('button', { name: 'Delete board', exact: true }).click();
   await expect(page.getByTestId('recent-board').getByTestId('board-card-title')).toHaveText('Farmyard friends');

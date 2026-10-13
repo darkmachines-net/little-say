@@ -6,13 +6,20 @@ import { LatestSpeechQueue, type SpeechDriver, type Tile } from '@little-say/cor
 import { hybridSpeech } from './hybridSpeech';
 
 const tile = starterLibrary().boards[0].tiles[0];
-function harness(hasAudio = true) {
+function harness(hasAudio = true, useDevice: (tile: Tile) => boolean = () => false) {
   const system = { speak: vi.fn(), stop: vi.fn() } satisfies SpeechDriver<Tile>;
   const audio = { speak: vi.fn(), stop: vi.fn() } satisfies SpeechDriver<string>;
-  const driver = hybridSpeech(system, audio, () => hasAudio ? { id: 'clip', uri: 'file:///clip.wav' } : undefined);
+  const driver = hybridSpeech(system, audio, () => hasAudio ? { id: 'clip', uri: 'file:///clip.wav' } : undefined, useDevice);
   return { system, audio, driver };
 }
 describe('saved audio playback with device fallback', () => {
+  it('bypasses downloaded AI clips only for a language explicitly using device speech', () => {
+    const { system, audio, driver } = harness(true, current => current.language === 'en-US');
+    driver.speak({ ...tile, language: 'en-US' }, vi.fn(), vi.fn());
+    expect(system.speak).toHaveBeenCalledOnce(); expect(audio.speak).not.toHaveBeenCalled();
+    driver.speak({ ...tile, language: 'es-ES' }, vi.fn(), vi.fn());
+    expect(audio.speak).toHaveBeenCalledOnce(); expect(system.speak).toHaveBeenCalledOnce();
+  });
   it('uses saved audio without also speaking through TTS', () => {
     const { system, audio, driver } = harness(); const done = vi.fn();
     driver.speak(tile, done, vi.fn());
