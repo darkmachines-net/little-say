@@ -197,7 +197,7 @@ A dry run exports the actual JS bundle but neither deploys nor publishes. Real p
 
 Native updates check/download on launch and apply on a subsequent launch, without forcing a reload during a child's board session.
 
-On iOS and Android, parents can also open **Parent settings → App updates → Check for updates** to check, download, and immediately install a compatible OTA update. The action saves the current settings draft before restarting and reports when the app is up to date or a check, download, save, or restart fails. Leaving settings stops the manual flow from restarting the app; an already-started Expo download can still finish for a later launch. The button is disabled in development, Expo Go, and builds with updates disabled. Browser updates continue to use the existing update banner.
+On iOS and Android, open **Settings → App updates → Check for updates** to check, download, and immediately install a compatible OTA update. The action waits for pending local writes before restarting and reports when the app is up to date or a check, download, save, or restart fails. Leaving the App updates page stops the manual flow from restarting the app; an already-started Expo download can still finish for a later launch. The button is disabled in development, Expo Go, and builds with updates disabled. Browser updates continue to use the existing update banner.
 
 A successful publication does not prove that a specific device has downloaded or applied it. Validate the actual target device after reopening the app.
 

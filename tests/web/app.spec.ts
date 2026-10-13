@@ -44,6 +44,8 @@ test.describe('outside modal dismissal', () => {
       await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
       const session = await context.newCDPSession(page);
       for (let attempt = 0; attempt < 2; attempt++) {
+        // Complete the screen's entry focus before starting a hold that blur must cancel.
+        await expect(page.getByTestId('play-board').getByRole('heading')).toBeFocused();
         const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
         await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2, id: 1 }] });
         await expect(control).toHaveText('Release to edit', { timeout: 3500 });
