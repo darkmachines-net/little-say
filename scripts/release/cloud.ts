@@ -68,7 +68,7 @@ export async function cloudBuild(plan: ReleasePlan, commit: string, platform: Pl
   });
 }
 
-/** Submit a verified build; modern retries require fresh exact-ID provider/artifact proof. Enqueue and completion remain separate stages. */
+/** Submit a verified build; every retry requires fresh exact-ID provider/artifact proof, including historical plans. */
 export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseline, journal: Journal, waitForCompletion = true): Promise<string> {
   assert(plan.profile === 'production' && baseline.profile === 'production', 'Internal artifacts cannot be submitted.');
   const config = readJson(resolve(mobile, 'eas.json')).submit.production;
@@ -92,7 +92,7 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
   };
   const provider: Provider<string> = {
     async find() { return (await submissions()).map(s => s.id); },
-    prepareRetry: plan.schema === 2 ? async id => {
+    prepareRetry: async id => {
       const associated = (await submissions()).find(s => s.id === id); verifyDestination(associated);
       const observed = JSON.parse(eas(['submit:view', id, '--json'], remote.env)); verifyDestination(observed);
       assert(observed.id === id && observed.status === 'ERRORED' && observed.canRetry === true, 'Submission cannot be retried by the provider. Reconcile this exact ID; do not upload a replacement.');
@@ -103,9 +103,9 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
       assert(await artifactHash(build.artifacts?.applicationArchiveUrl || build.artifacts?.buildUrl) === baseline.artifactSha256, 'Retry build artifact changed.');
       return { provider: 'eas', action: 'submit:retry', runId: plan.runId, submissionId: id, buildId: baseline.buildId, commit: baseline.commit, artifactSha256: baseline.artifactSha256,
         destination: baseline.platform === 'android' ? 'internal/draft' : String(config.ios.ascAppId), status: observed.status, canRetry: true };
-    } : undefined,
+    },
     async start(previousId) {
-      if (plan.schema === 2 && previousId) {
+      if (previousId) {
         const retried = JSON.parse(eas(['submit:retry', previousId, '--non-interactive', '--json'], remote.env));
         assert(typeof retried.id === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(retried.id) && !journal.operation(`submit-${baseline.platform}`)?.ids.includes(retried.id), 'Cannot identify retried EAS submission. Reconcile before retrying.');
         return retried.id;
@@ -115,7 +115,7 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
       const matches = (await submissions()).filter(s => !used.includes(s.id));
       assert(matches.length === 1, 'Cannot identify accepted EAS submission. Reconcile before retrying.'); return matches[0].id;
     },
-    async status(id) { const s = (await submissions()).find(s => s.id === id); assert(s, 'Submission no longer belongs to the recorded build.'); if (plan.schema === 2) verifyDestination(s); return s.status === 'FINISHED' ? 'complete' : ['ERRORED', 'CANCELED'].includes(s.status) ? 'failed' : 'running'; },
+    async status(id) { const s = (await submissions()).find(s => s.id === id); assert(s, 'Submission no longer belongs to the recorded build.'); verifyDestination(s); return s.status === 'FINISHED' ? 'complete' : ['ERRORED', 'CANCELED'].includes(s.status) ? 'failed' : 'running'; },
     verify: id => verify(id, true),
   };
   if (waitForCompletion) return runOperation(journal, `submit-${baseline.platform}`, provider);

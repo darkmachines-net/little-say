@@ -96,10 +96,12 @@ describe('cloud builds and exact submissions', () => {
     await expect(submitBuild(plan, baseline, journal, false)).rejects.toThrow('destination');
     expect(operations.has('enqueue-submit-android')).toBe(false);
   });
-  function failedModernSubmission() {
-    plan.schema = 2; plan.profile = 'production'; plan.runtimes = { android: fingerprint, ios: fingerprint };
-    baseline = { ...baseline, schema: 3, runtimePolicy: 'fingerprint', runtimeVersion: fingerprint, profile: 'production', channel: 'production', environment: 'production', artifactSha256: createHash('sha256').update('signed artifact').digest('hex') };
-    Object.assign(build, { runtime: { version: fingerprint }, buildProfile: 'production', distribution: 'STORE', updateChannel: { name: 'production' } });
+  function failedSubmission(schema: 1 | 2 = 2) {
+    plan.schema = schema; plan.profile = 'production';
+    if (schema === 2) plan.runtimes = { android: fingerprint, ios: fingerprint };
+    const runtime = schema === 2 ? fingerprint : plan.nativeRelease.version;
+    baseline = { ...baseline, schema: schema === 2 ? 3 : 2, ...(schema === 2 ? { runtimePolicy: 'fingerprint' as const } : {}), runtimeVersion: runtime, profile: 'production', channel: 'production', environment: 'production', artifactSha256: createHash('sha256').update('signed artifact').digest('hex') };
+    Object.assign(build, { runtime: { version: runtime }, buildProfile: 'production', distribution: 'STORE', updateChannel: { name: 'production' } });
     const previousId = '11111111-1111-1111-1111-111111111111', nextId = '22222222-2222-2222-2222-222222222222';
     const original = { id: previousId, status: 'ERRORED', platform: 'ANDROID', app: build.app, androidConfig: { track: 'internal', releaseStatus: 'DRAFT' }, canRetry: true, submittedBuild: build };
     submissions.push(original); journal.save({ key: 'submit-android', status: 'failed', ids: [previousId] });
@@ -111,15 +113,17 @@ describe('cloud builds and exact submissions', () => {
     });
     return { original, previousId, nextId };
   }
-  it('uses a provider-supported retry of the exact failed submission and retains its prior ID and artifact proof', async () => {
-    const { previousId, nextId } = failedModernSubmission();
+  it.each([1, 2] as const)('uses exact-ID provider retry for schema %s without changing saved runtime/selection decisions', async schema => {
+    const { previousId, nextId } = failedSubmission(schema);
+    const saved = structuredClone({ plan, baseline });
     expect(await submitBuild(plan, baseline, journal, false)).toBe(nextId);
+    expect({ plan, baseline }).toEqual(saved);
     expect(operations.get('submit-android')).toMatchObject({ status: 'running', ids: [previousId, nextId], retryProof: { submissionId: previousId, buildId: baseline.buildId, artifactSha256: baseline.artifactSha256, destination: 'internal/draft', canRetry: true } });
     expect(vi.mocked(eas).mock.calls.some(([args]) => args[0] === 'submit')).toBe(false);
     expect(vi.mocked(eas).mock.calls.find(([args]) => args[0] === 'submit:retry')?.[0]).toEqual(['submit:retry', previousId, '--non-interactive', '--json']);
   });
-  it('reconciles a lost retry response using the same build without retrying or submitting a second time', async () => {
-    const { previousId, nextId } = failedModernSubmission(); loseResponse = true;
+  it.each([1, 2] as const)('reconciles a lost schema %s retry response without a second retry or fresh submission', async schema => {
+    const { previousId, nextId } = failedSubmission(schema); loseResponse = true;
     await expect(submitBuild(plan, baseline, journal, false)).rejects.toThrow('retry response lost');
     expect(operations.get('submit-android')).toMatchObject({ status: 'intent', ids: [previousId], retryProof: { submissionId: previousId } });
     expect(await submitBuild(plan, baseline, journal, false)).toBe(nextId);
@@ -128,13 +132,19 @@ describe('cloud builds and exact submissions', () => {
     expect(vi.mocked(eas).mock.calls.some(([args]) => args[0] === 'submit')).toBe(false);
   });
   it.each(['expired', 'canceled', 'destination', 'source', 'artifact'] as const)('preserves failed submission evidence without another request when retry proof is %s', async fault => {
-    const { original, previousId } = failedModernSubmission();
+    const { original, previousId } = failedSubmission();
     if (fault === 'expired') original.canRetry = false;
     if (fault === 'canceled') original.status = 'CANCELED';
     if (fault === 'destination') original.androidConfig.track = 'production';
     if (fault === 'source') original.submittedBuild = { ...build, gitCommitHash: 'f'.repeat(40) };
     if (fault === 'artifact') baseline.artifactSha256 = '0'.repeat(64);
     await expect(submitBuild(plan, baseline, journal, false)).rejects.toThrow();
+    expect(operations.get('submit-android')).toMatchObject({ status: 'failed', ids: [previousId], sequence: 1 });
+    expect(vi.mocked(eas).mock.calls.some(([args]) => ['submit', 'submit:retry'].includes(args[0]))).toBe(false);
+  });
+  it('keeps a historical failed submission blocking when the provider no longer permits retry', async () => {
+    const { original, previousId } = failedSubmission(1); original.canRetry = false;
+    await expect(submitBuild(plan, baseline, journal, false)).rejects.toThrow('cannot be retried');
     expect(operations.get('submit-android')).toMatchObject({ status: 'failed', ids: [previousId], sequence: 1 });
     expect(vi.mocked(eas).mock.calls.some(([args]) => ['submit', 'submit:retry'].includes(args[0]))).toBe(false);
   });
