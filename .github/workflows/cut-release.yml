@@ -1,4 +1,4 @@
-# Publishes selected components, gates OTA on selected server deployment/native acceptance, and preserves retryable journals.
+# Publishes selected components; OTA waits for selected deployment, verified native builds, and store submission acceptance.
 name: Cut release
 on:
   workflow_dispatch:
