@@ -47,6 +47,26 @@ describe('recoverable external operations', () => {
     vi.mocked(provider.find).mockResolvedValue(['id-1']); vi.mocked(provider.start).mockResolvedValue('id-2');
     await runOperation(store, 'submit-ios', provider); expect(store.operation('submit-ios')?.ids).toEqual(['id-1', 'id-2']);
   });
+  it('retains each fresh retry proof in append-only intent history across repeated failure and final completion', async () => {
+    const { store, provider, history } = fixture();
+    provider.prepareRetry = vi.fn(async id => ({ action: 'provider-retry', submissionId: id, canRetry: true }));
+    vi.mocked(provider.start).mockResolvedValueOnce('id-1').mockResolvedValueOnce('id-2').mockResolvedValueOnce('id-3');
+    vi.mocked(provider.status).mockResolvedValueOnce('failed').mockResolvedValueOnce('failed').mockResolvedValueOnce('complete');
+    await expect(runOperation(store, 'submit-ios', provider)).rejects.toThrow('failed at provider');
+    await expect(runOperation(store, 'submit-ios', provider)).rejects.toThrow('failed at provider');
+    expect(await runOperation(store, 'submit-ios', provider)).toBe('verified:id-3');
+    expect(history.filter(state => state.status === 'intent' && state.retryProof).map(state => state.retryProof)).toEqual([
+      { action: 'provider-retry', submissionId: 'id-1', canRetry: true }, { action: 'provider-retry', submissionId: 'id-2', canRetry: true },
+    ]);
+    expect(store.operation('submit-ios')).toMatchObject({ status: 'complete', ids: ['id-1', 'id-2', 'id-3'] });
+    expect(provider.prepareRetry).toHaveBeenCalledTimes(2);
+  });
+  it('cannot turn failed state without its original ID into a fresh request when exact-ID retry is required', async () => {
+    const { store, provider, history } = fixture();
+    provider.prepareRetry = vi.fn(async () => 'provider proof'); store.save({ key: 'submit-ios', status: 'failed', ids: [] });
+    await expect(runOperation(store, 'submit-ios', provider)).rejects.toThrow('no original ID');
+    expect(history).toHaveLength(1); expect(provider.start).not.toHaveBeenCalled();
+  });
   it('rejects duplicate matches and changed verification without allocating a replacement', async () => {
     const { store, provider } = fixture(); vi.mocked(provider.find).mockResolvedValue(['id-1', 'id-2']);
     await expect(runOperation(store, 'build', provider)).rejects.toThrow('Multiple provider'); expect(provider.start).not.toHaveBeenCalled();

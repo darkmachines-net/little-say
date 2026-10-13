@@ -10,7 +10,7 @@ import type { Operation, ReleaseReceipt } from './contract';
 /** Run a GitHub CLI request scoped to the current repository with captured output. */
 export function gh(args: string[]): string { return run('gh', args, { capture: true }); }
 
-/** Read every release page, including private drafts, without silently truncating release history. */
+/** Read every release page without truncating history; draft access requires the caller's repository push/Contents write permission. */
 export function releases(): any[] {
   return JSON.parse(gh(['api', '--paginate', '--slurp', `repos/${process.env.GITHUB_REPOSITORY}/releases?per_page=100`])).flat();
 }

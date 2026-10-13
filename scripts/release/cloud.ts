@@ -68,7 +68,7 @@ export async function cloudBuild(plan: ReleasePlan, commit: string, platform: Pl
   });
 }
 
-/** Submit an exact verified build; enqueue mode records acceptance, while completion mode waits for the same provider operation. */
+/** Submit a verified build; modern retries require fresh exact-ID provider/artifact proof. Enqueue and completion remain separate stages. */
 export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseline, journal: Journal, waitForCompletion = true): Promise<string> {
   assert(plan.profile === 'production' && baseline.profile === 'production', 'Internal artifacts cannot be submitted.');
   const config = readJson(resolve(mobile, 'eas.json')).submit.production;
@@ -80,22 +80,42 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
     assert(build.status === 'FINISHED' && build.fingerprint?.hash === baseline.fingerprint, 'Submission build is not the verified successful artifact.');
     return build.submissions as any[];
   };
-  const verify = async (id: string, finished: boolean) => {
-    const s = (await submissions()).find(s => s.id === id);
-    assert(s && (finished ? s.status === 'FINISHED' : ['AWAITING_BUILD', 'IN_QUEUE', 'IN_PROGRESS', 'FINISHED'].includes(s.status)) && s.platform.toLowerCase() === baseline.platform && s.app.id === baseline.release.expoProjectId, 'Submission readback differs.');
+  const verifyDestination = (s: any) => {
+    assert(s && s.platform?.toLowerCase() === baseline.platform && s.app?.id === baseline.release.expoProjectId, 'Submission readback differs.');
     if (baseline.platform === 'android') assert(s.androidConfig?.track === 'internal' && s.androidConfig?.releaseStatus?.toLowerCase() === 'draft', 'Play submission destination differs.');
     else assert(String(s.iosConfig?.ascAppIdentifier) === String(config.ios.ascAppId), 'App Store Connect destination differs.');
+  };
+  const verify = async (id: string, finished: boolean) => {
+    const s = (await submissions()).find(s => s.id === id); verifyDestination(s);
+    assert(finished ? s.status === 'FINISHED' : ['AWAITING_BUILD', 'IN_QUEUE', 'IN_PROGRESS', 'FINISHED'].includes(s.status), 'Submission readback differs.');
     return id;
   };
   const provider: Provider<string> = {
     async find() { return (await submissions()).map(s => s.id); },
-    async start() {
+    prepareRetry: plan.schema === 2 ? async id => {
+      const associated = (await submissions()).find(s => s.id === id); verifyDestination(associated);
+      const observed = JSON.parse(eas(['submit:view', id, '--json'], remote.env)); verifyDestination(observed);
+      assert(observed.id === id && observed.status === 'ERRORED' && observed.canRetry === true, 'Submission cannot be retried by the provider. Reconcile this exact ID; do not upload a replacement.');
+      const build = observed.submittedBuild;
+      assert(build?.id === baseline.buildId, 'Retry submission no longer belongs to its verified build.');
+      verifyBuildIdentity(build, plan, baseline.commit, baseline.platform);
+      assert(build.status === 'FINISHED' && build.fingerprint?.hash === baseline.fingerprint, 'Retry build proof differs.');
+      assert(await artifactHash(build.artifacts?.applicationArchiveUrl || build.artifacts?.buildUrl) === baseline.artifactSha256, 'Retry build artifact changed.');
+      return { provider: 'eas', action: 'submit:retry', runId: plan.runId, submissionId: id, buildId: baseline.buildId, commit: baseline.commit, artifactSha256: baseline.artifactSha256,
+        destination: baseline.platform === 'android' ? 'internal/draft' : String(config.ios.ascAppId), status: observed.status, canRetry: true };
+    } : undefined,
+    async start(previousId) {
+      if (plan.schema === 2 && previousId) {
+        const retried = JSON.parse(eas(['submit:retry', previousId, '--non-interactive', '--json'], remote.env));
+        assert(typeof retried.id === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(retried.id) && !journal.operation(`submit-${baseline.platform}`)?.ids.includes(retried.id), 'Cannot identify retried EAS submission. Reconcile before retrying.');
+        return retried.id;
+      }
       eas(['submit', '--platform', baseline.platform, '--profile', 'production', '--id', baseline.buildId, '--non-interactive', '--no-wait', '--no-auto-testflight-setup'], remote.env);
       const used = journal.operation(`submit-${baseline.platform}`)?.ids || [];
       const matches = (await submissions()).filter(s => !used.includes(s.id));
       assert(matches.length === 1, 'Cannot identify accepted EAS submission. Reconcile before retrying.'); return matches[0].id;
     },
-    async status(id) { const s = (await submissions()).find(s => s.id === id); assert(s, 'Submission no longer belongs to the recorded build.'); return s.status === 'FINISHED' ? 'complete' : ['ERRORED', 'CANCELED'].includes(s.status) ? 'failed' : 'running'; },
+    async status(id) { const s = (await submissions()).find(s => s.id === id); assert(s, 'Submission no longer belongs to the recorded build.'); if (plan.schema === 2) verifyDestination(s); return s.status === 'FINISHED' ? 'complete' : ['ERRORED', 'CANCELED'].includes(s.status) ? 'failed' : 'running'; },
     verify: id => verify(id, true),
   };
   if (waitForCompletion) return runOperation(journal, `submit-${baseline.platform}`, provider);

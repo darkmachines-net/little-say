@@ -2,7 +2,7 @@
 
 import { assert } from './common';
 import type { NativeRelease, Platform, Profile } from './native-contract';
-import type { EnginePlan, ReleaseGraph, SourceIdentity } from '../../tools/release-engine/index.mjs';
+import type { EnginePlan, OperationEvidence, ReleaseGraph, SourceIdentity } from '../../tools/release-engine/index.mjs';
 
 export const platforms: Platform[] = ['android', 'ios'];
 /** Persisted modes remain readable for historical receipts and retries; new plans always use auto. */
@@ -45,6 +45,7 @@ export interface ReleaseReceipt {
 export interface Operation<T = unknown> {
   schema: 1; key: string; sequence: number; status: 'intent' | 'running' | 'failed' | 'complete';
   ids: string[]; result?: T;
+  retryProof?: OperationEvidence;
 }
 
 /** Require a full source revision before passing persisted data to Git or checkout. */

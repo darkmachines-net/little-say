@@ -2,7 +2,7 @@
 
 import { assert } from './common';
 import type { Operation } from './contract';
-import { reduceOperation } from '../../tools/release-engine/index.mjs';
+import { reduceOperation, type OperationEvidence } from '../../tools/release-engine/index.mjs';
 
 export interface OperationStore {
   /** Load the last durable state for this single-writer operation. */
@@ -13,8 +13,10 @@ export interface OperationStore {
 export interface Provider<T> {
   /** Find exact matching operations, including failed ones; return all matches to expose ambiguity. */
   find(): Promise<string[]>;
-  /** Start a new operation and return its ID as soon as the provider accepts it. */
-  start(): Promise<string>;
+  /** Start or retry the prior verified failed ID and return its accepted provider ID. */
+  start(previousId?: string): Promise<string>;
+  /** Validate a provider-supported retry and return durable proof before recording another request intent. */
+  prepareRetry?(id: string): Promise<OperationEvidence>;
   /** Read status without mutating it; terminal failures are explicit. */
   status(id: string): Promise<'running' | 'failed' | 'complete'>;
   /** Verify final identity and collect portable evidence. */
@@ -33,12 +35,20 @@ export async function acceptOperation<T>(store: OperationStore, key: string, pro
     else {
       assert(!state || state.status === 'failed', `Unknown outcome for ${key}. No second request was sent; reconcile the provider dashboard and journal.`);
       // Validate the new request boundary with the shared engine before persisting its intent.
-      const intent = reduceOperation(null, { type: 'intent', operationKey: key });
-      state = store.save({ key, status: 'intent', ids: state?.ids || [] });
-      id = await provider.start();
+      let intent = reduceOperation(null, { type: 'intent', operationKey: key });
+      const previousId = state?.status === 'failed' ? state.ids.at(-1) : undefined;
+      assert(state?.status !== 'failed' || !provider.prepareRetry || previousId, 'Failed provider operation has no original ID. Reconcile before retrying.');
+      const retryProof = previousId && provider.prepareRetry ? await provider.prepareRetry(previousId) : undefined;
+      if (retryProof) {
+        const accepted = reduceOperation(intent, { type: 'accepted', operationId: previousId! });
+        const retryEvent = { type: 'retry' as const, proof: retryProof };
+        intent = reduceOperation(reduceOperation(accepted, { type: 'failed', definitive: true, reason: 'Provider verified an exact-request retry.', proof: retryProof }), retryEvent);
+      }
+      state = store.save({ key, status: 'intent', ids: state?.ids || [], ...(retryProof ? { retryProof } : {}) });
+      id = await provider.start(previousId);
       reduceOperation(intent, { type: 'accepted', operationId: id });
     }
-    state = store.save({ key, status: 'running', ids: [...(state?.ids || []), id] });
+    state = store.save({ key, status: 'running', ids: [...(state?.ids || []), id], ...(state?.retryProof ? { retryProof: state.retryProof } : {}) });
   }
   return state!;
 }

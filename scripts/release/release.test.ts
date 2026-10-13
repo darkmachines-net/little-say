@@ -129,6 +129,8 @@ describe('publication boundary', () => {
     expect(cut.jobs.prepare.if).toContain('github.event.repository.default_branch');
     expect(cut.env.GH_TOKEN).toBeUndefined();
     for (const job of Object.values(cut.jobs) as any[]) if (job.steps) {
+      // Even journal inspection needs push access because GitHub hides draft releases from read-only tokens.
+      expect(job.permissions.contents).toBe('write');
       expect(job.env?.GH_TOKEN).toBeUndefined(); expect(job.env?.EXPO_TOKEN).toBeUndefined();
       for (const step of job.steps) {
         if (step.run?.startsWith('npm ci')) expect(step.env).toBeUndefined();
@@ -136,6 +138,7 @@ describe('publication boundary', () => {
       }
     }
     const recovery = workflow('recover-release.yml');
+    expect(recovery.jobs.recover.permissions.contents).toBe('write');
     expect(recovery.jobs.recover.env.GH_TOKEN).toBeUndefined(); expect(recovery.jobs.recover.env.EXPO_TOKEN).toBeUndefined();
     expect(recovery.jobs.recover.steps.at(-1).env.GH_TOKEN).toBe('${{ github.token }}');
     expect(JSON.stringify(workflow('ci.yml'))).not.toMatch(/release:cut|eas (build|submit|update)|EXPO_TOKEN|server:deploy/);

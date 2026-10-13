@@ -2,7 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
-import { resolve } from 'node:path';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, resolve } from 'node:path';
+import { normalizeOptionsAsync } from '@expo/fingerprint/build/Options';
+import { createFingerprintFromSourcesAsync } from '@expo/fingerprint/build/hash/Hash';
 import { mobile, node, root } from './common';
 import { nativeFingerprint, nativeRuntime, versionEnvironment } from './expo';
 import { releaseEnvironment } from './environment';
@@ -10,6 +14,23 @@ import { releaseEnvironment } from './environment';
 const require = createRequire(import.meta.url);
 const metadata = require(resolve(mobile, 'release-metadata.cjs'));
 describe('shared fingerprint policy', () => {
+  it('ignores transient Kotlin/Gradle outputs inside native plugins while retaining real Kotlin source', async () => {
+    const directory = mkdtempSync(resolve(tmpdir(), 'little-say-fingerprint-'));
+    try {
+      const plugin = 'node_modules/expo-updates/expo-updates-gradle-plugin';
+      const source = resolve(directory, plugin, 'src/Plugin.kt'); mkdirSync(dirname(source), { recursive: true }); writeFileSync(source, 'class Plugin');
+      const config = require(resolve(mobile, 'fingerprint.config.js'));
+      const options = await normalizeOptionsAsync(directory, { platforms: ['android'], ignorePaths: config.ignorePaths });
+      const fingerprint = async (settings = options) => (await createFingerprintFromSourcesAsync([{ type: 'dir', filePath: plugin, reasons: ['expoAutolinkingAndroid'] }], directory, settings)).hash;
+      const clean = await fingerprint();
+      for (const file of ['.kotlin/sessions/compiler.salive', 'build/classes/Plugin.class', '.gradle/state.bin', '.cxx/cache.bin']) {
+        const path = resolve(directory, plugin, file); mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, 'transient build state');
+      }
+      expect(await fingerprint()).toBe(clean);
+      expect(await fingerprint(await normalizeOptionsAsync(directory, { platforms: ['android'] }))).not.toBe(clean);
+      writeFileSync(source, 'class ChangedPlugin'); expect(await fingerprint()).not.toBe(clean);
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
   it('resolves the same fingerprint runtime Expo will embed for a selected platform', () => {
     const env = releaseEnvironment('internal');
     expect(nativeRuntime('android', env)).toBe(nativeFingerprint('android', env));

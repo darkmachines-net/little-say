@@ -15,7 +15,8 @@ module.exports = {
   // SDK 58 defaults to balanced; retain version/config/source sensitivity for the OTA release gate.
   preset: 'strict',
   // Replaced with resolved content below; raw metadata would defeat target-version overlays.
-  ignorePaths: ['android', 'android/**', 'ios', 'ios/**', '../../native-release.json', 'eas.json', 'assets/brand/colors.json'],
+  // Kotlin compiler sessions also occur inside discovered native dependency/Gradle-plugin roots.
+  ignorePaths: ['**/.kotlin/**', 'android', 'android/**', 'ios', 'ios/**', '../../native-release.json', 'eas.json', 'assets/brand/colors.json'],
   extraSources: [
     { type: 'file', filePath: 'fingerprint.config.js', reasons: ['fingerprint policy'] },
     ...['../../.gitignore', '../../.easignore', '../../.npmrc', '.easignore'].filter(path => existsSync(resolve(__dirname, path))).map(path => ({ type: 'contents', id: `archive:${path}`, contents: readFileSync(resolve(__dirname, path), 'utf8').replace(/\r\n/g, '\n'), reasons: ['cloud archive/install configuration'] })),
