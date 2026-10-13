@@ -1,0 +1,23 @@
+{
+  "bounds": {
+    "close": [
+      868,
+      240,
+      984,
+      371
+    ],
+    "save": [
+      88,
+      2143,
+      994,
+      2274
+    ]
+  },
+  "insets": [
+    "InsetsSource id=27 type=displayCutout frame=[0,0][1080,142] visible=true flags= sideHint=TOP boundingRects=null",
+    "InsetsSource id=57510000 type=statusBars frame=[0,0][1080,142] visible=true flags= sideHint=TOP boundingRects=null",
+    "InsetsSource id=60640001 type=navigationBars frame=[0,2361][1080,2424] visible=true flags=SUPPRESS_SCRIM|ANIMATE_RESIZING sideHint=BOTTOM boundingRects=null",
+    "mSource=InsetsSource id=60640001 type=navigationBars frame=[0,2361][1080,2424] visible=true flags=SUPPRESS_SCRIM|ANIMATE_RESIZING sideHint=BOTTOM boundingRects=null",
+    "mSource=InsetsSource id=57510000 type=statusBars frame=[0,0][1080,142] visible=true flags= sideHint=TOP boundingRects=null"
+  ]
+}

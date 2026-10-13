@@ -1,0 +1,11 @@
+{
+  "source": "7b718764bc865ca0ed102e68f68bc675d1000898",
+  "platform": "android",
+  "dev": false,
+  "sha256": "4c57124cef80c1f0bbe004bfeee39d99b30adce5908e0abc6a9ca93fb9da3ecc",
+  "apkSha256": "9320ba92fe45a62c63ce1cf8ad107d64ffc10b065479b7a9e1ad69298d6154b6",
+  "androidVersion": "16",
+  "sdk": "36",
+  "package": "net.darkmachines.littlesay",
+  "fixture": "English guest setup complete; empty local library; no account or generated content"
+}
