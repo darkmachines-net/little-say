@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve, dirname } from 'node:path';
 import { git, writeJson } from './common';
-import { platforms, type Inputs, type NativeBuildBaseline, type ReleaseReceipt, type ServerReceipt } from './contract';
+import { platforms, plannedRuntime, requiresDeployment, validateCloudBaseline, validatePlanPolicy, type Inputs, type NativeBuildBaseline, type ReleaseReceipt, type ServerReceipt } from './contract';
 import { type Platform, type Profile } from './native-contract';
 import { dependencyClosure, hash, relevantFile, sourceInputs } from './inputs';
 import { hasWork, planRelease } from './planner';
@@ -26,6 +26,29 @@ function args() {
 }
 
 describe('artifact selection and version allocation', () => {
+  it('records a fingerprint-policy transition without relabeling historical native baselines', () => {
+    const a = args(); a.inputs.bundle.android = 'updated JS';
+    const plan = planRelease({ ...a, resolveRuntime: platform => (platform === 'android' ? 'a' : 'b').repeat(40) });
+    expect(plan.schema).toBe(2); expect(plan.native).toEqual(platforms); expect(plan.baselines.every(b => b.schema === 2)).toBe(true);
+    expect(plan.otaTargets.filter(t => t.eligible).map(t => t.runtimeVersion)).toEqual(['a'.repeat(40), 'b'.repeat(40)]);
+    expect(plan.otaTargets.some(t => t.buildId && t.eligible)).toBe(false); expect(requiresDeployment(plan)).toBe(false);
+    validatePlanPolicy(plan); expect(plannedRuntime(plan, 'ios')).toBe('b'.repeat(40));
+    expect(requiresDeployment({ ...plan, schema: 1 })).toBe(true);
+  });
+  it('accepts verified fingerprint baseline identity while retaining strict legacy runtime validation', () => {
+    const old = { ...baseline('android'), buildId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', environmentHash: 'e'.repeat(64), compatibility: 'c'.repeat(64) };
+    validateCloudBaseline(old);
+    expect(() => validateCloudBaseline({ ...old, runtimeVersion: 'a'.repeat(40) })).toThrow('compatibility');
+    validateCloudBaseline({ ...old, schema: 3, runtimePolicy: 'fingerprint', runtimeVersion: 'a'.repeat(40) });
+  });
+  it('publishes a newly built fingerprint runtime even when native-only changes leave the bundle identity unchanged', () => {
+    const a = args(); a.previous.baselines = a.previous.baselines.map(b => ({ ...b, schema: 3, runtimePolicy: 'fingerprint', runtimeVersion: 'c'.repeat(40) }));
+    a.inputs.native.android = 'changed native configuration';
+    const plan = planRelease({ ...a, resolveRuntime: platform => (platform === 'android' ? 'a' : 'b').repeat(40) });
+    expect(plan.native).toEqual(['android']); expect(plan.ota).toEqual(['android']); expect(plan.changes.bundle).toEqual([]);
+    expect(plan.otaTargets.filter(t => t.eligible)).toEqual([{ platform: 'android', runtimeVersion: 'a'.repeat(40), eligible: true, reason: 'new build in this run' }]);
+    expect(requiresDeployment(plan)).toBe(false);
+  });
   it.each(['patch', 'minor', 'major'])('does nothing for %s when verified inputs are unchanged', bump => {
     const plan = planRelease({ ...args(), bump }); expect(hasWork(plan)).toBe(false);
     expect(plan.mode).toBe('auto');

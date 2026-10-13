@@ -16,11 +16,11 @@ type Needs = Record<string, { result: Result; outputs?: Record<string, string> }
 
 function needsFor(server: boolean, ota: boolean, active = true): Needs {
   return {
-    prepare: { result: 'success', outputs: { active: String(active), server: String(server), ota: String(ota) } },
+    prepare: { result: 'success', outputs: { active: String(active), server: String(server), deploy: String(server), ota: String(ota) } },
     server: { result: server ? 'success' : 'skipped' },
     'promote-server': { result: server ? 'success' : 'skipped' },
-    deploy: { result: server || ota ? 'success' : 'skipped' },
-    native: { result: 'success' }, submit: { result: 'skipped' }, ota: { result: ota ? 'success' : 'skipped' },
+    deploy: { result: server ? 'success' : 'skipped' },
+    native: { result: 'success' }, submit: { result: 'skipped' }, 'submit-complete': { result: 'skipped' }, ota: { result: ota ? 'success' : 'skipped' },
   };
 }
 
@@ -50,7 +50,7 @@ describe('deployment before release OTA', () => {
 
   it.each([
     { name: 'server-only', server: true, ota: false, active: true, expected: [true, false, true] },
-    { name: 'OTA-only with skipped server/promotion jobs', server: false, ota: true, active: true, expected: [true, true, true] },
+    { name: 'OTA-only with skipped server/promotion jobs', server: false, ota: true, active: true, expected: [false, true, true] },
     { name: 'server and OTA', server: true, ota: true, active: true, expected: [true, true, true] },
     { name: 'native-only', server: false, ota: false, active: true, expected: [false, false, true] },
     { name: 'no selected work', server: false, ota: false, active: false, expected: [false, false, false] },
@@ -66,12 +66,26 @@ describe('deployment before release OTA', () => {
   });
 
   it.each(['failure', 'cancelled', 'skipped'] as const)('blocks OTA and required release completion when deployment is %s', result => {
-    for (const server of [true, false]) {
+    for (const server of [true]) {
       const needs = needsFor(server, true); needs.deploy.result = result; needs.ota.result = 'skipped';
       expect(enabled('ota', needs)).toBe(false); expect(enabled('finalize', needs)).toBe(false);
     }
     const serverOnly = needsFor(true, false); serverOnly.deploy.result = result;
     expect(enabled('finalize', serverOnly)).toBe(false);
+  });
+
+  it('allows OTA after submission acceptance while completion remains blocked on the monitor', () => {
+    const needs = needsFor(false, true); needs.submit.result = 'success'; needs['submit-complete'].result = 'failure';
+    expect(cut.jobs.ota.needs).not.toContain('submit-complete');
+    expect(enabled('ota', needs)).toBe(true); expect(enabled('finalize', needs)).toBe(false);
+    needs['submit-complete'].result = 'success'; expect(enabled('finalize', needs)).toBe(true);
+    needs.submit.result = 'failure'; expect(enabled('ota', needs)).toBe(false);
+  });
+
+  it('can retain a historical OTA-only deployment prerequisite from the immutable plan output', () => {
+    const needs = needsFor(false, true); needs.prepare.outputs!.deploy = 'true'; needs.deploy.result = 'success';
+    expect(enabled('deploy', needs)).toBe(true); expect(enabled('ota', needs)).toBe(true);
+    needs.deploy.result = 'skipped'; expect(enabled('ota', needs)).toBe(false); expect(enabled('finalize', needs)).toBe(false);
   });
 
   it('retains native failure and cancellation boundaries after successful deployment', () => {

@@ -1,6 +1,7 @@
 /** @file Exercises retirement with synthetic GitHub state, response loss, interrupted runs, and fail-closed publication boundaries. */
 
-import { readFileSync, rmSync } from 'node:fs';
+import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, basename } from 'node:path';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { git, run } from './common';
@@ -33,6 +34,10 @@ beforeEach(() => {
       paths.add(dirname(args[3])); asset(basename(args[3]), JSON.parse(readFileSync(args[3], 'utf8'))); return '';
     }
     if (args[0] === 'release' && args[1] === 'create') { remote.push({ id: 11, tag_name: args[2], draft: true, assets: [] }); return ''; }
+    if (args[0] === 'release' && args[1] === 'download') {
+      const name = args[args.indexOf('--pattern') + 1], destination = args[args.indexOf('--output') + 1];
+      writeFileSync(destination, data.get(remote[0].assets.find((a: any) => a.name === name).id)); return '';
+    }
     const endpoint = args[1];
     if (endpoint.includes('/releases/assets/')) return JSON.stringify(data.get(Number(endpoint.split('/').at(-1))));
     if (endpoint.endsWith('/actions/runs/123')) return JSON.stringify(workflow);
@@ -47,6 +52,16 @@ beforeEach(() => {
 });
 afterEach(() => { vi.unstubAllEnvs(); for (const path of paths) rmSync(path, { recursive: true, force: true }); });
 describe('unpublished candidate retirement', () => {
+  it('verifies retained binary exports by original bytes when checking an audited abandoned journal', () => {
+    retireCandidate('123');
+    const bytes = Buffer.from('retained compressed export bytes'), digest = createHash('sha256').update(bytes).digest('hex');
+    const id = data.size + 1; data.set(id, bytes); remote[0].assets.push({ id, name: 'export.android.abc.bin', digest: `sha256:${digest}` });
+    const record = data.get(remote[0].assets.find((a: any) => a.name === 'retirement.json').id);
+    record.assets.push({ id, name: 'export.android.abc.bin', digest: `sha256:${digest}`, hash: digest });
+    data.set(remote[0].assets.find((a: any) => a.name === 'retirement-complete.json').id, { retirementHash: hash(record) });
+    expect(() => verifyRetirement(remote[0])).not.toThrow();
+    data.set(id, Buffer.from('changed bytes')); expect(() => verifyRetirement(remote[0])).toThrow('artifact differs');
+  });
   it('identifies the actual blocking run instead of attributing its journal to the new run', () => {
     asset('prepared.json', {});
     expect(() => reconcileCandidates('124')).toThrow('Blocking journal candidate/123 (https://github.com/test/app/actions/runs/123): Publication or unknown');

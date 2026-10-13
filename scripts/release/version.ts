@@ -5,14 +5,14 @@
 
 import { resolve } from 'node:path';
 import { assert, cleanCommit, fail, git, isMain, parseArgs, readJson, root, writeJson } from './common';
+import { bumpVersion } from '../../tools/release-engine/index.mjs';
 
 export const serverFiles = ['release.json', 'package.json', 'apps/server/package.json', 'package-lock.json'];
 /** Increment a stable semantic version by one major, minor, or patch step; reject unsupported input. */
 export function bump(version: string, part: string) {
   assert(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version), 'Expected a stable semantic version.');
   assert(['patch', 'minor', 'major'].includes(part), 'Choose patch, minor, or major.');
-  const [a, b, c] = version.split('.').map(Number);
-  return part === 'major' ? `${a + 1}.0.0` : part === 'minor' ? `${a}.${b + 1}.0` : `${a}.${b}.${c + 1}`;
+  return bumpVersion(version, part as 'patch' | 'minor' | 'major');
 }
 /** Clone version documents and update all server version mirrors without mutating the inputs. */
 export function serverDocuments(documents: Record<string, any>, version: string) {

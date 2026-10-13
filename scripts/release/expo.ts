@@ -2,7 +2,7 @@
 
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
-import { assert, git, mobile, node, readJson, root, safeEnvironment } from './common';
+import { assert, git, mobile, node, readJson, root, safeEnvironment, sourceEnvironment } from './common';
 import { graphqlClient, readExpoEnvironment, verifyExpoProject } from './eas-credentials';
 import { validateExpoEnvironment } from './environment';
 import { profileConfig, releaseConfig, verifyOta, type Baseline, type NativeRelease, type Platform, type Profile } from './native-contract';
@@ -36,8 +36,15 @@ export function versionEnvironment(env: NodeJS.ProcessEnv, release: Pick<NativeR
 export function nativeFingerprint(platform: Platform, env: NodeJS.ProcessEnv, normalized = false): string {
   assert(!git(['ls-files', 'apps/mobile/android', 'apps/mobile/ios']), 'Generated native directories must remain untracked.');
   const actual = normalized ? versionEnvironment(env, { version: '0.0.0', androidVersionCode: 1, iosBuildNumber: '1' }) : env;
-  const fingerprint = JSON.parse(node(resolve(root, 'node_modules/tsx/dist/cli.mjs'), [resolve(root, 'scripts/release/fingerprint.ts'), platform], { env: actual, capture: true })).hash;
+  const fingerprint = JSON.parse(node(resolve(root, 'node_modules/tsx/dist/cli.mjs'), [resolve(root, 'scripts/release/fingerprint.ts'), platform], { env: sourceEnvironment(actual), capture: true })).hash;
   return normalized ? hash({ fingerprint }) : fingerprint;
+}
+
+/** Resolve the platform runtime with Expo's own managed-workflow resolver, using the exact allocated build environment. */
+export function nativeRuntime(platform: Platform, env: NodeJS.ProcessEnv): string {
+  const result = JSON.parse(node(resolve(root, 'node_modules/expo-updates/bin/cli.js'), ['runtimeversion:resolve', '--platform', platform, '--workflow', 'managed'], { cwd: mobile, env: sourceEnvironment({ ...env, LITTLE_SAY_FINGERPRINT_PLATFORM: platform }), capture: true }));
+  assert(/^[a-f0-9]{40,64}$/.test(result.runtimeVersion), 'Expo did not resolve a fingerprint runtime.');
+  return result.runtimeVersion;
 }
 
 /** Resolve legacy retained local artifacts with the same target-version and native fingerprint proof as CI OTA. */
@@ -46,6 +53,7 @@ export function localOtaEnvironment(b: Baseline, profile: Profile, remote: { env
   for (const key of ['expoProjectId', 'expoOwner', 'serverUrl'] as const) assert(current[key] === b.release[key], 'OTA project/server identity differs.');
   const env = versionEnvironment(remote.env, b.release);
   verifyOta(b, { release: b.release, fingerprint: nativeFingerprint(b.platform, env), environmentHash: remote.hash, platform: b.platform, profile });
+  if (b.runtimePolicy === 'fingerprint') assert(nativeRuntime(b.platform, env) === b.runtimeVersion, 'Local runtime differs from the retained native build.');
   return env;
 }
 
@@ -59,12 +67,13 @@ export function otaEnvironment(b: NativeBuildBaseline, profile: Profile, remote:
   assert(nativeFingerprint(b.platform, remote.env, true) === b.compatibility, 'Native compatibility changed.');
   const env = versionEnvironment(remote.env, b.release);
   assert(nativeFingerprint(b.platform, env) === b.fingerprint, 'Full native fingerprint differs for target runtime.');
+  if (b.schema === 3) assert(nativeRuntime(b.platform, env) === b.runtimeVersion, 'Resolved fingerprint runtime differs from the verified build.');
   return env;
 }
 
-/** Export the actual platform bundle for validation/publication without changing tracked source. */
+/** Export the actual platform bundle with declared source inputs and no inherited publication tokens. */
 export function exportBundle(platform: Platform, directory: string, env: NodeJS.ProcessEnv): void {
-  node(resolve(root, 'node_modules/expo/bin/cli'), ['export', '--platform', platform, '--output-dir', directory], { cwd: mobile, env });
+  node(resolve(root, 'node_modules/expo/bin/cli'), ['export', '--platform', platform, '--output-dir', directory], { cwd: mobile, env: sourceEnvironment(env) });
 }
 
 /** Read build-associated submissions through the pinned adapter; EAS submit has no JSON output flag. */

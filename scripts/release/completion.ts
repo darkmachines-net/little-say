@@ -3,9 +3,9 @@ import { appendFileSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { assert, git, writeJson } from './common';
-import type { NativeBuildBaseline, PreparedRelease, ReleasePlan, ReleaseReceipt, ServerReceipt } from './contract';
+import { requiresDeployment, type NativeBuildBaseline, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
 import { hash } from './inputs';
-import { completedReceipts, gh, Journal, readAsset, releases } from './journal';
+import { completedReceipts, downloadAsset, gh, Journal, readAsset, releases } from './journal';
 import type { OtaResults } from './ota';
 import { releaseSummary } from './summary';
 
@@ -25,7 +25,7 @@ export function publishCompletion(plan: ReleasePlan, prepared: PreparedRelease, 
   else { git(['tag', tag, prepared.commit]); git(['push', 'origin', `refs/tags/${tag}`]); }
   const temp = mkdtempSync(resolve(tmpdir(), 'little-say-complete-'));
   const notes = resolve(temp, 'notes.md');
-  const deployment = plan.server || plan.ota.length ? 'The preceding workflow deployment upgraded the self-hosted testing Compose server and passed readiness checks. This receipt does not attest the deployed image digest.' : 'This native-only cut did not run a server deployment.';
+  const deployment = requiresDeployment(plan) ? 'The preceding workflow deployment upgraded the self-hosted testing Compose server and passed readiness checks. This receipt does not attest the deployed image digest.' : 'Server inputs were unchanged; this cut did not deploy the server.';
   const message = `Released ${plan.profile} from \`${prepared.commit}\`.\n\n${releaseSummary(plan, { server, baselines, ota: ota?.receipts || [], skipped: ota?.skipped || [] })}\n\n${deployment} Store processing/public rollout and device installation or OTA uptake have not been verified.\n`;
   writeFileSync(notes, message);
   let release = releases().find(r => r.tag_name === tag);
@@ -40,7 +40,16 @@ export function publishCompletion(plan: ReleasePlan, prepared: PreparedRelease, 
   upload('receipt.json', receipt);
   const candidate = journal.release();
   assert(candidate?.draft, 'Candidate journal disappeared before archival.');
-  const archive = { schema: 1, runId: plan.runId, releaseId: candidate.id, assets: candidate.assets.map((asset: any) => ({ id: asset.id, name: asset.name, digest: asset.digest, content: readAsset(candidate, asset.name) })).sort((a: any, b: any) => a.name.localeCompare(b.name)) };
+  for (const asset of candidate.assets.filter((asset: any) => asset.name.endsWith('.bin'))) {
+    const file = resolve(temp, asset.name);
+    downloadAsset(candidate, asset.name, file);
+    const existing = release.assets?.find((item: any) => item.name === asset.name);
+    if (!existing) gh(['release', 'upload', tag, file, '--repo', process.env.GITHUB_REPOSITORY!]);
+    release = releases().find(r => r.tag_name === tag);
+    assert(release.assets?.find((item: any) => item.name === asset.name)?.digest === asset.digest, 'Completed export archive differs.');
+    downloadAsset(release, asset.name, resolve(mkdtempSync(resolve(tmpdir(), 'little-say-archive-check-')), asset.name));
+  }
+  const archive = { schema: 1, runId: plan.runId, releaseId: candidate.id, assets: candidate.assets.map((asset: any) => ({ id: asset.id, name: asset.name, digest: asset.digest, ...(asset.name.endsWith('.bin') ? { retainedAsset: asset.name } : { content: readAsset(candidate, asset.name) }) })).sort((a: any, b: any) => a.name.localeCompare(b.name)) };
   upload('journal.json', archive);
   gh(['release', 'edit', tag, '--repo', process.env.GITHUB_REPOSITORY!, '--draft=false', '--latest=false']);
   assert(completedReceipts().some(r => r.runId === plan.runId && hash(r) === hash(receipt)), 'Completed release is not readable.');

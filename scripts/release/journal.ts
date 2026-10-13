@@ -1,9 +1,9 @@
 /** @file Stores append-only release plans and operation receipts in draft GitHub Release assets, surviving runner loss. */
 
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { assert, run, writeJson } from './common';
+import { assert, run, sha256, writeJson } from './common';
 import { hash } from './inputs';
 import type { Operation, ReleaseReceipt } from './contract';
 
@@ -22,17 +22,35 @@ export function readAsset<T>(release: any, name: string): T | undefined {
   return JSON.parse(gh(['api', `repos/${process.env.GITHUB_REPOSITORY}/releases/assets/${asset.id}`, '-H', 'Accept: application/octet-stream']));
 }
 
+/** Download one immutable binary asset with authenticated GitHub access and verify the provider's byte digest. */
+export function downloadAsset(release: any, name: string, destination: string): string {
+  assert(/^[a-z0-9.-]+\.bin$/.test(name), 'Invalid binary journal asset name.');
+  const asset = release?.assets.find((a: any) => a.name === name);
+  assert(asset && /^sha256:[a-f0-9]{64}$/.test(asset.digest), 'Missing binary journal artifact proof.');
+  gh(['release', 'download', release.tag_name, '--repo', process.env.GITHUB_REPOSITORY!, '--pattern', name, '--output', destination]);
+  assert(`sha256:${sha256(destination)}` === asset.digest, 'Downloaded journal artifact differs.');
+  return asset.digest;
+}
+
 export interface Retirement {
   schema: 1; runId: string; releaseId: number; source: string; reason: string;
   kind?: 'reconciled-partial'; evidenceHash?: string;
   assets: { id: number; name: string; digest: string; hash: string }[];
 }
 
+/** Hash retained JSON semantically and binary exports by verified bytes, without decoding archives as JSON. */
+export function assetContentHash(release: any, name: string): string {
+  if (!name.endsWith('.bin')) return hash(readAsset(release, name));
+  const directory = mkdtempSync(resolve(tmpdir(), 'little-say-retained-check-'));
+  try { return downloadAsset(release, name, resolve(directory, name)).slice('sha256:'.length); }
+  finally { rmSync(directory, { recursive: true, force: true }); }
+}
+
 /** Verify preserved asset identities and contents before treating an abandoned journal as nonblocking. */
 export function verifyRetirement(release: any, complete = true): Retirement {
   const record = readAsset<Retirement>(release, 'retirement.json');
   assert(record?.schema === 1 && record.releaseId === release.id && release.draft && release.tag_name === `abandoned/${record.runId}`, 'Abandoned journal identity is uncertain; reconcile before another cut.');
-  assert(Array.isArray(record.assets) && record.assets.every(a => /^sha256:[a-f0-9]{64}$/.test(a.digest) && release.assets.some((r: any) => r.id === a.id && r.name === a.name && r.digest === a.digest) && hash(readAsset(release, a.name)) === a.hash), 'Retired journal assets changed or are missing.');
+  assert(Array.isArray(record.assets) && record.assets.every(a => /^sha256:[a-f0-9]{64}$/.test(a.digest) && release.assets.some((r: any) => r.id === a.id && r.name === a.name && r.digest === a.digest) && assetContentHash(release, a.name) === a.hash), 'Retired journal assets changed or are missing.');
   assert(release.assets.every((a: any) => ['retirement.json', 'retirement-complete.json'].includes(a.name) || record.assets.some(r => r.id === a.id && r.name === a.name)), 'Unexpected retired journal assets; reconcile publication state.');
   if (record.kind === 'reconciled-partial') assert(record.evidenceHash === hash(readAsset(release, 'reconciliation.json')), 'Partial-release reconciliation evidence changed or is missing.');
   if (complete) assert(readAsset<{ retirementHash: string }>(release, 'retirement-complete.json')?.retirementHash === hash(record), 'Retirement readback is incomplete; reconcile before another cut.');
@@ -82,6 +100,16 @@ export class Journal {
     writeJson(path, value);
     gh(['release', 'upload', this.tag, path, '--repo', process.env.GITHUB_REPOSITORY!]);
     assert(hash(this.read(name)) === hash(value), 'Journal readback failed. Do not repeat remote work until reconciled.');
+  }
+  /** Retain an export archive once; after an uncertain upload, recover the original asset instead of regenerating it. */
+  putArchive(name: string, file: string): void {
+    assert(/^[a-z0-9.-]+\.bin$/.test(name), 'Invalid binary journal asset name.');
+    const digest = `sha256:${sha256(file)}`;
+    const existing = this.release()?.assets.find((a: any) => a.name === name);
+    if (!existing) gh(['release', 'upload', this.tag, file, '--repo', process.env.GITHUB_REPOSITORY!]);
+    const release = this.release();
+    assert(release?.assets.find((a: any) => a.name === name)?.digest === digest, 'Immutable export archive differs from the original upload.');
+    downloadAsset(release, name, resolve(mkdtempSync(resolve(tmpdir(), 'little-say-export-check-')), name));
   }
   /** Get the latest sequence for one operation; historical intent and provider IDs remain available indefinitely. */
   operation<T>(key: string): Operation<T> | undefined {

@@ -12,6 +12,7 @@ export type Profile = 'internal' | 'production';
 export interface NativeRelease { version: string; androidVersionCode: number; iosBuildNumber: string; expoOwner: string; expoProjectId: string; serverUrl: string; }
 export interface Baseline {
   schema: 1; commit: string; platform: Platform; profile: Profile; channel: Profile; environment: string;
+  runtimeVersion?: string; runtimePolicy?: 'fingerprint';
   release: NativeRelease; fingerprint: string; environmentHash: string;
   artifacts: { file: string; sha256: string }[];
   createdAt: string;

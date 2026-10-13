@@ -3,12 +3,12 @@
 import { appendFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { assert, cleanCommit, fail, git, isMain, readJson, root, writeJson } from './common';
-import { assertCommit, validateCloudBaseline, type Inputs, type NativeBuildBaseline, type OtaReceipt, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
+import { assertCommit, requiresDeployment, validateCloudBaseline, validatePlanPolicy, type Inputs, type NativeBuildBaseline, type OtaReceipt, type PreparedRelease, type ReleasePlan, type ReleaseReceipt, type ServerReceipt } from './contract';
 import { type Platform, type Profile, releaseConfig } from './native-contract';
 import { hash, sourceInputs } from './inputs';
 import { hasWork, planRelease } from './planner';
 import { completedReceipts, gh, Journal } from './journal';
-import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint, otaEnvironment, preflightCredentials, versionEnvironment } from './expo';
+import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint, nativeRuntime, otaEnvironment, preflightCredentials, versionEnvironment } from './expo';
 import { prepareCandidate, validateReleaseSource } from './candidate';
 import { artifactHash, cloudBuild, submitBuild, verifyBuildIdentity } from './cloud';
 import { eas } from './expo';
@@ -19,6 +19,7 @@ import { StaleCandidateError } from './metadata';
 import { reconcileCandidates, retireCandidate } from './retirement';
 import { releaseSummary } from './summary';
 import { publishCompletion } from './completion';
+import { sealReleasePlan, verifyReleasePlan } from './provenance';
 
 function summary(message: string) {
   console.log(message);
@@ -39,6 +40,8 @@ function history(source: string): ReleaseReceipt[] {
   return receipts.sort((a, b) => a.completedAt.localeCompare(b.completedAt));
 }
 function guard(plan: ReleasePlan, prepared: PreparedRelease) {
+  validatePlanPolicy(plan);
+  verifyReleasePlan(plan, process.env.GITHUB_REPOSITORY!, process.env.RELEASE_WORKFLOW_COMMIT || process.env.GITHUB_WORKFLOW_SHA || '');
   assert(cleanCommit() === prepared.commit && git(['rev-parse', 'HEAD^{tree}']) === prepared.tree, 'Publication checkout differs from the validated release.');
   git(['fetch', 'origin', process.env.DEFAULT_BRANCH!, '--tags']);
   ancestor(prepared.commit, git(['rev-parse', `origin/${process.env.DEFAULT_BRANCH}`]));
@@ -52,7 +55,7 @@ async function verifyImports(profile: Profile): Promise<NativeBuildBaseline[]> {
   for (const b of imported) {
     validateCloudBaseline(b); ancestor(b.commit, cleanCommit());
     const build = JSON.parse(eas(['build:view', b.buildId, '--json']));
-    verifyBuildIdentity(build, { profile, nativeRelease: b.release } as ReleasePlan, b.commit, b.platform);
+    verifyBuildIdentity(build, { schema: b.schema === 3 ? 2 : 1, profile, nativeRelease: b.release, runtimes: { [b.platform]: b.runtimeVersion } } as ReleasePlan, b.commit, b.platform);
     assert(build.status === 'FINISHED' && build.fingerprint?.hash === b.fingerprint, 'Imported baseline build is unverified.');
     assert(await artifactHash(build.artifacts.applicationArchiveUrl || build.artifacts.buildUrl) === b.artifactSha256, 'Imported artifact hash differs.');
   }
@@ -70,8 +73,11 @@ async function createPlan(runId: string): Promise<ReleasePlan> {
   const server = receipts.map(r => r.server).filter((r): r is ServerReceipt => !!r).at(-1) || legacyImage(image, source);
   if (server) assert(server.image === image && verifyImage(server.image, server.version, server.commit) === server.digest, 'Previous image receipt no longer verifies.');
   const plan = planRelease({ runId, source, profile, bump: process.env.RELEASE_BUMP || 'patch', inputs, serverVersion: readJson(resolve(root, 'release.json')).version,
-    nativeRelease: releaseConfig(), previous: receipts.filter(r => r.profile === profile).at(-1), server, imported: await verifyImports(profile), retired: readJson(resolve(root, 'release-policy.json')).retiredRuntimes });
+    nativeRelease: releaseConfig(), previous: receipts.filter(r => r.profile === profile).at(-1), server, imported: await verifyImports(profile), retired: readJson(resolve(root, 'release-policy.json')).retiredRuntimes,
+    resolveRuntime: (platform, release) => nativeRuntime(platform, versionEnvironment(remote.env, release)) });
   if (plan.otaTargets.some(t => t.eligible)) plan.channelBranch = await channelBranch(profile);
+  const workflowCommit = process.env.RELEASE_WORKFLOW_COMMIT || process.env.GITHUB_WORKFLOW_SHA || (process.env.GITHUB_ACTIONS !== 'true' ? source : '');
+  sealReleasePlan(plan, process.env.GITHUB_REPOSITORY!, workflowCommit);
   return plan;
 }
 async function preflight(plan: ReleasePlan, dry: boolean) {
@@ -96,22 +102,24 @@ async function preflight(plan: ReleasePlan, dry: boolean) {
     assert(cleanCommit() === plan.source && (await expoEnvironment(plan.profile)).hash === remote.hash, 'Dry-run source/environment changed.');
   }
 }
-function nativeResults(plan: ReleasePlan, journal: Journal): NativeBuildBaseline[] {
+function nativeResults(plan: ReleasePlan, journal: Journal, completed = false): NativeBuildBaseline[] {
   const baselines = [...plan.baselines];
   for (const platform of plan.native) {
     const op = journal.operation<NativeBuildBaseline>(`build-${platform}`);
     assert(op?.status === 'complete' && op.result, `Missing successful ${platform} build receipt.`);
     const b = { ...op.result };
     if (plan.profile === 'production') {
-      const submission = journal.operation<string>(`submit-${platform}`);
+      const key = plan.schema === 2 && !completed ? `enqueue-submit-${platform}` : `submit-${platform}`;
+      const submission = journal.operation<string>(key);
       assert(submission?.status === 'complete' && submission.result, `Missing ${platform} submission receipt.`); b.submissionId = submission.result;
+      if (!completed && plan.schema === 2) assert(journal.operation(`submit-${platform}`)?.ids.at(-1) === submission.result, 'Submission acceptance differs from the current provider operation.');
     }
     baselines.push(b);
   }
   return baselines;
 }
 async function finalize(plan: ReleasePlan, prepared: PreparedRelease, journal: Journal) {
-  const baselines = nativeResults(plan, journal);
+  const baselines = nativeResults(plan, journal, true);
   const ota = journal.read<{ receipts: OtaReceipt[]; skipped: string[] }>('ota.json');
   assert(!plan.ota.length || ota, 'Missing OTA completion record.');
   const server = plan.server ? journal.operation<ServerReceipt>('server')?.result : plan.previousServer;
@@ -150,7 +158,9 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     if (!dry) reconcileCandidates(runId);
     const saved = dry ? undefined : journal.read<ReleasePlan>('plan.json');
     const plan = saved || await createPlan(runId);
-    assert(plan.schema === 1 && plan.runId === runId, 'Journal plan identity differs from this run.');
+    validatePlanPolicy(plan);
+    if (saved) verifyReleasePlan(plan, process.env.GITHUB_REPOSITORY!, process.env.RELEASE_WORKFLOW_COMMIT || process.env.GITHUB_WORKFLOW_SHA || '');
+    assert([1, 2].includes(plan.schema) && plan.runId === runId, 'Journal plan identity differs from this run.');
     // Historical force-all and native patch allocations belong to the saved plan, not today's planner.
     assert(['auto', 'force_all'].includes(plan.mode) && plan.profile === (process.env.RELEASE_PROFILE || 'internal') && plan.bump === (process.env.RELEASE_BUMP || 'patch'), 'Run inputs differ from the original immutable plan.');
     if (!saved) await preflight(plan, dry);
@@ -168,11 +178,11 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     }
     git(['switch', '--detach', prepared.commit]); guard(plan, prepared);
     validateReleaseSource();
-    output('active', true); output('commit', prepared.commit); output('server', plan.server); output('native', plan.native); output('ota', plan.ota.length > 0); output('profile', plan.profile); return;
+    output('active', true); output('commit', prepared.commit); output('server', plan.server); output('deploy', requiresDeployment(plan)); output('native', plan.native); output('ota', plan.ota.length > 0); output('profile', plan.profile); return;
   }
   const plan = journal.read<ReleasePlan>('plan.json'); const prepared = journal.read<PreparedRelease>('prepared.json');
   assert(plan && prepared, 'Release has not been prepared. Resume its prepare job first.');
-  assert(plan.schema === 1 && plan.runId === runId, 'Journal plan identity differs from this run.'); guard(plan, prepared);
+  assert([1, 2].includes(plan.schema) && plan.runId === runId, 'Journal plan identity differs from this run.'); guard(plan, prepared);
   if (command === 'server') { assert(plan.server, 'Server publication is not planned.'); publishImage(plan, prepared.commit, journal); }
   else if (command === 'promote-server') {
     assert(plan.server, 'Server promotion is not planned.');
@@ -181,13 +191,13 @@ export async function unifiedRelease(command = process.argv[2] || 'prepare'): Pr
     assert(server.commit === prepared.commit && server.version === plan.serverVersion && server.input === plan.inputs.server && server.image === `ghcr.io/${process.env.GITHUB_REPOSITORY!.toLowerCase()}`, 'Server publication differs from the prepared release.');
     promoteImage(server);
   }
-  else if (command === 'native' || command === 'submit') {
+  else if (command === 'native' || command === 'submit' || command === 'submit-complete') {
     const platform = process.env.RELEASE_PLATFORM as Platform; assert(plan.native.includes(platform), 'Native platform is not planned.');
     if (command === 'native') await cloudBuild(plan, prepared.commit, platform, journal);
-    else { const b = journal.operation<NativeBuildBaseline>(`build-${platform}`)?.result; assert(b, 'Native build is not complete.'); await submitBuild(plan, b, journal); }
+    else { const b = journal.operation<NativeBuildBaseline>(`build-${platform}`)?.result; assert(b, 'Native build is not complete.'); await submitBuild(plan, b, journal, command === 'submit-complete' || plan.schema === 1); }
   } else if (command === 'ota') journal.put('ota.json', await publishOta(plan, prepared.commit, nativeResults(plan, journal), journal));
   else if (command === 'finalize') await finalize(plan, prepared, journal);
-  else throw new Error('Usage: release:cut -- plan|prepare|server|promote-server|native|submit|ota|finalize');
+  else throw new Error('Usage: release:cut -- plan|prepare|server|promote-server|native|submit|submit-complete|ota|finalize');
 }
 
 if (isMain(import.meta.url)) unifiedRelease().catch(error => {

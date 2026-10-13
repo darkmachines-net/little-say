@@ -3,8 +3,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { appendFileSync } from 'node:fs';
 import { cleanCommit, git, readJson, writeJson } from './common';
-import { completedReceipts, gh, Journal, readAsset, releases } from './journal';
-import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint } from './expo';
+import { completedReceipts, downloadAsset, gh, Journal, readAsset, releases } from './journal';
+import { channelBranch, expoEnvironment, exportBundle, nativeFingerprint, nativeRuntime } from './expo';
 import { prepareCandidate, validateReleaseSource } from './candidate';
 import { legacyImage, promoteImage, publishImage, verifyImage } from './image';
 import { cloudBuild, submitBuild } from './cloud';
@@ -18,9 +18,9 @@ import { reconcileCandidates, retireCandidate } from './retirement';
 import { StaleCandidateError } from './metadata';
 
 vi.mock('./common', async original => ({ ...await original<typeof import('./common')>(), cleanCommit: vi.fn(), git: vi.fn(), readJson: vi.fn(), writeJson: vi.fn() }));
-vi.mock('./journal', () => ({ Journal: vi.fn(), completedReceipts: vi.fn(), gh: vi.fn(), releases: vi.fn(), readAsset: vi.fn() }));
+vi.mock('./journal', () => ({ Journal: vi.fn(), completedReceipts: vi.fn(), downloadAsset: vi.fn(), gh: vi.fn(), releases: vi.fn(), readAsset: vi.fn() }));
 vi.mock('./retirement', () => ({ reconcileCandidates: vi.fn(), retireCandidate: vi.fn() }));
-vi.mock('./expo', async original => ({ ...await original<typeof import('./expo')>(), channelBranch: vi.fn(), expoEnvironment: vi.fn(), nativeFingerprint: vi.fn(), preflightCredentials: vi.fn(), exportBundle: vi.fn(), otaEnvironment: vi.fn(() => ({})) }));
+vi.mock('./expo', async original => ({ ...await original<typeof import('./expo')>(), channelBranch: vi.fn(), expoEnvironment: vi.fn(), nativeFingerprint: vi.fn(), nativeRuntime: vi.fn(), preflightCredentials: vi.fn(), exportBundle: vi.fn(), otaEnvironment: vi.fn(() => ({})) }));
 vi.mock('./candidate', () => ({ prepareCandidate: vi.fn(), validateReleaseSource: vi.fn() }));
 vi.mock('./image', () => ({ legacyImage: vi.fn(), promoteImage: vi.fn(), publishImage: vi.fn(), verifyImage: vi.fn() }));
 vi.mock('./cloud', () => ({ cloudBuild: vi.fn(), submitBuild: vi.fn() }));
@@ -35,14 +35,15 @@ const inputs = { server: 'server-input', native: { android: 'native-android', io
 let records: Map<string, any>, journal: any, remote: any[], history: ReleaseReceipt[], tags: Set<string>, loseUpload: boolean;
 beforeEach(() => {
   vi.resetAllMocks(); records = new Map(); remote = []; history = []; tags = new Set(); loseUpload = false;
-  for (const [key, value] of Object.entries({ GITHUB_ACTIONS: 'true', DEFAULT_BRANCH: 'master', GITHUB_REF: 'refs/heads/master', GITHUB_REPOSITORY: 'test/app', GITHUB_RUN_ID: '123', GITHUB_OUTPUT: '/tmp/outputs', RELEASE_PROFILE: 'internal', RELEASE_BUMP: 'patch' })) vi.stubEnv(key, value);
+  for (const [key, value] of Object.entries({ GITHUB_ACTIONS: 'true', DEFAULT_BRANCH: 'master', GITHUB_REF: 'refs/heads/master', GITHUB_REPOSITORY: 'test/app', RELEASE_WORKFLOW_COMMIT: 'c'.repeat(40), GITHUB_RUN_ID: '123', GITHUB_OUTPUT: '/tmp/outputs', RELEASE_PROFILE: 'internal', RELEASE_BUMP: 'patch' })) vi.stubEnv(key, value);
   journal = { tag: 'candidate/123', release: vi.fn(() => records.size ? { id: 1, draft: true, tag_name: 'candidate/123', assets: [...records.keys()].map((name, id) => ({ id, name, digest: 'sha256:fixture' })) } : undefined), create: vi.fn(), read: vi.fn((name: string) => records.get(name)), put: vi.fn((name: string, value: any) => { if (records.has(name)) expect(records.get(name)).toEqual(value); else records.set(name, value); }), operation: vi.fn((key: string) => records.get(`op-${key}`)) };
   vi.mocked(Journal).mockImplementation(function () { return journal; });
   journal.assertActive = vi.fn();
   vi.mocked(cleanCommit).mockReturnValue(commit); vi.mocked(releaseConfig).mockReturnValue(release);
-  vi.mocked(readJson).mockImplementation((path: string) => path.endsWith('release-policy.json') ? { schema: 1, importedBaselines: [], retiredRuntimes: [] } : { version: '0.2.0' });
+  vi.mocked(readJson).mockImplementation((path: string) => path.endsWith('release-policy.json') ? { schema: 1, importedBaselines: [], retiredRuntimes: [] } : path.endsWith('release-engine.lock.json') ? { revision: 'd'.repeat(40) } : { version: '0.2.0' });
   vi.mocked(sourceInputs).mockImplementation((_ref, target) => target === 'server' ? inputs.server : inputs.bundle[target]);
   vi.mocked(nativeFingerprint).mockImplementation(platform => inputs.native[platform]);
+  vi.mocked(nativeRuntime).mockReturnValue('f'.repeat(40));
   vi.mocked(expoEnvironment).mockResolvedValue({ env: { LITTLE_SAY_CHANNEL: 'internal', EXPO_NO_DOTENV: '1', CI: '1' }, hash: inputs.environmentHash });
   vi.mocked(channelBranch).mockResolvedValue({ id: 'branch-id', name: 'internal' });
   vi.mocked(completedReceipts).mockImplementation(() => history);
@@ -54,10 +55,16 @@ beforeEach(() => {
   });
   vi.mocked(releases).mockImplementation(() => remote);
   vi.mocked(readAsset).mockImplementation((r: any, name) => r?.tag_name === 'candidate/123' ? records.get(name) : r?.documents?.[name]);
+  vi.mocked(downloadAsset).mockReturnValue('sha256:fixture');
   vi.mocked(verifyPublishedOta).mockImplementation(async (_plan, _commit, _baselines, _journal, saved) => saved);
   vi.mocked(gh).mockImplementation(args => {
-    if (args[1] === 'create') remote.push({ tag_name: args[2], draft: true, documents: {} });
-    if (args[1] === 'upload') { remote[0].documents[args[3].split(/[\\/]/).at(-1)!] = [...vi.mocked(writeJson).mock.calls].reverse().find(([path]) => path === args[3])![1]; if (loseUpload) { loseUpload = false; throw Error('lost completion upload response'); } }
+    if (args[1] === 'create') remote.push({ tag_name: args[2], draft: true, documents: {}, assets: [] });
+    if (args[1] === 'upload') {
+      const name = args[3].split(/[\\/]/).at(-1)!;
+      if (name.endsWith('.bin')) remote[0].assets.push({ name, digest: 'sha256:fixture' });
+      else remote[0].documents[name] = [...vi.mocked(writeJson).mock.calls].reverse().find(([path]) => path === args[3])![1];
+      if (loseUpload) { loseUpload = false; throw Error('lost completion upload response'); }
+    }
     if (args[1] === 'edit') { remote[0].draft = false; history.push(remote[0].documents['receipt.json']); }
     return '';
   });
@@ -98,7 +105,8 @@ describe('orchestration publication boundaries', () => {
   });
   it('exits an automatic no-change cut without allocating persisted versions or tags', async () => {
     vi.stubEnv('RELEASE_MODE', 'force_all');
-    history.push(previous()); await unifiedRelease('prepare'); expect(journal.create).not.toHaveBeenCalled(); expect(prepareCandidate).not.toHaveBeenCalled();
+    const completed = previous(); completed.baselines = completed.baselines.map(b => ({ ...b, schema: 3, runtimePolicy: 'fingerprint', runtimeVersion: 'f'.repeat(40) }));
+    history.push(completed); await unifiedRelease('prepare'); expect(journal.create).not.toHaveBeenCalled(); expect(prepareCandidate).not.toHaveBeenCalled();
     expect(appendFileSync).toHaveBeenCalledWith('/tmp/outputs', 'active=false\n');
     expect(reconcileCandidates).toHaveBeenCalledOnce();
   });
@@ -176,5 +184,16 @@ describe('orchestration publication boundaries', () => {
     expect(remote[0].documents['journal.json'].assets.some((a: any) => a.name === 'receipt.json' && a.content === receipt)).toBe(true);
     expect(promoteImage).not.toHaveBeenCalled(); expect(cloudBuild).not.toHaveBeenCalled();
     await unifiedRelease('prepare'); expect(prepareCandidate).not.toHaveBeenCalled();
+  });
+  it('retains and verifies binary exports before deleting the candidate journal', async () => {
+    const old = previous(); const plan: ReleasePlan = { ...old.plan, runId: '123', server: false, native: [], submissions: [], ota: [], previousServer: old.server, baselines: old.baselines };
+    records.set('plan.json', plan); records.set('prepared.json', old.prepared); records.set('export.android.abc.bin', Buffer.from('original bytes'));
+    vi.mocked(downloadAsset).mockImplementationOnce(() => { throw Error('archive download interrupted'); });
+    await expect(unifiedRelease('finalize')).rejects.toThrow('archive download interrupted');
+    expect(vi.mocked(gh).mock.calls.some(([args]) => args[1] === 'delete')).toBe(false);
+    await unifiedRelease('finalize');
+    expect(vi.mocked(downloadAsset).mock.calls.map(([release]) => release.tag_name)).toEqual(['candidate/123', 'candidate/123', 'release/internal/123']);
+    expect(remote[0].documents['journal.json'].assets.find((asset: any) => asset.name.endsWith('.bin'))).toMatchObject({ retainedAsset: 'export.android.abc.bin' });
+    expect(vi.mocked(gh).mock.calls.some(([args]) => args[1] === 'delete')).toBe(true);
   });
 });

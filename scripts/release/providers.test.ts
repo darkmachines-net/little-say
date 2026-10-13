@@ -73,6 +73,28 @@ describe('cloud builds and exact submissions', () => {
     const calls = vi.mocked(eas).mock.calls.filter(([args]) => args[0] === 'submit'); expect(calls).toHaveLength(1);
     expect(calls[0][0]).toEqual(['submit', '--platform', platform, '--profile', 'production', '--id', baseline.buildId, '--non-interactive', '--no-wait', '--no-auto-testflight-setup']);
   });
+  it('records queued submission acceptance without claiming completion, then monitors the same exact ID', async () => {
+    plan.profile = 'production'; baseline = { ...baseline, profile: 'production', channel: 'production', environment: 'production' };
+    Object.assign(build, { buildProfile: 'production', distribution: 'STORE', updateChannel: { name: 'production' } });
+    const original = vi.mocked(eas).getMockImplementation()!;
+    vi.mocked(eas).mockImplementation((args, env) => { const result = original(args, env); if (args[0] === 'submit') submissions.at(-1).status = 'IN_QUEUE'; return result; });
+    const id = await submitBuild(plan, baseline, journal, false);
+    expect(operations.get('submit-android')?.status).toBe('running');
+    expect(operations.get('enqueue-submit-android')).toMatchObject({ status: 'complete', result: id });
+    expect(await submitBuild(plan, baseline, journal, false)).toBe(id);
+    submissions[0].status = 'FINISHED'; expect(await submitBuild(plan, baseline, journal)).toBe(id);
+    expect(operations.get('submit-android')?.status).toBe('complete');
+    expect(vi.mocked(eas).mock.calls.filter(([args]) => args[0] === 'submit')).toHaveLength(1);
+  });
+
+  it('blocks submission acceptance when the provider reports the wrong store destination', async () => {
+    plan.profile = 'production'; baseline = { ...baseline, profile: 'production', channel: 'production', environment: 'production' };
+    Object.assign(build, { buildProfile: 'production', distribution: 'STORE', updateChannel: { name: 'production' } });
+    const original = vi.mocked(eas).getMockImplementation()!;
+    vi.mocked(eas).mockImplementation((args, env) => { const result = original(args, env); if (args[0] === 'submit') submissions.at(-1).androidConfig.track = 'production'; return result; });
+    await expect(submitBuild(plan, baseline, journal, false)).rejects.toThrow('destination');
+    expect(operations.has('enqueue-submit-android')).toBe(false);
+  });
 });
 describe('compatible OTA target proof', () => {
   it('retains older compatible runtimes, deduplicates copies, and excludes incompatible/retired targets in force-all', () => {

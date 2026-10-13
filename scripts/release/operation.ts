@@ -2,6 +2,7 @@
 
 import { assert } from './common';
 import type { Operation } from './contract';
+import { reduceOperation } from '../../tools/release-engine/index.mjs';
 
 export interface OperationStore {
   /** Load the last durable state for this single-writer operation. */
@@ -20,10 +21,10 @@ export interface Provider<T> {
   verify(id: string): Promise<T>;
 }
 
-/** Recover or run one operation; unknown creation outcomes never authorize a second blind request. */
-export async function runOperation<T>(store: OperationStore, key: string, provider: Provider<T>, options: { polls?: number; pause?: () => Promise<void> } = {}): Promise<T> {
+/** Recover an accepted provider ID without waiting for completion; ambiguous requests remain blocking. */
+export async function acceptOperation<T>(store: OperationStore, key: string, provider: Provider<T>): Promise<Operation<T>> {
   let state = store.operation<T>(key);
-  if (state?.status === 'complete') return provider.verify(state.ids.at(-1)!);
+  if (state?.status === 'complete') return state;
   let id = state?.status === 'running' ? state.ids.at(-1) : undefined;
   if (!id) {
     const found = (await provider.find()).filter(candidate => !state?.ids.includes(candidate));
@@ -31,11 +32,22 @@ export async function runOperation<T>(store: OperationStore, key: string, provid
     if (found.length) id = found[0];
     else {
       assert(!state || state.status === 'failed', `Unknown outcome for ${key}. No second request was sent; reconcile the provider dashboard and journal.`);
+      // Validate the new request boundary with the shared engine before persisting its intent.
+      const intent = reduceOperation(null, { type: 'intent', operationKey: key });
       state = store.save({ key, status: 'intent', ids: state?.ids || [] });
       id = await provider.start();
+      reduceOperation(intent, { type: 'accepted', operationId: id });
     }
     state = store.save({ key, status: 'running', ids: [...(state?.ids || []), id] });
   }
+  return state!;
+}
+
+/** Recover or run one operation; unknown creation outcomes never authorize a second blind request. */
+export async function runOperation<T>(store: OperationStore, key: string, provider: Provider<T>, options: { polls?: number; pause?: () => Promise<void> } = {}): Promise<T> {
+  const state = await acceptOperation(store, key, provider);
+  const id = state.ids.at(-1)!;
+  if (state.status === 'complete') return provider.verify(id);
   for (let attempt = 0; attempt < (options.polls ?? 180); attempt++) {
     const status = await provider.status(id);
     if (status === 'failed') {

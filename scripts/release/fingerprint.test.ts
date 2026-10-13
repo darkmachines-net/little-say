@@ -4,12 +4,16 @@ import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
 import { mobile, node, root } from './common';
-import { nativeFingerprint, versionEnvironment } from './expo';
+import { nativeFingerprint, nativeRuntime, versionEnvironment } from './expo';
 import { releaseEnvironment } from './environment';
 
 const require = createRequire(import.meta.url);
 const metadata = require(resolve(mobile, 'release-metadata.cjs'));
 describe('shared fingerprint policy', () => {
+  it('resolves the same fingerprint runtime Expo will embed for a selected platform', () => {
+    const env = releaseEnvironment('internal');
+    expect(nativeRuntime('android', env)).toBe(nativeFingerprint('android', env));
+  }, 45000);
   it('permits only complete version overlays and never mutates cached native metadata', () => {
     const original = { version: '1.0.0', androidVersionCode: 2, iosBuildNumber: '3', expoProjectId: 'project' };
     const copy = metadata.resolveRelease(original, ''); delete copy.iosBuildNumber;

@@ -7,17 +7,16 @@ import { randomUUID } from 'node:crypto';
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, resolve } from 'node:path';
-import { assert, cleanCommit, fail, git, machineRoot, mobile, node, npm, parseArgs, readJson, root, run, safeEnvironment, sha256, writeJson } from './common';
+import { assert, cleanCommit, fail, machineRoot, mobile, node, npm, parseArgs, readJson, root, run, safeEnvironment, sha256, sourceEnvironment, writeJson } from './common';
 import { downloadAndroidCredentials, readExpoEnvironment, verifyExpoProject } from './eas-credentials';
 import { releaseEnvironment, validateExpoEnvironment } from './environment';
 import { verifyAndroidArtifacts } from './verify-android';
 import { verifyIosArtifact } from './verify-ios';
 import { type Baseline, type Platform, type Profile, profileConfig, releaseConfig, validateBaseline, verifyArtifacts } from './native-contract';
-import { channelBranch, localOtaEnvironment, otaEnvironment, updateGroup } from './expo';
+import { channelBranch, exportBundle, localOtaEnvironment, nativeFingerprint, nativeRuntime, otaEnvironment, updateGroup } from './expo';
 import { artifactHash, verifyBuildIdentity } from './cloud';
 import { validateCloudBaseline, type NativeBuildBaseline, type ReleasePlan } from './contract';
 import { bundlePayload, verifyUpdate } from './ota';
-import { deployServerBeforeOta } from './ota-deployment';
 import { checkVersions } from './version';
 
 const cli = resolve(root, 'tools/eas-cli/node_modules/eas-cli/bin/run');
@@ -41,9 +40,7 @@ async function remoteEnvironment(profile: Profile) {
   return validateExpoEnvironment(profile, await readExpoEnvironment(release, profileConfig(profile).environment));
 }
 function fingerprint(platform: Platform, env: NodeJS.ProcessEnv) {
-  assert(!git(['ls-files', 'apps/mobile/android', 'apps/mobile/ios']), 'Release tooling expects generated, untracked native directories.');
-  const raw = run(process.execPath, ['--import', 'tsx', resolve(root, 'scripts/release/fingerprint.ts'), platform], { env, capture: true });
-  return JSON.parse(raw).hash as string;
+  return nativeFingerprint(platform, env);
 }
 function baselineFor(platform: Platform, profile: Profile, explicit?: string) {
   const file = explicit ? resolve(explicit) : machine().baselines[`${platform}:${profile}`];
@@ -64,7 +61,7 @@ async function main() {
   const profile = (args.profile || 'internal') as Profile;
   assert(['android', 'ios'].includes(platform) && ['internal', 'production'].includes(profile), 'Choose android/ios and internal/production.');
   if (command === 'setup') {
-    if (!args.check) npm(['ci', '--prefix', 'tools/eas-cli'], { env: safeEnvironment() });
+    if (!args.check) npm(['ci', '--prefix', 'tools/eas-cli'], { env: sourceEnvironment() });
     eas(['--version']);
     console.log(`Machine config: ${configFile}\nRetained artifacts: ${machine().artifactRoot}`);
     if (platform === 'android') { run('java', ['-version']); assert(process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT, 'Install Android Studio SDK and set ANDROID_HOME (see release guide).'); }
@@ -112,13 +109,13 @@ async function main() {
       const key = readJson(config.credentials).android?.keystore;
       assert(key && isAbsolute(key.keystorePath) && existsSync(key.keystorePath) && key.keyAlias && key.keyPassword && key.keystorePassword, 'Invalid external signing configuration.');
       // Generate native files without injecting signing secrets or backend API keys.
-      node(expo, ['prebuild', '--clean', '--no-install', '--platform', 'android'], { cwd: mobile, env: remote.env });
+      node(expo, ['prebuild', '--clean', '--no-install', '--platform', 'android'], { cwd: mobile, env: sourceEnvironment(remote.env) });
       requireSameSource(commit);
       const temp = mkdtempSync(resolve(tmpdir(), 'little-say-gradle-'));
       try {
         const init = resolve(temp, 'signing.gradle');
         writeFileSync(init, `allprojects { p ->\n  p.afterEvaluate {\n    if (p.path == ':app' && p.plugins.hasPlugin('com.android.application')) {\n      def android = p.extensions.getByName('android')\n      def signing = android.signingConfigs.maybeCreate('littleSayRelease')\n      signing.storeFile = new File(System.getenv('LS_KEYSTORE'))\n      signing.storePassword = System.getenv('LS_STORE_PASSWORD')\n      signing.keyAlias = System.getenv('LS_KEY_ALIAS')\n      signing.keyPassword = System.getenv('LS_KEY_PASSWORD')\n      android.buildTypes.getByName('release').signingConfig = signing\n    }\n  }\n}\n`);
-        const env = { ...remote.env, LS_KEYSTORE: key.keystorePath, LS_STORE_PASSWORD: key.keystorePassword, LS_KEY_ALIAS: key.keyAlias, LS_KEY_PASSWORD: key.keyPassword };
+        const env = { ...sourceEnvironment(remote.env), LS_KEYSTORE: key.keystorePath, LS_STORE_PASSWORD: key.keystorePassword, LS_KEY_ALIAS: key.keyAlias, LS_KEY_PASSWORD: key.keyPassword };
         // Run the wrapper main class directly, avoiding cmd.exe argument interpolation on Windows.
         const java = process.env.JAVA_HOME ? resolve(process.env.JAVA_HOME, 'bin', process.platform === 'win32' ? 'java.exe' : 'java') : 'java';
         run(java, ['-classpath', resolve(mobile, 'android/gradle/wrapper/gradle-wrapper.jar'), 'org.gradle.wrapper.GradleWrapperMain', '--no-daemon', '--init-script', init, ':app:assembleRelease', ':app:bundleRelease'], { cwd: resolve(mobile, 'android'), env });
@@ -129,12 +126,12 @@ async function main() {
       verifyAndroidArtifacts(directory, key, release);
     } else {
       eas(['build', '--local', '--platform', 'ios', '--profile', profile, '--output', resolve(directory, 'app.ipa'), '--non-interactive'], { env: remote.env });
-      verifyIosArtifact(resolve(directory, 'app.ipa'), release, profile); files.push('app.ipa');
+      verifyIosArtifact(resolve(directory, 'app.ipa'), release, profile, nativeRuntime(platform, remote.env)); files.push('app.ipa');
     }
     requireSameSource(commit);
     assert(hash === fingerprint(platform, remote.env), 'Native fingerprint changed during the build. No baseline was recorded.');
     assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during the build. No baseline was recorded.');
-    const baseline: Baseline = { schema: 1, commit, platform, profile, channel: profile, environment: profileConfig(profile).environment, release, fingerprint: hash, environmentHash: remote.hash, artifacts: files.map(file => ({ file, sha256: sha256(resolve(directory, file)) })), createdAt: new Date().toISOString() };
+    const baseline: Baseline = { schema: 1, runtimePolicy: 'fingerprint', runtimeVersion: nativeRuntime(platform, remote.env), commit, platform, profile, channel: profile, environment: profileConfig(profile).environment, release, fingerprint: hash, environmentHash: remote.hash, artifacts: files.map(file => ({ file, sha256: sha256(resolve(directory, file)) })), createdAt: new Date().toISOString() };
     const file = resolve(directory, 'baseline.json'); writeJson(file, baseline);
     config.baselines[`${platform}:${profile}`] = file; saveMachine(config);
     console.log(`Built locally and retained: ${directory}\nBaseline: ${file}`); return;
@@ -170,32 +167,32 @@ async function main() {
   assert(file && existsSync(file), 'Select a retained local or portable cloud baseline with --baseline.');
   const baseline = readJson<Baseline | NativeBuildBaseline>(file);
   let otaEnv: NodeJS.ProcessEnv;
-  if (baseline.schema === 2) {
+  if (baseline.schema === 2 || baseline.schema === 3) {
     validateCloudBaseline(baseline);
     assert(baseline.platform === platform && baseline.profile === profile, 'Baseline platform/profile differs.');
     const build = JSON.parse(eas(['build:view', baseline.buildId, '--json'], { env: remote.env, capture: true }));
-    verifyBuildIdentity(build, { profile, nativeRelease: baseline.release } as ReleasePlan, baseline.commit, platform);
+    verifyBuildIdentity(build, { schema: baseline.schema === 3 ? 2 : 1, profile, nativeRelease: baseline.release, runtimes: { [platform]: baseline.runtimeVersion } } as ReleasePlan, baseline.commit, platform);
     assert(build.status === 'FINISHED' && build.fingerprint?.hash === baseline.fingerprint && await artifactHash(build.artifacts.applicationArchiveUrl || build.artifacts.buildUrl) === baseline.artifactSha256, 'Cloud baseline artifact no longer verifies.');
     otaEnv = otaEnvironment(baseline, profile, remote);
   } else {
+    assert(baseline.schema === 1, 'Unsupported local baseline schema.');
     verifyArtifacts(baseline, dirname(file));
     assert(baseline.platform === platform, 'Baseline platform differs.');
     otaEnv = localOtaEnvironment(baseline, profile, remote);
   }
-  const runtimeVersion = baseline.release.version;
+  const runtimeVersion = baseline.runtimeVersion || baseline.release.version;
   const retired = readJson(resolve(root, 'release-policy.json')).retiredRuntimes;
   assert(!retired.some((r: any) => r.profile === profile && r.platform === platform && r.runtimeVersion === runtimeVersion), 'This runtime has been explicitly retired.');
   const branch = await channelBranch(profile);
   // Export even for dry runs: catch bundling errors before asking EAS to publish.
   const exportDir = resolve(root, 'artifacts', 'ota', `${platform}-${profile}-${commit}`);
-  node(expo, ['export', '--platform', platform, '--output-dir', exportDir], { cwd: mobile, env: otaEnv });
+  exportBundle(platform, exportDir, otaEnv);
   requireSameSource(commit);
   assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during export. Run the command again.');
   if (args['dry-run']) { console.log(`OTA dry run passed. ${platform}, ${profile}, runtime ${runtimeVersion}, source ${commit}.\nBaseline: ${file}\nNo update was published.`); return; }
-  await deployServerBeforeOta();
   requireSameSource(commit);
-  assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed during server deployment. Run the command again.');
-  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during export or server deployment.');
+  assert(remote.hash === (await remoteEnvironment(profile)).hash, 'EAS environment changed before publication. Run the command again.');
+  assert((await channelBranch(profile)).id === branch.id, 'Channel mapping changed during export.');
   const result = JSON.parse(eas(['update', '--branch', branch.name, '--environment', profileConfig(profile).environment, '--platform', platform, '--message', args.message, '--input-dir', exportDir, '--skip-bundler', '--non-interactive', '--json'], { env: otaEnv, capture: true }));
   const updates = Array.isArray(result) ? result : [result];
   const group = updates[0]?.group;

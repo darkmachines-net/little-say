@@ -66,6 +66,26 @@ export function parseArgs(args: string[], allowed: string[]) {
 export function safeEnvironment(source: NodeJS.ProcessEnv = process.env) {
   return Object.fromEntries(Object.entries(source).filter(([key]) => !/^(AAC_OPENAI_KEY|OPENAI_API_KEY|EXPO_PUBLIC_.*|LITTLE_SAY_CHANNEL|LITTLE_SAY_OTA_VERSIONS|LITTLE_SAY_FINGERPRINT_PLATFORM|NODE_OPTIONS|EAS_BUILD_.*|EAS_SKIP_AUTO_FINGERPRINT|EXPO_NO_DOTENV)$/i.test(key)));
 }
+/**
+ * Allow only process essentials and declared application/test inputs in source-evaluating children.
+ * Publication tokens, workflow command files, auth sockets, Node injection options, and arbitrary
+ * inherited variables are excluded. This limits environment exposure; the child still shares its
+ * runner and home directory with the orchestrator, so this is not a credential-isolation sandbox.
+ */
+export function sourceEnvironment(source: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
+  const allowed = new Set([
+    'PATH', 'PATHEXT', 'SYSTEMROOT', 'WINDIR', 'COMSPEC', 'HOME', 'USERPROFILE', 'HOMEDRIVE', 'HOMEPATH',
+    'APPDATA', 'LOCALAPPDATA', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME', 'XDG_DATA_HOME', 'TMP', 'TEMP', 'TMPDIR',
+    'SHELL', 'TERM', 'COLORTERM', 'LANG', 'LANGUAGE', 'TZ', 'CI', 'NODE_ENV', 'FORCE_COLOR', 'NO_COLOR',
+    'JAVA_HOME', 'ANDROID_HOME', 'ANDROID_SDK_ROOT', 'DEVELOPER_DIR', 'SDKROOT',
+    'NPM_EXECPATH', 'NPM_NODE_EXECPATH', 'NPM_CONFIG_CACHE',
+    'EXPO_NO_DOTENV', 'EXPO_PUBLIC_API_URL', 'EXPO_PUBLIC_WEB_API_URL',
+    'LITTLE_SAY_CHANNEL', 'LITTLE_SAY_OTA_VERSIONS', 'LITTLE_SAY_FINGERPRINT_PLATFORM', 'LITTLE_SAY_GOOGLE_IOS_URL_SCHEME',
+    'TEST_PGHOST', 'TEST_PGPORT', 'TEST_PGDATABASE', 'TEST_PGUSER', 'TEST_PGPASSWORD', 'TEST_PGSSLMODE',
+    'FIREBASE_AUTH_EMULATOR_HOST', 'GCLOUD_PROJECT',
+  ]);
+  return Object.fromEntries(Object.entries(source).filter(([key, value]) => typeof value === 'string' && (allowed.has(key.toUpperCase()) || /^LC_[A-Z_]+$/i.test(key))));
+}
 /** Check whether the module URL corresponds to the script invoked by Node. */
 export function isMain(url: string) { return process.argv[1] && resolve(fileURLToPath(url)) === resolve(process.argv[1]); }
 /** Report a command error and set a failing exit code without terminating the process immediately. */

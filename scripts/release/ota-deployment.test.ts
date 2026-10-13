@@ -102,17 +102,16 @@ describe('local OTA server deployment gate', () => {
     expect(f.calls.filter(call => call.args[0] === 'workflow')).toHaveLength(1);
   });
 
-  it('keeps dry runs free of deployment and rechecks source, environment, and channel before publishing', () => {
+  it('keeps local OTA free of deployment and rechecks source, environment, and channel before publishing', () => {
     const native = readFileSync(resolve(root, 'scripts/release/native.ts'), 'utf8');
     const ota = native.slice(native.indexOf("assert(command === 'ota'"));
     const dryRun = ota.indexOf("if (args['dry-run'])");
-    const deploy = ota.indexOf('await deployServerBeforeOta();');
     const publish = ota.indexOf("eas(['update'");
     expect(dryRun).toBeGreaterThan(0);
-    expect(ota.slice(dryRun, deploy)).toContain('return;');
-    expect(deploy).toBeGreaterThan(dryRun);
-    expect(publish).toBeGreaterThan(deploy);
-    const rechecks = ota.slice(deploy, publish);
+    expect(ota).not.toContain('deployServerBeforeOta');
+    expect(ota.slice(dryRun, publish)).toContain('return;');
+    expect(publish).toBeGreaterThan(dryRun);
+    const rechecks = ota.slice(dryRun, publish);
     expect(rechecks).toContain('requireSameSource(commit)');
     expect(rechecks).toContain('remoteEnvironment(profile)');
     expect(rechecks).toContain('channelBranch(profile)');

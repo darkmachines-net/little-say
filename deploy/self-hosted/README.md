@@ -5,11 +5,8 @@ GitHub-hosted Actions open a temporary WireGuard tunnel using the supplied peer 
 upgrade for `little-say` on the Debian host. This repository contains only the caller; it does not provision
 peers, install a host helper, configure accounts, run SSH, or change homelab settings.
 
-**Cut release** promotes its verified server image to `latest` before calling the webhook. Server and OTA releases
-require successful deployment; native-only releases and no-op cuts do not deploy. Both internal and production
-OTA publication, and required release completion, depend on deployment success. **Deploy self-hosted server**
-also invokes the same caller independently. Local `npm run ota:publish` dispatches that workflow and waits for
-its exact successful run before uploading. Local `--dry-run` validates/exports without deploying or publishing.
+**Cut release** promotes its verified server image to `latest` before calling the webhook. Selected server releases require successful deployment; new OTA-only/native-only releases and no-op cuts do not deploy. When the plan selects server deployment, both internal and production OTA publication and release completion depend on its success. **Deploy self-hosted server**
+also invokes the same caller independently. Local `npm run ota:publish` leaves the server unchanged. Local `--dry-run` validates/exports without deploying or publishing.
 
 ## Request and success contract
 
@@ -79,8 +76,7 @@ across repositories. The shared service's Traefik allowlist must see the configu
 To replace the previous SSH configuration, add `DEPLOY_URL` and `DEPLOY_TOKEN`, remove `DEPLOY_SSH_USER`,
 `DEPLOY_SSH_PRIVATE_KEY`, and `DEPLOY_SSH_KNOWN_HOSTS`, and point `DEPLOY_HOST` at the HTTPS destination. Keep the
 existing WireGuard setting names. Keep repository `EXPO_TOKEN` and EAS settings for publication; the webhook job
-receives no Expo credentials. Local OTA additionally needs authenticated `gh` with repository Actions read/write
-permission. WireGuard and webhook secrets are never downloaded to the developer machine.
+receives no Expo credentials. Local OTA needs Expo publication access; it does not request deployment credentials. WireGuard and webhook secrets remain in GitHub.
 
 ## Rollout and recovery
 
@@ -107,8 +103,7 @@ controller continues accepted work after a caller disconnects. HTTP 409 can mean
 `deployment_requires_reconciliation` after an uncertain Docker command. Follow `deployer/ROLLOUT.md` to reconcile
 and clear that service-side block; restarting the controller alone does not establish successful deployment.
 Once reconciled, rerun the failed job in the original release or dispatch the standalone workflow again. A
-standalone success does not resume an older failed release or local OTA command. The local OTA command waits up
-to 40 minutes including queue time and blocks publication if the exact run cannot be confirmed.
+standalone success does not resume an older failed release or local OTA command. Local OTA no longer dispatches this deployment workflow.
 
 `latest` and the server can advance before a later native/OTA operation fails; retry the original release using
 its retained journal. Docker health confirms the image's configured probe, not exact image/OTA version identity,

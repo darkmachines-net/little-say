@@ -9,6 +9,7 @@ import { Journal } from './journal';
 import type { Platform } from './native-contract';
 import { runOperation } from './operation';
 import { artifactHash } from './cloud';
+import { retainExport } from './ota-artifact';
 
 export interface OtaResults { receipts: OtaReceipt[]; skipped: string[]; }
 
@@ -90,7 +91,7 @@ export function eligibleBaselines(plan: ReleasePlan, baselines: NativeBuildBasel
     const proof = proofs.get(key);
     assert(!proof || proof.fingerprint === b.fingerprint && proof.environmentHash === b.environmentHash, 'One runtime has conflicting native fingerprints/environment. Retire or reconcile it before OTA.');
     proofs.set(key, b);
-    if (b.compatibility !== plan.inputs.native[b.platform] || b.environmentHash !== plan.inputs.environmentHash) { skipped.push(`${key}: incompatible native inputs/environment`); continue; }
+    if (plan.schema === 2 && b.schema !== 3 || b.compatibility !== plan.inputs.native[b.platform] || b.environmentHash !== plan.inputs.environmentHash) { skipped.push(`${key}: incompatible native inputs/environment`); continue; }
     candidates.set(key, b);
   }
   return { eligible: [...candidates.values()], skipped };
@@ -110,17 +111,17 @@ export async function publishOta(plan: ReleasePlan, commit: string, baselines: N
     const key = runtimeKey(b.platform, b.runtimeVersion);
     const previous = plan.previousOta.find(o => o.platform === b.platform && o.runtimeVersion === b.runtimeVersion);
     const env = otaEnvironment(b, plan.profile, remote);
-    const directory = resolve(root, 'artifacts', 'release', plan.runId, 'ota', key);
-    exportBundle(b.platform, directory, env);
+    const existing = journal.operation<OtaReceipt>(`ota-${key}`);
+    const retained = existing?.status === 'complete' ? existing.result : plan.mode === 'auto' && previous?.input === plan.inputs.bundle[b.platform] ? previous : undefined;
+    if (retained) {
+      await verifyPublishedOta({ ...plan, ota: [b.platform] }, commit, [b], journal, { receipts: [retained], skipped: [] });
+      receipts.push(retained); continue;
+    }
+    let directory = resolve(root, 'artifacts', 'release', plan.runId, 'ota', key);
+    if (plan.schema === 2) directory = await retainExport(journal, key, directory, () => exportBundle(b.platform, directory, env));
+    else exportBundle(b.platform, directory, env);
     const payload = bundlePayload(directory, b.platform);
     assert(cleanCommit() === commit && (await expoEnvironment(plan.profile)).hash === remote.hash, 'Source/environment changed during export.');
-    if (plan.mode === 'auto' && previous?.input === plan.inputs.bundle[b.platform]) {
-      const updates = await updateGroup(previous.group);
-      assert(updates.length === 1 && updates[0].group === previous.group && hash(payload) === previous.payloadHash, 'Previously published OTA receipt/payload differs.');
-      verifyUpdate(updates[0], { baseline: b, commit: previous.commit, branchId: branch.id, marker: updates[0].message, payload });
-      assert((await channelBranch(plan.profile)).id === branch.id, 'Channel mapping changed during OTA readback.');
-      receipts.push(previous); continue;
-    }
     const marker = `little-say:${plan.runId}:ota:${key}:${hash(payload)}`;
     const args = { baseline: b, commit, branchId: branch.id, marker, payload };
     const receipt = await runOperation(journal, `ota-${key}`, {

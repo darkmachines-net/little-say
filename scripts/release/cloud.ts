@@ -3,19 +3,19 @@
 import { createHash } from 'node:crypto';
 import { assert, cleanCommit, mobile, readJson } from './common';
 import { resolve } from 'node:path';
-import type { NativeBuildBaseline, ReleasePlan } from './contract';
+import { plannedRuntime, type NativeBuildBaseline, type ReleasePlan } from './contract';
 import type { Platform } from './native-contract';
 import { profileConfig } from './native-contract';
 import { buildWithSubmissions, eas, expoEnvironment, nativeFingerprint } from './expo';
 import { Journal } from './journal';
-import { runOperation } from './operation';
+import { acceptOperation, runOperation, type Provider } from './operation';
 
 /** Verify EAS-reported build identity before accepting either a new build or an existing recovery match. */
 export function verifyBuildIdentity(build: any, plan: ReleasePlan, commit: string, platform: Platform): void {
   assert(build.gitCommitHash === commit && build.platform?.toLowerCase() === platform && build.buildProfile === plan.profile, 'EAS build source/platform/profile differs.');
   assert(build.app?.id === plan.nativeRelease.expoProjectId && build.appIdentifier === 'net.darkmachines.littlesay', 'EAS build application differs.');
   assert(build.appVersion === plan.nativeRelease.version && String(build.appBuildVersion) === String(platform === 'android' ? plan.nativeRelease.androidVersionCode : plan.nativeRelease.iosBuildNumber), 'EAS build version differs.');
-  assert(build.runtime?.version === plan.nativeRelease.version && build.updateChannel?.name === plan.profile, 'EAS build runtime/channel differs.');
+  assert(build.runtime?.version === plannedRuntime(plan, platform) && build.updateChannel?.name === plan.profile, 'EAS build runtime/channel differs.');
   assert(build.distribution === (plan.profile === 'internal' ? 'INTERNAL' : 'STORE') && !build.isForIosSimulator, 'EAS distribution differs.');
 }
 
@@ -62,14 +62,14 @@ export async function cloudBuild(plan: ReleasePlan, commit: string, platform: Pl
       const previous = journal.operation<NativeBuildBaseline>(`build-${platform}`)?.result;
       if (previous) assert(previous.artifactSha256 === artifactSha256, 'Previously verified build artifact changed.');
       assert((await expoEnvironment(plan.profile)).hash === remote.hash && cleanCommit() === commit, 'Build environment/source changed during execution.');
-      return { schema: 2, commit, platform, profile: plan.profile, channel: plan.profile, environment: profileConfig(plan.profile).environment,
-        release: plan.nativeRelease, runtimeVersion: plan.nativeRelease.version, fingerprint, compatibility, environmentHash: remote.hash, buildId: id, artifactUrl, artifactSha256 };
+      return { schema: plan.schema === 2 ? 3 : 2, ...(plan.schema === 2 ? { runtimePolicy: 'fingerprint' as const } : {}), commit, platform, profile: plan.profile, channel: plan.profile, environment: profileConfig(plan.profile).environment,
+        release: plan.nativeRelease, runtimeVersion: plannedRuntime(plan, platform), fingerprint, compatibility, environmentHash: remote.hash, buildId: id, artifactUrl, artifactSha256 };
     },
   });
 }
 
-/** Submit only a production build's exact ID, discovering submission IDs via the pinned EAS read adapter. */
-export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseline, journal: Journal): Promise<string> {
+/** Submit an exact verified build; enqueue mode records acceptance, while completion mode waits for the same provider operation. */
+export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseline, journal: Journal, waitForCompletion = true): Promise<string> {
   assert(plan.profile === 'production' && baseline.profile === 'production', 'Internal artifacts cannot be submitted.');
   const config = readJson(resolve(mobile, 'eas.json')).submit.production;
   assert(config.android.track === 'internal' && config.android.releaseStatus === 'draft', 'Production Android submissions must remain internal drafts.');
@@ -80,7 +80,14 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
     assert(build.status === 'FINISHED' && build.fingerprint?.hash === baseline.fingerprint, 'Submission build is not the verified successful artifact.');
     return build.submissions as any[];
   };
-  return runOperation(journal, `submit-${baseline.platform}`, {
+  const verify = async (id: string, finished: boolean) => {
+    const s = (await submissions()).find(s => s.id === id);
+    assert(s && (finished ? s.status === 'FINISHED' : ['AWAITING_BUILD', 'IN_QUEUE', 'IN_PROGRESS', 'FINISHED'].includes(s.status)) && s.platform.toLowerCase() === baseline.platform && s.app.id === baseline.release.expoProjectId, 'Submission readback differs.');
+    if (baseline.platform === 'android') assert(s.androidConfig?.track === 'internal' && s.androidConfig?.releaseStatus?.toLowerCase() === 'draft', 'Play submission destination differs.');
+    else assert(String(s.iosConfig?.ascAppIdentifier) === String(config.ios.ascAppId), 'App Store Connect destination differs.');
+    return id;
+  };
+  const provider: Provider<string> = {
     async find() { return (await submissions()).map(s => s.id); },
     async start() {
       eas(['submit', '--platform', baseline.platform, '--profile', 'production', '--id', baseline.buildId, '--non-interactive', '--no-wait', '--no-auto-testflight-setup'], remote.env);
@@ -89,12 +96,16 @@ export async function submitBuild(plan: ReleasePlan, baseline: NativeBuildBaseli
       assert(matches.length === 1, 'Cannot identify accepted EAS submission. Reconcile before retrying.'); return matches[0].id;
     },
     async status(id) { const s = (await submissions()).find(s => s.id === id); assert(s, 'Submission no longer belongs to the recorded build.'); return s.status === 'FINISHED' ? 'complete' : ['ERRORED', 'CANCELED'].includes(s.status) ? 'failed' : 'running'; },
-    async verify(id) {
-      const s = (await submissions()).find(s => s.id === id);
-      assert(s?.status === 'FINISHED' && s.platform.toLowerCase() === baseline.platform && s.app.id === baseline.release.expoProjectId, 'Submission readback differs.');
-      if (baseline.platform === 'android') assert(s.androidConfig?.track === 'internal' && s.androidConfig?.releaseStatus?.toLowerCase() === 'draft', 'Play submission destination differs.');
-      else assert(String(s.iosConfig?.ascAppIdentifier) === String(config.ios.ascAppId), 'App Store Connect destination differs.');
-      return id;
-    },
-  });
+    verify: id => verify(id, true),
+  };
+  if (waitForCompletion) return runOperation(journal, `submit-${baseline.platform}`, provider);
+  const accepted = await acceptOperation(journal, `submit-${baseline.platform}`, provider);
+  if (await provider.status(accepted.ids.at(-1)!) === 'failed') {
+    journal.save({ key: `submit-${baseline.platform}`, status: 'failed', ids: accepted.ids });
+    throw new Error('Submission failed after acceptance. Inspect the provider error before retrying this run.');
+  }
+  const id = await verify(accepted.ids.at(-1)!, false);
+  const key = `enqueue-submit-${baseline.platform}`;
+  if (journal.operation<string>(key)?.result !== id) journal.save({ key, status: 'complete', ids: [id], result: id });
+  return id;
 }

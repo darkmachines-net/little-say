@@ -1,17 +1,17 @@
 /** @file Exercises historical forced OTA plans, automatic reuse, runtime deduplication, and lost-response recovery against exported bytes. */
 
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { cleanCommit, writeJson } from './common';
-import { channelBranch, eas, expoEnvironment, exportBundle, otaEnvironment, updateGroup, updateGroups } from './expo';
+import { channelBranch, eas, expoEnvironment, exportBundle, otaEnvironment, updateAssetUrls, updateGroup, updateGroups } from './expo';
 import { bundlePayload, publishOta } from './ota';
 import { planRelease } from './planner';
 import type { NativeBuildBaseline, Operation, ReleasePlan } from './contract';
 import type { Journal } from './journal';
 const fixture = vi.hoisted(() => ({ root: `${process.cwd()}/artifacts/ota-unit-${process.pid}` }));
 vi.mock('./common', async original => ({ ...await original<typeof import('./common')>(), root: fixture.root, cleanCommit: vi.fn() }));
-vi.mock('./expo', () => ({ channelBranch: vi.fn(), eas: vi.fn(), expoEnvironment: vi.fn(), exportBundle: vi.fn(), otaEnvironment: vi.fn(), updateGroup: vi.fn(), updateGroups: vi.fn() }));
+vi.mock('./expo', () => ({ channelBranch: vi.fn(), eas: vi.fn(), expoEnvironment: vi.fn(), exportBundle: vi.fn(), otaEnvironment: vi.fn(), updateAssetUrls: vi.fn(), updateGroup: vi.fn(), updateGroups: vi.fn() }));
 const commit = 'a'.repeat(40), release = { version: '0.1.0', androidVersionCode: 1, iosBuildNumber: '1', expoOwner: 'test', expoProjectId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', serverUrl: 'https://test.invalid' };
 let plan: ReleasePlan, baselines: NativeBuildBaseline[], groups: any[], journal: Journal, operations: Map<string, Operation<any>>, loseResponse: boolean;
 beforeEach(() => {
@@ -31,15 +31,18 @@ beforeEach(() => {
   });
   vi.mocked(updateGroups).mockImplementation(async (_branch, _platform, runtime) => groups.filter(g => g.runtime.version === runtime).map(g => [g]));
   vi.mocked(updateGroup).mockImplementation(async id => groups.filter(g => g.group === id));
+  vi.mocked(updateAssetUrls).mockResolvedValue(['launch', 'asset'].map(storageKey => ({ storageKey, url: `https://test.invalid/${storageKey}`, headers: {} })));
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(url.endsWith('/launch') ? 'real exported bundle bytes' : 'asset bytes')));
   vi.mocked(eas).mockImplementation((args, env) => {
     expect(args).toContain('--skip-bundler'); expect(args).toContain('--environment'); expect(args).not.toContain('--channel');
     const payload = bundlePayload(args[args.indexOf('--input-dir') + 1], 'android');
     const group = `group-${groups.length + 1}`;
-    groups.push({ group, platform: 'android', runtime: { version: env!.TARGET_RUNTIME }, gitCommitHash: commit, isGitWorkingTreeDirty: false, branch: { id: 'branch' }, environment: 'PREVIEW', message: args[args.indexOf('--message') + 1], manifestFragment: JSON.stringify({ launchAsset: { fileSHA256: payload.launch }, assets: payload.assets.map(fileSHA256 => ({ fileSHA256 })), extra: { expoClient: { extra: { eas: { projectId: release.expoProjectId }, serverUrl: release.serverUrl } } } }) });
+    groups.push({ id: group, group, platform: 'android', runtime: { version: env!.TARGET_RUNTIME }, gitCommitHash: commit, isGitWorkingTreeDirty: false, branch: { id: 'branch' }, environment: 'PREVIEW', message: args[args.indexOf('--message') + 1], manifestFragment: JSON.stringify({ launchAsset: { storageKey: 'launch', fileSHA256: payload.launch }, assets: payload.assets.map(fileSHA256 => ({ storageKey: 'asset', fileSHA256 })), extra: { expoClient: { extra: { eas: { projectId: release.expoProjectId }, serverUrl: release.serverUrl } } } }) });
     if (loseResponse) { loseResponse = false; throw Error('response lost after publication'); } return JSON.stringify([{ group }]);
   });
 });
 afterAll(() => rmSync(fixture.root, { recursive: true, force: true }));
+afterEach(() => vi.unstubAllGlobals());
 describe('OTA operation recovery', () => {
   it('preserves a historical forced plan and reuses its fresh groups on retries', async () => {
     plan.mode = 'force_all';
@@ -60,7 +63,7 @@ describe('OTA operation recovery', () => {
   });
   it('stops if the planned channel moves or previously verified uploaded bytes change', async () => {
     vi.mocked(channelBranch).mockResolvedValueOnce({ id: 'other', name: 'internal' }); await expect(publishOta(plan, commit, baselines, journal)).rejects.toThrow('planned destination'); expect(eas).not.toHaveBeenCalled();
-    await publishOta(plan, commit, baselines, journal); groups[0].manifestFragment = '{}';
+    await publishOta(plan, commit, baselines, journal); const manifest = JSON.parse(groups[0].manifestFragment); manifest.launchAsset.fileSHA256 = 'z'.repeat(43); groups[0].manifestFragment = JSON.stringify(manifest);
     await expect(publishOta(plan, commit, baselines, journal)).rejects.toThrow('payload'); expect(eas).toHaveBeenCalledTimes(2);
   });
 });

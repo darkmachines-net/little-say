@@ -36,7 +36,7 @@ module.exports = ({ config }) => {
     ios: { ...config.ios, buildNumber: release.iosBuildNumber, usesAppleSignIn: true, entitlements: { ...config.ios?.entitlements, 'com.apple.developer.applesignin': ['Default'] } },
     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },
     plugins: [...(config.plugins || []), 'expo-secure-store', googleIosPlugin, ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],
-    runtimeVersion: { policy: 'appVersion' },
+    runtimeVersion: { policy: 'fingerprint' },
     updates: projectId ? {
       url: `https://u.expo.dev/${projectId}`,
       checkAutomatically: 'ON_LOAD',

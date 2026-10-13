@@ -54,7 +54,7 @@ export function retireCandidate(runId: string, currentFailure = false): boolean 
   let release = matches[0];
   if (!release) return false;
   const plan = readAsset<ReleasePlan>(release, 'plan.json');
-  assert(!plan || plan.schema === 1 && plan.runId === runId, 'Retirement plan identity conflicts.');
+  assert(!plan || [1, 2].includes(plan.schema) && plan.runId === runId, 'Retirement plan identity conflicts.');
   const identity = plan || { runId, source: release.target_commitish };
   assertCommit(identity.source);
   const run = unpublished(release, identity, currentFailure);

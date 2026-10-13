@@ -15,13 +15,15 @@ afterEach(() => { for (const directory of directories.splice(0)) rmSync(director
 async function validate(failure: string) {
   const directory = mkdtempSync(join(tmpdir(), 'release-validation-')); directories.push(directory);
   const cli = join(directory, 'npm.cjs'), log = join(directory, 'commands.jsonl');
-  writeFileSync(cli, `const fs = require('node:fs');
-fs.appendFileSync(process.env.VALIDATION_LOG, JSON.stringify(process.argv.slice(2)) + '\\n');
+  writeFileSync(cli, `/** @file Records validation commands and simulates a requested subprocess failure. */
+const fs = require('node:fs');
+fs.appendFileSync(${JSON.stringify(log)}, JSON.stringify(process.argv.slice(2)) + '\\n');
 const script = process.argv[3];
-if (script === 'check' && process.env.VALIDATION_FAILURE === 'check') process.exit(11);
+const failure = ${JSON.stringify(failure)};
+if (script === 'check' && failure === 'check') process.exit(11);
 if (script === 'test:services') {
-  if (process.env.VALIDATION_FAILURE === 'startup') process.exit(12);
-  if (process.env.VALIDATION_FAILURE === 'tests') process.exit(13);
+  if (failure === 'startup') process.exit(12);
+  if (failure === 'tests') process.exit(13);
 }
 `);
   // Windows treats environment names case-insensitively; remove npm's inherited spelling
@@ -34,7 +36,7 @@ if (script === 'test:services') {
     status = await new Promise<number | null>((resolve, reject) => {
       const child = spawn(process.execPath, ['--import', 'tsx', 'scripts/release/validation.ts'], {
         cwd: root, stdio: ['ignore', descriptor, descriptor], timeout: 15000, windowsHide: true,
-        env: { ...environment, npm_execpath: cli, VALIDATION_LOG: log, VALIDATION_FAILURE: failure },
+        env: { ...environment, npm_execpath: cli },
       });
       child.once('error', reject);
       child.once('close', resolve);

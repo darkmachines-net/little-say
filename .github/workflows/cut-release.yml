@@ -1,4 +1,4 @@
-# Selects and publishes releases, gates OTA on the shared server deployment webhook, and preserves retryable journals.
+# Publishes selected components, gates OTA on selected server deployment/native acceptance, and preserves retryable journals.
 name: Cut release
 on:
   workflow_dispatch:
@@ -24,6 +24,7 @@ env:
   DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   RELEASE_PROFILE: ${{ inputs.profile }}
   RELEASE_BUMP: ${{ inputs.bump }}
+  RELEASE_WORKFLOW_COMMIT: ${{ github.workflow_sha }}
   EXPO_NO_DOTENV: '1'
   TEST_PGDATABASE: little_say_test
   TEST_PGUSER: little_say_test
@@ -33,9 +34,6 @@ jobs:
     if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      GH_TOKEN: ${{ github.token }}
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
       actions: read
       contents: write
@@ -57,6 +55,7 @@ jobs:
       active: ${{ steps.cut.outputs.active }}
       commit: ${{ steps.cut.outputs.commit }}
       server: ${{ steps.cut.outputs.server }}
+      deploy: ${{ steps.cut.outputs.deploy }}
       native: ${{ steps.cut.outputs.native }}
       ota: ${{ steps.cut.outputs.ota }}
       profile: ${{ steps.cut.outputs.profile }}
@@ -80,9 +79,10 @@ jobs:
       - name: Plan, validate, and prepare the release
         id: cut
         run: npm run release:cut -- prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   server:
-    env:
-      GH_TOKEN: ${{ github.token }}
     needs: prepare
     if: ${{ needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true' }}
     runs-on: ubuntu-latest
@@ -109,13 +109,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
       - run: npm run release:cut -- server
+        env:
+          GH_TOKEN: ${{ github.token }}
   promote-server:
     needs: [prepare, server]
     if: ${{ needs.prepare.outputs.active == 'true' && needs.prepare.outputs.server == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      GH_TOKEN: ${{ github.token }}
     permissions:
       contents: write
       packages: write
@@ -136,9 +136,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
       - run: npm run release:cut -- promote-server
+        env:
+          GH_TOKEN: ${{ github.token }}
   deploy:
     needs: [prepare, server, promote-server]
-    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && (needs.prepare.outputs.server == 'true' || needs.prepare.outputs.ota == 'true') && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.promote-server.result == 'success' || needs.promote-server.result == 'skipped') }}
+    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.deploy == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.promote-server.result == 'success' || needs.promote-server.result == 'skipped') }}
     uses: ./.github/workflows/deploy-self-hosted.yml
     permissions:
       contents: read
@@ -159,8 +161,6 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
     env:
-      GH_TOKEN: ${{ github.token }}
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -174,9 +174,12 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix tools/eas-cli
       - run: npm run release:cut -- native
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   submit:
-    needs: [prepare, server, native]
-    if: ${{ always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped') }}
+    needs: [prepare, server, deploy, native]
+    if: ${{ always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.native.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.deploy.result == 'success' || (needs.prepare.outputs.deploy != 'true' && needs.deploy.result == 'skipped')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     permissions:
@@ -186,8 +189,6 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.prepare.outputs.native) }}
     env:
-      GH_TOKEN: ${{ github.token }}
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -201,14 +202,42 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix tools/eas-cli
       - run: npm run release:cut -- submit
-  ota:
-    needs: [prepare, server, deploy, native, submit]
-    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && needs.deploy.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  submit-complete:
+    needs: [prepare, submit]
+    if: ${{ always() && !cancelled() && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.profile == 'production' && needs.submit.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.prepare.outputs.native) }}
     env:
-      GH_TOKEN: ${{ github.token }}
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      RELEASE_PLATFORM: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.prepare.outputs.commit }}
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm ci --prefix tools/eas-cli
+      - run: npm run release:cut -- submit-complete
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  ota:
+    needs: [prepare, server, deploy, native, submit]
+    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && needs.prepare.outputs.ota == 'true' && (needs.deploy.result == 'success' || (needs.prepare.outputs.deploy != 'true' && needs.deploy.result == 'skipped')) && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
     permissions:
       contents: write
     steps:
@@ -223,14 +252,14 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix tools/eas-cli
       - run: npm run release:cut -- ota
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   finalize:
-    needs: [prepare, server, deploy, native, submit, ota]
-    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.deploy.result == 'success' || (needs.prepare.outputs.server != 'true' && needs.prepare.outputs.ota != 'true' && needs.deploy.result == 'skipped')) && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped') }}
+    needs: [prepare, server, deploy, native, submit, submit-complete, ota]
+    if: ${{ always() && !cancelled() && needs.prepare.result == 'success' && needs.prepare.outputs.active == 'true' && (needs.server.result == 'success' || needs.server.result == 'skipped') && (needs.deploy.result == 'success' || (needs.prepare.outputs.deploy != 'true' && needs.deploy.result == 'skipped')) && (needs.native.result == 'success' || needs.native.result == 'skipped') && (needs.submit.result == 'success' || needs.submit.result == 'skipped') && (needs.ota.result == 'success' || needs.ota.result == 'skipped') && (needs.submit-complete.result == 'success' || needs.submit-complete.result == 'skipped') }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    env:
-      GH_TOKEN: ${{ github.token }}
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     permissions:
       contents: write
       packages: read
@@ -252,3 +281,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
       - run: npm run release:cut -- finalize
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
