@@ -148,9 +148,13 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
   return finish();
 }
 
-/** Build the exact preview used for applying an AI proposal, including staged picture overrides. */
-export function proposalPreview(source: Board | undefined, proposal: BoardProposal): Board {
-  let index = 0; return applyProposal(source ?? null, proposal, () => `draft-${index++}`);
+/**
+ * Build the exact proposal preview, including staged pictures and retained translations.
+ * Set replaceTranslations only after explicit parent review of this draft: it allows the returned
+ * board to replace protected manual or legacy translations. Previewing does not persist the board.
+ */
+export function proposalPreview(source: Board | undefined, proposal: BoardProposal, replaceTranslations = false): Board {
+  let index = 0; return applyProposal(source ?? null, proposal, () => `draft-${index++}`, undefined, replaceTranslations);
 }
 
 /** Resolve new/requested AI pictures while retaining matching images from prior conversational drafts. */

@@ -6,7 +6,7 @@ import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowUp, Mic, SlidersHorizontal, Square } from 'lucide-react-native';
-import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
+import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { apiFetch, proposeBoard } from '../services/api';
 import { useRecording } from '../services/useRecording';
 import { Button, Notice, Sheet } from './components';
@@ -44,13 +44,17 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
  * Explicit send/record actions enable AI use without an interstitial. Navigation cancels pending work;
  * only an in-progress board save prevents leaving. onAiUse persists the legacy AI-enabled preference.
+ * onApply's second argument authorizes replacing protected manual/legacy translations for this
+ * draft only; it is true only after explicit parent review and must not authorize another draft.
  */
-export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {
+export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
   const [source] = useState(board);
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<ConversationTurn[]>([]);
   const [draft, setDraft] = useState<BoardProposal | null>(null);
+  const [translationReview, setTranslationReview] = useState(false);
+  const [reviewedDraft, setReviewedDraft] = useState<BoardProposal | null>(null);
   const [picturePolicy, setPicturePolicy] = useState(source?.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy);
   const [pictureOptionsOpen, setPictureOptionsOpen] = useState(false);
   const [pictureMessage, setPictureMessage] = useState('');
@@ -125,6 +129,8 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');
       validateGeneratedBoard(response.proposal, source ? boardContext(source) : null);
       if (!response.proposal.needsClarification) {
+        // Validate the retained-translation merge before rendering or downloading pictures.
+        proposalPreview(source, response);
         setDraft(response);
         if (response.proposal.picturePolicy) {
           if (policyRef.current === requestedPolicy) setPicturePolicy(response.proposal.picturePolicy);
@@ -182,11 +188,12 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   const apply = async () => {
     if (!draft || request.current || saving.current) return;
     saving.current = true; setBusy('save'); setError('');
-    try { await onApply(draft); if (live.current) onClose(); }
+    try { await onApply(draft, reviewedDraft === draft); if (live.current) onClose(); }
     catch (e) { if (live.current) setError((e as Error).message || 'The board could not be saved. Please try again.'); }
     finally { saving.current = false; if (live.current) setBusy(null); }
   };
-  const preview = draft ? proposalPreview(source, draft) : source ?? null;
+  const replacements = draft ? proposalTranslationReplacements(source, draft) : [];
+  const preview = draft ? proposalPreview(source, draft, reviewedDraft === draft) : source ?? null;
   const canvasMessage = busy === 'generate' ? pictureMessage || 'Updating your board…' : clarifying ? 'Waiting for your answer · Your current draft stays here.' : '';
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : Platform.OS === 'android' ? 'height' : undefined} testID="ai-conversation" style={{ flex: 1, backgroundColor: theme.background }}>
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}><View style={[styles.row, { width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 10 : 16, gap: 10 }]}>
@@ -223,10 +230,15 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       </View>
       <View style={{ flex: sideBySide ? 1.15 : undefined, height: sideBySide ? undefined : Math.min(preview ? 480 : 170, height * (preview ? 0.5 : 0.25)), minHeight: 0, minWidth: 0, gap: 10 }}>
         <DraftCanvas board={preview} states={tileStates} message={canvasMessage} compact={!sideBySide} />
+        {replacements.length > 0 && <View style={{ gap: 6 }}><Text style={styles.small}>{reviewedDraft === draft ? 'Reviewed translation replacements will be applied.' : `${replacements.length} saved translations will be kept. Review proposed replacements separately.`}</Text><Button compact kind="secondary" disabled={Boolean(busy)} onPress={() => setTranslationReview(true)}>Review translation replacements</Button></View>}
         {pictureIssues.length > 0 && <Text testID="picture-summary" accessibilityLiveRegion="polite" style={styles.small}>{pictureIssues.join(' ')}</Text>}
         {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={Boolean(busy) || recording.recording || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
       </View>
     </View>
+    {translationReview && draft && <Sheet title="Review translation replacements" onClose={() => setTranslationReview(false)} footer={<><Button kind="secondary" onPress={() => { setReviewedDraft(null); setTranslationReview(false); }}>Keep saved translations</Button><Button onPress={() => { setReviewedDraft(draft); setTranslationReview(false); }}>Use proposed translations</Button></>}>
+      <Text style={styles.body}>These saved words are protected. Compare each change before choosing replacements. Nothing is saved until you apply the board.</Text>
+      {replacements.map(({ tileId, card, saved, proposed }) => <View key={`${tileId}:${saved.language}`} style={[styles.card, { gap: 8 }]}><Text style={styles.label}>{card} - {languageName(saved.language)}</Text><Text style={styles.body}>Saved: {saved.label} / {saved.speech}</Text><Text style={styles.body}>Proposed: {proposed.label} / {proposed.speech}</Text></View>)}
+    </Sheet>}
     {pictureOptionsOpen && <Sheet title="Picture settings" onClose={() => setPictureOptionsOpen(false)} footer={<Button onPress={() => setPictureOptionsOpen(false)}>Done</Button>}>
       <PicturePreferences value={picturePolicy} onChange={setPicturePolicy} disabled={busy === 'save'} /><PictureGenerationInfo />
       {busy === 'generate' && <Text style={styles.small}>Current pictures are still being prepared. Changes here apply to your next update.</Text>}

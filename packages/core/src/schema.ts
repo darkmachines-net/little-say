@@ -15,7 +15,8 @@ export const illustrationSchema = z.discriminatedUnion('kind', [
   libraryPictureSchema, generatedPictureSchema, unresolvedPictureSchema,
 ]);
 export const translationSchema = z.object({ language: languageSchema, label: z.string().trim().min(1).max(80), speech: z.string().trim().min(1).max(200) });
-export const storedTranslationSchema = translationSchema.extend({ source: z.string().max(700) });
+// Older entries have unknown provenance and are protected like manual corrections.
+export const storedTranslationSchema = translationSchema.extend({ source: z.string().max(700), origin: z.enum(['generated', 'manual']).optional() });
 export const playLanguagesSchema = z.array(languageSchema).max(6).refine(tags => {
   try { return new Set(tags.map(tag => Intl.getCanonicalLocales(tag)[0])).size === tags.length; } catch { return false; }
 }, 'Choose each play language once.');
@@ -148,7 +149,7 @@ export type BoardProposal = z.infer<typeof proposalSchema>;
 
 /** Build AI-safe board context without local photo IDs, paths, or bytes, excluding stale translations. */
 export function boardContext(board: Board): BoardContext {
-  return { id: board.id, title: board.title, revision: board.revision, playLanguages: board.playLanguages ?? [], picturePolicy: board.picturePolicy, tiles: board.tiles.map(t => ({ id: t.id, label: t.label, speech: t.speech, language: t.language, color: t.color, emoji: t.illustration.kind === 'emoji' ? t.illustration.emoji : null, hasPhoto: t.illustration.kind === 'photo', hasPicture: t.illustration.kind !== 'emoji', pictureOptions: t.pictureOptions, languageMode: t.languageMode, translations: t.translations?.filter(translation => translation.source === tileSource(t)).map(({ source, ...translation }) => translation) })) };
+  return { id: board.id, title: board.title, revision: board.revision, playLanguages: board.playLanguages ?? [], picturePolicy: board.picturePolicy, tiles: board.tiles.map(t => ({ id: t.id, label: t.label, speech: t.speech, language: t.language, color: t.color, emoji: t.illustration.kind === 'emoji' ? t.illustration.emoji : null, hasPhoto: t.illustration.kind === 'photo', hasPicture: t.illustration.kind !== 'emoji', pictureOptions: t.pictureOptions, languageMode: t.languageMode, translations: t.translations?.filter(translation => translation.source === tileSource(t)).map(({ source, origin, ...translation }) => translation) })) };
 }
 
 /**
@@ -181,11 +182,20 @@ export function validateGeneratedBoard(value: GeneratedBoard, context: BoardCont
   return value;
 }
 
+/** Reject source changes hiding saved corrections or protected translations supplied from a manual editor draft. */
+export function assertTranslationSourceLanguageChange(previous: Tile | undefined, next: Pick<Tile, 'language'>, draftTranslations: Tile['translations'] = []): void {
+  const changesLanguage = previous && Intl.getCanonicalLocales(previous.language)[0] !== Intl.getCanonicalLocales(next.language)[0];
+  if (changesLanguage && [...(previous.translations ?? []), ...draftTranslations].some(saved => saved.origin !== 'generated' && Intl.getCanonicalLocales(saved.language)[0] === Intl.getCanonicalLocales(next.language)[0])) {
+    throw new Error('This changes the original language to one with saved translations. Keep the original language and edit its translation instead, so saved corrections stay protected.');
+  }
+}
+
 /**
- * Apply a validated proposal only to its original board revision, retaining matching photos and current
- * translations while assigning IDs to new content.
+ * Apply a revision-bound proposal, preserving saved corrections (including stale words for review).
+ * Only a separate parent review may enable replaceTranslations; never derive it from model output.
+ * Reject source-language changes that would shadow a protected saved translation.
  */
-export function applyProposal(current: Board | null, envelope: BoardProposal, id: () => string, now = new Date().toISOString()): Board {
+export function applyProposal(current: Board | null, envelope: BoardProposal, id: () => string, now = new Date().toISOString(), replaceTranslations = false): Board {
   proposalSchema.parse(envelope);
   if (envelope.pictures && (new Set(envelope.pictures.map(picture => picture.index)).size !== envelope.pictures.length || envelope.pictures.some(picture => picture.index >= envelope.proposal.tiles.length))) throw new Error('The picture draft no longer matches these cards.');
   if (current ? (envelope.boardId !== current.id || envelope.baseRevision !== current.revision) : (envelope.boardId !== null || envelope.baseRevision !== null)) throw new Error('This board changed while AI was working. Generate a new proposal to keep your latest edits.');
@@ -200,8 +210,18 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
     tiles: proposal.tiles.map((tile, index) => {
       const previous = current?.tiles.find(t => t.id === tile.existingId);
       const source = tileSource(tile);
-      const retained = previous?.translations?.filter(t => t.source === source) ?? [];
-      const translations = [...retained.filter(t => !tile.translations?.some(next => Intl.getCanonicalLocales(next.language)[0] === Intl.getCanonicalLocales(t.language)[0])), ...(tile.translations ?? []).map(t => ({ ...t, source }))].slice(-6);
+      assertTranslationSourceLanguageChange(previous, tile);
+      const translations = [...(previous?.translations ?? [])];
+      for (const proposed of tile.translations ?? []) {
+        const index = translations.findIndex(t => Intl.getCanonicalLocales(t.language)[0] === Intl.getCanonicalLocales(proposed.language)[0]);
+        const old = translations[index];
+        if (old && old.source === source && old.label === proposed.label && old.speech === proposed.speech) continue;
+        // Model output cannot grant permission to replace a parent's correction.
+        if (old && old.origin !== 'generated' && !replaceTranslations) continue;
+        const next = { ...proposed, source, origin: 'generated' as const };
+        if (index < 0) translations.push(next); else translations[index] = next;
+      }
+      if (translations.length > 6) throw new Error('This proposal exceeds the saved translation limit. Keep fewer new languages; existing translations have not been removed.');
       const languageMode = tile.languageMode ?? previous?.languageMode;
       const picture = envelope.pictures?.find(value => value.index === index);
       const retainedIllustration = previous && !tile.replacePicture && (proposal.picturePolicy || previous.illustration.kind !== 'emoji' || previous.pictureOptions?.locked) ? previous.illustration : undefined;
@@ -211,6 +231,18 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
         pictureConcept: picture?.concept ?? previous?.pictureConcept,
         illustration: picture?.illustration ?? retainedIllustration ?? { kind: 'emoji', emoji: tile.emoji || '❔' } };
     }),
+  });
+}
+
+/** List protected translations that a proposal would replace after an explicit parent review. */
+export function proposalTranslationReplacements(current: Board | undefined, envelope: BoardProposal) {
+  return envelope.proposal.tiles.flatMap(tile => {
+    const previous = current?.tiles.find(value => value.id === tile.existingId);
+    return (tile.translations ?? []).flatMap(proposed => {
+      const saved = previous?.translations?.find(value => Intl.getCanonicalLocales(value.language)[0] === Intl.getCanonicalLocales(proposed.language)[0]);
+      return saved && saved.origin !== 'generated' && (saved.source !== tileSource(tile) || saved.label !== proposed.label || saved.speech !== proposed.speech)
+        ? [{ tileId: previous!.id, card: tile.label, saved, proposed }] : [];
+    });
   });
 }
 

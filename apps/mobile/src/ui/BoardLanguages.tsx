@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
-import { applyLanguageSetup, applyTranslations, canonicalLanguage, languageName, missingTranslations, profileLanguages, suggestedPlayLanguages, tileInLanguage, type Board, type BoardChanges, type Settings } from '@little-say/core';
+import { applyLanguageSetup, applyTranslations, canonicalLanguage, hasTileLanguage, languageName, missingTranslations, profileLanguages, storedTileTranslation, suggestedPlayLanguages, tileInLanguage, tileSource, type Board, type BoardChanges, type Settings } from '@little-say/core';
 import { prepareTranslations } from '../services/api';
 import { Button, Notice, Sheet } from './components';
 import { styles } from './theme';
@@ -12,7 +12,7 @@ import { LanguageChoices } from './LanguageChoices';
  * Edit play languages and stage generated translations for review; apply prepared translations only
  * if the source board revision still matches.
  */
-export function BoardLanguages({ board, settings, onChange, onConsent, onClose }: { board: Board; settings: Settings; onChange: (changes: BoardChanges) => void; onConsent: () => Promise<void>; onClose: () => void }) {
+export function BoardLanguages({ board, settings, onChange, onConsent, onClose }: { board: Board; settings: Settings; onChange: (changes: BoardChanges, expectedRevision?: number) => void; onConsent: () => Promise<void>; onClose: () => void }) {
   const [choosing, setChoosing] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -30,6 +30,7 @@ export function BoardLanguages({ board, settings, onChange, onConsent, onClose }
     onChange({ playLanguages: contains(tag) ? selected.filter(value => canonicalLanguage(value) !== canonicalLanguage(tag)) : [...selected, canonicalLanguage(tag)] });
   };
   const prepare = async (candidate: Board, setup = false) => {
+    controller.current?.abort();
     const abort = new AbortController(); controller.current = abort;
     setBusy(true); setError('');
     try {
@@ -41,19 +42,24 @@ export function BoardLanguages({ board, settings, onChange, onConsent, onClose }
         const result = await prepareTranslations(settings.backendUrl, request, abort.signal);
         ready = { ...candidate, tiles: applyTranslations(candidate, result) };
       }
-      if (!abort.signal.aborted) setProposal({ board: ready, setup });
-    } catch (e) { if (!abort.signal.aborted) setError((e as Error).message); }
-    finally { if (!abort.signal.aborted) setBusy(false); }
+      if (controller.current === abort && !abort.signal.aborted) setProposal({ board: ready, setup });
+    } catch (e) { if (controller.current === abort && !abort.signal.aborted) setError((e as Error).message); }
+    finally { if (controller.current === abort && !abort.signal.aborted) setBusy(false); }
   };
   const missing = missingTranslations(board);
+  const needsReview = board.tiles.flatMap(tile => (tile.translations ?? []).filter(value => value.origin !== 'generated' && value.source !== tileSource(tile))).length;
   if (proposal) return <Sheet title={proposal.setup ? 'Review board languages' : 'Review translations'} subtitle="The language buttons will appear above the tiles in Play." onClose={() => setProposal(null)} footer={<Button onPress={() => {
-    try { onChange(applyLanguageSetup(board, proposal.board)); onClose(); }
+    try { onChange(applyLanguageSetup(board, proposal.board), proposal.board.revision); onClose(); }
     catch (e) { setError((e as Error).message); setProposal(null); }
   }}>{proposal.setup ? 'Use these languages' : 'Use translations'}</Button>}>
     <Text style={styles.body}>{proposal.board.title} · {proposal.board.tiles.length} cards</Text>
     {proposal.board.tiles.filter(tile => tile.languageMode === 'board').map(tile => <View key={tile.id} style={[styles.card, { gap: 8 }]}>
       <Text style={styles.label}>{tile.label}</Text>
       {(proposal.board.playLanguages ?? []).map(tag => {
+        if (!hasTileLanguage(tile, tag)) {
+          const saved = storedTileTranslation(tile, tag);
+          return <View key={tag} style={{ gap: 2 }}><Text style={styles.small}>{languageName(tag)} — {saved ? 'saved words need review' : 'translation missing'}</Text>{saved && <Text style={styles.body}>{saved.label} · says "{saved.speech}"</Text>}</View>;
+        }
         const version = tileInLanguage(tile, tag);
         return <View key={tag} style={{ gap: 2 }}><Text style={styles.small}>{languageName(tag)}</Text><Text style={styles.body}>{version.label}{version.speech !== version.label ? ` · says “${version.speech}”` : ''}</Text></View>;
       })}
@@ -69,6 +75,7 @@ export function BoardLanguages({ board, settings, onChange, onConsent, onClose }
     </View>}
     {busy && <View style={styles.row}><Text accessibilityLiveRegion="polite" style={styles.body}>Preparing translations…</Text><Button kind="ghost" onPress={() => { controller.current?.abort(); setBusy(false); }}>Cancel</Button></View>}
     {Boolean(error) && <Notice>{error}</Notice>}
+    {needsReview > 0 && <Notice>{needsReview} saved translations need review after an original-word change. They are protected from automatic replacement; review them in their card editors.</Notice>}
     <View style={{ gap: 14 }}>
       <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}><Text style={styles.label}>Play languages</Text><Button disabled={busy} kind="secondary" onPress={() => setChoosing(value => !value)}>{choosing ? 'Done choosing' : 'Choose languages'}</Button></View>
       {!choosing && <Text style={styles.body}>{selected.length ? selected.map(languageName).join(' · ') : 'No language toggle set up yet'}</Text>}
@@ -78,7 +85,7 @@ export function BoardLanguages({ board, settings, onChange, onConsent, onClose }
         <Button kind="secondary" disabled={busy || board.tiles.every(t => t.languageMode === 'board')} onPress={() => onChange({ tiles: board.tiles.map(t => ({ ...t, languageMode: 'board' })) })}>Make all cards switchable</Button>
         <Button disabled={busy} kind="ghost" onPress={() => onChange({ translateLabels: board.translateLabels === false })}>{board.translateLabels === false ? 'Switch spoken words only' : 'Switch labels and spoken words'}</Button>
         {!settings.aiConsent && <Text style={styles.small}>Translates with OpenAI. Review words before saving.</Text>}
-        <Button kind="secondary" busy={busy} disabled={!missing} onPress={() => void prepare(board)}>{missing ? `Prepare translations (${missing.tiles.reduce((sum, t) => sum + t.targets.length, 0)})` : 'Translations ready'}</Button>
+        <Button kind="secondary" busy={busy} disabled={!missing} onPress={() => void prepare(board)}>{missing ? `Prepare translations (${missing.tiles.reduce((sum, t) => sum + t.targets.length, 0)})` : needsReview ? 'Saved translations need review' : 'Translations ready'}</Button>
       </>}
     </View>
   </Sheet>;

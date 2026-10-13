@@ -122,13 +122,13 @@ function Application() {
     setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
     void store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })).catch(() => {});
   }} />;
-  const accept = async (proposal: BoardProposal) => {
+  const accept = async (proposal: BoardProposal, replaceTranslations = false) => {
     let candidate!: Board;
     let original: Board | null = null;
     await store.commit(lib => {
       const current = lib.boards.find(b => b.id === proposal.boardId) ?? null;
       if (proposal.boardId && !current) throw new Error('The original board was deleted. Please create a new proposal.');
-      candidate = applyProposal(current, proposal, () => Crypto.randomUUID());
+      candidate = applyProposal(current, proposal, () => Crypto.randomUUID(), undefined, replaceTranslations);
       original = current;
       return { ...lib, boards: current ? lib.boards.map(b => b.id === candidate.id ? candidate : b) : [...lib.boards, candidate] };
     });
@@ -147,7 +147,7 @@ function Application() {
   if (draftRoute.route) {
     const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={proposal => draftRoute.save(() => accept(proposal))} onAiUse={consent} onClose={draftRoute.close} />;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={(proposal, replaceTranslations) => draftRoute.save(() => accept(proposal, replaceTranslations))} onAiUse={consent} onClose={draftRoute.close} />;
   }
   return <><View style={styles.page}>
     <StatusBar style="dark" />
@@ -155,8 +155,9 @@ function Application() {
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
-    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onStopPreview={() => previewQueue.stop()} saving={store.saving} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={changes => {
+    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
       const current = store.current.current!.boards.find(b => b.id === selected.id)!;
+      if (expectedRevision !== undefined && current.revision !== expectedRevision) throw new Error('This board changed while editing. Your saved changes are kept; reopen the current card or prepare translations again.');
       remember(current);
       const next = reviseBoard(current, changes);
       void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === next.id ? next : b) })).catch(() => {});

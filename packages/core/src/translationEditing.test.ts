@@ -1,0 +1,131 @@
+/** @file Protects manual/legacy translations across edits, generation, source changes and AI proposals. */
+
+import { describe, expect, it } from 'vitest';
+import { starterLibrary } from '../../../tests/fixtures/library';
+import { applyProposal, assertTranslationSourceLanguageChange, boardContext, migrateLibrary, syncSnapshotSchema, tileSchema, tileSource, type BoardProposal } from './schema';
+import { applyTranslations, editTileTranslation, missingTranslations, storedTileTranslation, tileInLanguage, validateTranslations } from './boardLanguages';
+import { speechKey } from './speech';
+import { boardAssetKeys, mergeBoards } from './account';
+
+function fixture() {
+  const library = starterLibrary();
+  const board = library.boards[0]; board.tiles = board.tiles.slice(0, 1);
+  board.playLanguages = ['en-US', 'ru-RU', 'es-ES'];
+  const tile = board.tiles[0]; tile.languageMode = 'board';
+  tile.translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(tile) }];
+  return { library, board, tile };
+}
+function proposal(board: ReturnType<typeof fixture>['board']): BoardProposal {
+  return { boardId: board.id, baseRevision: board.revision, proposal: { title: 'Renamed', explanation: 'A change', needsClarification: false, tiles: board.tiles.map(tile => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, emoji: '🐄', color: tile.color, translations: [{ language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка' }] })) } };
+}
+describe('translation corrections', () => {
+  it('guards newly protected draft translations without treating unreviewed AI output as a manual correction', () => {
+    const { tile } = fixture();
+    const draft = editTileTranslation(tile, 'es-ES', { label: 'Corrected label', speech: 'Corrected words' });
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'es-es' }, draft.translations)).toThrow('Keep the original language');
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'en-us' }, draft.translations)).not.toThrow();
+    expect(() => assertTranslationSourceLanguageChange(tile, { language: 'es-ES' })).not.toThrow();
+  });
+  it.each([undefined, 'manual'] as const)('retains an empty %s correction draft for validation instead of deleting it', origin => {
+    const { tile } = fixture();
+    tile.translations![0].origin = origin;
+    const saved = editTileTranslation(tile, 'es-ES', { label: 'Vaca', speech: 'vaca' });
+    const snapshot = structuredClone(saved);
+    const empty = editTileTranslation(editTileTranslation(saved, 'ru-RU', { label: '' }), 'ru-RU', { speech: '' });
+    expect(storedTileTranslation(empty, 'ru-RU')).toMatchObject({ label: '', speech: '', origin: 'manual' });
+    expect(tileSchema.safeParse(empty).success).toBe(false);
+    expect(storedTileTranslation(empty, 'es-ES')).toEqual(storedTileTranslation(saved, 'es-ES'));
+    expect(empty).toMatchObject({ label: saved.label, speech: saved.speech, language: saved.language, illustration: saved.illustration });
+    expect(saved).toEqual(snapshot);
+    const completed = editTileTranslation(empty, 'ru-RU', { label: 'Corrected label', speech: 'Corrected words' });
+    expect(tileSchema.parse(JSON.parse(JSON.stringify(completed)))).toEqual(completed);
+  });
+  it('guards manual and legacy source collisions while allowing equivalent or unrelated language tags', () => {
+    const { tile } = fixture();
+    for (const origin of [undefined, 'manual'] as const) {
+      const previous = { ...tile, translations: tile.translations!.map(t => ({ ...t, origin })) };
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'ru-ru' })).toThrow('Keep the original language');
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'en-us' })).not.toThrow();
+      expect(() => assertTranslationSourceLanguageChange(previous, { language: 'fr-FR' })).not.toThrow();
+    }
+  });
+  it('round-trips corrections through account snapshots and preserves both versions of a sync conflict', () => {
+    const { board, tile } = fixture();
+    const corrected = { ...board, revision: board.revision + 1, tiles: [editTileTranslation(tile, 'ru-RU', { speech: 'Corrected words' })] };
+    const remote = { ...board, revision: board.revision + 1, title: 'Remote title' };
+    const restored = syncSnapshotSchema.parse(JSON.parse(JSON.stringify({ revision: 1, boards: [corrected], assets: [] })));
+    expect(restored.boards[0]).toEqual(corrected);
+    const merged = mergeBoards([board], restored.boards, [remote], () => 'translation-conflict');
+    expect(merged[0]).toEqual(remote);
+    expect(merged[1].tiles).toEqual(corrected.tiles);
+    expect(merged[1].tiles[0]).toMatchObject({ label: tile.label, speech: tile.speech, illustration: tile.illustration });
+    const keys = boardAssetKeys([restored.boards[0]]).speech;
+    expect(keys.has(speechKey({ text: 'Corrected words', language: 'ru-RU' }))).toBe(true);
+    expect(keys.has(speechKey({ text: tile.translations![0].speech, language: 'ru-RU' }))).toBe(false);
+    expect(keys.has(speechKey({ text: tile.speech, language: tile.language }))).toBe(true);
+  });
+  it('edits just the selected variant, retains incomplete drafts and round-trips manual provenance', () => {
+    const { library, board, tile } = fixture();
+    const corrected = editTileTranslation(tile, 'ru-ru', { label: 'Моя корова', speech: 'коровушка' });
+    const partial = editTileTranslation(corrected, 'es-ES', { label: 'Vaca' });
+    expect(partial).toMatchObject({ label: tile.label, speech: tile.speech, language: tile.language, id: tile.id, illustration: tile.illustration });
+    expect(storedTileTranslation(partial, 'ru-RU')).toMatchObject({ speech: 'коровушка', origin: 'manual' });
+    expect(storedTileTranslation(partial, 'es-ES')?.speech).toBe('');
+    board.tiles[0] = editTileTranslation(partial, 'es-ES', { speech: 'vaca' });
+    const loaded = migrateLibrary(JSON.parse(JSON.stringify(library))).boards[0];
+    expect(loaded.tiles[0]).toEqual(board.tiles[0]);
+    expect(boardContext(loaded).tiles[0].translations?.[0]).toMatchObject({ speech: 'коровушка' });
+  });
+  it('preserves inactive and stale corrections while filling only genuinely missing translations', () => {
+    const { board, tile } = fixture();
+    board.tiles[0] = { ...editTileTranslation(tile, 'fr-FR', { label: 'Vache', speech: 'vache' }), speech: 'Moo' };
+    const request = missingTranslations(board)!;
+    expect(request.tiles[0].targets).toEqual(['es-ES']);
+    const saved = board.tiles[0].translations;
+    board.tiles = applyTranslations(board, validateTranslations(request, { translations: [{ tileId: tile.id, language: 'es-ES', label: 'Vaca', speech: 'vaca' }] }));
+    expect(board.tiles[0].translations).toEqual([...saved!, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }]);
+    expect(tileInLanguage(board.tiles[0], 'ru-RU').language).toBe('en-US');
+    const reviewed = editTileTranslation(board.tiles[0], 'ru-RU', {});
+    expect(tileInLanguage(reviewed, 'ru-RU').speech).toBe('корова');
+  });
+  it('keeps corrections through unrelated AI edits and requires explicit permission to replace them', () => {
+    const { board, tile } = fixture();
+    board.tiles[0] = editTileTranslation(tile, 'ru-RU', { speech: 'коровушка' });
+    const draft = proposal(board);
+    const kept = applyProposal(board, draft, () => 'unused');
+    expect(kept.title).toBe('Renamed');
+    expect(kept.tiles[0].translations).toEqual(board.tiles[0].translations);
+    const replaced = applyProposal(board, draft, () => 'unused', undefined, true);
+    expect(storedTileTranslation(replaced.tiles[0], 'ru-RU')).toMatchObject({ speech: 'бурёнка', origin: 'generated' });
+    draft.proposal.tiles[0].speech = 'Moo';
+    const changedSource = applyProposal(board, draft, () => 'unused');
+    expect(storedTileTranslation(changedSource.tiles[0], 'ru-RU')?.speech).toBe('коровушка');
+    expect(tileInLanguage(changedSource.tiles[0], 'ru-RU').language).toBe('en-US');
+  });
+  it('does not evict saved variants to fit extra AI output and still rejects stale board responses', () => {
+    const { board, tile } = fixture();
+    board.tiles[0].translations = ['ru-RU', 'es-ES', 'fr-FR', 'de-DE', 'it-IT', 'pt-PT'].map(language => ({ language, label: 'Saved', speech: 'saved', source: tileSource(tile) }));
+    const draft = proposal(board); draft.proposal.tiles[0].translations = [{ language: 'ja-JP', label: '牛', speech: '牛' }];
+    expect(() => applyProposal(board, draft, () => 'unused')).toThrow('limit');
+    expect(() => applyProposal({ ...board, revision: board.revision + 1 }, draft, () => 'unused')).toThrow('changed');
+    board.playLanguages = ['ja-JP'];
+    const request = missingTranslations(board)!;
+    expect(() => applyTranslations(board, validateTranslations(request, { translations: [{ tileId: tile.id, language: 'ja-JP', label: '牛', speech: '牛' }] }))).toThrow('six saved translations');
+    expect(board.tiles[0].translations).toHaveLength(6);
+  });
+  it('refuses an AI source-language change that would shadow a saved correction even without a proposed translation', () => {
+    const { board, tile } = fixture();
+    board.tiles[0] = editTileTranslation(tile, 'ru-RU', { speech: 'коровушка' });
+    const draft = proposal(board);
+    draft.proposal.tiles[0] = { ...draft.proposal.tiles[0], language: 'ru-RU', label: 'Бурёнка', speech: 'бурёнка', translations: [] };
+    for (const replaceTranslations of [false, true]) expect(() => applyProposal(board, draft, () => 'unused', undefined, replaceTranslations)).toThrow('Keep the original language');
+    expect(tileInLanguage(board.tiles[0], 'ru-RU').speech).toBe('коровушка');
+    expect(board.tiles[0].language).toBe('en-US');
+  });
+  it('changes audio identity for corrected speech, but keeps it for label-only corrections', () => {
+    const { tile } = fixture();
+    const key = (value: typeof tile) => { const resolved = tileInLanguage(value, 'ru-RU'); return speechKey({ text: resolved.speech, language: resolved.language }); };
+    expect(key(editTileTranslation(tile, 'ru-RU', { label: 'Моя корова' }))).toBe(key(tile));
+    expect(key(editTileTranslation(tile, 'ru-RU', { speech: 'коровушка' }))).not.toBe(key(tile));
+  });
+});
