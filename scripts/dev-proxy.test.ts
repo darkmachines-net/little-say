@@ -35,17 +35,17 @@ describe('remote development web proxy', () => {
     const response = await fetch(`${local}/api/account/session`, { headers: { Cookie: `private=1; ${session}; ${csrf}`, Authorization: 'other-credential', 'X-Little-Say-Account': 'account-id', 'X-Little-Say-CSRF': 'b'.repeat(64) } });
     expect(response.headers.get('set-cookie')).toBe(`${session}; Path=/api/account; HttpOnly; SameSite=Strict`);
   });
-  it('forwards paths, queries, app headers and multipart bytes without browser credentials or origin', async () => {
+  it('forwards paths, queries, app headers and JSON bytes without browser credentials or origin', async () => {
     const backend = await listen(async (req, res) => {
       const chunks: Buffer[] = []; for await (const chunk of req) chunks.push(chunk);
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify({ url: req.url, method: req.method, headers: req.headers, body: Buffer.concat(chunks).toString('base64') }));
     });
     const local = await proxy(backend);
-    const body = Buffer.from('sample\u0000audio\r\n--boundary--');
-    const response = await fetch(`${local}/api/transcribe?test=1`, { method: 'POST', headers: { Origin: origin, 'X-Little-Say': '1', 'Content-Type': 'multipart/form-data; boundary=boundary', Cookie: 'private=1', Authorization: 'secret' }, body });
+    const body = Buffer.from(JSON.stringify({ prompt: 'Cow', board: null }));
+    const response = await fetch(`${local}/api/boards/propose?test=1`, { method: 'POST', headers: { Origin: origin, 'X-Little-Say': '1', 'Content-Type': 'application/json', Cookie: 'private=1', Authorization: 'secret' }, body });
     const received = await response.json();
-    expect(received).toMatchObject({ url: '/api/transcribe?test=1', method: 'POST', body: body.toString('base64'), headers: { 'x-little-say': '1', 'content-type': 'multipart/form-data; boundary=boundary' } });
+    expect(received).toMatchObject({ url: '/api/boards/propose?test=1', method: 'POST', body: body.toString('base64'), headers: { 'x-little-say': '1', 'content-type': 'application/json' } });
     for (const header of ['origin', 'cookie', 'authorization']) expect(received.headers[header]).toBeUndefined();
   });
   it('streams binary assets and preserves upstream status, ranges, and content headers', async () => {

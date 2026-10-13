@@ -22,7 +22,7 @@ Choose `npm run dev:local` (also `npm run dev`) for full-stack changes, or `npm 
 The website homepage (`/`) introduces Little Say and its features, with **Coming soon** placeholders for the App Store and Google Play. **Open web app** enters the browser app at `/app`; existing boards remain in the same origin's storage. Installed web apps launch directly into the app. The homepage uses a separate web entry and is neither accessible nor bundled in native iOS/Android apps.
 
 - Choose preferred languages on first launch and optionally generate starter boards. Each device keeps its own boards, settings, photos and downloaded speech without an account.
-- **New board** and **Edit with AI** open a full-page conversation beside a live draft canvas, stacked on phones. Pictures appear as they finish, with active and queued cards identified. Review transcripts and drafts, refine them, then explicitly save. Manual editing supports 1–24 cards, searchable emoji, local photos and cropping.
+- **New board** and **Edit with AI** open a full-page conversation beside a live draft canvas, stacked on phones. Pictures appear as they finish, with active and queued cards identified. Review messages and drafts, refine them, then explicitly save. Manual editing supports 1–24 cards, searchable emoji, local photos and cropping.
 - **Picture settings** in the workspace header and **Pictures** in the board editor choose automatic, library-only, generated, or emoji-only output. Matching detects inaccurate or ambiguous emoji, searches licensed illustrations, and optionally generates missing pictures in a consistent style. Cards offer **Picture options** to search, describe, replace or protect pictures. Automatic keeps good emoji, fills gaps from the library, and generates only missing pictures. Completed drafts do not prompt for AI illustrations; deliberate changes remain available in Picture settings. Library only and Emoji only avoid new generation; unavailable pictures fall back to useful emoji. See [pictures, sources and configuration](docs/PICTURES.md).
 - The library spotlights the most recently used board and puts favorites immediately below it. Each board's **…** menu includes deletion and missing-audio generation.
 - Set a board's **Languages** to offer a toggle during play. Individual cards can follow that toggle or keep their own language, useful for family names. Review generated translations or edit them manually.
@@ -42,7 +42,6 @@ OpenAI requests go through the backend using the following configuration. No sec
 | `AAC_OPENAI_KEY` | Preferred backend key; falls back to `OPENAI_API_KEY` |
 | `OPENAI_BOARD_MODEL` | `gpt-6.1-sol` |
 | `OPENAI_REASONING_EFFORT` | `low` |
-| `OPENAI_TRANSCRIBE_MODEL` | `gpt-transcribe` |
 | `OPENAI_SPEECH_MODEL` | `gpt-realtime-2.1-mini` |
 | `OPENAI_SPEECH_VOICE` | `marin` |
 | `OPENAI_IMAGE_MODEL` | `gpt-image-2.5-flare` |
@@ -52,7 +51,7 @@ OpenAI requests go through the backend using the following configuration. No sec
 | `HOST` / `PORT` | `127.0.0.1` / `8787` outside Docker |
 | `ALLOWED_ORIGINS` | Local development origins; set explicitly for deployment |
 
-AI actions start directly when requested, with an inline explanation instead of an opt-in screen. Only parent prompts, necessary board text and explicit microphone recordings are sent. Photo paths/content are excluded. Responses use Structured Outputs and `store: false`. The server does not retain microphone recordings or log prompts, transcripts, board text or provider error bodies. Provider retention follows [OpenAI's data policies](https://developers.openai.com/api/docs/guides/your-data).
+AI actions start directly when requested, with an inline explanation instead of an opt-in screen. Only parent prompts and necessary board text are sent. Enter prompts by typing or using your keyboard’s dictation, then review and send the text. Little Say does not record or upload microphone audio. Photo paths/content are excluded. Responses use Structured Outputs and `store: false`. The server does not log prompts, board text or provider error bodies. Provider retention follows [OpenAI's data policies](https://developers.openai.com/api/docs/guides/your-data).
 
 Generated speech is retained in a shared server cache and can contain family names or other private tile words. Cache identity includes text, language, model, voice and format. Identical requests reuse clips; regeneration preserves old clip URLs for other devices. Downloaded speech works offline. The cache has no automatic eviction. Parents should review generated words and pronunciation.
 
@@ -68,7 +67,7 @@ Copy-Item .env.example .env
 docker compose up -d --build
 ```
 
-This is an unauthenticated service for a trusted private network. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and use that URL in Parent settings; web uses its own origin. Browser microphone access needs HTTPS outside localhost. If binding to another host interface, restrict access to the trusted network.
+This is an unauthenticated service for a trusted private network. Docker binds to `127.0.0.1:8787` by default. Route a private HTTPS origin through your reverse proxy and use that URL in Parent settings; web uses its own origin. If binding to another host interface, restrict access to the trusted network.
 
 The container runs as a non-root user with a read-only filesystem. Its named `speech-cache` volume preserves audio across replacements; removing volumes deletes the cache. Board libraries remain on each device.
 
@@ -83,6 +82,6 @@ For a production web preview without Docker, run `npm run build` then `npm start
 - [Deployment setup](deploy/self-hosted/README.md): shared homelab webhook, supplied WireGuard settings, scoped token, and health before OTA.
 - [Interface conventions](docs/DESIGN.md) and [mountain assets](apps/mobile/assets/brand/README.md).
 
-`apps/mobile` contains the UI and platform adapters, `apps/server` the API and web host, and `packages/core` the schemas and shared behavior. `tests/fixtures` contains sample libraries used only by tests and evaluations. Native projects, build output, recordings, local credentials and generated test artifacts are ignored.
+`apps/mobile` contains the UI and platform adapters, `apps/server` the API and web host, and `packages/core` the schemas and shared behavior. `tests/fixtures` contains sample libraries used only by tests and evaluations. Native projects, build output, local credentials and generated test artifacts are ignored.
 
 `npm run emoji:update` regenerates the offline catalog from pinned Unicode/CLDR data under the [Unicode License V3](packages/core/src/data/UNICODE-LICENSE.txt). `npm run brand:assets` regenerates icon sizes from the saved mountain master. Normal builds use the committed assets and need neither download nor image generation.

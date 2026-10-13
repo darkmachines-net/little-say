@@ -12,8 +12,8 @@
     },
     "android": {
       "package": "net.darkmachines.littlesay",
-      "permissions": [
-        "RECORD_AUDIO"
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
       ],
       "allowBackup": false
     },
@@ -29,13 +29,14 @@
         {
           "photosPermission": "Choose a photo to illustrate a soundboard tile.",
           "cameraPermission": false,
-          "microphonePermission": "Record a parent prompt to create or edit a soundboard."
+          "microphonePermission": false
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Record a parent prompt to create or edit a soundboard.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
           "enableBackgroundRecording": false,
           "enableBackgroundPlayback": false
         }

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`preserves complete board, picture, transcription and speech requests with literal hostile-looking data 1`] = `
+exports[`preserves complete board, picture and speech requests with literal hostile-looking data 1`] = `
 {
   "client-options": "380bea17d9fb685de220b7d64da9473583a652ff9587f7f12c45d8f15e718448",
   "configured/analyze": "9f9b7e4a827d0ac6abf215edb38fa0077abc90eee3c7a3cfd30b1286469a5a6c",
@@ -15,7 +15,6 @@ exports[`preserves complete board, picture, transcription and speech requests wi
   "configured/speech/fr-FR": "7d9da6b85250df497a247f76f8720dcebd9ee0859e34eb844b3bbf19149629fa",
   "configured/speech/ja-JP": "5beeadc1e3f800b25c976ad194e909d589c8bc2b434ef2041a66d32564c48d4d",
   "configured/speech/literal-boundary": "b0dbf3fc70f7abf78301a2cd5bbda392b8185c627ac245ef41ad4198453d98a7",
-  "configured/transcribe": "2f9b45bf94cadae439c7d5efcd21e8792f17d35acb130bc5317f59493bcb4cfa",
   "configured/translate": "916d16d224a225c519f638ee62881374134f713f0b1f38e819618e5a4663b55e",
   "default/analyze": "bf84de9fd7db140e8ccc213bad6366350f30828450f69cc2b5c6db43ac60cc6d",
   "default/board/1": "caf25a6935c9c7be7431f8169a6a9a1759381d1fda193237db135995ce79e2c8",
@@ -29,7 +28,6 @@ exports[`preserves complete board, picture, transcription and speech requests wi
   "default/speech/fr-FR": "35d31554c347a363279ec5decbaef6e7af957c8aad966da29eed8f40fc7f8f6a",
   "default/speech/ja-JP": "80da793869d7badcea9e5afd6ce8ecc4d4a2c9964d7e8b99ecb79aa4e95b7b88",
   "default/speech/literal-boundary": "a7b3a6356c7e391997669a92856f50fbb45ca36f8e9451caf2a4b5703805a377",
-  "default/transcribe": "7258ad01a3235d66be6f6ac95b8a6c939ab926777f71d7612dfcb70a1960aa24",
   "default/translate": "09152a41cfe68de3e17d4f7171a182c677696b3788b0e53972e2e5eac769ef86",
   "realtime-options": "dd5c807e785f0b4b32d7629578af47701701ccf5ffd2c40c97a42abc4c451da1",
 }

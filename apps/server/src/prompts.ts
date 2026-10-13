@@ -6,7 +6,7 @@ import speech from '../../../prompts/server/speech.json' with { type: 'json' };
 import { loadPromptResource, loadPromptTemplate } from '../../../packages/core/src/promptResources';
 import { type PictureConcept } from '@little-say/core';
 
-export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation', 'transcription'], 'server/board');
+export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation'], 'server/board');
 export const picturePrompts = loadPromptResource(pictures, ['visualRules', 'analysis', 'selection', 'review', 'color', 'line', 'generation'], 'server/pictures');
 const speechPrompts = loadPromptResource(speech, ['instructions'], 'server/speech');
 export const pictureSelectionInstructions = loadPromptTemplate(picturePrompts.selection, ['visualRules'], 'server/pictures.selection')({ visualRules: picturePrompts.visualRules });

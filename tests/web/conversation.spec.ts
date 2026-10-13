@@ -1,6 +1,6 @@
 /**
  * @file Exercises conversational board creation and edits, including clarification, cancellation, and
- * draft application.
+ * draft application and text review without app microphone capture.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -178,7 +178,7 @@ test('failed follow-ups and clarification preserve the previous draft and small-
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
   expect(requests[3].conversation.history).toHaveLength(2);
   expect(requests[3].conversation.draft).toEqual(proposal());
-  for (const name of ['Use this board', 'Voice prompt', 'Send message', 'Back to boards']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+  for (const name of ['Use this board', 'Send message', 'Back to boards']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
   await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-phone.png' });
 });
 
@@ -247,68 +247,45 @@ for (const outcome of ['failure', 'success'] as const) test(`browser history pre
   await expect(page.getByTestId('ai-conversation')).toBeVisible();
 });
 
-for (const dismissal of ['page back', 'browser back']) test(`voice transcripts can be reviewed for follow-ups and ${dismissal} releases the microphone`, async ({ page }) => {
+for (const dismissal of ['page back', 'browser back']) test(`prompt text stays editable until sent and ${dismissal} leaves without microphone access`, async ({ page }) => {
   await page.evaluate(() => {
-    (window as any).__stoppedTracks = 0;
-    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
-    class Recorder {
-      static isTypeSupported() { return true; }
-      state = 'inactive'; mimeType = 'audio/webm'; ondataavailable: any; onstop: any;
-      start() { this.state = 'recording'; }
-      stop() { this.state = 'inactive'; this.ondataavailable?.({ data: new Blob(['test voice '.repeat(20)]) }); queueMicrotask(() => this.onstop?.()); }
-    }
-    (window as any).MediaRecorder = Recorder;
+    (window as any).__microphoneRequests = 0;
+    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => {
+      (window as any).__microphoneRequests++;
+      throw new Error('Little Say must not capture prompt audio');
+    } });
   });
   const requests: any[] = [];
-  await page.route('**/api/transcribe', route => route.fulfill({ json: { text: 'Make the cow blue' } }));
+  let transcriptions = 0;
+  await page.route('**/api/transcribe', route => { transcriptions++; return route.abort(); });
   await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: envelope() }); });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow');
+  await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
+  await expect(page.getByText('What would you like on your board? Type a message or use your keyboard’s dictation.', { exact: true })).toBeVisible();
+  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
+  await input.click();
+  await expect(input).toBeFocused();
+  // Keyboard dictation commits ordinary text; browser automation verifies the resulting input flow.
+  await input.fill('Cow and бабушка');
+  expect(requests).toHaveLength(0);
+  await input.fill('Cow');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByTestId('ai-draft')).toBeVisible();
-  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
-  await page.getByRole('button', { name: /^Stop ·/ }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Make the cow blue');
+  await input.fill('Make the cow blue');
   expect(requests).toHaveLength(1);
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
-  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Make the cow green');
+  await input.fill('Make the cow green');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
   expect(requests[1].prompt).toBe('Make the cow green');
   expect(requests[1].conversation.history).toHaveLength(1);
-  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
-  await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
+  await input.fill('An unsent follow-up');
   if (dismissal === 'browser back') await page.goBack();
   else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
-  expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
-});
-
-test('a capture-time recorder error releases the microphone and lets the parent retry', async ({ page }) => {
-  await page.evaluate(() => {
-    (window as any).__stoppedTracks = 0;
-    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => ({ getTracks: () => [{ stop: () => { (window as any).__stoppedTracks++; } }] }) });
-    class Recorder {
-      static isTypeSupported() { return true; }
-      state = 'inactive'; mimeType = 'audio/webm'; onerror: any;
-      constructor() { (window as any).__recorder = this; }
-      start() { this.state = 'recording'; }
-      stop() { this.state = 'inactive'; }
-    }
-    (window as any).MediaRecorder = Recorder;
-  });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Our family');
-  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
-
-  await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  await page.evaluate(() => (window as any).__recorder.onerror(new Event('error')));
-  await expect(page.getByText('The recording failed. Please try again.', { exact: true })).toBeVisible();
-  expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(1);
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Our family');
-  await page.getByRole('button', { name: 'Voice prompt', exact: true }).click();
-  await expect(page.getByRole('button', { name: /^Stop ·/ })).toBeVisible();
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  expect(await page.evaluate(() => (window as any).__stoppedTracks)).toBe(2);
+  expect(requests).toHaveLength(2);
+  expect(transcriptions).toBe(0);
+  expect(await page.evaluate(() => (window as any).__microphoneRequests)).toBe(0);
 });
 
 test('the compact editor fits tablet orientations and keeps reordering in the tile dialog', async ({ page }) => {
@@ -339,4 +316,6 @@ test('a new phone conversation starts with its full data-use introduction visibl
   expect(text.y).toBeGreaterThanOrEqual(panel.y);
   expect(text.y + text.height).toBeLessThanOrEqual(panel.y + panel.height);
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
+  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-entry-phone.png' });
 });
