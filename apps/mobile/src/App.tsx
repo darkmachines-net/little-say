@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, Text, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Crypto from 'expo-crypto';
 import * as Speech from 'expo-speech';
@@ -184,6 +184,7 @@ function Application() {
 }
 /**
  * Mount the app with safe-area support and the library-driven setup, dashboard, editor, and play
- * screens.
+ * screens. Seed the stable root provider with native window insets for the first render; subsequent
+ * system-bar visibility and orientation changes are measured by the provider.
  */
-export default function App() { return <SafeAreaProvider><SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}><Application /></SafeAreaView></SafeAreaProvider>; }
+export default function App() { return <SafeAreaProvider initialMetrics={initialWindowMetrics}><SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}><Application /></SafeAreaView></SafeAreaProvider>; }
