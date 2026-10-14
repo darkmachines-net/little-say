@@ -21,6 +21,7 @@ async function openBoard(page: Page, count: number, playing = true, label = long
   });
   await openExistingLibrary(page);
   const library = starterLibrary();
+  library.settings.accountChoiceMade = true;
   const board = library.boards[0];
   board.title = 'My board';
   board.tiles = Array.from({ length: count }, (_, i) => ({ ...board.tiles[i % 6], id: `tile-${i}`, label: i === count - 1 ? label : `Word ${i + 1}`, speech: `Word ${i + 1}` }));

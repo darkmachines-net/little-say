@@ -32,7 +32,7 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     const { store: libraryStore, session: account, canSync: allowed } = current.current;
     if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || !allowed || !libraryStore.current.current) return;
     if (Platform.OS === 'web' ? document.hidden : AppState.currentState !== 'active') return;
-    if (backendUrl(libraryStore.current.current.settings.backendUrl) !== account.server) { setError('This account belongs to a different server. Restore its server address or sign out before using another account.'); return; }
+    if (backendUrl(libraryStore.current.current.settings.backendUrl) !== account.server) { setError('This account belongs to a different server. Sign out and sign in again to use this version of Little Say. Your local boards are safe.'); return; }
     running.current = true; setBusy(true); setError(''); setMessage('Syncing boards and assets…');
     const controller = new AbortController(); operation.current = controller;
     try {

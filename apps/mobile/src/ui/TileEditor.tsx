@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { ArrowLeft, ArrowRight, Copy, Crop, ImagePlus, Trash2, Volume2 } from 'lucide-react-native';
-import { assertTranslationSourceLanguageChange, canonicalLanguage, colors, editTileTranslation, languageName, languageSchema, profileLanguages, storedTileTranslation, tileSource, tileSchema, type Tile, type Settings } from '@little-say/core';
+import { speechSource, assertTranslationSourceLanguageChange, canonicalLanguage, colors, editTileTranslation, languageName, languageSchema, profileLanguages, storedTileTranslation, tileSource, tileSchema, type Tile, type Settings } from '@little-say/core';
 import { type SpeechLibrary } from '../services/speechLibrary';
 import { chooseTilePhoto, type TilePhoto } from '../services/photos';
 import { Button, Field, Notice, Sheet } from './components';
@@ -90,19 +90,20 @@ export function TileEditor({ tile, board, playLanguages = [], editingLanguage = 
       <View style={[styles.row, { flexWrap: 'wrap' }]}><Button kind={draft.languageMode !== 'board' ? 'primary' : 'secondary'} onPress={() => { update({ languageMode: 'fixed' }); selectLanguage(null); }}>Keep this card’s language</Button><Button kind={draft.languageMode === 'board' ? 'primary' : 'secondary'} onPress={() => update({ languageMode: 'board' })}>Follow board language</Button></View>
       {draft.languageMode !== 'board' && <Text style={styles.small}>This card keeps its original words when the board language changes.</Text>}
       {draft.languageMode === 'board' && !playLanguages.length && <Text style={styles.small}>Choose play languages in the board editor to add translations.</Text>}
+      {speechSource(settings, voiceTile.language) === 'ai' ? <>
       <Text style={styles.label}>Natural voice{target ? ` · ${languageName(target)}` : ''}</Text>
       <Text accessibilityLiveRegion="polite" style={styles.small}>{stale ? 'Review the saved translation before preparing audio.' : !voiceReady && target ? 'Add both translated fields to prepare audio.' : speech.state === 'preparing' ? (speech.asset ? 'Preparing a fresh take. Your current audio is still available.' : 'Preparing AI audio… You can save the tile and keep going.') : speech.asset ? 'AI-generated voice saved on this device for offline play.' : 'Using the device voice until AI audio is ready.'}</Text>
-      <Text style={styles.small}>{target ? `Uses the ${languageName(target)} spoken words.` : 'Uses “What it says” and the original language.'}</Text>{!settings.aiConsent && <Text style={styles.small}>Words go to OpenAI through your server. Generated audio is saved on the server and this device.</Text>}
+      <Text style={styles.small}>{target ? `Uses the ${languageName(target)} spoken words.` : 'Uses “What it says” and the original language.'}</Text>
       <Button kind="secondary" icon={Volume2} disabled={!voiceReady} busy={voiceReady && speech.state === 'preparing'} onPress={() => {
         setError('');
         const attempt = voiceOperation.current;
         void (async () => {
-          if (!settings.aiConsent) await onConsent();
           if (attempt !== voiceOperation.current) return;
           await audio.generate(voiceTile, settings.backendUrl, Boolean(speech.asset));
         })().catch(error => { if (attempt === voiceOperation.current) setError((error as Error).message); });
       }}>{voiceReady && speech.asset ? 'Regenerate audio' : 'Generate audio'}</Button>
       {Boolean(speech.error) && <Notice>{speech.error}</Notice>}
+      </> : <Text style={styles.small}>Uses the device voice selected in Settings → Voices.</Text>}
     </View>
     <View><Text style={styles.label}>Tile color</Text><View style={styles.row}>{colors.map(color => <Pressable key={color} accessibilityLabel={`${color} tile color`} accessibilityRole="button" accessibilityState={{ selected: draft.color === color }} onPress={() => update({ color })} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: palettes[color].background, borderWidth: draft.color === color ? 3 : 1, borderColor: draft.color === color ? theme.accent : theme.line }} />)}</View></View>
     {Boolean(error) && error !== speech.error && <Notice>{error}</Notice>}

@@ -96,7 +96,7 @@ test('offline setup can save a regional preference and start empty without Engli
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); await context.setOffline(true); await page.reload();
   await page.getByRole('button', { name: 'Generate starter boards', exact: true }).click();
-  await expect(page.getByText('Cannot reach your home server.', { exact: false }).first()).toBeVisible();
+  await expect(page.getByText('Cannot reach Little Say.', { exact: false }).first()).toBeVisible();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
   await expect(page.getByText('No boards yet', { exact: true })).toBeVisible();
   await page.reload();

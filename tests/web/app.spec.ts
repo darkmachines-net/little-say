@@ -44,6 +44,8 @@ test.describe('outside modal dismissal', () => {
       await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
       const session = await context.newCDPSession(page);
       for (let attempt = 0; attempt < 2; attempt++) {
+        // Complete the screen's entry focus before starting a hold that blur must cancel.
+        await expect(page.getByTestId('play-board').getByRole('heading')).toBeFocused();
         const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
         await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2, id: 1 }] });
         await expect(control).toHaveText('Release to edit', { timeout: 3500 });
@@ -96,7 +98,8 @@ test.describe('outside modal dismissal', () => {
 });
 
 test('device language profile persists offline and drives French/Spanish board setup without changing fixed cards', async ({ page, context }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language Spanish', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language French', exact: true }).click();
@@ -105,16 +108,19 @@ test('device language profile persists offline and drives French/Spanish board s
   await page.getByRole('button', { name: 'Fewer languages', exact: true }).click();
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.screenshot({ path: 'artifacts/screenshots/device-languages.png' });
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); await context.setOffline(true); await page.reload();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove device language French', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove device language Spanish', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Default language French', exact: true })).toHaveText('✓ French');
   await expect(page.getByRole('button', { name: 'Remove device language Russian', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Close Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await context.setOffline(false);
   const words: Record<string, [string, string]> = { Cow: ['Vache', 'Vaca'], Sheep: ['Mouton', 'Oveja'], Horse: ['Cheval', 'Caballo'], Pig: ['Cochon', 'Cerdo'], Chicken: ['Poulet', 'Pollo'], Duck: ['Canard', 'Pato'] };
   await page.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Test device voice fallback' } }));
@@ -136,12 +142,14 @@ test('device language profile persists offline and drives French/Spanish board s
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Vaca', lang: 'es-ES' });
   await leaveBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await page.getByRole('button', { name: 'Remove device language French', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Default language Spanish', exact: true })).toHaveText('✓ Spanish');
   await page.getByRole('button', { name: 'Remove device language Spanish', exact: true }).click();
   await expect(page.getByText('Keep at least one language.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play in French', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Vaca', exact: true })).toBeVisible();
@@ -153,13 +161,15 @@ test('device language profile persists offline and drives French/Spanish board s
 });
 
 test('regional language preferences drive manual cards and AI requests', async ({ page }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('textbox', { name: 'Another device language tag', exact: true }).fill('es-mx');
   await page.getByRole('button', { name: 'Add language', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language Spanish', exact: true }).click();
   await page.getByRole('button', { name: 'Remove device language English', exact: true }).click();
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.reload();
   await page.getByRole('button', { name: 'Build manually', exact: true }).click();
@@ -472,16 +482,18 @@ test('board card menu fills missing translated audio, continues when closed, ret
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const request = store.get('library');
       request.onsuccess = () => {
-        const library = request.result; library.settings.aiConsent = true; library.settings.autoSpeech = false;
+        const library = request.result; library.settings.aiConsent = true; library.settings.voiceSources = { 'en-US': 'ai', 'es-ES': 'ai' };
         const board = library.boards[0]; board.tiles = board.tiles.slice(0, 2); board.playLanguages = ['en-US', 'es-ES'];
         const cow = board.tiles[0]; cow.languageMode = 'board';
         cow.translations = [{ language: 'es-ES', label: 'Vaca', speech: 'Vaca', source: JSON.stringify([cow.label, cow.speech, cow.language]) }];
-        board.tiles.push({ ...cow, id: 'duplicate-cow' });
+        board.tiles.push({ ...cow, id: 'duplicate-cow' }); library.boards = [board];
         store.put(library, 'library');
       };
       tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error);
     }); db.close();
   });
+  // Unload the initial fixture so its pending speech requests cannot enter this scenario.
+  await page.goto('/');
   const wave = pcmToWav(Buffer.alloc(24000)); const id = createHash('sha256').update(wave).digest('hex');
   const attempts: Record<string, number> = {};
   let releaseTranslation!: () => void;
@@ -493,15 +505,8 @@ test('board card menu fills missing translated audio, continues when closed, ret
     return input.text === 'Sheep' && attempts.Sheep === 1 ? route.fulfill({ status: 503, json: { error: 'Try again' } }) : route.fulfill({ json: { ...input, id, cacheHit: true } });
   });
   await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
-  await page.reload();
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).first().click();
-  await page.getByRole('button', { name: 'Generate audio', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Regenerate audio', exact: true })).toBeEnabled();
-  await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.goto('/app');
   await page.getByRole('button', { name: 'More options for Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Generate missing audio (2)', exact: true }).click();
   await expect.poll(() => attempts.Vaca).toBe(1);
   await expect(page.getByText('Generating audio… 1 of 3 saved.', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close Farmyard friends', exact: true }).click();
@@ -509,26 +514,28 @@ test('board card menu fills missing translated audio, continues when closed, ret
   await page.getByRole('button', { name: 'More options for Farmyard friends', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Generate missing audio (1)', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Generate missing audio (1)', exact: true }).click();
-  await expect(page.getByText('All audio saved on this device.', { exact: true })).toBeVisible();
+  await expect(page.getByText('All AI audio saved on this device.', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Generate missing audio/ })).toHaveCount(0);
   expect(attempts).toEqual({ Cow: 1, Vaca: 1, Sheep: 2 });
   await page.getByRole('button', { name: 'Close Farmyard friends', exact: true }).click();
   await page.reload();
   await page.getByRole('button', { name: 'More options for Farmyard friends', exact: true }).click();
-  await expect(page.getByText('All audio saved on this device.', { exact: true })).toBeVisible();
+  await expect(page.getByText('All AI audio saved on this device.', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Generate missing audio/ })).toHaveCount(0);
   expect(attempts).toEqual({ Cow: 1, Vaca: 1, Sheep: 2 });
 });
 
-test('board audio retry fills only missing clips with automatic generation disabled', async ({ page }) => {
+test('board audio retry fills only clips that automatic AI preparation could not save', async ({ page }) => {
   await page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const request = store.get('library');
-      request.onsuccess = () => { const library = request.result; library.settings.aiConsent = true; library.settings.autoSpeech = false; library.boards[0].tiles = library.boards[0].tiles.slice(0, 2); store.put(library, 'library'); };
+      request.onsuccess = () => { const library = request.result; library.settings.aiConsent = true; library.settings.voiceSources = { 'en-US': 'ai', 'es-ES': 'ai' }; library.boards[0].tiles = library.boards[0].tiles.slice(0, 2); library.boards = [library.boards[0]]; store.put(library, 'library'); };
       tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error);
     }); db.close();
   });
+  // Unload the initial fixture so its pending speech requests cannot enter this scenario.
+  await page.goto('/');
   const wave = pcmToWav(Buffer.alloc(24000)); const id = createHash('sha256').update(wave).digest('hex');
   const attempts: Record<string, number> = {};
   await page.route('**/api/speech', route => {
@@ -537,9 +544,8 @@ test('board audio retry fills only missing clips with automatic generation disab
     return input.text === 'Sheep' && attempts.Sheep === 1 ? route.fulfill({ status: 503, json: { error: 'Try again' } }) : route.fulfill({ json: { ...input, id, cacheHit: true } });
   });
   await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
-  await page.reload();
+  await page.goto('/app');
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare missing audio (2)', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry missing audio (1)', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Retry missing audio (1)', exact: true }).click();
   await expect(page.getByRole('button', { name: 'All audio saved', exact: true })).toBeDisabled();
@@ -547,10 +553,12 @@ test('board audio retry fills only missing clips with automatic generation disab
 });
 
 test('numbers 1–9 get a visible bilingual setup and switch speech while preserving digit labels', async ({ page }) => {
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.getByRole('button', { name: 'Add device language Russian', exact: true }).click();
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => {

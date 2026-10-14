@@ -10,7 +10,7 @@ import { styles, theme } from './theme';
 const pictureModes: readonly PictureChoice<PicturePolicy['mode']>[] = [
   { value: 'auto', label: 'Automatic', description: 'Keep clear emoji. Fill gaps with library pictures, then generate only what is still missing.' },
   { value: 'library', label: 'Library only', description: 'Use free library pictures, with emoji when there is no good match. Never generate new images.' },
-  { value: 'generated', label: 'AI illustrations', description: 'Create illustrations with your server’s AI service. Keep emoji if generation is unavailable.' },
+  { value: 'generated', label: 'AI illustrations', description: 'Create illustrations with Little Say’s AI service. Keep emoji if generation is unavailable.' },
   { value: 'emoji', label: 'Emoji only', description: 'Use emoji, even when the closest match is approximate.' },
 ];
 
@@ -37,11 +37,11 @@ export function CardPicturePreferences({ options, policy, onChange, disabled = f
 }
 
 /** Describe picture processing and retention before a parent starts AI picture work. */
-export const pictureDataDisclosure = 'AI picture matching and generation send card descriptions and library or generated picture pixels through your server to OpenAI. Pictures, concepts and job metadata remain in the server cache without automatic deletion. Personal photos stay on this device.';
+export const pictureDataDisclosure = 'AI picture matching and generation send card descriptions and library or generated picture pixels through Little Say to OpenAI. Pictures, concepts and job metadata remain in the server cache without automatic deletion. Personal photos stay on this device.';
 
 /** Explain the generation included in Automatic and how to choose a source that never generates images. */
 export function PictureGenerationInfo() {
-  return <Text style={styles.small}>Automatic and AI illustrations can use your server’s paid AI service. Choose Library only or Emoji only to avoid image generation. Pictures are downloaded for offline play. {pictureDataDisclosure}</Text>;
+  return <Text style={styles.small}>Automatic and AI illustrations can use Little Say’s AI service. Choose Library only or Emoji only to avoid image generation. Pictures are downloaded for offline play. {pictureDataDisclosure}</Text>;
 }
 
 /** Show source and license links in parent controls rather than covering children's cards with credits. */

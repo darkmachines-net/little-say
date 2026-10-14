@@ -71,7 +71,7 @@ export function BoardLanguages({ board, settings, onChange, onConsent, onClose }
       <Button busy={busy} onPress={() => void prepare({ ...board, playLanguages: suggested, tiles: board.tiles.map(tile => ({ ...tile, languageMode: 'board' })) }, true)}>{setupLabel}</Button>
       <Text style={styles.body}>Make all {board.tiles.length} cards switch between {suggested.map(languageName).join(', ')}. Review the words before saving.</Text>
       <Text style={styles.small}>You can keep individual cards in one language from their tile editor.</Text>
-      {!settings.aiConsent && <Text style={styles.small}>Tile words are sent to OpenAI through your server for translation.</Text>}
+      {!settings.aiConsent && <Text style={styles.small}>Tile words are sent to OpenAI through Little Say for translation.</Text>}
     </View>}
     {busy && <View style={styles.row}><Text accessibilityLiveRegion="polite" style={styles.body}>Preparing translations…</Text><Button kind="ghost" onPress={() => { controller.current?.abort(); setBusy(false); }}>Cancel</Button></View>}
     {Boolean(error) && <Notice>{error}</Notice>}

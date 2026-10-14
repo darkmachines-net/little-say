@@ -1,7 +1,7 @@
 /** @file Connects library loading and serialized durable writes to React state. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { type Library, newLibrary } from '@little-say/core';
+import { type Library, newLibrary, migrateDeviceSettings } from '@little-say/core';
 import * as storage from './storage';
 
 /**
@@ -21,6 +21,8 @@ export function useLibrary() {
     try {
       let value = await storage.loadLibrary();
       if (!value) { value = newLibrary(Intl.DateTimeFormat().resolvedOptions().locale); await storage.saveLibrary(value); }
+      const migrated = migrateDeviceSettings(value);
+      if (migrated !== value) { await storage.saveLibrary(migrated); value = migrated; }
       // Prune only during initial load, before transient drafts and undo history exist.
       const boards = [...value.boards, ...(value.setup?.drafts.map(draft => draft.board) ?? [])];
       const ids = new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'photo' ? [t.illustration.assetId] : [])));

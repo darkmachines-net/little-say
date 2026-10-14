@@ -3,10 +3,10 @@
 import { type SpeechAsset, type SpeechDriver, type Tile } from '@little-say/core';
 
 /**
- * Prefer cached clips and fall back to system TTS when missing or playback fails. One driver feeds
+ * Honor device-only choices; otherwise prefer cached clips and fall back to system TTS on failure. One driver feeds
  * the bounded queue for both sources; stop cancels both and invalidates late callbacks.
  */
-export function hybridSpeech(system: SpeechDriver<Tile>, audio: SpeechDriver<string>, asset: (tile: Tile) => SpeechAsset | undefined): SpeechDriver<Tile> {
+export function hybridSpeech(system: SpeechDriver<Tile>, audio: SpeechDriver<string>, asset: (tile: Tile) => SpeechAsset | undefined, useDevice: (tile: Tile) => boolean = () => false): SpeechDriver<Tile> {
   let generation = 0;
   return {
     speak(tile, done, failed) {
@@ -19,7 +19,7 @@ export function hybridSpeech(system: SpeechDriver<Tile>, audio: SpeechDriver<str
         try { system.speak(tile, () => { if (attempt === generation) done(); }, () => { if (attempt === generation) failed(); }); }
         catch { if (attempt === generation) failed(); }
       };
-      const clip = asset(tile);
+      const clip = useDevice(tile) ? undefined : asset(tile);
       if (!clip) { fallback(); return; }
       try { audio.speak(clip.uri, finish, fallback); } catch { fallback(); }
     },

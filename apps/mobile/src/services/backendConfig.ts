@@ -9,13 +9,11 @@ export function normalizeBackendUrl(value: string) {
 }
 
 /**
- * Prefer a validated development URL over the saved address, then use the platform fallback; throw if
- * none is available.
+ * Use a development build override or the built-in service origin. Legacy device addresses are ignored.
  */
-export function resolveBackendUrl(configured: string, developmentUrl: string, webOrigin?: string) {
+export function resolveBackendUrl(_legacyAddress: string, developmentUrl: string, serviceOrigin?: string) {
   // A saved deployment address must never silently divert a local development session.
   if (developmentUrl.trim()) return normalizeBackendUrl(developmentUrl);
-  if (configured.trim()) return normalizeBackendUrl(configured);
-  if (webOrigin) return webOrigin;
-  throw new Error('Add your private server address in Parent settings to use AI. For local development, start the app with npm run dev.');
+  if (serviceOrigin) return normalizeBackendUrl(serviceOrigin);
+  throw new Error('Little Say’s service is not configured in this build. Please install an updated version.');
 }

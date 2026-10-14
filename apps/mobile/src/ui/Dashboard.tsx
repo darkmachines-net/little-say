@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and parent settings. */
+/** @file Organizes saved boards by recent use and favorites and exposes creation and Settings navigation. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -15,7 +15,7 @@ import { Brand, MountainMark } from './Brand';
  * Spotlight the most recently played board, place favorites next, and present library actions and the
  * AI creation workspace, with a separate manual creation entry.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onConsent, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onConsent: () => Promise<void>; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuBoard = library.boards.find(board => board.id === menuId);
@@ -30,7 +30,7 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
       <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }]}>
         <Brand />
-        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Parent settings" /></View>
+        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></View>
       </View>
     </View>
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
@@ -44,6 +44,6 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
       </View>
       {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text><Button icon={Plus} onPress={onCompose}>Create your first board</Button></View>}
     </ScrollView>
-    {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onConsent={onConsent} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
+    {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
   </View>;
 }

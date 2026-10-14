@@ -42,7 +42,7 @@ export async function csrfHeaders(server: string): Promise<Record<string, string
 }
 
 async function rawSignIn(context: Context, provider: Provider, email: string, password: string): Promise<{ user: User; apple?: AppleGrant }> {
-  if (!context.config.providers.includes(provider)) throw new Error('This sign-in method is not enabled on the selected server.');
+  if (!context.config.providers.includes(provider)) throw new Error('This sign-in method is not available in Little Say.');
   if (provider === 'password') return signInWithEmailAndPassword(context.auth, email.trim(), password);
   if (Platform.OS !== 'web') {
     const credential = await nativeCredential(provider, context.config);
@@ -112,7 +112,7 @@ export async function verifyAccountEmail(session: AccountSession, password: stri
 export async function linkAccountProvider(session: AccountSession, target: Provider, email: string, newPassword: string, currentProvider: Provider, password: string) {
   const { context, user } = await reauthenticate(session, currentProvider, password);
   try {
-    if (!context.config.providers.includes(target)) throw new Error('This sign-in method is not enabled on the selected server.');
+    if (!context.config.providers.includes(target)) throw new Error('This sign-in method is not available in Little Say.');
     if (target === 'password') await linkWithCredential(user, EmailAuthProvider.credential(email.trim(), newPassword));
     else if (Platform.OS === 'web') await linkWithPopup(user, providerObject(target));
     else await linkWithCredential(user, (await nativeCredential(target, context.config)).credential);

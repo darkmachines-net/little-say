@@ -2,15 +2,14 @@
 
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
-import { boardAudioTiles, speechKey, speechResponseSchema, type Library } from '@little-say/core';
+import { boardAudioTiles, speechKey, speechResponseSchema, speechSource, type Library } from '@little-say/core';
 import { loadSpeechAssets, saveSpeechAsset } from '../data/storage';
 import { ApiError, apiFetch, backendUrl } from './api';
 import { SpeechLibrary } from './speechLibrary';
 
 /**
- * Keep a subscribed SpeechLibrary instance and prepare missing language variants when consent and
- * automatic audio are enabled; retry transient capacity failures and resume on foreground or
- * reconnection.
+ * Prepare missing clips only for languages using AI speech, independent of legacy AI consent.
+ * Retry transient capacity failures and resume on foreground or reconnection.
  */
 export function useSpeechLibrary(library: Library | null) {
   const reference = useRef<SpeechLibrary | null>(null);
@@ -36,10 +35,10 @@ export function useSpeechLibrary(library: Library | null) {
   const speech = reference.current;
   useSyncExternalStore(speech.subscribe, speech.snapshot, speech.snapshot);
   useEffect(() => {
-    if (!library?.settings.aiConsent || !library.settings.autoSpeech) {
+    if (!library || library.setup) {
       void speech.prepare([], library?.settings.backendUrl ?? ''); return;
     }
-    const prepare = (retry = false) => { void speech.prepare(library.boards.flatMap(boardAudioTiles), library.settings.backendUrl, retry); };
+    const prepare = (retry = false) => { void speech.prepare(library.boards.flatMap(boardAudioTiles).filter(tile => speechSource(library.settings, tile.language) === 'ai'), library.settings.backendUrl, retry); };
     prepare();
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') prepare(true); });
     const online = () => prepare(true);

@@ -158,8 +158,8 @@ test('a pending return keeps the editor visible and prevents concurrent edits un
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
 });
 
-test('a failed save retains edits and editor until retry, without granting AI consent', async ({ page }) => {
-  let aiRequests = 0; page.on('request', request => { if (/\/api\/(propose|speech|pictures|translat)/.test(request.url())) aiRequests++; });
+test('a failed save retains edits and editor until retry without requesting board or picture AI', async ({ page }) => {
+  let aiRequests = 0; page.on('request', request => { if (/\/api\/(boards\/propose|pictures|translat)/.test(request.url())) aiRequests++; });
   await play(page); await unlock(page);
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;
