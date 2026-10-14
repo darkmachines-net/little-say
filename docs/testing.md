@@ -16,10 +16,10 @@ Settings navigation, preference migration and per-language voice-source contract
 The suites cover touch gestures, unlock timing, bounded speech, persistence and failed saves, setup, multilingual boards, conversational editing, photo framing, offline playback, and release-contract guards. Browser screenshots, traces, builds and temporary fixtures belong under ignored `artifacts/`, `test-results/` or `playwright-report/`. CI runs the conversation scenarios and uploads their screenshots as the `conversation-screenshots` artifact with seven-day retention.
 
 CI runs `tests/web/safe-area.spec.ts`, which overrides browser safe-area environment values to check account/setup,
-dialog close/save, and play control bounds, including changing bottom insets and rotating an open
-dialog. This exercises real layout but does not replace Android checks: verify status-bar/cutout and
-gesture/three-button navigation clearance in portrait and landscape, open a long settings or tile
-dialog, scroll it to the end, rotate it, and enter/leave play with the status bar hidden/restored.
+Settings page navigation, dialog close/save, and play control bounds, including changing bottom insets
+and rotating an open page or dialog. This exercises real layout but does not replace Android checks:
+verify status-bar/cutout and gesture/three-button navigation clearance in portrait and landscape,
+scroll and rotate Settings pages and a long tile dialog, and enter/leave play with the status bar hidden/restored.
 
 Website tests in `tests/web/landing.spec.ts` cover desktop and phone layouts, keyboard navigation, inactive store placeholders, no library/API initialization on the homepage, direct `/app` access, and older installed-web-app launches. App scenarios start at `/app`. Landing-page captures are under ignored `artifacts/screenshots/landing/`; reviewed PR evidence is retained on the [non-product evidence ref](https://github.com/MChartier/little-say/tree/77dd5092a4e952f08a75da2351a6262e365a117b/docs/review/pr6-zbook). The native entry (`src/Entry.tsx`) exports only the shared app; after entry changes, export iOS and Android with source maps and confirm neither `Entry.web.tsx` nor `src/website/` appears in either native bundle's sources.
 

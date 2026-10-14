@@ -1,4 +1,4 @@
-/** @file Verifies screen and modal control bounds with system-bar/cutout insets and live rotation. */
+/** @file Verifies account, Settings, modal and play control bounds with system-bar/cutout insets and live rotation. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
@@ -34,15 +34,42 @@ test('account and setup navigation stay within system bars', async ({ page, cont
   await expectInsideSafeArea(next, page, bars);
 });
 
+test('Settings navigation stays safe while scrolling and rotating its pages', async ({ page, context }) => {
+  await page.setViewportSize(portrait);
+  const device = await context.newCDPSession(page);
+  await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
+  await openExistingLibrary(page);
+  await expectInsideSafeArea(page.getByRole('button', { name: 'Settings', exact: true }), page, bars);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  for (const { viewport, insets } of [
+    { viewport: portrait, insets: bars },
+    { viewport: portrait, insets: { top: 48, bottom: 24, left: 0, right: 0 } },
+    { viewport: { width: 844, height: 390 }, insets: { top: 24, bottom: 24, left: 48, right: 48 } },
+    { viewport: portrait, insets: bars },
+  ]) {
+    await page.setViewportSize(viewport);
+    await device.send('Emulation.setSafeAreaInsetsOverride', { insets });
+    await expectInsideSafeArea(page.getByRole('button', { name: 'Boards', exact: true }), page, insets);
+    const privacy = page.getByRole('button', { name: 'Privacy Policy', exact: true });
+    await privacy.scrollIntoViewIfNeeded();
+    await expectInsideSafeArea(privacy, page, insets);
+    await privacy.click();
+    await page.getByRole('heading', { name: 'Account deletion', exact: true }).scrollIntoViewIfNeeded();
+    const back = page.getByRole('button', { name: 'Settings', exact: true });
+    await expectInsideSafeArea(back, page, insets);
+    await back.click();
+  }
+});
+
 test('long dialogs keep close and save actions safe while insets and orientation change', async ({ page, context }) => {
   await page.setViewportSize(portrait);
   const device = await context.newCDPSession(page);
   await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
   await openExistingLibrary(page);
-  await expectInsideSafeArea(page.getByRole('button', { name: 'Parent settings', exact: true }), page, bars);
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
-  const close = page.getByRole('button', { name: 'Close Parent settings', exact: true });
-  const save = page.getByRole('button', { name: 'Save settings', exact: true });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  const close = page.getByRole('button', { name: 'Close Edit tile', exact: true });
+  const save = page.getByRole('button', { name: 'Save tile', exact: true });
   const scenarios = [
     { viewport: portrait, insets: bars },
     { viewport: portrait, insets: { top: 48, bottom: 24, left: 0, right: 0 } },
@@ -55,7 +82,7 @@ test('long dialogs keep close and save actions safe while insets and orientation
     await expectInsideSafeArea(close, page, insets);
     await expectInsideSafeArea(save, page, insets);
     // Scrolling the body must not move either fixed action under a system bar.
-    await page.getByRole('textbox', { name: 'Private server address', exact: true }).scrollIntoViewIfNeeded();
+    await page.getByRole('button', { name: 'Duplicate tile', exact: true }).scrollIntoViewIfNeeded();
     await expectInsideSafeArea(close, page, insets);
     await expectInsideSafeArea(save, page, insets);
   }
@@ -63,7 +90,7 @@ test('long dialogs keep close and save actions safe while insets and orientation
   await expect(save).toHaveCount(0);
 
   // The overlay still dismisses from the safe gutter after the wrappers are added.
-  await page.getByRole('button', { name: 'Parent settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: bars.top + 4 } });
   await expect(close).toHaveCount(0);
 });
