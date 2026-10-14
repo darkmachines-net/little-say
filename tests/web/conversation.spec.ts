@@ -1,6 +1,7 @@
 /**
  * @file Exercises conversational board creation and edits, including clarification, cancellation, and
- * draft application and text review without app microphone capture.
+ * draft application and text review without app microphone capture. Review screenshots are written
+ * to ignored artifacts for temporary CI retention, not source documentation.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -317,5 +318,15 @@ test('a new phone conversation starts with its full data-use introduction visibl
   expect(text.y + text.height).toBeLessThanOrEqual(panel.y + panel.height);
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
+  await mkdir('artifacts/screenshots', { recursive: true });
   await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-entry-phone.png' });
+  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
+  await input.fill('A board with cow, sheep, and horse');
+  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeEnabled();
+  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-ready-phone.png' });
+  await input.fill('');
+  await page.setViewportSize({ width: 1180, height: 900 });
+  await expect(input).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeDisabled();
+  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-entry-desktop.png' });
 });

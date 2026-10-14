@@ -1,4 +1,4 @@
-# Validates release metadata, types, unit tests, PostgreSQL integration contracts, and production builds for source changes.
+# Validates source changes and retains conversation end-to-end screenshots as temporary CI artifacts.
 name: Check
 on:
   pull_request:
@@ -37,3 +37,14 @@ jobs:
       - run: npm run test:services
       - run: npx playwright install --with-deps chromium
       - run: npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"
+      - name: Conversation end-to-end checks
+        id: conversation
+        run: npm run test:web -- tests/web/conversation.spec.ts
+      - name: Retain conversation screenshots for review
+        if: ${{ !cancelled() && steps.conversation.outcome != 'skipped' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: conversation-screenshots
+          path: artifacts/screenshots/ai-conversation-*.png
+          if-no-files-found: error
+          retention-days: 7
