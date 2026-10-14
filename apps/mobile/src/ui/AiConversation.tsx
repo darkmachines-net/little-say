@@ -5,10 +5,9 @@
 import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
-import { ArrowLeft, ArrowUp, Mic, SlidersHorizontal, Square } from 'lucide-react-native';
+import { ArrowLeft, ArrowUp, SlidersHorizontal, Square } from 'lucide-react-native';
 import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
-import { apiFetch, proposeBoard } from '../services/api';
-import { useRecording } from '../services/useRecording';
+import { proposeBoard } from '../services/api';
 import { Button, Notice, Sheet } from './components';
 import { DraftCanvas } from './DraftCanvas';
 import { theme, styles } from './theme';
@@ -42,8 +41,9 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
 /**
  * Render a creation or editing conversation that preserves the source board until Apply, supports
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
- * Explicit send/record actions enable AI use without an interstitial. Navigation cancels pending work;
- * only an in-progress board save prevents leaving. onAiUse persists the legacy AI-enabled preference.
+ * Text entry supports system keyboard dictation; explicit sends enable AI without an interstitial.
+ * Navigation cancels pending work; only an in-progress board save prevents leaving.
+ * onAiUse persists the legacy AI-enabled preference.
  * onApply's second argument authorizes replacing protected manual/legacy translations for this
  * draft only; it is true only after explicit parent review and must not authorize another draft.
  */
@@ -64,31 +64,21 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   const draftBeforeRequest = useRef<BoardProposal | null>(null);
   const [clarifying, setClarifying] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
-  const [busy, setBusy] = useState<'generate' | 'transcribe' | 'microphone' | 'save' | null>(null);
+  const [busy, setBusy] = useState<'generate' | 'save' | null>(null);
   const [error, setError] = useState('');
-  const [seconds, setSeconds] = useState(0);
   const request = useRef<AbortController | null>(null);
   const live = useRef(true);
   const saving = useRef(false);
   const transcript = useRef<ScrollView>(null);
   const input = useRef<TextInput>(null);
   const nearBottom = useRef(true);
-  const recording = useRecording(setError);
-  const finishRef = useRef<() => void>(() => {});
   const { width, height } = useWindowDimensions();
   const title = source ? 'Edit with AI' : 'New board';
   const atLimit = history.length >= MAX_AI_TURNS;
   const sideBySide = width >= 800;
   const picturesChanged = Boolean(draft?.proposal.picturePolicy && JSON.stringify(picturePolicy) !== JSON.stringify(draft.proposal.picturePolicy));
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
-  useEffect(() => {
-    if (!recording.recording) return;
-    setSeconds(0);
-    const started = Date.now();
-    const timer = setInterval(() => { const elapsed = Math.floor((Date.now() - started) / 1000); setSeconds(elapsed); if (elapsed >= 60) { clearInterval(timer); finishRef.current(); } }, 250);
-    return () => clearInterval(timer);
-  }, [recording.recording]);
-  const close = () => { if (saving.current) return; request.current?.abort(); void recording.cleanup(); onClose(); };
+  const close = () => { if (saving.current) return; request.current?.abort(); onClose(); };
   const closeRef = useRef(close); closeRef.current = close;
   useEffect(() => { const subscription = BackHandler.addEventListener('hardwareBackPress', () => { closeRef.current(); return true; }); return () => subscription.remove(); }, []);
   const enableAi = async (controller: AbortController) => {
@@ -102,7 +92,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   });
   const cancel = () => {
     request.current?.abort(); request.current = null;
-    void recording.cleanup(); setBusy(null); setPictureMessage('');
+    setBusy(null); setPictureMessage('');
     if (busy === 'generate') {
       setTileStates({}); setDraft(draftBeforeRequest.current);
       if (!submitted && draftBeforeRequest.current?.proposal.picturePolicy) setPicturePolicy(draftBeforeRequest.current.proposal.picturePolicy);
@@ -149,29 +139,6 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       if (live.current && request.current === controller) { request.current = null; setBusy(null); setSubmitted(null); }
     }
   };
-  const start = async () => {
-    if (request.current || saving.current) return;
-    const controller = new AbortController(); request.current = controller;
-    setError(''); setBusy('microphone');
-    try { if (await enableAi(controller)) await recording.start(); } catch (e) { if (live.current && request.current === controller) setError((e as Error).message); }
-    finally { if (live.current && request.current === controller) { request.current = null; setBusy(null); } }
-  };
-  const finish = async () => {
-    if (request.current || saving.current) return;
-    const controller = new AbortController(); request.current = controller;
-    setBusy('transcribe'); setError(''); nearBottom.current = true;
-    try {
-      const body = await recording.stop();
-      if (controller.signal.aborted || !live.current) return;
-      const result = await apiFetch(settings.backendUrl, '/api/transcribe', { method: 'POST', body }, controller.signal);
-      if (live.current && request.current === controller) {
-        setPrompt(current => (current.trim() ? `${current.trim()} ${result.text}` : result.text).slice(0, 4000));
-        input.current?.focus();
-      }
-    } catch (e) { if (live.current && request.current === controller) setError((e as Error).message); }
-    finally { if (request.current === controller) { await recording.cleanup(); if (live.current) { request.current = null; setBusy(null); } } }
-  };
-  finishRef.current = () => { void finish(); };
   const updatePictures = async (policy = picturePolicy) => {
     if (!draft || request.current) return;
     setError(''); setPicturePolicy(policy);
@@ -206,24 +173,23 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       <View testID="ai-chat-panel" style={{ flex: sideBySide ? 0.85 : 1, minHeight: 0, minWidth: 0, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
         <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current && (history.length > 0 || submitted || busy)) transcript.current?.scrollToEnd({ animated: false }); }}>
           {!history.length && !submitted && <View style={{ gap: 16 }}>
-            <Text style={styles.body}>{source ? 'What would you like to change? Your board will update alongside the conversation.' : 'What would you like on your board? Type a message or use the microphone.'}</Text>
-            <Text style={styles.small}>Messages and board words go to AI. Voice prompts send a recording. {pictureDataDisclosure}</Text>
-            {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', conversationPrompts.farm], ['🥣 Snack time', conversationPrompts.snack], ['👋 My family', conversationPrompts.family]].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy) || recording.recording} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
+            <Text style={styles.body}>{source ? 'What would you like to change? Your board will update alongside the conversation.' : 'What would you like on your board? Type a message or use your keyboard’s dictation.'}</Text>
+            <Text style={styles.small}>Messages and board words go to AI. {pictureDataDisclosure}</Text>
+            {!source && <View style={{ gap: 8 }}>{[['🐾 Farm animals', conversationPrompts.farm], ['🥣 Snack time', conversationPrompts.snack], ['👋 My family', conversationPrompts.family]].map(([label, value]) => <Button key={label} kind="secondary" disabled={Boolean(busy)} onPress={() => { setPrompt(value); input.current?.focus(); }}>{label}</Button>)}</View>}
           </View>}
           {history.map((turn, index) => <View key={index} style={{ gap: 14 }}>
             <View style={{ alignSelf: 'flex-end', maxWidth: '96%', borderRadius: 18, borderBottomRightRadius: 5, padding: 14, backgroundColor: theme.accentSoft }}><Text style={{ ...styles.body, color: theme.ink }}>{turn.prompt}</Text></View>
             <View style={{ alignSelf: 'flex-start', borderRadius: 18, borderBottomLeftRadius: 5, padding: 4 }}><Text accessibilityLiveRegion={index === history.length - 1 ? 'polite' : 'none'} style={styles.body}>{turn.reply}</Text></View>
           </View>)}
           {submitted && <View style={{ alignSelf: 'flex-end', maxWidth: '96%', borderRadius: 18, padding: 14, backgroundColor: theme.accentSoft }}><Text style={{ ...styles.body, color: theme.ink }}>{submitted}</Text></View>}
-          {busy && busy !== 'save' && <Working key={busy} pictures={Boolean(pictureMessage)} label={busy === 'generate' ? pictureMessage || 'Working on your draft…' : busy === 'transcribe' ? 'Transcribing your recording…' : 'Opening microphone…'} />}
+          {busy === 'generate' && <Working pictures={Boolean(pictureMessage)} label={pictureMessage || 'Working on your draft…'} />}
         </ScrollView>
         <View style={{ padding: width < 600 ? 10 : 16, gap: 10, borderTopWidth: 1, borderColor: theme.line }}>
           {Boolean(error) && <Notice>{error}</Notice>}
           {atLimit ? <Text style={styles.body}>{draft && !clarifying ? 'Save this draft to continue in a new conversation.' : 'This conversation has reached its limit. Go back and start a new one.'}</Text> : <>
-            <TextInput ref={input} accessibilityLabel="Message to AI" value={prompt} onChangeText={setPrompt} multiline maxLength={4000} editable={!busy && !recording.recording} placeholder={history.length ? 'Ask for a change or answer a question…' : source ? 'Add a goat, and keep everything else…' : 'A board with cow, sheep, horse…'} placeholderTextColor={theme.muted} style={[styles.field, { minHeight: 58, maxHeight: 112, textAlignVertical: 'top' }]} />
-            <View style={[styles.row, { justifyContent: 'space-between' }]}>
-              <Button kind={recording.recording ? 'danger' : 'ghost'} icon={recording.recording ? Square : Mic} onPress={() => recording.recording ? void finish() : void start()} disabled={Boolean(busy)} compact>{recording.recording ? 'Stop · ' + seconds + 's / 60s' : 'Voice prompt'}</Button>
-              {busy && busy !== 'save' ? <Button compact kind="secondary" icon={Square} onPress={cancel}>Stop request</Button> : <Button compact icon={ArrowUp} onPress={() => void generate()} disabled={Boolean(busy) || !prompt.trim() || recording.recording}>Send message</Button>}
+            <TextInput ref={input} accessibilityLabel="Message to AI" accessibilityHint="Type or use your keyboard’s dictation, then send your message." value={prompt} onChangeText={setPrompt} multiline maxLength={4000} editable={!busy} placeholder={history.length ? 'Ask for a change or answer a question…' : source ? 'Add a goat, and keep everything else…' : 'A board with cow, sheep, horse…'} placeholderTextColor={theme.muted} style={[styles.field, { minHeight: 58, maxHeight: 112, textAlignVertical: 'top' }]} />
+            <View style={[styles.row, { justifyContent: 'flex-end' }]}>
+              {busy === 'generate' ? <Button compact kind="secondary" icon={Square} onPress={cancel}>Stop request</Button> : <Button compact icon={ArrowUp} onPress={() => void generate()} disabled={Boolean(busy) || !prompt.trim()}>Send message</Button>}
             </View>
           </>}
         </View>
@@ -232,7 +198,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
         <DraftCanvas board={preview} states={tileStates} message={canvasMessage} compact={!sideBySide} />
         {replacements.length > 0 && <View style={{ gap: 6 }}><Text style={styles.small}>{reviewedDraft === draft ? 'Reviewed translation replacements will be applied.' : `${replacements.length} saved translations will be kept. Review proposed replacements separately.`}</Text><Button compact kind="secondary" disabled={Boolean(busy)} onPress={() => setTranslationReview(true)}>Review translation replacements</Button></View>}
         {pictureIssues.length > 0 && <Text testID="picture-summary" accessibilityLiveRegion="polite" style={styles.small}>{pictureIssues.join(' ')}</Text>}
-        {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={Boolean(busy) || recording.recording || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
+        {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={Boolean(busy) || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
       </View>
     </View>
     {translationReview && draft && <Sheet title="Review translation replacements" onClose={() => setTranslationReview(false)} footer={<><Button kind="secondary" onPress={() => { setReviewedDraft(null); setTranslationReview(false); }}>Keep saved translations</Button><Button onPress={() => { setReviewedDraft(draft); setTranslationReview(false); }}>Use proposed translations</Button></>}>

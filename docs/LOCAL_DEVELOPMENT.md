@@ -17,7 +17,7 @@ Choose one command at a time. `dev` remains an alias for the local full-stack fl
 
 `npm.cmd run dev:remote` checks `https://littlesay.darkmachines.net/api/health`, then starts Expo Go in LAN mode. It does not start a local backend, reserve its port, create `.env`, or look up a Windows User API key. The deployed server supplies its own credentials and model configuration. Health failures stop startup with a remote-specific error; the launcher never silently falls back to a different backend.
 
-Native clients connect directly to the HTTPS backend. For browser testing, use `npm.cmd run dev:web:remote` or press **w** in the remote Expo session. The development web app sends `/api/` calls to its own Metro origin; a development-only middleware streams them to the selected remote backend. This covers JSON, recorded audio uploads, speech downloads, and picture assets without changing the deployment's allowed origins. The proxy accepts only the configured localhost/LAN origins and the app's POST header, strips browser cookies/authorization/origin, and does not follow redirects. Other requests continue to Metro. Production exports do not include this proxy or use these development overrides.
+Native clients connect directly to the HTTPS backend. For browser testing, use `npm.cmd run dev:web:remote` or press **w** in the remote Expo session. The development web app sends `/api/` calls to its own Metro origin; a development-only middleware streams them to the selected remote backend. This covers JSON, speech downloads, and picture assets without changing the deployment's allowed origins. The proxy accepts only the configured localhost/LAN origins and the app's POST header, strips browser cookies/authorization/origin, and does not follow redirects. Other requests continue to Metro. Production exports do not include this proxy or use these development overrides.
 
 AI requests made while testing use the deployed server and its normal billing/caches. Startup and doctor checks only request health/status endpoints. Stop and restart Expo when switching modes or changing the remote origin; append `-- --clear` if a device still has a stale bundle.
 
@@ -27,7 +27,7 @@ The repository's `.codex/environments/environment.toml` defines **Expo + local b
 
 Select the Little Say development environment in Codex's local-environment settings if it is not already selected, then choose an action from the top bar. Keep its terminal open; Ctrl+C stops that session before choosing another mode. See the [official local-environment documentation](https://learn.chatgpt.com/docs/environments/local-environment).
 
-This project uses SDK 57; install its compatible [Expo Go version](https://expo.dev/go). On physical iOS devices, the current Expo Go flow requires the CLI and Expo Go to be signed in to the same Expo account: run `npx.cmd expo login` from `apps/mobile`, then sign in on the device. This is an [Expo Go requirement](https://docs.expo.dev/get-started/start-developing/), not an account requirement in Little Say. Allow local-network and microphone access when requested.
+This project uses SDK 57; install its compatible [Expo Go version](https://expo.dev/go). On physical iOS devices, the current Expo Go flow requires the CLI and Expo Go to be signed in to the same Expo account: run `npx.cmd expo login` from `apps/mobile`, then sign in on the device. This is an [Expo Go requirement](https://docs.expo.dev/get-started/start-developing/), not an account requirement in Little Say. Allow local-network access when requested.
 
 ## API key
 
@@ -86,13 +86,13 @@ Leave `DEV_HOST` blank for detection. If set, it must be an IPv4 address current
 3. Open the Expo QR code. In Parent settings, run **Test connection**.
 4. Ask for six farm animals, review the draft, apply it, and play a tile.
 5. Ask to replace one animal. Check that the rest stay intact, then test undo.
-6. Use **Voice prompt**, allow the microphone, stop recording, review the transcript, and submit it.
+6. Focus **Message to AI**, type or use the keyboard’s dictation if available, review the text, and choose **Send message**. Little Say should not request microphone access.
 7. In a board editor, watch the saved AI voice count increase without blocking editing. Open a tile and choose **Generate audio** or **Regenerate audio**, then **Listen to this tile**. Check an English word and a Russian word such as `бабушка` with `ru-RU`.
 8. After audio is saved, disconnect the tablet from Wi-Fi and play it again. Edit the spoken text or language to confirm an old clip is never played for new words; device TTS is the fallback until matching audio is prepared.
 
 Generated audio is stored in the repository's ignored `.cache/speech` directory by default. Restarting `npm run dev` reuses it. `OPENAI_SPEECH_MODEL` and `OPENAI_SPEECH_VOICE` are optional server settings; the defaults are `gpt-realtime-2.1-mini` and `marin`. `SPEECH_CACHE_DIR` can point to another persistent directory. The Expo app receives only the backend URL and downloaded audio, never the key.
 
-The web app on `localhost:8081` also supports recording. A device browser using a plain LAN HTTP URL generally cannot access its microphone; use the native Expo Go app for this local voice test. Browser offline/service-worker behavior is tested against the built app, not Metro.
+Prompt entry uses the regular system keyboard on native and web. Dictation availability and permissions are controlled by the keyboard or operating system. Browser offline/service-worker behavior is tested against the built app, not Metro.
 
 ## If the device cannot connect
 

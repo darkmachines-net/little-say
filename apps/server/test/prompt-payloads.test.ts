@@ -8,14 +8,13 @@ import { openAIPictureProvider } from '../src/picture-provider';
 import { openAISynthesis, speechProfile } from '../src/synthesis';
 import { type ProposalRequest, type PictureConcept } from '@little-say/core';
 
-const calls = vi.hoisted(() => ({ parse: vi.fn(), generate: vi.fn(), transcribe: vi.fn(), send: vi.fn(), connections: [] as unknown[], clients: [] as unknown[] }));
+const calls = vi.hoisted(() => ({ parse: vi.fn(), generate: vi.fn(), send: vi.fn(), connections: [] as unknown[], clients: [] as unknown[] }));
 vi.mock('openai', async importOriginal => ({
   ...await importOriginal<typeof import('openai')>(),
   default: class {
     constructor(options: unknown) { calls.clients.push(options); }
     responses = { parse: calls.parse };
     images = { generate: calls.generate };
-    audio = { transcriptions: { create: calls.transcribe } };
   },
 }));
 vi.mock('openai/realtime/ws', () => ({
@@ -37,11 +36,11 @@ vi.mock('openai/realtime/ws', () => ({
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const data = 'Café 牛 "quoted" \\ $& $` $\' $$ {{language}} {{concept}}\nsecond line';
 
-it('preserves complete board, picture, transcription and speech requests with literal hostile-looking data', async () => {
+it('preserves complete board, picture and speech requests with literal hostile-looking data', async () => {
   const observed: Record<string, string> = {};
   const remember = (name: string, value: unknown) => { observed[name] = digest(value); };
   for (const custom of [false, true]) {
-    const env = { AAC_OPENAI_KEY: 'synthetic-key', ...(custom ? { OPENAI_BOARD_MODEL: 'custom-board', OPENAI_REASONING_EFFORT: 'high', OPENAI_TRANSCRIBE_MODEL: 'custom-transcribe', OPENAI_IMAGE_MODEL: 'custom-image', OPENAI_SPEECH_MODEL: 'custom-speech', OPENAI_SPEECH_VOICE: 'cedar' } : {}) };
+    const env = { AAC_OPENAI_KEY: 'synthetic-key', ...(custom ? { OPENAI_BOARD_MODEL: 'custom-board', OPENAI_REASONING_EFFORT: 'high', OPENAI_IMAGE_MODEL: 'custom-image', OPENAI_SPEECH_MODEL: 'custom-speech', OPENAI_SPEECH_VOICE: 'cedar' } : {}) };
     const prefix = custom ? 'configured' : 'default';
     const provider = openAIProvider(env)!;
     const request: ProposalRequest = { prompt: data, board: null, languageProfile: { defaultLanguage: 'fr-FR', languages: ['fr-FR', 'ja-JP'] }, conversation: { history: [{ prompt: data, reply: data }], draft: null } };
@@ -52,10 +51,6 @@ it('preserves complete board, picture, transcription and speech requests with li
     }
     await provider.translate!({ boardId: 'board-1', baseRevision: 2, tiles: [{ id: 'tile-1', label: data, speech: data, language: 'fr-FR', targets: ['ja-JP'] }] });
     remember(`${prefix}/translate`, calls.parse.mock.lastCall);
-    calls.transcribe.mockResolvedValue({ text: data });
-    await provider.transcribe(Buffer.from(data), 'synthetic.wav', 'audio/wav');
-    const transcription = calls.transcribe.mock.lastCall![0];
-    remember(`${prefix}/transcribe`, { ...transcription, file: { name: transcription.file.name, type: transcription.file.type, bytes: Buffer.from(await transcription.file.arrayBuffer()).toString('base64') } });
     const pictures = openAIPictureProvider(env)!;
     const concept: PictureConcept = { description: data, features: [data], searchTerms: [data], emojiAccurate: false };
     calls.parse.mockResolvedValue({ status: 'completed', output_parsed: { tiles: [{ id: 'tile-1', ...concept }] } });

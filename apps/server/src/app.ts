@@ -5,7 +5,6 @@
 
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import multipart from '@fastify/multipart';
 import rateLimit from '@fastify/rate-limit';
 import staticFiles from '@fastify/static';
 import { existsSync } from 'node:fs';
@@ -33,7 +32,6 @@ export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
   await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
-  await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024, files: 1, fields: 0, parts: 1 }, throwFileSizeLimit: true });
   await app.register(rateLimit, { global: false });
   const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
   let active = 0;
@@ -45,9 +43,9 @@ export async function createServer(options: ServerOptions) {
   });
   app.setErrorHandler((error, request, reply) => {
     const status = (error as { statusCode?: number }).statusCode ?? 500;
-    // Only log metadata, never prompt, transcript, recording, board, or provider error bodies.
+    // Only log metadata, never prompt, board, or provider error bodies.
     app.log.warn({ requestId: request.id, statusCode: status }, 'Request failed');
-    reply.code(status >= 400 && status < 500 ? status : 500).send({ error: status === 413 ? 'This recording is too large. Try a shorter prompt.' : status === 429 ? 'Too many requests. Please try again shortly.' : status === 400 ? 'The request could not be read. Please try again.' : 'The server could not complete this request.' });
+    reply.code(status >= 400 && status < 500 ? status : 500).send({ error: status === 413 ? 'This request is too large. Try sending less content.' : status === 429 ? 'Too many requests. Please try again shortly.' : status === 400 ? 'The request could not be read. Please try again.' : 'The server could not complete this request.' });
   });
 
   app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
@@ -157,25 +155,6 @@ export async function createServer(options: ServerOptions) {
     catch { return reply.code(502).send({ error: 'AI could not prepare all translations. Your board is unchanged. Please try again.' }); }
     finally { active--; }
   });
-  app.post('/api/transcribe', aiLimits, async (request, reply) => {
-    if (!options.provider) return reply.code(503).send({ error: 'Voice prompts need an OpenAI key configured on your home server. You can type your prompt instead.' });
-    if (active >= maxConcurrent) return reply.code(429).send({ error: 'The server is busy. Please try again shortly.' });
-    active++;
-    try {
-      const file = await request.file();
-      const mime = file?.mimetype.split(';')[0];
-      const extensions: Record<string, string> = { 'audio/webm': 'webm', 'video/webm': 'webm', 'audio/mp4': 'm4a', 'video/mp4': 'mp4', 'audio/m4a': 'm4a', 'audio/x-m4a': 'm4a', 'audio/mpeg': 'mp3', 'audio/wav': 'wav', 'audio/x-wav': 'wav' };
-      if (!file || !mime || !extensions[mime]) return reply.code(400).send({ error: 'Use a supported audio recording (M4A, WebM, MP3, or WAV).' });
-      const audio = await file.toBuffer();
-      if (audio.length < 100) return reply.code(400).send({ error: 'The recording was empty. Try recording again or type your prompt.' });
-      const transcript = (await options.provider.transcribe(audio, `prompt.${extensions[mime]}`, mime)).trim();
-      if (!transcript || transcript.length > 4000) return reply.code(422).send({ error: 'No usable short prompt was heard. Try again or type your prompt.' });
-      return { text: transcript };
-    } catch (error) {
-      if ((error as { statusCode?: number }).statusCode === 413) return reply.code(413).send({ error: 'This recording is too large. Try a shorter prompt.' });
-      return reply.code(502).send({ error: 'The recording could not be transcribed. Try again or type your prompt.' });
-    } finally { active--; }
-  });
 
   const root = resolve(options.webRoot ?? '../mobile/dist');
   if (existsSync(resolve(root, 'index.html'))) {
@@ -183,7 +162,7 @@ export async function createServer(options: ServerOptions) {
       if (path.endsWith('.html') || path.endsWith('sw.js')) response.header('Cache-Control', 'no-cache');
       response.header('X-Content-Type-Options', 'nosniff');
       response.header('Referrer-Policy', 'same-origin');
-      response.header('Permissions-Policy', 'microphone=(self), camera=()');
+      response.header('Permissions-Policy', 'microphone=(), camera=()');
       response.header('Content-Security-Policy', "frame-ancestors 'none'; object-src 'none'; base-uri 'self'");
     } });
     app.setNotFoundHandler((request, reply) => request.url.startsWith('/api/') || request.url.includes('.') ? reply.code(404).send({ error: 'Not found' }) : reply.sendFile('index.html'));

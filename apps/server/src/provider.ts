@@ -1,10 +1,10 @@
 /**
- * @file Implements server-side OpenAI board proposals, transcription, and translation behind an
+ * @file Implements server-side OpenAI board proposals and translation behind an
  * injectable provider.
  */
 
 import { boardPrompts } from './prompts';
-import OpenAI, { toFile } from 'openai';
+import OpenAI from 'openai';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { aiGeneratedBoardSchema, aiPictureGeneratedBoardSchema, generatedTranslationsSchema, type GeneratedBoard, type ProposalRequest, type TranslationRequest, type GeneratedTranslations } from '@little-say/core';
 
@@ -14,11 +14,6 @@ export interface AiProvider {
    * context.
    */
   propose(request: ProposalRequest): Promise<GeneratedBoard>;
-  /**
-   * Convert the supplied recording bytes and file metadata into prompt text in the original spoken
-   * languages.
-   */
-  transcribe(audio: Buffer, filename: string, mime: string): Promise<string>;
   /** Generate the requested tile-language pairs when translation is supported by the provider. */
   translate?(request: TranslationRequest): Promise<GeneratedTranslations>;
 }
@@ -71,14 +66,6 @@ export function openAIProvider(env: NodeJS.ProcessEnv): AiProvider | null {
       });
       if (!response.output_parsed || response.status !== 'completed') throw new Error('Incomplete translations.');
       return response.output_parsed;
-    },
-    async transcribe(audio, filename, mime) {
-      const result = await client.audio.transcriptions.create({
-        model: env.OPENAI_TRANSCRIBE_MODEL || 'gpt-transcribe',
-        file: await toFile(audio, filename, { type: mime }),
-        prompt: boardPrompts.transcription,
-      });
-      return result.text;
     },
   };
 }
