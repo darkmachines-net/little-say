@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { X, AlertCircle, type LucideIcon } from 'lucide-react-native';
 import { theme, styles } from './theme';
 
@@ -40,18 +41,24 @@ export function ModalBackdrop({ onClose }: { onClose: () => void }) {
  * Present a responsive, scrollable modal with an optional fixed footer. Outside taps use the same
  * cancellation path as the close button and system back action, without confirming or saving.
  * Visibility can hide a parent sheet during full-screen navigation without resetting caller state.
+ * Each native modal measures its own system-bar/cutout insets; only the body scrolls inside the
+ * remaining safe space, keeping the header and footer reachable after rotation or window resizing.
  */
 export function Sheet({ title, subtitle, onClose, children, footer, wide = false, visible = true }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; visible?: boolean }) {
-  const { width, height } = useWindowDimensions();
-  return <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose} statusBarTranslucent>
-    <View style={{ display: visible ? 'flex' : 'none', flex: 1, backgroundColor: theme.scrim, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 12 : 30 }}>
+  const { width } = useWindowDimensions();
+  return <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose} statusBarTranslucent navigationBarTranslucent>
+    <SafeAreaProvider style={{ display: visible ? 'flex' : 'none', backgroundColor: theme.scrim }}>
       <ModalBackdrop onClose={onClose} />
-      <View accessibilityViewIsModal style={{ backgroundColor: theme.background, borderRadius: 24, width: '100%', maxWidth: wide ? 860 : 580, maxHeight: height - 48, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
-        <View style={{ padding: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}><View style={{ flex: 1, gap: 6 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text>{Boolean(subtitle) && <Text style={styles.body}>{subtitle}</Text>}</View><Button icon={X} kind="ghost" compact onPress={onClose} accessibilityLabel={`Close ${title}`} /></View>
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, gap: 20 }}>{children}</ScrollView>
-        {footer && <View style={{ padding: 20, borderTopWidth: 1, borderColor: theme.line, backgroundColor: 'white', gap: 10 }}>{footer}</View>}
-      </View>
-    </View>
+      <SafeAreaView pointerEvents="box-none" style={{ flex: 1 }}>
+        <View pointerEvents="box-none" style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: width < 600 ? 12 : 30 }}>
+          <View accessibilityViewIsModal style={{ backgroundColor: theme.background, borderRadius: 24, width: '100%', maxWidth: wide ? 860 : 580, maxHeight: '100%', flexShrink: 1, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
+            <View style={{ padding: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}><View style={{ flex: 1, gap: 6 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text>{Boolean(subtitle) && <Text style={styles.body}>{subtitle}</Text>}</View><Button icon={X} kind="ghost" compact onPress={onClose} accessibilityLabel={`Close ${title}`} /></View>
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 24, gap: 20 }}>{children}</ScrollView>
+            {footer && <View style={{ padding: 20, borderTopWidth: 1, borderColor: theme.line, backgroundColor: 'white', gap: 10 }}>{footer}</View>}
+          </View>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   </Modal>;
 }
 /**

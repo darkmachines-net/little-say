@@ -19,6 +19,8 @@ vi.mock('react-native', () => ({
   StyleSheet: { create: (styles: unknown) => styles },
 }));
 vi.mock('lucide-react-native', () => ({ AlertCircle: 'AlertCircle' }));
+// Shared UI also exports native dialogs; this OTA test does not exercise their window measurement.
+vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView' }));
 
 let renderer: ReactTestRenderer | undefined;
 const save = vi.fn();
