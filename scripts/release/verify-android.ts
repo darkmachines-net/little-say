@@ -7,8 +7,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { assert, run, safeEnvironment } from './common';
-import type { NativeRelease } from './native-contract';
+import { assert, run, sourceEnvironment } from './source-common';
+import type { NativeRelease } from './local-native';
 
 /**
  * Use installed Java and Android SDK tools to verify APK/AAB signatures and the APK package/version,
@@ -25,7 +25,7 @@ export function verifyAndroidArtifacts(directory: string, key: { keystorePath: s
   const temp = mkdtempSync(resolve(tmpdir(), 'little-say-cert-'));
   try {
     const cert = resolve(temp, 'signer.der');
-    run(javaTool('keytool'), ['-exportcert', '-keystore', key.keystorePath, '-alias', key.keyAlias, '-storepass:env', 'LS_STORE_PASSWORD', '-file', cert], { capture: true, env: { ...safeEnvironment(), LS_STORE_PASSWORD: key.keystorePassword } });
+    run(javaTool('keytool'), ['-exportcert', '-keystore', key.keystorePath, '-alias', key.keyAlias, '-storepass:env', 'LS_STORE_PASSWORD', '-file', cert], { capture: true, env: { ...sourceEnvironment(), LS_STORE_PASSWORD: key.keystorePassword } });
     const expected = createHash('sha256').update(readFileSync(cert)).digest('hex');
     const apk = run(javaTool('java'), ['-jar', resolve(tools, 'lib/apksigner.jar'), 'verify', '--print-certs', resolve(directory, 'app.apk')], { capture: true });
     assert(apk.toLowerCase().includes(`certificate sha-256 digest: ${expected}`), 'APK signer differs from the configured EAS keystore.');

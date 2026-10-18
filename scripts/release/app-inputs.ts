@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { posix } from 'node:path';
-import { assert, git, root } from './common';
+import { assert, git, root } from './source-common';
 
 /** Hash structured input deterministically, independent of JSON property insertion order. */
 export function hash(value: unknown): string {

@@ -3,8 +3,8 @@
 import { mkdtempSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { assert, run } from './common';
-import type { NativeRelease, Profile } from './native-contract';
+import { assert, run } from './source-common';
+import type { NativeRelease, Profile } from './local-native';
 
 /**
  * Extract and verify the single app in an IPA, including version and OTA project/runtime/channel;

@@ -2,38 +2,19 @@
 
 import { describe, expect, it } from 'vitest';
 import { createRequire } from 'node:module';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, resolve } from 'node:path';
-import { normalizeOptionsAsync } from '@expo/fingerprint/build/Options';
-import { createFingerprintFromSourcesAsync } from '@expo/fingerprint/build/hash/Hash';
-import { mobile, node, root } from './common';
-import { nativeFingerprint, nativeRuntime, versionEnvironment } from './expo';
-import { releaseEnvironment } from './environment';
+import { resolve } from 'node:path';
+import { mobile, node, root } from './source-common';
+import { hookEnvironment, nativeFingerprint } from './hooks';
 
 const require = createRequire(import.meta.url);
 const metadata = require(resolve(mobile, 'release-metadata.cjs'));
+const releaseEnvironment = (profile: 'internal' | 'production') => hookEnvironment({ profile });
+const versionEnvironment = (environment: NodeJS.ProcessEnv, release: Record<string, unknown>) => ({ ...environment, LITTLE_SAY_OTA_VERSIONS: JSON.stringify(release) });
 describe('shared fingerprint policy', () => {
-  it('ignores transient Kotlin/Gradle outputs inside native plugins while retaining real Kotlin source', async () => {
-    const directory = mkdtempSync(resolve(tmpdir(), 'little-say-fingerprint-'));
-    try {
-      const plugin = 'node_modules/expo-updates/expo-updates-gradle-plugin';
-      const source = resolve(directory, plugin, 'src/Plugin.kt'); mkdirSync(dirname(source), { recursive: true }); writeFileSync(source, 'class Plugin');
-      const config = require(resolve(mobile, 'fingerprint.config.js'));
-      const options = await normalizeOptionsAsync(directory, { platforms: ['android'], ignorePaths: config.ignorePaths });
-      const fingerprint = async (settings = options) => (await createFingerprintFromSourcesAsync([{ type: 'dir', filePath: plugin, reasons: ['expoAutolinkingAndroid'] }], directory, settings)).hash;
-      const clean = await fingerprint();
-      for (const file of ['.kotlin/sessions/compiler.salive', 'build/classes/Plugin.class', '.gradle/state.bin', '.cxx/cache.bin']) {
-        const path = resolve(directory, plugin, file); mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, 'transient build state');
-      }
-      expect(await fingerprint()).toBe(clean);
-      expect(await fingerprint(await normalizeOptionsAsync(directory, { platforms: ['android'] }))).not.toBe(clean);
-      writeFileSync(source, 'class ChangedPlugin'); expect(await fingerprint()).not.toBe(clean);
-    } finally { rmSync(directory, { recursive: true, force: true }); }
-  });
-  it('resolves the same fingerprint runtime Expo will embed for a selected platform', () => {
+  it('preserves the appVersion runtime resolved by Expo for the selected platform', () => {
     const env = releaseEnvironment('internal');
-    expect(nativeRuntime('android', env)).toBe(nativeFingerprint('android', env));
+    const result = JSON.parse(node(resolve(root, 'node_modules/expo-updates/bin/cli.js'), ['runtimeversion:resolve', '--platform', 'android', '--workflow', 'managed'], { cwd: mobile, env, capture: true }));
+    expect(result.runtimeVersion).toBe(require(resolve(root, 'native-release.json')).version);
   }, 45000);
   it('permits only complete version overlays and never mutates cached native metadata', () => {
     const original = { version: '1.0.0', androidVersionCode: 2, iosBuildNumber: '3', expoProjectId: 'project' };

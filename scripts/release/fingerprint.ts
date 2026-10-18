@@ -4,7 +4,7 @@
  */
 
 import { createFingerprintAsync } from '@expo/fingerprint';
-import { mobile } from './common';
+import { mobile } from './source-common';
 
 const platform = process.argv[2];
 if (platform !== 'ios' && platform !== 'android') throw new Error('Fingerprint requires one native platform.');

@@ -1,0 +1,17 @@
+# Delegates the fixed pipeline; credentials are available only to the shared jobs that need them.
+name: Handle release request
+on:
+  workflow_run:
+    workflows: [Release request, Recover release]
+    types: [completed]
+permissions: { contents: read }
+jobs:
+  release:
+    if: github.event.workflow_run.conclusion == 'success'
+    permissions: { contents: write, actions: write, packages: write, pull-requests: write, checks: write, id-token: write, attestations: write }
+    uses: MChartier/expo-release-template/.github/workflows/release-handler.yml@c101987cb2af9412dd984dbdf0e917916705319e
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      DEPLOY_WG_ENDPOINT: ${{ secrets.DEPLOY_WG_ENDPOINT }}
+      DEPLOY_WG_PRIVATE_KEY: ${{ secrets.DEPLOY_WG_PRIVATE_KEY }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
