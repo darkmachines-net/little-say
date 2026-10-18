@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createEasTransport, downloadEasAndroidCredentials, verifyLocalBuild } from '@mchartier/expo-release';
+import { createEasTransport, downloadEasAndroidCredentials, saveLocalCredentialPaths, verifyLocalBuild } from '@mchartier/expo-release';
 import { assert, mobile, readJson, root, run, writeJson } from './source-common';
 import { machineFile, machineRoot, signingKey } from './local-native';
 
@@ -26,14 +26,25 @@ export async function installLocalAndroid(receiptFile: string, deviceSerial?: st
     device: deviceSerial || 'default', installedAt: new Date().toISOString() });
 }
 
-async function main() {
-  const [command, ...args] = process.argv.slice(2);
+/** Reject unknown commands, misplaced flags and unsupported platforms before consulting providers or devices. */
+export function parseNativeToolArguments(argv: string[]) {
+  const [command, ...args] = argv;
+  const permitted: Record<string, string[]> = { setup: ['login', 'platform'], configure: ['credentials'], install: ['receipt', 'device'] };
+  assert(Object.hasOwn(permitted, command || ''), 'Choose setup, configure, or install.');
   const options: Record<string, string> = {};
   for (let index = 0; index < args.length; index++) {
     const key = args[index].replace(/^--/, '');
-    assert(args[index].startsWith('--') && ['credentials', 'receipt', 'device', 'login', 'platform'].includes(key) && !options[key], 'Unknown or repeated native tool option.');
-    options[key] = key === 'login' ? 'true' : args[++index]; assert(options[key], `Missing ${key}.`);
+    assert(args[index].startsWith('--') && permitted[command].includes(key) && !options[key], 'Unknown, misplaced or repeated native tool option.');
+    options[key] = key === 'login' ? 'true' : args[++index];
+    assert(options[key] && !options[key].startsWith('--'), `Missing ${key}.`);
   }
+  assert(!options.platform || ['android', 'ios'].includes(options.platform), 'Choose android or ios.');
+  assert(command !== 'install' || options.receipt, 'Installation requires --receipt from a retained local build.');
+  return { command, options };
+}
+
+async function main() {
+  const { command, options } = parseNativeToolArguments(process.argv.slice(2));
   const eas = createEasTransport({ cwd: mobile });
   if (command === 'setup') {
     if (options.login) createEasTransport({ cwd: mobile, run: (file: string, argv: string[], settings: any) => {
@@ -51,7 +62,7 @@ async function main() {
     const credentials = options.credentials || await downloadEasAndroidCredentials(spec, resolve(machineRoot, 'signing', release.expoProjectId, randomUUID()), eas);
     assert(isAbsolute(credentials) && existsSync(credentials), 'Use an existing absolute external credentials path.');
     signingKey(credentials);
-    writeJson(machineFile, { schemaVersion: 1, targets: { android: { credentialsFile: credentials } } });
+    saveLocalCredentialPaths({ config: readJson(resolve(root, 'release.config.json')), root, target: 'android', credentialsFile: credentials });
     console.log('External Android signing configured.'); return;
   }
   assert(command === 'install' && options.receipt, 'Use native:install --receipt .release/artifacts-<digest>.json [--device SERIAL].');

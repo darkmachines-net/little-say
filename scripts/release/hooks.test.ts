@@ -1,10 +1,12 @@
 /** @file Exercises Little Say's declared shared-pipeline integration, platform input boundaries and credential-free application-hook environment. */
 import { describe, expect, it, vi } from 'vitest';
-import { baselineKey, configuredComponents, hashIdentity, planRelease, readConfig, type ComponentObservation, type ReleaseBaseline } from '@mchartier/expo-release';
+import { baselineKey, configuredComponents, hashIdentity, planRelease, readConfig, resolveConfigurationValue, type ComponentObservation, type ReleaseBaseline } from '@mchartier/expo-release';
 import { applicationHook, hookEnvironment, type HookRequest } from './hooks';
 import { dependencyClosure, relevantFile, withoutVersions } from './app-inputs';
 import { readJson, root, sourceEnvironment } from './source-common';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 
 const config = readConfig(root);
 const source = { repository: config.repository, commit: 'a'.repeat(40), toolkitCommit: 'b'.repeat(40), origin: 'local' as const };
@@ -24,6 +26,16 @@ function previous(): ReleaseBaseline {
 }
 
 describe('Little Say shared release contract', () => {
+  it('takes the Android store destination from the committed EAS profile rather than a second literal', () => {
+    const destination = config.components.find(component => component.id === 'android')!.submission;
+    expect(resolveConfigurationValue(destination, root)).toEqual(readJson(resolve(root, 'apps/mobile/eas.json')).submit.production.android);
+    const fixture = mkdtempSync(resolve(tmpdir(), 'little-say-destination-'));
+    try {
+      mkdirSync(resolve(fixture, 'apps/mobile'), { recursive: true });
+      writeFileSync(resolve(fixture, 'apps/mobile/eas.json'), JSON.stringify({ submit: { production: { android: { track: 'beta', releaseStatus: 'draft' } } } }));
+      expect(resolveConfigurationValue(destination, fixture)).toEqual({ track: 'beta', releaseStatus: 'draft' });
+    } finally { expect(dirname(resolve(fixture))).toBe(resolve(tmpdir())); rmSync(fixture, { recursive: true, force: true }); }
+  });
   // Expected selections captured from the pre-adoption planner at 30e086e.
   it.each([
     ['no-op', [], []], ['server-only', ['server'], ['server']], ['android OTA', ['android.ota'], ['android.ota']],
@@ -41,6 +53,10 @@ describe('Little Say shared release contract', () => {
     if (name === 'Android native') {
       expect(plan.components.find(item => item.id === 'android')?.next).toEqual({ version: '0.1.4', versionCode: 5 });
       expect(plan.components.find(item => item.id === 'ios')?.next).toBeUndefined();
+    }
+    if (name === 'combined major') for (const target of ['android', 'ios']) {
+      expect(plan.graph.stages.find(stage => stage.id === `${target}.ota:export`)?.needs).toContain(`${target}:build`);
+      expect(plan.graph.stages.some(stage => stage.id === `${target}:submit`)).toBe(false);
     }
     if (name === 'android OTA') expect(plan.graph.stages.find(stage => stage.id === 'android.ota:publish')?.needs.some(id => plan.stages[id].action === 'deploy')).toBe(true);
   });

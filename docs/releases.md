@@ -44,7 +44,7 @@ Selected server or OTA work retains the existing self-hosted deployment prerequi
 
 ## EAS and signing
 
-`native-release.json` owns the Expo project, owner, server origin and native counters. `apps/mobile/eas.json` defines build profiles and destinations. Production iOS submission requires explicit App Store Connect `ascAppId`. Required Apple sign-in entitlements are checked in the selected unexpired provisioning profile. Android keeps its existing default EAS key.
+`native-release.json` owns the Expo project, owner, server origin and native counters. `apps/mobile/eas.json` defines build profiles and destinations; release configuration reads its production Android destination and iOS app ID through JSON mappings. Production iOS submission requires explicit App Store Connect `ascAppId`. Required Apple sign-in entitlements are checked in the selected unexpired provisioning profile. Android keeps its existing default EAS key.
 
 Repository `EXPO_TOKEN` authorizes shared EAS jobs. Remote variables must be reproducible readable strings with public names declared in `release.config.json`. Backend credentials and executable process overrides are rejected. The declared Google iOS URL scheme may be supplied through EAS.
 
@@ -62,7 +62,9 @@ npm run release -- run --local
 npm run native:install -- --receipt .release/artifacts-PLAN_DIGEST.json --device DEVICE_SERIAL
 ```
 
-`native:configure` downloads the exact project's default Android key outside the repository. Alternatively use `--credentials C:/PRIVATE/credentials.json` with an absolute external keystore path. Existing `native.json` credential paths remain readable; a fresh configure writes the shared settings format. Prebuild runs before Gradle receives signing material. APK/AAB signatures and app versions are verified. `adb install -r` preserves data; the installed version is read back.
+`native:configure` is Android-only and downloads the exact project's default Android key outside the repository. Alternatively use `--credentials C:/PRIVATE/credentials.json` with an absolute external keystore path. `--platform` belongs to `native:setup`; misplaced flags are rejected before provider or device access. Existing `native.json` credential paths remain readable; shared atomic credential updates preserve original metadata and other targets. Prebuild runs before Gradle receives signing material. APK/AAB signatures and the APK app version are verified. `adb install -r` preserves data; the installed version is read back.
+
+Local appVersion builds reject changed native fingerprints under an already used runtime, including successful builds from other worktrees and explicitly mapped original receipts. Change and commit the native version before rebuilding incompatible native inputs. This local collision check never authorizes hosted publication or supplies a hosted OTA baseline.
 
 On macOS, use `native:setup -- --platform ios` and plan target `ios`. The shared runner invokes EAS `--local`; only that invocation receives Expo authentication. The credential-free IPA verifier checks bundle/version/runtime/channel identity. Install internal IPAs through Xcode on registered devices. Local receipts retain explicit local origin and cannot become protected hosted provenance. Store/OTA publication dispatches through Actions.
 
