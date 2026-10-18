@@ -20,6 +20,7 @@
     "lint": "eslint . --max-warnings 0",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json",
     "test": "vitest run",
+    "test:release": "npm run release -- validate && vitest run scripts/release --maxWorkers=2 --testTimeout=30000",
     "test:web": "playwright test",
     "build": "npm run build -w @little-say/server && npm run build:web -w @little-say/app",
     "start": "npm run start -w @little-say/server",

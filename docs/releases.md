@@ -2,6 +2,8 @@
 
 Little Say consumes the pinned `@mchartier/expo-release` pipeline. `release.config.json` is the application contract; the package and reusable-workflow callers must pin the same full Git commit. Use Node 24 and `npm ci` to install the shared CLI and locked EAS tooling. No separate EAS installation or engine synchronization is needed.
 
+Pull requests run the shared **Release contract** workflow on Windows and Linux. It installs the pinned package and runs `npm run test:release` to verify configuration, input boundaries and application hooks without publication credentials.
+
 ## Commands
 
 Start from a clean committed checkout with GitHub CLI authentication. Planning reads release history and EAS public inputs without publication. Source validation needs the disposable PostgreSQL/Firebase services described in [testing](testing.md).
