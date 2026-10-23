@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { createArtifactReceipt, finalizePlan, planRelease, readConfig, saveLocalCredentialPaths, verifyLocalBuild, writeLocalReceipt } from '@mchartier/expo-release';
+import { createArtifactReceipt, finalizePlan, planRelease, readConfig, saveLocalCredentialPaths, verifyLocalBuild, writeLocalReceipt, type ReleaseConfiguration } from '@mchartier/expo-release';
 import { installLocalAndroid, parseNativeToolArguments } from './native-tools';
 
 const temporary: string[] = [];
@@ -19,7 +19,7 @@ it('rejects wrong-platform configuration and misplaced or incomplete device opti
   }
 });
 
-it('preserves original Little Say artifact and baseline metadata when refreshing a credential path', () => {
+it('stores credentials in the new settings file without adopting old artifact or runtime history', () => {
   const fixture = mkdtempSync(join(tmpdir(), 'little-say-credentials-')); temporary.push(fixture);
   const checkout = join(fixture, 'checkout'); const settingsRoot = join(fixture, 'settings');
   mkdirSync(checkout); mkdirSync(join(settingsRoot, 'little-say'), { recursive: true });
@@ -29,13 +29,14 @@ it('preserves original Little Say artifact and baseline metadata when refreshing
   writeFileSync(join(settingsRoot, 'little-say', 'native.json'), JSON.stringify(legacy));
   const saved = saveLocalCredentialPaths({ config: readConfig(), root: checkout, target: 'android', credentialsFile,
     platform: 'win32', environment: { LOCALAPPDATA: settingsRoot } });
-  expect(saved.settings.legacy).toEqual(legacy);
+  expect(saved.settings).toEqual({ schemaVersion: 1, targets: { android: { credentialsFile } } });
+  expect(saved.file.endsWith('expo-release.json')).toBe(true);
   expect(saved.credentials.credentialsFile).toBe(credentialsFile);
 });
 
 it('installs exact shared APK evidence and keeps installation readback outside its immutable file inventory', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'little-say-install-')); temporary.push(directory);
-  const config = { schemaVersion: 1 as const, repository: 'MChartier/little-say', defaultBranch: 'master', components: [{
+  const config: ReleaseConfiguration = { schemaVersion: 1, repository: 'MChartier/little-say', defaultBranch: 'master', components: [{
     id: 'android', kind: 'native' as const, platform: 'android' as const, builder: 'eas' as const,
     localBuilder: 'command' as const, applicationId: 'net.darkmachines.littlesay' }] };
   const source = { repository: config.repository, commit: 'a'.repeat(40), toolkitCommit: 'b'.repeat(40), origin: 'local' as const };

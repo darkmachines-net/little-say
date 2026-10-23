@@ -49,10 +49,7 @@ export function inspectApplication(request: HookRequest) {
   assert(!profile.extends && JSON.stringify(profile.env) === JSON.stringify({ LITTLE_SAY_CHANNEL: request.profile }), 'EAS profile must use the canonical release environment.');
   const expoConfig = publicExpoConfig(environment);
   const environmentHash = request.environmentHash || hash(Object.entries(request.environment || {}).sort(([a], [b]) => a.localeCompare(b)));
-  const bootstrap = request.baseline?.components?.['server||||'];
-  const baselineIdentity = bootstrap?.requiresSourceIdentity ? hash({ identity: sourceInputs(bootstrap.source, 'server'), environment: null }) : undefined;
-  const observations: any[] = [{ id: 'server', identity: sourceInputs(request.source.commit, 'server'), version: readJson(resolve(root, 'release.json')).version,
-    ...(baselineIdentity ? { baselineIdentity } : {}) }];
+  const observations: any[] = [{ id: 'server', identity: sourceInputs(request.source.commit, 'server'), version: readJson(resolve(root, 'release.json')).version }];
   for (const platform of ['android', 'ios'] as const) {
     const compatibilityIdentity = nativeFingerprint(platform, environment, true);
     const fingerprint = nativeFingerprint(platform, environment);

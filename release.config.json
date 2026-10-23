@@ -53,18 +53,18 @@
         { "file": "package.json", "pointer": "/version" }, { "file": "apps/server/package.json", "pointer": "/version" },
         { "file": "package-lock.json", "pointer": "/version" }, { "file": "package-lock.json", "pointer": "/packages//version" },
         { "file": "package-lock.json", "pointer": "/packages/apps~1server/version" }
-      ] }
+      ] }, "minimumVersion": "0.3.3"
     },
     {
       "id": "native", "targets": ["android", "ios"], "bump": "requested", "codeAllocation": "independent",
       "version": { "file": "native-release.json", "pointer": "/version", "mirrors": [
         { "file": "apps/mobile/package.json", "pointer": "/version" }, { "file": "apps/mobile/app.json", "pointer": "/expo/version" },
         { "file": "package-lock.json", "pointer": "/packages/apps~1mobile/version" }
-      ] }
+      ] }, "minimumVersion": "0.1.4", "minimumCodes": {"android":5,"ios":5}
     }
   ],
   "nativeGroups": [],
-  "local": { "settingsDirectory": "little-say", "settingsFile": "native.json", "legacyCredentialsField": "credentials", "legacyMetadataFields": { "artifactRoot": "path", "baselines": "string-map" }, "legacyBuildReceiptsField": "baselines" },
+  "local": { "settingsDirectory": "little-say", "settingsFile": "expo-release.json"},
   "dependencies": [],
   "policy": { "otaForNewRuntime": false, "deployment": "server-or-ota", "runtimeSupportFile": "release-policy.json" },
   "hooks": {
@@ -78,6 +78,5 @@
     "type": "wireguard-webhook", "service": "little-say", "environment": "self-hosted-testing", "path": "/deploy/little-say",
     "variables": { "host": "DEPLOY_HOST", "url": "DEPLOY_URL", "address": "DEPLOY_WG_ADDRESS", "publicKey": "DEPLOY_WG_PUBLIC_KEY", "endpoint": "DEPLOY_WG_ENDPOINT", "privateKey": "DEPLOY_WG_PRIVATE_KEY", "token": "DEPLOY_TOKEN" }
   },
-  "github": { "requestWorkflow": "release-request.yml", "handlerWorkflow": "release-handler.yml", "recoveryWorkflow": "recover-release.yml" },
-  "legacy": { "format": "little-say", "prefixes": ["candidate/", "release/", "abandoned/"], "workflow": ".github/workflows/cut-release.yml" }
+  "github": { "requestWorkflow": "release-request.yml", "handlerWorkflow": "release-handler.yml", "recoveryWorkflow": "recover-release.yml" }
 }

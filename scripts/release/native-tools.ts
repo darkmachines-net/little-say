@@ -1,12 +1,11 @@
 /** @file Checks developer toolchains, stores external signing configuration, and installs an explicitly retained Little Say APK in place. */
 import { execFileSync } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createEasTransport, downloadEasAndroidCredentials, saveLocalCredentialPaths, verifyLocalBuild } from '@mchartier/expo-release';
-import { assert, mobile, readJson, root, run, writeJson } from './source-common';
-import { machineFile, machineRoot, signingKey } from './local-native';
+import { configureLocalCredentials, resolveEasCli, setupToolchain, readConfig, saveLocalCredentialPaths, verifyLocalBuild } from '@mchartier/expo-release';
+import { assert, mobile, root, run, writeJson } from './source-common';
+import { machineFile, signingKey } from './local-native';
 
 /** Reverify the canonical local build receipt, install its exact APK in place, and read back the installed version. */
 export async function installLocalAndroid(receiptFile: string, deviceSerial?: string, execute = run) {
@@ -45,24 +44,20 @@ export function parseNativeToolArguments(argv: string[]) {
 
 async function main() {
   const { command, options } = parseNativeToolArguments(process.argv.slice(2));
-  const eas = createEasTransport({ cwd: mobile });
   if (command === 'setup') {
-    if (options.login) createEasTransport({ cwd: mobile, run: (file: string, argv: string[], settings: any) => {
-      execFileSync(file, argv, { ...settings, stdio: 'inherit' }); return '';
-    } }).cli(['login'], false);
-    console.log(eas.cli(['--version'], false));
+    setupToolchain();
+    if (options.login) execFileSync(process.execPath, [resolveEasCli(), 'login'], { cwd: mobile, stdio: 'inherit' });
+    console.log(execFileSync(process.execPath, [resolveEasCli(), '--version'], { encoding: 'utf8' }));
     if (options.platform === 'ios') { assert(process.platform === 'darwin', 'Local iOS builds require macOS.'); run('xcodebuild', ['-version']); run('pod', ['--version']); }
     else { run('java', ['-version']); assert(process.env.ANDROID_HOME || process.env.ANDROID_SDK_ROOT, 'Set ANDROID_HOME to the Android SDK.'); }
     console.log(`Local signing configuration: ${machineFile}`); return;
   }
   if (command === 'configure') {
-    const release = readJson(resolve(root, 'native-release.json'));
-    const spec = { projectId: release.expoProjectId, owner: release.expoOwner, slug: 'little-say', applicationId: 'net.darkmachines.littlesay' };
-    await eas.project(spec);
-    const credentials = options.credentials || await downloadEasAndroidCredentials(spec, resolve(machineRoot, 'signing', release.expoProjectId, randomUUID()), eas);
-    assert(isAbsolute(credentials) && existsSync(credentials), 'Use an existing absolute external credentials path.');
-    signingKey(credentials);
-    saveLocalCredentialPaths({ config: readJson(resolve(root, 'release.config.json')), root, target: 'android', credentialsFile: credentials });
+    if (options.credentials) {
+      assert(isAbsolute(options.credentials) && existsSync(options.credentials), 'Use an existing absolute external credentials path.');
+      signingKey(options.credentials);
+      saveLocalCredentialPaths({ config: readConfig(), root, target: 'android', credentialsFile: options.credentials });
+    } else await configureLocalCredentials({ config: readConfig(), root, target: 'android' });
     console.log('External Android signing configured.'); return;
   }
   assert(command === 'install' && options.receipt, 'Use native:install --receipt .release/artifacts-<digest>.json [--device SERIAL].');

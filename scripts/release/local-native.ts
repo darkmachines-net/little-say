@@ -10,9 +10,9 @@ import type { HookRequest } from './hooks';
 export interface NativeRelease { version: string; androidVersionCode: number; iosBuildNumber: string; expoOwner: string; expoProjectId: string; serverUrl: string; }
 export type Profile = 'internal' | 'production';
 export const machineRoot = resolve(process.env.LOCALAPPDATA || process.env.XDG_CONFIG_HOME || resolve(homedir(), '.config'), 'little-say');
-export const machineFile = resolve(machineRoot, 'native.json');
+export const machineFile = resolve(machineRoot, 'expo-release.json');
 /** Require credentials outside the checkout and generated artifact directory, with an existing absolute keystore path. */
-export function signingKey(file = (() => { const settings = readJson(machineFile); return settings.targets?.android?.credentialsFile || settings.credentials; })()) {
+export function signingKey(file = (() => { const settings = readJson(machineFile); return settings.targets?.android?.credentialsFile; })()) {
   const outside = (path: string) => { const rel = relative(root, path); return isAbsolute(rel) || rel === '..' || rel.startsWith('..\\') || rel.startsWith('../'); };
   assert(typeof file === 'string' && isAbsolute(file) && outside(file), 'Configure external signing credentials with native:configure.');
   const key = readJson(file).android?.keystore;

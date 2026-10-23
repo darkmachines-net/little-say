@@ -36,7 +36,7 @@ describe('Little Say shared release contract', () => {
       expect(resolveConfigurationValue(destination, fixture)).toEqual({ track: 'beta', releaseStatus: 'draft' });
     } finally { expect(dirname(resolve(fixture))).toBe(resolve(tmpdir())); rmSync(fixture, { recursive: true, force: true }); }
   });
-  // Expected selections captured from the pre-adoption planner at 30e086e.
+  // Selection is independent of the fresh-history version and build-number floors.
   it.each([
     ['no-op', [], []], ['server-only', ['server'], ['server']], ['android OTA', ['android.ota'], ['android.ota']],
     ['Android native', ['android'], ['android']], ['iOS native', ['ios'], ['ios']],
@@ -51,7 +51,7 @@ describe('Little Say shared release contract', () => {
     const plan = planRelease({ config, source, origin: { kind: 'local' }, observations, baseline: previous(), profile: 'internal', bump: name === 'combined major' ? 'major' : 'patch' });
     expect(plan.selection.selected).toEqual(expected);
     if (name === 'Android native') {
-      expect(plan.components.find(item => item.id === 'android')?.next).toEqual({ version: '0.1.4', versionCode: 5 });
+      expect(plan.components.find(item => item.id === 'android')?.next).toEqual({ version: '0.1.5', versionCode: 6 });
       expect(plan.components.find(item => item.id === 'ios')?.next).toBeUndefined();
     }
     if (name === 'combined major') for (const target of ['android', 'ios']) {

@@ -1,6 +1,8 @@
 # Releases
 
-Little Say consumes the pinned `@mchartier/expo-release` pipeline. `release.config.json` is the application contract; the package and reusable-workflow callers must pin the same full Git commit. Use Node 24 and `npm ci` to install the shared CLI and locked EAS tooling. No separate EAS installation or engine synchronization is needed.
+Start with the [fresh-history cutover](release-cutover.md). Legacy release recovery and baseline import are intentionally unavailable.
+
+Little Say consumes the pinned `@mchartier/expo-release` pipeline. `release.config.json` is the application contract; the package and reusable-workflow callers must pin the same full Git commit. Use Node 24 and `npm ci` followed by `npm run release -- setup` to install the shared CLI and official locked EAS toolchain. The toolkit owns the external provider cache; no global EAS or copied engine is needed.
 
 Pull requests run the shared **Release contract** workflow on Windows and Linux. It installs the pinned package and runs `npm run test:release` to verify configuration, input boundaries and application hooks without publication credentials.
 
@@ -38,7 +40,7 @@ Run the desired plan before creating another; each `plan` command replaces the l
 
 Server/web, Android native, iOS native and each platform's JavaScript inputs are compared independently. Only selected native build counters advance; native semantic versions remain shared. Internal and production client histories stay separate, while server image history is global.
 
-Hosted native builds remain EAS cloud builds. Runtimes remain **appVersion**; this adoption does not migrate installed apps to fingerprint runtimes. Full fingerprints still guard compatibility. Environment-only changes require native builds without adding unchanged OTA publications. Retained-runtime exports use the exact baseline's version metadata, including unchanged platforms and eligible older runtimes. `release-policy.json` retains imported cloud baselines and explicitly retired runtimes.
+Hosted native builds remain EAS cloud builds. Runtimes remain **appVersion**; this adoption does not migrate installed apps to fingerprint runtimes. Full fingerprints still guard compatibility. Environment-only changes require native builds without adding unchanged OTA publications. Retained-runtime exports use the exact baseline's version metadata, including unchanged platforms and eligible older runtimes. `release-policy.json` lists explicitly retired runtimes. Supported runtime evidence comes only from new-format releases.
 
 Selected server or OTA work retains the existing self-hosted deployment prerequisite. Native-only and no-op releases skip deployment. Server publication/promotion precede deployment. Production submissions retain exact artifact/destination identity; acceptance differs from completion. OTA requires verified retained export bytes and the supported native handoff prerequisite. Final success requires all selected stages.
 
@@ -62,9 +64,9 @@ npm run release -- run --local
 npm run native:install -- --receipt .release/artifacts-PLAN_DIGEST.json --device DEVICE_SERIAL
 ```
 
-`native:configure` is Android-only and downloads the exact project's default Android key outside the repository. Alternatively use `--credentials C:/PRIVATE/credentials.json` with an absolute external keystore path. `--platform` belongs to `native:setup`; misplaced flags are rejected before provider or device access. Existing `native.json` credential paths remain readable; shared atomic credential updates preserve original metadata and other targets. Prebuild runs before Gradle receives signing material. APK/AAB signatures and the APK app version are verified. `adb install -r` preserves data; the installed version is read back.
+`native:configure` is Android-only and downloads the exact project's default Android key outside the repository. Alternatively use `--credentials C:/PRIVATE/credentials.json` with an absolute external keystore path. `--platform` belongs to `native:setup`; misplaced flags are rejected before provider or device access. Register existing credential paths in `expo-release.json`; old `native.json` settings are not read. Shared atomic updates preserve the other current-format targets. Prebuild runs before Gradle receives signing material. APK/AAB signatures and the APK app version are verified. `adb install -r` preserves data; the installed version is read back.
 
-Local appVersion builds reject changed native fingerprints under an already used runtime, including successful builds from other worktrees and explicitly mapped original receipts. Change and commit the native version before rebuilding incompatible native inputs. This local collision check never authorizes hosted publication or supplies a hosted OTA baseline.
+Local appVersion builds reject changed native fingerprints under an already used runtime, including successful new-format builds from other worktrees. Change and commit the native version before rebuilding incompatible native inputs. This local collision check never authorizes hosted publication or supplies a hosted OTA baseline.
 
 On macOS, use `native:setup -- --platform ios` and plan target `ios`. The shared runner invokes EAS `--local`; only that invocation receives Expo authentication. The credential-free IPA verifier checks bundle/version/runtime/channel identity. Install internal IPAs through Xcode on registered devices. Local receipts retain explicit local origin and cannot become protected hosted provenance. Store/OTA publication dispatches through Actions.
 
@@ -81,7 +83,6 @@ npm run release -- recover --release-id RELEASE_ID --abandon --reason 'Retire th
 
 Inspection is read-only. Mutation requires one explicit action and a protected hosted request. GitHub Releases are the durable ledger; caches are not another publication history. Intents precede requests and accepted IDs precede readback. A lost response or empty search cannot authorize duplicate uploads. Provider-supported submission retries reverify the exact failed request, destination, original build and bytes immediately before mutation.
 
-Shared compatibility readers preserve historical `candidate/`, `release/` and `abandoned/` plans, workflow identities, IDs, artifacts and reservations. Successful independent operations survive recovery; ambiguous evidence remains blocking. Historical finalization/reconciliation must satisfy the original workflow and live provider contract. Do not edit or delete journal assets to unblock a release. Abandonment preserves reservations and successful artifacts without claiming completion; later source fixes need another plan.
 
 Historical continuation selects one original stage with `--resume --stage submit-android`, `submit-ios`, `promote-server`, `deploy`, or `ota`. Each uses its own credential boundary. `ota` only finalizes a complete inventory of already verified original publications. Missing original fingerprints or payload receipts remain blocking. A failed or timed-out deployment does not authorize another POST without reconciliation.
 
