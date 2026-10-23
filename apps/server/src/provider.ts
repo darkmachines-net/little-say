@@ -3,10 +3,12 @@
  * injectable provider.
  */
 
-import { boardPrompts } from './prompts';
+import { boardPrompts, picturePrompts, preparationPrompts } from './prompts';
+import { genericConceptInstructions } from './generic-concepts';
+import { draftFailure, draftRequestId, DraftResponseError, type DraftMetric } from './draft-diagnostics';
 import OpenAI from 'openai';
 import { zodTextFormat } from 'openai/helpers/zod';
-import { aiGeneratedBoardSchema, aiPictureGeneratedBoardSchema, generatedTranslationsSchema, type GeneratedBoard, type ProposalRequest, type TranslationRequest, type GeneratedTranslations } from '@little-say/core';
+import { aiGeneratedBoardSchema, aiPictureGeneratedBoardSchema, aiPreparedBoardSchema, generatedTranslationsSchema, type GeneratedBoard, type ProposalRequest, type TranslationRequest, type GeneratedTranslations } from '@little-say/core';
 
 export interface AiProvider {
   /**
@@ -14,6 +16,8 @@ export interface AiProvider {
    * context.
    */
   propose(request: ProposalRequest): Promise<GeneratedBoard>;
+  /** Produce words and concepts in one cancellable call; templates are sanitized server-owned hints. */
+  prepare?(request: ProposalRequest, templates: GeneratedBoard[], signal?: AbortSignal): Promise<GeneratedBoard>;
   /** Generate the requested tile-language pairs when translation is supported by the provider. */
   translate?(request: TranslationRequest): Promise<GeneratedTranslations>;
 }
@@ -24,13 +28,48 @@ const pictureInstructions = boardPrompts.pictures;
 
 /**
  * Create the OpenAI-backed provider from server environment settings, or return null when no API key is
- * configured.
+ * configured. Preparation metrics report bounded failure stages and token usage without request or
+ * response content; transport and structured-output parsing are measured separately without retries.
  */
-export function openAIProvider(env: NodeJS.ProcessEnv): AiProvider | null {
+export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMetric) => void): AiProvider | null {
   const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim();
   if (!apiKey) return null;
   const client = new OpenAI({ apiKey, timeout: 45000, maxRetries: 0 });
   return {
+    async prepare(request, templates, signal) {
+      const started = Date.now();
+      const initial = !request.board && !request.conversation?.draft && !request.conversation?.history.length;
+      const model = initial ? env.OPENAI_DRAFT_MODEL || 'gpt-6-luna' : env.OPENAI_BOARD_MODEL || 'gpt-6.1-sol';
+      const effort = initial ? env.OPENAI_DRAFT_REASONING_EFFORT || 'none' : env.OPENAI_REASONING_EFFORT || 'low';
+      const { preparationId: _id, previousPreparationId: _previous, ...input } = request;
+      let stage = 'request';
+      let usage: { inputTokens: number; outputTokens: number } | undefined;
+      try {
+        // Separate transport from local parsing so failed structured output is not mislabeled as an outage.
+        const response = await client.responses.create({ model, reasoning: { effort: effort as 'none' | 'low' | 'medium' | 'high' }, store: false, max_output_tokens: 14000,
+          input: [{ role: 'system', content: boardInstructions + pictureInstructions + '\n' + picturePrompts.analysis + preparationPrompts.draft + genericConceptInstructions() + preparationPrompts.templates },
+            { role: 'user', content: JSON.stringify({ request: input, templates }) }],
+          text: { format: zodTextFormat(aiPreparedBoardSchema, 'prepared_soundboard') },
+        }, { signal });
+        usage = { inputTokens: response.usage?.input_tokens ?? 0, outputTokens: response.usage?.output_tokens ?? 0 };
+        stage = 'response';
+        if (response.status !== 'completed') throw new DraftResponseError('incomplete');
+        if (response.output.some(item => item.type === 'message' && item.content.some(content => content.type === 'refusal'))) throw new DraftResponseError('refusal');
+        if (!response.output_text) throw new DraftResponseError('incomplete');
+        stage = 'json'; const decoded: unknown = JSON.parse(response.output_text);
+        stage = 'schema'; const draft = aiPreparedBoardSchema.parse(decoded);
+        stage = 'normalize';
+        const result = { ...draft, picturePolicy: { ...draft.picturePolicy, style: 'color' as const }, tiles: draft.tiles.map(({ pictureInstruction, pictureMode, pictureStyle: _style, replacePicture, ...tile }) => {
+          const previous = request.conversation?.draft?.tiles.find(value => value.existingId !== null && value.existingId === tile.existingId) ?? request.board?.tiles.find(value => value.id === tile.existingId);
+          return { ...tile, replacePicture, pictureOptions: { locked: replacePicture ? Boolean(pictureInstruction || pictureMode) : previous?.pictureOptions?.locked ?? false, instruction: pictureInstruction, ...(pictureMode ? { mode: pictureMode } : {}) } };
+        }) };
+        metric?.({ operation: initial ? 'draft' : 'refine', milliseconds: Date.now() - started, ...usage, requestId: draftRequestId(request.preparationId), outcome: 'success' });
+        return result;
+      } catch (error) {
+        metric?.({ operation: initial ? 'draft' : 'refine', milliseconds: Date.now() - started, ...usage, requestId: draftRequestId(request.preparationId), outcome: 'failure', stage, failure: draftFailure(error, signal?.aborted) });
+        throw error;
+      }
+    },
     async propose(request) {
       if (request.pictureCapability === 1) {
         const response = await client.responses.parse({

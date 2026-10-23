@@ -6,6 +6,7 @@ Application-authored model instructions and preset messages live here as UTF-8 J
 | --- | --- | --- |
 | `server/board.json` | `apps/server/src/provider.ts`: board instructions, picture addendum, translation | None; the picture addendum starts with a newline |
 | `server/pictures.json` | `apps/server/src/pictures/provider.ts`: analysis, selection, generation, review, both style briefs | `visualRules` in selection/review; `look` and JSON-serialized `concept` in generation |
+| `server/preparation.json` | Negotiated combined drafting and batch picture selection | `concepts` is the server-owned, reviewed generic vocabulary |
 | `server/speech.json` | `apps/server/src/synthesis.ts`: Realtime speech instructions | `language` |
 | `shared/onboarding.json` | `packages/core/src/onboarding.ts`: starter concept lists and template | `concepts` |
 | `shared/conversation.json` | `apps/mobile/src/ui/AiConversation.tsx`: three suggestion messages | None; these intentionally differ from onboarding |
@@ -17,3 +18,5 @@ Shared/mobile code imports only `shared/` through `promptPresets.ts`, with no fi
 The payload and preset snapshot tests preserve SHA-256 fingerprints of complete serialized requests/text captured from master before extraction, including schemas and configured/default options. They use mocked transports, never live inference. Review intentional prompt changes against these baselines rather than blindly updating them. Resource-validation tests protect literal substitutions and clear failures. Run `npm run check`, the setup/conversation browser tests, and web/iOS/Android exports when changing the loading boundary.
 
 Deferred ChatGPT grants (PR20) are absent from this base. Their distinct prompts must be integrated separately if that work resumes.
+
+Fast preparation appends the existing concept-analysis rules and the preparation instructions to the board prompt. `aiPreparedBoardSchema` adds concepts to each tile. The public vocabulary is not an authorization from the model: `generic-content.ts` separately admits only canonical generic fields into cross-user reuse. Legacy payload snapshots remain unchanged. Use `npm run eval:ai -- --prepared` for billable semantic and multilingual evaluation of the combined response.
