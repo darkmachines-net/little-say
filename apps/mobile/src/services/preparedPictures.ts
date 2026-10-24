@@ -15,7 +15,7 @@ export async function prepareServerPictures(source: Board | undefined, envelope:
   let batch = pictureBatchSchema.parse(envelope.preparation);
   const id = batch.id;
   let index = 0;
-  let board = applyProposal(source ?? null, { ...envelope, pictures: undefined }, () => `draft-${index++}`);
+  const board = applyProposal(source ?? null, { ...envelope, pictures: undefined }, () => `draft-${index++}`);
   const signature = (tile: BoardProposal['proposal']['tiles'][number]) => JSON.stringify([tile.existingId, tile.pictureConcept, tile.emoji, tile.pictureOptions]);
   board.tiles = board.tiles.map((tile, index) => {
     const proposed = envelope.proposal.tiles[index];
@@ -49,7 +49,7 @@ export async function prepareServerPictures(source: Board | undefined, envelope:
           check();
           board.tiles = board.tiles.map((value, i) => i === state.index ? { ...value, illustration: picture, pictureConcept: proposed.pictureConcept } : value);
           downloaded.add(key);
-        } catch (error) { check(); failed.add(state.index); }
+        } catch { check(); failed.add(state.index); }
       }
       check(); options.tileProgress?.(tile.id, failed.has(state.index) ? 'fallback' : state.state);
     }));

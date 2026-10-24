@@ -39,7 +39,7 @@ export class PictureScheduler {
           shared.controller.abort();
           if (!shared.active) { this.pending = this.pending.filter(item => item !== shared); if (this.work.get(key) === shared) this.work.delete(key); shared.reject(new Error('Cancelled')); }
         }
-        error ? reject(error) : resolve(value as T);
+        if (error) reject(error); else resolve(value as T);
       };
       const cancel = () => finish(new Error('Cancelled'));
       signal.addEventListener('abort', cancel, { once: true });
