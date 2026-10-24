@@ -1,5 +1,7 @@
 # Builds the web app and API into a non-root server image with durable caches and database readiness checks.
 FROM node:24-bookworm-slim AS build
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/mobile/package.json apps/mobile/package.json

@@ -1,20 +1,49 @@
 {
-  "cli": { "version": "22.4.0", "appVersionSource": "local", "requireCommit": true },
+  "cli": {
+    "version": "25.3.0",
+    "appVersionSource": "remote",
+    "requireCommit": true
+  },
   "build": {
     "internal": {
-      "channel": "internal", "environment": "preview", "distribution": "internal", "autoIncrement": false, "credentialsSource": "remote",
-      "env": { "LITTLE_SAY_CHANNEL": "internal" },
-      "android": { "buildType": "apk" }, "ios": { "simulator": false }
+      "channel": "internal",
+      "environment": "preview",
+      "distribution": "internal",
+      "autoIncrement": true,
+      "credentialsSource": "remote",
+      "env": {
+        "LITTLE_SAY_CHANNEL": "internal"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
     },
     "production": {
-      "channel": "production", "environment": "production", "distribution": "store", "autoIncrement": false, "credentialsSource": "remote",
-      "env": { "LITTLE_SAY_CHANNEL": "production" }, "android": { "buildType": "app-bundle" }
+      "channel": "production",
+      "environment": "production",
+      "distribution": "store",
+      "autoIncrement": true,
+      "credentialsSource": "remote",
+      "env": {
+        "LITTLE_SAY_CHANNEL": "production"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
     }
   },
   "submit": {
     "production": {
-      "android": { "track": "internal", "releaseStatus": "draft" },
-      "ios": {}
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascAppId": "6826487372"
+      }
     }
   }
 }

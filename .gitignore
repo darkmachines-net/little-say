@@ -16,6 +16,7 @@ apps/mobile/ios/
 *.p12
 *.mobileprovision
 artifacts/
+.release/
 credentials.json
 *.ipa
 *.apk

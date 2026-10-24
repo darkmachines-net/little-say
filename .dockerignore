@@ -8,6 +8,7 @@ node_modules
 **/android
 **/ios
 artifacts
+.release
 test-results
 playwright-report
 .cache

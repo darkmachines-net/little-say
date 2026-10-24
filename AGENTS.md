@@ -10,3 +10,7 @@ Keep documentation close to the code and update it whenever the behavior or publ
 - Do not add comments to formats that disallow them, such as JSON manifests and lockfiles. Generated output, vendored code/data, and binary assets are exempt; document their source or generator instead.
 
 When adding or changing code, check documentation coverage and accuracy along with the usual validation. Documentation-only edits should preserve executable behavior.
+
+## Release integration
+
+Use the single protected Release workflow and the pinned toolkit; keep package/workflow SHAs identical with the toolkit pin updater. Consumers own only application metadata, source boundaries and validation. Runtime is the shared mobile major; EAS owns independent platform build counters. Never add consumer lifecycle, recovery or retained-artifact wrappers.

@@ -1,5 +1,5 @@
 # Runs a published server image with external configuration and persistent speech/picture caches.
-# Used only by the local server:deploy command. No source build runs on the host.
+# Optional operator-managed Compose deployment; the shared release worker uses the configured webhook.
 services:
   little-say:
     image: ${LITTLE_SAY_SERVER_IMAGE:?An immutable image digest is required}
