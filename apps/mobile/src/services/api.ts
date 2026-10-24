@@ -38,8 +38,8 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
     return data;
   } catch (error) {
-    if (abort.signal.aborted) throw new Error(externalSignal?.aborted ? 'Request cancelled. Your board is unchanged.' : 'The server took too long. Your prompt is still here to try again.');
-    if (error instanceof TypeError) throw new Error('Cannot reach Little Say. Check your connection and try again, or create a board manually.');
+    if (abort.signal.aborted) throw new Error(externalSignal?.aborted ? 'Request cancelled. Your board is unchanged.' : 'The server took too long. Your prompt is still here to try again.', { cause: error });
+    if (error instanceof TypeError) throw new Error('Cannot reach Little Say. Check your connection and try again, or create a board manually.', { cause: error });
     throw error;
   } finally { clearTimeout(timeout); externalSignal?.removeEventListener('abort', cancel); }
 }

@@ -1,6 +1,6 @@
 /** @file Stages board picture improvements and restyling for explicit preview, revision-checked apply, and cancellation. */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { defaultPicturePolicy, type Board, type Settings } from '@little-say/core';
 import { prepareBoardPictures } from '../services/pictures';
@@ -22,7 +22,7 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
   const started = useRef(false);
   useEffect(() => () => request.current?.abort(), []);
   const close = () => { request.current?.abort(); onClose(); };
-  const prepare = async (restyle: boolean) => {
+  const prepare = useCallback(async (restyle: boolean) => {
     const controller = new AbortController(); request.current = controller;
     setBusy(true); setIssues([]); setPrepared(false);
     try {
@@ -32,8 +32,8 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
       setDraft(result.board); setIssues(result.issues); setPrepared(true);
     } catch (error) { if (!controller.signal.aborted) setIssues([(error as Error).message]); }
     finally { if (request.current === controller) { request.current = null; setBusy(false); setMessage(''); } }
-  };
-  useEffect(() => { if (automatic && !started.current) { started.current = true; void prepare(false); } }, []);
+  }, [changedTileId, onConsent, policy, settings, source]);
+  useEffect(() => { if (automatic && !started.current) { started.current = true; void prepare(false); } }, [automatic, prepare]);
   return <Sheet title="Board pictures" onClose={close} wide footer={<Button disabled={busy || !prepared} onPress={() => { if (currentRevision !== source.revision) { setIssues(['This board changed. Close and reopen Pictures to keep your latest edits.']); return; } onApply(draft, source.revision); onClose(); }}>Apply pictures</Button>}>
     <PicturePreferences value={policy} disabled={busy} onChange={value => { setPolicy(value); setPrepared(false); }} />
     <PictureGenerationInfo />

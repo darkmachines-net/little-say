@@ -34,8 +34,10 @@ export function TileEditor({ tile, board, playLanguages = [], editingLanguage = 
   const operation = useRef(0);
   const voiceOperation = useRef(0);
   const picking = useRef(false);
+  // Only departure cancels pending work; use the latest callback without running cleanup on rerenders.
+  const stopPreview = useRef(onStopPreview); stopPreview.current = onStopPreview;
   const { width } = useWindowDimensions();
-  useEffect(() => () => { operation.current++; voiceOperation.current++; onStopPreview(); }, []);
+  useEffect(() => () => { operation.current++; voiceOperation.current++; stopPreview.current(); }, []);
   const update = (value: Partial<Tile>) => { voiceOperation.current++; onStopPreview(); setError(''); setDraft(current => ({ ...current, ...value })); };
   const selectLanguage = (language: string | null) => { voiceOperation.current++; onStopPreview(); setAudioLanguage(language); onEditingLanguage?.(language); setError(''); };
   const validLanguage = languageSchema.safeParse(draft.language).success;

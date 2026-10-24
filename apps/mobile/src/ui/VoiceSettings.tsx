@@ -19,11 +19,12 @@ export function VoiceSettings({ language, settings, voices, audio, busy, onChang
   const matches = voices.filter(voice => voice.language.split('-')[0].toLowerCase() === language.split('-')[0].toLowerCase());
   const queue = useMemo(() => speechQueue(voices, settings.voices, active => setPlaying(Boolean(active)), () => { setPlaying(false); setError('This voice could not play. Check the volume and device speech settings.'); }, audio.asset, tag => speechSource(settings, tag)), [voices, settings, audio]);
   useEffect(() => {
-    const stop = () => { request.current++; queue.stop(); setPlaying(false); };
+    const cancelPreview = () => { request.current++; queue.stop(); };
+    const stop = () => { cancelPreview(); setPlaying(false); };
     const subscription = AppState.addEventListener('change', state => { if (state !== 'active') stop(); });
     const hidden = () => { if (document.hidden) stop(); };
     if (Platform.OS === 'web') document.addEventListener('visibilitychange', hidden);
-    return () => { request.current++; queue.stop(); subscription.remove(); if (Platform.OS === 'web') document.removeEventListener('visibilitychange', hidden); };
+    return () => { cancelPreview(); subscription.remove(); if (Platform.OS === 'web') document.removeEventListener('visibilitychange', hidden); };
   }, [queue]);
   const preview = async () => {
     const current = ++request.current;

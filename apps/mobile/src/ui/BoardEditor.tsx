@@ -44,7 +44,7 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   useEffect(() => { setTitle(board.title); }, [board.title]);
   useEffect(() => {
     if (editingLanguage && !board.playLanguages?.some(tag => canonicalLanguage(tag) === canonicalLanguage(editingLanguage))) { onStopPreview(); setEditingLanguage(null); }
-  }, [board.playLanguages, editingLanguage]);
+  }, [board.playLanguages, editingLanguage, onStopPreview]);
   const setTiles = (tiles: Tile[]) => onChange({ tiles }, board.revision);
   const addTile = () => {
     const language = newTileLanguage(board, settings);

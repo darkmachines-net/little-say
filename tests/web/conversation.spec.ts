@@ -213,10 +213,9 @@ for (const outcome of ['failure', 'success'] as const) test(`browser history pre
       if (this.name === 'state' && !(window as any).__heldWrite) {
         (window as any).__heldWrite = true;
         let hold = true;
-        const store = this;
-        const keepAlive = () => { if (hold) store.get('library').onsuccess = keepAlive; };
+        const keepAlive = () => { if (hold) this.get('library').onsuccess = keepAlive; };
         keepAlive();
-        (window as any).__releaseWrite = (fail: boolean) => { hold = false; if (fail) store.transaction.abort(); };
+        (window as any).__releaseWrite = (fail: boolean) => { hold = false; if (fail) this.transaction.abort(); };
       }
       return result;
     };

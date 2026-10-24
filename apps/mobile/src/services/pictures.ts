@@ -159,7 +159,7 @@ export function proposalPreview(source: Board | undefined, proposal: BoardPropos
 
 /** Resolve new/requested AI pictures while retaining matching images from prior conversational drafts. */
 export async function prepareProposalPictures(source: Board | undefined, envelope: BoardProposal, settings: Settings, options: PictureWorkOptions = {}, previous?: BoardProposal | null) {
-  let board = proposalPreview(source, envelope);
+  const board = proposalPreview(source, envelope);
   const targetIds = new Set<string>();
   const forceIds = new Set<string>();
   const reused = new Set<number>();
