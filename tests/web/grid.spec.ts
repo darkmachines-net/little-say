@@ -11,7 +11,11 @@ async function openBoard(page: Page, count: number, playing = true, label = long
   await page.addInitScript(() => {
     const w = window as any;
     w.__spoken = []; w.__utterances = [];
-    w.SpeechSynthesisUtterance = class { text: string; lang = ''; onend: any; constructor(text: string) { this.text = text; } };
+    w.SpeechSynthesisUtterance = class {
+      text: string; lang = ''; onend: any;
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(text: string) { this.text = text; }
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => [{ voiceURI: 'test-en', name: 'English', lang: 'en-US', localService: true, default: true }],
       speak: (utterance: any) => { w.__spoken.push(utterance.text); w.__utterances.push(utterance); },

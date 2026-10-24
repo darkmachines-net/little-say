@@ -98,7 +98,7 @@ async function main() {
       if (remote) { await health(config.webUrl); console.log(`PASS web API proxy ${config.webUrl}/api/health`); }
     } catch { console.log(remote ? 'Metro or its web API proxy is not reachable. Start npm run dev:remote.' : 'Metro is not reachable (expected when running only dev:server).'); if (remote) process.exitCode = 1; }
     if (apiReady) console.log(`On the device, open ${config.apiUrl}/api/health. It should show status: ok. This computer-only check cannot prove device/firewall reachability.`);
-    console.log('Use the same trusted LAN. Allow Expo Go local-network access. If needed, see docs/LOCAL_DEVELOPMENT.md for the Windows firewall helper. No model calls were made.');
+    console.log('Use the same trusted LAN. Allow Expo Go local-network access. If needed, see scripts/README.md for the Windows firewall helper. No model calls were made.');
     return;
   }
   const serverOnly = flags.has('--server-only');

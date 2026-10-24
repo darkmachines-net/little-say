@@ -1,6 +1,7 @@
 /**
  * @file Loads server environment, wires OpenAI and durable speech/picture caches, and starts the HTTP
- * listener.
+ * listener. Firebase configuration enables Postgres-backed accounts and a schema check before listen;
+ * guest-only startup creates no pool. Migrations are an explicit operator command, never startup work.
  */
 
 import { config } from 'dotenv';
@@ -9,11 +10,11 @@ import { createServer } from './app';
 import { openAIProvider } from './provider';
 import { SpeechCache } from './speech-cache';
 import { openAISynthesis, speechProfile } from './synthesis';
-import { PictureJobs } from './picture-jobs';
-import { openAIPictureProvider } from './picture-provider';
-import { Accounts } from './accounts';
+import { PictureJobs } from './pictures/jobs';
+import { openAIPictureProvider } from './pictures/provider';
+import { Accounts } from './accounts/store';
 import { createDatabase, checkDatabase } from './database';
-import { FirebaseIdentity } from './firebase';
+import { FirebaseIdentity } from './accounts/firebase';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true });
 config({ quiet: true });
 const accountsEnabled = Boolean(process.env.FIREBASE_PROJECT_ID || process.env.FIREBASE_AUTH_EMULATOR_HOST);

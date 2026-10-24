@@ -10,7 +10,10 @@ async function mockVoices(page: Page) {
   await page.addInitScript(() => {
     const w = window as any;
     w.__spoken = []; w.__clips = [];
-    w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
+    w.SpeechSynthesisUtterance = class {
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(public text: string) {}
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => [{ voiceURI: 'test-en', name: 'English device voice', lang: 'en-US', localService: true }, { voiceURI: 'test-ru', name: 'Russian device voice', lang: 'ru-RU', localService: true }],
       speak: (utterance: any) => { w.__spoken.push({ text: utterance.text, language: utterance.lang, voice: utterance.voice?.voiceURI }); setTimeout(() => utterance.onend?.(), 10); },

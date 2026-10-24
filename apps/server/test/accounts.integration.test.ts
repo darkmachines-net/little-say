@@ -2,7 +2,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
-import { Accounts, type Identity } from '../src/accounts';
+import { Accounts, type Identity } from '../src/accounts/store';
 import { checkDatabase, migrateDatabase, SCHEMA_VERSIONS } from '../src/database';
 import { testDatabase } from './postgres-fixture';
 import { starterLibrary } from '../../../tests/fixtures/library';

@@ -25,7 +25,11 @@ async function readLibrary(page: Page) {
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     const w = window as any; w.__spoken = [];
-    w.SpeechSynthesisUtterance = class { text = ''; lang = ''; onstart: any; constructor(text: string) { this.text = text; } };
+    w.SpeechSynthesisUtterance = class {
+      text = ''; lang = ''; onstart: any;
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(text: string) { this.text = text; }
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => ['en-US', 'fr-FR', 'es-ES'].map(lang => ({ voiceURI: lang, name: lang, lang, localService: true })),
       speak: (utterance: any) => { w.__spoken.push({ text: utterance.text, language: utterance.lang }); utterance.onstart?.(); },

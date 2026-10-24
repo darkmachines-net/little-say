@@ -1,4 +1,8 @@
-/** @file Selects the website homepage or browser app without importing website code into native builds. */
+/**
+ * @file Selects the public homepage or browser app. Keep website copy/styles reachable only from this
+ * web entry: native Entry.tsx must import only App. The homepage must not initialize the device library
+ * or call app APIs. New PWA installs start at /app; older standalone root launches still enter App.
+ */
 
 import { lazy, Suspense } from 'react';
 import LandingPage from './website/LandingPage.web';

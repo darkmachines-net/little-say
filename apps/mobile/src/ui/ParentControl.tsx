@@ -6,7 +6,11 @@ import { LockKeyhole } from 'lucide-react-native';
 import { useParentHold } from './useParentHold';
 import { theme } from './theme';
 
-export interface ParentControlProps { cancelToken: number; onExitRequest: () => void; }
+export interface ParentControlProps {
+  cancelToken: number;
+  /** Request the exit confirmation after a completed hold/release or accessible unlock. */
+  onExitRequest: () => void;
+}
 
 /** Require a ready release inside the control, with a cancellable timed screen-reader alternative. */
 export function ParentControl({ cancelToken, onExitRequest }: ParentControlProps) {

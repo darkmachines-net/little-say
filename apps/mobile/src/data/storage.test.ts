@@ -8,7 +8,10 @@ vi.mock('expo-sqlite', () => ({ openDatabaseAsync: async () => ({ execAsync: vi.
 vi.mock('expo-file-system/legacy', () => ({ documentDirectory: 'file:///documents/' }));
 vi.mock('expo-file-system', () => ({
   Paths: { document: 'file:///documents/' },
-  Directory: class { create() {} },
+  Directory: class {
+    /** Pretend the fixture directory already exists without touching the real filesystem. */
+    create() {}
+  },
   File: class { exists = false; uri = 'file:///documents/asset'; write = native.write; },
 }));
 vi.mock('./audioDownload', () => ({ downloadAudio: native.audio }));

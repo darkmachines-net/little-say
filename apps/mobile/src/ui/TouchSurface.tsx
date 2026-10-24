@@ -5,7 +5,13 @@ import { AccessibilityInfo, View, type GestureResponderEvent, type ViewInstance 
 import { BoardTouchController, type Tile, type TileRect } from '@little-say/core';
 import { TileFace } from './TileFace';
 
-export interface TouchSurfaceProps { tiles: Tile[]; rects: TileRect[]; playingId: string | null; tappedId: string | null; pendingId: string | null; onActivate: (id: string) => void; onContact: () => void; }
+export interface TouchSurfaceProps {
+  tiles: Tile[]; rects: TileRect[]; playingId: string | null; tappedId: string | null; pendingId: string | null;
+  /** Queue speech for the selected tile once per accepted contact or assistive activation. */
+  onActivate: (id: string) => void;
+  /** Cancel a pending parent hold when a board contact begins. */
+  onContact: () => void;
+}
 /**
  * Render tiles at measured rectangles and handle each native contact once, keeping touch feedback
  * independent of playback state.

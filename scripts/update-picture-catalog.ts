@@ -30,7 +30,7 @@ entries.push(...emojis.map(emoji => ({
   id: `openmoji-${emoji.hexcode}`, name: emoji.annotation, terms: [emoji.annotation, emoji.tags, emoji.openmoji_tags].filter(Boolean), style: 'line' as const,
   provenance: { library: 'openmoji' as const, sourceId: emoji.hexcode, sourceUrl: `https://raw.githubusercontent.com/hfg-gmuend/openmoji/${openmoji}/black/svg/${emoji.hexcode}.svg`, author: 'OpenMoji contributors, HfG Schwäbisch Gmünd', license: 'CC-BY-SA-4.0' as const, modified: 'Rasterized and fitted to a transparent square; original artwork unchanged.' },
 })));
-const output = new URL('../apps/server/src/data/picture-catalog.json', import.meta.url);
+const output = new URL('../apps/server/src/pictures/data/catalog.json', import.meta.url);
 await mkdir(fileURLToPath(new URL('.', output)), { recursive: true });
 await writeFile(output, `${JSON.stringify(entries.map(entry => catalogEntrySchema.parse(entry)))}\n`);
 console.log(`Saved ${entries.length} pinned picture records.`);

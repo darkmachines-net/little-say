@@ -2,7 +2,7 @@
 
 import sharp from 'sharp';
 import { catalogEntrySchema, type CatalogEntry, type PicturePolicy } from '@little-say/core';
-import data from './data/picture-catalog.json';
+import data from './data/catalog.json';
 
 const catalog = data.map(entry => catalogEntrySchema.parse(entry));
 const tokens = (value: string) => value.toLowerCase().normalize('NFKC').split(/[^\p{L}\p{N}]+/u).filter(Boolean);

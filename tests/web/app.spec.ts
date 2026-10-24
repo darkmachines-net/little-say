@@ -13,7 +13,11 @@ async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
     const w = window as any;
     w.__spoken = []; w.__utterances = [];
-    w.SpeechSynthesisUtterance = class { text = ''; lang = ''; voice = null; onend: any; onerror: any; onstart: any; constructor(text = '') { this.text = text; } };
+    w.SpeechSynthesisUtterance = class {
+      text = ''; lang = ''; voice = null; onend: any; onerror: any; onstart: any;
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(text = '') { this.text = text; }
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => [{ voiceURI: 'test-en', name: 'English test voice', lang: 'en-US', localService: true, default: true }, { voiceURI: 'test-ru', name: 'Russian test voice', lang: 'ru-RU', localService: true, default: false }, { voiceURI: 'test-es', name: 'Spanish test voice', lang: 'es-ES', localService: true }, { voiceURI: 'test-fr', name: 'French test voice', lang: 'fr-FR', localService: true }],
       speak: (utterance: any) => { w.__spoken.push({ text: utterance.text, lang: utterance.lang }); w.__utterances.push(utterance); utterance.onstart?.({}); },

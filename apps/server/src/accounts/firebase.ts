@@ -2,7 +2,7 @@
 import { initializeApp, applicationDefault, deleteApp } from 'firebase-admin/app';
 import { getAuth, type Auth, type DecodedIdToken } from 'firebase-admin/auth';
 import { authConfigSchema, type AuthConfig } from '@little-say/core';
-import { AccountError, type Identity } from './accounts';
+import { AccountError, type Identity } from './store';
 
 export const COOKIE_SECONDS = 14 * 86400;
 export interface IdentityService {

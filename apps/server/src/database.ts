@@ -1,4 +1,4 @@
-/** @file Validates Postgres connections and owns pooled transactions, migrations, and schema readiness. */
+/** @file Owns Postgres connections, pooled transactions, SQL migration discovery, and schema readiness. */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import pg, { type PoolClient, type PoolConfig } from 'pg';
@@ -41,9 +41,12 @@ export async function transaction<T>(pool: pg.Pool, action: (client: PoolClient)
   finally { client.release(); }
 }
 
-/** Apply locked, transactional SQL migrations and reject histories incompatible with this release. */
+/** Apply locked, transactional SQL migrations beside module documentation and reject incompatible histories. */
 export async function migrateDatabase(config: PoolConfig, schema = 'public') {
-  await runner({ databaseUrl: config, dir: migrations, schema, migrationsTable: 'pgmigrations', direction: 'up', singleTransaction: true, checkOrder: true, log: () => {} });
+  await runner({ databaseUrl: config, dir: migrations,
+    // Exclude the module README while preserving the runner's default hidden-file exclusion.
+    ignorePattern: '(\\..*|README\\.md)',
+    schema, migrationsTable: 'pgmigrations', direction: 'up', singleTransaction: true, checkOrder: true, log: () => {} });
   const pool = new pg.Pool(config);
   try { await checkDatabase(pool, schema); } finally { await pool.end(); }
 }

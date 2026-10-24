@@ -5,9 +5,9 @@ import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { loadDevelopmentEnv, withDevelopmentApiKey } from './dev-config';
-import { openAIPictureProvider, type PictureMetric } from '../apps/server/src/picture-provider';
-import { PictureJobs } from '../apps/server/src/picture-jobs';
-import { downloadCatalogPicture, searchPictures } from '../apps/server/src/picture-catalog';
+import { openAIPictureProvider, type PictureMetric } from '../apps/server/src/pictures/provider';
+import { PictureJobs } from '../apps/server/src/pictures/jobs';
+import { downloadCatalogPicture, searchPictures } from '../apps/server/src/pictures/catalog';
 
 if (process.argv.includes('--catalog')) {
   for (const [word, style] of [['dumper truck', 'color'], ['cow', 'color'], ['tractor', 'line']] as const) {
