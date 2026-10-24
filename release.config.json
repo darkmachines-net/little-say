@@ -102,8 +102,7 @@
     "image": "ghcr.io/mchartier/little-say",
     "dockerfile": "Dockerfile",
     "platforms": [
-      "linux/amd64",
-      "linux/arm64"
+      "linux/amd64"
     ],
     "smoke": {
       "port": 8787,
