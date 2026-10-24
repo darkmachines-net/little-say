@@ -20,26 +20,22 @@
     "lint": "eslint . --max-warnings 0",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json",
     "test": "vitest run",
-    "test:release": "npm run release -- validate && vitest run scripts/release --maxWorkers=2 --testTimeout=30000",
+    "test:release": "expo-release validate && node --test scripts/release/*.test.mjs",
     "test:web": "playwright test",
     "build": "npm run build -w @little-say/server && npm run build:web -w @little-say/app",
     "start": "npm run start -w @little-say/server",
-    "check": "npm run lint && npm run release -- validate && npm run typecheck && npm test && npm run build",
+    "check": "npm run lint && npm run test:release && npm run typecheck && npm test && npm run build",
     "eval:ai": "tsx scripts/evaluate-ai.ts",
     "emoji:update": "tsx scripts/update-emoji-catalog.ts",
     "pictures:update": "tsx scripts/update-picture-catalog.ts",
     "eval:pictures": "tsx scripts/evaluate-pictures.ts",
     "release": "expo-release",
-    "native:setup": "tsx scripts/release/native-tools.ts setup",
-    "native:configure": "tsx scripts/release/native-tools.ts configure",
-    "native:install": "tsx scripts/release/native-tools.ts install",
     "brand:assets": "node scripts/brand-assets.mjs",
     "db:migrate": "npm run db:migrate -w @little-say/server",
     "db:status": "npm run db:status -w @little-say/server",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:services": "firebase emulators:exec --only auth --project demo-little-say \"npm run test:integration\"",
-    "test:accounts:web": "playwright test --config playwright.accounts.config.ts",
-    "release:setup": "expo-release setup"
+    "test:accounts:web": "playwright test --config playwright.accounts.config.ts"
   },
   "engines": {
     "node": "^22.14.0 || ^24.3.0 || ^26.0.0 || >=27.0.0"
@@ -52,7 +48,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@mchartier/expo-release": "git+https://github.com/MChartier/expo-release-template.git#e3cbcc3ceda336876e8fc8fea6c6076de245bf59",
+    "@mchartier/expo-release": "git+https://github.com/MChartier/expo-release-template.git#f1f765d2094627aefea889844694a878874b9d7c",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
     "@playwright/test": "1.63.0",

@@ -2,7 +2,7 @@
 
 The shared Expo pipeline opens a temporary WireGuard tunnel and calls the existing [darkmachines deployer](https://github.com/MChartier/darkmachines/tree/4ae5621727b21dddf0614059046bad991cdd97e2/deployer). The service owns the fixed Compose upgrade for `little-say` on Debian. This migration changes the caller implementation; Compose, startup database migrations and host provisioning remain in place.
 
-Selected server or OTA work waits for deployment under the configured `server-or-ota` policy. Native-only and no-op releases skip it. New images are promoted before the webhook. Standalone deployment uses `npm run release -- plan --operation deploy --release-id RELEASE_ID`, then `npm run release -- run`, through the same protected shared worker.
+Changed server inputs build and publish an image, then invoke the configured webhook once. Selected native and OTA delivery waits for that deployment. Unchanged server inputs skip deployment; there is no standalone retained-image deploy command.
 
 ## Endpoint and configuration
 
@@ -29,6 +29,6 @@ Keep the separate Little Say peer/address and token; another repository's concur
 
 A timeout, lost response or cancellation may leave deployment running. Inspect deployer logs and app state before recovery. HTTP 409 may indicate overlapping work or a reconciliation block. Follow the existing [operator guide](https://github.com/MChartier/darkmachines/blob/4ae5621727b21dddf0614059046bad991cdd97e2/deployer/ROLLOUT.md); restarting the controller alone does not prove success.
 
-Use `npm run release -- recover --release-id RELEASE_ID` to inspect evidence, then an explicit reviewed action. Successful image/native/OTA operations remain retained. Application startup can migrate schema; failure is not an automatic database or image rollback.
+Use GitHub deployment records and provider/deployer logs to resolve an interrupted operation. Missing evidence never permits another webhook request. Application startup can migrate schema; failure is not an automatic database or image rollback.
 
 Mocked transport/failure tests live upstream. Application checks remain in `npm run check` and `npm run test:services`. Real routing, registry, server health and device uptake need separate operator validation; none is claimed by this extraction.

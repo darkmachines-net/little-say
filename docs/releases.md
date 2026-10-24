@@ -1,89 +1,15 @@
 # Releases
 
-Start with the [fresh-history cutover](release-cutover.md). Legacy release recovery and baseline import are intentionally unavailable.
+Use the pinned shared toolkit through the **Release** GitHub Actions workflow, dispatched from the protected default branch. The package and reusable workflow must reference the same reviewed full SHA. Install with npm normally; the toolkit's scripts/sync-engine.mjs updates pins and regenerates locks without copying snapshots.
 
-Little Say consumes the pinned `@mchartier/expo-release` pipeline. `release.config.json` is the application contract; the package and reusable-workflow callers must pin the same full Git commit. Use Node 24 and `npm ci` followed by `npm run release -- setup` to install the shared CLI and official locked EAS toolchain. The toolkit owns the external provider cache; no global EAS or copied engine is needed.
+Preview with npm run release -- plan --profile production, or validate configuration with npm run release -- validate. The public CLI is read-only. GitHub owns execution and approvals. The hosted workflow installs official EAS CLI 25.3.0 through Expo's action.
 
-Pull requests run the shared **Release contract** workflow on Windows and Linux. It installs the pinned package and runs `npm run test:release` to verify configuration, input boundaries and application hooks without publication credentials.
+Native fingerprint changes allocate a new mobile major and build every enabled platform. A requested compatible rebuild allocates a minor and same-runtime OTA. JS/assets changes allocate a patch OTA. Expo runtime is the explicit mobile major. Older binaries sharing that major remain eligible; distinct older runtimes receive no automatic backports. Server inputs use a separate patch version and successful deployment baseline.
 
-## Commands
+Versions are stamped into a tagged child build commit; default-branch files are not bumped. Failed reservations consume their numbers. Source checks, Docker production and OTA export have no publishing credentials. Selected server deployment must succeed before native delivery and OTA publication.
 
-Start from a clean committed checkout with GitHub CLI authentication. Planning reads release history and EAS public inputs without publication. Source validation needs the disposable PostgreSQL/Firebase services described in [testing](testing.md).
+There are no candidate/version PRs, retained-artifact commands, promotions, local release wrappers, history imports or replay CLI. An uncertain request leaves its GitHub deployment record blocking. Inspect GitHub/EAS/store/deployer evidence and record a confirmed outcome before starting another dispatch; a timeout is not proof of failure. Store review and later promotions use EAS/store tooling.
 
-```sh
-npm run release -- validate
-npm run release -- validate --source
-npm run release -- plan --profile internal
-npm run release -- run
-npm run release -- status
-npm run release -- status --release-id RELEASE_ID
-```
+Little Say uses EAS cloud builds for Android and iOS with one mobile semantic version, independent managed build counters and the existing net.darkmachines.littlesay identity. The internal profile distributes internally without submission; production submits through the configured EAS profiles. Both use the existing self-hosted-testing WireGuard deployment. GitHub internal/production environments must be restricted to the protected default branch. EAS environments remain preview/production. Source validation remains npm run check plus the existing service integration checks in CI.
 
-`validate` checks configuration, version mirrors and toolkit pins. `--source` additionally runs `npm run check` and the service integration suite. `plan` writes `.release/plan.json`; `run` dispatches that exact request through Actions. Use `--profile production` and `--bump patch|minor|major` when planning to choose distribution and version increment.
-
-**Release request** records an unprivileged request. **Handle release request** independently verifies its original default-branch run and toolkit, prepares the candidate and performs shared stages. Required review, branch protections and environment approvals remain authoritative. The local CLI cannot bypass them.
-
-Explicit operations use the same interface:
-
-```sh
-npm run release -- plan --operation ota --targets android.ota --profile internal
-npm run release -- plan --operation build --targets android --profile internal
-npm run release -- plan --operation submit --release-id RELEASE_ID --targets android
-npm run release -- plan --operation deploy --release-id RELEASE_ID
-npm run release -- plan --operation promote --release-id RELEASE_ID --targets server
-npm run release -- run
-```
-
-Run the desired plan before creating another; each `plan` command replaces the local proposal. Submission, promotion and deployment require finalized hosted release evidence and create a separate protected operation. They retain the original artifact producer, allocate no versions and do not advance build baselines. Developer setup and device installation remain separate. This interface replaces the previous `release:*`, `native:build`, `native:submit`, `ota:publish` and `server:*` aliases.
-
-## Application behavior
-
-Server/web, Android native, iOS native and each platform's JavaScript inputs are compared independently. Only selected native build counters advance; native semantic versions remain shared. Internal and production client histories stay separate, while server image history is global.
-
-Hosted native builds remain EAS cloud builds. Runtimes remain **appVersion**; this adoption does not migrate installed apps to fingerprint runtimes. Full fingerprints still guard compatibility. Environment-only changes require native builds without adding unchanged OTA publications. Retained-runtime exports use the exact baseline's version metadata, including unchanged platforms and eligible older runtimes. `release-policy.json` lists explicitly retired runtimes. Supported runtime evidence comes only from new-format releases.
-
-Selected server or OTA work retains the existing self-hosted deployment prerequisite. Native-only and no-op releases skip deployment. Server publication/promotion precede deployment. Production submissions retain exact artifact/destination identity; acceptance differs from completion. OTA requires verified retained export bytes and the supported native handoff prerequisite. Final success requires all selected stages.
-
-## EAS and signing
-
-`native-release.json` owns the Expo project, owner, server origin and native counters. `apps/mobile/eas.json` defines build profiles and destinations; release configuration reads its production Android destination and iOS app ID through JSON mappings. Production iOS submission requires explicit App Store Connect `ascAppId`. Required Apple sign-in entitlements are checked in the selected unexpired provisioning profile. Android keeps its existing default EAS key.
-
-Repository `EXPO_TOKEN` authorizes shared EAS jobs. Remote variables must be reproducible readable strings with public names declared in `release.config.json`. Backend credentials and executable process overrides are rejected. The declared Google iOS URL scheme may be supplied through EAS.
-
-Source installation, inspection, validation and exports receive no publication credentials. OTA/store publishers use verified retained files and data-only Expo configuration. EAS cloud builds necessarily evaluate authenticated app configuration; that existing boundary remains. New durable receipts omit temporary signed download URLs.
-
-## Local builds and devices
-
-Android requires a JDK, Android SDK Build Tools and `ANDROID_HOME` or `ANDROID_SDK_ROOT`. Local iOS requires macOS, Xcode and CocoaPods. Setup checks use the package's pinned EAS executable:
-
-```sh
-npm run native:setup -- --login
-npm run native:configure
-npm run release -- plan --operation build --targets android --profile internal
-npm run release -- run --local
-npm run native:install -- --receipt .release/artifacts-PLAN_DIGEST.json --device DEVICE_SERIAL
-```
-
-`native:configure` is Android-only and downloads the exact project's default Android key outside the repository. Alternatively use `--credentials C:/PRIVATE/credentials.json` with an absolute external keystore path. `--platform` belongs to `native:setup`; misplaced flags are rejected before provider or device access. Register existing credential paths in `expo-release.json`; old `native.json` settings are not read. Shared atomic updates preserve the other current-format targets. Prebuild runs before Gradle receives signing material. APK/AAB signatures and the APK app version are verified. `adb install -r` preserves data; the installed version is read back.
-
-Local appVersion builds reject changed native fingerprints under an already used runtime, including successful new-format builds from other worktrees. Change and commit the native version before rebuilding incompatible native inputs. This local collision check never authorizes hosted publication or supplies a hosted OTA baseline.
-
-On macOS, use `native:setup -- --platform ios` and plan target `ios`. The shared runner invokes EAS `--local`; only that invocation receives Expo authentication. The credential-free IPA verifier checks bundle/version/runtime/channel identity. Install internal IPAs through Xcode on registered devices. Local receipts retain explicit local origin and cannot become protected hosted provenance. Store/OTA publication dispatches through Actions.
-
-## Recovery and evidence
-
-```sh
-npm run release -- recover --release-id RELEASE_ID
-npm run release -- recover --release-id RELEASE_ID --resume
-npm run release -- recover --release-id RELEASE_ID --retry --stage android:submit
-npm run release -- recover --release-id RELEASE_ID --reconcile reviewed-evidence.json
-npm run release -- recover --release-id RELEASE_ID --complete
-npm run release -- recover --release-id RELEASE_ID --abandon --reason 'Retire this attempt after verified terminal provider outcomes.'
-```
-
-Inspection is read-only. Mutation requires one explicit action and a protected hosted request. GitHub Releases are the durable ledger; caches are not another publication history. Intents precede requests and accepted IDs precede readback. A lost response or empty search cannot authorize duplicate uploads. Provider-supported submission retries reverify the exact failed request, destination, original build and bytes immediately before mutation.
-
-
-Historical continuation selects one original stage with `--resume --stage submit-android`, `submit-ios`, `promote-server`, `deploy`, or `ota`. Each uses its own credential boundary. `ota` only finalizes a complete inventory of already verified original publications. Missing original fingerprints or payload receipts remain blocking. A failed or timed-out deployment does not authorize another POST without reconciliation.
-
-The deployment webhook's healthy response is health evidence, not an exact deployed image digest. Store processing/review, public rollout, device installation and OTA uptake remain separate from pipeline completion. See [private deployment settings](../deploy/self-hosted/README.md).
+See [fresh cutover](release-cutover.md) before the first dispatch.
