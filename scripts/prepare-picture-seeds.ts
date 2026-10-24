@@ -1,4 +1,10 @@
-/** @file Downloads pinned licensed generic symbols, rasterizes them once, and writes digest-verified bundled PNGs plus a review contact sheet. */
+/**
+ * @file Downloads the pinned library sources in generic-concepts.ts and writes digest-verified,
+ * rasterized PNGs to picture-seeds.json, preserving attribution in the picture catalog.
+ * Run `npm run pictures:seeds`; add `-- --offline` to verify and rewrite the shipped library bytes
+ * without downloads. Both modes rebuild the ignored artifacts/picture-seeds/ contact sheet, including
+ * existing generated seeds. Bundled library symbols need no GitHub download on first use.
+ */
 
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';

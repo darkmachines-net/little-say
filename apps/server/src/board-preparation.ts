@@ -28,7 +28,11 @@ export class BoardPreparation {
   private ready: Promise<void>;
   private scheduler: PictureScheduler;
   private closed = false;
-  /** Open request records separately from the generic index; unfinished batches never replay paid work. */
+  /**
+   * Open private request records separately from the generic index. Records omit raw prompts/history
+   * but retain draft responses; they use the trusted-server access boundary, have no automatic eviction,
+   * and remain after account deletion. Unfinished batches become interrupted on restart without paid replay.
+   */
   constructor(private directory: string, private provider: AiProvider, private pictures: PictureJobs, readonly content: GenericContent, private speech?: SpeechCache, concurrency = 6, private metric?: (event: PreparationMetric) => void) {
     this.scheduler = new PictureScheduler(concurrency); this.ready = this.restore();
   }
@@ -58,7 +62,12 @@ export class BoardPreparation {
     void work.finally(() => { if (this.writes.get(id) === work) this.writes.delete(id); }).catch(() => {});
     return work;
   }
-  /** Start once for a caller-generated request ID; the ID also permits cancellation before the response arrives. */
+  /**
+   * Start once for a caller-generated request ID; the ID permits cancellation before the response arrives.
+   * Trusted pictures resolve immediately without visual review. Pending work returns in one aggregate
+   * batch. A previous preparation may retain private draft pictures only while source revision, meaning
+   * and presentation match; retention does not admit them to shared reuse.
+   */
   async propose(request: ProposalRequest): Promise<BoardProposal> {
     await this.ready;
     if (!request.preparationId || this.closed) throw new Error('Preparation unavailable.');
@@ -166,6 +175,7 @@ export class BoardPreparation {
       await this.persist(record).catch(() => {}); this.active.delete(id); throw error;
     }
   }
+  /** Reject board-specific conflicts without invalidating an otherwise reusable canonical asset. */
   private rejectDuplicates(record: Record, proposal: GeneratedBoard) {
     const rejected = new Set<number>();
     const meaning = (index: number) => {
@@ -182,6 +192,11 @@ export class BoardPreparation {
   private async remember(record: Record, request: ProposalRequest) {
     if (record.envelope && record.batch.state === 'complete' && record.batch.tiles.every(tile => tile.state === 'ready')) await this.content.remember(request, record.envelope.proposal).catch(() => {});
   }
+  /**
+   * Batch uncertain library checks, then queue genuine generation gaps and validate each new image once.
+   * Canonical work coalesces by meaning and style; explicit regeneration uses a private key. Cache and
+   * catalog lookups never wait behind the paid-generation scheduler, and failures do not trigger retries.
+   */
   private async finish(record: Record, request: ProposalRequest, pending: PendingTile[], controller: AbortController) {
     const signal = controller.signal;
     const provider = this.pictures.provider;

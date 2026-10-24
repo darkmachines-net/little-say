@@ -44,7 +44,12 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     throw error;
   } finally { clearTimeout(timeout); externalSignal?.removeEventListener('abort', cancel); }
 }
-/** Negotiate picture support, then schema-check an AI proposal without applying it to the saved library. */
+/**
+ * Negotiate picture support, then schema-check a proposal without applying it to the saved library.
+ * Health preparation.version=1 permits a caller-generated UUID preparationId alongside pictures.version=1;
+ * aborting also cancels that batch before a proposal returns. Capability discovery is cached per backend
+ * session. Older peers retain the original picture/proposal protocol.
+ */
 export async function proposeBoard(url: string, request: ProposalRequest, signal?: AbortSignal): Promise<BoardProposal> {
   let input = request;
   if (request.pictureCapability) {

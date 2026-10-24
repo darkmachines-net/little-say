@@ -30,6 +30,8 @@ try {
   const provider = openAIProvider(process.env, metric => console.info(JSON.stringify({ service: 'boards', ...metric })));
   const pictures = new PictureJobs(pictureDirectory, openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false');
   const speechCache = new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env)));
+  // Preparation is standard when AI is configured. Private batches and the generic index use separate
+  // filesystem directories; guest preparation does not require an account database or migration.
   const preparation = provider?.prepare ? new BoardPreparation(resolve(pictureDirectory, 'batches'), provider, pictures, new GenericContent(resolve(pictureDirectory, 'generic-v1')), speechCache, Number(process.env.PICTURE_GENERATION_CONCURRENCY || 6), metric => console.info(JSON.stringify({ service: 'preparation', ...metric }))) : undefined;
   app = await createServer({
   database,

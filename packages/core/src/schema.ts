@@ -126,6 +126,12 @@ export const aiPictureGeneratedBoardSchema = aiGeneratedBoardSchema.extend({
 export const aiPreparedBoardSchema = aiPictureGeneratedBoardSchema.extend({
   tiles: z.array(aiPictureGeneratedBoardSchema.shape.tiles.element.extend({ pictureConcept: pictureConceptSchema })),
 });
+/**
+ * Proposal envelopes keep preparation fields optional for older clients/servers. Picture references
+ * require verified local downloads before saving; speech references are cache hits only. Timing is in
+ * milliseconds. Working preparations use one aggregate poll loop via GET /api/pictures/batches/:id;
+ * POST /api/pictures/batches/:id/cancel stops outstanding work.
+ */
 export const proposalSchema = z.object({
   baseRevision: z.number().int().nonnegative().nullable(),
   boardId: z.string().nullable(), proposal: generatedBoardSchema,

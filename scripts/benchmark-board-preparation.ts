@@ -1,4 +1,24 @@
-/** @file Runs billable end-to-end browser preparation benchmarks against isolated caches and writes content-free timing and usage reports. */
+/**
+ * @file Runs billable browser benchmarks from Send through six suitable, decoded pictures and an
+ * enabled save action. Build first, then run `npm run eval:boards -- --samples 100`.
+ *
+ * Each request uses fresh browser storage. Cold requests get separate empty reuse caches with bundled
+ * assets available; warm requests share a cache after one warmup per fixture; concurrent requests use
+ * four sessions and an initially empty shared cache. Only synthetic fixtures are used, never accounts.
+ * `--conditions cold,warm,concurrent` selects populations; `--fixtures` selects fixture families.
+ *
+ * Drafting is billable. New artwork requires `--generate`; add `--unseeded` to bypass generated seeds.
+ * For fresh construction art: `--fixtures construction --samples 1 --conditions cold --generate
+ * --unseeded --timeout 120000`. No paid request is retried automatically. Only this isolated test
+ * server's per-IP request limit is raised; deployment limits are unchanged.
+ *
+ * Ignored artifacts/board-preparation/ runs contain an immutable web copy, source/build hashes,
+ * results, summary, screenshots and content-free model metrics. HTTP failures end a sample immediately;
+ * failures and unsuitable fallbacks remain in the denominator. Missing provider usage stays unknown.
+ * Asset-download time sums concurrent resource durations, so it must not be added to readiness time.
+ * The exit status fails on any unsuitable request or p95 >= 10 seconds. Visual acceptance, fresh-art
+ * latency, speech downloads, larger boards and deployment-network performance require separate checks.
+ */
 
 import { chromium, type Browser } from '@playwright/test';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';

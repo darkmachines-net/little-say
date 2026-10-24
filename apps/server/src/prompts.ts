@@ -9,6 +9,11 @@ import { type PictureConcept } from '@little-say/core';
 
 export const boardPrompts = loadPromptResource(board, ['instructions', 'pictures', 'translation'], 'server/board');
 export const picturePrompts = loadPromptResource(pictures, ['visualRules', 'analysis', 'selection', 'review', 'color', 'line', 'generation'], 'server/pictures');
+/**
+ * Combined drafts append these instructions and the picture-analysis rules to the board prompt,
+ * returning aiPreparedBoardSchema. The injected vocabulary guides drafting; GenericContent separately
+ * authorizes shared reuse. Manual picture analysis retains its dedicated prompt and endpoint.
+ */
 export const preparationPrompts = loadPromptResource(preparation, ['draft', 'concepts', 'templates', 'matching', 'batch'], 'server/preparation');
 const preparationConcepts = loadPromptTemplate(preparationPrompts.concepts, ['concepts'], 'server/preparation.concepts');
 const speechPrompts = loadPromptResource(speech, ['instructions'], 'server/speech');

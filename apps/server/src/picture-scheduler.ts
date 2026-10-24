@@ -9,7 +9,10 @@ export class PictureScheduler {
   private active = 0;
   private lastBoard = '';
   private closed = false;
-  /** Limit paid concurrency independently from fast catalog lookup and reuse. */
+  /**
+   * Limit paid concurrency independently from catalog lookup and reuse: default six active generations
+   * (allowed 1–24) and 48 queued jobs. Excess new work is rejected; queued boards alternate for fairness.
+   */
   constructor(private concurrency = 6, private capacity = 48) {
     if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 24) throw new Error('Picture concurrency must be 1–24.');
   }

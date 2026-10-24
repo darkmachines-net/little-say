@@ -1,4 +1,10 @@
-/** @file Imports already inspected, server-validated generic results from an isolated evaluation as bundled generated assets, preserving model provenance. */
+/**
+ * @file Imports visually inspected, server-validated generic results from an isolated evaluation into
+ * generated-picture-seeds.json. Run `npx tsx scripts/import-reviewed-picture-seeds.ts <evaluation-directory>`
+ * after inspecting the pictures. Only complete results with approved concepts and intact transparent
+ * PNGs qualify. Records retain generated source type, model/quality provenance and validation version;
+ * library-only requests cannot use them. This explicit build-time import never scans account data.
+ */
 
 import { createHash } from 'node:crypto';
 import { readFile, readdir, writeFile } from 'node:fs/promises';

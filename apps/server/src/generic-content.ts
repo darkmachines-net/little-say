@@ -1,4 +1,8 @@
-/** @file Stores only canonical generic pictures and sanitized future templates in a versioned, durable server cache. */
+/**
+ * @file Stores canonical generic pictures and sanitized future templates in a durable cache with an
+ * in-memory search index. The cache is independent of accounts and PostgreSQL; neither historical
+ * backups nor private batch records supply shared content.
+ */
 
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
@@ -6,6 +10,7 @@ import { join } from 'node:path';
 import { generatedBoardSchema, resolvedPictureSchema, type GeneratedBoard, type ProposalRequest, type ResolvedPicture } from '@little-say/core';
 import { canonicalPictureConcept, genericConcept, genericConcepts, genericWords, type GenericConcept } from './generic-concepts';
 
+/** Bump when cache/schema or semantic-approval rules invalidate previously admitted records. */
 const version = 1;
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 type Template = { key: string; terms: string[]; board: GeneratedBoard; pictures: { index: number; picture: ResolvedPicture }[] };
@@ -53,6 +58,11 @@ export class GenericContent {
     if (!words.length || words.some(word => !filler.has(word) && !genericTokens.has(word))) return undefined;
     return digest({ version, prompt: genericWords(request.prompt), languages: request.languageProfile ?? null, pictures: request.picturePolicy ?? null });
   }
+  /**
+   * Admit only reviewed concepts, approved labels/speech and public language tags. Reconstruct titles,
+   * emoji and concept metadata; exclude personal instructions, protected pictures and existing IDs.
+   * Model vocabulary and client flags alone cannot authorize cross-user reuse.
+   */
   private sanitize(board: GeneratedBoard): GeneratedBoard | undefined {
     if (board.needsClarification || !board.tiles.length) return undefined;
     const reusableLanguage = (language: string) => /^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2})?$/.test(language);
@@ -84,7 +94,10 @@ export class GenericContent {
     const key = this.pictureKey(item, raw.style);
     await this.write(`picture-${key}.json`, { key, picture }); this.pictures.set(key, picture);
   }
-  /** Return a detached exact template only for an eligible initial request. */
+  /**
+   * Return a detached template only for an eligible initial request with the same normalized prompt,
+   * language profile and picture settings. Conversation edits cannot take this shortcut.
+   */
   async exact(request: ProposalRequest): Promise<Pick<Template, 'board' | 'pictures'> | undefined> {
     await this.ready; const key = this.requestKey(request);
     const template = key && this.templates.get(key);

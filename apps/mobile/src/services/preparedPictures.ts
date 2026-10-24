@@ -5,7 +5,12 @@ import { apiFetch, backendUrl } from './api';
 import { savePictureAsset, saveSpeechAsset } from '../data/storage';
 import { type PictureWorkOptions } from './pictures';
 
-/** Stage only verified local assets; cancellation freezes the last published draft and stops server work. */
+/**
+ * Download pictures concurrently and publish only verified local assets as saveable draft references.
+ * Follow one active batch; immediate results need no polling. Cancellation freezes the last published
+ * draft and stops server work, preventing late picture mutation after save. Unsuitable results remain
+ * explicit fallbacks. Cached speech downloads independently and never delay picture readiness.
+ */
 export async function prepareServerPictures(source: Board | undefined, envelope: BoardProposal, settings: Settings, options: PictureWorkOptions, previous?: BoardProposal | null): Promise<{ proposal: BoardProposal; issues: string[] }> {
   let batch = pictureBatchSchema.parse(envelope.preparation);
   const id = batch.id;

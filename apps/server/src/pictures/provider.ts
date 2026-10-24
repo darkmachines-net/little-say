@@ -28,7 +28,11 @@ const reviewSchema = z.object({ rejected: z.array(z.string()) });
 const batchSchema = z.object({ selections: z.array(z.object({ id: z.string(), candidate: z.string().nullable() })) });
 const image = (bytes: Buffer): OpenAI.Responses.ResponseInputImage => ({ type: 'input_image', image_url: `data:image/png;base64,${bytes.toString('base64')}`, detail: 'auto' });
 
-/** Build the image provider when a backend key is present; disable generation separately through server configuration. */
+/**
+ * Build the image provider when a backend key is present; disable generation separately through server
+ * configuration. Preparation matching uses OPENAI_PICTURE_MATCH_MODEL (gpt-6-luna) with no reasoning.
+ * OPENAI_IMAGE_QUALITY defaults to medium; low is an explicit option for comparative evaluation.
+ */
 export function openAIPictureProvider(env: NodeJS.ProcessEnv, metric?: (event: PictureMetric) => void): PictureProvider | undefined {
   const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim(); if (!apiKey) return undefined;
   const client = new OpenAI({ apiKey, timeout: 180000, maxRetries: 0 });

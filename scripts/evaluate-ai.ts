@@ -1,6 +1,7 @@
 /**
  * @file Runs billable AI proposal evaluations for multilingual boards and prints results and timing
- * to standard output.
+ * to standard output. `npm run eval:ai -- --prepared` exercises combined drafting with picture concepts
+ * and its conversational refinements; omitting the flag exercises the original proposal protocol.
  */
 
 import { starterLibrary } from '../tests/fixtures/library';

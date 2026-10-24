@@ -30,6 +30,8 @@ const pictureInstructions = boardPrompts.pictures;
  * Create the OpenAI-backed provider from server environment settings, or return null when no API key is
  * configured. Preparation metrics report bounded failure stages and token usage without request or
  * response content; transport and structured-output parsing are measured separately without retries.
+ * Initial preparation uses OPENAI_DRAFT_MODEL (gpt-6-luna) and OPENAI_DRAFT_REASONING_EFFORT (none).
+ * Refinements and translations retain OPENAI_BOARD_MODEL and OPENAI_REASONING_EFFORT.
  */
 export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMetric) => void): AiProvider | null {
   const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim();
