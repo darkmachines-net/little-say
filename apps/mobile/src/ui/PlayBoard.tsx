@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
+import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ViewInstance } from 'react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
 import { gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
@@ -24,7 +24,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   useKeepAwake('soundboard', { suppressDeactivateWarnings: true });
   const { width, height } = useWindowDimensions();
   const heading = useScreenFocus();
-  const surface = useRef<View>(null);
+  const surface = useRef<ViewInstance>(null);
   const leaving = useRef(false);
   const live = useRef(true);
   const measureTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

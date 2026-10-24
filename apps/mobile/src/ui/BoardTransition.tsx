@@ -1,7 +1,7 @@
 /** @file Animates an inert copy of the playing cards into the existing editor's measured preview. */
 
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, AppState, Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { AccessibilityInfo, Animated, AppState, Platform, StyleSheet, View, useWindowDimensions, type ViewInstance } from 'react-native';
 import type { Tile, TileRect } from '@little-say/core';
 import { TileFace } from './TileFace';
 
@@ -11,7 +11,7 @@ export type BoardSnapshot = BoardGeometry & { tiles: Tile[]; viewport: { width: 
 /** Keep the animation decorative: controls belong to the editor and every interruption settles there. */
 export function BoardTransition({ source, target, onDone }: { source: BoardSnapshot; target: BoardGeometry | null; onDone: () => void }) {
   const progress = useRef(new Animated.Value(0)).current;
-  const root = useRef<View>(null);
+  const root = useRef<ViewInstance>(null);
   const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
   const [reduce, setReduce] = useState<boolean | null>(null);
   const { width, height } = useWindowDimensions();
