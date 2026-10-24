@@ -1,6 +1,6 @@
 /**
- * @file Loads server environment, wires OpenAI and durable speech/picture caches, and starts the HTTP
- * listener. Firebase configuration enables Postgres-backed accounts and a schema check before listen;
+ * @file Loads server environment, wires standard board preparation and durable speech/picture caches,
+ * and starts the HTTP listener. Firebase enables Postgres-backed accounts and a schema check before listen;
  * guest-only startup creates no pool. Migrations are an explicit operator command, never startup work.
  */
 
@@ -30,7 +30,7 @@ try {
   const provider = openAIProvider(process.env, metric => console.info(JSON.stringify({ service: 'boards', ...metric })));
   const pictures = new PictureJobs(pictureDirectory, openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false');
   const speechCache = new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env)));
-  const preparation = process.env.AAC_FAST_BOARD_PREPARATION === 'true' && provider?.prepare ? new BoardPreparation(resolve(pictureDirectory, 'batches'), provider, pictures, new GenericContent(resolve(pictureDirectory, 'generic-v1')), speechCache, Number(process.env.PICTURE_GENERATION_CONCURRENCY || 6), metric => console.info(JSON.stringify({ service: 'preparation', ...metric }))) : undefined;
+  const preparation = provider?.prepare ? new BoardPreparation(resolve(pictureDirectory, 'batches'), provider, pictures, new GenericContent(resolve(pictureDirectory, 'generic-v1')), speechCache, Number(process.env.PICTURE_GENERATION_CONCURRENCY || 6), metric => console.info(JSON.stringify({ service: 'preparation', ...metric }))) : undefined;
   app = await createServer({
   database,
   auth,

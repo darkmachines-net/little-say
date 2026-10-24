@@ -19,7 +19,7 @@ export type PreparationMetric = { operation: string; milliseconds?: number; coun
 const hash = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Owns the opt-in preparation protocol; legacy picture jobs remain independently usable. */
+/** Owns standard negotiated board preparation; manual and older-client picture jobs remain independently usable. */
 export class BoardPreparation {
   private records = new Map<string, Record>();
   private pending = new Map<string, Promise<BoardProposal>>();
