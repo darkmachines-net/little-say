@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { EventEmitter } from 'node:events';
 import { expect, it, vi } from 'vitest';
 import { openAIProvider } from '../src/provider';
-import { openAIPictureProvider } from '../src/picture-provider';
+import { openAIPictureProvider } from '../src/pictures/provider';
 import { openAISynthesis, speechProfile } from '../src/synthesis';
 import { type ProposalRequest, type PictureConcept } from '@little-say/core';
 
@@ -12,6 +12,7 @@ const calls = vi.hoisted(() => ({ parse: vi.fn(), generate: vi.fn(), send: vi.fn
 vi.mock('openai', async importOriginal => ({
   ...await importOriginal<typeof import('openai')>(),
   default: class {
+    /** Record provider client options without connecting to OpenAI. */
     constructor(options: unknown) { calls.clients.push(options); }
     responses = { parse: calls.parse };
     images = { generate: calls.generate };
@@ -20,13 +21,16 @@ vi.mock('openai', async importOriginal => ({
 vi.mock('openai/realtime/ws', () => ({
   OpenAIRealtimeWS: class extends EventEmitter {
     socket = new EventEmitter();
+    /** Record connection settings and asynchronously announce the synthetic session. */
     constructor(options: unknown) { super(); calls.connections.push(options); queueMicrotask(() => this.emit('session.created')); }
+    /** Capture the request and emit deterministic audio, transcript, and completion events. */
     send(payload: unknown) {
       calls.send(payload);
       this.emit('response.output_audio.delta', { delta: Buffer.alloc(2).toString('base64') });
       this.emit('response.output_audio_transcript.done', { transcript: 'Bonjour' });
       this.emit('response.done', { response: { status: 'completed' } });
     }
+    /** Accept provider cleanup without opening or closing any real socket. */
     close() {}
   },
 }));

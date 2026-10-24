@@ -10,7 +10,10 @@ import { openExistingLibrary } from './existingLibrary';
 async function openTranslations(page: Page, missingSpanish = false, legacy = false) {
   await page.addInitScript(() => {
     const w = window as any; w.__spoken = [];
-    w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
+    w.SpeechSynthesisUtterance = class {
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(public text: string) {}
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => ['en-US', 'ru-RU', 'es-ES'].map(lang => ({ voiceURI: lang, lang, name: lang, localService: true })),
       speak: (value: any) => { w.__spoken.push({ text: value.text, language: value.lang }); value.onend?.(); },

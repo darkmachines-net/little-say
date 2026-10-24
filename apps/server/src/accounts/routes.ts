@@ -3,7 +3,7 @@ import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { type FastifyInstance, type FastifyRequest, type FastifyReply } from 'fastify';
 import { syncSnapshotSchema } from '@little-say/core';
 import { z } from 'zod';
-import { Accounts, AccountError, MAX_ASSET_BYTES } from './accounts';
+import { Accounts, AccountError, MAX_ASSET_BYTES } from './store';
 import { COOKIE_SECONDS, type IdentityService } from './firebase';
 
 const hashSchema = z.string().regex(/^[a-f0-9]{64}$/);

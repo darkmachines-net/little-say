@@ -5,7 +5,7 @@ Application-authored model instructions and preset messages live here as UTF-8 J
 | Resource | Caller | Substitutions |
 | --- | --- | --- |
 | `server/board.json` | `apps/server/src/provider.ts`: board instructions, picture addendum, translation | None; the picture addendum starts with a newline |
-| `server/pictures.json` | `apps/server/src/picture-provider.ts`: analysis, selection, generation, review, both style briefs | `visualRules` in selection/review; `look` and JSON-serialized `concept` in generation |
+| `server/pictures.json` | `apps/server/src/pictures/provider.ts`: analysis, selection, generation, review, both style briefs | `visualRules` in selection/review; `look` and JSON-serialized `concept` in generation |
 | `server/speech.json` | `apps/server/src/synthesis.ts`: Realtime speech instructions | `language` |
 | `shared/onboarding.json` | `packages/core/src/onboarding.ts`: starter concept lists and template | `concepts` |
 | `shared/conversation.json` | `apps/mobile/src/ui/AiConversation.tsx`: three suggestion messages | None; these intentionally differ from onboarding |

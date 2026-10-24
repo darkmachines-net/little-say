@@ -1,6 +1,6 @@
 /** @file Performs concept analysis, pixel-based picture selection, and bounded OpenAI illustration generation. */
 
-import { picturePrompts, pictureSelectionInstructions, pictureReviewInstructions, pictureGenerationPrompt } from './prompts';
+import { picturePrompts, pictureSelectionInstructions, pictureReviewInstructions, pictureGenerationPrompt } from '../prompts';
 import OpenAI from 'openai';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';

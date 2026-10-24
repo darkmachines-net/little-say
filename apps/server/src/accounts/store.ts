@@ -2,7 +2,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, mergeAssets, syncSnapshotSchema } from '@little-say/core';
-import { transaction } from './database';
+import { transaction } from '../database';
 
 export const MAX_ASSET_BYTES = 10 * 1024 * 1024;
 export const MAX_ACCOUNT_BYTES = 256 * 1024 * 1024;

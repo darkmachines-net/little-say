@@ -16,7 +16,10 @@ async function unlock(page: Page) {
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     const w = window as any; w.__spoken = []; w.__allSpeech = []; w.__stops = 0;
-    w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
+    w.SpeechSynthesisUtterance = class {
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(public text: string) {}
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => [{ voiceURI: 'test-en', name: 'English', lang: 'en-US', localService: true }],
       speak: (utterance: any) => { w.__spoken.push(utterance.text); w.__allSpeech.push(utterance); },

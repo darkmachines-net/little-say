@@ -11,16 +11,16 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { proposalRequestSchema, validateGeneratedBoard, speechRequestSchema, translationRequestSchema, validateTranslations, pictureAnalysisRequestSchema, pictureJobRequestSchema, pictureConceptSchema, pictureAssetIdSchema } from '@little-say/core';
 import { z } from 'zod';
-import { PictureJobs, PictureJobError } from './picture-jobs';
-import { searchPictures } from './picture-catalog';
+import { PictureJobs, PictureJobError } from './pictures/jobs';
+import { searchPictures } from './pictures/catalog';
 import { type AiProvider } from './provider';
 import { SpeechCache, SpeechCacheError } from './speech-cache';
 import release from '../../../release.json';
-import { type Accounts } from './accounts';
-import { type IdentityService } from './firebase';
+import { type Accounts } from './accounts/store';
+import { type IdentityService } from './accounts/firebase';
 import { type Pool } from 'pg';
 import { checkDatabase } from './database';
-import { accountRoutes } from './account-routes';
+import { accountRoutes } from './accounts/routes';
 
 export interface ServerOptions { provider: AiProvider | null; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
 

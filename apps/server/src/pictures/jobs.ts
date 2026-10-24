@@ -4,8 +4,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile, rename, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pictureJobSchema, pictureJobRequestSchema, pictureAssetIdSchema, resolvedPictureSchema, type PictureJob, type PictureJobRequest, type CatalogEntry, type ResolvedPicture } from '@little-say/core';
-import { searchPictures, catalogPicture, downloadCatalogPicture, normalizePicture } from './picture-catalog';
-import { type PictureProvider, type PictureCandidate } from './picture-provider';
+import { searchPictures, catalogPicture, downloadCatalogPicture, normalizePicture } from './catalog';
+import { type PictureProvider, type PictureCandidate } from './provider';
 
 const hash = (value: Buffer | string) => createHash('sha256').update(value).digest('hex');
 const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === 'ENOENT';

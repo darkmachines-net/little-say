@@ -5,7 +5,11 @@ import { View, type GestureResponderEvent } from 'react-native';
 import { PhotoGesture, panPhoto, zoomPhoto, type PhotoCrop } from '@little-say/core';
 import { PhotoImage, type PhotoSource } from './PhotoImage';
 
-export type PhotoCropSurfaceProps = { source: PhotoSource; size: number; crop: PhotoCrop; onChange: (crop: PhotoCrop) => void };
+export type PhotoCropSurfaceProps = {
+  source: PhotoSource; size: number; crop: PhotoCrop;
+  /** Update the unsaved crop preview after bounded pan, pinch, or accessibility adjustments. */
+  onChange: (crop: PhotoCrop) => void;
+};
 /** Render the square crop surface and translate native touch positions into bounded crop updates. */
 export function PhotoCropSurface({ source, size, crop, onChange }: PhotoCropSurfaceProps) {
   const frame = { width: size, height: size };

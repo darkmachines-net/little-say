@@ -23,7 +23,10 @@ test('generates from draft text and language, regenerates, persists offline, and
       this.addEventListener('ended', () => { w.__audioEnded++; }, { once: true });
       return w.__failAudio ? Promise.reject(new Error('Audio unavailable')) : original.call(this);
     };
-    w.SpeechSynthesisUtterance = class { constructor(public text: string) {} };
+    w.SpeechSynthesisUtterance = class {
+      /** Retain the requested words for deterministic browser speech assertions. */
+      constructor(public text: string) {}
+    };
     Object.defineProperty(w, 'speechSynthesis', { configurable: true, value: {
       getVoices: () => [{ voiceURI: 'test-en', name: 'English', lang: 'en-US', localService: true }, { voiceURI: 'test-ru', name: 'Russian', lang: 'ru-RU', localService: true }],
       speak: (utterance: any) => { w.__spoken.push({ text: utterance.text, language: utterance.lang }); setTimeout(() => utterance.onend?.(), 10); },

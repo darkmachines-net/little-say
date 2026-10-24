@@ -6,9 +6,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import sharp from 'sharp';
-import { PictureJobs } from '../src/picture-jobs';
-import { openAIPictureProvider, type PictureProvider } from '../src/picture-provider';
-import { searchPictures, normalizePicture } from '../src/picture-catalog';
+import { PictureJobs } from '../src/pictures/jobs';
+import { openAIPictureProvider, type PictureProvider } from '../src/pictures/provider';
+import { searchPictures, normalizePicture } from '../src/pictures/catalog';
 import { createServer } from '../src/app';
 import { type PictureJobRequest } from '@little-say/core';
 

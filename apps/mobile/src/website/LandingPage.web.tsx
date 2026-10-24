@@ -1,4 +1,8 @@
-/** @file Presents Little Say's public, web-only feature overview and forthcoming store availability. */
+/**
+ * @file Presents the public, web-only feature overview using the shared mountain identity and palette.
+ * Describe implemented features, link into /app, and keep store links inactive until listings exist.
+ * Entry.web.tsx is the only entry owner; native bundles must never import this page or its styles.
+ */
 
 import type { CSSProperties } from 'react';
 import { MountainMark } from '../ui/Brand';

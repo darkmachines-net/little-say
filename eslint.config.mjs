@@ -1,10 +1,27 @@
-/** @file Lints authored JavaScript/TypeScript and React Hooks while excluding generated output. */
+/** @file Lints authored JavaScript/TypeScript, React Hooks, file overviews, and public API documentation. */
 
 import js from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
+import jsdoc from 'eslint-plugin-jsdoc';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+
+// Public members are documented even when a class/object is exported later or used as a test adapter.
+const publicMembers = [
+  'MethodDefinition:not([accessibility="private"]):not([accessibility="protected"]):not([key.type="PrivateIdentifier"])',
+  'TSAbstractMethodDefinition:not([accessibility="protected"])',
+  ':matches(PropertyDefinition, TSAbstractPropertyDefinition):not([accessibility="private"]):not([accessibility="protected"]):not([key.type="PrivateIdentifier"]):matches([value.type="ArrowFunctionExpression"], [value.type="FunctionExpression"], [typeAnnotation.typeAnnotation.type="TSFunctionType"])',
+  ':matches(ExportNamedDeclaration > VariableDeclaration > VariableDeclarator, Program > VariableDeclaration > VariableDeclarator, ExportDefaultDeclaration, AssignmentExpression) > ObjectExpression > Property:matches([value.type="ArrowFunctionExpression"], [value.type="FunctionExpression"])',
+];
+const callableDeclarations = [
+  'TSDeclareFunction',
+  'TSMethodSignature',
+  'TSPropertySignature[typeAnnotation.typeAnnotation.type="TSFunctionType"]',
+  'TSTypeAliasDeclaration > TSFunctionType',
+  'TSCallSignatureDeclaration',
+  'TSConstructSignatureDeclaration',
+];
 
 export default defineConfig(
   globalIgnores([
@@ -46,6 +63,31 @@ export default defineConfig(
       '@typescript-eslint/no-require-imports': ['error', { allow: ['\\.png$'] }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
+  {
+    files: ['**/*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}'],
+    languageOptions: { parser: tseslint.parser, ecmaVersion: 'latest', parserOptions: { ecmaFeatures: { jsx: true } } },
+    // The alias applies the same upstream rule with a separate policy for public members.
+    plugins: { jsdoc, 'jsdoc-members': jsdoc },
+    settings: { jsdoc: { mode: 'typescript' } },
+    rules: {
+      'jsdoc/require-file-overview': 'error',
+      'jsdoc/require-jsdoc': ['error', {
+        publicOnly: true,
+        enableFixer: false,
+        exemptEmptyConstructors: false,
+        require: { FunctionDeclaration: true, FunctionExpression: true, ArrowFunctionExpression: true, MethodDefinition: false },
+        contexts: callableDeclarations,
+      }],
+      'jsdoc-members/require-jsdoc': ['error', {
+        enableFixer: false,
+        exemptEmptyConstructors: false,
+        require: { FunctionDeclaration: false },
+        contexts: publicMembers,
+      }],
+      // A file overview or an empty block cannot stand in for a callable's description.
+      'jsdoc/require-description': ['error', { contexts: ['FunctionDeclaration', 'ArrowFunctionExpression', 'FunctionExpression', ...callableDeclarations, ...publicMembers] }],
     },
   },
 );
