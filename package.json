@@ -3,7 +3,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "type": "module",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "workspaces": [
     "apps/*",
     "packages/*"
