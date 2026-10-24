@@ -55,7 +55,7 @@ test('an existing guest library survives the new launch choice and failed choice
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;
-    IDBObjectStore.prototype.put = function (...args) { IDBObjectStore.prototype.put = original; throw new DOMException('Synthetic full storage', 'QuotaExceededError'); };
+    IDBObjectStore.prototype.put = function () { IDBObjectStore.prototype.put = original; throw new DOMException('Synthetic full storage', 'QuotaExceededError'); };
   });
   await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByText('Your choice could not be saved. Check device storage and try again.', { exact: true })).toBeVisible();

@@ -54,7 +54,8 @@ function Application() {
     setEntryChecked(true);
     if (!account.session && !store.library.settings.accountChoiceMade && !store.library.settings.activeBoardId && !draftRoute.route && !settingsRoute.route) setAccountOpen(true);
   }, [entryChecked, store.library, account.ready, account.session, draftRoute.route, settingsRoute.route]);
-  const previewQueue = useMemo(() => speechQueue(voices, store.library?.settings.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset, tag => store.library ? speechSource(store.library.settings, tag) : 'ai'), [voices, store.library?.settings, audio]);
+  const previewSettings = store.library?.settings;
+  const previewQueue = useMemo(() => speechQueue(voices, previewSettings?.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset, tag => previewSettings ? speechSource(previewSettings, tag) : 'ai'), [voices, previewSettings, audio]);
   useEffect(() => () => previewQueue.stop(), [previewQueue]);
   const consent = () => store.change(current => ({ ...current, settings: { ...current.settings, aiConsent: true } }));
   useEffect(() => {

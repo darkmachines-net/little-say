@@ -1,6 +1,6 @@
 /** @file Shares one monotonic, cancellable two-second gate across pointer, keyboard and assistive input. */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import { ParentExitGesture, type ParentHoldState, type Point } from '@little-say/core';
 
@@ -14,17 +14,19 @@ export function useParentHold(cancelToken: number, onUnlock: () => void) {
   const unlock = useRef(onUnlock); unlock.current = onUnlock;
   const [state, setState] = useState<ParentHoldState>('idle');
   const [accessible, setAccessible] = useState(false);
-  const clearTimer = () => { generation.current++; clearTimeout(timer.current); timer.current = undefined; };
-  const cancel = () => { clearTimer(); gesture.cancel(); if (accessibleAttempt.current) contacts.current.delete('accessibility'); accessibleAttempt.current = false; setAccessible(false); setState('idle'); };
-  const reset = () => { contacts.current.clear(); cancel(); };
-  useEffect(() => { reset(); return () => { clearTimer(); gesture.cancel(); }; }, [cancelToken]);
+  const clearTimer = useCallback(() => { generation.current++; clearTimeout(timer.current); timer.current = undefined; }, []);
+  /** Cancel the current attempt and any pending assistive activation. */
+  const cancel = useCallback(() => { clearTimer(); gesture.cancel(); if (accessibleAttempt.current) contacts.current.delete('accessibility'); accessibleAttempt.current = false; setAccessible(false); setState('idle'); }, [clearTimer, gesture]);
+  /** Forget all contacts and cancel the attempt after navigation or an interruption. */
+  const reset = useCallback(() => { contacts.current.clear(); cancel(); }, [cancel]);
+  useEffect(() => { reset(); return () => { clearTimer(); gesture.cancel(); }; }, [cancelToken, clearTimer, gesture, reset]);
   useEffect(() => {
     const app = AppState.addEventListener('change', state => { if (state !== 'active') reset(); });
     const blur = () => reset();
     const hidden = () => { if (document.hidden) reset(); };
     if (Platform.OS === 'web') { window.addEventListener('blur', blur); document.addEventListener('visibilitychange', hidden); }
     return () => { app.remove(); if (Platform.OS === 'web') { window.removeEventListener('blur', blur); document.removeEventListener('visibilitychange', hidden); } };
-  }, []);
+  }, [reset]);
   const down = (id: number | string, point: Point, touchCount?: number) => {
     if (accessibleAttempt.current) reset();
     if (touchCount === 1) contacts.current.clear();

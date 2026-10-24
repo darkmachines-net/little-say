@@ -116,7 +116,7 @@ export function reconcileCandidates(currentRunId: string): void {
     try {
       assert(retireCandidate(runId), 'Release is retryable or unresolved. Resume/reconcile it before another cut.');
     } catch (error) {
-      throw new Error(`Blocking journal ${release.tag_name} (https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}): ${error instanceof Error ? error.message : 'reconciliation failed'}`);
+      throw new Error(`Blocking journal ${release.tag_name} (https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${runId}): ${error instanceof Error ? error.message : 'reconciliation failed'}`, { cause: error });
     }
   }
 }

@@ -30,11 +30,12 @@ export function useSettingsRoute() {
     setRoute(parent);
   };
   const onBack = useRef(back); onBack.current = back;
+  const settingsOpen = Boolean(route);
   useEffect(() => {
-    if (!route) return;
+    if (!settingsOpen) return;
     const listener = BackHandler.addEventListener('hardwareBackPress', () => { onBack.current(); return true; });
     return () => listener.remove();
-  }, [Boolean(route)]);
+  }, [settingsOpen]);
   return {
     route,
     /** Enter a child page, retaining browser history or the exact native caller. */
