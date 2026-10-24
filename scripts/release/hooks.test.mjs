@@ -47,6 +47,10 @@ test('the real Expo SDK ignores stamped versions but retains native compatibilit
     stamp(root,allocation);
     for(const platform of platforms){const after=fingerprint(platform);assert.equal(after.hash,before[platform].hash);
       assert.ok(after.sources.some(source=>source.id=== 'expoAutolinkingConfig:'+platform || source.reasons.some(reason=>reason.includes('Autolinking'))));}
+    const file=path.join(app,'app.json'),changed=JSON.parse(fs.readFileSync(file));
+    changed.expo.android.permissions=[...(changed.expo.android.permissions??[]),'android.permission.VIBRATE'];
+    fs.writeFileSync(file,JSON.stringify(changed));
+    assert.notEqual(fingerprint('android').hash,before.android.hash,'Native permission changes must invalidate compatibility.');
   } finally {for(const [file,bytes] of originals)fs.writeFileSync(path.join(root,file),bytes);}
 });
 
