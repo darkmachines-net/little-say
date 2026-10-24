@@ -1,0 +1,18 @@
+Little Say
+
+Required Notice: Copyright (c) 2026 Matthew Chartier (https://github.com/darkmachines-net/little-say).
+
+Except where separate terms are stated, this repository is licensed by
+Matthew Chartier under the PolyForm Shield License 1.0.0 in LICENSE:
+https://polyformproject.org/licenses/shield/1.0.0
+
+Third-party material retains its own copyright and license terms. In particular:
+- Unicode/CLDR data: packages/core/src/data/UNICODE-LICENSE.txt.
+- Mulberry Symbols and OpenMoji artwork: CC BY-SA 4.0; source revisions,
+  attribution and modification notices are documented in apps/server/src/pictures/README.md
+  and retained in the picture catalog and asset provenance.
+- Dependencies retain the licenses and notices supplied by their authors.
+
+The software license does not grant trademark rights in the Little Say name
+or mountain identity, or permission to imply official endorsement. Factual
+attribution and preservation of required notices do not imply endorsement.
