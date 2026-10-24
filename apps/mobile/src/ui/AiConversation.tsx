@@ -4,7 +4,7 @@
 
 import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions, type ScrollViewInstance, type TextInputInstance } from 'react-native';
 import { ArrowLeft, ArrowUp, SlidersHorizontal, Square } from 'lucide-react-native';
 import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { proposeBoard } from '../services/api';
@@ -69,8 +69,8 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   const request = useRef<AbortController | null>(null);
   const live = useRef(true);
   const saving = useRef(false);
-  const transcript = useRef<ScrollView>(null);
-  const input = useRef<TextInput>(null);
+  const transcript = useRef<ScrollViewInstance>(null);
+  const input = useRef<TextInputInstance>(null);
   const nearBottom = useRef(true);
   const { width, height } = useWindowDimensions();
   const title = source ? 'Edit with AI' : 'New board';

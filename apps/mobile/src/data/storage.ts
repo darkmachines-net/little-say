@@ -44,7 +44,7 @@ export async function savePictureAsset(id: string, url: string, signal?: AbortSi
   pictureAssetIdSchema.parse(id);
   const folder = new Directory(Paths.document, 'tile-pictures'); folder.create({ intermediates: true, idempotent: true });
   const file = new File(folder, `${id}.png`);
-  if (!file.exists) file.write(await downloadPicture(id, url, signal));
+  if (!file.exists) await file.write(await downloadPicture(id, url, signal));
 }
 /** Resolve a saved illustration, independent of the JPEG photo/crop store. */
 export async function pictureUri(id: string): Promise<string | null> {
@@ -86,7 +86,7 @@ export async function saveSpeechAsset(key: string, id: string, url: string): Pro
   const directory = new Directory(Paths.document, 'tile-audio');
   directory.create({ intermediates: true, idempotent: true });
   const file = new File(directory, `${id}.wav`);
-  if (!file.exists) file.write(await downloadAudio(url));
+  if (!file.exists) await file.write(await downloadAudio(url));
   await (await database).runAsync('INSERT INTO speech (key, asset_id) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET asset_id = excluded.asset_id', key, id);
   return { id, uri: file.uri };
 }
@@ -106,6 +106,6 @@ export async function writeSyncAsset(asset: SyncAsset, bytes: Uint8Array): Promi
   const folder = new Directory(Paths.document, asset.kind === 'photo' ? 'tile-photos' : asset.kind === 'picture' ? 'tile-pictures' : 'tile-audio');
   folder.create({ intermediates: true, idempotent: true });
   const extension = asset.kind === 'photo' ? 'jpg' : asset.kind === 'picture' ? 'png' : 'wav';
-  new File(folder, `${asset.id}.${extension}`).write(bytes);
+  await new File(folder, `${asset.id}.${extension}`).write(bytes);
   if (asset.kind === 'speech') await (await database).runAsync('INSERT INTO speech (key, asset_id) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET asset_id = excluded.asset_id', asset.key!, asset.id);
 }

@@ -1,11 +1,11 @@
 /** @file Moves mode-change focus to a non-editable heading without opening the keyboard or playing a card. */
 
 import { useEffect, useRef } from 'react';
-import { AccessibilityInfo, Platform, View, findNodeHandle } from 'react-native';
+import { AccessibilityInfo, Platform, findNodeHandle, type ViewInstance } from 'react-native';
 
 /** Focus the mounted screen heading once; cancel the scheduled focus when navigation changes again. */
 export function useScreenFocus() {
-  const heading = useRef<View>(null);
+  const heading = useRef<ViewInstance>(null);
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       if (Platform.OS === 'web') (heading.current as unknown as HTMLElement | null)?.focus({ preventScroll: true });

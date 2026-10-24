@@ -22,6 +22,11 @@ test('account and setup navigation stay within system bars', async ({ page, cont
   await page.setViewportSize(portrait);
   const device = await context.newCDPSession(page);
   await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
+  // Keep the opening animation active while the web provider measures its viewport-relative insets.
+  await page.route('**/app', async route => {
+    const response = await route.fetch();
+    await route.fulfill({ response, body: (await response.text()).replace('</head>', '<style>* { animation-duration: 1s !important; }</style></head>') });
+  });
   await page.goto('/app');
   await expectInsideSafeArea(page.getByRole('button', { name: 'Back', exact: true }), page, bars);
   const guest = page.getByRole('button', { name: 'Continue without an account', exact: true });

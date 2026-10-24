@@ -1,6 +1,6 @@
 /** @file Hosts dedicated account navigation above the current app screen without discarding local settings drafts. */
 import { useState } from 'react';
-import { Modal, ScrollView, View } from 'react-native';
+import { Modal, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { type AccountController } from '../services/useAccount';
 import { AccountPanel } from './AccountPanel';
@@ -11,6 +11,7 @@ import { styles, theme } from './theme';
 /**
  * Open full-screen account navigation with insets measured in its own native modal window.
  * Back leaves forms before returning to the caller; scrolling stays within the system bars.
+ * Web fades in place so the safe-area provider never measures a sliding, offscreen viewport.
  */
 export function AccountScreen({ account, onClose }: { account: AccountController; onClose: () => Promise<void> }) {
   const [mode, setMode] = useState<'login' | 'register' | 'reset' | null>(null);
@@ -22,7 +23,7 @@ export function AccountScreen({ account, onClose }: { account: AccountController
     void onClose().catch(() => setError('Your choice could not be saved. Check device storage and try again.')).finally(() => setSaving(false));
   };
   const back = () => { if (!account.busy && !saving) { if (mode) setMode(mode === 'reset' ? 'login' : null); else close(); } };
-  return <Modal visible animationType="slide" presentationStyle="fullScreen" onRequestClose={back} statusBarTranslucent navigationBarTranslucent>
+  return <Modal visible animationType={Platform.OS === 'web' ? 'fade' : 'slide'} presentationStyle="fullScreen" onRequestClose={back} statusBarTranslucent navigationBarTranslucent>
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <View style={[styles.container, styles.row, { minHeight: 76, justifyContent: 'space-between' }]}><Brand /><Button kind="ghost" disabled={account.busy || saving} onPress={back}>Back</Button></View>

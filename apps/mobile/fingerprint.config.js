@@ -12,6 +12,8 @@ if (platform === 'android') { delete release.iosBuildNumber; delete build.ios; }
 if (platform === 'ios') { delete release.androidVersionCode; delete build.android; }
 
 module.exports = {
+  // SDK 58 defaults to balanced; retain version/config/source sensitivity for the OTA release gate.
+  preset: 'strict',
   // Replaced with resolved content below; raw metadata would defeat target-version overlays.
   ignorePaths: ['android', 'android/**', 'ios', 'ios/**', '../../native-release.json', 'eas.json', 'assets/brand/colors.json'],
   extraSources: [
