@@ -1,5 +1,6 @@
 # Builds the web app and API into a non-root server image with durable caches and database readiness checks.
-FROM node:24-bookworm-slim AS build
+# Compile portable JavaScript/web assets once, without emulating the target CPU.
+FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS build
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
@@ -11,6 +12,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
+# Install runtime dependencies per target so native modules (including sharp) match the image.
 FROM node:24-bookworm-slim AS server-deps
 WORKDIR /app
 COPY package.json package-lock.json ./
