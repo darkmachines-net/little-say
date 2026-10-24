@@ -2,6 +2,16 @@
 
 A local-first AAC soundboard for parents and toddlers, built with Expo, React Native, TypeScript, and Fastify. Families create boards with emoji, licensed illustrations, generated pictures, or their own photos, then play words in their preferred languages. Boards and downloaded media work offline; account backup is optional.
 
+## License
+
+Little Say is developed in public and made available under the [PolyForm Shield License 1.0.0](LICENSE), except where separate terms are stated. See [NOTICE](NOTICE) for the copyright holder, required notice and third-party license boundaries.
+
+You may use, study, modify and redistribute the software for purposes permitted by the license, including personal use and noncompeting commercial work. The license restricts using the software to provide competing products or services, including renamed apps, hosted services and free offerings. Its full terms, including the new-product and discontinued-product provisions, govern what is permitted.
+
+Shield does not generally require you to publish your source code or modifications. Its protection is the restriction on competing products. Redistributions must include the license text or its URL and the `Required Notice:` line in [NOTICE](NOTICE). Uses outside the license require separate permission from the relevant copyright holder.
+
+Dependencies, Unicode/CLDR data and third-party picture libraries retain their own licenses and attribution requirements; see [NOTICE](NOTICE) and [picture sources](apps/server/src/pictures/README.md#catalog-and-attribution). The software license does not grant trademark rights in the Little Say name or mountain identity, or permission to imply official endorsement.
+
 ## Run locally
 
 Use Node 24. Set `AAC_OPENAI_KEY` in your environment (or `OPENAI_API_KEY` in an ignored root `.env`), then run from the repository root:

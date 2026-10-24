@@ -1,5 +1,6 @@
 {
   "name": "@little-say/app",
+  "license": "SEE LICENSE IN LICENSE",
   "version": "0.1.4",
   "private": true,
   "main": "index.ts",

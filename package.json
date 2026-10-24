@@ -1,5 +1,6 @@
 {
   "name": "little-say-workspace",
+  "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "type": "module",
   "version": "0.3.3",
