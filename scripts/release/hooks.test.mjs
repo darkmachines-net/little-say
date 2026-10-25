@@ -1,4 +1,4 @@
-/** @file Release contract: metadata stamping, native compatibility and internal delivery through Play and TestFlight. */
+/** @file Release contract: metadata stamping, native compatibility and beta delivery through Play and TestFlight. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -47,11 +47,11 @@ test('the real Expo SDK ignores stamped versions but retains native compatibilit
     stamp(root,allocation);
     for(const platform of platforms){const after=fingerprint(platform);assert.equal(after.hash,before[platform].hash);
       assert.ok(after.sources.some(source=>source.id=== 'expoAutolinkingConfig:'+platform || source.reasons.some(reason=>reason.includes('Autolinking'))));}
-    const store=Object.fromEntries(platforms.map(platform=>[platform,fingerprint(platform,'internal').hash]));
+    const store=Object.fromEntries(platforms.map(platform=>[platform,fingerprint(platform,'beta').hash]));
     const easFile=path.join(app,'eas.json'),directInstall=JSON.parse(originals.get('apps/mobile/eas.json'));
-    directInstall.build.internal.distribution='internal';directInstall.build.internal.android.buildType='apk';
+    directInstall.build.beta.distribution='internal';directInstall.build.beta.android.buildType='apk';
     fs.writeFileSync(easFile,JSON.stringify(directInstall));
-    for(const platform of platforms)assert.notEqual(fingerprint(platform,'internal').hash,store[platform],'Store builds require a fresh native compatibility baseline.');
+    for(const platform of platforms)assert.notEqual(fingerprint(platform,'beta').hash,store[platform],'Store builds require a fresh native compatibility baseline.');
     fs.writeFileSync(easFile,originals.get('apps/mobile/eas.json'));
     const file=path.join(app,'app.json'),changed=JSON.parse(fs.readFileSync(file));
     changed.expo.android.permissions=[...(changed.expo.android.permissions??[]),'android.permission.VIBRATE'];
@@ -66,32 +66,32 @@ test('configured identity, approval environments and destinations remain explici
   const eas=JSON.parse(fs.readFileSync(path.join(root,'apps/mobile/eas.json')));
   assert.equal(eas.cli.version,'25.3.0');
   assert.equal(eas.cli.appVersionSource,'remote');
-  assert.equal(eas.build.internal.autoIncrement,true);assert.equal(eas.build.production.autoIncrement,true);
-  for (const profile of ['internal', 'production']) {
+  assert.equal(eas.build.beta.autoIncrement,true);assert.equal(eas.build.production.autoIncrement,true);
+  for (const profile of ['beta', 'production']) {
     assert.equal(config.profiles[profile].submit,true);
     assert.equal(eas.build[profile].distribution,'store');
     assert.equal(eas.build[profile].android.buildType,'app-bundle');
     assert.notEqual(eas.build[profile].ios?.simulator,true);
     assert.equal(eas.submit[profile].ios.ascAppId,'6826487372');
   }
-  assert.equal(config.profiles.internal.approvalEnvironment,'internal');
-  assert.equal(config.profiles.internal.environment,'preview');assert.equal(eas.build.internal.channel,'internal');
-  assert.deepEqual(eas.submit.internal.android,{track:'internal',releaseStatus:'completed'});
-  assert.deepEqual(eas.submit.production.android,{track:'internal',releaseStatus:'draft'});
+  assert.equal(config.profiles.beta.approvalEnvironment,'internal');
+  assert.equal(config.profiles.beta.environment,'preview');assert.equal(eas.build.beta.channel,'beta');
+  assert.deepEqual(eas.submit.beta.android,{track:'internal',releaseStatus:'completed'});
+  assert.deepEqual(eas.submit.production.android,{track:'production',releaseStatus:'draft'});
 });
 
-test('internal native releases submit both platforms while compatible OTA releases skip submission', () => {
+test('beta native releases submit both platforms while compatible OTA releases skip submission', () => {
   const releaseConfig={...config,mobile:{...config.mobile,platforms:['android','ios']}};
-  const observation={server:'server',family:'native',js:{android:'bundle',ios:'bundle'},fingerprints:{internal:{android:'android',ios:'ios'}}};
-  const native=selectRelease(releaseConfig,'internal',observation);
+  const observation={server:'server',family:'native',js:{android:'bundle',ios:'bundle'},fingerprints:{beta:{android:'android',ios:'ios'}}};
+  const native=selectRelease(releaseConfig,'beta',observation);
   assert.equal(native.native,true);
-  for(const platform of releaseConfig.mobile.platforms)assert.ok(native.operations.includes(`internal/submit/${platform}`));
-  const history={mobile:{version:native.versions.mobile,family:observation.family},server:{version:native.versions.server},baselines:{'internal/deploy/server':{input:observation.server}}};
+  for(const platform of releaseConfig.mobile.platforms)assert.ok(native.operations.includes(`beta/submit/${platform}`));
+  const history={mobile:{version:native.versions.mobile,family:observation.family},server:{version:native.versions.server},baselines:{'beta/deploy/server':{input:observation.server}}};
   for(const platform of releaseConfig.mobile.platforms){
-    history.baselines[`internal/build/${platform}`]={runtime:native.runtime,fingerprint:observation.fingerprints.internal[platform]};
-    history.baselines[`internal/js/${platform}`]={input:'previous-bundle'};
+    history.baselines[`beta/build/${platform}`]={runtime:native.runtime,fingerprint:observation.fingerprints.beta[platform]};
+    history.baselines[`beta/js/${platform}`]={input:'previous-bundle'};
   }
-  const ota=selectRelease(releaseConfig,'internal',observation,history);
+  const ota=selectRelease(releaseConfig,'beta',observation,history);
   assert.equal(ota.native,false);assert.equal(ota.bump,'patch');assert.deepEqual(ota.ota,['android','ios']);
   assert.ok(ota.operations.every(operation=>!operation.includes('/submit/')));
 });

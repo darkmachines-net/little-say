@@ -2,7 +2,7 @@
 const { fingerprintTransform } = require('@mchartier/expo-release/expo');
 const release = { ...require('../../native-release.json') };
 for (const key of ['version', 'androidVersionCode', 'iosBuildNumber']) delete release[key];
-const profile = process.env.LITTLE_SAY_CHANNEL || 'internal';
+const profile = process.env.EAS_BUILD_PROFILE || process.env.LITTLE_SAY_CHANNEL || 'beta';
 const eas = require('./eas.json');
 module.exports = {
   // Keep strict native source/configuration hashing; generated versions are excluded below.

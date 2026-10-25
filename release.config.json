@@ -3,15 +3,15 @@
   "repository": "darkmachines-net/little-say",
   "defaultBranch": "master",
   "profiles": {
-    "internal": {
+    "beta": {
       "environment": "preview",
-      "channel": "internal",
-      "easProfile": "internal",
+      "channel": "beta",
+      "easProfile": "beta",
       "submit": true,
       "approvalEnvironment": "internal",
       "deployEnvironment": "self-hosted-testing",
       "publicEnvironment": {
-        "LITTLE_SAY_CHANNEL": "internal"
+        "LITTLE_SAY_CHANNEL": "beta"
       }
     },
     "production": {
@@ -111,6 +111,19 @@
     "deployment": {
       "service": "little-say",
       "path": "/deploy/little-say"
+    }
+  },
+  "development": {
+    "easProfile": "development",
+    "environment": "preview",
+    "approvalEnvironment": "internal",
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "publicEnvironment": {
+      "LITTLE_SAY_CHANNEL": "beta",
+      "EXPO_RELEASE_VARIANT": "development"
     }
   }
 }
