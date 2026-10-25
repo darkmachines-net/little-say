@@ -8,7 +8,7 @@ import { theme } from './theme';
 
 export interface ParentControlProps {
   cancelToken: number;
-  /** Request the exit confirmation after a completed hold/release or accessible unlock. */
+  /** Unlock board navigation after a completed hold/release or accessible countdown. */
   onExitRequest: () => void;
 }
 
@@ -18,7 +18,7 @@ export function ParentControl({ cancelToken, onExitRequest }: ParentControlProps
   const control = useRef<ViewInstance>(null);
   const bounds = useRef({ x: 0, y: 0, width: 0, height: 0 });
   const inside = (x: number, y: number) => { const b = bounds.current; return b.width > 0 && x >= b.x && x < b.x + b.width && y >= b.y && y < b.y + b.height; };
-  return <View ref={control} collapsable={false} onLayout={() => control.current?.measureInWindow((x, y, width, height) => { bounds.current = { x, y, width, height }; })} testID="parent-control" accessible accessibilityRole="button" accessibilityLiveRegion="polite" accessibilityLabel={hold.accessible ? 'Unlocking editor. Activate again to cancel.' : 'Hold to unlock. Hold for two seconds and release.'} accessibilityHint="With a screen reader, activate to start a two-second unlock. Activate again to cancel." onAccessibilityTap={hold.activateAccessible} accessibilityActions={[{ name: 'activate' }]} onAccessibilityAction={event => { if (event.nativeEvent.actionName === 'activate') hold.activateAccessible(); }}
+  return <View ref={control} collapsable={false} onLayout={() => control.current?.measureInWindow((x, y, width, height) => { bounds.current = { x, y, width, height }; })} testID="parent-control" accessible accessibilityRole="button" accessibilityLiveRegion="polite" accessibilityLabel={hold.accessible ? 'Unlocking board. Activate again to cancel.' : 'Hold to unlock. Hold for two seconds and release.'} accessibilityHint="With a screen reader, activate to start a two-second unlock. Activate again to cancel." onAccessibilityTap={hold.activateAccessible} accessibilityActions={[{ name: 'activate' }]} onAccessibilityAction={event => { if (event.nativeEvent.actionName === 'activate') hold.activateAccessible(); }}
     onTouchStart={event => { const t = event.nativeEvent; hold.down(t.identifier, { x: t.pageX, y: t.pageY }, t.touches.length); }}
     onTouchMove={event => { const t = event.nativeEvent; if (!inside(t.pageX, t.pageY)) hold.cancel(); else hold.move(t.identifier, { x: t.pageX, y: t.pageY }); }}
     onTouchEnd={event => { const t = event.nativeEvent; if (!inside(t.pageX, t.pageY)) hold.cancel(); if (hold.up(t.identifier)) onExitRequest(); }} onTouchCancel={event => hold.cancelContact(event.nativeEvent.identifier)}

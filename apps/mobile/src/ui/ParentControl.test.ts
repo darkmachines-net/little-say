@@ -32,7 +32,7 @@ describe('native parent unlock feedback', () => {
   it('accepts release immediately when the label becomes ready', async () => {
     await touch('onTouchStart'); await advance(1999);
     expect(label()).toBe('Keep holding…'); expect(exit).not.toHaveBeenCalled();
-    await advance(1); expect(label()).toBe('Release to edit');
+    await advance(1); expect(label()).toBe('Release to unlock');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce(); expect(label()).toBe('Hold to unlock');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
@@ -40,7 +40,7 @@ describe('native parent unlock feedback', () => {
     const clock = vi.spyOn(performance, 'now').mockReturnValue(0);
     await touch('onTouchStart');
     clock.mockReturnValue(1999); await advance(2000); expect(label()).toBe('Keep holding…');
-    clock.mockReturnValue(2000); await advance(1); expect(label()).toBe('Release to edit');
+    clock.mockReturnValue(2000); await advance(1); expect(label()).toBe('Release to unlock');
     vi.setSystemTime(new Date('2000-01-01'));
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
@@ -55,11 +55,11 @@ describe('native parent unlock feedback', () => {
     await touch('onTouchStart'); await advance(1000); await touch('onTouchEnd');
     await touch('onTouchStart'); await advance(1000); expect(label()).toBe('Keep holding…');
     await advance(999); expect(label()).toBe('Keep holding…');
-    await advance(1); expect(label()).toBe('Release to edit');
+    await advance(1); expect(label()).toBe('Release to unlock');
     await touch('onTouchEnd'); expect(exit).toHaveBeenCalledOnce();
   });
   it('cancels immediately if another finger joins, even after readiness', async () => {
-    await touch('onTouchStart'); await advance(2000); expect(label()).toBe('Release to edit');
+    await touch('onTouchStart'); await advance(2000); expect(label()).toBe('Release to unlock');
     await touch('onTouchStart', point(2, 50, 2)); expect(label()).toBe('Hold to unlock');
     await advance(3000); expect(label()).toBe('Hold to unlock');
     await touch('onTouchEnd', point(2)); await touch('onTouchEnd'); expect(exit).not.toHaveBeenCalled();

@@ -108,6 +108,7 @@ test('rotation preserves speech and cancels contacts measured against the old gr
   await buttons.last().click();
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Word 1', 'Word 2', 'Word 5']);
 
+  await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control');
   const hold = (await control.boundingBox())!;
   await page.mouse.move(hold.x + hold.width / 2, hold.y + hold.height / 2); await page.mouse.down();

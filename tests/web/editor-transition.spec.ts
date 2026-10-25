@@ -8,9 +8,12 @@ async function play(page: Page) {
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
 }
 async function unlock(page: Page) {
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'), box = (await control.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
-  await expect(control).toHaveText('Release to edit'); await page.mouse.up();
+  await expect(control).toHaveText('Release to unlock'); await page.mouse.up();
+  await expect(page.getByTestId('play-board')).toBeVisible();
+  await page.getByTestId('board-back').click();
   await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 }
 test.beforeEach(async ({ page }) => {
@@ -89,7 +92,8 @@ test('selected play language, missing translations and voice safeguards survive 
 });
 
 test('keyboard requires a continuous hold and cancels repeat, blur, Escape and background interruptions', async ({ page }) => {
-  await play(page); const control = page.getByTestId('parent-control');
+  await play(page); if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
+  const control = page.getByTestId('parent-control');
   await page.clock.install({ time: new Date('2026-10-07T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-07T00:00:01Z'));
   await control.focus(); await page.keyboard.down('Space'); await page.clock.runFor(1999); await page.keyboard.up('Space');
@@ -104,12 +108,14 @@ test('keyboard requires a continuous hold and cancels repeat, blur, Escape and b
     if (reason === 'hidden') await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: false }); });
   }
   await control.focus(); await page.keyboard.down('Enter'); await page.clock.runFor(1000); await page.keyboard.down('Enter');
-  await page.clock.runFor(1000); await expect(control).toHaveText('Release to edit'); await page.keyboard.up('Enter');
+  await page.clock.runFor(1000); await expect(control).toHaveText('Release to unlock'); await page.keyboard.up('Enter');
+  await page.getByTestId('board-back').click();
   await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 });
 
 test('assistive activation is delayed, cancellable and cannot fire after backgrounding', async ({ page }) => {
-  await play(page); const control = page.getByTestId('parent-control');
+  await play(page); if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
+  const control = page.getByTestId('parent-control');
   await page.clock.install({ time: new Date('2026-10-07T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-07T00:00:01Z'));
   const activate = () => control.evaluate(element => (element as HTMLButtonElement).click());
@@ -117,12 +123,15 @@ test('assistive activation is delayed, cancellable and cannot fire after backgro
   await activate(); await page.clock.runFor(1000); await expect(control).toHaveText('Hold to unlock');
   await activate(); await page.clock.runFor(1000); await page.evaluate(() => window.dispatchEvent(new Event('blur')));
   await page.clock.runFor(2000); await expect(control).toHaveText('Hold to unlock');
-  await activate(); await page.clock.runFor(2000); await page.clock.runFor(800);
+  await activate(); await page.clock.runFor(2000);
+  await expect(page.getByTestId('play-board')).toBeVisible();
+  await page.getByTestId('board-back').click(); await page.clock.runFor(800);
   await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 });
 
 test('release outside the control and a second contact elsewhere cannot unlock', async ({ page, context }) => {
-  await play(page); const control = page.getByTestId('parent-control');
+  await play(page); if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
+  const control = page.getByTestId('parent-control');
   await page.clock.install({ time: new Date('2026-10-07T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-07T00:00:01Z'));
   const box = (await control.boundingBox())!;
@@ -211,9 +220,10 @@ test('cards shrink toward the measured preview while existing controls are alrea
   await page.clock.install({ time: new Date('2026-10-07T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-07T00:00:01Z'));
   const source = (await page.getByRole('button', { name: 'Cow', exact: true }).boundingBox())!;
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = (await page.getByTestId('parent-control').boundingBox())!;
   await page.mouse.move(control.x + 20, control.y + 20); await page.mouse.down();
-  await page.clock.runFor(2000); await page.mouse.up(); await page.clock.runFor(1);
+  await page.clock.runFor(2000); await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(1);
   await expect(page.getByRole('button', { name: 'Edit with AI', exact: true })).toBeEnabled();
   const overlay = page.getByTestId('board-transition'); await expect(overlay).toHaveAttribute('aria-hidden', 'true');
   // ResizeObserver measurements are delivered between browser tasks, separately from the fake clock.
@@ -236,4 +246,30 @@ test('reduced motion and resize during the transition always leave a usable edit
   await expect(page.getByTestId('board-transition')).toHaveCount(0);
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Edit tile', exact: true })).toBeVisible();
+});
+
+test('boards open unlocked, lock in one tap, and require unlock then back to leave', async ({ page }) => {
+  await play(page);
+  const back = page.getByRole('button', { name: 'Back to editor', exact: true });
+  const lock = page.getByRole('button', { name: 'Lock board', exact: true });
+  await expect(back).toBeVisible();
+  await expect(lock).toBeVisible();
+  expect((await back.boundingBox())!.x).toBeLessThan((await lock.boundingBox())!.x);
+  await expect(page.getByTestId('parent-control')).toHaveCount(0);
+  await lock.click();
+  await expect(back).toHaveCount(0);
+  const control = page.getByTestId('parent-control');
+  await control.click();
+  await expect(back).toHaveCount(0);
+  await control.focus(); await page.keyboard.down('Enter');
+  await expect(control).toHaveText('Release to unlock'); await page.keyboard.up('Enter');
+  await expect(back).toBeVisible();
+  await expect(page.getByTestId('play-board')).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Cow', exact: true }).click();
+  expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
+  await lock.click(); await expect(back).toHaveCount(0);
+  await page.reload(); await expect(back).toBeVisible();
+  await back.click();
+  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 });

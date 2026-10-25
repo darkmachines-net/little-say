@@ -62,5 +62,5 @@ export function useParentHold(cancelToken: number, onUnlock: () => void) {
     reset(); down('accessibility', { x: 0, y: 0 });
     accessibleAttempt.current = true; setAccessible(true);
   };
-  return { state, accessible, label: accessible ? 'Unlocking. Activate to cancel.' : state === 'ready' ? 'Release to edit' : state === 'holding' ? 'Keep holding…' : 'Hold to unlock', down, move, up, cancel, reset, cancelContact, activateAccessible };
+  return { state, accessible, label: accessible ? 'Unlocking. Activate to cancel.' : state === 'ready' ? 'Release to unlock' : state === 'holding' ? 'Keep holding…' : 'Hold to unlock', down, move, up, cancel, reset, cancelContact, activateAccessible };
 }
