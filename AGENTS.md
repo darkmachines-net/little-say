@@ -16,3 +16,5 @@ Run `npm run lint` to enforce file overviews and public-callable JSDoc using the
 ## Release integration
 
 Use the single protected Release workflow and the pinned toolkit; keep package/workflow SHAs identical with the toolkit pin updater. Consumers own only application metadata, source boundaries and validation. Runtime is the shared mobile major; EAS owns independent platform build counters. Never add consumer lifecycle, recovery or retained-artifact wrappers.
+
+Failed or uncertain prior attempts must not block a fresh release. Preserve consumed reservations and confirmed success baselines, retain same-run duplicate protection, and accept possible redundant delivery after a lost provider acknowledgement.

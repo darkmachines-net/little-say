@@ -29,6 +29,6 @@ Keep the separate Little Say peer/address and token; another repository's concur
 
 A timeout, lost response or cancellation may leave deployment running. Inspect deployer logs and app state before recovery. HTTP 409 may indicate overlapping work or a reconciliation block. Follow the existing [operator guide](https://github.com/MChartier/darkmachines/blob/4ae5621727b21dddf0614059046bad991cdd97e2/deployer/ROLLOUT.md); restarting the controller alone does not prove success.
 
-Use GitHub deployment records and provider/deployer logs to resolve an interrupted operation. Missing evidence never permits another webhook request. Application startup can migrate schema; failure is not an automatic database or image rollback.
+A fresh release may send a new webhook request without resolving the earlier GitHub deployment record. The toolkit records success only after confirmed health; a lost response can therefore cause redundant deployment in a later release. Provider/deployer logs remain useful for diagnosis, and the deployer's own overlapping-work or reconciliation errors still require attention. Application startup can migrate schema; failure is not an automatic database or image rollback.
 
 Mocked transport/failure tests live upstream. Application checks remain in `npm run check` and `npm run test:services`. Real routing, registry, server health and device uptake need separate operator validation; none is claimed by this extraction.
