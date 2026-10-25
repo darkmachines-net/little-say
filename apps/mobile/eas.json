@@ -8,14 +8,14 @@
     "internal": {
       "channel": "internal",
       "environment": "preview",
-      "distribution": "internal",
+      "distribution": "store",
       "autoIncrement": true,
       "credentialsSource": "remote",
       "env": {
         "LITTLE_SAY_CHANNEL": "internal"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "ios": {
         "simulator": false
@@ -36,6 +36,15 @@
     }
   },
   "submit": {
+    "internal": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "completed"
+      },
+      "ios": {
+        "ascAppId": "6826487372"
+      }
+    },
     "production": {
       "android": {
         "track": "internal",
