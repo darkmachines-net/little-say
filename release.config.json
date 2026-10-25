@@ -99,7 +99,7 @@
       "package-lock.json",
       "Dockerfile"
     ],
-    "image": "ghcr.io/mchartier/little-say",
+    "image": "ghcr.io/darkmachines-net/little-say",
     "dockerfile": "Dockerfile",
     "platforms": [
       "linux/amd64"
