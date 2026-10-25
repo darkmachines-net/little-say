@@ -7,7 +7,7 @@
       "environment": "preview",
       "channel": "internal",
       "easProfile": "internal",
-      "submit": false,
+      "submit": true,
       "approvalEnvironment": "internal",
       "deployEnvironment": "self-hosted-testing",
       "publicEnvironment": {
