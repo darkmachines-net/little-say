@@ -33,6 +33,18 @@ export type PictureJobRequest = z.infer<typeof pictureJobRequestSchema>;
 export const pictureJobSchema = z.object({ id: z.string().uuid(), draftId: z.string(), tileId: z.string(), state: z.enum(['queued', 'working', 'complete', 'cancelled', 'error']), phase: z.enum(['finding', 'generating']).optional(), result: resolvedPictureSchema.optional(), error: z.string().optional() });
 export type PictureJob = z.infer<typeof pictureJobSchema>;
 
+/** Per-card preparation distinguishes a suitable picture from a merely saveable fallback. */
+export const preparedTileSchema = z.object({
+  index: z.number().int().min(0).max(23),
+  state: z.enum(['queued', 'finding', 'generating', 'ready', 'fallback']),
+  result: resolvedPictureSchema.optional(),
+});
+export const pictureBatchSchema = z.object({
+  id: z.string().uuid(), state: z.enum(['working', 'complete', 'cancelled', 'error']),
+  tiles: z.array(preparedTileSchema).max(24),
+});
+export type PictureBatch = z.infer<typeof pictureBatchSchema>;
+
 /** Normalize presentation selectors so visually identical emoji are compared together. */
 export function normalizedEmoji(value: string): string { return value.replace(/[\uFE0E\uFE0F]/g, '').normalize('NFC'); }
 

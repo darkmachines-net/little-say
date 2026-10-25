@@ -1,0 +1,7 @@
+{
+  "draft": "\nReturn pictureConcept on every tile in the same response. ",
+  "concepts": "For generic meanings use these exact pictureConcept.description values: {{concepts}}. Use features=[] for ordinary instances; add features only for explicit distinguishing requirements. Use a specific different description for any other sense or requested visual qualifier. Never turn a bat used in sport into bat animal or prepared chicken into chicken animal.",
+  "templates": "\nTemplates are examples only. Respect all requested items, counts, language and picture requirements.",
+  "matching": "\nAccept differences in style, incidental color and decorative detail. Preserve the intended object/action, explicit picture instructions and distinctions between cards. A category substitute is not the same meaning.",
+  "batch": "\nReturn every supplied card id once, with candidate=null when no candidate conveys its meaning."
+}

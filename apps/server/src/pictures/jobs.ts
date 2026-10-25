@@ -6,6 +6,8 @@ import { join } from 'node:path';
 import { pictureJobSchema, pictureJobRequestSchema, pictureAssetIdSchema, resolvedPictureSchema, type PictureJob, type PictureJobRequest, type CatalogEntry, type ResolvedPicture } from '@little-say/core';
 import { searchPictures, catalogPicture, downloadCatalogPicture, normalizePicture } from './catalog';
 import { type PictureProvider, type PictureCandidate } from './provider';
+import seeds from './data/picture-seeds.json';
+import generatedSeeds from './data/generated-picture-seeds.json';
 
 const hash = (value: Buffer | string) => createHash('sha256').update(value).digest('hex');
 const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === 'ENOENT';
@@ -69,6 +71,32 @@ export class PictureJobs {
   }
   private async put(bytes: Buffer) { const id = hash(bytes); await this.atomic(`${id}.png`, bytes); return id; }
 
+  /** Persist normalized, validated image bytes; the caller owns semantic approval before publication. */
+  async store(bytes: Buffer): Promise<string> { await this.ready; return this.put(await normalizePicture(bytes)); }
+
+  /** Resolve a shipped, digest-verified library asset without any network access. */
+  async seed(id: string): Promise<ResolvedPicture | null> {
+    await this.ready;
+    const seed = (seeds as Record<string, { png: string; digest: string }>)[id];
+    const entry = catalogPicture(id);
+    if (!seed || !entry) return null;
+    const bytes = Buffer.from(seed.png, 'base64');
+    if (hash(bytes) !== seed.digest) return null;
+    return { kind: 'library', assetId: await this.put(bytes), style: entry.style, provenance: entry.provenance };
+  }
+
+  /** Load a reviewed generic evaluation result with its original generated provenance and validated PNG digest. */
+  async generatedSeed(meaning: string, style: 'color' | 'line'): Promise<ResolvedPicture | null> {
+    await this.ready;
+    const seed = (generatedSeeds as Record<string, { version: number; png: string; picture: unknown }>)[meaning];
+    if (!seed || seed.version !== 1) return null;
+    const parsed = resolvedPictureSchema.safeParse(seed.picture);
+    if (!parsed.success || parsed.data.kind !== 'generated' || parsed.data.style !== style || parsed.data.description !== meaning) return null;
+    const bytes = Buffer.from(seed.png, 'base64');
+    if (hash(bytes) !== parsed.data.assetId) return null;
+    await this.put(bytes); return parsed.data;
+  }
+
   /** Download/cache a catalog-owned source without invoking AI, suitable for manual picture selection. */
   async library(id: string): Promise<{ entry: CatalogEntry; bytes: Buffer; picture: ResolvedPicture }> {
     await this.ready;
@@ -84,7 +112,9 @@ export class PictureJobs {
       const bytes = picture.kind !== 'unresolved' ? await this.read(picture.assetId) : null;
       if (bytes) return { entry, bytes, picture };
     } catch (error) { if (!missing(error) && !(error instanceof SyntaxError) && (error as Error).name !== 'ZodError') throw error; }
-    const bytes = await downloadCatalogPicture(entry);
+    const seed = (seeds as Record<string, { png: string; digest: string }>)[id];
+    const bundled = seed && Buffer.from(seed.png, 'base64');
+    const bytes = bundled && hash(bundled) === seed.digest ? bundled : await downloadCatalogPicture(entry);
     const picture: ResolvedPicture = { kind: 'library', assetId: await this.put(bytes), style: entry.style, provenance: entry.provenance };
     await this.atomic(name, JSON.stringify(picture)); return { entry, bytes, picture };
   }

@@ -8,24 +8,27 @@
 
 Preserve author, original source URL, license, and rasterization/padding notice on each asset and in parent-facing credits. Adapted artwork retains its license; pinned source URLs provide the original vectors. The current app searches color symbols; outline metadata remains readable for older saved pictures.
 
-Only catalog-owned URLs may be downloaded. Redirects and external SVG resources are rejected, sizes are bounded, and output is rasterized to PNG. First use of an uncached symbol needs server access to GitHub. Library selection needs no OpenAI key; saved board PNGs work offline.
+Only catalog-owned URLs may be downloaded. Redirects and external SVG resources are rejected, sizes are bounded, and output is rasterized to PNG. First use of an uncached symbol outside the bundled seeds needs server access to GitHub. Library selection needs no OpenAI key; saved board PNGs work offline. The seed-generation and reviewed-import contracts live beside their scripts in `scripts/prepare-picture-seeds.ts` and `scripts/import-reviewed-picture-seeds.ts`.
 
 ## Protocol
 
 `/api/health` advertises picture protocol 1 and catalog/analysis/generation capabilities. Clients send `pictureCapability: 1` for extended board proposals; older clients retain the original emoji shape.
+
+When AI is configured, health also advertises preparation protocol 1 for combined drafting and aggregate picture work. [`../board-preparation.ts`](../board-preparation.ts) documents batch ownership, private draft retention, generic reuse and cancellation; [`packages/core/src/schema.ts`](../../../../packages/core/src/schema.ts) defines the negotiated proposal contract.
 
 | Endpoint under `/api/pictures` | Responsibility |
 | --- | --- |
 | `GET /search`, `GET /library/:id` | Search metadata or download a selected licensed symbol |
 | `POST /analyze`, `POST /review` | Analyze meanings or review actual board pictures |
 | `POST /jobs`, `GET /jobs/:id`, `POST /jobs/:id/cancel` | Start, observe, or cancel durable work |
+| `GET /batches/:id`, `POST /batches/:id/cancel` | Observe or cancel aggregate proposal picture work |
 | `GET /assets/:digest.png` | Serve immutable verified PNG bytes |
 
 A request UUID is bound to its payload, draft, and card identity; reusing it for changed content fails. Optional phases distinguish `finding` from `generating`. Cancellation removes queued work and attempts to abort active generation, which may already have incurred a charge. Restarted unfinished jobs become interrupted and require an explicit new attempt. Failures never automatically purchase another generation.
 
 ## Configuration and retention
 
-`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. Default concurrency is two with at most 48 queued cards. Backend keys never reach the client.
+`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. Per-card jobs default to two concurrent generations; prepared boards use `PICTURE_GENERATION_CONCURRENCY` (default six). Each queue admits at most 48 waiting generations. Backend keys never reach the client.
 
 `PICTURE_CACHE_DIR` defaults to `../../.cache/pictures` from the server working directory and `/app/data/pictures` in Docker. Retain that directory across replacements: generated pictures, concept descriptions, completed job metadata, and hashed cache keys have no automatic eviction. Personal photos and their paths are excluded from picture requests; explicit account backups are a separate contract. Requests and provider bodies are not logged. Guest picture endpoints share the server's trusted-private-network boundary.
 

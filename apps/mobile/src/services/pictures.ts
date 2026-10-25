@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { applyProposal, defaultPicturePolicy, pictureAnalysisSchema, pictureJobSchema, pictureTargets, resolvedPictureSchema, catalogEntrySchema, searchEmoji, type Board, type BoardProposal, type PicturePolicy, type Settings, type Tile } from '@little-say/core';
 import { apiFetch, backendUrl } from './api';
 import { savePictureAsset } from '../data/storage';
+import { prepareServerPictures } from './preparedPictures';
 
 const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
 export type PictureTileState = 'queued' | 'working' | 'finding' | 'generating' | 'ready' | 'fallback';
@@ -16,9 +17,13 @@ export interface PictureWorkOptions {
   forceIds?: Set<string>;
   replaceProtected?: boolean;
   allowGeneration?: boolean;
+  /** Initial local downloads are verified; the visible preview may now be saved while work continues. */
+  available?: () => void;
+  /** Refresh the independent audio library after cache-only speech downloads complete. */
+  speechReady?: () => void | Promise<void>;
   /** Report parent-facing progress without publishing draft changes to the saved board. */
   progress?: (message: string) => void;
-  /** Publish detached in-progress previews; the caller must not save them before work completes. */
+  /** Publish detached previews; saving is permitted after available, or after legacy work completes. */
   preview?: (board: Board) => void;
   /** Report individual card work without treating queued jobs as active generation. */
   tileProgress?: (tileId: string, state: PictureTileState) => void;
@@ -159,6 +164,7 @@ export function proposalPreview(source: Board | undefined, proposal: BoardPropos
 
 /** Resolve new/requested AI pictures while retaining matching images from prior conversational drafts. */
 export async function prepareProposalPictures(source: Board | undefined, envelope: BoardProposal, settings: Settings, options: PictureWorkOptions = {}, previous?: BoardProposal | null) {
+  if (envelope.preparation) return prepareServerPictures(source, envelope, settings, options, previous);
   const board = proposalPreview(source, envelope);
   const targetIds = new Set<string>();
   const forceIds = new Set<string>();

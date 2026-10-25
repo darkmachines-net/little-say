@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
-import { picturePolicySchema, pictureOptionsSchema, pictureConceptSchema, pictureModeSchema, pictureStyleSchema, libraryPictureSchema, generatedPictureSchema, unresolvedPictureSchema } from './pictures';
+import { picturePolicySchema, pictureOptionsSchema, pictureConceptSchema, pictureModeSchema, pictureStyleSchema, libraryPictureSchema, generatedPictureSchema, unresolvedPictureSchema, pictureBatchSchema } from './pictures';
 
 export const MAX_TILES = 24;
 export const colors = ['sage', 'peach', 'butter', 'sky', 'lilac', 'rose'] as const;
@@ -111,28 +111,42 @@ export const generatedBoardSchema = z.object({
   needsClarification: z.boolean(),
   playLanguages: z.array(z.string()).optional(),
   picturePolicy: picturePolicySchema.optional(),
-  tiles: z.array(z.object({ existingId: z.string().nullable(), label: z.string(), speech: z.string(), language: z.string(), emoji: z.string(), color: z.enum(colors), pictureOptions: pictureOptionsSchema.optional(), replacePicture: z.boolean().optional(), languageMode: z.enum(['fixed', 'board']).optional(), translations: z.array(z.object({ language: z.string(), label: z.string(), speech: z.string() })).optional() })),
+  tiles: z.array(z.object({ existingId: z.string().nullable(), label: z.string(), speech: z.string(), language: z.string(), emoji: z.string(), color: z.enum(colors), pictureOptions: pictureOptionsSchema.optional(), replacePicture: z.boolean().optional(), pictureConcept: pictureConceptSchema.optional(), languageMode: z.enum(['fixed', 'board']).optional(), translations: z.array(z.object({ language: z.string(), label: z.string(), speech: z.string() })).optional() })),
 });
 // The API's strict output schema requires every property, while saved/older
 // proposal envelopes remain readable without the new optional language fields.
 export const aiGeneratedBoardSchema = generatedBoardSchema.omit({ picturePolicy: true }).extend({
   playLanguages: z.array(z.string()),
-  tiles: z.array(generatedBoardSchema.shape.tiles.element.omit({ pictureOptions: true, replacePicture: true }).extend({ languageMode: z.enum(['fixed', 'board']), translations: z.array(z.object({ language: z.string(), label: z.string(), speech: z.string() })) })),
+  tiles: z.array(generatedBoardSchema.shape.tiles.element.omit({ pictureOptions: true, replacePicture: true, pictureConcept: true }).extend({ languageMode: z.enum(['fixed', 'board']), translations: z.array(z.object({ language: z.string(), label: z.string(), speech: z.string() })) })),
 });
 export const aiPictureGeneratedBoardSchema = aiGeneratedBoardSchema.extend({
   picturePolicy: picturePolicySchema,
   tiles: z.array(aiGeneratedBoardSchema.shape.tiles.element.extend({ pictureInstruction: z.string(), pictureMode: pictureModeSchema.nullable(), pictureStyle: pictureStyleSchema.nullable(), replacePicture: z.boolean() })),
 });
+export const aiPreparedBoardSchema = aiPictureGeneratedBoardSchema.extend({
+  tiles: z.array(aiPictureGeneratedBoardSchema.shape.tiles.element.extend({ pictureConcept: pictureConceptSchema })),
+});
+/**
+ * Proposal envelopes keep preparation fields optional for older clients/servers. Picture references
+ * require verified local downloads before saving; speech references are cache hits only. Timing is in
+ * milliseconds. Working preparations use one aggregate poll loop via GET /api/pictures/batches/:id;
+ * POST /api/pictures/batches/:id/cancel stops outstanding work.
+ */
 export const proposalSchema = z.object({
   baseRevision: z.number().int().nonnegative().nullable(),
   boardId: z.string().nullable(), proposal: generatedBoardSchema,
   pictures: z.array(z.object({ index: z.number().int().min(0).max(MAX_TILES - 1), illustration: illustrationSchema, concept: pictureConceptSchema.optional() })).max(MAX_TILES).optional(),
+  preparation: pictureBatchSchema.optional(),
+  speech: z.array(z.object({ text: z.string().min(1).max(200), language: languageSchema, id: z.string().regex(/^[a-f0-9]{64}$/) })).max(168).optional(),
+  timing: z.object({ draftMs: z.number().nonnegative(), resolveMs: z.number().nonnegative(), templateHit: z.boolean() }).optional(),
 });
 export const MAX_AI_TURNS = 20;
 export const conversationTurnSchema = z.object({ prompt: z.string().trim().min(1).max(4000), reply: z.string().trim().min(1).max(1000) });
 export const proposalRequestSchema = z.object({
   prompt: z.string().trim().min(1).max(4000), board: boardContextSchema.nullable(), languageProfile: languageProfileSchema.optional(),
   picturePolicy: picturePolicySchema.optional(), pictureCapability: z.literal(1).optional(),
+  preparationId: z.string().uuid().optional(),
+  previousPreparationId: z.string().uuid().optional(),
   // The source board stays immutable until Apply. Draft IDs always refer to it,
   // so a refinement cannot accidentally reuse a replaced tile's photo.
   conversation: z.object({ history: z.array(conversationTurnSchema).max(MAX_AI_TURNS - 1), draft: generatedBoardSchema.nullable() }).optional(),
