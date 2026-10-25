@@ -1,0 +1,2 @@
+<!-- Declares the foreground-only tile audio library; it needs no service or media controls. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

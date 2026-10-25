@@ -16,6 +16,8 @@ Core merges compare the last acknowledged snapshot, propagate deletions, preserv
 
 ## Speech
 
+Android clips use the [local tile-audio module](../../modules/tile-audio/README.md); that module owns native playback behavior, build requirements, and device validation.
+
 `hybridSpeech` selects downloaded AI clips or device TTS. `speechLibrary` prepares missing clips without blocking editing; `useSpeechLibrary` owns lifecycle and progress. Playback finishes the current utterance and retains only the latest queued selection. Clip identity must match the current text, language, model, voice, and format; never play an old clip for changed words. Downloaded media works offline; AI failure falls back to a matching device voice. Parents should review pronunciation.
 
 `settings.voiceSources` selects `ai` or `device` for each canonical language tag; AI is the default. `settings.voices` retains device voice IDs for explicit device speech and AI fallback. Device-selected languages bypass cached AI and skip automatic/board-level generation. AI speech preparation does not consult legacy `aiConsent`.

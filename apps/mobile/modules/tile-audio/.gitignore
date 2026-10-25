@@ -1,0 +1,3 @@
+# Ignore generated Gradle output; native fingerprints cover authored module inputs.
+android/build/
+android/.gradle/
