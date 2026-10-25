@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       profile: { description: 'internal: Play testing + TestFlight; production: configured store submission', type: choice, required: true, options: [internal, production] }
-      rebuild: { description: Build compatible binaries and same-runtime OTA, type: boolean, default: false }
+      rebuild: { description: Force a new native build, type: boolean, default: false }
 permissions: { contents: read }
 jobs:
   release:
