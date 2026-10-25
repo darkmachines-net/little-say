@@ -48,6 +48,17 @@ jobs:
       - run: npm run test:services
       - run: npx playwright install --with-deps chromium
       - run: npm run test:web -- tests/web/safe-area.spec.ts
+      - name: Validate board navigation in Chromium
+        id: board_navigation
+        run: npm run test:web -- tests/web/editor-transition.spec.ts --grep "boards open unlocked"
+      - name: Retain board navigation screenshots for review
+        if: ${{ !cancelled() && steps.board_navigation.outcome != 'skipped' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: board-navigation-browser-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifacts/screenshots/board-navigation/*.png
+          if-no-files-found: error
+          retention-days: 14
       - name: Validate Settings in Chromium
         id: settings
         run: npm run test:web -- tests/web/settings.spec.ts

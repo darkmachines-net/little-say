@@ -1,5 +1,6 @@
 /** @file Verifies guarded play/editor navigation, timed input, draft/save recovery, motion and audio handoff. */
 
+import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
 
@@ -248,28 +249,37 @@ test('reduced motion and resize during the transition always leave a usable edit
   await expect(page.getByRole('heading', { name: 'Edit tile', exact: true })).toBeVisible();
 });
 
-test('boards open unlocked, lock in one tap, and require unlock then back to leave', async ({ page }) => {
-  await play(page);
-  const back = page.getByRole('button', { name: 'Back to editor', exact: true });
-  const lock = page.getByRole('button', { name: 'Lock board', exact: true });
-  await expect(back).toBeVisible();
-  await expect(lock).toBeVisible();
-  expect((await back.boundingBox())!.x).toBeLessThan((await lock.boundingBox())!.x);
-  await expect(page.getByTestId('parent-control')).toHaveCount(0);
-  await lock.click();
-  await expect(back).toHaveCount(0);
-  const control = page.getByTestId('parent-control');
-  await control.click();
-  await expect(back).toHaveCount(0);
-  await control.focus(); await page.keyboard.down('Enter');
-  await expect(control).toHaveText('Release to unlock'); await page.keyboard.up('Enter');
-  await expect(back).toBeVisible();
-  await expect(page.getByTestId('play-board')).toBeVisible();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Cow', exact: true }).click();
-  expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
-  await lock.click(); await expect(back).toHaveCount(0);
-  await page.reload(); await expect(back).toBeVisible();
-  await back.click();
-  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
-});
+for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 820 }]) {
+  test('boards open unlocked, lock in one tap, and require unlock then back to leave at ' + viewport.width + 'px', async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await play(page);
+    const captures = 'artifacts/screenshots/board-navigation';
+    await mkdir(captures, { recursive: true });
+    const back = page.getByRole('button', { name: 'Back to editor', exact: true });
+    const lock = page.getByRole('button', { name: 'Lock board', exact: true });
+    await expect(back).toBeVisible();
+    await expect(lock).toBeVisible();
+    expect((await back.boundingBox())!.x).toBeLessThan((await lock.boundingBox())!.x);
+    await expect(page.getByTestId('parent-control')).toHaveCount(0);
+    await page.screenshot({ path: captures + '/after-unlocked-' + viewport.width + '.png' });
+    await lock.click();
+    await expect(back).toHaveCount(0);
+    const control = page.getByTestId('parent-control');
+    await expect(control).toHaveText('Hold to unlock');
+    await page.screenshot({ path: captures + '/after-locked-' + viewport.width + '.png' });
+    await control.click();
+    await expect(back).toHaveCount(0);
+    await control.focus(); await page.keyboard.down('Enter');
+    await expect(control).toHaveText('Release to unlock'); await page.keyboard.up('Enter');
+    await expect(back).toBeVisible();
+    await expect(page.getByTestId('play-board')).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.screenshot({ path: captures + '/after-unlocked-again-' + viewport.width + '.png' });
+    await page.getByRole('button', { name: 'Cow', exact: true }).click();
+    expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
+    await lock.click(); await expect(back).toHaveCount(0);
+    await page.reload(); await expect(back).toBeVisible();
+    await back.click();
+    await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+  });
+}

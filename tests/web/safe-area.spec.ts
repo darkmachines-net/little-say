@@ -1,4 +1,4 @@
-/** @file Verifies account, Settings, modal and play control bounds with system-bar/cutout insets and live rotation. */
+/** @file Verifies account, Settings, modal and unlocked/locked play controls stay within system-bar/cutout insets and live rotation. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
@@ -112,6 +112,11 @@ test('play controls and tiles use the inset viewport', async ({ page, context })
   });
   await openExistingLibrary(page);
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
+  await expectInsideSafeArea(page.getByTestId('board-back'), page, bars);
+  const lock = page.getByTestId('board-lock');
+  await expectInsideSafeArea(lock, page, bars);
+  await lock.click();
+  await expect(page.getByTestId('board-back')).toHaveCount(0);
   await expectInsideSafeArea(page.getByTestId('parent-control'), page, bars);
   for (const name of ['Cow', 'Pig', 'Sheep', 'Horse', 'Chicken', 'Duck']) {
     await expectInsideSafeArea(page.getByRole('button', { name, exact: true }), page, bars);
