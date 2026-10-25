@@ -19,6 +19,14 @@ beforeEach(async () => { directory = await mkdtemp(join(tmpdir(), 'little-say-sp
 afterEach(async () => { await rm(directory, { recursive: true, force: true }); });
 
 describe('durable speech cache', () => {
+  it('looks up a batch without synthesis and respects the active speech profile', async () => {
+    const generate = vi.fn(async () => wav()); const cache = new SpeechCache(directory, profile, generate);
+    const saved = await cache.get(input);
+    expect(await cache.lookup([input, { ...input, text: ' Cow ' }, { text: 'Missing', language: 'en-US' }])).toEqual([{ ...input, id: saved.id }]);
+    expect(generate).toHaveBeenCalledOnce();
+    expect(await new SpeechCache(directory, { ...profile, voice: 'other' }, generate).lookup([input])).toEqual([]);
+    expect(generate).toHaveBeenCalledOnce();
+  });
   it('deduplicates simultaneous requests and persists reuse across restart without an API key', async () => {
     const generate = vi.fn(async () => wav());
     const cache = new SpeechCache(directory, profile, generate);

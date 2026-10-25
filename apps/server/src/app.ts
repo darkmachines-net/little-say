@@ -21,8 +21,12 @@ import { type IdentityService } from './accounts/firebase';
 import { type Pool } from 'pg';
 import { checkDatabase } from './database';
 import { accountRoutes } from './accounts/routes';
+import { type BoardPreparation } from './board-preparation';
 
-export interface ServerOptions { provider: AiProvider | null; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean; }
+export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
+  /** Trusted harness override; deployed servers retain thirty AI requests per IP per minute. */
+  aiRequestsPerMinute?: number;
+}
 
 /**
  * Construct and register a server with injected AI, speech, and picture services without opening a listening
@@ -33,9 +37,9 @@ export async function createServer(options: ServerOptions) {
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
   await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
   await app.register(rateLimit, { global: false });
-  const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
+  const aiLimits = { config: { rateLimit: { max: options.aiRequestsPerMinute ?? 30, timeWindow: '1 minute' } } };
   let active = 0;
-  const maxConcurrent = options.maxConcurrent ?? 2;
+  const maxConcurrent = options.maxConcurrent ?? (options.preparation ? 6 : 2);
   app.addHook('onRequest', async (request, reply) => {
     if (!request.url.startsWith('/api/')) return;
     if (request.headers.origin && !origins.includes(request.headers.origin)) return reply.code(403).send({ error: 'This web address is not allowed by the private server.' });
@@ -48,7 +52,7 @@ export async function createServer(options: ServerOptions) {
     reply.code(status >= 400 && status < 500 ? status : 500).send({ error: status === 413 ? 'This request is too large. Try sending less content.' : status === 429 ? 'Too many requests. Please try again shortly.' : status === 400 ? 'The request could not be read. Please try again.' : 'The server could not complete this request.' });
   });
 
-  app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
+  app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, ...(options.preparation ? { preparation: { version: 1 } } : {}), pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
   app.get('/api/ready', async (_request, reply) => {
     try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version }; }
     catch { return reply.code(503).send({ status: 'unavailable', error: 'Database readiness check failed.' }); }
@@ -60,9 +64,17 @@ export async function createServer(options: ServerOptions) {
   const deletionTimer = options.accounts && options.auth ? setInterval(sweep, 30000) : undefined;
   deletionTimer?.unref();
   app.addHook('onReady', async () => { sweep(); });
-  app.addHook('onClose', async () => { clearInterval(deletionTimer); await deletionWork; options.pictures?.close(); await options.auth?.close(); await options.database?.end(); });
+  app.addHook('onClose', async () => { clearInterval(deletionTimer); await deletionWork; options.preparation?.close(); options.pictures?.close(); await options.auth?.close(); await options.database?.end(); });
 
   if (options.accounts && options.auth) await accountRoutes(app, options.accounts, options.auth, options.secureCookies ?? true);
+  app.get<{ Params: { id: string } }>('/api/pictures/batches/:id', async (request, reply) => {
+    const batch = await options.preparation?.status(request.params.id);
+    return batch ?? reply.code(404).send({ error: 'Picture preparation unavailable.' });
+  });
+  app.post<{ Params: { id: string } }>('/api/pictures/batches/:id/cancel', aiLimits, async (request, reply) => {
+    const batch = await options.preparation?.cancel(request.params.id);
+    return batch ?? reply.code(404).send({ error: 'Picture preparation unavailable.' });
+  });
   app.get('/api/pictures/search', aiLimits, async (request, reply) => {
     const parsed = z.object({ q: z.string().trim().min(1).max(300), style: z.enum(['color', 'line']) }).safeParse(request.query);
     if (!parsed.success) return reply.code(400).send({ error: 'Provide search words and a picture style.' });
@@ -138,6 +150,13 @@ export async function createServer(options: ServerOptions) {
     active++;
     const start = Date.now();
     try {
+      if (parsed.data.preparationId && options.preparation) {
+        const id = parsed.data.preparationId;
+        const disconnected = () => { if (!reply.raw.writableEnded) void options.preparation!.cancel(id).catch(() => {}); };
+        reply.raw.once('close', disconnected);
+        try { return await options.preparation.propose(parsed.data); }
+        finally { reply.raw.removeListener('close', disconnected); }
+      }
       const proposal = validateGeneratedBoard(await options.provider.propose(parsed.data), parsed.data.board);
       app.log.info({ operation: 'propose', durationMs: Date.now() - start }, 'AI request completed');
       return { boardId: parsed.data.board?.id ?? null, baseRevision: parsed.data.board?.revision ?? null, proposal };

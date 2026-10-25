@@ -1,8 +1,9 @@
-/** @file Protects account credentials from development backend overrides without changing ordinary API routing. */
+/** @file Verifies credential routing, per-backend capability negotiation, and cancellation before prepared proposals return. */
 import { afterEach, expect, it, vi } from 'vitest';
 
 vi.mock('react-native', () => ({ Platform: { OS: 'web' } }));
 vi.mock('expo-constants', () => ({ default: { expoConfig: {} } }));
+vi.mock('expo-crypto', () => ({ randomUUID: () => '10000000-0000-4000-8000-000000000001' }));
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.resetModules(); });
 
 it('pins account credentials to the consented server while ordinary requests follow the development backend', async () => {
@@ -16,4 +17,35 @@ it('pins account credentials to the consented server while ordinary requests fol
   expect(fetch).toHaveBeenLastCalledWith('https://consented.example/api/account/session', expect.objectContaining({ headers: { 'X-Little-Say': '1', Authorization: 'Bearer synthetic-token' } }));
   await apiFetch('https://consented.example', '/api/health');
   expect(fetch).toHaveBeenLastCalledWith('https://development.example/api/health', expect.objectContaining({ headers: { 'X-Little-Say': '1' } }));
+});
+
+it('discovers preparation once per backend session and preserves older proposal servers', async () => {
+  vi.stubGlobal('__DEV__', false); vi.stubGlobal('window', { location: { origin: 'https://new.example' } });
+  const envelope = { boardId: null, baseRevision: null, proposal: { title: '', explanation: 'Which animals?', needsClarification: true, tiles: [] } };
+  const fetch = vi.fn(async (url: string) => ({ ok: true, json: async () => url.endsWith('/health') ? (url.includes('old.example') ? {} : { pictures: { version: 1 }, preparation: { version: 1 } }) : envelope }));
+  vi.stubGlobal('fetch', fetch);
+  const { proposeBoard } = await import('./api');
+  const request = { prompt: 'Animals', board: null, pictureCapability: 1 as const };
+  await proposeBoard('https://new.example', request); await proposeBoard('https://new.example', request);
+  vi.stubGlobal('window', { location: { origin: 'https://old.example' } });
+  await proposeBoard('https://old.example', request);
+  expect(fetch.mock.calls.filter(call => call[0].endsWith('/health'))).toHaveLength(2);
+  const posts = vi.mocked(globalThis.fetch).mock.calls.filter(call => String(call[0]).endsWith('/propose'));
+  expect(JSON.parse(posts[0][1]!.body as string).preparationId).toBe('10000000-0000-4000-8000-000000000001');
+  expect(JSON.parse(posts[2][1]!.body as string)).toEqual({ prompt: 'Animals', board: null });
+});
+
+it('sends cancellation even when an initial prepared proposal has not returned', async () => {
+  vi.stubGlobal('__DEV__', false); vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/propose')) return new Promise<Response>((_resolve, reject) => init!.signal!.addEventListener('abort', () => reject(new Error('Aborted')), { once: true }));
+    return { ok: true, json: async () => ({ pictures: { version: 1 }, preparation: { version: 1 } }) };
+  });
+  vi.stubGlobal('fetch', fetch);
+  const { proposeBoard } = await import('./api'); const controller = new AbortController();
+  const work = proposeBoard('https://new.example', { prompt: 'Animals', board: null, pictureCapability: 1 }, controller.signal);
+  const assertion = expect(work).rejects.toThrow('cancelled');
+  await vi.waitFor(() => expect(fetch.mock.calls.some(call => call[0].endsWith('/propose'))).toBe(true));
+  controller.abort(); await assertion;
+  expect(fetch.mock.calls.some(call => call[0].endsWith('/api/pictures/batches/10000000-0000-4000-8000-000000000001/cancel'))).toBe(true);
 });

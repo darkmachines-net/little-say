@@ -1,6 +1,7 @@
 /**
  * @file Runs billable AI proposal evaluations for multilingual boards and prints results and timing
- * to standard output.
+ * to standard output. `npm run eval:ai -- --prepared` exercises combined drafting with picture concepts
+ * and its conversational refinements; omitting the flag exercises the original proposal protocol.
  */
 
 import { starterLibrary } from '../tests/fixtures/library';
@@ -11,8 +12,10 @@ import { loadDevelopmentEnv, withDevelopmentApiKey } from './dev-config';
 import { openAIProvider } from '../apps/server/src/provider';
 import { boardContext, starterBoard, starterPrompt, validateGeneratedBoard, type GeneratedBoard, type ProposalRequest } from '@little-say/core';
 const env = await withDevelopmentApiKey(await loadDevelopmentEnv(fileURLToPath(new URL('../', import.meta.url))));
-const provider = openAIProvider(env);
+const prepared = process.argv.includes('--prepared');
+const provider = openAIProvider(env, event => console.log(JSON.stringify({ service: 'boards', ...event })));
 if (!provider) { console.error('Set AAC_OPENAI_KEY or OPENAI_API_KEY to run the live evaluation. This script makes billable API requests.'); process.exit(1); }
+const propose = (request: ProposalRequest) => prepared ? provider.prepare!({ ...request, pictureCapability: 1 }, []) : provider.propose(request);
 const farm = starterLibrary().boards[0];
 const languageProfile = { languages: ['fr-FR', 'es-ES'], defaultLanguage: 'fr-FR' };
 const fixtures: { name: string; request: ProposalRequest; check: (value: GeneratedBoard) => boolean; followups?: { prompt: string; check: (value: GeneratedBoard) => boolean }[] }[] = [
@@ -44,7 +47,7 @@ if (!selectedFixtures.length) throw new Error('No evaluation fixtures matched th
 for (const fixture of selectedFixtures) {
   const start = performance.now();
   try {
-    let result = validateGeneratedBoard(await provider.propose(fixture.request), fixture.request.board);
+    let result = validateGeneratedBoard(await propose(fixture.request), fixture.request.board);
     const ms = Math.round(performance.now() - start); durations.push(ms);
     const passed = fixture.check(result); if (!passed) failures++;
     console.log(JSON.stringify({ fixture: fixture.name, passed, durationMs: ms, tiles: result.tiles.length }));
@@ -55,7 +58,7 @@ for (const fixture of selectedFixtures) {
     for (const followup of fixture.followups ?? []) {
       history.push({ prompt: previousPrompt, reply: result.explanation });
       const turnStart = performance.now();
-      result = validateGeneratedBoard(await provider.propose({ ...fixture.request, prompt: followup.prompt, conversation: { history, draft } }), fixture.request.board);
+      result = validateGeneratedBoard(await propose({ ...fixture.request, prompt: followup.prompt, conversation: { history, draft } }), fixture.request.board);
       const turnPassed = followup.check(result); if (!turnPassed) failures++;
       console.log(JSON.stringify({ fixture: fixture.name, turn: history.length + 1, passed: turnPassed, durationMs: Math.round(performance.now() - turnStart), tiles: result.tiles.length }));
       if (!turnPassed) console.log(JSON.stringify({ fixture: fixture.name, proposal: result }));
@@ -65,5 +68,5 @@ for (const fixture of selectedFixtures) {
   } catch (e) { failures++; console.error(JSON.stringify({ fixture: fixture.name, passed: false, error: 'Provider request or output validation failed', type: (e as Error).name, validation: e instanceof ZodError ? e.issues.map(issue => ({ path: issue.path, message: issue.message })) : undefined, status: (e as { status?: number }).status, code: (e as { code?: string }).code })); }
 }
 durations.sort((a, b) => a - b);
-console.log(JSON.stringify({ model: env.OPENAI_BOARD_MODEL || 'gpt-6.1-sol', effort: env.OPENAI_REASONING_EFFORT || 'low', fixtures: selectedFixtures.length, failures, medianMs: durations[Math.floor(durations.length / 2)] ?? null }));
+console.log(JSON.stringify({ model: prepared ? env.OPENAI_DRAFT_MODEL || 'gpt-6-luna' : env.OPENAI_BOARD_MODEL || 'gpt-6.1-sol', effort: prepared ? env.OPENAI_DRAFT_REASONING_EFFORT || 'none' : env.OPENAI_REASONING_EFFORT || 'low', fixtures: selectedFixtures.length, failures, medianMs: durations[Math.floor(durations.length / 2)] ?? null }));
 process.exitCode = failures ? 1 : 0;

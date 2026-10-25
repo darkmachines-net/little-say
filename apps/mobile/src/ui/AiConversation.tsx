@@ -47,7 +47,7 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * onApply's second argument authorizes replacing protected manual/legacy translations for this
  * draft only; it is true only after explicit parent review and must not authorize another draft.
  */
-export function AiConversation({ settings, board, onApply, onAiUse, onClose }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void }) {
+export function AiConversation({ settings, board, onApply, onAiUse, onClose, onSpeechReady }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void; onSpeechReady?: () => Promise<void> }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
   const [source] = useState(board);
   const [prompt, setPrompt] = useState('');
@@ -65,6 +65,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   const [clarifying, setClarifying] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [busy, setBusy] = useState<'generate' | 'save' | null>(null);
+  const [saveable, setSaveable] = useState(false);
   const [error, setError] = useState('');
   const request = useRef<AbortController | null>(null);
   const live = useRef(true);
@@ -86,13 +87,15 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
     return live.current && request.current === controller && !controller.signal.aborted;
   };
   const pictureCallbacks = (controller: AbortController, envelope: BoardProposal) => ({
+    available: () => { if (live.current && request.current === controller) setSaveable(true); },
+    speechReady: onSpeechReady,
     progress: (message: string) => { if (live.current && request.current === controller) setPictureMessage(message); },
     tileProgress: (id: string, state: PictureTileState) => { if (live.current && request.current === controller) setTileStates(old => ({ ...old, [id]: state })); },
     preview: (board: Board) => { if (live.current && request.current === controller) setDraft({ ...envelope, pictures: board.tiles.map((tile, index) => ({ index, illustration: tile.illustration, concept: tile.pictureConcept })) }); },
   });
   const cancel = () => {
     request.current?.abort(); request.current = null;
-    setBusy(null); setPictureMessage('');
+    setBusy(null); setPictureMessage(''); setSaveable(false);
     if (busy === 'generate') {
       setTileStates({}); setDraft(draftBeforeRequest.current);
       if (!submitted && draftBeforeRequest.current?.proposal.picturePolicy) setPicturePolicy(draftBeforeRequest.current.proposal.picturePolicy);
@@ -107,12 +110,13 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
     nearBottom.current = true;
     draftBeforeRequest.current = draft;
     const requestedPolicy = picturePolicy;
-    setError(''); setPictureMessage(''); setPictureIssues([]); setTileStates({}); setBusy('generate'); setSubmitted(message); setPrompt('');
+    setError(''); setPictureMessage(''); setPictureIssues([]); setTileStates({}); setSaveable(false); setBusy('generate'); setSubmitted(message); setPrompt('');
     try {
       if (!await enableAi(controller)) return;
       const response = await proposeBoard(settings.backendUrl, {
         prompt: message, board: source ? boardContext(source) : null, languageProfile: getLanguageProfile(settings),
         picturePolicy, pictureCapability: 1,
+        ...(draft?.preparation ? { previousPreparationId: draft.preparation.id } : {}),
         conversation: { history, draft: draft ? { ...draft.proposal, ...(draft.proposal.picturePolicy ? { picturePolicy } : {}) } : null },
       }, controller.signal);
       if (!live.current || request.current !== controller) return;
@@ -121,7 +125,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
       if (!response.proposal.needsClarification) {
         // Validate the retained-translation merge before rendering or downloading pictures.
         proposalPreview(source, response);
-        setDraft(response);
+        if (!response.preparation) setDraft(response);
         if (response.proposal.picturePolicy) {
           if (policyRef.current === requestedPolicy) setPicturePolicy(response.proposal.picturePolicy);
           const prepared = await prepareProposalPictures(source, response, { ...settings, aiConsent: true }, { signal: controller.signal, ...pictureCallbacks(controller, response) }, draft);
@@ -142,20 +146,24 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
   const updatePictures = async (policy = picturePolicy) => {
     if (!draft || request.current) return;
     setError(''); setPicturePolicy(policy);
-    const controller = new AbortController(); request.current = controller; draftBeforeRequest.current = draft; setBusy('generate'); setPictureIssues([]); setTileStates({});
+    const controller = new AbortController(); request.current = controller; draftBeforeRequest.current = draft; setSaveable(false); setBusy('generate'); setPictureIssues([]); setTileStates({});
     try {
       if (!await enableAi(controller)) return;
       const preview = proposalPreview(source, draft);
-      const next = { ...draft, proposal: { ...draft.proposal, picturePolicy: policy, tiles: draft.proposal.tiles.map((tile, index) => ({ ...tile, replacePicture: !preview.tiles[index].pictureOptions?.locked && preview.tiles[index].illustration.kind !== 'photo' })) } };
+      const next = { ...draft, preparation: undefined, proposal: { ...draft.proposal, picturePolicy: policy, tiles: draft.proposal.tiles.map((tile, index) => ({ ...tile, replacePicture: !preview.tiles[index].pictureOptions?.locked && preview.tiles[index].illustration.kind !== 'photo' })) } };
       const prepared = await prepareProposalPictures(source, next, { ...settings, aiConsent: true }, { signal: controller.signal, ...pictureCallbacks(controller, next) });
       if (live.current && request.current === controller) { setDraft(prepared.proposal); setPictureIssues(prepared.issues); }
     } catch (error) { if (!controller.signal.aborted) setError((error as Error).message); }
     finally { if (request.current === controller) { request.current = null; setBusy(null); setPictureMessage(''); } }
   };
   const apply = async () => {
-    if (!draft || request.current || saving.current) return;
+    if (!draft || (request.current && !saveable) || saving.current) return;
+    const visible = draft;
+    // Detach before aborting so rejected polls and late downloads cannot change the saved snapshot.
+    const pending = request.current; request.current = null; pending?.abort(); setSaveable(false); setSubmitted(null); setPictureMessage('');
+    setTileStates(old => Object.fromEntries(Object.entries(old).map(([id, state]) => [id, state === 'ready' ? state : 'fallback'])));
     saving.current = true; setBusy('save'); setError('');
-    try { await onApply(draft, reviewedDraft === draft); if (live.current) onClose(); }
+    try { await onApply(visible, reviewedDraft === visible); if (live.current) onClose(); }
     catch (e) { if (live.current) setError((e as Error).message || 'The board could not be saved. Please try again.'); }
     finally { saving.current = false; if (live.current) setBusy(null); }
   };
@@ -198,7 +206,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose }: {
         <DraftCanvas board={preview} states={tileStates} message={canvasMessage} compact={!sideBySide} />
         {replacements.length > 0 && <View style={{ gap: 6 }}><Text style={styles.small}>{reviewedDraft === draft ? 'Reviewed translation replacements will be applied.' : `${replacements.length} saved translations will be kept. Review proposed replacements separately.`}</Text><Button compact kind="secondary" disabled={Boolean(busy)} onPress={() => setTranslationReview(true)}>Review translation replacements</Button></View>}
         {pictureIssues.length > 0 && <Text testID="picture-summary" accessibilityLiveRegion="polite" style={styles.small}>{pictureIssues.join(' ')}</Text>}
-        {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={Boolean(busy) || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
+        {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? saveable ? 'You can save these pictures now. Saving stops remaining picture work.' : 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={(Boolean(busy) && !saveable) || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
       </View>
     </View>
     {translationReview && draft && <Sheet title="Review translation replacements" onClose={() => setTranslationReview(false)} footer={<><Button kind="secondary" onPress={() => { setReviewedDraft(null); setTranslationReview(false); }}>Keep saved translations</Button><Button onPress={() => { setReviewedDraft(draft); setTranslationReview(false); }}>Use proposed translations</Button></>}>

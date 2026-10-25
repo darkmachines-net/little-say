@@ -2,6 +2,7 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import * as Crypto from 'expo-crypto';
 import { proposalSchema, translationEnvelopeSchema, type TranslationRequest, type BoardProposal, type ProposalRequest } from '@little-say/core';
 import { resolveBackendUrl } from './backendConfig';
 
@@ -43,15 +44,38 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     throw error;
   } finally { clearTimeout(timeout); externalSignal?.removeEventListener('abort', cancel); }
 }
-/** Negotiate picture support, then schema-check an AI proposal without applying it to the saved library. */
+/**
+ * Negotiate picture support, then schema-check a proposal without applying it to the saved library.
+ * Health preparation.version=1 permits a caller-generated UUID preparationId alongside pictures.version=1;
+ * aborting also cancels that batch before a proposal returns. Capability discovery is cached per backend
+ * session. Older peers retain the original picture/proposal protocol.
+ */
 export async function proposeBoard(url: string, request: ProposalRequest, signal?: AbortSignal): Promise<BoardProposal> {
   let input = request;
   if (request.pictureCapability) {
-    const health = await apiFetch(url, '/api/health', {}, signal);
-    if (health.pictures?.version !== 1) { const { pictureCapability: _capability, picturePolicy: _policy, ...legacy } = request; input = legacy; }
+    const health = await serverCapabilities(url, signal);
+    if (signal?.aborted) throw new Error('Request cancelled.');
+    if (health.pictures?.version !== 1) { const { pictureCapability: _capability, picturePolicy: _policy, preparationId: _id, previousPreparationId: _previous, ...legacy } = request; input = legacy; }
+    else if (health.preparation?.version === 1) input = { ...request, preparationId: request.preparationId ?? Crypto.randomUUID() };
   }
-  const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal);
-  return proposalSchema.parse(response);
+  const cancel = () => { if (input.preparationId) void apiFetch(url, `/api/pictures/batches/${input.preparationId}/cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {}); };
+  signal?.addEventListener('abort', cancel, { once: true });
+  try {
+    const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal);
+    if (signal?.aborted) { cancel(); throw new Error('Request cancelled.'); }
+    return proposalSchema.parse(response);
+  } catch (error) { cancel(); throw error; }
+  finally { signal?.removeEventListener('abort', cancel); }
+}
+
+type Capabilities = { pictures?: { version?: number }; preparation?: { version?: number } };
+const capabilities = new Map<string, Capabilities>();
+/** Cache successful capability discovery per backend session; failed or cancelled reads remain retryable. */
+async function serverCapabilities(url: string, signal?: AbortSignal): Promise<Capabilities> {
+  const key = backendUrl(url); const known = capabilities.get(key); if (known) return known;
+  const result = await apiFetch(url, '/api/health', {}, signal) as Capabilities;
+  if (!signal?.aborted) capabilities.set(key, result);
+  return result;
 }
 /**
  * Request and schema-check a translation envelope for the supplied board revision and missing

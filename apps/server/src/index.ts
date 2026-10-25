@@ -1,6 +1,6 @@
 /**
- * @file Loads server environment, wires OpenAI and durable speech/picture caches, and starts the HTTP
- * listener. Firebase configuration enables Postgres-backed accounts and a schema check before listen;
+ * @file Loads server environment, wires standard board preparation and durable speech/picture caches,
+ * and starts the HTTP listener. Firebase enables Postgres-backed accounts and a schema check before listen;
  * guest-only startup creates no pool. Migrations are an explicit operator command, never startup work.
  */
 
@@ -15,6 +15,8 @@ import { openAIPictureProvider } from './pictures/provider';
 import { Accounts } from './accounts/store';
 import { createDatabase, checkDatabase } from './database';
 import { FirebaseIdentity } from './accounts/firebase';
+import { GenericContent } from './generic-content';
+import { BoardPreparation } from './board-preparation';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true });
 config({ quiet: true });
 const accountsEnabled = Boolean(process.env.FIREBASE_PROJECT_ID || process.env.FIREBASE_AUTH_EMULATOR_HOST);
@@ -24,14 +26,20 @@ let auth: FirebaseIdentity | undefined;
 let app: Awaited<ReturnType<typeof createServer>> | undefined;
 try {
   auth = accountsEnabled ? new FirebaseIdentity() : undefined;
+  const pictureDirectory = resolve(process.env.PICTURE_CACHE_DIR || '../../.cache/pictures');
+  const provider = openAIProvider(process.env, metric => console.info(JSON.stringify({ service: 'boards', ...metric })));
+  const pictures = new PictureJobs(pictureDirectory, openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false');
+  const speechCache = new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env)));
+  // Preparation is standard when AI is configured. Private batches and the generic index use separate
+  // filesystem directories; guest preparation does not require an account database or migration.
+  const preparation = provider?.prepare ? new BoardPreparation(resolve(pictureDirectory, 'batches'), provider, pictures, new GenericContent(resolve(pictureDirectory, 'generic-v1')), speechCache, Number(process.env.PICTURE_GENERATION_CONCURRENCY || 6), metric => console.info(JSON.stringify({ service: 'preparation', ...metric }))) : undefined;
   app = await createServer({
   database,
   auth,
-  provider: openAIProvider(process.env),
+  provider, preparation,
   accounts: auth && database ? new Accounts(database) : undefined,
   secureCookies: process.env.NODE_ENV === 'production',
-  pictures: new PictureJobs(resolve(process.env.PICTURE_CACHE_DIR || '../../.cache/pictures'), openAIPictureProvider(process.env, metric => console.info(JSON.stringify({ service: 'pictures', ...metric }))), process.env.AAC_IMAGE_GENERATION !== 'false'),
-  speechCache: new SpeechCache(resolve(process.env.SPEECH_CACHE_DIR || '../../.cache/speech'), speechProfile(process.env), openAISynthesis(process.env, speechProfile(process.env))),
+  pictures, speechCache,
   origins: process.env.ALLOWED_ORIGINS?.split(',').map(value => value.trim()).filter(Boolean),
   webRoot: process.env.WEB_ROOT,
   logger: true,

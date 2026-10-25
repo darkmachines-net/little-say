@@ -205,7 +205,7 @@ describe('shared catalog download cancellation', () => {
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="orange"/></svg>';
     vi.stubGlobal('fetch', vi.fn((_url, init: RequestInit) => new Promise<Response>((resolve, reject) => { signals.push(init.signal!); releases.push(() => outcome === 'reject' ? reject(new Error('Source unavailable')) : resolve(new Response(svg, { headers: { 'Content-Type': 'image/svg+xml' } }))); })));
     const { jobs, provider } = await service({ select: vi.fn(async (_concept, candidates) => candidates[0]?.id ?? null) });
-    const requests = [0, 1, 2].map(() => ({ ...input(), mode: 'auto' as const, concept: { ...input().concept, description: 'cow', searchTerms: ['cow'] } }));
+    const requests = [0, 1, 2].map(() => ({ ...input(), mode: 'auto' as const, concept: { ...input().concept, description: 'tractor', searchTerms: ['tractor'] } }));
     const independent = input();
     try {
       const cancelledBeforeStart = { ...requests[0], requestId: randomUUID() };
@@ -213,7 +213,7 @@ describe('shared catalog download cancellation', () => {
       expect((await jobs.start(cancelledBeforeStart)).state).toBe('cancelled');
       expect(globalThis.fetch).not.toHaveBeenCalled();
       for (const request of [...requests, independent]) await jobs.start(request);
-      const sources = searchPictures('cow', 'color', 4).length;
+      const sources = searchPictures('tractor', 'color', 4).length;
       await vi.waitFor(() => expect(releases).toHaveLength(sources));
       expect((await jobs.status(requests[2].requestId))?.state).toBe('queued');
       await Promise.all(requests.slice(0, 2).map(request => jobs.cancel(request.requestId)));

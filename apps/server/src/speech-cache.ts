@@ -51,6 +51,19 @@ export class SpeechCache {
     return task;
   }
 
+  /** Look up verified clips without starting synthesis, including when generation is saturated or disabled. */
+  async lookup(inputs: SpeechInput[]): Promise<(SpeechInput & { id: string })[]> {
+    const normalized = [...new Map(inputs.map(raw => { const input = speechInputSchema.parse(raw); return [JSON.stringify(input), input]; })).values()];
+    const results = await Promise.all(normalized.map(async input => {
+      const key = hash(JSON.stringify({ ...input, ...this.profile }));
+      try {
+        const id = speechAssetIdSchema.parse(JSON.parse(await readFile(join(this.directory, `${key}.json`), 'utf8')).id);
+        return await this.read(id) ? { ...input, id } : null;
+      } catch (error) { if (missing(error) || error instanceof SyntaxError || (error as Error).name === 'ZodError') return null; throw error; }
+    }));
+    return results.filter(result => result !== null);
+  }
+
   private async atomicWrite(path: string, data: Buffer | string) {
     const temporary = `${path}.${randomUUID()}.tmp`;
     try { await writeFile(temporary, data); await rename(temporary, path); }
