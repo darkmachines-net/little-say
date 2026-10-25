@@ -38,7 +38,9 @@
     "db:status": "npm run db:status -w @little-say/server",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:services": "firebase emulators:exec --only auth --project demo-little-say \"npm run test:integration\"",
-    "test:accounts:web": "playwright test --config playwright.accounts.config.ts"
+    "test:accounts:web": "playwright test --config playwright.accounts.config.ts",
+    "preview": "expo-release preview",
+    "dev:native": "expo-release dev"
   },
   "engines": {
     "node": "^22.14.0 || ^24.3.0 || ^26.0.0 || >=27.0.0"
@@ -51,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#2fdd2113d71dbc2720e67dac55b8928a6d58974c",
+    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#4112ce687e22180066b255a4d6ae9b4e0c8d4b2f",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
     "@playwright/test": "1.63.0",

@@ -5,14 +5,31 @@
     "requireCommit": true
   },
   "build": {
-    "internal": {
-      "channel": "internal",
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "environment": "preview",
+      "autoIncrement": false,
+      "credentialsSource": "remote",
+      "env": {
+        "LITTLE_SAY_CHANNEL": "beta",
+        "EXPO_RELEASE_VARIANT": "development"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "beta": {
+      "channel": "beta",
       "environment": "preview",
       "distribution": "store",
       "autoIncrement": true,
       "credentialsSource": "remote",
       "env": {
-        "LITTLE_SAY_CHANNEL": "internal"
+        "LITTLE_SAY_CHANNEL": "beta"
       },
       "android": {
         "buildType": "app-bundle"
@@ -36,7 +53,7 @@
     }
   },
   "submit": {
-    "internal": {
+    "beta": {
       "android": {
         "track": "internal",
         "releaseStatus": "completed"
@@ -47,7 +64,7 @@
     },
     "production": {
       "android": {
-        "track": "internal",
+        "track": "production",
         "releaseStatus": "draft"
       },
       "ios": {

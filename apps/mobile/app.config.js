@@ -3,7 +3,7 @@
  * contract.
  */
 
-const { runtimeVersion } = require('@mchartier/expo-release/expo');
+const { runtimeVersion, developmentConfig } = require('@mchartier/expo-release/expo');
 const release = require('../../native-release.json');
 const colors = require('./assets/brand/colors.json');
 
@@ -12,8 +12,8 @@ const colors = require('./assets/brand/colors.json');
  * channels.
  */
 module.exports = ({ config }) => {
-  const channel = process.env.LITTLE_SAY_CHANNEL || 'internal';
-  if (!['internal', 'production'].includes(channel)) throw new Error('Unknown update channel.');
+  const channel = process.env.LITTLE_SAY_CHANNEL || 'beta';
+  if (!['beta', 'production'].includes(channel)) throw new Error('Unknown update channel.');
   const projectId = release.expoProjectId;
   // The native Google SDK autolinks even without an OAuth scheme. In that case the Nitro
   // plugin is absent, so supply only the module maps required by its Swift AppCheck dependency.
@@ -23,7 +23,7 @@ module.exports = ({ config }) => {
       { name: 'GoogleUtilities', modular_headers: true },
       { name: 'RecaptchaInterop', modular_headers: true },
     ] } }];
-  return {
+  return developmentConfig({
     ...config,
     version: release.version,
     icon: './assets/brand/app-icon.png',
@@ -49,5 +49,5 @@ module.exports = ({ config }) => {
       serverUrl: release.serverUrl || '',
       ...(projectId ? { eas: { projectId } } : {}),
     },
-  };
+  });
 };
