@@ -1,5 +1,5 @@
 /**
- * @file Verifies touch hit testing, latest-pending speech, parent exit timing, and responsive grid
+ * @file Verifies touch hit testing, latest-pending speech, one-second parent hold timing, and responsive grid
  * layout.
  */
 
@@ -54,15 +54,15 @@ describe('bounded speech', () => {
   });
 });
 describe('parent hold and fixed layout', () => {
-  it('requires a full stationary hold and release', () => {
-    const gate = new ParentExitGesture(); gate.down(1, { x: 0, y: 0 }, 0); expect(gate.up(1, 1999)).toBe(false);
-    gate.down(1, { x: 0, y: 0 }, 3000); expect(gate.up(1, 5000)).toBe(true); expect(gate.up(1, 6000)).toBe(false);
+  it('requires the full one-second threshold before consuming a stationary hold', () => {
+    const gate = new ParentExitGesture(); gate.down(1, { x: 0, y: 0 }, 0); expect(gate.up(1, 999)).toBe(false);
+    gate.down(1, { x: 0, y: 0 }, 3000); expect(gate.up(1, 4000)).toBe(true); expect(gate.up(1, 6000)).toBe(false);
   });
   it('uses one latched readiness state for feedback and release', () => {
     const gate = new ParentExitGesture(); gate.down(1, { x: 0, y: 0 }, 1000);
-    expect(gate.advance(2999)).toBe('holding'); expect(gate.remaining(2999)).toBe(1);
-    expect(gate.advance(3000)).toBe('ready'); expect(gate.remaining(3000)).toBe(0);
-    expect(gate.up(1, 2999)).toBe(true); // Readiness cannot disagree with a later clock sample.
+    expect(gate.advance(1999)).toBe('holding'); expect(gate.remaining(1999)).toBe(1);
+    expect(gate.advance(2000)).toBe('ready'); expect(gate.remaining(2000)).toBe(0);
+    expect(gate.up(1, 1999)).toBe(true); // Readiness cannot disagree with a later clock sample.
     expect(gate.state).toBe('idle');
     gate.down(1, { x: 0, y: 0 }, 4000); gate.move(1, { x: 13, y: 0 });
     expect(gate.advance(6000)).toBe('idle'); expect(gate.up(1, 6000)).toBe(false);
