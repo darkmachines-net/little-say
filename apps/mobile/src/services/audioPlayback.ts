@@ -1,16 +1,17 @@
-/** @file Adapts Expo audio players to the shared speech-driver contract. */
+/** @file Adapts Expo audio players on iOS; Android uses the session-free platform implementation. */
 
 import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import { type SpeechDriver } from '@little-say/core';
 
 /**
- * Create a native clip driver with a load timeout and silent-mode playback. Stop releases the owned
+ * Create an iOS clip driver with a load timeout and silent-mode playback. Stop releases the owned
  * player and suppresses late callbacks.
  */
 export function audioPlayback(): SpeechDriver<string> {
   let cleanup: (() => void) | undefined;
   const stop = () => { const dispose = cleanup; cleanup = undefined; dispose?.(); };
   return {
+    /** Replace this driver's clip and report completion or failure only while its request remains active. */
     speak(uri, done, failed) {
       stop();
       const player = createAudioPlayer({ uri }, { updateInterval: 100 });
@@ -32,6 +33,7 @@ export function audioPlayback(): SpeechDriver<string> {
         if (active) player.play();
       }).catch(() => { if (active) failed(); });
     },
+    /** Release the owned clip and suppress callbacks from cancelled playback. */
     stop,
   };
 }
