@@ -88,7 +88,7 @@ export class LatestSpeechQueue<T> {
   }
 }
 
-export const PARENT_HOLD_MS = 2000;
+export const PARENT_HOLD_MS = 1000;
 export type ParentHoldState = 'idle' | 'holding' | 'ready';
 export class ParentExitGesture {
   private contact: { id: number | string; point: Point; time: number; ready: boolean } | null = null;
@@ -116,7 +116,7 @@ export class ParentExitGesture {
   move(id: number | string, point: Point) {
     if (this.contact?.id === id && Math.hypot(point.x - this.contact.point.x, point.y - this.contact.point.y) > 12) this.cancel();
   }
-  /** Return whether the matching contact is ready at release time, then clear the hold state. */
+  /** Consume a matching ready contact from the timer or release fallback, then clear the hold state. */
   up(id: number | string, time: number): boolean {
     const valid = this.contact?.id === id && this.advance(time) === 'ready';
     this.cancel(); return Boolean(valid);

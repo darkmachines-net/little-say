@@ -1,5 +1,5 @@
 /**
- * @file Exercises board editing and play, safe modal dismissal, navigation protection, responsive
+ * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
  * layouts, and offline browser behavior.
  */
 
@@ -28,9 +28,12 @@ async function setupSpeech(page: Page) {
 }
 async function finishSpeech(page: Page) { await page.evaluate(() => (window as any).__utterances.shift()?.onend?.({})); }
 async function leaveBoard(page: Page) {
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2); await page.mouse.down();
-  await expect(control).toHaveText('Release to edit', { timeout: 3500 }); await page.mouse.up();
+  await expect(page.getByTestId('board-back')).toBeVisible(); await page.mouse.up();
+  await expect(page.getByTestId('play-board')).toBeVisible();
+  await page.getByTestId('board-back').click();
   await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 }
 test.beforeEach(async ({ page }) => { await setupSpeech(page); await openExistingLibrary(page); });
@@ -43,17 +46,19 @@ test.describe('outside modal dismissal', () => {
     await page.screenshot({ path: `${directory}/${name}-${width}.png`, animations: 'disabled' });
   }
   for (const viewport of [{ width: 390, height: 700 }, { width: 1180, height: 900 }]) {
-    test(`hold opens editing directly and return remains idle at ${viewport.width}px`, async ({ page, context }) => {
+    test(`hold reveals back and return remains idle at ${viewport.width}px`, async ({ page, context }) => {
       await page.setViewportSize(viewport);
       await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
       const session = await context.newCDPSession(page);
       for (let attempt = 0; attempt < 2; attempt++) {
         // Complete the screen's entry focus before starting a hold that blur must cancel.
         await expect(page.getByTestId('play-board').getByRole('heading')).toBeFocused();
+        if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
         const control = page.getByTestId('parent-control'); const bounds = (await control.boundingBox())!;
         await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2, id: 1 }] });
-        await expect(control).toHaveText('Release to edit', { timeout: 3500 });
+        await expect(page.getByTestId('board-back')).toBeVisible();
         await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await page.getByTestId('board-back').click();
         await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
         await expect(page.getByText('Leave this board?')).toHaveCount(0);
         await page.getByRole('button', { name: 'Return to play', exact: true }).click();
@@ -267,7 +272,7 @@ test('complete emoji search finds blueberries for a plum card and persists offli
   await expect(blueberries).toBeVisible();
 });
 
-test('swipes are forgiving, speech is bounded, and parent editing needs a deliberate hold and release', async ({ page }) => {
+test('swipes are forgiving, speech is bounded, and locked navigation needs an unlock then back', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   const cow = (await page.getByRole('button', { name: 'Cow', exact: true }).boundingBox())!;
   const sheep = (await page.getByRole('button', { name: 'Sheep', exact: true }).boundingBox())!;
@@ -282,7 +287,9 @@ test('swipes are forgiving, speech is bounded, and parent editing needs a delibe
   await page.mouse.move(cow.x + cow.width + 6, cow.y + 30); await page.mouse.down();
   await page.mouse.move(sheep.x + 30, sheep.y + 30); await page.mouse.up();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1).text)).toBe('Sheep');
+  await page.getByTestId('board-lock').click();
   await page.getByTestId('parent-control').click(); await expect(page.getByText('Leave this board?')).toHaveCount(0);
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = (await page.getByTestId('parent-control').boundingBox())!;
   await page.mouse.move(control.x + 20, control.y + 20); await page.mouse.down(); await page.mouse.move(control.x - 20, control.y + 20);
   await page.waitForTimeout(2100); await page.mouse.up(); await expect(page.getByText('Leave this board?')).toHaveCount(0);
@@ -290,53 +297,56 @@ test('swipes are forgiving, speech is bounded, and parent editing needs a delibe
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
 
-test('unlock readiness matches release at the boundary and cancelled holds reset immediately', async ({ page }) => {
+test('unlock completes automatically at one second and cancelled holds reset immediately', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
   // The measured grid's first layout cancels active holds. Let it finish before freezing time.
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
   await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));
-  const down = async () => { const box = (await control.boundingBox())!; await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); await expect(control).toHaveText('Keep holding…'); return box; };
-  await down(); await page.clock.runFor(1999);
-  await expect(control).toHaveText('Keep holding…'); await page.mouse.up();
+  const down = async () => { const box = (await control.boundingBox())!; await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…'); return box; };
+  await down(); await page.clock.runFor(999);
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…'); await page.mouse.up();
   await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
   for (let i = 0; i < 3; i++) {
-    await down(); await page.clock.runFor(1999); await expect(control).toHaveText('Keep holding…');
-    await page.clock.runFor(1); await expect(control).toHaveText('Release to edit');
-    await page.mouse.up(); await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Return to play', exact: true }).click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
+    await down(); await page.clock.runFor(999); await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
+    await page.clock.runFor(1); await expect(page.getByTestId('board-back')).toBeVisible();
+    await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Return to play', exact: true }).click(); await page.getByTestId('board-lock').click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
   }
-  for (const elapsed of [1500, 2000]) {
+  for (const elapsed of [500, 999]) {
     const box = await down(); await page.clock.runFor(elapsed);
     await page.mouse.move(box.x + 40, box.y + 20);
-    await expect(control).toHaveText('Hold to unlock');
-    await page.clock.runFor(3000); await expect(control).toHaveText('Hold to unlock');
+    await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
+    await page.clock.runFor(3000); await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
     await page.mouse.up(); await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
   }
 });
 
-test('another touch cancels the ready unlock state without leaving stale feedback', async ({ page, context }) => {
+test('another touch cancels a pending unlock without leaving stale feedback', async ({ page, context }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   // Let the initial board layout finish before freezing timers; layout resets the hold gesture.
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
+  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
   await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));
   const box = (await control.boundingBox())!, x = Math.round(box.x + 20), y = Math.round(box.y + 20);
   const session = await context.newCDPSession(page);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
-  await expect(control).toHaveText('Keep holding…');
-  await page.clock.runFor(2000); await expect(control).toHaveText('Release to edit');
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
+  await page.clock.runFor(500);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }, { x: x + 40, y, id: 2 }] });
-  await expect(control).toHaveText('Hold to unlock');
-  await page.clock.runFor(3000); await expect(control).toHaveText('Hold to unlock');
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
+  await page.clock.runFor(3000); await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 3 }] });
-  await expect(control).toHaveText('Keep holding…');
-  await page.clock.runFor(2000); await expect(control).toHaveText('Release to edit');
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
+  await page.clock.runFor(1000); await expect(page.getByTestId('board-back')).toBeVisible();
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.getByTestId('board-back').click();
   await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 });
 
@@ -355,7 +365,7 @@ test('tap feedback never steals the playing highlight during repeated queued tap
   const sheep = page.getByRole('button', { name: 'Sheep', exact: true });
   const horse = page.getByRole('button', { name: 'Horse', exact: true });
   await expect(cow).toBeVisible();
-  await expect(page.getByTestId('parent-control')).toHaveText('Hold to unlock');
+  await expect(page.getByTestId('board-back')).toBeVisible();
   await expect(page.getByText('Touch a picture. Hear a word.')).toHaveCount(0);
   await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
   await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));

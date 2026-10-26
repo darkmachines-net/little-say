@@ -14,10 +14,7 @@ async function savedLibrary(page: Page) {
   });
 }
 async function leaveBoard(page: Page) {
-  // Allow the screen's scheduled entry focus to finish before holding a keyboard control.
-  await expect(page.getByTestId('play-board').getByRole('heading')).toBeFocused();
-  await page.getByTestId('parent-control').focus(); await page.keyboard.down('Enter');
-  await expect(page.getByTestId('parent-control')).toHaveText('Release to edit'); await page.keyboard.up('Enter');
+  await page.getByTestId('board-back').click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 }

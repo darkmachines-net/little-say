@@ -1,10 +1,10 @@
-/** @file Shares one monotonic, cancellable two-second gate across pointer, keyboard and assistive input. */
+/** @file Shares a cancellable one-second automatic unlock and visible progress across all input methods. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
-import { ParentExitGesture, type ParentHoldState, type Point } from '@little-say/core';
+import { ParentExitGesture, PARENT_HOLD_MS, type ParentHoldState, type Point } from '@little-say/core';
 
-/** Require a ready release for contacts, or a cancellable timed assistive activation; reset on interruption. */
+/** Unlock once at the monotonic threshold without waiting for release; cancel early releases and interruptions. */
 export function useParentHold(cancelToken: number, onUnlock: () => void) {
   const gesture = useRef(new ParentExitGesture()).current;
   const contacts = useRef(new Set<number | string>());
@@ -14,9 +14,10 @@ export function useParentHold(cancelToken: number, onUnlock: () => void) {
   const unlock = useRef(onUnlock); unlock.current = onUnlock;
   const [state, setState] = useState<ParentHoldState>('idle');
   const [accessible, setAccessible] = useState(false);
+  const [progress, setProgress] = useState(0);
   const clearTimer = useCallback(() => { generation.current++; clearTimeout(timer.current); timer.current = undefined; }, []);
   /** Cancel the current attempt and any pending assistive activation. */
-  const cancel = useCallback(() => { clearTimer(); gesture.cancel(); if (accessibleAttempt.current) contacts.current.delete('accessibility'); accessibleAttempt.current = false; setAccessible(false); setState('idle'); }, [clearTimer, gesture]);
+  const cancel = useCallback(() => { clearTimer(); gesture.cancel(); if (accessibleAttempt.current) contacts.current.delete('accessibility'); accessibleAttempt.current = false; setAccessible(false); setState('idle'); setProgress(0); }, [clearTimer, gesture]);
   /** Forget all contacts and cancel the attempt after navigation or an interruption. */
   const reset = useCallback(() => { contacts.current.clear(); cancel(); }, [cancel]);
   useEffect(() => { reset(); return () => { clearTimer(); gesture.cancel(); }; }, [cancelToken, clearTimer, gesture, reset]);
@@ -39,20 +40,23 @@ export function useParentHold(cancelToken: number, onUnlock: () => void) {
       if (attempt !== generation.current) return;
       const now = performance.now();
       setState(gesture.advance(now));
-      if (gesture.state === 'ready' && accessibleAttempt.current) {
-        const valid = gesture.up('accessibility', now); reset();
+      setProgress(1 - gesture.remaining(now) / PARENT_HOLD_MS);
+      if (gesture.state === 'ready') {
+        const valid = gesture.up(id, now); cancel();
         if (valid) unlock.current();
         return;
       }
-      // A timer can run early; the same clock validates both feedback and release.
-      if (gesture.state === 'holding') timer.current = setTimeout(update, Math.max(1, gesture.remaining(now)));
+      // Sample progress without allowing early timers or wall-clock changes to shorten the hold.
+      if (gesture.state === 'holding') timer.current = setTimeout(update, Math.max(1, Math.min(16, gesture.remaining(now))));
     };
-    timer.current = setTimeout(update, gesture.remaining(performance.now()));
+    timer.current = setTimeout(update, Math.min(16, gesture.remaining(performance.now())));
   };
   const move = (id: number | string, point: Point) => { gesture.move(id, point); if (gesture.state === 'idle') cancel(); };
   const up = (id: number | string) => {
+    // A delayed timer must not reject a contact that has already met the same monotonic threshold.
     const valid = contacts.current.size === 1 && gesture.up(id, performance.now());
-    contacts.current.delete(id); cancel(); return valid;
+    contacts.current.delete(id); cancel();
+    if (valid) unlock.current();
   };
   const cancelContact = (id: number | string) => { contacts.current.delete(id); cancel(); };
   // Assistive activation has no reliable press duration. It starts the same timed gate,
@@ -62,5 +66,5 @@ export function useParentHold(cancelToken: number, onUnlock: () => void) {
     reset(); down('accessibility', { x: 0, y: 0 });
     accessibleAttempt.current = true; setAccessible(true);
   };
-  return { state, accessible, label: accessible ? 'Unlocking. Activate to cancel.' : state === 'ready' ? 'Release to edit' : state === 'holding' ? 'Keep holding…' : 'Hold to unlock', down, move, up, cancel, reset, cancelContact, activateAccessible };
+  return { state, accessible, progress, label: accessible ? 'Unlocking. Activate to cancel.' : state === 'holding' ? 'Unlocking…' : 'Locked · hold 1 s to unlock', down, move, up, cancel, reset, cancelContact, activateAccessible };
 }

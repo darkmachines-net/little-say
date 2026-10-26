@@ -263,9 +263,7 @@ test('direct play entry inherits Russian and returns with corrected speech while
   await openTranslations(page);
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
-  const control = page.getByTestId('parent-control'), box = (await control.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
-  await expect(control).toHaveText('Release to edit'); await page.mouse.up();
+  await page.getByTestId('board-back').click();
   await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
   await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('коровушка');
   await page.getByRole('button', { name: 'Listen to translation', exact: true }).click();

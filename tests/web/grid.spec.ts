@@ -108,11 +108,12 @@ test('rotation preserves speech and cancels contacts measured against the old gr
   await buttons.last().click();
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Word 1', 'Word 2', 'Word 5']);
 
+  await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control');
   const hold = (await control.boundingBox())!;
   await page.mouse.move(hold.x + hold.width / 2, hold.y + hold.height / 2); await page.mouse.down();
   await page.setViewportSize(viewports[1]);
-  await expect(control).toHaveText('Hold to unlock'); await page.mouse.up();
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock'); await page.mouse.up();
   await expect(page.getByRole('heading', { name: 'Leave this board?' })).toHaveCount(0);
 });
 
