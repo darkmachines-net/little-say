@@ -47,7 +47,7 @@ Use EAS/store tooling for store review and later promotions. The integration has
 
 ## Development previews
 
-Run **Development → build** from master to build a separate Little Say Dev phone app after configuring its EAS signing. The development application ID is net.darkmachines.littlesay.development. Android uses an APK; iOS uses registered-device ad hoc distribution. This build is independent of beta and production releases and has no persistent OTA channel.
+Run **Development → build** from master to build a separate Little Say Dev phone app after configuring its EAS signing. The development application ID is net.darkmachines.littlesay.development. Android uses an APK; iOS uses registered-device ad hoc distribution. This build is independent of beta and production releases and has no persistent OTA channel. Keep **Use workflow from** set to master; to include pending changes, set **Source** to their pushed branch name (for example, codex/android-tile-audio) or full commit SHA. A blank Source builds the master dispatch commit.
 
 With that app installed, run `npm run preview -- --platform android` (or ios) from your working copy before review. Uncommitted edits are included. Open the printed EAS dashboard link and scan its development-build preview QR code. Native changes require another development build; JavaScript-only changes reuse it. Use `npm run dev:native` for local Metro live reload. The [shared development contract](https://github.com/darkmachines-net/expo-release-template/blob/main/src/consumer/README.md#development-previews) owns setup, environment and compatibility details. EAS CLI 25.3.0 and EAS login are required locally.
 

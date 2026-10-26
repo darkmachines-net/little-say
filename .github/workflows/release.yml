@@ -9,6 +9,6 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@4112ce687e22180066b255a4d6ae9b4e0c8d4b2f
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@44f6e1466cabf5f8a80378701307472f4414a3fd
     with: { profile: '${{ inputs.profile }}', rebuild: '${{ inputs.rebuild }}' }
     secrets: inherit
