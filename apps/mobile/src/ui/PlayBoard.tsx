@@ -1,6 +1,6 @@
 /**
  * @file Coordinates child playback, independent touch and speech feedback, board languages, and optional
- * locking with fixed header slots, visible hold progress, and explicit back navigation.
+ * locking with fixed header slots, visible hold progress, and lock-aware Android back navigation.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,6 +21,7 @@ import { styles, theme } from './theme';
 /**
  * Fit the board to the available screen, queue tile speech, and keep language and exit actions in the
  * header. Open unlocked; a tap locks navigation and a one-second hold automatically reveals back.
+ * Android Back returns to the editor while unlocked and is consumed without leaving while locked.
  * Stop playback when the app backgrounds, the web page hides, or the screen unmounts.
  */
 export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChange, onEdit }: { board: Board; settings: Settings; voices: Voice[]; audioAsset: (tile: Tile) => SpeechAsset | undefined; onLanguageChange: (language: string) => Promise<void>; onEdit: (snapshot: BoardSnapshot | null) => void }) {
@@ -48,9 +49,8 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   const tiles = useMemo(() => board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false)), [board.tiles, board.translateLabels, language]);
   const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and selected voice in Settings.'), audioAsset, tag => speechSource(settings, tag)), [voices, settings, audioAsset]);
   useEffect(() => {
-    const back = BackHandler.addEventListener('hardwareBackPress', () => true);
     const appState = AppState.addEventListener('change', state => { if (state !== 'active') { queue.stop(); clearTimeout(flashTimer.current); setFlash(null); setCancelToken(t => t + 1); } });
-    return () => { back.remove(); appState.remove(); queue.stop(); clearTimeout(flashTimer.current); };
+    return () => { appState.remove(); queue.stop(); clearTimeout(flashTimer.current); };
   }, [queue]);
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -70,7 +70,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
     setFlash(id); clearTimeout(flashTimer.current); flashTimer.current = setTimeout(() => setFlash(null), 180);
     queue.enqueue(tile);
   }, [tiles, queue]);
-  const edit = () => {
+  const edit = useCallback(() => {
     if (leaving.current) return;
     leaving.current = true;
     queue.stop(); clearTimeout(flashTimer.current); setFlash(null); setCancelToken(t => t + 1);
@@ -82,7 +82,14 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
     // Navigation still works if an interrupted native measurement never returns.
     measureTimer.current = setTimeout(() => deliver(null), 100);
     surface.current?.measureInWindow((x, y, measuredWidth, measuredHeight) => deliver({ x, y, width: measuredWidth, height: measuredHeight, rects, tiles, viewport: { width, height } }));
-  };
+  }, [queue, onEdit, rects, tiles, width, height]);
+  useEffect(() => {
+    const back = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!locked) edit();
+      return true;
+    });
+    return () => back.remove();
+  }, [locked, edit]);
   return <View style={[styles.page, { paddingHorizontal: 16, paddingBottom: 16 }]} testID="play-board" onTouchStart={event => { if (event.nativeEvent.touches.length > 1) setCancelToken(t => t + 1); }}>
     <StatusBar hidden />
     <View testID="board-header" style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
