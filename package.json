@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#44f6e1466cabf5f8a80378701307472f4414a3fd",
+    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#528d5cd05a88d82247109d0599c3fce9eaf3e9f3",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
     "@playwright/test": "1.63.0",

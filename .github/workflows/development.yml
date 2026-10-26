@@ -1,14 +1,14 @@
-# Run the trusted workflow from master; Source selects the branch or commit for the development app.
+# Build a development client with its matching hosted preview; Source selects the app branch or commit.
 name: Development
 on:
   workflow_dispatch:
     inputs:
-      operation: { description: Build a dev client or publish a hosted preview, type: choice, options: [build, update], default: build, required: true }
+      operation: { description: 'Build a dev client with a preview, or update an existing client', type: choice, options: [build, update], default: build, required: true }
       platform: { description: Phone platform, type: choice, options: [android, ios], default: android, required: true }
       source: { description: App source branch or full commit SHA; blank uses master, type: string, default: '' }
 permissions: { contents: read }
 jobs:
   development:
-    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@44f6e1466cabf5f8a80378701307472f4414a3fd
+    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@528d5cd05a88d82247109d0599c3fce9eaf3e9f3
     with: { operation: '${{ inputs.operation }}', platform: '${{ inputs.platform }}', source: '${{ inputs.source }}' }
     secrets: inherit
