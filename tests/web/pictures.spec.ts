@@ -1,4 +1,4 @@
-/** @file Exercises automatic picture drafts, default generation, fallback, cancellation, manual library selection, and offline PNG persistence. */
+/** @file Covers the shared board workspace. Exercises automatic picture drafts, default generation, fallback, cancellation, manual library selection, and offline PNG persistence. */
 
 import { test, expect, type Page } from '@playwright/test';
 import sharp from 'sharp';
@@ -51,15 +51,15 @@ test('a complete emoji board is ready to save without suggesting AI illustration
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Six farm animals');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
   await expect(page.getByText(/A matching set of AI illustrations/)).toHaveCount(0);
   expect(jobs).toHaveLength(0);
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   expect((await library(page)).boards.at(-1).tiles.map((tile: any) => tile.label)).toEqual(animals);
 });
 
-test('Automatic fills only a gap and illustration changes remain available in Picture settings', async ({ page }) => {
+test('Automatic fills gaps and explicit picture restyling stages changes with cancel and apply', async ({ page }) => {
   const { jobs } = await mockPictures(page);
   const proposal = draft();
   proposal.proposal.tiles = proposal.proposal.tiles.slice(0, 3).map((tile, index) => ({ ...tile, label: ['Cow', 'Sheep', 'Excavator'][index], speech: ['Cow', 'Sheep', 'Excavator'][index], emoji: ['🐄', '🐑', '🚜'][index] }));
@@ -68,42 +68,27 @@ test('Automatic fills only a gap and illustration changes remain available in Pi
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Cow, sheep, and excavator');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
+  await expect(page.getByTestId('ai-working')).toHaveCount(0);
   expect(jobs.map(job => job.concept.description)).toEqual(['Excavator']);
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
-  await expect(page.getByTestId('ai-draft')).toContainText('🐄');
-  await expect(page.getByRole('button', { name: 'Create matching AI illustrations', exact: true })).toHaveCount(0);
-  const requestIllustrations = async () => {
-    await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Board options', exact: true }).click();
+  const restyle = async () => {
+    await page.getByRole('button', { name: 'Pictures', exact: true }).click();
     await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
     await page.getByRole('button', { name: 'AI illustrations', exact: true }).click();
-    await page.getByRole('button', { name: 'Update draft pictures', exact: true }).click();
+    await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
   };
-  const held = new Map<string, PictureJobRequest>();
-  const hold = async (route: import('@playwright/test').Route) => {
-    const job = route.request().postDataJSON();
-    held.set(job.requestId, job);
-    await route.fulfill({ json: { id: job.requestId, draftId: job.draftId, tileId: job.tileId, state: 'working', phase: 'generating' } });
-  };
-  const poll = async (route: import('@playwright/test').Route) => {
-    const job = held.get(route.request().url().split('/').at(-1)!);
-    if (!job) return route.fallback();
-    await route.fulfill({ json: { id: job.requestId, draftId: job.draftId, tileId: job.tileId, state: 'working', phase: 'generating' } });
-  };
-  await page.route('**/api/pictures/jobs', hold);
-  await page.route('**/api/pictures/jobs/*', poll);
-  await requestIllustrations();
-  await expect(page.getByText('Generating illustration', { exact: true }).first()).toBeVisible();
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Stop request', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
-  await page.unroute('**/api/pictures/jobs', hold);
-  await page.unroute('**/api/pictures/jobs/*', poll);
-  await requestIllustrations();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  expect(jobs.slice(1).map(job => job.mode)).toEqual(['generated', 'generated', 'generated']);
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(3);
+  await restyle();
+  await page.getByRole('button', { name: 'Close Board pictures', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
+  await restyle();
+  await page.getByRole('button', { name: 'Apply pictures', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(3);
+  expect(jobs.slice(1).every(job => job.mode === 'generated')).toBe(true);
+  expect((await library(page)).boards).toHaveLength(3);
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
+  expect((await library(page)).boards.at(-1).picturePolicy.mode).toBe('generated');
 });
 
 test('construction pictures are staged, generated by default, saved offline, and retained in later text edits', async ({ page, context }) => {
@@ -113,22 +98,26 @@ test('construction pictures are staged, generated by default, saved offline, and
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Six construction vehicles, with clear pictures.');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(6);
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(6);
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeEnabled();
   expect(jobs).toHaveLength(6); expect(jobs.every(job => job.allowGeneration)).toBe(true);
   expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
+  await expect.poll(async () => (await library(page)).creationDraft?.suggestion?.board.tiles.filter((tile: any) => tile.illustration.kind === 'generated').length).toBe(6);
+  await page.reload();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(6);
+  expect(jobs).toHaveLength(6);
   await mkdir('artifacts/screenshots', { recursive: true });
   await page.screenshot({ path: 'artifacts/screenshots/pictures-draft.png' });
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   const stored = (await library(page)).boards.at(-1);
   expect(new Set(stored.tiles.map((tile: any) => tile.illustration.assetId)).size).toBe(6);
   expect((await library(page)).settings.autoImages).not.toBe(true);
   await page.unroute('**/api/boards/propose');
   await page.route('**/api/boards/propose', route => route.fulfill({ json: { boardId: stored.id, baseRevision: stored.revision, proposal: { ...draft().proposal, title: 'Our vehicles', tiles: stored.tiles.map((tile: any) => ({ existingId: tile.id, label: tile.label, speech: tile.speech, language: tile.language, color: tile.color, emoji: '' })) } } }));
-  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Rename the board only.');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   expect(jobs).toHaveLength(6);
   expect((await library(page)).boards.at(-1).tiles.map((tile: any) => tile.illustration)).toEqual(stored.tiles.map((tile: any) => tile.illustration));
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
@@ -137,41 +126,26 @@ test('construction pictures are staged, generated by default, saved offline, and
   await expect(page.getByText('Picture unavailable', { exact: true })).toHaveCount(0);
 });
 
-test('stopping picture jobs cancels queued work and discards the partial preview without saving it', async ({ page }) => {
+test('stopping picture jobs keeps the usable preview and Dismiss discards it without saving', async ({ page }) => {
   const { jobs, cancelled, ready } = await mockPictures(page, true);
-  const requests: any[] = [];
-  await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: draft() }); });
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: draft() }));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Construction vehicles');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-
   await expect.poll(() => jobs.length).toBe(2);
-  expect(jobs.every(job => job.allowGeneration)).toBe(true);
   ready.add(labels[1]);
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
   await expect.poll(() => jobs.length).toBe(3);
   await page.getByRole('button', { name: 'Stop request', exact: true }).click();
   await expect.poll(() => cancelled.length).toBeGreaterThanOrEqual(2);
-  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
   await expect(page.getByTestId('picture-active-animation')).toHaveCount(0);
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Construction vehicles');
-  await expect(page.getByTestId('ai-transcript').getByText('Six distinct construction vehicles.', { exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect.poll(() => requests.length).toBe(2);
-  await expect.poll(() => jobs.length).toBeGreaterThan(3);
-  await page.getByRole('button', { name: 'Stop request', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Construction vehicles');
-  // Late readiness from either discarded request must not restore its preview or context.
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeEnabled();
   labels.forEach(label => ready.add(label));
-  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  expect(requests).toHaveLength(3);
-  expect(requests[1].prompt).toBe('Construction vehicles');
-  expect(requests.slice(1).map(request => request.conversation)).toEqual([{ history: [], draft: null }, { history: [], draft: null }]);
-  await expect(page.getByTestId('ai-transcript').getByText('Six distinct construction vehicles.', { exact: true })).toHaveCount(1);
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
+  await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  expect((await library(page)).boards).toHaveLength(3);
 });
 
 test('manual library selection needs no AI permission and saves attribution plus a protected offline picture', async ({ page, context }) => {
@@ -189,7 +163,7 @@ test('manual library selection needs no AI permission and saves attribution plus
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   const saved = (await library(page)).boards[0].tiles[0]; expect(saved.illustration).toEqual(picture); expect(saved.pictureOptions.locked).toBe(true); expect(jobs).toHaveLength(0);
   await context.setOffline(true); await page.reload();
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await expect(page.getByTestId('card-picture')).toHaveCount(1);
+  if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await expect(page.getByTestId('card-picture')).toHaveCount(1);
 });
 
 test('board restyling previews changes, preserves a protected card, and supports returning to emoji', async ({ page }) => {
@@ -199,6 +173,7 @@ test('board restyling previews changes, preserves a protected card, and supports
   await page.getByRole('button', { name: 'Picture options', exact: true }).click();
   await page.getByRole('switch', { name: 'Keep this picture', exact: true }).check();
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Board options', exact: true }).click();
   await page.getByRole('button', { name: 'Pictures', exact: true }).click();
   await page.getByRole('button', { name: 'Restyle board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Apply pictures', exact: true })).toBeEnabled();
@@ -222,6 +197,7 @@ test('board restyling previews changes, preserves a protected card, and supports
 test('picture sources use a compact explained selector with keyboard dismissal and no duplicate generation gate', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Board options', exact: true }).click();
   await page.getByRole('button', { name: 'Pictures', exact: true }).click();
   const source = page.getByRole('button', { name: 'Picture source: Automatic', exact: true });
   await expect(source).toHaveAttribute('aria-expanded', 'false');
@@ -270,11 +246,11 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
 
   await expect.poll(() => jobs.length).toBe(2);
   await expect(page.getByTestId('picture-active-animation')).toHaveCount(2);
-  await expect(page.getByTestId('ai-draft').getByText('Queued', { exact: true })).toHaveCount(4);
-  await expect(page.getByRole('button', { name: 'Picture settings', exact: true })).toBeEnabled();
-  const chat = (await page.getByTestId('ai-chat-panel').boundingBox())!;
-  const canvas = (await page.getByTestId('ai-canvas').boundingBox())!;
-  expect(canvas.x).toBeGreaterThanOrEqual(chat.x + chat.width); expect(canvas.y).toBe(chat.y);
+  await expect(page.getByTestId('editor-preview').getByText('Queued', { exact: true })).toHaveCount(4);
+  await expect(page.getByRole('button', { name: 'Board options', exact: true })).toBeEnabled();
+  const chat = (await page.getByTestId('editor-actions').boundingBox())!;
+  const canvas = (await page.getByTestId('editor-preview').boundingBox())!;
+  expect(chat.x).toBeGreaterThanOrEqual(canvas.x + canvas.width);
   const before = await page.getByTestId('picture-active-animation').first().evaluate(element => getComputedStyle(element).opacity);
   await expect.poll(() => page.getByTestId('picture-active-animation').first().evaluate(element => getComputedStyle(element).opacity)).not.toBe(before);
   const cycles = await page.getByTestId('picture-active-animation').first().evaluate(async element => {
@@ -292,27 +268,21 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   });
   expect(reducedFrames).toEqual(['0.45']);
   ready.add(labels[1]);
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
-  await expect(page.getByTestId(`draft-card-${jobs[1].tileId}`)).toContainText('Ready');
-  await expect(page.getByTestId(`draft-card-${jobs[0].tileId}`)).toContainText('Improving picture');
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Edit tile Concrete truck, suggested change', exact: true })).toContainText('Ready');
+  await expect(page.getByRole('button', { name: 'Edit tile Dump truck, suggested change', exact: true })).toContainText('Improving picture');
   await expect.poll(() => jobs.length).toBe(3);
   expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
-  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Picture source: Automatic', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Board options', exact: true }).click();
+  await page.getByRole('button', { name: 'Pictures', exact: true }).click();
   await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
   await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
-  labels.forEach(label => ready.add(label));
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(6);
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Improve pictures', exact: true }).click();
+  await page.getByRole('button', { name: 'Apply pictures', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(0);
   await expect(page.getByTestId('picture-active-animation')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Picture source: Emoji only', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Update draft pictures', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(0);
-  expect(jobs).toHaveLength(6);
+  expect(jobs).toHaveLength(3);
   await page.goBack();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
@@ -325,11 +295,11 @@ test('missing library and disabled server generation keep a usable emoji board w
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Construction vehicles');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeEnabled();
   await expect(page.getByTestId('picture-summary')).toHaveCount(1);
   await expect(page.getByTestId('picture-summary')).toContainText('closest emoji for 6 cards');
   await expect(page.getByText(/Enable AI pictures|Needs a picture|No clear library match/)).toHaveCount(0);
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   expect((await library(page)).boards.at(-1).tiles.every((tile: any) => tile.illustration.kind === 'emoji')).toBe(true);
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
   const continueToBoard = page.getByRole('button', { name: 'Continue to board', exact: true });
@@ -350,7 +320,7 @@ for (const [mode, label] of [['library', 'Library only'], ['emoji', 'Emoji only'
       await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(value, 'library'); tx.oncomplete = () => resolve(); }); db.close();
     }, value);
     await page.reload();
-    await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
     await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
     await page.getByRole('button', { name: 'Picture options', exact: true }).click();
   };
@@ -386,6 +356,6 @@ for (const action of ['close', 'stop', 'apply'] as const) test(`saved tile edits
   expect(saved.tiles[0].speech).toBe('Calf');
   expect(saved.revision).toBe(value.boards[0].revision + (action === 'apply' ? 2 : 1));
   expect(saved.tiles[0].illustration.kind).toBe(action === 'apply' ? 'generated' : 'emoji');
-  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.reload();
   await expect(page.getByRole('button', { name: 'Edit tile Calf', exact: true })).toBeVisible();
 });

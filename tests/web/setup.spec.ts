@@ -1,4 +1,4 @@
-/** @file Exercises language-first onboarding, generated starter drafts, retries, and setup persistence. */
+/** @file Covers the shared board workspace. Exercises language-first onboarding, generated starter drafts, retries, and setup persistence. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { type ProposalRequest, type StarterTopic } from '../../packages/core/src/schema';
@@ -108,8 +108,11 @@ test('offline setup can save a regional preference and start empty without Engli
   const saved = await readLibrary(page);
   expect(saved.setup).toBeUndefined(); expect(saved.boards).toEqual([]);
   expect(saved.settings.languageProfile).toEqual({ languages: ['es-MX'], defaultLanguage: 'es-MX' });
-  await page.getByRole('button', { name: 'Build manually', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Edit tile Hola', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Change original language', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
 });
 
 test('setup waits for durable saves and retains generated drafts when final saving fails', async ({ page }) => {

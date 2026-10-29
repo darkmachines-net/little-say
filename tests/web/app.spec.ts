@@ -1,5 +1,5 @@
 /**
- * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
+ * @file Exercises the shared board workspace, editing and play, safe modal dismissal, one-second navigation holds, responsive
  * layouts, and offline browser behavior.
  */
 
@@ -34,7 +34,7 @@ async function leaveBoard(page: Page) {
   await expect(page.getByTestId('board-back')).toBeVisible(); await page.mouse.up();
   await expect(page.getByTestId('play-board')).toBeVisible();
   await page.getByTestId('board-back').click();
-  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+  await expect(page.getByTestId('editor-heading')).toBeVisible();
 }
 test.beforeEach(async ({ page }) => { await setupSpeech(page); await openExistingLibrary(page); });
 
@@ -59,7 +59,7 @@ test.describe('outside modal dismissal', () => {
         await expect(page.getByTestId('board-back')).toBeVisible();
         await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
         await page.getByTestId('board-back').click();
-        await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+        await expect(page.getByTestId('editor-heading')).toBeVisible();
         await expect(page.getByText('Leave this board?')).toHaveCount(0);
         await page.getByRole('button', { name: 'Return to play', exact: true }).click();
         await expect(page.getByTestId('play-board')).toBeVisible();
@@ -87,18 +87,17 @@ test.describe('outside modal dismissal', () => {
       await expect(label).toHaveValue('Cow');
       await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
 
+      await page.getByRole('button', { name: 'Board options', exact: true }).click();
+
       await page.getByRole('button', { name: 'Delete board', exact: true }).click();
       await page.getByRole('heading', { name: 'Delete Farmyard friends?', exact: true }).tap();
       await page.getByTestId('modal-backdrop').tap({ position: { x: 4, y: 4 } });
       await expect(page.getByRole('heading', { name: 'Delete Farmyard friends?', exact: true })).toHaveCount(0);
       await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
 
-      await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
-      await page.getByRole('heading', { name: 'Edit with AI', exact: true }).tap();
       await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsent edit');
       await capture(page, 'ai-workspace', viewport.width);
-      await page.getByRole('button', { name: 'Back to board', exact: true }).tap();
-      await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
+      await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('');
       await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
       await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
       await capture(page, 'ai-dismissed', viewport.width);
@@ -181,7 +180,11 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.reload();
-  await page.getByRole('button', { name: 'Build manually', exact: true }).click();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Hola');
+  await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Hola');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await page.setViewportSize({ width: 540, height: 820 });
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
   // Intl.DisplayNames uses either regional spelling across supported browser/CLDR versions.
@@ -194,7 +197,9 @@ test('regional language preferences drive manual cards and AI requests', async (
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
   await expect(page.getByRole('button', { name: 'Choose tile language Russian', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Add a tile', exact: true }).click();
+  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Agua');
+  await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Agua');
   await page.getByRole('button', { name: 'Change original language', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
@@ -210,7 +215,7 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('One apple card');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   expect(generationRequests).toBe(1);
   await expect(page.getByRole('button', { name: 'Edit tile Manzana', exact: true })).toBeVisible();
 });
@@ -224,7 +229,7 @@ test('starter library, manual edit, mixed-language data, and persistence', async
   await expect(page.getByRole('button', { name: 'Edit tile Baba', exact: true })).toBeVisible();
   await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
   await page.reload();
-  await page.getByRole('button', { name: 'Edit Our family', exact: true }).click();
+  if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Our family', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Baba', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'What it says', exact: true })).toHaveValue('бабушка');
 });
@@ -262,7 +267,7 @@ test('complete emoji search finds blueberries for a plum card and persists offli
   await page.reload();
   await context.setOffline(true);
   await page.reload();
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Plum', exact: true }).getByText('🫐', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Edit tile Plum', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Words on the tile', exact: true })).toHaveValue('Plum');
@@ -312,7 +317,7 @@ test('unlock completes automatically at one second and cancelled holds reset imm
   for (let i = 0; i < 3; i++) {
     await down(); await page.clock.runFor(999); await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
     await page.clock.runFor(1); await expect(page.getByTestId('board-back')).toBeVisible();
-    await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+    await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(800); await expect(page.getByTestId('editor-heading')).toBeVisible();
     await page.getByRole('button', { name: 'Return to play', exact: true }).click(); await page.getByTestId('board-lock').click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
   }
   for (const elapsed of [500, 999]) {
@@ -347,7 +352,7 @@ test('another touch cancels a pending unlock without leaving stale feedback', as
   await page.clock.runFor(1000); await expect(page.getByTestId('board-back')).toBeVisible();
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.getByTestId('board-back').click();
-  await page.clock.runFor(800); await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
+  await page.clock.runFor(800); await expect(page.getByTestId('editor-heading')).toBeVisible();
 });
 
 test('active board survives reload and uses Russian pronunciation', async ({ page }) => {
@@ -560,6 +565,7 @@ test('board audio retry fills only clips that automatic AI preparation could not
   await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
   await page.goto('/app');
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Board options', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry missing audio (1)', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Retry missing audio (1)', exact: true }).click();
   await expect(page.getByRole('button', { name: 'All audio saved', exact: true })).toBeDisabled();
@@ -641,12 +647,12 @@ test('AI proposal requires review, applies safely, and can be undone', async ({ 
     await route.fulfill({ json: { boardId: input.board?.id ?? null, baseRevision: input.board?.revision ?? null, proposal: { title: 'Duck pond', explanation: 'Replaced horse with duck.', needsClarification: false, tiles: input.board.tiles.map((t: any) => t.label === 'Horse' ? { existingId: null, label: 'Duckling', speech: 'Duckling', language: 'en-US', color: 'butter', emoji: '🦆' } : { existingId: t.id, label: t.label, speech: t.speech, language: t.language, color: t.color, emoji: t.emoji }) } } });
   });
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
+
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Replace horse with duckling');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
-  await expect(page.getByRole('heading', { name: 'Duck pond', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Duck pond');
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Duckling', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Undo last board change', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Horse', exact: true })).toBeVisible();
@@ -682,14 +688,14 @@ test('24 tiles fit in both tablet orientations and remain keyboard accessible', 
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Create exactly 24 tiles');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Add a tile', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Add card', exact: true })).toHaveCount(0);
   for (const size of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }, { width: 1024, height: 768 }]) {
     await page.setViewportSize(size);
     const tiles = page.getByTestId('editor-preview').getByRole('button');
     await expect(tiles).toHaveCount(24);
     for (const tile of await tiles.all()) await expect(tile).toBeInViewport({ ratio: 1 });
-    for (const name of ['Edit with AI', 'Duplicate board', 'Delete board', 'Languages', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    for (const name of ['Board options', 'Languages', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
     await page.screenshot({ path: `artifacts/screenshots/editor-24-${size.width}.png` });
   }
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
@@ -715,7 +721,7 @@ test('photo attachments survive reload and remain on the device', async ({ page 
   await page.getByRole('button', { name: 'Use photo', exact: true }).click();
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
-  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.reload(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Adjust crop', exact: true }).click();
   await expect(page.getByText('125%', { exact: true })).toBeVisible();
   await expect(page.getByText('Photo unavailable', { exact: true })).toHaveCount(0);
@@ -735,7 +741,7 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await page.reload();
   // Retrying saves the edits without reviving a failed navigation request after restart.
   await expect(page.getByTestId('play-board')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Play My farm', exact: true }).click();
+  await page.getByRole('button', { name: 'Play board', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible(); await expect(page.getByText('My farm', { exact: true })).toBeVisible();
 });
 
@@ -745,6 +751,6 @@ test('AI sign-in requirement retains the parent prompt and existing boards', asy
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(page.getByText('Sign in to use AI or cloud backup.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
 });

@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and Settings navigation. */
+/** @file Organizes saved boards by recent use and favorites, with one resumable creation entry and Settings. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -13,9 +13,9 @@ import { Brand, MountainMark } from './Brand';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace, with a separate manual creation entry.
+ * shared board workspace, including resumable device-local creation drafts.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuBoard = library.boards.find(board => board.id === menuId);
@@ -36,13 +36,13 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>New board</Button><Button kind="ghost" compact onPress={onManual}>Build manually</Button></View>
+        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>{library.creationDraft ? 'Resume draft' : 'New board'}</Button></View>
       </View>
       {recent && card(recent, true)}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 }}>
         {remaining.map(board => <View key={board.id} style={{ width: `${100 / columns}%`, padding: 8 }}>{card(board)}</View>)}
       </View>
-      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text><Button icon={Plus} onPress={onCompose}>Create your first board</Button></View>}
+      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text></View>}
     </ScrollView>
     {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
   </View>;
