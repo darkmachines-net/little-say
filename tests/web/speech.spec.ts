@@ -1,5 +1,5 @@
 /**
- * @file Exercises generated-audio controls, language-specific clips, and fallback behavior in the
+ * @file Covers the shared board workspace. Exercises generated-audio controls, language-specific clips, and fallback behavior in the
  * browser.
  */
 
@@ -126,7 +126,7 @@ test('board creation does not wait for background audio and stale generation can
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Owl');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Owl', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Edit tile Owl', exact: true }).click();
   await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Hoot');

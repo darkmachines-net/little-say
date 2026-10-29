@@ -36,7 +36,7 @@ export const tileSchema = z.object({
   languageMode: z.enum(['fixed', 'board']).optional(),
   translations: z.array(storedTranslationSchema).max(6).optional(),
 });
-export const boardSchema = z.object({
+const boardFields = z.object({
   id: z.string().min(1).max(100), title: z.string().trim().min(1).max(100),
   revision: z.number().int().nonnegative(), tiles: z.array(tileSchema).min(1).max(MAX_TILES),
   createdAt: z.string(), updatedAt: z.string(),
@@ -44,7 +44,14 @@ export const boardSchema = z.object({
   // Absent means follow the user profile; saved generated languages never restrict play.
   playLanguageSubset: playLanguagesSchema.refine(tags => tags.length > 0, 'Keep at least one play language.').optional(),
   picturePolicy: picturePolicySchema.optional(),
-}).refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
+});
+export const boardSchema = boardFields.refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
+// Empty creation drafts are device-local and cannot enter playback or account snapshots.
+export const draftBoardSchema = boardFields.extend({ tiles: z.array(tileSchema).max(MAX_TILES) }).refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
+export const boardSuggestionSchema = z.object({ base: draftBoardSchema, board: boardSchema });
+export const creationDraftSchema = z.object({ board: draftBoardSchema, prompt: z.string().max(4000), suggestion: boardSuggestionSchema.nullable() });
+export type BoardSuggestion = z.infer<typeof boardSuggestionSchema>;
+export type CreationDraft = z.infer<typeof creationDraftSchema>;
 export const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),

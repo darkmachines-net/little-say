@@ -1,6 +1,6 @@
 /**
- * @file Coordinates library and creation-draft persistence, navigation, playback, shared languages,
- * default AI media, and automatic translation jobs across parent editing screens.
+ * @file Coordinates library persistence, board navigation, playback previews, and parent editing
+ * actions, effective shared languages, and background translations within one board workspace.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -8,14 +8,13 @@ import { ActivityIndicator, AppState, Platform, Text, View } from 'react-native'
 import { initialWindowMetrics, SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Crypto from 'expo-crypto';
-import { applyProposal, speechSource, boardPlayTiles, boardWithProfileLanguages, firstWord, getLanguageProfile, languageName, profileLanguages, reviseBoard, type Board, type BoardProposal, type Settings, type Tile } from '@little-say/core';
+import { mergeBoardSuggestion, draftBoardSchema, speechSource, boardPlayTiles, boardWithProfileLanguages, languageName, profileLanguages, reviseBoard, type Board, type BoardSuggestion, type Settings, type Tile } from '@little-say/core';
 import { useLibrary } from './data/useLibrary';
 import { getVoices, matchingVoice, speechQueue, type Voice } from './services/speech';
 import { useSpeechLibrary } from './services/useSpeechLibrary';
 import { useBoardTranslations } from './services/useBoardTranslations';
 import { initializeUpdates, applyUpdate } from './services/updates';
 import { Dashboard } from './ui/Dashboard';
-import { AiConversation } from './ui/AiConversation';
 import { useBoardDraftRoute } from './services/useBoardDraftRoute';
 import { BoardEditor } from './ui/BoardEditor';
 import type { BoardSnapshot } from './ui/BoardTransition';
@@ -35,7 +34,15 @@ function Application() {
   const draftRoute = useBoardDraftRoute();
   const audio = useSpeechLibrary(store.library);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  useEffect(() => { if (draftRoute.route?.boardId) setSelectedId(draftRoute.route.boardId); }, [draftRoute.route?.boardId]);
+  useEffect(() => { setSelectedId(draftRoute.route?.boardId ?? null); }, [draftRoute.route?.boardId]);
+  useEffect(() => {
+    if (!store.library || !draftRoute.route || draftRoute.route.boardId || store.library.creationDraft) return;
+    const now = new Date().toISOString();
+    void store.change(current => current.creationDraft ? current : { ...current, creationDraft: {
+      board: { id: Crypto.randomUUID(), title: 'New board', revision: 0, createdAt: now, updatedAt: now, tiles: [], playLanguages: profileLanguages(current.settings), picturePolicy: current.settings.pictureDefaults ?? defaultPicturePolicy },
+      prompt: '', suggestion: null,
+    } }).catch(() => {});
+  }, [draftRoute.route, store]);
   const settingsRoute = useSettingsRoute();
   const [accountOpen, setAccountOpen] = useState(false);
   const [entryChecked, setEntryChecked] = useState(false);
@@ -78,9 +85,9 @@ function Application() {
     void store.change(current => {
       const boardLanguages = { ...current.settings.boardLanguages }; delete boardLanguages[id];
       const boardLastPlayedAt = { ...current.boardLastPlayedAt }; delete boardLastPlayedAt[id];
-      return { ...current, boards: current.boards.filter(board => board.id !== id), boardLastPlayedAt, favoriteBoardIds: current.favoriteBoardIds?.filter(boardId => boardId !== id), settings: { ...current.settings, boardLanguages, activeBoardId: current.settings.activeBoardId === id ? null : current.settings.activeBoardId } };
+      return { ...current, creationDraft: current.creationDraft?.board.id === id ? undefined : current.creationDraft, boards: current.boards.filter(board => board.id !== id), boardLastPlayedAt, favoriteBoardIds: current.favoriteBoardIds?.filter(boardId => boardId !== id), settings: { ...current.settings, boardLanguages, activeBoardId: current.settings.activeBoardId === id ? null : current.settings.activeBoardId } };
     }).catch(() => {});
-    setSelectedId(current => current === id ? null : current);
+    draftRoute.close(); setSelectedId(current => current === id ? null : current);
     setUndo(current => { const next = { ...current }; delete next[id]; return next; });
   };
   const play = async (board: Board) => {
@@ -117,67 +124,55 @@ function Application() {
   if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
   const boards = library.boards.map(board => boardWithProfileLanguages(board, library.settings));
   const activeBoard = boards.find(board => board.id === library.settings.activeBoardId);
-  const selected = boards.find(board => board.id === selectedId);
+  const selected = boards.find(board => board.id === (draftRoute.route?.boardId ?? selectedId)) ?? (draftRoute.route && !draftRoute.route.boardId && library.creationDraft ? boardWithProfileLanguages(library.creationDraft.board, library.settings) : undefined);
   if (activeBoard) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onEdit={snapshot => {
-    setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
+    if (draftRoute.route?.boardId !== activeBoard.id) draftRoute.open(activeBoard.id); setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
     void store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })).catch(() => {});
   }} />;
-  const accept = async (proposal: BoardProposal, replaceTranslations = false) => {
-    let candidate!: Board;
-    let original: Board | null = null;
-    await store.commit(lib => {
-      const current = lib.boards.find(b => b.id === proposal.boardId) ?? null;
-      if (proposal.boardId && !current) throw new Error('The original board was deleted. Please create a new proposal.');
-      candidate = applyProposal(current, proposal, () => Crypto.randomUUID(), undefined, replaceTranslations);
+  const accept = async (suggestion: BoardSuggestion, choice?: 'current' | 'suggested') => {
+    let original!: Board;
+    await draftRoute.save(() => store.commit(lib => {
+      const current = lib.boards.find(b => b.id === suggestion.base.id) ?? (lib.creationDraft?.board.id === suggestion.base.id ? lib.creationDraft.board : undefined);
+      if (!current) throw new Error('The original board was deleted.');
+      const merged = mergeBoardSuggestion(suggestion.base, suggestion.board, current, choice);
+      if (merged.conflicts.length && !choice) throw new Error('Newer edits need review. Choose which changes to keep.');
       original = current;
-      return { ...lib, boardCreationDraft: current ? lib.boardCreationDraft : undefined, boards: current ? lib.boards.map(b => b.id === candidate.id ? candidate : b) : [...lib.boards, candidate] };
-    });
-    if (original) remember(original);
-    setSelectedId(candidate.id);
+      const exists = lib.boards.some(b => b.id === current.id);
+      return { ...lib, creationDraft: lib.creationDraft?.board.id === current.id ? undefined : lib.creationDraft, boards: exists ? lib.boards.map(b => b.id === current.id ? merged.board : b) : [...lib.boards, merged.board] };
+    }));
+    remember(original); setSelectedId(original.id); draftRoute.replace(original.id);
   };
-  const manual = () => {
-    const now = new Date().toISOString();
-    const settings = store.current.current!.settings;
-    const language = getLanguageProfile(settings).defaultLanguage;
-    const word = firstWord(language);
-    const playLanguages = profileLanguages(settings);
-    const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, picturePolicy: settings.pictureDefaults ?? defaultPicturePolicy, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: 'board', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
-    void store.change(current => ({ ...current, boards: [...current.boards, board] })).catch(() => {}); setSelectedId(board.id);
-  };
-  if (draftRoute.route) {
-    const source = draftRoute.route.boardId ? boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
-    if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source}
-      savedDraft={source ? undefined : library.boardCreationDraft}
-      onSaveDraft={draft => draftRoute.save(() => store.commit(current => ({ ...current, boardCreationDraft: draft })))}
-      onDiscardDraft={() => store.current.current?.boardCreationDraft ? draftRoute.save(() => store.commit(current => ({ ...current, boardCreationDraft: undefined }))) : Promise.resolve()}
-      onBeforeClose={draftRoute.beforeClose}
-      onApply={(proposal, replaceTranslations) => draftRoute.save(() => accept(proposal, replaceTranslations))}
-      onAiUse={consent} onClose={draftRoute.close} onSpeechReady={() => audio.reload()} />;
-  }
+  if (draftRoute.route?.boardId && !selected) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
   return <><View style={styles.page}>
     <StatusBar style="dark" />
     {!selected && account.session && <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={styles.small}>{account.error ? 'Backup needs attention' : account.busy ? 'Syncing account backup…' : account.savedAt ? 'Account backup enabled' : 'Account backup pending'}</Text><Button compact kind="ghost" onPress={() => settingsRoute.open({ page: 'account' })}>Account & backup</Button></View>}
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
-    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} translationStatus={translations.status[selected.id]} onPrepareTranslations={() => void translations.prepare(selected.id)} onCancelTranslations={() => translations.cancel(selected.id)} onManageLanguages={() => settingsRoute.open({ page: 'languages' })} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
-      const current = store.current.current!.boards.find(b => b.id === selected.id)!;
+    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} translationStatus={translations.status[selected.id]} onPrepareTranslations={() => void translations.prepare(selected.id)} onCancelTranslations={() => translations.cancel(selected.id)} onManageLanguages={() => settingsRoute.open({ page: 'languages' })} draft={library.creationDraft?.board.id === selected.id ? library.creationDraft : undefined} onAccept={accept} onDraft={state => {
+      const current = store.current.current?.creationDraft;
+      if (!current || current.board.id !== selected.id || JSON.stringify({ prompt: current.prompt, suggestion: current.suggestion }) === JSON.stringify(state)) return;
+      void store.change(lib => lib.creationDraft?.board.id === selected.id ? { ...lib, creationDraft: { ...lib.creationDraft, ...state } } : lib).catch(() => {});
+    }} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; void store.flush().then(() => { previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); draftRoute.close(); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }).catch(() => setError('Your changes could not be saved. Retry saving before leaving.')); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
+      const current = store.current.current!.boards.find(b => b.id === selected.id) ?? store.current.current!.creationDraft!.board;
       if (expectedRevision !== undefined && current.revision !== expectedRevision) throw new Error('This board changed while editing. Your saved changes are kept; reopen the current card or prepare translations again.');
       remember(current);
-      const next = reviseBoard(current, changes);
-      void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === next.id ? next : b) })).catch(() => {});
+      const next = (changes.tiles ?? current.tiles).length ? reviseBoard(current, changes) : draftBoardSchema.parse({ ...current, ...changes, revision: current.revision + 1, updatedAt: new Date().toISOString() });
+      void store.change(lib => next.tiles.length ? { ...lib, creationDraft: lib.creationDraft?.board.id === next.id ? undefined : lib.creationDraft, boards: lib.boards.some(b => b.id === next.id) ? lib.boards.map(b => b.id === next.id ? next : b) : [...lib.boards, next] } : { ...lib, creationDraft: { board: next, prompt: lib.creationDraft?.prompt ?? '', suggestion: null } }).catch(() => {});
+      if (next.tiles.length && !draftRoute.route?.boardId) { setSelectedId(next.id); draftRoute.replace(next.id); }
       return next;
     }} onDelete={() => deleteBoard(selected.id)} onDuplicate={() => {
+      if (!selected.tiles.length) return;
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
-      void store.change(lib => ({ ...lib, boards: [...lib.boards, copy] })).catch(() => {}); setSelectedId(copy.id);
-    }} onCompose={() => draftRoute.open(selected.id)} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
+      void store.change(lib => ({ ...lib, boards: [...lib.boards, copy] })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
+    }} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
       const history = undo[selected.id] ?? []; const previous = history.at(-1); if (!previous) return;
-      const current = store.current.current!.boards.find(b => b.id === selected.id)!;
+      const current = store.current.current!.boards.find(b => b.id === selected.id) ?? store.current.current!.creationDraft!.board;
       const restored = { ...previous, revision: current.revision + 1, updatedAt: new Date().toISOString() };
-      void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) })).catch(() => {});
+      void store.change(lib => restored.tiles.length ? { ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) } : { ...lib, boards: lib.boards.filter(b => b.id !== selected.id), creationDraft: { board: restored, prompt: '', suggestion: null } }).catch(() => {});
+      if (!restored.tiles.length) draftRoute.replace(null);
       setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
-    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={setSelectedId} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onManual={manual} onDelete={deleteBoard} onFavorite={id => {
+    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);

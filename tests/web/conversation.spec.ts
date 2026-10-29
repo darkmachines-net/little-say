@@ -1,16 +1,14 @@
-/**
- * @file Exercises conversational board creation and edits, including clarification, cancellation, and
- * explicit draft retention/discard, application, and text review without app microphone capture. Review screenshots are written
- * to ignored artifacts for temporary CI retention, not source documentation.
- */
-
-import { expect, test, type Page } from '@playwright/test';
+/** @file Verifies the unified editor: local drafts, mixed AI/direct edits, review, cancellation, recovery, and compact layouts. */
+import { expect, test, type Page, type Route } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';
 
-const word = (label: string) => ({ existingId: null, label, speech: label, language: 'en-US', emoji: '🐄', color: 'sage', languageMode: 'fixed', translations: [] });
-const proposal = (label = 'Cow') => ({ title: 'Animal words', explanation: `Here is ${label}.`, needsClarification: false, playLanguages: ['en-US'], tiles: [word(label)] });
-const envelope = (value = proposal()) => ({ boardId: null, baseRevision: null, proposal: value });
+const word = (label: string, existingId: string | null = null) => ({ existingId, label, speech: label, language: 'en-US', emoji: '🐄', color: 'sage', languageMode: 'fixed', translations: [] });
+const proposal = (label = 'Cow') => ({ title: 'Animal words', explanation: 'Your suggestion is ready.', needsClarification: false, playLanguages: ['en-US'], tiles: [word(label)] });
+async function respond(route: Route, value = proposal()) {
+  const input = route.request().postDataJSON();
+  await route.fulfill({ json: { boardId: input.board?.id ?? null, baseRevision: input.board?.revision ?? null, proposal: value } });
+}
 async function saved(page: Page) {
   return page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
@@ -21,422 +19,253 @@ async function send(page: Page, message: string) {
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill(message);
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 }
+async function add(page: Page, label: string) {
+  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill(label);
+  await page.getByRole('textbox', { name: 'What it says', exact: true }).fill(label);
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  const close = page.getByRole('button', { name: 'Close Board pictures', exact: true });
+  if (await close.count()) await close.click();
+}
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
 
-for (const exit of ['page back', 'browser back'] as const) test(`an untouched creation offers discard on ${exit} and reopens with the default prompt`, async ({ page }) => {
-  if (exit === 'browser back') await page.setViewportSize({ width: 390, height: 700 });
+test('one entry opens an empty local draft; direct creation needs no AI and cancel adds nothing', async ({ page }) => {
   let requests = 0;
-  await page.route('**/api/boards/propose', route => { requests++; return route.fulfill({ json: envelope() }); });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  if (exit === 'browser back') await page.goBack();
-  else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
-  await expect(page.getByRole('button', { name: 'Discard', exact: true })).toBeInViewport({ ratio: 1 });
-  await expect(page.getByRole('button', { name: 'Keep editing', exact: true })).toBeInViewport({ ratio: 1 });
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toHaveCount(0);
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
-  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeDisabled();
-  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
-  expect(requests).toBe(0);
-});
-
-test('only saving a draft makes it resumable, and discarding clears its prompt across reloads', async ({ page }) => {
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await page.getByRole('button', { name: '🐾 Farm animals', exact: true }).click();
-  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
-  const prompt = await input.inputValue();
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Keep editing', exact: true }).click();
-  await expect(input).toHaveValue(prompt);
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toBeVisible();
-  expect((await saved(page)).boardCreationDraft.prompt).toBe(prompt);
-  await page.reload();
-  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
-  await expect(input).toHaveValue(prompt);
-  await input.fill('A different unsent message');
-  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
-  await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
-  await page.goBack();
-  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Picture settings', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
-  await page.reload();
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await expect(input).toHaveValue('');
-  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Picture source: Automatic', exact: true })).toBeVisible();
-});
-
-test('saved conversation and canvas resume after reload and applying the board consumes the draft', async ({ page }) => {
-  const requests: any[] = [];
-  await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: envelope() }); });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow');
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Make it green');
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toBeVisible();
-  expect((await saved(page)).boards).toHaveLength(3);
-  await page.reload();
-  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
-  await expect(page.getByTestId('ai-draft')).toContainText('Cow');
-  await expect(page.getByTestId('ai-transcript')).toContainText('Here is Cow.');
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Make it green');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  expect(requests[1].conversation.history).toEqual([{ prompt: 'Cow', reply: 'Here is Cow.' }]);
-  expect(requests[1].conversation.draft.title).toBe('Animal words');
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Animal words');
-  expect((await saved(page)).boards).toHaveLength(4);
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-});
-
-test('failed draft saves and discards keep the conversation open for retry', async ({ page }) => {
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
-  await input.fill('My animals');
-  await page.evaluate(() => { const put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function (...args: any[]) { if ((window as any).__failWrites) throw new DOMException('Storage full', 'QuotaExceededError'); return put.apply(this, args as any); }; (window as any).__failWrites = true; });
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-  await expect(page.getByText('Your draft could not be saved. Please try again.', { exact: true })).toBeVisible();
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-  await page.evaluate(() => { (window as any).__failWrites = false; });
-  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
-  await expect(input).toHaveValue('My animals');
-  await page.evaluate(() => { (window as any).__failWrites = true; });
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByText('Your draft could not be discarded. Please try again.', { exact: true })).toBeVisible();
-  expect((await saved(page)).boardCreationDraft.prompt).toBe('My animals');
-  await page.evaluate(() => { (window as any).__failWrites = false; });
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
-  expect((await saved(page)).boardCreationDraft).toBeUndefined();
-});
-
-test('manual creation starts from the library and suggestions stay in the conversation without an opt-in screen', async ({ page }) => {
-  let requests = 0;
-  await page.route('**/api/boards/propose', route => { requests++; return route.fulfill({ json: envelope() }); });
-  await page.getByRole('button', { name: 'Build manually', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Our new board');
-  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
-  expect(requests).toBe(0);
-  await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Build manually', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: '🐾 Farm animals', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Create six farm animal tiles including cow, sheep, and horse.');
-  await expect(page).toHaveURL(/#boards\/new$/);
-  expect(requests).toBe(0); expect((await saved(page)).settings.aiConsent).toBe(false);
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  await expect(page.getByText('Use AI services?', { exact: true })).toHaveCount(0);
-  expect(requests).toBe(1);
-});
-
-test('editing routes survive reload and return to their source board without saving a draft', async ({ page }) => {
-  const original = (await saved(page)).boards[0];
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`#boards/${original.id}/ai$`));
-  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('An unsaved message');
-  await page.reload();
-  await expect(page.getByTestId('ai-canvas')).toContainText('Farmyard friends');
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
-  await page.getByRole('button', { name: 'Back to board', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
-  expect((await saved(page)).boards[0]).toEqual(original);
-});
-
-test('clarification, draft and refinement stay in one conversation until explicitly saved', async ({ page }) => {
-  const requests: any[] = [];
-  let release!: () => void;
-  const pending = new Promise<void>(resolve => { release = resolve; });
-  await page.route('**/api/boards/propose', async route => {
-    requests.push(route.request().postDataJSON());
-    if (requests.length === 1) { await pending; await route.fulfill({ json: envelope({ ...proposal(), explanation: 'Which two animals would you like?', needsClarification: true, tiles: [] }) }); }
-    else await route.fulfill({ json: envelope(requests.length === 2 ? { ...proposal(), tiles: [word('Cow'), word('Sheep')] } : { ...proposal(), title: 'Two animals', explanation: 'The cow is now blue; the sheep stays the same.', tiles: [{ ...word('Cow'), color: 'sky' }, word('Sheep')] }) });
-  });
+  await page.route('**/api/boards/propose', route => { requests++; return respond(route); });
   const count = (await saved(page)).boards.length;
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Make two animal cards. Ask me which ones.');
-  await expect(page.getByTestId('ai-working')).toBeVisible();
-  await expect(page.getByText(/Working on your draft… · [1-9]/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Stop request', exact: true })).toBeEnabled();
-  await mkdir('artifacts/screenshots', { recursive: true });
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-working.png' });
-  release();
-  await expect(page.getByText('Which two animals would you like?', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toHaveCount(0);
-  await send(page, 'Cow and sheep');
-  await expect(page.getByTestId('ai-draft')).toContainText('Sheep');
-  expect(requests[1].conversation.history).toEqual([{ prompt: 'Make two animal cards. Ask me which ones.', reply: 'Which two animals would you like?' }]);
-  expect(requests[1].conversation.draft).toBeNull();
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('New board');
+  await expect(page.getByRole('button', { name: 'Play board', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /Build manually|Edit with AI|History/ })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
+  await page.getByRole('textbox', { name: 'Board title' }).fill('Our snacks');
+  await page.getByRole('textbox', { name: 'Message to AI' }).fill('Maybe add drinks');
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   expect((await saved(page)).boards).toHaveLength(count);
-  await send(page, 'Make the cow blue');
-  await expect(page.getByTestId('ai-draft')).toContainText('Two animals');
-  expect(requests[2].conversation.history).toHaveLength(2);
-  expect(requests[2].conversation.draft.tiles.map((t: any) => t.label)).toEqual(['Cow', 'Sheep']);
-  await page.setViewportSize({ width: 820, height: 1180 });
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-draft.png' });
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Two animals');
-  const boards = (await saved(page)).boards;
-  expect(boards).toHaveLength(count + 1);
-  expect(boards.at(-1).tiles[0].color).toBe('sky');
+  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Our snacks');
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toHaveValue('Maybe add drinks');
+  await add(page, 'Water');
+  await expect(page.getByRole('button', { name: 'Edit tile Water', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/#boards\/[^/]+\/edit$/);
+  await expect.poll(async () => (await saved(page)).boards.length).toBe(count + 1);
+  expect(requests).toBe(0); expect((await saved(page)).settings.aiConsent).toBe(false);
 });
 
-test('editing refines the latest draft while keeping source IDs, languages and photos private', async ({ page }) => {
+test('clarification, direct preview edits, and follow-ups use the latest canvas before one Keep and Undo', async ({ page }) => {
+  const requests: any[] = [];
+  await page.route('**/api/boards/propose', route => {
+    const input = route.request().postDataJSON(); requests.push(input);
+    if (requests.length === 1) return respond(route, { ...proposal(), explanation: 'Which animals?', needsClarification: true, tiles: [] });
+    if (requests.length === 2) return respond(route, { ...proposal(), tiles: [word('Cow'), word('Sheep')] });
+    return respond(route, { ...proposal(), title: 'Our animals', tiles: input.board.tiles.map((t: any) => ({ ...word(t.label, t.id), color: 'sky' })) });
+  });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('button', { name: 'Farm animals', exact: true }).click();
+  expect(requests).toHaveLength(0);
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByText('Which animals?', { exact: true })).toBeVisible();
+  await send(page, 'Cow and sheep');
+  await expect(page.getByTestId('editor-preview')).toContainText('Sheep');
+  await page.getByRole('button', { name: 'Edit tile Cow, suggested change', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Words on the tile' }).fill('Moo');
+  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
+  await send(page, 'Make them blue');
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Our animals');
+  expect(requests[2].board.tiles[0].label).toBe('Moo');
+  expect(requests[2].conversation.draft).toBeNull(); expect(requests[2].conversation.history).toHaveLength(2);
+  expect((await saved(page)).boards).toHaveLength(3);
+  await page.reload();
+  await expect(page.getByTestId('editor-preview')).toContainText('Moo');
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Moo', exact: true })).toBeVisible();
+  expect((await saved(page)).boards).toHaveLength(4);
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeVisible();
+  await page.getByRole('button', { name: 'Undo last board change' }).click();
+  await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
+  await expect.poll(async () => (await saved(page)).boards.length).toBe(3);
+});
+
+test('newer direct edits merge with a pending request and conflicting fields require a choice', async ({ page }) => {
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/api/boards/propose', async route => {
+    const input = route.request().postDataJSON(); await gate;
+    await respond(route, { ...proposal(), title: 'AI title', tiles: input.board.tiles.map((t: any) => ({ ...word(t.label, t.id), speech: t.label === 'Cow' ? 'Hello cow' : t.speech })) });
+  });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await send(page, 'Change the title and cow speech');
+  await expect(page.getByTestId('ai-working')).toBeVisible();
+  await page.getByRole('textbox', { name: 'Board title' }).fill('My title');
+  await page.getByRole('textbox', { name: 'Message to AI' }).fill('My next request');
+  release();
+  await expect(page.getByRole('button', { name: 'Keep my edits' })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toHaveValue('My next request');
+  await page.getByRole('button', { name: 'Keep my edits' }).click();
+  await expect(page.getByRole('button', { name: 'Keep my edits' })).toHaveCount(0);
+  const board = (await saved(page)).boards[0];
+  expect(board.title).toBe('My title'); expect(board.tiles[0].speech).toBe('Hello cow');
+});
+
+test('card handoff saves typed words and enforces scope even when AI changes the whole board', async ({ page }) => {
+  let input: any;
+  await page.route('**/api/boards/propose', route => {
+    input = route.request().postDataJSON();
+    return respond(route, { ...proposal(), title: 'Wrong title', tiles: input.board.tiles.map((t: any) => ({ ...word(t.label, t.id), speech: 'Moo moo' })).reverse() });
+  });
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
-  const chooser = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Choose photo', exact: true }).click();
-  await (await chooser).setFiles({ name: 'cow.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aD1sAAAAASUVORK5CYII=', 'base64') });
-  await page.getByRole('button', { name: 'Use photo', exact: true }).click();
-  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
-  const original = (await saved(page)).boards[0];
-  const requests: any[] = [];
-  await page.route('**/api/boards/propose', async route => {
-    const input = route.request().postDataJSON(); requests.push(input);
-    const tiles = input.conversation.draft?.tiles ?? input.board.tiles.map((t: any) => t.label === 'Horse' ? word('Goat') : { ...word(t.label), existingId: t.id, emoji: t.emoji ?? '', language: t.language, color: t.color });
-    await route.fulfill({ json: { boardId: input.board.id, baseRevision: input.board.revision, proposal: { ...proposal(), title: requests.length === 1 ? 'Our animals' : 'Our favorite animals', explanation: 'Your draft is updated.', playLanguages: input.board.playLanguages, tiles } } });
-  });
-  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
-  await send(page, 'Replace Horse with Goat');
-  await expect(page.getByTestId('ai-draft')).toContainText('Goat');
-  await send(page, 'Call it Our favorite animals');
-  await expect(page.getByTestId('ai-draft')).toContainText('Our favorite animals');
-  expect(requests[1].board).toEqual(requests[0].board);
-  expect(requests[1].conversation.draft.tiles.find((t: any) => t.label === 'Goat').existingId).toBeNull();
-  expect(JSON.stringify(requests)).not.toContain(original.tiles[0].illustration.assetId);
-  expect((await saved(page)).boards[0]).toEqual(original);
-  await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Edit tile Goat', exact: true })).toBeVisible();
-  const result = (await saved(page)).boards[0];
-  expect(result.tiles[0].illustration).toEqual(original.tiles[0].illustration);
-  expect(result.tiles.find((t: any) => t.label === 'Goat').id).not.toBe(original.tiles.find((t: any) => t.label === 'Horse').id);
-  await page.getByRole('button', { name: 'Undo last board change', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Edit tile Horse', exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Words on the tile' }).fill('My cow');
+  await page.getByRole('button', { name: 'Ask AI about this card' }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeFocused();
+  await send(page, 'Make its sound repeat');
+  await page.getByRole('button', { name: 'Keep changes', exact: true }).click();
+  const board = (await saved(page)).boards[0];
+  expect(input.board.tiles[0].label).toBe('My cow');
+  expect(board.title).toBe('Farmyard friends'); expect(board.tiles[0].speech).toBe('Moo moo'); expect(board.tiles[1].speech).toBe('Sheep');
+  await page.getByRole('button', { name: 'Edit tile My cow', exact: true }).click();
+  await page.getByRole('button', { name: 'Remove tile', exact: true }).click();
+  await send(page, 'Rename the board');
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Wrong title');
+  expect(input.prompt).toBe('Rename the board');
 });
 
-test('stopping and retrying ignores late replies and does not duplicate conversation turns', async ({ page }) => {
-  const requests: any[] = [];
-  let release!: () => void;
-  const pending = new Promise<void>(resolve => { release = resolve; });
+test('stop ignores late replies, permits retry, and Dismiss preserves accepted content', async ({ page }) => {
+  const requests: any[] = []; let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
   await page.route('**/api/boards/propose', async route => {
     requests.push(route.request().postDataJSON());
-    if (requests.length === 1) { await pending; await route.fulfill({ json: envelope(proposal('Wrong late word')) }).catch(() => {}); }
-    else await route.fulfill({ json: envelope() });
+    if (requests.length === 1) { await gate; await respond(route, proposal('Wrong late word')).catch(() => {}); }
+    else await respond(route);
   });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await send(page, 'A cow');
   await expect(page.getByTestId('ai-working')).toBeVisible();
-  await page.getByRole('button', { name: 'Stop request', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A cow');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByTestId('ai-draft')).toContainText('Cow');
-  release();
-  expect(requests[1].conversation.history).toEqual([]);
-  await expect(page.getByText('A cow', { exact: true })).toHaveCount(1);
-  await expect(page.getByTestId('ai-draft')).not.toContainText('Wrong late word');
-  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
-  expect((await saved(page)).boards).toHaveLength(3);
+  await page.getByRole('button', { name: 'Stop request' }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toHaveValue('A cow');
+  await page.getByRole('button', { name: 'Send message' }).click();
+  await expect(page.getByTestId('editor-preview')).toContainText('Cow');
+  release(); expect(requests[1].conversation.history).toEqual([]);
+  await expect(page.getByTestId('editor-preview')).not.toContainText('Wrong late word');
+  await page.getByRole('button', { name: 'Dismiss', exact: true }).click();
+  await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
 });
 
-test('failed follow-ups and clarification preserve the previous draft and small-screen controls', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 700 });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const requests: any[] = [];
-  await page.route('**/api/boards/propose', async route => {
-    requests.push(route.request().postDataJSON());
-    if (requests.length === 2) await route.fulfill({ status: 502, json: { error: 'Please try again.' } });
-    else if (requests.length === 3) await route.fulfill({ json: envelope({ ...proposal(), needsClarification: true, explanation: 'Which color?', tiles: [] }) });
-    else await route.fulfill({ json: envelope() });
-  });
+test('failed follow-ups retain the visible suggestion and retry text', async ({ page }) => {
+  let n = 0;
+  await page.route('**/api/boards/propose', route => ++n === 2 ? route.fulfill({ status: 502, json: { error: 'Please try again.' } }) : respond(route));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await send(page, 'Cow');
-  await expect(page.getByTestId('ai-draft')).toContainText('Cow');
-  await send(page, 'Change its color');
+  await expect(page.getByRole('button', { name: 'Keep changes' })).toBeEnabled();
+  await send(page, 'Make it blue');
   await expect(page.getByText('Please try again.', { exact: true })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Change its color');
-  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeInViewport({ ratio: 1 });
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByText('Which color?', { exact: true })).toBeVisible();
-  expect(requests[2].conversation.history).toHaveLength(1);
-  await expect(page.getByTestId('ai-draft')).toContainText('Waiting for your answer');
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toHaveCount(0);
-  await send(page, 'Blue');
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  expect(requests[3].conversation.history).toHaveLength(2);
-  expect(requests[3].conversation.draft).toEqual(proposal());
-  for (const name of ['Use this board', 'Send message', 'Back to boards']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-phone.png' });
+  await expect(page.getByTestId('editor-preview')).toContainText('Cow');
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toHaveValue('Make it blue');
+  await page.getByRole('button', { name: 'Keep changes' }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
 });
 
-test('a failed save keeps the draft and retry creates exactly one board', async ({ page }) => {
-  await page.route('**/api/boards/propose', route => route.fulfill({ json: envelope() }));
+test('failed durable save retains the suggestion and retry creates exactly one board', async ({ page }) => {
+  await page.route('**/api/boards/propose', route => respond(route));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await send(page, 'Cow');
-  await expect(page.getByTestId('ai-draft')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Keep changes' })).toBeEnabled();
   await page.evaluate(() => { const put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function (...args: any[]) { if ((window as any).__failWrites) throw new DOMException('Storage full', 'QuotaExceededError'); return put.apply(this, args as any); }; (window as any).__failWrites = true; });
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  await expect(page.getByTestId('ai-conversation')).toContainText('Storage full');
+  await page.getByRole('button', { name: 'Keep changes' }).click();
+  await expect(page.getByTestId('board-assistant')).toContainText('Storage full');
   expect((await saved(page)).boards).toHaveLength(3);
   await page.evaluate(() => { (window as any).__failWrites = false; });
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Animal words');
+  await page.getByRole('button', { name: 'Keep changes' }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
   expect((await saved(page)).boards).toHaveLength(4);
 });
 
-for (const outcome of ['failure', 'success'] as const) test(`browser history preserves a pending draft save through ${outcome}`, async ({ page }) => {
-  await page.route('**/api/boards/propose', route => route.fulfill({ json: envelope() }));
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await send(page, 'Cow');
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  // Retain a same-document Forward destination while the current draft stays mounted.
-  await page.evaluate(() => { history.pushState({}, '', '#other'); history.back(); });
-  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
+for (const outcome of ['failure', 'success'] as const) test(`browser navigation is guarded during a durable save through ${outcome}`, async ({ page }) => {
+  await page.route('**/api/boards/propose', route => respond(route));
+  await page.getByRole('button', { name: 'New board', exact: true }).click(); await send(page, 'Cow');
+  await expect(page.getByRole('button', { name: 'Keep changes' })).toBeEnabled();
+  await expect.poll(async () => Boolean((await saved(page)).creationDraft?.suggestion)).toBe(true);
   await page.evaluate(() => {
     const put = IDBObjectStore.prototype.put;
     IDBObjectStore.prototype.put = function (...args: any[]) {
       const result = put.apply(this, args as any);
       if (this.name === 'state' && !(window as any).__heldWrite) {
-        (window as any).__heldWrite = true;
-        let hold = true;
-        const keepAlive = () => { if (hold) this.get('library').onsuccess = keepAlive; };
-        keepAlive();
+        (window as any).__heldWrite = true; let hold = true;
+        const alive = () => { if (hold) this.get('library').onsuccess = alive; }; alive();
         (window as any).__releaseWrite = (fail: boolean) => { hold = false; if (fail) this.transaction.abort(); };
-      }
-      return result;
+      } return result;
     };
   });
-  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep changes' }).click();
   await expect.poll(() => page.evaluate(() => Boolean((window as any).__releaseWrite))).toBe(true);
-  await page.goForward();
-  await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
-  for (let attempt = 0; attempt < 2; attempt++) {
-    await page.goBack();
-    await expect.poll(() => page.evaluate(() => location.hash)).toBe('#boards/new');
-    await expect(page.getByTestId('ai-draft')).toContainText('Cow');
-  }
-  await expect(page.getByRole('button', { name: 'Back to boards', exact: true })).toBeDisabled();
-  await page.evaluate(fail => (window as any).__releaseWrite(fail), outcome === 'failure');
-  if (outcome === 'failure') {
-    await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-    await expect(page.getByTestId('ai-conversation')).toContainText(/abort/i);
-    expect((await saved(page)).boards).toHaveLength(3);
-    await page.getByRole('button', { name: 'Use this board', exact: true }).click();
-  }
-  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
-  expect((await saved(page)).boards).toHaveLength(4);
-  // Save protection ends: ordinary Back and Forward can dismiss and reopen a fresh workspace.
-  await page.getByRole('button', { name: 'Edit with AI', exact: true }).click();
   await page.goBack();
-  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
-  await page.goForward();
-  await expect(page.getByTestId('ai-conversation')).toBeVisible();
+  await expect(page).toHaveURL(/#boards\/new$/);
+  await expect(page.getByRole('button', { name: 'Boards', exact: true })).toBeDisabled();
+  await page.evaluate(fail => (window as any).__releaseWrite(fail), outcome === 'failure');
+  if (outcome === 'failure') { await expect(page.getByTestId('board-assistant')).toContainText(/abort/i); await page.getByRole('button', { name: 'Keep changes' }).click(); }
+  await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
+  expect((await saved(page)).boards).toHaveLength(4);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
 
-for (const dismissal of ['page back', 'browser back']) test(`prompt text stays editable until sent and ${dismissal} leaves without microphone access`, async ({ page }) => {
-  await page.evaluate(() => {
-    (window as any).__microphoneRequests = 0;
-    Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => {
-      (window as any).__microphoneRequests++;
-      throw new Error('Little Say must not capture prompt audio');
-    } });
-  });
-  const requests: any[] = [];
-  let transcriptions = 0;
-  await page.route('**/api/transcribe', route => { transcriptions++; return route.abort(); });
-  await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: envelope() }); });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
-  await expect(page.getByText('What would you like on your board? Type a message or use your keyboard’s dictation.', { exact: true })).toBeVisible();
-  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
-  await input.click();
-  await expect(input).toBeFocused();
-  // Keyboard dictation commits ordinary text; browser automation verifies the resulting input flow.
-  await input.fill('Cow and бабушка');
-  expect(requests).toHaveLength(0);
-  await input.fill('Cow');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByTestId('ai-draft')).toBeVisible();
-  await input.fill('Make the cow blue');
-  expect(requests).toHaveLength(1);
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
-  await input.fill('Make the cow green');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
-  expect(requests[1].prompt).toBe('Make the cow green');
-  expect(requests[1].conversation.history).toHaveLength(1);
-  await input.fill('An unsent follow-up');
-  if (dismissal === 'browser back') await page.goBack();
-  else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
-  await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
-  expect(requests).toHaveLength(2);
-  expect(transcriptions).toBe(0);
-  expect(await page.evaluate(() => (window as any).__microphoneRequests)).toBe(0);
-});
-
-test('the compact editor fits tablet orientations and keeps reordering in the tile dialog', async ({ page }) => {
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveCount(0);
-  for (const size of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }, { width: 1024, height: 768 }]) {
-    await page.setViewportSize(size);
-    for (const name of ['Edit with AI', 'Add a tile', 'Duplicate board', 'Delete board', 'Languages', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
-    await expect(page.getByRole('button', { name: /^(Prepare missing audio \(6\)|Preparing audio…|Retry missing audio \(6\))$/ })).toBeInViewport({ ratio: 1 });
-    await expect(page.getByRole('button', { name: 'Edit tile Duck', exact: true })).toBeInViewport({ ratio: 1 });
-    await page.screenshot({ path: `artifacts/screenshots/editor-${size.width}.png` });
-  }
-  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Move Cow earlier', exact: true })).toBeDisabled();
-  await page.getByRole('button', { name: 'Move Cow later', exact: true }).click();
-  await expect(page.getByText('Position 2 of 6', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await expect(page.getByTestId('editor-preview').getByRole('button').nth(1)).toHaveAccessibleName('Edit tile Cow');
-});
-
-test('a new phone conversation starts with its full data-use introduction visible', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('button', { name: 'New board', exact: true }).click();
-  const intro = page.getByText(/Messages and board words go to AI/);
-  await expect(intro).toContainText('without automatic deletion');
-  await page.evaluate(async () => { await document.fonts.ready; await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))); });
-  const panel = (await page.getByTestId('ai-transcript').boundingBox())!;
-  const text = (await intro.boundingBox())!;
-  expect(text.y).toBeGreaterThanOrEqual(panel.y);
-  expect(text.y + text.height).toBeLessThanOrEqual(panel.y + panel.height);
-  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
+test('compact controls fit phone and tablet; disclosure is available without a transcript', async ({ page }) => {
   await mkdir('artifacts/screenshots', { recursive: true });
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-entry-phone.png' });
-  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
-  await input.fill('A board with cow, sheep, and horse');
-  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeEnabled();
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-ready-phone.png' });
-  await input.fill('');
-  await page.setViewportSize({ width: 1180, height: 900 });
-  await expect(input).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeDisabled();
-  await page.screenshot({ path: 'artifacts/screenshots/ai-conversation-text-entry-desktop.png' });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  for (const size of [{ width: 390, height: 844 }, { width: 820, height: 1180 }, { width: 1180, height: 820 }]) {
+    await page.setViewportSize(size);
+    for (const name of ['Add card', 'Board options', 'Send message', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeInViewport({ ratio: 1 });
+    await page.screenshot({ path: `artifacts/screenshots/unified-editor-${size.width}.png` });
+  }
+  await expect(page.getByRole('button', { name: 'History', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Review before keeping', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'About AI' }).click();
+  await expect(page.getByText(/Messages and board words go to AI/)).toContainText('Personal photos stay on this device');
+  await page.getByRole('button', { name: 'Close About AI', exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/api/boards/propose', route => {
+    const board = route.request().postDataJSON().board;
+    return respond(route, { ...proposal(), title: board.title, tiles: board.tiles.map((tile: any) => ({ ...word(tile.label, tile.id), emoji: tile.emoji, color: tile.color, speech: tile.label === 'Cow' ? 'Moo moo' : tile.speech })) });
+  });
+  await send(page, 'Make the cow say moo moo');
+  await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeInViewport({ ratio: 1 });
+  await page.screenshot({ path: 'artifacts/screenshots/unified-editor-suggestion-390.png' });
+});
+
+test('direct additions during a request survive and can be changed in the next AI turn', async ({ page }) => {
+  let release!: () => void; const gate = new Promise<void>(resolve => { release = resolve; });
+  let turns = 0;
+  await page.route('**/api/pictures/analyze', route => route.fulfill({ status: 503, json: { error: 'Pictures unavailable' } }));
+  await page.route('**/api/boards/propose', async route => {
+    const input = route.request().postDataJSON(); const turn = ++turns;
+    if (turn === 1) await gate;
+    await respond(route, { ...proposal(), title: 'Our board', tiles: input.board.tiles.map((t: any) => word(turn === 2 && t.label === 'Water' ? 'Drink' : t.label, t.id)) });
+  });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await send(page, 'Rename the board');
+  await expect(page.getByTestId('ai-working')).toBeVisible();
+  await add(page, 'Water');
+  release();
+  await expect(page.getByRole('button', { name: 'Keep changes' })).toBeEnabled();
+  await expect(page.getByTestId('editor-preview')).toContainText('Water');
+  await send(page, 'Call Water Drink');
+  await expect(page.getByTestId('editor-preview')).toContainText('Drink');
+  await page.getByRole('button', { name: 'Keep changes' }).click();
+  expect((await saved(page)).boards[0].tiles.at(-1).label).toBe('Drink');
+});
+
+test('editing route reloads and keyboard text never requests microphone access', async ({ page }) => {
+  await page.evaluate(() => { Object.defineProperty(navigator.mediaDevices, 'getUserMedia', { configurable: true, value: async () => { throw new Error('Unexpected microphone request'); } }); });
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI' }).fill('Cow and бабушка');
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Farmyard friends');
+  await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
+  await page.goBack();
+  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
