@@ -1,4 +1,4 @@
-# Restricts runtime and release credentials to attached identities and repository/environment-bound federation.
+# Restricts runtime credentials to attached identities and releases to immutable GitHub repository/environment identity.
 resource "google_service_account" "service" {
   for_each     = toset(["api", "worker", "migrator", "tasks", "scheduler", "release"])
   account_id   = "little-say-${each.key}"
@@ -66,7 +66,8 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   attribute_mapping = {
     "google.subject" = "assertion.sub", "attribute.repository" = "assertion.repository"
   }
-  attribute_condition = "assertion.repository == 'darkmachines-net/little-say' && assertion.ref == 'refs/heads/master' && assertion.sub == 'repo:darkmachines-net/little-say:environment:gcp-production'"
+  # GitHub's immutable subject embeds owner/repository IDs; a same-name replacement must not inherit deployment access.
+  attribute_condition = "assertion.repository == 'darkmachines-net/little-say' && assertion.ref == 'refs/heads/master' && assertion.sub == 'repo:darkmachines-net@347558273/little-say@1403932361:environment:gcp-production'"
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
