@@ -1,4 +1,4 @@
-# Runs immutable API/worker revisions with a pinned worker secret and a separately privileged migration job.
+# Runs immutable API/worker revisions with bounded cold-start probes, a pinned worker secret and a privileged migration job.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
@@ -103,8 +103,9 @@ resource "google_cloud_run_v2_service" "service" {
         }
         initial_delay_seconds = 2
         period_seconds        = 5
-        failure_threshold     = 20
-        timeout_seconds       = 3
+        # First-image cold starts can exceed 100 seconds; allow a bounded 200-second probe window.
+        failure_threshold = 40
+        timeout_seconds   = 3
 
       }
       liveness_probe {
