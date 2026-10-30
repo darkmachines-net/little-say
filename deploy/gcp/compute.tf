@@ -1,4 +1,4 @@
-# Runs one immutable image as API, IAM-only worker with a pinned provider secret, and separately privileged migration job.
+# Runs immutable API/worker revisions with a pinned worker secret and a separately privileged migration job.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
@@ -120,7 +120,8 @@ resource "google_cloud_run_v2_service" "service" {
 
   }
   lifecycle {
-    ignore_changes = [template[0].containers[0].image, template[0].revision, client, client_version, traffic]
+    # Leave revision unset: retaining a release-created name prevents changing its immutable configuration.
+    ignore_changes = [template[0].containers[0].image, client, client_version, traffic]
     precondition {
       condition     = !var.ai_enabled || var.ai_provider_key_version != ""
       error_message = "Provision and select an ai-provider-key secret version before enabling AI."
