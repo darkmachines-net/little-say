@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, duplicate delivery, interruption, owner grants, and real API session contracts against isolated PostgreSQL. */
+/** @file Verifies durable jobs, guest/account ownership, private media, CSRF, cancellation, and interruption in isolated PostgreSQL. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -110,8 +110,9 @@ it('persists fixture speech through a worker restart and grants downloads only t
   await expect(new DatabaseCache(f.pool, restarted, 'speech', f.alice.id).read('contract.json')).rejects.toMatchObject({ code: 'ENOENT' });
   await expect(restarted.read('../escape')).rejects.toThrow('Invalid storage key');
 });
-it('uses only __session for browser AI, enforces CSRF and verification, and protects direct media and job URLs', async () => {
+it.each([false, true])('allows unverified or guest AI (anonymous=%s) while protecting CSRF, jobs, media and backups', async anonymous => {
   const f = await setup();
+  Object.assign(f.identity, { emailVerified: false, anonymous, ...(anonymous ? { email: null, providers: [] } : {}) });
   const auth: IdentityService = {
     config: { projectId: 'demo-little-say', appId: 'demo-app', apiKey: 'demo-key', authDomain: 'localhost', providers: ['password'] },
     /** Return only this fixture's enrolled identity. */
@@ -129,14 +130,12 @@ it('uses only __session for browser AI, enforces CSRF and verification, and prot
   const caches = apiCaches({ ...hosting, env: {} });
   const app = await createServer({ provider: null, ...caches, accounts: f.accounts, auth, hosting, secureCookies: true }); cleanup.push(() => app.close());
   const csrf = await app.inject('/api/account/csrf'), initialCookie = String(csrf.headers['set-cookie']).split(';')[0];
-  const login = await app.inject({ method: 'POST', url: '/api/account/session', headers: { cookie: initialCookie, 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken }, payload: { idToken: 'fixture' } });
+  const login = await app.inject({ method: 'POST', url: '/api/account/session', headers: { cookie: initialCookie, 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken }, payload: { idToken: 'fixture', guest: anonymous } });
   expect(login.statusCode).toBe(200); expect(login.headers['set-cookie']).toMatch(/^__session=[a-f0-9]{64}; Path=\/api; HttpOnly; SameSite=Strict;.*Secure$/);
   const headers = { cookie: String(login.headers['set-cookie']).split(';')[0], 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken };
   const id = randomUUID(), payload = { id, kind: 'speech', input: { text: 'Hello', language: 'en' } };
   expect((await app.inject({ method: 'POST', url: '/api/ai/jobs', headers: { ...headers, 'x-little-say-csrf': 'wrong' }, payload })).statusCode).toBe(403);
-  f.identity.emailVerified = false;
-  expect((await app.inject({ method: 'POST', url: '/api/ai/jobs', headers, payload })).statusCode).toBe(403);
-  f.identity.emailVerified = true;
+  expect((await app.inject({ url: '/api/account/backup', headers })).statusCode).toBe(403);
   const accepted = await app.inject({ method: 'POST', url: '/api/ai/jobs', headers, payload }); expect(accepted.statusCode).toBe(202);
   expect((await app.inject(`/api/ai/jobs/${id}`)).statusCode).toBe(401);
   const job = (await f.jobs.claim(id))!;
@@ -144,5 +143,11 @@ it('uses only __session for browser AI, enforces CSRF and verification, and prot
   const media = '/api/speech/' + result.id + '.wav';
   expect((await app.inject(media)).statusCode).toBe(401);
   expect((await app.inject({ url: media, headers })).statusCode).toBe(200);
+  expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers })).json()).toMatchObject({ state: 'complete', result });
+  const previous = f.identity.uid; f.identity.uid = randomUUID(); await f.accounts.provision(f.identity);
+  expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
+  expect((await app.inject({ url: media, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
+  await app.inject({ method: 'POST', url: `/api/ai/jobs/${id}/cancel`, headers: { authorization: 'Bearer other', 'x-little-say': '1' } });
+  f.identity.uid = previous;
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers })).json()).toMatchObject({ state: 'complete', result });
 });

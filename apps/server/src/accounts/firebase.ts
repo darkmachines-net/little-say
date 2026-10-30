@@ -1,4 +1,4 @@
-/** @file Configures Firebase Admin identity verification and public client settings without exposing admin credentials. */
+/** @file Verifies registered and anonymous Firebase identities and exposes only public client configuration. */
 import { initializeApp, applicationDefault, deleteApp } from 'firebase-admin/app';
 import { getAuth, type Auth, type DecodedIdToken } from 'firebase-admin/auth';
 import { authConfigSchema, type AuthConfig } from '@little-say/core';
@@ -55,7 +55,8 @@ export class FirebaseIdentity implements IdentityService {
       const user = await this.auth.getUser(claims.uid);
       if (user.disabled) throw new Error('Disabled');
       return { project: this.config.projectId, uid: claims.uid, email: user.email ?? null, displayName: user.displayName ?? null, emailVerified: user.emailVerified,
-        providers: user.providerData.map(value => value.providerId), authTime: claims.auth_time, expires: claims.exp };
+        providers: user.providerData.map(value => value.providerId), authTime: claims.auth_time, expires: claims.exp,
+        anonymous: claims.firebase.sign_in_provider === 'anonymous' && user.providerData.length === 0 };
     } catch { throw new AccountError('Sign in again to sync. Your local boards are still available.', 401); }
   }
   /** Create a two-week cookie; callers verify recent auth and CSRF before invoking this operation. */

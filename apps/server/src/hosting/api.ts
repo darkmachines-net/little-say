@@ -1,4 +1,4 @@
-/** @file Applies public-host authorization and asynchronous job compatibility to AI, batch, and media routes. */
+/** @file Protects asynchronous AI jobs and media with automatic guest or registered ownership. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
@@ -50,7 +50,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     if (library && request.method === 'GET') return reply.send({ picture: (await catalog.library(decodeURIComponent(library[1]))).picture });
     const legacyKind = aliases[path];
     if (legacyKind && request.method === 'POST') {
-      const { account } = await access.verify(request, true);
+      const { account } = await access.verify(request);
       const input = validateJobInput(legacyKind, request.body);
       if (legacyKind === 'review') for (const card of (input as z.infer<typeof reviewSchema>).cards) {
         if (!await canReadMedia(pool, 'pictures', `${card.assetId}.png`, account.id)) throw new AccountError('Picture unavailable.', 404);
@@ -65,7 +65,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     }
     const legacy = /^\/api\/pictures\/(jobs|batches)\/([^/]+)(\/cancel)?$/.exec(path);
     if (legacy) {
-      const { account } = await access.verify(request, true);
+      const { account } = await access.verify(request);
       const job = legacy[3] && request.method === 'POST' ? await jobs.cancel(account.id, legacy[2]) : await jobs.get(account.id, legacy[2]);
       if (!job) return reply.code(404).send({ error: 'Job unavailable.' });
       if (legacy[1] === 'jobs') return reply.send(pictureState(job));
@@ -80,7 +80,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     }
   });
   app.post('/api/ai/jobs', { bodyLimit: 512 * 1024 }, async (request, reply) => {
-    const { account } = await access.verify(request, true);
+    const { account } = await access.verify(request);
     const parsed = submission.safeParse(request.body);
     if (!parsed.success) throw new AccountError('Provide a valid AI operation.', 400);
     const { id, kind } = parsed.data, input = validateJobInput(kind, parsed.data.input);
@@ -93,12 +93,12 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     return reply.code(202).send(job);
   });
   app.get<{ Params: { id: string } }>('/api/ai/jobs/:id', async (request, reply) => {
-    const { account } = await access.verify(request, true);
+    const { account } = await access.verify(request);
     const job = await jobs.get(account.id, request.params.id);
     return job ?? reply.code(404).send({ error: 'Job unavailable.' });
   });
   app.post<{ Params: { id: string } }>('/api/ai/jobs/:id/cancel', async (request, reply) => {
-    const { account } = await access.verify(request, true);
+    const { account } = await access.verify(request);
     return await jobs.cancel(account.id, request.params.id) ?? reply.code(404).send({ error: 'Job unavailable.' });
   });
 }

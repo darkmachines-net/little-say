@@ -1,4 +1,4 @@
-/** @file Separates AI sign-in from explicit device backup consent and coordinates optional foreground synchronization. */
+/** @file Coordinates optional account sign-in, explicit device backup consent, and foreground synchronization. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -95,7 +95,7 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     const previous = current.current.session;
     value = { ...value, backupEnabled: previous?.server === value.server && previous.account.id === value.account.id && previous.backupEnabled === true };
     await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false);
-    setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. AI is available when connected.' : 'Verify your email to use AI or enable backup. Local boards remain available.');
+    setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. You can enable backup for this device.' : 'Verify your email to enable backup. AI and local boards are already available.');
   };
   const setBackupEnabled = async (enabled: boolean) => run(async () => {
     const value = current.current.session;

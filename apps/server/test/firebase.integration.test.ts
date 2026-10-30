@@ -1,4 +1,4 @@
-/** @file Verifies real Auth-emulator credentials, cookies, CSRF, revocation, email actions, and global deletion against Postgres. */
+/** @file Verifies guest/account Auth-emulator credentials, session renewal, CSRF, revocation, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -50,6 +50,21 @@ it('keeps guest APIs available and gates backup on verified email with no passwo
   await f.admin.updateUser(f.uid, { emailVerified: true });
   expect((await f.app.inject({ url: '/api/account/backup', headers: access })).statusCode).toBe(200);
   expect((await f.app.inject({ method: 'POST', url: '/api/account/register', headers, payload: {} })).statusCode).toBe(404);
+});
+it('restores persisted native guests without recent sign-in and rejects account credentials disguised as guests', async () => {
+  const f = await setup();
+  const guest = await rest('accounts:signUp', { returnSecureToken: true });
+  cleanup.push(() => f.admin.deleteUser(guest.localId));
+  expect(await f.auth.verify(guest.idToken)).toMatchObject({ anonymous: true, email: null, emailVerified: false });
+  // The emulator permits editing this unsigned claim to model a refreshed ID token from an older guest login.
+  const parts = guest.idToken.split('.'), claims = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+  claims.auth_time -= 86400;
+  const token = parts[0] + '.' + Buffer.from(JSON.stringify(claims)).toString('base64url') + '.' + parts[2];
+  const request = { method: 'POST' as const, url: '/api/account/session', headers, payload: { idToken: token, native: true, guest: true } };
+  const first = await f.app.inject(request), second = await f.app.inject(request);
+  expect(first.statusCode).toBe(200); expect(second.json().account.id).toBe(first.json().account.id);
+  expect((await f.app.inject({ url: '/api/account/backup', headers: { authorization: 'Bearer ' + token } })).statusCode).toBe(403);
+  expect((await f.app.inject({ ...request, payload: { ...request.payload, idToken: f.token } })).statusCode).toBe(403);
 });
 it('protects cookie exchange and mutation with CSRF, uses secure cookies, and invalidates only logout cookie', async () => {
   const f = await setup(); await f.admin.updateUser(f.uid, { emailVerified: true });

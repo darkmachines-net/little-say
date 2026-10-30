@@ -1,4 +1,4 @@
-/** @file Presents optional Firebase accounts, explicit backup consent, verification, linking, and global identity deletion. */
+/** @file Presents optional backup accounts and verification while keeping local boards and AI available to guests. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { type AccountController } from '../services/useAccount';
@@ -34,7 +34,7 @@ export function AccountPanel({ account, mode, setMode, onContinue, settingsPage 
       <Text style={styles.body}>Signed in as {account.session!.account.displayName || account.session!.account.email || 'your account'}</Text>
       <Text style={styles.small}>{account.session!.backupEnabled ? 'Backup is enabled on this device.' : 'Your boards stay on this device until you enable backup.'}</Text>
       {account.session!.account.deletionPending ? <Notice>Backup access is blocked while deletion is pending. Retry Delete account to finish Apple confirmation.</Notice> : !account.session!.account.emailVerified ? <>
-        <Notice>Verify your email to use AI or enable backup. Your boards still work offline.</Notice>
+        <Notice>Verify your email to enable backup. AI is available now, and your boards still work offline.</Notice>
         {passwordNeeded && <Field label="Password for verification" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />}
         <Button disabled={account.busy || (passwordNeeded ? !password : !account.socialAvailable)} onPress={() => void account.verifyEmail(password, false, current).then(clear).catch(() => {})}>Check email verification</Button>
         <Button kind="secondary" disabled={account.busy || (passwordNeeded ? !password : !account.socialAvailable) || !account.session!.account.email} onPress={() => void account.verifyEmail(password, true, current).then(clear).catch(() => {})}>Resend verification email</Button>
@@ -73,7 +73,7 @@ export function AccountPanel({ account, mode, setMode, onContinue, settingsPage 
       </> : <Button kind="ghost" disabled={account.busy} onPress={() => { setDeleting(true); setManage(false); clear(); }}>Delete account…</Button>}
       {!account.socialAvailable && <Text style={styles.small}>Google and Apple account actions require a development build. Email sign-in and local boards work in Expo Go.</Text>}
     </> : <>
-      <Text style={styles.body}>Use local boards without an account. Sign in to use AI and optionally back up boards across devices.</Text>
+      <Text style={styles.body}>Create boards and use AI without an account. Sign in to back up boards across devices.</Text>
       <Text style={styles.small}>Without a backup, removing the app or clearing its storage removes these boards.</Text>
       {mode ? <>
         <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />

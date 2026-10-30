@@ -1,4 +1,4 @@
-/** @file Starts the real API against a unique test schema and the Auth emulator, then removes only its owned schema. */
+/** @file Runs the real API and fixture worker against an isolated test schema/emulator, then removes only owned data. */
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { testDatabase } from '../apps/server/test/postgres-fixture';
@@ -14,6 +14,7 @@ Object.assign(process.env, {
   FIREBASE_AUTH_EMULATOR_URL: 'http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST,
 });
 await import(pathToFileURL(resolve('apps/server/dist/index.js')).href);
+await import(pathToFileURL(resolve('apps/server/dist/worker.js')).href);
 let closing = false;
 async function stop(code: number) { if (closing) return; closing = true; await fixture.close(); process.exitCode = code; }
 process.once('SIGTERM', () => { void stop(0); });

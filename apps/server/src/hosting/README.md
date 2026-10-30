@@ -22,7 +22,7 @@ Workers heartbeat every two seconds. Lost claims become `interrupted` after 90 s
 | `AAC_AI_FIXTURES=true` | Explicit local/test synthetic boards, pictures and silent WAVs; forbidden in production |
 | `AAC_AI_WORKER_CONFIGURED=true` | Cloud API capability advertisement after the worker key is provisioned; the API does not receive that key |
 
-Without a provider key or explicit fixtures, local AI is unavailable. Public catalog lookups, manual boards, device speech, and downloaded content remain available. Native and browser AI/media requests use the same [account authorization](../accounts/README.md), including requests to direct Cloud Run URLs.
+Without a provider key or explicit fixtures, local AI is unavailable. Public catalog lookups, manual boards, device speech, and downloaded content remain available. AI requires no registration or email verification. Automatic guest identities use the same ownership limits and [account authorization](../accounts/README.md) as registered accounts, including requests to direct Cloud Run URLs.
 
 ## Storage and deletion
 

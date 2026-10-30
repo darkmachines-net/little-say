@@ -1,4 +1,4 @@
-/** @file Stores Firebase-owned private backups in Postgres with atomic quota, revision, and deletion boundaries. */
+/** @file Stores Firebase guest/account owners, sessions, and private backups with atomic quota and deletion boundaries. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, mergeAssets, syncSnapshotSchema } from '@little-say/core';
@@ -7,7 +7,7 @@ import { transaction } from '../database';
 export const MAX_ASSET_BYTES = 10 * 1024 * 1024;
 export const MAX_ACCOUNT_BYTES = 256 * 1024 * 1024;
 const digest = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
-export type Identity = { project: string; uid: string; email: string | null; displayName: string | null; emailVerified: boolean; providers: string[]; authTime: number; expires: number };
+export type Identity = { project: string; uid: string; email: string | null; displayName: string | null; emailVerified: boolean; providers: string[]; authTime: number; expires: number; anonymous?: boolean };
 type Row = { id: string; email: string | null; display_name: string | null; email_verified: boolean; providers: string[]; deleting?: boolean };
 const publicAccount = (row: Row): Account => ({ id: row.id, email: row.email, displayName: row.display_name, emailVerified: row.email_verified, providers: row.providers, ...(row.deleting ? { deletionPending: true } : {}) });
 
@@ -22,7 +22,7 @@ export class Accounts {
   /** Inject the server-owned pool and an optional smaller quota for integration fixtures. */
   constructor(private pool: Pool, private quota = MAX_ACCOUNT_BYTES) {}
 
-  /** Provision only after explicit sign-in; Firebase project/UID is the sole identity key. */
+  /** Provision a verified Firebase guest or account; project/UID is the sole identity key, never email. */
   async provision(identity: Identity): Promise<Account> {
     return transaction(this.pool, async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [identity.project + ':' + identity.uid]);

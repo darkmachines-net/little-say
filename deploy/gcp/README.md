@@ -16,11 +16,13 @@ The API permits public invocation but enforces account identity/ownership for pr
 
 ## Identity, secrets and native binaries
 
-Terraform registers Firebase's public client configuration, email/password auth and the existing Android/iOS package identities `net.darkmachines.littlesay`. Import existing Firebase registrations if they are already present. Configure Google with the actual Play App Signing certificate fingerprints, upload/test certificates where applicable, Android OAuth package/fingerprint clients, a web client ID, and an iOS OAuth client/URL scheme. Supply the public client IDs in Terraform variables and `LITTLE_SAY_GOOGLE_IOS_URL_SCHEME` in the release environment. Preserve the existing EAS project and application IDs.
+Terraform registers Firebase's public client configuration, email/password and anonymous guest auth plus the existing Android/iOS package identities `net.darkmachines.littlesay`. Import existing Firebase registrations if they are already present. Configure Google with the actual Play App Signing certificate fingerprints, upload/test certificates where applicable, Android OAuth package/fingerprint clients, a web client ID, and an iOS OAuth client/URL scheme. Supply the public client IDs in Terraform variables and `LITTLE_SAY_GOOGLE_IOS_URL_SCHEME` in the release environment. Preserve the existing EAS project and application IDs.
 
 Configure Apple with the existing app identifier's Sign in with Apple entitlement, Services ID, team/key ID, private key, Firebase callback `https://little-say.firebaseapp.com/__/auth/handler`, and approved private-email relay sender/domain. Enable Google/Apple in Firebase before setting their public Terraform variables; email/password remains the only advertised method until then. OAuth provider secrets and Apple keys belong in Secret Manager/provider consoles, never Git or client bundles. `google-client-secret` and `apple-private-key` are reserved secret resources, not automatically populated provider configurations.
 
-Add the AI key directly as a version of `ai-provider-key` using stdin or a protected local file. Do not put it in tfvars or print it in logs. Only the worker has access. Keep `ai_enabled=false` until the real hosted acceptance checks succeed; changing it to false on API and worker is the operator kill switch. An origin change requires explicit sign-in and separate backup consent; local boards are retained.
+Add the AI key directly as a version of `ai-provider-key` in Secret Manager, using the console, stdin or a protected local file. Do not put the key in tfvars, chat or logs. Set `ai_provider_key_version` in the ignored `terraform.tfvars` to that version's number (for example, `"1"`), then review and apply Terraform. Only the worker receives `AAC_OPENAI_KEY`; API and migration identities have no access to this secret. Key rotation creates a new secret version and an explicitly reviewed worker revision, rather than silently changing running instances through `latest`.
+
+Provisioning the key and activating AI are separate. Keep `ai_enabled=false` until the real hosted acceptance checks succeed; Terraform rejects activation without a selected key version. After applying a key change, verify the new worker revision's secret reference and readiness, then route worker traffic to that verified revision, since Terraform preserves release-owned traffic. Changing `ai_enabled` updates the API/worker environment; route verified revisions and republish the pinned Hosting rewrite for the change to reach clients. Setting it to false is the operator admission/execution kill switch. An origin change requires explicit sign-in and separate backup consent; local boards are retained.
 
 ## Release protection
 
@@ -36,7 +38,7 @@ For media, create an operator-owned probe object, record its generation, delete 
 
 Before launch, demonstrate actual Hosting `__session`/CSRF behavior, direct API authorization, object round trips, authenticated queued execution, queue failure, duplicate delivery, worker termination and redeployment. Verify the image digest, migration state, HTTPS, SQL/storage/job/readiness alerts and $25/$50/$100 billing thresholds. Alerts are not spending caps. Check SQL restoration and object recovery into isolated resources. Record evidence in ignored `artifacts/` or the PR.
 
-Test sign-in, verified AI, backup restore, account deletion and offline playback on TestFlight and Play-installed binaries, plus LAN development separately. Emulator/browser tests cannot establish store OAuth identities, device networking or native storage behavior.
+Test guest AI, sign-in, verified backup restore, account deletion and offline playback on TestFlight and Play-installed binaries, plus LAN development separately. Emulator/browser tests cannot establish store OAuth identities, device networking or native storage behavior.
 
 ## Feasibility checkpoint and fallback
 

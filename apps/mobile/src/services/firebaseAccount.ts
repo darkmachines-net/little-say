@@ -1,22 +1,23 @@
-/** @file Coordinates explicit Firebase sign-in, backend cookie exchange, provider linking, and fresh native ID tokens. */
+/** @file Coordinates automatic guest AI sessions and explicit backup sign-in with origin-bound Firebase credentials. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, GoogleAuthProvider, OAuthProvider, EmailAuthProvider, linkWithCredential, linkWithPopup, type User, type Auth } from 'firebase/auth';
+import { initializeAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, signInWithPopup, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, GoogleAuthProvider, OAuthProvider, EmailAuthProvider, linkWithCredential, linkWithPopup, type User, type Auth } from 'firebase/auth';
 import { authConfigSchema, sessionSchema, type AuthConfig } from '@little-say/core';
-import { apiFetch } from './api';
+import { apiFetch, ApiError } from './api';
 import { authDependencies } from './firebasePersistence';
 import { nativeCredential, socialAuthAvailable, type SocialProvider, type AppleGrant } from './firebaseProviders';
 import { type AccountSession } from './accountSession';
 export type Provider = 'password' | SocialProvider;
 type Context = { auth: Auth; config: AuthConfig };
 const contexts = new Map<string, Promise<Context>>();
+const guests = new Map<string, { expires: number; session: Promise<AccountSession> }>();
 const providerObject = (provider: SocialProvider) => {
   if (provider === 'google.com') return new GoogleAuthProvider();
   const apple = new OAuthProvider('apple.com'); apple.addScope('email'); apple.addScope('name'); return apple;
 };
 
-/** Resolve public backend configuration only after the parent requests account functionality. */
+/** Resolve public identity settings lazily for AI use or an explicit account action. */
 export async function accountContext(server: string, savedConfig?: AuthConfig): Promise<Context> {
   let context = contexts.get(server);
   if (!context) {
@@ -53,17 +54,48 @@ async function rawSignIn(context: Context, provider: Provider, email: string, pa
   return { user: result.user, ...(accessToken ? { apple: { token: accessToken, type: 'ACCESS_TOKEN' as const } } : {}) };
 }
 
-async function exchange(server: string, context: Context, user: User): Promise<AccountSession> {
+async function exchange(server: string, context: Context, user: User, guest = false): Promise<AccountSession> {
   const result = sessionSchema.parse(await apiFetch(server, '/api/account/session', { credentials: 'include', method: 'POST',
     headers: { 'Content-Type': 'application/json', ...await csrfHeaders(server) },
-    body: JSON.stringify({ idToken: await getIdToken(user, true), native: Platform.OS !== 'web' }) }, undefined, true));
+    body: JSON.stringify({ idToken: await getIdToken(user, true), native: Platform.OS !== 'web', guest }) }, undefined, true));
   const session = { account: result.account, server, firebaseUid: user.uid, authConfig: context.config };
   if (Platform.OS === 'web') await signOut(context.auth);
   return session;
 }
 
-/** Sign in or register only after explicit consent to connect this device's boards to the selected server. */
+/** Obtain a private AI owner without registration or backup consent; concurrent requests share one exchange. */
+export async function guestAuthHeaders(server: string, mutation: boolean): Promise<Record<string, string>> {
+  let pending = guests.get(server);
+  if (!pending || pending.expires <= Date.now()) {
+    const session = (async (): Promise<AccountSession> => {
+      const context = await accountContext(server);
+      if (Platform.OS === 'web') {
+        try {
+          const existing = sessionSchema.parse(await apiFetch(server, '/api/account/session', {}, undefined, true));
+          // Browser authority stays in the HttpOnly cookie; no Firebase UID/refresh token is restored to JS.
+          return { account: existing.account, server, firebaseUid: '', authConfig: context.config };
+        } catch (error) { if (!(error instanceof ApiError) || error.status !== 401) throw error; }
+      }
+      if (context.auth.currentUser && !context.auth.currentUser.isAnonymous) await signOut(context.auth);
+      const { user } = await signInAnonymously(context.auth);
+      return exchange(server, context, user, true);
+    })();
+    pending = { expires: Date.now() + 5 * 60 * 1000, session };
+    guests.set(server, pending);
+    session.catch(() => { if (guests.get(server)?.session === session) guests.delete(server); });
+  }
+  const session = await pending.session;
+  return { 'X-Little-Say-Account': session.account.id, ...await accountAuthHeaders(session, mutation) };
+}
+
+async function finishGuestRequests(server: string) {
+  await guests.get(server)?.session.catch(() => {});
+  guests.delete(server);
+}
+
+/** Sign in or register explicitly; this alone never opts the device into cloud backup. */
 export async function authenticateAccount(server: string, mode: 'login' | 'register', email: string, password: string, provider: Provider = 'password') {
+  await finishGuestRequests(server);
   const context = await accountContext(server);
   try {
     const result = mode === 'register' && provider === 'password' ? await createUserWithEmailAndPassword(context.auth, email.trim(), password) : await rawSignIn(context, provider, email, password);
@@ -90,6 +122,7 @@ export async function accountAuthHeaders(session: AccountSession, mutation: bool
 
 /** Clear this device's Firebase state without affecting other devices or local boards. */
 export async function signOutAccount(session: AccountSession) {
+  await finishGuestRequests(session.server);
   const context = await accountContext(session.server, session.authConfig);
   await signOut(context.auth);
 }

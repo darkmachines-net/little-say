@@ -1,4 +1,4 @@
-# Owns single-zone PostgreSQL, private durable media, credentials, Firebase, and registry resources.
+# Owns PostgreSQL, private media, credentials, Firebase account/guest authentication, and the image registry.
 resource "google_firebase_project" "app" {
   provider = google-beta
 }
@@ -14,6 +14,9 @@ data "google_firebase_web_app_config" "client" {
 resource "google_identity_platform_config" "auth" {
   authorized_domains = ["littlesay.app", "little-say.firebaseapp.com", "little-say.web.app"]
   sign_in {
+    anonymous {
+      enabled = true
+    }
     phone_number {
       enabled = false
     }

@@ -1,4 +1,4 @@
-# Runs one immutable application image as API, IAM-only worker, and separately privileged migration job.
+# Runs one immutable image as API, IAM-only worker with a pinned provider secret, and separately privileged migration job.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
@@ -82,13 +82,13 @@ resource "google_cloud_run_v2_service" "service" {
 
       }
       dynamic "env" {
-        for_each = each.key == "worker" && var.ai_enabled ? [1] : []
+        for_each = each.key == "worker" && var.ai_provider_key_version != "" ? [1] : []
         content {
           name = "AAC_OPENAI_KEY"
           value_source {
             secret_key_ref {
               secret  = google_secret_manager_secret.secret["ai-provider-key"].secret_id
-              version = "latest"
+              version = var.ai_provider_key_version
 
             }
 
@@ -121,6 +121,10 @@ resource "google_cloud_run_v2_service" "service" {
   }
   lifecycle {
     ignore_changes = [template[0].containers[0].image, template[0].revision, client, client_version, traffic]
+    precondition {
+      condition     = !var.ai_enabled || var.ai_provider_key_version != ""
+      error_message = "Provision and select an ai-provider-key secret version before enabling AI."
+    }
   }
   depends_on = [google_project_iam_member.runtime, google_secret_manager_secret_iam_member.runtime]
 }

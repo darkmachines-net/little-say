@@ -1,4 +1,4 @@
-/** @file Exercises optional account consent, full photo/picture/audio restore, offline edits, conflicts, and local-preserving sign-out in real browsers. */
+/** @file Exercises automatic guest AI, optional backup consent, media restoration, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -6,6 +6,31 @@ import { starterLibrary } from '../fixtures/library';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 
 const password = 'a test family passphrase';
+
+test('guests create a fixture AI board without registration and retain private session ownership on reload', async ({ page, browser }) => {
+  await page.goto('/app');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
+  const accepted = page.waitForResponse(response => response.url().endsWith('/api/boards/propose') && response.status() === 202);
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Create a hello board');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  const job = await (await accepted).json();
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  const owner = (await (await page.request.get('/api/account/session')).json()).account;
+  expect(owner).toMatchObject({ email: null, emailVerified: false, providers: [] });
+  expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
+  expect((await readLibrary(page)).sync).toBeUndefined();
+  expect((await page.request.get('/api/account/backup')).status()).toBe(403);
+  await page.reload();
+  expect((await (await page.request.get('/api/account/session')).json()).account.id).toBe(owner.id);
+  expect((await page.request.get(`/api/ai/jobs/${job.id}`)).status()).toBe(200);
+  const other = await browser.newContext();
+  try {
+    expect((await other.request.get(new URL(`/api/ai/jobs/${job.id}`, page.url()).href)).status()).toBe(401);
+  } finally { await other.close(); }
+});
 
 test('launch choices, form back/cancel and settings navigation preserve guest state across relaunch', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -126,7 +151,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
-    await expect(page.getByText('Verify your email to use AI or enable backup. Your boards still work offline.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Verify your email to enable backup. AI is available now, and your boards still work offline.', { exact: true })).toBeVisible();
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
     expect(verification).toBeTruthy();
