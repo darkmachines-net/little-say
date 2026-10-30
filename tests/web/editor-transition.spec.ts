@@ -1,4 +1,4 @@
-/** @file Verifies asynchronous play entry, fixed headers, unlock timing, draft recovery, motion and audio handoff. */
+/** @file Verifies asynchronous play entry, headers, unlock timing, draft recovery, motion and explicit device-speech handoff. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
     } });
     Element.prototype.requestFullscreen = async () => {};
   });
-  await openExistingLibrary(page);
+  await openExistingLibrary(page, { voiceSources: { 'en-US': 'device', 'ru-RU': 'device', 'fr-FR': 'device' } });
 });
 
 test('dashboard and reload entry bind the same board, preserve edits and stop active/pending audio', async ({ page }) => {
