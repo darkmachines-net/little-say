@@ -1,4 +1,4 @@
-# Defines deployment identities and optional provider settings; secret values are added directly to Secret Manager.
+# Defines deployment identities, a pinned provider-key version, and independent AI activation; key values stay in Secret Manager.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -28,7 +28,16 @@ variable "alert_email" {
 variable "ai_enabled" {
   type        = bool
   default     = false
-  description = "Enable only after adding the provider-key secret and completing feasibility acceptance."
+  description = "Enable admission and execution only after configuring ai_provider_key_version and completing hosted acceptance."
+}
+variable "ai_provider_key_version" {
+  type        = string
+  default     = ""
+  description = "Numeric ai-provider-key Secret Manager version to attach only to the worker; empty leaves it unconfigured. This is not the API key."
+  validation {
+    condition     = var.ai_provider_key_version == "" || can(regex("^[1-9][0-9]*$", var.ai_provider_key_version))
+    error_message = "Use an explicit numeric Secret Manager version, or an empty string before provisioning."
+  }
 }
 variable "google_web_client_id" {
   type    = string

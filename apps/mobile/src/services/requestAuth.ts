@@ -1,15 +1,15 @@
-/** @file Attaches credentials only to the explicitly signed-in backend and protected application paths. */
+/** @file Attaches origin-bound guest/account credentials to AI and private media without requiring registration. */
 import { loadAccountSession } from './accountSession';
 
-/** Resolve current credentials lazily so account configuration/login requests cannot recurse. */
+/** Use explicit account credentials or establish a guest owner lazily, without enabling backup. */
 export async function applicationHeaders(server: string, mutation = false): Promise<Record<string, string>> {
   const session = await loadAccountSession();
-  if (!session || session.server !== server) return {};
-  const { accountAuthHeaders } = await import('./firebaseAccount');
+  const { accountAuthHeaders, guestAuthHeaders } = await import('./firebaseAccount');
+  if (!session || session.server !== server) return guestAuthHeaders(server, mutation);
   return { 'X-Little-Say-Account': session.account.id, ...await accountAuthHeaders(session, mutation) };
 }
 
-/** Authenticate media only at the signed-in origin; catalog downloads also work signed out. */
+/** Attach the same origin's AI owner to generated media; reject redirects carrying its credentials. */
 export async function mediaRequest(url: string): Promise<RequestInit> {
   const parsed = new URL(url);
   if (!/^\/api\/(speech\/|pictures\/assets\/)/.test(parsed.pathname)) return {};
