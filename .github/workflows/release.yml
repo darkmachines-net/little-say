@@ -1,4 +1,4 @@
-# Store releases use the pinned workflow's confirmed-submission reuse from the protected default branch.
+# Protected releases federate GCP deployment before native/OTA delivery and reuse confirmed toolkit operations.
 name: Release
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 permissions: { contents: read }
 jobs:
   release:
-    permissions: { contents: write, deployments: write, packages: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@528d5cd05a88d82247109d0599c3fce9eaf3e9f3
+    permissions: { contents: write, deployments: write, packages: write, id-token: write }
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@cf95c38552aa1ed8877952c2002f40f5c65ac88f
     with: { profile: '${{ inputs.profile }}', rebuild: '${{ inputs.rebuild }}' }
     secrets: inherit

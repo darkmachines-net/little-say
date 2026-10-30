@@ -1,0 +1,11 @@
+# Runs the pinned Firebase Authentication emulator with its Java runtime and persistent local state.
+FROM eclipse-temurin:21-jre AS java
+FROM node:24-bookworm-slim
+COPY --from=java /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_HOME=/opt/java/openjdk PATH=/opt/java/openjdk/bin:$PATH
+RUN npm install --global firebase-tools@15.32.1 && mkdir -p /data/auth /emulator && chown -R node:node /data /emulator
+WORKDIR /emulator
+COPY deploy/local/firebase.json ./firebase.json
+USER node
+EXPOSE 9099
+CMD ["firebase", "emulators:start", "--only", "auth", "--project", "demo-little-say", "--import", "/data/auth", "--export-on-exit", "/data/auth"]

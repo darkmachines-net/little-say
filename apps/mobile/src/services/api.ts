@@ -1,10 +1,11 @@
-/** @file Provides backend address resolution and cancellable, validated JSON requests for AI features. */
+/** @file Resolves the backend and authenticates cancellable JSON requests, including polling durable AI operations. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Crypto from 'expo-crypto';
 import { proposalSchema, translationEnvelopeSchema, type TranslationRequest, type BoardProposal, type ProposalRequest } from '@little-say/core';
 import { resolveBackendUrl } from './backendConfig';
+import { applicationHeaders } from './requestAuth';
 
 // Expo inlines these exact property accesses. Remote web uses Metro's same-origin proxy; native goes directly.
 export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
@@ -22,23 +23,44 @@ export class ApiError extends Error {
 }
 
 /**
- * Request backend JSON with the app header, a 60-second timeout, and optional external cancellation;
+ * Request backend JSON with a 60-second HTTP timeout and independently polled asynchronous AI results;
  * surface network and HTTP failures as errors. Account requests pin the exact consented server
  * to prevent credentials following a development override or changed backend.
  */
 export async function apiFetch(configured: string, path: string, init: RequestInit = {}, externalSignal?: AbortSignal, exactServer = false) {
   const abort = new AbortController();
   const timeout = setTimeout(() => abort.abort(), 60000);
+  const server = exactServer ? configured : backendUrl(configured);
+  let accepted: string | undefined;
   const cancel = () => abort.abort();
   externalSignal?.addEventListener('abort', cancel, { once: true });
   if (externalSignal?.aborted) abort.abort();
   try {
-    const server = exactServer ? configured : backendUrl(configured);
-    const response = await fetch(`${server}${path}`, { ...init, signal: abort.signal, headers: { 'X-Little-Say': '1', ...init.headers } });
+    const protectedRequest = !path.startsWith('/api/account/') && !['/api/health', '/api/ready'].includes(path) && !path.startsWith('/api/pictures/search') && !path.startsWith('/api/pictures/library/');
+    const authentication = protectedRequest ? await applicationHeaders(server, init.method === 'POST') : {};
+    const response = await fetch(`${server}${path}`, { ...init, redirect: 'error', credentials: 'include', signal: abort.signal, headers: { 'X-Little-Say': '1', ...(init.method === 'POST' ? { 'X-Little-Say-Request': Crypto.randomUUID() } : {}), ...authentication, ...init.headers } });
     const data = await response.json().catch(() => { throw new Error('Little Say’s service returned an unexpected response. Please try again.'); });
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
+    if (response.status === 202 && typeof data.kind === 'string' && typeof data.id === 'string') {
+      clearTimeout(timeout); accepted = data.id;
+      const deadline = Date.now() + 30 * 60 * 1000;
+      let job = data;
+      while (true) {
+        abort.signal.throwIfAborted();
+        if (['cancelled', 'error', 'interrupted'].includes(job.state)) throw new ApiError(job.error || 'AI work stopped. Your saved board is unchanged.', 409);
+        if (job.result !== null && job.result !== undefined) return job.result;
+        if (Date.now() > deadline) throw new Error('AI work took too long. Your saved board is unchanged.');
+        await new Promise<void>((done, reject) => {
+          const stop = () => { clearTimeout(timer); abort.signal.removeEventListener('abort', stop); reject(new Error('Cancelled')); };
+          const timer = setTimeout(() => { abort.signal.removeEventListener('abort', stop); done(); }, 500);
+          abort.signal.addEventListener('abort', stop, { once: true }); if (abort.signal.aborted) stop();
+        });
+        job = await apiFetch(server, `/api/ai/jobs/${accepted}`, {}, abort.signal, true);
+      }
+    }
     return data;
   } catch (error) {
+    if (accepted) void apiFetch(server, `/api/ai/jobs/${accepted}/cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }, undefined, true).catch(() => {});
     if (abort.signal.aborted) throw new Error(externalSignal?.aborted ? 'Request cancelled. Your board is unchanged.' : 'The server took too long. Your prompt is still here to try again.', { cause: error });
     if (error instanceof TypeError) throw new Error('Cannot reach Little Say. Check your connection and try again, or create a board manually.', { cause: error });
     throw error;

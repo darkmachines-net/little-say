@@ -15,7 +15,7 @@ afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await 
 const project = 'demo-little-say';
 const headers = { 'x-little-say': '1' };
 async function setup() {
-  if (process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099') throw new Error('Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.');
+  if (!/^127\.0\.0\.1:\d+$/.test(process.env.FIREBASE_AUTH_EMULATOR_HOST || '')) throw new Error('Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.');
   const db = await testDatabase(); cleanup.push(() => db.close());
   const adminApp = initializeApp({ projectId: project }, randomUUID()), admin = getAuth(adminApp); cleanup.push(() => deleteApp(adminApp));
   const auth = new FirebaseIdentity({ ...process.env, NODE_ENV: 'test', FIREBASE_PROJECT_ID: project, FIREBASE_API_KEY: 'demo-key', FIREBASE_APP_ID: 'demo-app', FIREBASE_AUTH_PROVIDERS: 'password' });
@@ -28,7 +28,7 @@ async function setup() {
   return { app, auth, admin, accounts, uid, email, password, token: registered.idToken as string };
 }
 async function rest(method: string, body: unknown) {
-  const response = await fetch('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/' + method + '?key=demo-key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const response = await fetch('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/' + method + '?key=demo-key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const value = await response.json(); if (!response.ok) throw new Error(value.error?.message || 'Emulator request failed'); return value;
 }
 async function native(fixture: Awaited<ReturnType<typeof setup>>) {
@@ -81,7 +81,7 @@ it('supports Firebase verification and password reset email actions', async () =
   const f = await setup();
   await rest('accounts:sendOobCode', { requestType: 'VERIFY_EMAIL', idToken: f.token });
   await rest('accounts:sendOobCode', { requestType: 'PASSWORD_RESET', email: f.email });
-  const response = await fetch('http://127.0.0.1:9099/emulator/v1/projects/' + project + '/oobCodes');
+  const response = await fetch('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/' + project + '/oobCodes');
   const codes = (await response.json()).oobCodes.filter((value: { email: string }) => value.email === f.email);
   const verification = codes.find((value: { requestType: string }) => value.requestType === 'VERIFY_EMAIL');
   await rest('accounts:update', { oobCode: verification.oobCode });
@@ -116,8 +116,8 @@ it('links providers only to the authenticated UID and preserves both accounts on
   cleanup.push(() => deleteClientApp(firstApp), () => deleteClientApp(secondApp));
   const first = initializeAuth(firstApp, { persistence: inMemoryPersistence });
   const second = initializeAuth(secondApp, { persistence: inMemoryPersistence });
-  connectAuthEmulator(first, 'http://127.0.0.1:9099', { disableWarnings: true });
-  connectAuthEmulator(second, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectAuthEmulator(first, 'http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST, { disableWarnings: true });
+  connectAuthEmulator(second, 'http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST, { disableWarnings: true });
   const user = (await signInWithEmailAndPassword(first, f.email, f.password)).user;
   const credential = GoogleAuthProvider.credential(JSON.stringify({ sub: randomUUID(), email: randomUUID() + '@example.test', email_verified: true }));
   const linked = await linkWithCredential(user, credential);

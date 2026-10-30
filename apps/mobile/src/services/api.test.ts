@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 vi.mock('react-native', () => ({ Platform: { OS: 'web' } }));
 vi.mock('expo-constants', () => ({ default: { expoConfig: {} } }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => '10000000-0000-4000-8000-000000000001' }));
+vi.mock('./accountSession', () => ({ loadAccountSession: async () => null }));
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.resetModules(); });
 
 it('pins account credentials to the consented server while ordinary requests follow the development backend', async () => {

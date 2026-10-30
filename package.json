@@ -22,7 +22,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p scripts/tsconfig.json",
     "test": "vitest run",
     "test:release": "expo-release validate && node --test scripts/release/*.test.mjs",
-    "test:web": "playwright test",
+    "test:web": "tsx scripts/test-services.ts --web",
     "build": "npm run build -w @little-say/server && npm run build:web -w @little-say/app",
     "start": "npm run start -w @little-say/server",
     "check": "npm run lint && npm run test:release && npm run typecheck && npm test && npm run build",
@@ -37,8 +37,8 @@
     "db:migrate": "npm run db:migrate -w @little-say/server",
     "db:status": "npm run db:status -w @little-say/server",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "test:services": "firebase emulators:exec --only auth --project demo-little-say \"npm run test:integration\"",
-    "test:accounts:web": "playwright test --config playwright.accounts.config.ts",
+    "test:services": "tsx scripts/test-services.ts",
+    "test:accounts:web": "tsx scripts/test-services.ts --browser",
     "preview": "expo-release preview",
     "dev:native": "expo-release dev"
   },
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#528d5cd05a88d82247109d0599c3fce9eaf3e9f3",
+    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#cf95c38552aa1ed8877952c2002f40f5c65ac88f",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
     "@playwright/test": "1.63.0",

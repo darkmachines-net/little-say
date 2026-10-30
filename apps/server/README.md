@@ -1,44 +1,37 @@
 # API and web host
 
-`src/index.ts` loads the environment and owns the HTTP listener, provider adapters, caches, and optional account infrastructure. `src/app.ts` registers the API and serves the exported browser app. `/api/health` reports capabilities; `/api/ready` also checks the database and exact migration history when accounts are enabled. Shutdown drains requests and closes owned resources.
+`src/index.ts` starts the API using shared PostgreSQL and Firebase configuration. `src/worker.ts` executes durable AI jobs and maintenance. `src/app.ts` registers HTTP routes and serves the built browser app; its injectable provider mode is retained for isolated unit fixtures. `/api/health` reports capabilities; `/api/ready` verifies the additive migration prefix. Shutdown drains owned resources.
 
-Guest AI endpoints assume a trusted private network. Enabling [accounts](src/accounts/README.md) protects private backups; it does not turn guest AI into an authenticated public service. Never expose backend keys through `EXPO_PUBLIC_*`, client bundles, responses, or logs.
+Verified sign-in is required for server-funded AI. Owner checks protect jobs, cancellation and personal generated-media downloads, including direct Cloud Run URLs. Public catalog access, manual boards, device speech and downloaded content remain available without sign-in. [Account sessions](src/accounts/README.md) and the [shared hosting runtime](src/hosting/README.md) own these contracts. Sign-in does not enable backups automatically.
 
 ## Configuration
 
-Run from the workspace root with the [development launcher](../../scripts/README.md), or build and start with `npm run build` and `npm start`. The standalone server loads the repository `.env` and its working-directory `.env`. Defaults below are defined by the corresponding adapters:
+Use the [development launcher](../../scripts/README.md) for the complete local stack. It needs Node and Docker, with no cloud account. `docker compose up --build` starts PostgreSQL, Auth, migrations, API, worker and the built web app at localhost:8787. Development accounts/media persist in checkout-owned volumes; ordinary shutdown never deletes them. PostgreSQL is loopback-only.
 
 | Variable | Contract |
 | --- | --- |
-| `AAC_OPENAI_KEY` / `OPENAI_API_KEY` | Preferred server key / fallback; absent keys leave manual board use available |
-| `OPENAI_BOARD_MODEL` | `gpt-6.1-sol`, used by board proposals and picture analysis |
-| `OPENAI_REASONING_EFFORT` | `low` for board proposals |
+| `AAC_OPENAI_KEY` / `OPENAI_API_KEY` | Worker key / fallback; missing keys disable paid AI |
+| `AAC_AI_FIXTURES=true` | Explicit local synthetic responses; forbidden in production |
+| `AAC_AI_ENABLED=false` | Operator kill switch for API admission and worker claims |
+| `OPENAI_BOARD_MODEL` / `OPENAI_REASONING_EFFORT` | `gpt-6.1-sol` / `low` |
 | `OPENAI_SPEECH_MODEL` / `OPENAI_SPEECH_VOICE` | `gpt-realtime-2.1-mini` / `marin` |
-| `OPENAI_IMAGE_MODEL`, `AAC_IMAGE_GENERATION`, `PICTURE_CACHE_DIR` | Owned by the [picture service](src/pictures/README.md) |
-| `SPEECH_CACHE_DIR` | `../../.cache/speech` from the server working directory; `/app/data/speech` in Docker |
-| `HOST` / `PORT` | `127.0.0.1` / `8787`; the development launcher supplies its own values |
-| `ALLOWED_ORIGINS` | Comma-separated exact browser origins; set explicitly for deployment |
-| `WEB_ROOT` | Optional exported web directory; see static-host resolution in `src/app.ts` |
-| `FIREBASE_*`, `PG*` | Optional [accounts](src/accounts/README.md) and [database](migrations/README.md) configuration |
+| `OPENAI_IMAGE_MODEL`, `AAC_IMAGE_GENERATION` | [Picture provider settings](src/pictures/README.md) |
+| `MEDIA_DIRECTORY` / `MEDIA_BUCKET` | Local disk / private GCS objects; metadata stays in PostgreSQL |
+| `HOST` / `PORT` | API listener; launcher supplies the selected trusted LAN address |
+| `ALLOWED_ORIGINS` | Exact comma-separated browser origins; never `*` for authenticated use |
+| `WEB_ROOT` | Optional browser export; image uses `/app/web` |
+| `FIREBASE_*`, `PG*` | Required [identity](src/accounts/README.md) and [database](migrations/README.md) settings |
+
+The standalone entry loads root/working-directory `.env` files. Production rejects emulator and fixture settings. Server secrets never belong in `EXPO_PUBLIC_*`, bundles, responses or logs. Cloud workers use attached service accounts; local Firebase emulation needs no credentials.
 
 ## Processing and retention
 
-`provider.ts` sends parent prompts and necessary board text through Structured Outputs with `store: false`. Personal photos and local photo paths are excluded from AI requests. There is no microphone upload or transcription endpoint; parents use text or system keyboard dictation. Prompts, board text, credentials, and provider error bodies are excluded from logs. Provider retention is governed by [OpenAI's data policies](https://developers.openai.com/api/docs/guides/your-data).
+`provider.ts` sends parent prompts and necessary board text through Structured Outputs with `store:false`. Personal photos and local paths are excluded from AI requests. There is no microphone upload/transcription endpoint. Logs exclude prompts, boards, credentials and provider bodies. Provider retention follows [OpenAI data policies](https://developers.openai.com/api/docs/guides/your-data).
 
-`speech-cache.ts` retains shared generated clips, which may contain names or private words. Identity includes text, language, model, voice, and format. Identical requests reuse clips; regeneration preserves old immutable URLs for other devices. There is no automatic eviction. The [picture service](src/pictures/README.md) owns separate image/job retention, and [account storage](src/accounts/README.md) owns explicitly uploaded backups.
+Generated clips can contain private words. Immutable digests and existing download routes are preserved; access is owner-scoped. JSON indexes, job/batch state and generic metadata live in PostgreSQL, binary generated media in the selected object store. [Storage/deletion](src/hosting/README.md#storage-and-deletion) owns retention; private backup bytes remain in PostgreSQL.
 
-## Hosting
+## Deployment
 
-For a source-built private deployment:
+[GCP operations](../../deploy/gcp/README.md) owns Terraform, bootstrap, credentials, recovery and launch acceptance. The application image is shared by API, worker and migration job. Ordinary API startup never migrates. The protected [release toolkit](../../scripts/release/README.md) deploys backend before mobile/OTA.
 
-```powershell
-Copy-Item .env.example .env
-# Set the backend key and ALLOWED_ORIGINS=https://your-private-hostname.
-docker compose up -d --build
-```
-
-The root Compose file builds the app, binds to host loopback by default, and persists speech and picture caches in named volumes. The image runs as a non-root user with a read-only filesystem. Removing volumes removes cached media; device libraries are independent. Configure a private HTTPS reverse proxy and the production native origin in `native-release.json`. Restrict access if exposing another host interface.
-
-Accounts require externally configured PostgreSQL and Firebase plus explicit migrations before startup. The image contains `server/database-cli.js` and SQL migrations; the ordinary server entry never migrates automatically. See [migration operation](migrations/README.md) and the [production deployment module](../../deploy/self-hosted/README.md) for the shared host's startup/readiness contract.
-
-The web homepage `/` and browser app `/app` share an origin but have separate entries. Visit the built app online once before testing offline. Service-worker updates wait for a parent's action; browser storage belongs to the origin, so development and production have separate libraries.
+The homepage `/` and app `/app` share an origin with separate entries. Visit the browser app online before testing offline. Service-worker updates wait for parent action. Browser storage belongs to its origin, so development and production libraries are separate.

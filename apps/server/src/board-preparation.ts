@@ -1,8 +1,7 @@
 /** @file Prepares drafts with immediate reusable pictures and durable cancellable batches, isolating shared generic content from request data. */
 
-import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { cacheStore, type CacheStore } from './hosting/storage';
 import { pictureBatchSchema, proposalSchema, validateGeneratedBoard, defaultPicturePolicy, type BoardProposal, type GeneratedBoard, type PictureBatch, type PictureConcept, type ProposalRequest, type ResolvedPicture } from '@little-say/core';
 import { type AiProvider } from './provider';
 import { draftFailure, draftRequestId, type DraftFailure } from './draft-diagnostics';
@@ -28,24 +27,25 @@ export class BoardPreparation {
   private ready: Promise<void>;
   private scheduler: PictureScheduler;
   private closed = false;
+  private storage: CacheStore;
+  private finishing = new Map<string, Promise<void>>();
   /**
    * Open private request records separately from the generic index. Records omit raw prompts/history
-   * but retain draft responses; they use the trusted-server access boundary, have no automatic eviction,
-   * and remain after account deletion. Unfinished batches become interrupted on restart without paid replay.
+   * but retain draft responses. Runtime storage is namespaced to the job owner and removed on account
+   * deletion. The shared job repository owns interruption; isolated file fixtures reconcile on restart.
    */
-  constructor(private directory: string, private provider: AiProvider, private pictures: PictureJobs, readonly content: GenericContent, private speech?: SpeechCache, concurrency = 6, private metric?: (event: PreparationMetric) => void) {
-    this.scheduler = new PictureScheduler(concurrency); this.ready = this.restore();
+  constructor(directory: string | CacheStore, private provider: AiProvider, private pictures: PictureJobs, readonly content: GenericContent, private speech?: SpeechCache, concurrency = 6, private metric?: (event: PreparationMetric) => void) {
+    this.storage = cacheStore(directory); this.scheduler = new PictureScheduler(concurrency); this.ready = this.restore();
   }
   private async restore() {
-    await mkdir(this.directory, { recursive: true });
-    for (const name of await readdir(this.directory)) {
+    for (const name of await this.storage.list()) {
       if (!/^batch-[0-9a-f-]+\.json$/.test(name)) continue;
       try {
-        const value = JSON.parse(await readFile(join(this.directory, name), 'utf8')) as Record;
+        const value = JSON.parse((await this.storage.read(name)).toString()) as Record;
         value.batch = pictureBatchSchema.parse(value.batch);
         if (name !== `batch-${value.batch.id}.json` || typeof value.fingerprint !== 'string') continue;
         if (value.envelope) value.envelope = proposalSchema.parse(value.envelope);
-        if (value.batch.state === 'working') { value.batch.state = 'error'; for (const tile of value.batch.tiles) if (tile.state !== 'ready') tile.state = 'fallback'; }
+        if (!this.storage.shared && value.batch.state === 'working') { value.batch.state = 'error'; for (const tile of value.batch.tiles) if (tile.state !== 'ready') tile.state = 'fallback'; }
         this.records.set(value.batch.id, value);
       } catch { /* Invalid records cannot cause a new provider request. */ }
     }
@@ -55,8 +55,7 @@ export class BoardPreparation {
     const data = JSON.stringify(record);
     const previous = this.writes.get(id) ?? Promise.resolve();
     const work = previous.catch(() => {}).then(async () => {
-      const temporary = join(this.directory, `${randomUUID()}.tmp`);
-      await writeFile(temporary, data); await rename(temporary, join(this.directory, `batch-${id}.json`));
+      await this.storage.write(`batch-${id}.json`, data);
     });
     this.writes.set(id, work);
     void work.finally(() => { if (this.writes.get(id) === work) this.writes.delete(id); }).catch(() => {});
@@ -166,7 +165,10 @@ export class BoardPreparation {
       stage = 'persist';
       await this.persist(record);
       const response = structuredClone({ ...envelope, preparation: record.batch });
-      if (pending.length) void this.finish(record, request, pending, controller).finally(() => this.active.delete(id));
+      if (pending.length) {
+        const work = this.finish(record, request, pending, controller).finally(() => { this.active.delete(id); this.finishing.delete(id); });
+        this.finishing.set(id, work);
+      }
       else { this.active.delete(id); await this.remember(record, request); }
       return response;
     } catch (error) {
@@ -261,6 +263,13 @@ export class BoardPreparation {
   }
   /** Read aggregate status without starting new work or exposing another board's context. */
   async status(id: string): Promise<PictureBatch | null> { await this.ready; return uuid.test(id) ? structuredClone(this.records.get(id)?.batch ?? null) : null; }
+  /** Keep a durable worker request alive until all preparation work has settled; abort cancels its draft. */
+  async drain(id: string, signal: AbortSignal): Promise<void> {
+    const cancel = () => { void this.cancel(id); };
+    signal.addEventListener('abort', cancel, { once: true });
+    try { if (signal.aborted) await this.cancel(id); await this.finishing.get(id); signal.throwIfAborted(); }
+    finally { signal.removeEventListener('abort', cancel); }
+  }
   /** Cancel by known request ID, including requests whose proposal has not returned yet. */
   async cancel(id: string): Promise<PictureBatch | null> {
     await this.ready; if (!uuid.test(id)) return null;

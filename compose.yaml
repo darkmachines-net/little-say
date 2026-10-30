@@ -1,33 +1,83 @@
-# Builds and runs the app locally with server-side AI settings and persistent speech/picture caches.
+# Runs the complete local application, worker, PostgreSQL, and Firebase Auth emulator with durable development data.
+x-runtime: &runtime
+  NODE_ENV: development
+  HOST: 0.0.0.0
+  PORT: '8787'
+  PGHOST: postgres
+  PGPORT: '5432'
+  PGDATABASE: little_say
+  PGUSER: little_say
+  PGPASSWORD: local-development-only
+  PGSSLMODE: disable
+  FIREBASE_PROJECT_ID: demo-little-say
+  FIREBASE_API_KEY: demo-key
+  FIREBASE_APP_ID: demo-app
+  FIREBASE_AUTH_PROVIDERS: password
+  FIREBASE_AUTH_EMULATOR_HOST: auth:9099
+  FIREBASE_AUTH_EMULATOR_URL: http://${DEV_AUTH_BIND:-127.0.0.1}:${DEV_AUTH_PORT:-9099}
+  MEDIA_DIRECTORY: /app/data
+  AAC_AI_FIXTURES: ${AAC_AI_FIXTURES:-false}
+  AAC_OPENAI_KEY: ${AAC_OPENAI_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  AAC_IMAGE_GENERATION: ${AAC_IMAGE_GENERATION:-true}
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8787,http://127.0.0.1:8787}
 services:
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: little_say
+      POSTGRES_USER: little_say
+      POSTGRES_PASSWORD: local-development-only
+    ports: ['127.0.0.1:${DEV_PG_PORT:-15432}:5432']
+    volumes: ['postgres-data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U little_say -d little_say']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  auth:
+    stop_grace_period: 60s
+    build:
+      context: .
+      dockerfile: deploy/local/Dockerfile.auth
+    ports: ['${DEV_AUTH_BIND:-127.0.0.1}:${DEV_AUTH_PORT:-9099}:9099']
+    volumes: ['auth-data:/data']
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:9099').then(()=>{}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+  migrate:
+    build: .
+    environment: *runtime
+    command: ['node', 'server/database-cli.js', 'migrate']
+    healthcheck: { disable: true }
+    depends_on:
+      postgres: { condition: service_healthy }
   little-say:
     build: .
-    restart: unless-stopped
     init: true
-    ports:
-      - "${BIND_ADDRESS:-127.0.0.1}:8787:8787"
-    environment:
-      AAC_OPENAI_KEY: ${AAC_OPENAI_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_BOARD_MODEL: ${OPENAI_BOARD_MODEL:-gpt-6.1-sol}
-      OPENAI_REASONING_EFFORT: ${OPENAI_REASONING_EFFORT:-low}
-      OPENAI_SPEECH_MODEL: ${OPENAI_SPEECH_MODEL:-gpt-realtime-2.1-mini}
-      OPENAI_SPEECH_VOICE: ${OPENAI_SPEECH_VOICE:-marin}
-      SPEECH_CACHE_DIR: /app/data/speech
-      PICTURE_CACHE_DIR: /app/data/pictures
-      OPENAI_IMAGE_MODEL: ${OPENAI_IMAGE_MODEL:-gpt-image-2.5-flare}
-      AAC_IMAGE_GENERATION: ${AAC_IMAGE_GENERATION:-true}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8787}
-    read_only: true
-    volumes:
-      - speech-cache:/app/data/speech
-      - picture-cache:/app/data/pictures
-    tmpfs:
-      - /tmp:size=32m,mode=1777
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
+    environment: *runtime
+    ports: ['${BIND_ADDRESS:-127.0.0.1}:8787:8787']
+    volumes: ['media:/app/data']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      auth: { condition: service_healthy }
+  worker:
+    build: .
+    init: true
+    environment: *runtime
+    command: ['node', 'server/worker.js']
+    healthcheck:
+      test: ['CMD', 'node', 'server/worker-health.js']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    volumes: ['media:/app/data']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      auth: { condition: service_healthy }
 volumes:
-  speech-cache:
-  picture-cache:
+  postgres-data:
+  auth-data:
+  media:

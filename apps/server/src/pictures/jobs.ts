@@ -1,8 +1,7 @@
-/** @file Persists idempotent picture jobs and immutable PNG assets with bounded, cancellable generation. */
+/** @file Resolves and caches pictures through injectable storage; standalone fixtures retain bounded in-process jobs. */
 
-import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, writeFile, rename, readdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { cacheStore, type CacheStore } from '../hosting/storage';
 import { pictureJobSchema, pictureJobRequestSchema, pictureAssetIdSchema, resolvedPictureSchema, type PictureJob, type PictureJobRequest, type CatalogEntry, type ResolvedPicture } from '@little-say/core';
 import { searchPictures, catalogPicture, downloadCatalogPicture, normalizePicture } from './catalog';
 import { type PictureProvider, type PictureCandidate } from './provider';
@@ -38,17 +37,17 @@ export class PictureJobs {
   private sourceLoads = new Map<string, Promise<{ entry: CatalogEntry; bytes: Buffer; picture: ResolvedPicture }>>();
   private ready: Promise<void>;
   private closed = false;
+  private storage: CacheStore;
   /** Open a dedicated durable cache; unfinished jobs become interrupted rather than repeating paid requests. */
-  constructor(private directory: string, readonly provider?: PictureProvider, readonly generationEnabled = false, private concurrency = 2) { this.ready = this.restore(); }
+  constructor(directory: string | CacheStore, readonly provider?: PictureProvider, readonly generationEnabled = false, private concurrency = 2) { this.storage = cacheStore(directory); this.ready = this.restore(); }
 
   private async restore() {
-    await mkdir(this.directory, { recursive: true });
-    for (const name of await readdir(this.directory)) {
+    for (const name of await this.storage.list()) {
       if (!/^job-[0-9a-f-]+\.json$/.test(name)) continue;
       try {
-        const stored = JSON.parse(await readFile(join(this.directory, name), 'utf8')) as StoredJob;
+        const stored = JSON.parse((await this.storage.read(name)).toString()) as StoredJob;
         stored.job = pictureJobSchema.parse(stored.job);
-        if (stored.job.state === 'working' || stored.job.state === 'queued') {
+        if (!this.storage.shared && (stored.job.state === 'working' || stored.job.state === 'queued')) {
           stored.job = { ...stored.job, state: 'error', error: 'Picture work was interrupted. Retry explicitly to continue.' };
           await this.persist(stored);
         }
@@ -57,8 +56,7 @@ export class PictureJobs {
     }
   }
   private async atomic(name: string, value: Buffer | string) {
-    const temporary = join(this.directory, `${randomUUID()}.tmp`);
-    await writeFile(temporary, value); await rename(temporary, join(this.directory, name));
+    await this.storage.write(name, value);
   }
   private persist(stored: StoredJob) { return this.atomic(`job-${stored.job.id}.json`, JSON.stringify(stored)); }
 
@@ -66,7 +64,7 @@ export class PictureJobs {
   async read(id: string): Promise<Buffer | null> {
     await this.ready;
     if (!pictureAssetIdSchema.safeParse(id).success) return null;
-    try { const bytes = await readFile(join(this.directory, `${id}.png`)); return hash(bytes) === id && bytes.length <= 8 * 1024 * 1024 ? bytes : null; }
+    try { const bytes = await this.storage.read(`${id}.png`); return hash(bytes) === id && bytes.length <= 8 * 1024 * 1024 ? bytes : null; }
     catch (error) { if (missing(error)) return null; throw error; }
   }
   private async put(bytes: Buffer) { const id = hash(bytes); await this.atomic(`${id}.png`, bytes); return id; }
@@ -108,7 +106,7 @@ export class PictureJobs {
     const entry = catalogPicture(id); if (!entry) throw new PictureJobError('Unknown library picture.', 404);
     const name = `source-${hash(JSON.stringify(entry.provenance))}.json`;
     try {
-      const picture = resolvedPictureSchema.parse(JSON.parse(await readFile(join(this.directory, name), 'utf8')));
+      const picture = resolvedPictureSchema.parse(JSON.parse((await this.storage.read(name)).toString()));
       const bytes = picture.kind !== 'unresolved' ? await this.read(picture.assetId) : null;
       if (bytes) return { entry, bytes, picture };
     } catch (error) { if (!missing(error) && !(error instanceof SyntaxError) && (error as Error).name !== 'ZodError') throw error; }
@@ -184,13 +182,14 @@ export class PictureJobs {
       await this.persist(stored).catch(() => {});
     }
   }
-  private async resolve(input: PictureJobRequest, signal: AbortSignal, progress: (phase: 'finding' | 'generating') => Promise<void>): Promise<ResolvedPicture> {
+  /** Execute a picture operation inside an externally claimed durable job without starting another queue. */
+  async resolve(input: PictureJobRequest, signal: AbortSignal, progress: (phase: 'finding' | 'generating') => Promise<void>): Promise<ResolvedPicture> {
     const unresolved = (reason: string): ResolvedPicture => ({ kind: 'unresolved', reason });
     if (!this.provider) return unresolved('Automatic matching needs AI. Search the library or choose an emoji or photo.');
     const key = hash(JSON.stringify({ concept: input.concept, style: input.style, mode: input.mode, neighbors: input.neighbors, model: this.provider.model, version: 1 }));
     if (!input.regenerate) {
       try {
-        const result = resolvedPictureSchema.parse(JSON.parse(await readFile(join(this.directory, `match-${key}.json`), 'utf8')));
+        const result = resolvedPictureSchema.parse(JSON.parse((await this.storage.read(`match-${key}.json`)).toString()));
         if (result.kind !== 'unresolved' && (result.kind !== 'generated' || input.allowGeneration) && await this.read(result.assetId)) return result;
       } catch (error) { if (!missing(error) && !(error instanceof SyntaxError) && (error as Error).name !== 'ZodError') throw error; }
     }

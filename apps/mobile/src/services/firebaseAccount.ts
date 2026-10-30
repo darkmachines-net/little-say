@@ -34,7 +34,7 @@ export async function accountContext(server: string, savedConfig?: AuthConfig): 
   return context;
 }
 
-/** Fetch a same-origin double-submit token for browser account mutations. */
+/** Fetch the server-side CSRF token bound to the sole opaque browser session cookie. */
 export async function csrfHeaders(server: string): Promise<Record<string, string>> {
   if (Platform.OS !== 'web') return {};
   const result = await apiFetch(server, '/api/account/csrf', { credentials: 'include' }, undefined, true);

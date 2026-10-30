@@ -299,7 +299,7 @@ test('swipes are forgiving, speech is bounded, and locked navigation needs an un
 
 test('unlock completes automatically at one second and cancelled holds reset immediately', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
-  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
+  await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
   // The measured grid's first layout cancels active holds. Let it finish before freezing time.
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
@@ -739,11 +739,11 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await expect(page.getByTestId('play-board')).toBeVisible(); await expect(page.getByText('My farm', { exact: true })).toBeVisible();
 });
 
-test('missing AI configuration retains the parent prompt and existing boards', async ({ page }) => {
+test('AI sign-in requirement retains the parent prompt and existing boards', async ({ page }) => {
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm with six animals');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByText('AI is not configured yet.', { exact: false })).toBeVisible();
+  await expect(page.getByText('Sign in to use AI or cloud backup.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();

@@ -76,7 +76,8 @@ async function signIn(page: Page, username: string) {
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
-  await page.getByRole('button', { name: 'Sign in & sync this device', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Enable backup on this device', exact: true }).click();
 }
 async function changeTitle(page: Page, title: string) {
   await page.evaluate(async title => {
@@ -124,16 +125,18 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
-    await expect(page.getByText(/Continuing enables backup/)).toBeVisible();
-    await page.getByRole('button', { name: 'Create account & enable backup', exact: true }).click();
-    await expect(page.getByText('Verify your email before syncing. Your boards still work offline.', { exact: true })).toBeVisible();
-    const codes = await (await page.request.get('http://127.0.0.1:9099/emulator/v1/projects/demo-little-say/oobCodes')).json();
+    await page.getByRole('button', { name: 'Create account', exact: true }).click();
+    await expect(page.getByText('Verify your email to use AI or enable backup. Your boards still work offline.', { exact: true })).toBeVisible();
+    const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
     expect(verification).toBeTruthy();
-    const verified = await page.request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: verification.oobCode } });
+    const verified = await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: verification.oobCode } });
     expect(verified.ok()).toBe(true);
     await page.getByLabel('Password for verification', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Check email verification', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Enable backup on this device', exact: true })).toBeVisible();
+    expect((await readLibrary(page)).sync).toBeUndefined();
+    await page.getByRole('button', { name: 'Enable backup on this device', exact: true }).click();
     await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await expect.poll(async () => (await readLibrary(page)).sync.snapshot.assets.length).toBe(3);
     expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).not.toContain('token');
@@ -189,12 +192,12 @@ test('a parent can skip accounts and finish setup without an account request', a
 test('cross-tab account changes and legacy server overrides never silently redirect a backup', async ({ page, context }) => {
   const emails = [randomUUID() + '@example.test', randomUUID() + '@example.test'];
   for (const email of emails) {
-    const created = await page.request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key', { data: { email, password, returnSecureToken: true } });
+    const created = await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key', { data: { email, password, returnSecureToken: true } });
     const { idToken } = await created.json();
-    await page.request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=demo-key', { data: { requestType: 'VERIFY_EMAIL', idToken } });
-    const { oobCodes } = await (await page.request.get('http://127.0.0.1:9099/emulator/v1/projects/demo-little-say/oobCodes')).json();
+    await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=demo-key', { data: { requestType: 'VERIFY_EMAIL', idToken } });
+    const { oobCodes } = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const code = oobCodes.find((value: { email: string }) => value.email === email);
-    expect((await page.request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
+    expect((await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
   }
   await page.goto('/app');
   await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();

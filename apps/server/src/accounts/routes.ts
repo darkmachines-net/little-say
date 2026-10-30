@@ -1,36 +1,22 @@
-/** @file Exposes Firebase sessions and owner-scoped backup routes with CSRF, reauthentication, and deletion safeguards. */
-import { randomBytes, timingSafeEqual } from 'node:crypto';
+/** @file Exposes opaque Firebase Hosting sessions and private backups with server-side CSRF and fresh deletion proof. */
 import { type FastifyInstance, type FastifyRequest, type FastifyReply } from 'fastify';
 import { syncSnapshotSchema } from '@little-say/core';
 import { z } from 'zod';
 import { Accounts, AccountError, MAX_ASSET_BYTES } from './store';
 import { COOKIE_SECONDS, type IdentityService } from './firebase';
+import { AccountAccess, sessionCookie, bearerToken as bearer } from './access';
 
 const hashSchema = z.string().regex(/^[a-f0-9]{64}$/);
-const readCookie = (request: FastifyRequest, name: string) => (request.headers.cookie ?? '').split(';').map(value => value.trim()).find(value => value.startsWith(name + '='))?.slice(name.length + 1) ?? '';
-const bearer = (request: FastifyRequest) => /^Bearer (.+)$/.exec(request.headers.authorization ?? '')?.[1];
-function setCookie(reply: FastifyReply, name: string, value: string, secure: boolean, seconds: number) {
-  reply.header('Set-Cookie', name + '=' + value + '; Path=/api/account; HttpOnly; SameSite=Strict; Max-Age=' + (value ? seconds : 0) + (secure ? '; Secure' : ''));
-}
-function csrf(request: FastifyRequest) {
-  const cookie = readCookie(request, 'little_say_csrf'), header = request.headers['x-little-say-csrf'];
-  if (typeof header !== 'string' || !/^[a-f0-9]{64}$/.test(cookie) || header.length !== cookie.length || !timingSafeEqual(Buffer.from(cookie), Buffer.from(header))) throw new AccountError('Refresh the account panel and try again.', 403);
+function setCookie(reply: FastifyReply, value: string, secure: boolean, seconds: number) {
+  reply.header('Set-Cookie', '__session=' + value + '; Path=/api; HttpOnly; SameSite=Strict; Max-Age=' + (value ? seconds : 0) + (secure ? '; Secure' : ''));
 }
 function recent(authTime: number) { if (authTime > Date.now() / 1000 + 60 || Date.now() / 1000 - authTime > 300) throw new AccountError('Authenticate again to complete this action.', 401); }
 
 /** Register optional Firebase account routes; the caller owns the repositories and identity adapter. */
 export async function accountRoutes(app: FastifyInstance, accounts: Accounts, auth: IdentityService, secureCookies: boolean) {
-  const authenticate = async (request: FastifyRequest, backup = false) => {
-    const access = bearer(request), cookie = readCookie(request, 'little_say_session');
-    if (!access && !cookie) throw new AccountError('Sign in to sync this device.', 401);
-    if (!access && request.method !== 'GET') csrf(request);
-    const firebaseToken = access ?? await accounts.checkCookie(cookie);
-    const identity = await auth.verify(firebaseToken, !access);
-    const account = await accounts.find(identity);
-    if (request.headers['x-little-say-account'] && request.headers['x-little-say-account'] !== account.id) throw new AccountError('The browser account changed. Sign in again before syncing.', 401);
-    if (backup && !identity.emailVerified) throw new AccountError('Verify your email before syncing. Local boards remain available.', 403);
-    return { account, identity, cookie: access ? '' : cookie };
-  };
+  const access = new AccountAccess(accounts, auth);
+  const authenticate = (request: FastifyRequest, backup = false) => access.verify(request, backup);
+  const csrf = (request: FastifyRequest) => accounts.checkCsrf(sessionCookie(request), request.headers['x-little-say-csrf']);
   await app.register(async routes => {
     routes.addHook('onRequest', async (_request, reply) => { reply.header('Cache-Control', 'no-store'); reply.header('X-Content-Type-Options', 'nosniff'); });
     routes.setErrorHandler((error, _request, reply) => {
@@ -40,29 +26,28 @@ export async function accountRoutes(app: FastifyInstance, accounts: Accounts, au
     });
     routes.get('/api/account/config', async () => auth.config);
     routes.get('/api/account/csrf', async (request, reply) => {
-      const current = readCookie(request, 'little_say_csrf');
-      const csrfToken = /^[a-f0-9]{64}$/.test(current) ? current : randomBytes(32).toString('hex');
-      setCookie(reply, 'little_say_csrf', csrfToken, secureCookies, 86400);
-      return { csrfToken };
+      const session = await accounts.browserSession(sessionCookie(request));
+      if (session.cookie !== sessionCookie(request)) setCookie(reply, session.cookie, secureCookies, 86400);
+      return { csrfToken: session.csrf };
     });
     routes.post('/api/account/session', { config: { rateLimit: { max: 20, timeWindow: '15 minutes', groupId: 'account-auth' } } }, async (request, reply) => {
       const parsed = z.object({ idToken: z.string().min(1).max(16000), native: z.boolean().default(false) }).safeParse(request.body);
       if (!parsed.success) return reply.code(400).send({ error: 'A Firebase sign-in token is required.' });
-      if (!parsed.data.native) csrf(request);
+      if (!parsed.data.native) await csrf(request);
       const identity = await auth.verify(parsed.data.idToken); recent(identity.authTime);
       const account = await accounts.provision(identity);
-      if (!parsed.data.native) setCookie(reply, 'little_say_session', await accounts.issueCookie(account, await auth.cookie(parsed.data.idToken), Math.floor(Date.now() / 1000) + COOKIE_SECONDS), secureCookies, COOKIE_SECONDS);
+      if (!parsed.data.native) setCookie(reply, await accounts.issueCookie(account, await auth.cookie(parsed.data.idToken), Math.floor(Date.now() / 1000) + COOKIE_SECONDS, sessionCookie(request)), secureCookies, COOKIE_SECONDS);
       return { account };
     });
     routes.get('/api/account/session', async request => ({ account: (await authenticate(request)).account }));
     routes.post('/api/account/logout', async (request, reply) => {
       const { cookie, identity } = await authenticate(request);
       if (cookie) await accounts.logout(cookie, identity.expires);
-      setCookie(reply, 'little_say_session', '', secureCookies, 0);
+      setCookie(reply, '', secureCookies, 0);
       return { ok: true };
     });
     routes.post('/api/account/delete', { config: { rateLimit: { max: 10, timeWindow: '15 minutes', groupId: 'account-auth' } } }, async (request, reply) => {
-      if (!bearer(request)) csrf(request);
+      if (!bearer(request)) await csrf(request);
       const parsed = z.object({ idToken: z.string().min(1).max(16000), apple: z.object({ token: z.string().min(1).max(16000), type: z.enum(['CODE', 'ACCESS_TOKEN']), redirectUri: z.string().optional() }).optional() }).safeParse(request.body);
       if (!parsed.success) return reply.code(400).send({ error: 'Reauthenticate before deleting your account.' });
       const fresh = await auth.verify(parsed.data.idToken); recent(fresh.authTime);
@@ -75,7 +60,7 @@ export async function accountRoutes(app: FastifyInstance, accounts: Accounts, au
         await auth.revokeApple(parsed.data.idToken, parsed.data.apple);
       }
       await accounts.confirmDeletion(fresh);
-      setCookie(reply, 'little_say_session', '', secureCookies, 0);
+      setCookie(reply, '', secureCookies, 0);
       return reply.code(202).send({ ok: true, deletionPending: true });
     });
     routes.get('/api/account/backup', async request => accounts.snapshot((await authenticate(request, true)).account));

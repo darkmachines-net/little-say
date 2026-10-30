@@ -1,11 +1,9 @@
 /**
- * @file Caches speech by normalized input and synthesis profile with immutable audio files and bounded
- * generation.
+ * @file Caches speech through injected media/metadata storage with immutable clips and bounded synthesis.
  */
 
-import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { cacheStore, type CacheStore } from './hosting/storage';
 import { speechAssetIdSchema, speechInputSchema, type SpeechInput } from '@little-say/core';
 import { MAX_SPEECH_BYTES, type SpeechProfile } from './synthesis';
 
@@ -18,11 +16,12 @@ export class SpeechCacheError extends Error {
 export class SpeechCache {
   private pending = new Map<string, Promise<{ id: string; cacheHit: boolean }>>();
   private active = 0;
+  private storage: CacheStore;
   /**
    * Configure persistent storage, synthesis identity, and concurrency; a null synthesizer permits cache
    * reads without new generation.
    */
-  constructor(private directory: string, private profile: SpeechProfile, private synthesize: ((input: SpeechInput) => Promise<Buffer>) | null, private maxConcurrent = 2) {}
+  constructor(directory: string | CacheStore, private profile: SpeechProfile, private synthesize: ((input: SpeechInput) => Promise<Buffer>) | null, private maxConcurrent = 2) { this.storage = cacheStore(directory); }
 
   /**
    * Read a digest-addressed WAV, returning null for invalid IDs, absent files, or failed content checks
@@ -31,7 +30,7 @@ export class SpeechCache {
   async read(id: string): Promise<Buffer | null> {
     if (!speechAssetIdSchema.safeParse(id).success) return null;
     try {
-      const audio = await readFile(join(this.directory, `${id}.wav`));
+      const audio = await this.storage.read(`${id}.wav`);
       return audio.length <= MAX_SPEECH_BYTES && hash(audio) === id ? audio : null;
     }
     catch (error) { if (missing(error)) return null; throw error; }
@@ -57,7 +56,7 @@ export class SpeechCache {
     const results = await Promise.all(normalized.map(async input => {
       const key = hash(JSON.stringify({ ...input, ...this.profile }));
       try {
-        const id = speechAssetIdSchema.parse(JSON.parse(await readFile(join(this.directory, `${key}.json`), 'utf8')).id);
+        const id = speechAssetIdSchema.parse(JSON.parse((await this.storage.read(`${key}.json`)).toString()).id);
         return await this.read(id) ? { ...input, id } : null;
       } catch (error) { if (missing(error) || error instanceof SyntaxError || (error as Error).name === 'ZodError') return null; throw error; }
     }));
@@ -65,16 +64,14 @@ export class SpeechCache {
   }
 
   private async atomicWrite(path: string, data: Buffer | string) {
-    const temporary = `${path}.${randomUUID()}.tmp`;
-    try { await writeFile(temporary, data); await rename(temporary, path); }
-    finally { await unlink(temporary).catch(error => { if (!missing(error)) throw error; }); }
+    await this.storage.write(path, data);
   }
 
   private async produce(key: string, input: SpeechInput, regenerate: boolean) {
-    const pointer = join(this.directory, `${key}.json`);
+    const pointer = `${key}.json`;
     if (!regenerate) {
       try {
-        const id = speechAssetIdSchema.parse(JSON.parse(await readFile(pointer, 'utf8')).id);
+        const id = speechAssetIdSchema.parse(JSON.parse((await this.storage.read(pointer)).toString()).id);
         if (await this.read(id)) return { id, cacheHit: true };
       } catch (error) { if (!missing(error) && !(error instanceof SyntaxError) && (error as Error).name !== 'ZodError') throw error; }
     }
@@ -85,8 +82,7 @@ export class SpeechCache {
       const audio = await this.synthesize(input);
       if (audio.length < 46 || audio.length > MAX_SPEECH_BYTES || audio.toString('ascii', 0, 4) !== 'RIFF' || audio.toString('ascii', 8, 12) !== 'WAVE') throw new Error('Invalid generated audio.');
       const id = hash(audio);
-      await mkdir(this.directory, { recursive: true });
-      await this.atomicWrite(join(this.directory, `${id}.wav`), audio);
+      await this.atomicWrite(`${id}.wav`, audio);
       // Replace the lookup only after the fresh audio is durable. Existing URLs
       // remain immutable, including when regeneration fails or another device plays.
       await this.atomicWrite(pointer, JSON.stringify({ id }));

@@ -1,5 +1,5 @@
 /** @file Stores Firebase-owned private backups in Postgres with atomic quota, revision, and deletion boundaries. */
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, mergeAssets, syncSnapshotSchema } from '@little-say/core';
 import { transaction } from '../database';
@@ -56,25 +56,40 @@ export class Accounts {
     if (!(await db.query('SELECT id FROM accounts WHERE id=$1 AND NOT deleting FOR UPDATE', [id])).rowCount) throw new AccountError('Sign in again to sync.', 401);
   }
 
-  /** Bind a Firebase cookie to a unique browser login, even when Firebase mints identical JWTs. */
-  async issueCookie(account: Account, token: string, expires: number) {
+  /** Rotate an opaque browser login while retaining the explicitly validated pre-login CSRF token. */
+  async issueCookie(account: Account, token: string, expires: number, previous = '') {
     const device = randomBytes(32).toString('hex');
-    await this.pool.query('INSERT INTO browser_sessions VALUES($1,$2,$3,to_timestamp($4))', [digest(device), account.id, digest(token), expires]);
-    return device + '.' + token;
+    const csrf = (await this.browserSession(previous)).csrf;
+    await this.pool.query('INSERT INTO web_sessions(hash,csrf,token,account_id,expires) VALUES($1,$2,$3,$4,to_timestamp($5))', [digest(device), csrf, token, account.id, expires]);
+    if (previous) await this.pool.query('DELETE FROM web_sessions WHERE hash=$1', [digest(previous)]);
+    return device;
   }
 
-  /** Verify the issued device binding before Firebase verification; changing the prefix cannot bypass logout. */
+  /** Open one opaque login before Firebase verifies the stored session token and account revocation. */
   async checkCookie(cookie: string) {
-    const separator = cookie.indexOf('.'), device = cookie.slice(0, separator), token = cookie.slice(separator + 1);
-    if (!/^[a-f0-9]{64}$/.test(device) || !(await this.pool.query('SELECT 1 FROM browser_sessions JOIN accounts ON accounts.id=account_id WHERE hash=$1 AND token_hash=$2 AND expires>now()', [digest(device), digest(token)])).rowCount) throw new AccountError('Sign in again to sync.', 401);
-    if ((await this.pool.query('SELECT 1 FROM revoked_browser_sessions WHERE hash=$1 AND expires>now()', [digest(cookie)])).rowCount) throw new AccountError('Sign in again to sync.', 401);
-    return token;
+    const row = /^[a-f0-9]{64}$/.test(cookie) && (await this.pool.query('SELECT token FROM web_sessions WHERE hash=$1 AND expires>now() AND account_id IS NOT NULL', [digest(cookie)])).rows[0];
+    if (!row?.token) throw new AccountError('Sign in again to sync.', 401);
+    return row.token as string;
   }
 
   /** Revoke this browser cookie without revoking other Firebase devices. */
-  async logout(cookie: string, expires: number) {
-    await this.pool.query('INSERT INTO revoked_browser_sessions VALUES($1,to_timestamp($2)) ON CONFLICT DO NOTHING', [digest(cookie), expires]);
-    await this.pool.query('DELETE FROM browser_sessions WHERE hash=$1', [digest(cookie.split('.')[0])]);
+  async logout(cookie: string, _expires: number) {
+    await this.pool.query('DELETE FROM web_sessions WHERE hash=$1', [digest(cookie)]);
+  }
+
+  /** Reuse a valid browser binding or create a short-lived anonymous binding for login CSRF protection. */
+  async browserSession(cookie: string): Promise<{ cookie: string; csrf: string }> {
+    const row = /^[a-f0-9]{64}$/.test(cookie) && (await this.pool.query('SELECT csrf FROM web_sessions WHERE hash=$1 AND expires>now()', [digest(cookie)])).rows[0];
+    if (row) return { cookie, csrf: row.csrf };
+    const created = randomBytes(32).toString('hex'), csrf = randomBytes(32).toString('hex');
+    await this.pool.query("INSERT INTO web_sessions(hash,csrf,expires) VALUES($1,$2,now()+interval '1 day')", [digest(created), csrf]);
+    return { cookie: created, csrf };
+  }
+
+  /** Validate a header against the server-side session token without issuing or rotating a binding. */
+  async checkCsrf(cookie: string, header: unknown) {
+    const row = /^[a-f0-9]{64}$/.test(cookie) && (await this.pool.query('SELECT csrf FROM web_sessions WHERE hash=$1 AND expires>now()', [digest(cookie)])).rows[0];
+    if (!row || typeof header !== 'string' || !/^[a-f0-9]{64}$/.test(header) || !timingSafeEqual(Buffer.from(row.csrf), Buffer.from(header))) throw new AccountError('Refresh the account panel and try again.', 403);
   }
 
   /** Return the latest acknowledged snapshot; a deleting account cannot read or publish backups. */
@@ -136,6 +151,7 @@ export class Accounts {
 
   /** Retry a bounded batch of durable deletions; failures remain blocked and retry after one minute. */
   async processDeletions(project: string, removeIdentity: (uid: string) => Promise<void>) {
+    await this.pool.query('DELETE FROM web_sessions WHERE expires<=now()');
     await this.pool.query('DELETE FROM revoked_browser_sessions WHERE expires<=now()');
     await this.pool.query('DELETE FROM browser_sessions WHERE expires<=now()');
     for (let count = 0; count < 10; count++) {
@@ -144,6 +160,7 @@ export class Accounts {
         const row = result.rows[0]; if (!row) return false;
         try { await removeIdentity(row.firebase_uid); }
         catch { await db.query("UPDATE account_deletions SET retry_after=now()+interval '1 minute' WHERE firebase_project=$1 AND firebase_uid=$2", [project, row.firebase_uid]); return true; }
+        await db.query("DELETE FROM service_records WHERE namespace=$1", ['batches/' + row.account_id]);
         await db.query('DELETE FROM accounts WHERE id=$1', [row.account_id]);
         await db.query('UPDATE account_deletions SET completed=true WHERE firebase_project=$1 AND firebase_uid=$2', [project, row.firebase_uid]);
         return true;

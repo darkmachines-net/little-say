@@ -79,7 +79,7 @@ it('revokes only the selected browser cookie and expires its revocation record',
   await expect(accounts.checkCookie(first)).rejects.toMatchObject({ statusCode: 401 });
   await expect(accounts.checkCookie('f'.repeat(64) + first.slice(64))).rejects.toMatchObject({ statusCode: 401 });
   expect(await accounts.checkCookie(second)).toBe('identical-firebase-token');
-  await pool.query("UPDATE browser_sessions SET expires=now()-interval '1 second'");
+  await pool.query("UPDATE web_sessions SET expires=now()-interval '1 second'");
   await expect(accounts.checkCookie(second)).rejects.toMatchObject({ statusCode: 401 });
 });
 
