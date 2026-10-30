@@ -15,7 +15,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@cf95c38552aa1ed8877952c2002f40f5c65ac88f
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@743c841f70a6a34e7f3b17d8e2ef783e8dcf7cab
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination] }}
       rebuild: ${{ inputs.rebuild }}
