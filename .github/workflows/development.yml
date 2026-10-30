@@ -9,6 +9,6 @@ on:
 permissions: { contents: read }
 jobs:
   development:
-    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@cf95c38552aa1ed8877952c2002f40f5c65ac88f
+    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@743c841f70a6a34e7f3b17d8e2ef783e8dcf7cab
     with: { operation: '${{ inputs.operation }}', platform: '${{ inputs.platform }}', source: '${{ inputs.source }}' }
     secrets: inherit
