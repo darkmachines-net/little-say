@@ -61,8 +61,8 @@ test('the real Expo SDK ignores stamped versions but retains native compatibilit
 });
 
 test('configured identity, approval environments and destinations remain explicit', () => {
-  assert.equal(config.schemaVersion,3);assert.equal(config.server.deployment.service,'little-say');
-  assert.ok(config.profiles.production.approvalEnvironment);assert.equal(config.profiles.production.deployEnvironment,'self-hosted-testing');
+  assert.equal(config.schemaVersion,3);assert.equal(config.server.deployment.provider,'gcp');assert.equal(config.server.deployment.api,'little-say-api');
+  assert.ok(config.profiles.production.approvalEnvironment);assert.equal(config.profiles.production.deployEnvironment,'gcp-production');
   const eas=JSON.parse(fs.readFileSync(path.join(root,'apps/mobile/eas.json')));
   assert.equal(eas.cli.version,'25.3.0');
   assert.equal(eas.cli.appVersionSource,'remote');

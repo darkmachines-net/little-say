@@ -32,15 +32,21 @@ export function AccountPanel({ account, mode, setMode, onContinue, settingsPage 
     {Boolean(account.message) && <Text accessibilityLiveRegion="polite" style={styles.body}>{account.message}</Text>}
     {signedIn ? <>
       <Text style={styles.body}>Signed in as {account.session!.account.displayName || account.session!.account.email || 'your account'}</Text>
-      <Text style={styles.small}>Boards, photos, illustrations and saved voices back up to Little Say. Device settings remain here.</Text>
+      <Text style={styles.small}>{account.session!.backupEnabled ? 'Backup is enabled on this device.' : 'Your boards stay on this device until you enable backup.'}</Text>
       {account.session!.account.deletionPending ? <Notice>Backup access is blocked while deletion is pending. Retry Delete account to finish Apple confirmation.</Notice> : !account.session!.account.emailVerified ? <>
-        <Notice>Verify your email before syncing. Your boards still work offline.</Notice>
+        <Notice>Verify your email to use AI or enable backup. Your boards still work offline.</Notice>
         {passwordNeeded && <Field label="Password for verification" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" />}
         <Button disabled={account.busy || (passwordNeeded ? !password : !account.socialAvailable)} onPress={() => void account.verifyEmail(password, false, current).then(clear).catch(() => {})}>Check email verification</Button>
         <Button kind="secondary" disabled={account.busy || (passwordNeeded ? !password : !account.socialAvailable) || !account.session!.account.email} onPress={() => void account.verifyEmail(password, true, current).then(clear).catch(() => {})}>Resend verification email</Button>
       </> : <>
-        {account.savedAt && <Text style={styles.small}>Last synced: {new Date(account.savedAt).toLocaleString()}</Text>}
-        <Button busy={account.busy} onPress={() => void account.sync()}>Sync now</Button>
+        {account.session!.backupEnabled ? <>
+          {account.savedAt && <Text style={styles.small}>Last synced: {new Date(account.savedAt).toLocaleString()}</Text>}
+          <Button busy={account.busy} onPress={() => void account.sync()}>Sync now</Button>
+          <Button kind="secondary" disabled={account.busy} onPress={() => void account.setBackupEnabled(false).catch(() => {})}>Pause backup</Button>
+        </> : <>
+          <Text style={styles.body}>Enable backup to upload this device’s boards, personal photos and saved voices to Little Say and restore existing account boards here. Little Say’s service can access backups.</Text>
+          <Button busy={account.busy} onPress={() => void account.setBackupEnabled(true).catch(() => {})}>Enable backup on this device</Button>
+        </>}
       </>}
       <Button kind="secondary" disabled={account.busy} onPress={onContinue}>{settingsPage ? 'Back to Settings' : 'Continue to boards'}</Button>
       <Button kind="secondary" disabled={account.busy} onPress={() => void account.disconnect().then(clear).catch(() => {})}>Sign out and keep local boards</Button>
@@ -67,15 +73,14 @@ export function AccountPanel({ account, mode, setMode, onContinue, settingsPage 
       </> : <Button kind="ghost" disabled={account.busy} onPress={() => { setDeleting(true); setManage(false); clear(); }}>Delete account…</Button>}
       {!account.socialAvailable && <Text style={styles.small}>Google and Apple account actions require a development build. Email sign-in and local boards work in Expo Go.</Text>}
     </> : <>
-      <Text style={styles.body}>Use Little Say without an account, or back up boards to restore after reinstalling and sync across devices.</Text>
+      <Text style={styles.body}>Use local boards without an account. Sign in to use AI and optionally back up boards across devices.</Text>
       <Text style={styles.small}>Without a backup, removing the app or clearing its storage removes these boards.</Text>
       {mode ? <>
         <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />
         {mode !== 'reset' && <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} maxLength={128} />}
         {mode === 'register' && <><Text style={styles.small}>Use at least 12 characters.</Text><Field label="Confirm password" value={confirmation} onChangeText={setConfirmation} secureTextEntry autoCapitalize="none" maxLength={128} /></>}
         {mode === 'reset' ? <Button busy={account.busy} disabled={!email.trim()} onPress={() => void account.resetPassword(email).then(() => { if (mounted.current) { setMode('login'); clear(); } }).catch(() => {})}>Send password reset email</Button> : <>
-          <Text style={styles.body}>Continuing enables backup of this device’s boards, personal photos and saved voices to Little Say after email verification. Existing account boards are added here. Little Say’s service can access backups.</Text>
-          <Button busy={account.busy} disabled={!account.ready || !account.config || !email.trim() || !password || (mode === 'register' && (password.length < 12 || password !== confirmation))} onPress={() => signIn('password')}>{mode === 'register' ? 'Create account & enable backup' : 'Sign in & sync this device'}</Button>
+          <Button busy={account.busy} disabled={!account.ready || !account.config || !email.trim() || !password || (mode === 'register' && (password.length < 12 || password !== confirmation))} onPress={() => signIn('password')}>{mode === 'register' ? 'Create account' : 'Sign in'}</Button>
           {(['google.com', 'apple.com'] as const).filter(provider => providers.includes(provider)).map(provider => <Button key={provider} kind="secondary" disabled={account.busy || !account.socialAvailable} onPress={() => signIn(provider)}>Continue with {names[provider]}</Button>)}
           {!account.socialAvailable && <Text style={styles.small}>Use a development build for Google and Apple sign-in. Email works in Expo Go.</Text>}
           {mode === 'login' && <Button kind="ghost" disabled={account.busy} onPress={() => { setMode('reset'); clear(); }}>Forgot password?</Button>}

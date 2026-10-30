@@ -1,0 +1,8 @@
+{
+  "hosting": {
+    "site": "little-say",
+    "public": "public",
+    "rewrites": [{ "source": "**", "run": { "serviceId": "little-say-api", "region": "us-central1", "pinTag": true } }],
+    "headers": [{ "source": "/api/**", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }]
+  }
+}

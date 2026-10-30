@@ -4,6 +4,8 @@ The protected [Release workflow](../../.github/workflows/release.yml) invokes th
 
 `hooks.mjs` owns only application-specific behavior: `identity` hashes tracked inputs while excluding tests, Markdown, other-platform files, and allocated versions; `stamp` mirrors allocated versions into declared metadata; `applicationHook` dispatches inspection, stamping, script type validation, and isolated server health/version checks. Lifecycle, providers, approval, persistence, and uncertain-outcome handling belong to the shared toolkit.
 
+GCP deployment is selected for the shared `https://littlesay.app` backend. The toolkit runs migrations, verifies immutable API/worker revisions and publishes revision-pinned Firebase Hosting before native/OTA delivery. The protected `gcp-production` environment supplies federated deployment identity; [GCP operations](../../deploy/gcp/README.md#release-protection) owns setup and recovery. The application owns no deployment wrapper.
+
 ## Preview and execution
 
 Install with `npm ci`, then use the read-only CLI:
@@ -25,11 +27,11 @@ GitHub owns execution and approvals. Dispatch **Release** from the protected def
 
 Expo runtime is the explicit mobile major. Binaries sharing that major remain eligible; distinct older runtimes receive no automatic backports. [fingerprint.config.js](../../apps/mobile/fingerprint.config.js) retains strict native compatibility checks while excluding allocated version fields. Server inputs use a separate patch version and successful-deployment baseline.
 
-Versions are stamped into a tagged child build commit; default-branch files are not bumped. Failed reservations consume their numbers. Source checks, Docker production builds, and OTA export have no publishing credentials. Selected server deployment must succeed before native delivery and OTA publication; the [deployment module](../../deploy/self-hosted/README.md) owns the webhook and WireGuard contract.
+Versions are stamped into a tagged child build commit; default-branch files are not bumped. Failed reservations consume their numbers. Source checks, Docker production builds, and OTA export have no publishing credentials. Selected server deployment must succeed before native delivery and OTA publication; the [GCP module](../../deploy/gcp/README.md) owns infrastructure and operational configuration.
 
 ## Provider setup and runtime transition
 
-Preserve the configured application/project IDs, signing/submission credentials, webhook destination, and WireGuard peer. Use the beta and production OTA channels for new builds. GitHub `internal` and `production` environments must restrict deployment branches to `master` and require the intended reviewers. Their EAS environments are `preview` and `production`. Deployment credentials remain in the protected `self-hosted-testing` environment.
+Preserve the configured application/project IDs and signing/submission credentials. Use the beta and production OTA channels for new builds. GitHub `internal` and `production` environments must restrict deployment branches to `master` and require the intended reviewers. Their EAS environments are `preview` and `production`. Deployment credentials remain in the protected `gcp-production` environment.
 
 Expo operations use `EXPO_TOKEN`. Ordinary EAS builds use managed signing credentials. Configure store signing/provisioning and assign the app's Google Play service-account key and App Store Connect API key in EAS before running noninteractive submission. Build-signing and store-submission credentials are separate. The shared workflow's Android signing secret names, where required, are `ANDROID_KEYSTORE_BASE64`, `ANDROID_STORE_PASSWORD`, `ANDROID_KEY_ALIAS`, and `ANDROID_KEY_PASSWORD`. Public EAS inputs must be declared readable strings.
 

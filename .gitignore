@@ -1,3 +1,4 @@
+# Excludes generated output, credentials, local data and deployment state from version control.
 node_modules/
 .expo/
 dist/
@@ -22,3 +23,11 @@ credentials.json
 *.apk
 *.aab
 *.asc
+.terraform/
+.firebase/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+firebase-debug.log

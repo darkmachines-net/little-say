@@ -6,10 +6,4 @@ export default defineConfig({
   ...base,
   testMatch: 'accounts.spec.ts',
   testIgnore: [],
-  webServer: {
-    command: 'node --import tsx scripts/test-server.ts',
-    url: 'http://127.0.0.1:4175/api/ready',
-    timeout: 30000,
-    reuseExistingServer: false,
-  },
 });

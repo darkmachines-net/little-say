@@ -1,0 +1,47 @@
+# GCP deployment
+
+The approved project is `little-say` (number `1003645384869`), billing account `01E081-A8027C-EC4F62`. Regional resources use `us-central1`. TestFlight, Play testing and production clients use `https://littlesay.app`; they share accounts and data. This module defines infrastructure; the [protected Release workflow](../../scripts/release/README.md) owns image publication and deployment. Infrastructure validation alone does not establish hosted readiness.
+
+## Bootstrap and first image
+
+Use Terraform 1.5+ and Google Cloud CLI with an operator account authorized for this project and billing account. Authenticate with `gcloud auth login --update-adc`, then `gcloud auth application-default set-quota-project little-say`. Operator Firebase CLI commands also need `GOOGLE_CLOUD_QUOTA_PROJECT=little-say` in their environment. Accept Firebase Terms in the console before first activation. Never give runtime or release identities an operator's credentials.
+
+1. Run `terraform -chdir=deploy/gcp/bootstrap init`, then `plan` and `apply`. The import block adopts the supplied existing project, links its billing account, enables APIs and creates the private versioned state bucket. Review the plan for unrelated project changes. Keep bootstrap state secure; copy its state to the state bucket for recovery after bootstrap. Never commit state.
+2. Run `terraform -chdir=deploy/gcp init`. Application state uses the protected GCS backend and locking. Write an ignored `terraform.tfvars` with `alert_email`. Leave `image=""` and `ai_enabled=false` to provision foundations first. If Firebase or Auth was previously enabled, import those existing resources before applying; do not replace existing application identities.
+3. Build the actual application image for linux/amd64 and push it to `us-central1-docker.pkg.dev/little-say/application/server`. Read its digest from Artifact Registry; set `image` to the immutable `.../server@sha256:...` value. Do not deploy floating tags.
+4. First provision only the migration job with `terraform apply -target=google_cloud_run_v2_job.migrate`, then execute `gcloud run jobs execute little-say-migrate --region=us-central1 --project=little-say --wait`. This first-bootstrap ordering prevents readiness probes from starting against an empty schema. Migrations use a separate database identity, revoke the runtime role's administrative privileges, and grant only runtime DML plus ledger reads.
+5. Apply the full Terraform configuration. Confirm both Cloud Run revisions and `/api/ready`; publish `firebase deploy --only hosting --project little-say --config deploy/gcp/firebase.json` only after the API and worker are verified. The rewrite pins the verified ready API revision. Connect the custom domain, apply the DNS records Firebase provides at the domain's registrar, and wait for managed HTTPS. Certificate waiting is excluded from the feasibility timebox.
+
+The API permits public invocation but enforces account identity/ownership for private routes. The worker permits only Tasks, Scheduler and the release identity through Cloud Run IAM. Its application endpoints intentionally trust that IAM boundary; never grant `allUsers` or deploy the worker behind a public proxy. Cloud SQL uses authenticated socket integration, public IP with no authorized client networks and required connectors. Runtime pools default to three connections. SQL and media/state resources have deletion protections; applying Terraform is an operator operation.
+
+## Identity, secrets and native binaries
+
+Terraform registers Firebase's public client configuration, email/password auth and the existing Android/iOS package identities `net.darkmachines.littlesay`. Import existing Firebase registrations if they are already present. Configure Google with the actual Play App Signing certificate fingerprints, upload/test certificates where applicable, Android OAuth package/fingerprint clients, a web client ID, and an iOS OAuth client/URL scheme. Supply the public client IDs in Terraform variables and `LITTLE_SAY_GOOGLE_IOS_URL_SCHEME` in the release environment. Preserve the existing EAS project and application IDs.
+
+Configure Apple with the existing app identifier's Sign in with Apple entitlement, Services ID, team/key ID, private key, Firebase callback `https://little-say.firebaseapp.com/__/auth/handler`, and approved private-email relay sender/domain. Enable Google/Apple in Firebase before setting their public Terraform variables; email/password remains the only advertised method until then. OAuth provider secrets and Apple keys belong in Secret Manager/provider consoles, never Git or client bundles. `google-client-secret` and `apple-private-key` are reserved secret resources, not automatically populated provider configurations.
+
+Add the AI key directly as a version of `ai-provider-key` using stdin or a protected local file. Do not put it in tfvars or print it in logs. Only the worker has access. Keep `ai_enabled=false` until the real hosted acceptance checks succeed; changing it to false on API and worker is the operator kill switch. An origin change requires explicit sign-in and separate backup consent; local boards are retained.
+
+## Release protection
+
+Create the protected GitHub environment `gcp-production` with required reviewers and default-branch restrictions. Set its `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_RELEASE_SERVICE_ACCOUNT` from Terraform outputs. Federation accepts only `darkmachines-net/little-say`, `refs/heads/master`, and this exact environment. Package and reusable workflow pins must remain synchronized. Both beta and production mobile profiles deploy this shared backend first. Store upload is separate from public review/promotion; beta uses Play internal testing, while production creates a production-track draft for separate review and rollout.
+
+Release verifies the confirmed image digest, migrates, verifies worker/API readiness, and then publishes Firebase Hosting pinned to the API revision. Native/OTA stages depend on success. Confirmed operations are reused on retries; failures still permit a fresh release. Additive schemas support rolling revisions and older clients. There is no automatic database rollback. Terraform ignores image/traffic changes made by the release toolkit; subsequent infrastructure edits must preserve the deployed image.
+
+## Recovery and acceptance
+
+SQL keeps daily backups and seven days of point-in-time recovery. To rehearse recovery, clone `little-say-postgres` to a distinct recovery instance at a selected timestamp using Cloud SQL's clone/PITR operation, keep public authorized networks empty, and attach only a temporary validation identity. Run schema/read-only fixture checks on the clone. Never restore over the production instance during a rehearsal. Record the recovered timestamp and validation in ignored `artifacts/`, then explicitly remove only the recovery resources when finished.
+
+For media, create an operator-owned probe object, record its generation, delete it, and use `gcloud storage restore` on that exact soft-deleted generation. Verify its digest and copy it into a separate recovery bucket before removing the probe. Do not rehearse against user media. Test state recovery from a versioned state object into an isolated local directory; never overwrite current remote state as a demonstration.
+
+Before launch, demonstrate actual Hosting `__session`/CSRF behavior, direct API authorization, object round trips, authenticated queued execution, queue failure, duplicate delivery, worker termination and redeployment. Verify the image digest, migration state, HTTPS, SQL/storage/job/readiness alerts and $25/$50/$100 billing thresholds. Alerts are not spending caps. Check SQL restoration and object recovery into isolated resources. Record evidence in ignored `artifacts/` or the PR.
+
+Test sign-in, verified AI, backup restore, account deletion and offline playback on TestFlight and Play-installed binaries, plus LAN development separately. Emulator/browser tests cannot establish store OAuth identities, device networking or native storage behavior.
+
+## Feasibility checkpoint and fallback
+
+Allow two focused engineering days for the thin hosted path: HTTPS routing, Firebase sessions, Cloud SQL migration, private object round trip and authenticated queued work through the application image. Exclude account access and DNS/certificate waiting. If this cannot be established, or requires substantially more infrastructure, switch hosting to Render. Do not operate both deployments.
+
+Render reuses this image, PostgreSQL, Firebase Authentication, filesystem media on a 10 GB persistent disk and a polling worker. Run API and worker under one supervised web-container process; it accepts brief deployment downtime and cannot scale horizontally with the disk. No Cloud Tasks or Cloud Storage dependency is required. Provisioning/deployment integration is deferred until that checkpoint, not maintained as a second active environment.
+
+Planning estimates for ~100 MAU are $30–40/month for recommended GCP launch or $50–60/month on Render, excluding AI, domain, store/EAS costs and taxes. Capacity-tested smallest tiers may cost $12–20 or $19–25 respectively. Recheck [GCP SQL](https://cloud.google.com/sql/pricing), [Cloud Run](https://cloud.google.com/run/pricing), [Firebase](https://firebase.google.com/pricing), and [Render](https://render.com/pricing) before enabling billing-dependent resources.

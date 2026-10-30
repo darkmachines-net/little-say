@@ -16,12 +16,12 @@ it('initializes account tables and repeats migrations without duplicate versions
   const versions = await database.pool.query('SELECT name FROM pgmigrations ORDER BY id');
   expect(versions.rows.map(row => row.name)).toEqual(SCHEMA_VERSIONS);
   const tables = await database.pool.query('SELECT tablename FROM pg_tables WHERE schemaname = $1 ORDER BY tablename', [database.schema]);
-  expect(tables.rows.map(row => row.tablename)).toEqual(['account_assets', 'account_deletions', 'account_snapshots', 'accounts', 'browser_sessions', 'pgmigrations', 'revoked_browser_sessions']);
+  expect(tables.rows.map(row => row.tablename)).toEqual(['account_assets', 'account_deletions', 'account_snapshots', 'accounts', 'ai_cancellations', 'ai_jobs', 'browser_sessions', 'media_grants', 'media_objects', 'pgmigrations', 'revoked_browser_sessions', 'service_records', 'web_sessions', 'worker_heartbeats']);
 });
 
 it('appends accounts to an existing foundation database without changing its prior ledger', async () => {
-  await database.pool.query('DROP TABLE account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts');
-  await database.pool.query('DELETE FROM pgmigrations WHERE name=$1', [SCHEMA_VERSIONS[1]]);
+  await database.pool.query('DROP TABLE ai_cancellations, ai_jobs, media_grants, media_objects, service_records, web_sessions, worker_heartbeats, account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts');
+  await database.pool.query('DELETE FROM pgmigrations WHERE name>=$1', [SCHEMA_VERSIONS[1]]);
   const before = (await database.pool.query('SELECT id,name,run_on FROM pgmigrations ORDER BY id')).rows;
   await migrateDatabase(database.config, database.schema);
   expect((await database.pool.query('SELECT id,name,run_on FROM pgmigrations ORDER BY id')).rows.slice(0, 1)).toEqual(before);
@@ -29,7 +29,7 @@ it('appends accounts to an existing foundation database without changing its pri
 });
 
 it('rejects an unmigrated schema and becomes ready after explicit migration', async () => {
-  await database.pool.query('DROP TABLE account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts, pgmigrations');
+  await database.pool.query('DROP TABLE ai_cancellations, ai_jobs, media_grants, media_objects, service_records, web_sessions, worker_heartbeats, account_assets, account_deletions, account_snapshots, browser_sessions, revoked_browser_sessions, accounts, pgmigrations');
   await expect(checkDatabase(database.pool)).rejects.toThrow();
   await migrateDatabase(database.config, database.schema);
   await expect(checkDatabase(database.pool)).resolves.toBeUndefined();
@@ -77,6 +77,11 @@ it('commits successful work, rolls back failed work, and releases the only conne
     await transaction(pool, async client => { await client.query('INSERT INTO atomic_work VALUES (3)'); });
     expect((await pool.query('SELECT id FROM atomic_work ORDER BY id')).rows).toEqual([{ id: 1 }, { id: 3 }]);
   } finally { await pool.end(); }
+});
+
+it('keeps an older rolling revision ready after a newer additive migration', async () => {
+  await database.pool.query("INSERT INTO pgmigrations (name, run_on) VALUES ('1760000000005_additive', now())");
+  await expect(checkDatabase(database.pool)).resolves.toBeUndefined();
 });
 
 it('keeps fixture schemas independent and removes only the closed fixture schema', async () => {

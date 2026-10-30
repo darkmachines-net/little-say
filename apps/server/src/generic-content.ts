@@ -1,12 +1,9 @@
 /**
- * @file Stores canonical generic pictures and sanitized future templates in a durable cache with an
- * in-memory search index. The cache is independent of accounts and PostgreSQL; neither historical
- * backups nor private batch records supply shared content.
+ * @file Stores reviewed generic pictures/templates through shared metadata storage; private account backups never feed reuse.
  */
 
-import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { cacheStore, type CacheStore } from './hosting/storage';
 import { generatedBoardSchema, resolvedPictureSchema, type GeneratedBoard, type ProposalRequest, type ResolvedPicture } from '@little-say/core';
 import { canonicalPictureConcept, genericConcept, genericConcepts, genericWords, type GenericConcept } from './generic-concepts';
 
@@ -22,14 +19,14 @@ export class GenericContent {
   private templates = new Map<string, Template>();
   private pictures = new Map<string, ResolvedPicture>();
   private ready: Promise<void>;
+  private storage: CacheStore;
   /** Initialize a dedicated cache directory; never scan account backups or legacy picture jobs. */
-  constructor(private directory: string) { this.ready = this.restore(); }
+  constructor(directory: string | CacheStore) { this.storage = cacheStore(directory); this.ready = this.restore(); }
   private async restore() {
-    await mkdir(this.directory, { recursive: true });
-    for (const name of await readdir(this.directory)) {
+    for (const name of await this.storage.list()) {
       if (!/^(template|picture)-[a-f0-9]{64}\.json$/.test(name)) continue;
       try {
-        const data = JSON.parse(await readFile(join(this.directory, name), 'utf8'));
+        const data = JSON.parse((await this.storage.read(name)).toString());
         if (data.version !== version) continue;
         if (name.startsWith('template-')) {
           const board = this.sanitize(generatedBoardSchema.parse(data.board));
@@ -47,9 +44,7 @@ export class GenericContent {
     }
   }
   private async write(name: string, value: unknown) {
-    const temporary = join(this.directory, `${randomUUID()}.tmp`);
-    await writeFile(temporary, JSON.stringify({ version, ...value as object }));
-    await rename(temporary, join(this.directory, name));
+    await this.storage.write(name, JSON.stringify({ version, ...value as object }));
   }
   private requestKey(request: ProposalRequest): string | undefined {
     if (request.board || request.previousPreparationId || request.conversation?.draft || request.conversation?.history.length) return undefined;

@@ -1,6 +1,6 @@
 # Picture catalog and durable jobs
 
-`catalog.ts` searches licensed metadata and downloads trusted artwork. `provider.ts` owns concept analysis, pixel review, and image generation. `jobs.ts` owns the durable queue and immutable PNG cache. Routes are registered by `../app.ts`; payload schemas and source selection are in `packages/core/src/pictures.ts`. [Client services](../../../mobile/src/services/README.md#picture-drafts) own revision-safe drafts and offline downloads.
+`catalog.ts` searches licensed metadata and downloads trusted artwork. `provider.ts` owns concept analysis, pixel review, and image generation. `jobs.ts` owns picture resolution and the immutable PNG cache. Production/local runtime queues use the shared [job repository](../hosting/README.md); its file-backed queue remains only for isolated fixtures. Routes are registered by `../app.ts`; payload schemas and source selection are in `packages/core/src/pictures.ts`. [Client services](../../../mobile/src/services/README.md#picture-drafts) own revision-safe drafts and offline downloads.
 
 ## Catalog and attribution
 
@@ -28,8 +28,8 @@ A request UUID is bound to its payload, draft, and card identity; reusing it for
 
 ## Configuration and retention
 
-`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. Per-card jobs default to two concurrent generations; prepared boards use `PICTURE_GENERATION_CONCURRENCY` (default six). Each queue admits at most 48 waiting generations. Backend keys never reach the client.
+`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. The shared runtime permits two executing jobs globally and two outstanding jobs per account. A prepared board performs picture work sequentially within its claim. Backend keys never reach the client.
 
-`PICTURE_CACHE_DIR` defaults to `../../.cache/pictures` from the server working directory and `/app/data/pictures` in Docker. Retain that directory across replacements: generated pictures, concept descriptions, completed job metadata, and hashed cache keys have no automatic eviction. Personal photos and their paths are excluded from picture requests; explicit account backups are a separate contract. Requests and provider bodies are not logged. Guest picture endpoints share the server's trusted-private-network boundary.
+Runtime storage uses `MEDIA_DIRECTORY` or `MEDIA_BUCKET` for PNGs and PostgreSQL for private owner-bound descriptions/job state and shared approved generic metadata. [Storage/deletion](../hosting/README.md#storage-and-deletion) defines ownership and cleanup. Personal photos and their paths are excluded from picture requests; explicit account backups are a separate contract. Requests and provider bodies are not logged. AI routes require verified sign-in. Private assets and jobs require their owner; catalog access remains public.
 
 Use [picture evaluation](../../../../tests/README.md#live-ai-and-device-validation) for billable visual checks. Model review and automated tests cannot establish whether a child understands a picture.

@@ -22,8 +22,11 @@ import { type Pool } from 'pg';
 import { checkDatabase } from './database';
 import { accountRoutes } from './accounts/routes';
 import { type BoardPreparation } from './board-preparation';
+import { AccountError } from './accounts/store';
+import { hostingRoutes, type HostedServices } from './hosting/api';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
+  hosting?: HostedServices;
   /** Trusted harness override; deployed servers retain thirty AI requests per IP per minute. */
   aiRequestsPerMinute?: number;
 }
@@ -35,7 +38,7 @@ export interface ServerOptions { provider: AiProvider | null; preparation?: Boar
 export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
-  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
+  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'X-Little-Say-Request', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
   await app.register(rateLimit, { global: false });
   const aiLimits = { config: { rateLimit: { max: options.aiRequestsPerMinute ?? 30, timeWindow: '1 minute' } } };
   let active = 0;
@@ -46,24 +49,26 @@ export async function createServer(options: ServerOptions) {
     if (request.method === 'POST' && request.headers['x-little-say'] !== '1') return reply.code(403).send({ error: 'Use the Little Say app to make this request.' });
   });
   app.setErrorHandler((error, request, reply) => {
+    if (error instanceof AccountError) return reply.code(error.statusCode).send({ error: error.message });
     const status = (error as { statusCode?: number }).statusCode ?? 500;
     // Only log metadata, never prompt, board, or provider error bodies.
     app.log.warn({ requestId: request.id, statusCode: status }, 'Request failed');
     reply.code(status >= 400 && status < 500 ? status : 500).send({ error: status === 413 ? 'This request is too large. Try sending less content.' : status === 429 ? 'Too many requests. Please try again shortly.' : status === 400 ? 'The request could not be read. Please try again.' : 'The server could not complete this request.' });
   });
 
-  app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.provider !== null, version: release.version, ...(options.preparation ? { preparation: { version: 1 } } : {}), pictures: { version: 1, catalog: Boolean(options.pictures), analysis: Boolean(options.pictures?.provider), generation: Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
+  if (options.hosting) await hostingRoutes(app, options.hosting);
+  app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.hosting?.enabled ?? options.provider !== null, version: release.version, ...(options.hosting ? { aiJobs: { version: 1 }, authenticationRequired: true } : {}), ...(options.preparation || options.hosting?.enabled ? { preparation: { version: 1 } } : {}), pictures: { version: 1, catalog: Boolean(options.pictures), analysis: options.hosting?.enabled ?? Boolean(options.pictures?.provider), generation: options.hosting?.enabled ? options.pictures?.generationEnabled : Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
   app.get('/api/ready', async (_request, reply) => {
-    try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version }; }
+    try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version, ...(process.env.K_REVISION ? { revision: process.env.K_REVISION } : {}) }; }
     catch { return reply.code(503).send({ status: 'unavailable', error: 'Database readiness check failed.' }); }
   });
   let deletionWork: Promise<void> | undefined;
   const sweep = () => {
     if (!deletionWork && options.accounts && options.auth) deletionWork = options.accounts.processDeletions(options.auth.config.projectId, uid => options.auth!.deleteUser(uid)).catch(() => { app.log.error('Account deletion retry failed; pending work remains durable.'); }).finally(() => { deletionWork = undefined; });
   };
-  const deletionTimer = options.accounts && options.auth ? setInterval(sweep, 30000) : undefined;
+  const deletionTimer = !options.hosting && options.accounts && options.auth ? setInterval(sweep, 30000) : undefined;
   deletionTimer?.unref();
-  app.addHook('onReady', async () => { sweep(); });
+  app.addHook('onReady', async () => { if (!options.hosting) sweep(); });
   app.addHook('onClose', async () => { clearInterval(deletionTimer); await deletionWork; options.preparation?.close(); options.pictures?.close(); await options.auth?.close(); await options.database?.end(); });
 
   if (options.accounts && options.auth) await accountRoutes(app, options.accounts, options.auth, options.secureCookies ?? true);

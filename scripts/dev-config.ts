@@ -1,4 +1,4 @@
-/** @file Selects local or self-hosted development, resolves LAN addresses, and isolates Expo from API secrets. */
+/** @file Selects local/hosted development, resolves LAN addresses, and isolates Expo from all backend credentials. */
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { networkInterfaces, type NetworkInterfaceInfo } from 'node:os';
@@ -58,7 +58,7 @@ export function developmentConfig(env: Environment, addresses = lanAddresses(), 
   if (backend === 'local' && apiPort === expoPort) throw new Error('DEV_API_PORT and DEV_EXPO_PORT must be different.');
   let apiUrl = `http://${host}:${apiPort}`;
   if (backend === 'remote') {
-    const value = env.DEV_REMOTE_API_URL?.trim() || 'https://littlesay.darkmachines.net';
+    const value = env.DEV_REMOTE_API_URL?.trim() || 'https://littlesay.app';
     let url: URL;
     try { url = new URL(value); } catch { throw new Error('DEV_REMOTE_API_URL must be an HTTPS origin.'); }
     if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw new Error('DEV_REMOTE_API_URL must be an HTTPS origin without credentials, paths, queries, or fragments.');
@@ -111,17 +111,17 @@ export async function ensureDevelopmentEnv(root: string) {
  */
 export function apiEnvironment(env: Environment, config: DevelopmentConfig): Environment {
   if (config.backend !== 'local') throw new Error('A remote development session must not start a local API.');
-  return { ...env, NODE_ENV: 'development', HOST: '0.0.0.0', PORT: String(config.apiPort), ALLOWED_ORIGINS: config.origins.join(',') };
+  return { ...env, NODE_ENV: 'development', HOST: config.host, PORT: String(config.apiPort), ALLOWED_ORIGINS: config.origins.join(',') };
 }
 /**
  * Remove server secrets and inherited client overrides, then inject the selected API URL and Expo
- * LAN host. Remote web uses Metro's same-origin API proxy; native clients connect directly.
+ * LAN host. Browser sessions use Metro's same-origin API proxy; native clients connect directly.
  */
 export function expoEnvironment(inherited: Environment, config: DevelopmentConfig): Environment {
   const env = { ...inherited };
   for (const key of Object.keys(env)) {
-    if (/^(AAC_OPENAI_KEY$|OPENAI_|EXPO_PUBLIC_|DEV_|LITTLE_SAY_DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
+    if (/^(AAC_|OPENAI_|PG|FIREBASE_|GOOGLE_|MEDIA_|TASKS_|WORKER_|COMPOSE_|EXPO_PUBLIC_|DEV_|LITTLE_SAY_DEV_|ALLOWED_ORIGINS$|WEB_ROOT$|HOST$|PORT$|EXPO_PACKAGER_PROXY_URL$|EXPO_NO_CLIENT_ENV_VARS$)/i.test(key)) delete env[key];
   }
   return { ...env, NODE_ENV: 'development', EXPO_NO_DOTENV: '1', EXPO_PUBLIC_API_URL: config.apiUrl, REACT_NATIVE_PACKAGER_HOSTNAME: config.host,
-    ...(config.backend === 'remote' ? { LITTLE_SAY_DEV_PROXY_URL: config.apiUrl, EXPO_PUBLIC_WEB_API_URL: config.webUrl } : {}) };
+    LITTLE_SAY_DEV_PROXY_URL: config.apiUrl, EXPO_PUBLIC_WEB_API_URL: config.webUrl };
 }

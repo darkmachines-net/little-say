@@ -6,7 +6,7 @@ const https = require('node:https');
 /**
  * Create Connect middleware for /api/ only. Accept trusted development origins and the app's POST
  * header, strip unrelated credentials/origin, and stream bodies and assets to a fixed HTTP(S) origin.
- * Only account endpoints relay Little Say's own HttpOnly session cookie and account identity header.
+ * Protected application endpoints relay only Little Say's opaque session and explicit account headers.
  * The caller owns the HTTP server; disconnected clients cancel their upstream request. Errors are
  * sanitized and redirects are rejected so a backend cannot turn this into an arbitrary URL proxy.
  * @param {string} backendUrl Backend origin, never a client-provided URL.
@@ -32,12 +32,12 @@ function createDevelopmentApiProxy(backendUrl, origins) {
     const target = new URL(request.url, backend);
     if (target.origin !== backend.origin || !target.pathname.startsWith('/api/')) { fail(400, 'Invalid development API path.'); return; }
     const headers = {};
-    for (const name of ['content-type', 'content-length', 'x-little-say', 'accept', 'range', 'if-none-match', 'if-modified-since']) {
+    for (const name of ['content-type', 'content-length', 'x-little-say', 'x-little-say-request', 'accept', 'range', 'if-none-match', 'if-modified-since']) {
       if (request.headers[name] !== undefined) headers[name] = request.headers[name];
     }
-    const accountRequest = target.pathname.startsWith('/api/account/');
+    const accountRequest = /^\/api\/(account|ai|boards|pictures|speech)(\/|$)/.test(target.pathname);
     if (accountRequest) {
-      const cookies = (request.headers.cookie || '').split(';').map(value => value.trim()).filter(value => /^(little_say_session=[a-zA-Z0-9_.-]{1,16000}|little_say_csrf=[a-f0-9]{64})$/.test(value));
+      const cookies = (request.headers.cookie || '').split(';').map(value => value.trim()).filter(value => /^__session=[a-f0-9]{64}$/.test(value));
       if (cookies.length) headers.cookie = cookies.join('; ');
       if (request.headers['x-little-say-csrf']) headers['x-little-say-csrf'] = request.headers['x-little-say-csrf'];
       if (request.headers['x-little-say-account']) headers['x-little-say-account'] = request.headers['x-little-say-account'];
@@ -52,7 +52,7 @@ function createDevelopmentApiProxy(backendUrl, origins) {
       }
       if (accountRequest && incoming.headers['set-cookie']) {
         // Metro uses HTTP on the trusted development LAN. Production never passes through this proxy.
-        outgoing['set-cookie'] = incoming.headers['set-cookie'].filter(value => /^little_say_(session|csrf)=/.test(value)).map(value => value.replace(/;\s*Secure\b/gi, ''));
+        outgoing['set-cookie'] = incoming.headers['set-cookie'].filter(value => /^__session=/.test(value)).map(value => value.replace(/;\s*Secure\b/gi, ''));
       }
       response.writeHead(incoming.statusCode || 502, outgoing);
       incoming.once('error', () => response.destroy());

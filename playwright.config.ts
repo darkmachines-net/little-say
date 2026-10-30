@@ -4,11 +4,13 @@
  */
 
 import { defineConfig } from '@playwright/test';
+const origin = `http://127.0.0.1:${process.env.TEST_API_PORT || '4175'}`;
 export default defineConfig({
+  outputDir: process.env.TEST_RESULTS_DIR || 'test-results',
   testDir: './tests/web', fullyParallel: false, workers: 1, timeout: 45000,
   testIgnore: 'accounts.spec.ts',
   expect: { timeout: 7000 },
-  use: { baseURL: 'http://127.0.0.1:4175', viewport: { width: 1180, height: 900 }, screenshot: 'only-on-failure', trace: 'retain-on-failure', serviceWorkers: 'allow' },
+  use: { baseURL: origin, viewport: { width: 1180, height: 900 }, screenshot: 'only-on-failure', trace: 'retain-on-failure', serviceWorkers: 'allow' },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
-  webServer: { command: 'npm run start', url: 'http://127.0.0.1:4175/api/health', timeout: 30000, reuseExistingServer: false, env: { PORT: '4175', HOST: '127.0.0.1', ALLOWED_ORIGINS: 'http://127.0.0.1:4175', AAC_OPENAI_KEY: '', OPENAI_API_KEY: '' } },
+  webServer: { command: 'node --import tsx scripts/test-server.ts', url: origin + '/api/ready', timeout: 30000, reuseExistingServer: false },
 });

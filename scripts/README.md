@@ -1,6 +1,6 @@
 # Development and maintenance tools
 
-Run commands from the repository root. Use `npm.cmd` / `npx.cmd` in Windows PowerShell and `npm` / `npx` elsewhere. Install with `npm ci`; Node 24 is the normal development runtime. `package.json` records the supported Node range. Use an Expo Go build compatible with the SDK in `apps/mobile/package.json`; native dependency/SDK changes require a replacement development or release binary before loading the new bundle.
+Run commands from the repository root. Use `npm.cmd` / `npx.cmd` in Windows PowerShell and `npm` / `npx` elsewhere. Install with `npm ci`; Node 24 is the normal development runtime. `package.json` records the supported Node range. Docker Desktop (Linux containers) is also required locally; Java runs inside the Auth container. No GCP account or credentials are needed. Use an Expo Go build compatible with the SDK in `apps/mobile/package.json`; native dependency/SDK changes require a replacement development or release binary before loading the new bundle.
 
 ## Development launcher
 
@@ -8,32 +8,36 @@ Run commands from the repository root. Use `npm.cmd` / `npx.cmd` in Windows Powe
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` / `dev:local` | Watched local API + Expo Go on the LAN |
-| `npm run dev:remote` | Expo Go against `https://littlesay.darkmachines.net`, without a local API/key |
+| `npm run dev` / `dev:local` | PostgreSQL/Auth + watched API/worker + Expo Go on the LAN |
+| `npm run dev:remote` | Expo Go against `https://littlesay.app`, without a local API/key |
 | `npm run dev:web` / `dev:web:remote` | Corresponding backend mode plus browser launch |
-| `npm run dev:server` / `dev:app` | API only / Expo waiting for a separately running local API |
+| `npm run dev:server` / `dev:app` | Dependencies + watched API/worker / Expo against an existing local API |
 | `npm run dev:setup` | Create an optional ignored root `.env` only if absent |
-| `npm run dev:doctor` | Check selected addresses and local API/Metro; add `-- --remote` for remote health/proxy |
+| `npm run dev:doctor` | Check migrations, worker, emulator, selected addresses and API/Metro; add `-- --remote` for remote health/proxy |
 | `npm run dev -- --clear` | Restart with Metro cache reset; also accepted by local/remote aliases |
 
-Run one launcher at a time. It checks ports without terminating existing owners, waits for API health, and starts Expo in Go/LAN mode. Ctrl+C stops only its child process trees. Restart when changing networks, environment settings, or backend modes, then reload the app. Remote health failure stops startup; it never silently falls back to another backend. Doctor/startup make no model calls; actual remote AI use uses the deployed server's billing and caches.
+Run one launcher at a time. It checks ports without terminating existing owners, starts checkout-owned Compose dependencies, waits for their health, runs local migrations, then waits for API health, and starts Expo in Go/LAN mode. Ctrl+C stops only its child process trees. Restart when changing networks, environment settings, or backend modes, then reload the app. Remote health failure stops startup; it never silently falls back to another backend. Doctor/startup make no model calls; actual remote AI use uses the deployed server's billing and caches.
 
-The `.codex/environments/environment.toml` actions invoke these same commands through Node; install dependencies once before using them. Local API defaults to `0.0.0.0:8788`, Expo to `8081`, and the app receives the chosen LAN URL. Standalone production server defaults are separate.
+The `.codex/environments/environment.toml` actions invoke these same commands through Node; install dependencies once before using them. Local API binds only the selected LAN address on port `8788`, Expo to `8081`, and the app receives the chosen LAN URL. Standalone production server defaults are separate.
+
+Development accounts/database persist in checkout-named Docker volumes and media in `.cache/media`. Test runners use separate disposable projects and directories. Port conflicts fail without killing their owner; select unused ports for another checkout. `docker compose up --build` also provides a complete built browser/API/worker stack on localhost:8787. Do not delete volumes to fix startup problems.
 
 ## Environment and browser proxy
 
 Resolution order is inherited process environment, `.env.local`, then `.env`. Local mode prefers `AAC_OPENAI_KEY` over `OPENAI_API_KEY`, with Windows User environment fallback only when no explicit process/file key exists. Keys are never printed or written by the launcher. Remote mode does not look up local keys or create `.env`.
 
-Only the API child receives the server environment. Expo has `AAC_OPENAI_KEY`, `OPENAI_*`, and inherited `EXPO_PUBLIC_*` removed, with dotenv disabled; the launcher supplies only public `EXPO_PUBLIC_API_URL` and, for remote browser sessions, `EXPO_PUBLIC_WEB_API_URL`.
+Only API/worker children receive the server environment. PostgreSQL and Auth always use local demo settings, overriding inherited hosted configuration. Expo has `AAC_OPENAI_KEY`, `OPENAI_*`, and inherited `EXPO_PUBLIC_*` removed, with dotenv disabled; the launcher supplies only public `EXPO_PUBLIC_API_URL` and `EXPO_PUBLIC_WEB_API_URL` for the same-origin browser proxy.
 
 | Optional setting | Contract |
 | --- | --- |
 | `DEV_HOST` | This machine's assigned LAN IPv4; empty selects Wi-Fi/Ethernet ahead of virtual/VPN adapters |
 | `DEV_API_PORT` | Local API port, default 8788; ignored entirely in remote mode |
+| `DEV_PG_PORT` / `DEV_AUTH_PORT` | Loopback PostgreSQL / selected-LAN Auth ports, defaults 15432 / 9099 |
+| `AAC_AI_FIXTURES` | Explicit synthetic local AI, default false; no provider key needed |
 | `DEV_EXPO_PORT` | Expo port, default 8081 |
 | `DEV_REMOTE_API_URL` | Remote HTTPS origin without credentials, path, query, or fragment |
 
-Remote native requests use HTTPS directly. Browser `/api/` requests stream through Metro to that fixed backend, including JSON, speech, and pictures. The proxy accepts exact configured development origins and the app POST header, rejects redirects, and strips unrelated cookies/authorization/origin. Only account paths relay account session/CSRF cookies and account headers; Secure is removed only on the trusted HTTP development hop. Production exports contain no development proxy.
+Remote native requests use HTTPS directly. Browser `/api/` requests stream through Metro to that fixed backend, including JSON, speech, and pictures. The proxy accepts exact configured development origins and the app POST header, rejects redirects, and strips unrelated cookies/authorization/origin. AI, media and account paths relay only the opaque `__session` cookie plus explicit CSRF/account headers; Secure is removed only on the trusted HTTP development hop. Production exports contain no development proxy.
 
 ## Device connectivity
 
@@ -60,7 +64,7 @@ After connecting, create/refine a board, check undo, save audio, then disconnect
 - `update-picture-catalog.ts` (`npm run pictures:update`) owns the [licensed catalog's pinned inputs and output](../apps/server/src/pictures/README.md).
 - `brand-assets.mjs` (`npm run brand:assets`) regenerates variants from the committed [mountain master](../apps/mobile/assets/brand/README.md); normal builds use committed assets.
 - `evaluate-ai.ts` and `evaluate-pictures.ts` are opt-in billable [evaluation tools](../tests/README.md#live-ai-and-device-validation).
-- `test-server.ts` owns the isolated account-browser API and disposable schema. See [service tests](../tests/README.md#service-tests).
+- `test-services.ts` owns disposable Compose dependencies/ports/media for service and browser suites; `test-server.ts` owns their API and schema. See [service tests](../tests/README.md#service-tests).
 - [Release tooling](release/README.md) owns versioning, provider publication, and recovery.
 
 ## Linting

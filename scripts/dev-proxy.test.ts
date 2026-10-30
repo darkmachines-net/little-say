@@ -23,17 +23,16 @@ async function proxy(backend: string) {
 }
 
 describe('remote development web proxy', () => {
-  it('relays only the Little Say account cookie and account identity on account routes', async () => {
-    const session = `little_say_session=${'a'.repeat(64)}.eyHeader.eyPayload.signature`;
-    const csrf = `little_say_csrf=${'b'.repeat(64)}`;
+  it.each(['/api/account/session', '/api/ai/jobs', '/api/pictures/assets/image.png', '/api/speech/audio.wav'])('relays only the opaque session and account identity on %s', async path => {
+    const session = `__session=${'a'.repeat(64)}`;
     const local = await proxy(await listen((req, res) => {
-      expect(req.headers.cookie).toBe(`${session}; ${csrf}`); expect(req.headers.authorization).toBeUndefined();
+      expect(req.headers.cookie).toBe(session); expect(req.headers.authorization).toBeUndefined();
       expect(req.headers['x-little-say-csrf']).toBe('b'.repeat(64));
       expect(req.headers['x-little-say-account']).toBe('account-id');
-      res.setHeader('Set-Cookie', [`${session}; Path=/api/account; HttpOnly; SameSite=Strict; Secure`, 'unrelated=secret']); res.end('{}');
+      res.setHeader('Set-Cookie', [`${session}; Path=/api; HttpOnly; SameSite=Strict; Secure`, 'unrelated=secret']); res.end('{}');
     }));
-    const response = await fetch(`${local}/api/account/session`, { headers: { Cookie: `private=1; ${session}; ${csrf}`, Authorization: 'other-credential', 'X-Little-Say-Account': 'account-id', 'X-Little-Say-CSRF': 'b'.repeat(64) } });
-    expect(response.headers.get('set-cookie')).toBe(`${session}; Path=/api/account; HttpOnly; SameSite=Strict`);
+    const response = await fetch(`${local}${path}`, { headers: { Cookie: `private=1; ${session}; little_say_csrf=legacy`, Authorization: 'other-credential', 'X-Little-Say-Account': 'account-id', 'X-Little-Say-CSRF': 'b'.repeat(64) } });
+    expect(response.headers.get('set-cookie')).toBe(`${session}; Path=/api; HttpOnly; SameSite=Strict`);
   });
   it('forwards paths, queries, app headers and JSON bytes without browser credentials or origin', async () => {
     const backend = await listen(async (req, res) => {

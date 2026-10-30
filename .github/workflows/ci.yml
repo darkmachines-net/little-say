@@ -1,4 +1,4 @@
-# Rejects lint warnings/errors, validates builds and tests, and retains temporary review screenshots.
+# Checks code and complete isolated local services/browser flows, retaining only temporary review evidence.
 name: Check
 on:
   pull_request:
@@ -21,22 +21,6 @@ jobs:
       - run: npm run lint
   check:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-bookworm
-        env:
-          POSTGRES_USER: little_say_test
-          POSTGRES_PASSWORD: little_say_test
-          POSTGRES_DB: little_say_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U little_say_test -d little_say_test"
-          --health-interval 5s --health-timeout 5s --health-retries 20
-    env:
-      TEST_PGDATABASE: little_say_test
-      TEST_PGUSER: little_say_test
-      TEST_PGPASSWORD: little_say_test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -70,7 +54,7 @@ jobs:
           path: artifacts/screenshots/settings/*.png
           if-no-files-found: warn
           retention-days: 14
-      - run: npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"
+      - run: npm run test:accounts:web
       - name: Conversation end-to-end checks
         id: conversation
         run: npm run test:web -- tests/web/conversation.spec.ts

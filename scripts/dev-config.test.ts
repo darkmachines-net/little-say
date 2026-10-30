@@ -23,14 +23,14 @@ describe('local development configuration', () => {
   });
   it('uses the self-hosted origin without reserving or validating the local API port', () => {
     const config = developmentConfig({ DEV_API_PORT: 'invalid', DEV_EXPO_PORT: '8788' }, addresses, 'remote');
-    expect(config.apiUrl).toBe('https://littlesay.darkmachines.net');
+    expect(config.apiUrl).toBe('https://littlesay.app');
     expect(config.expoUrl).toBe('exp://192.168.1.20:8788');
     expect(() => apiEnvironment({}, config)).toThrow('must not start a local API');
     const env = expoEnvironment({ OPENAI_API_KEY: 'secret', EXPO_PUBLIC_API_URL: 'http://stale', LITTLE_SAY_DEV_PROXY_URL: 'https://stale' }, config);
     expect(env.EXPO_PUBLIC_API_URL).toBe(config.apiUrl); expect(env.LITTLE_SAY_DEV_PROXY_URL).toBe(config.apiUrl);
     expect(env.EXPO_PUBLIC_WEB_API_URL).toBe(config.webUrl); expect(JSON.stringify(env)).not.toContain('secret');
     const local = expoEnvironment(env, developmentConfig({}, addresses));
-    expect(local.LITTLE_SAY_DEV_PROXY_URL).toBeUndefined(); expect(local.EXPO_PUBLIC_WEB_API_URL).toBeUndefined();
+    expect(local.LITTLE_SAY_DEV_PROXY_URL).toBe('http://192.168.1.20:8788'); expect(local.EXPO_PUBLIC_WEB_API_URL).toBe('http://192.168.1.20:8081');
     expect(local.EXPO_PUBLIC_API_URL).toBe('http://192.168.1.20:8788');
   });
   it('validates a remote override without letting it redirect local sessions', () => {
@@ -47,7 +47,7 @@ describe('local development configuration', () => {
     expect(config.apiUrl).toBe('http://10.0.0.30:9000'); expect(config.expoUrl).toBe('exp://10.0.0.30:9001');
     expect(config.origins).toContain('http://10.0.0.30:9001'); expect(config.origins).toContain('http://localhost:9001');
     const api = apiEnvironment({ OPENAI_API_KEY: 'backend-secret', ALLOWED_ORIGINS: '*' }, config);
-    expect(api.HOST).toBe('0.0.0.0'); expect(api.PORT).toBe('9000'); expect(api.OPENAI_API_KEY).toBe('backend-secret'); expect(api.ALLOWED_ORIGINS).not.toContain('*');
+    expect(api.HOST).toBe('10.0.0.30'); expect(api.PORT).toBe('9000'); expect(api.OPENAI_API_KEY).toBe('backend-secret'); expect(api.ALLOWED_ORIGINS).not.toContain('*');
   });
   it('does not pass backend keys, public secret variables, or dotenv files to Expo', () => {
     const env = { PATH: '/bin', AAC_OPENAI_KEY: 'app-secret', OPENAI_API_KEY: 'backend-secret', OPENAI_BOARD_MODEL: 'model', EXPO_PUBLIC_API_KEY: 'public-secret', EXPO_PUBLIC_API_URL: 'http://old-host', EXPO_PACKAGER_PROXY_URL: 'https://old-tunnel', EXPO_NO_CLIENT_ENV_VARS: '1' };

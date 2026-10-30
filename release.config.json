@@ -9,7 +9,7 @@
       "easProfile": "beta",
       "submit": true,
       "approvalEnvironment": "internal",
-      "deployEnvironment": "self-hosted-testing",
+      "deployEnvironment": "gcp-production",
       "publicEnvironment": {
         "LITTLE_SAY_CHANNEL": "beta"
       }
@@ -20,7 +20,7 @@
       "easProfile": "production",
       "submit": true,
       "approvalEnvironment": "production",
-      "deployEnvironment": "self-hosted-testing",
+      "deployEnvironment": "gcp-production",
       "publicEnvironment": {
         "LITTLE_SAY_CHANNEL": "production"
       }
@@ -97,7 +97,8 @@
       "apps/mobile",
       "packages",
       "package-lock.json",
-      "Dockerfile"
+      "Dockerfile",
+      "deploy/gcp/firebase.json"
     ],
     "image": "ghcr.io/darkmachines-net/little-say",
     "dockerfile": "Dockerfile",
@@ -106,11 +107,52 @@
     ],
     "smoke": {
       "port": 8787,
-      "healthPath": "/api/ready"
+      "healthPath": "/api/ready",
+      "environment": {
+        "NODE_ENV": "development",
+        "PGHOST": "postgres",
+        "PGDATABASE": "little_say",
+        "PGUSER": "little_say",
+        "PGPASSWORD": "disposable-smoke-only",
+        "PGSSLMODE": "disable",
+        "FIREBASE_PROJECT_ID": "demo-little-say",
+        "FIREBASE_AUTH_EMULATOR_HOST": "127.0.0.1:9099",
+        "FIREBASE_API_KEY": "demo-key",
+        "FIREBASE_APP_ID": "demo-app"
+      },
+      "initialize": [
+        "node",
+        "server/database-cli.js",
+        "migrate"
+      ],
+      "services": {
+        "postgres": {
+          "environment": {
+            "POSTGRES_PASSWORD": "disposable-smoke-only",
+            "POSTGRES_USER": "little_say",
+            "POSTGRES_DB": "little_say"
+          },
+          "ready": [
+            "pg_isready",
+            "-U",
+            "little_say",
+            "-d",
+            "little_say"
+          ],
+          "image": "postgres:17-bookworm"
+        }
+      }
     },
     "deployment": {
-      "service": "little-say",
-      "path": "/deploy/little-say"
+      "provider": "gcp",
+      "project": "little-say",
+      "region": "us-central1",
+      "api": "little-say-api",
+      "worker": "little-say-worker",
+      "migrationJob": "little-say-migrate",
+      "hostingSite": "little-say",
+      "registry": "us-central1-docker.pkg.dev/little-say/application/server",
+      "origin": "https://littlesay.app"
     }
   },
   "development": {

@@ -1,4 +1,4 @@
-/** @file Coordinates opt-in authentication, debounced foreground sync, retry status, and local-only sign-out. */
+/** @file Separates AI sign-in from explicit device backup consent and coordinates optional foreground synchronization. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -25,12 +25,18 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
-    void loadAccountSession().then(value => { if (mounted.current) setSession(value); }).catch(() => { if (mounted.current) setError('Saved sign-in could not be opened. Please sign in again.'); }).finally(() => { if (mounted.current) setReady(true); });
+    void loadAccountSession().then(value => {
+      if (!mounted.current) return;
+      setSession(value);
+      if (value && value.server !== backendUrl(current.current.store.current.current?.settings.backendUrl ?? '')) {
+        setNeedsLogin(true); setMessage('Little Say’s server changed. Sign in again and choose whether to enable backup. Your local boards are safe.');
+      }
+    }).catch(() => { if (mounted.current) setError('Saved sign-in could not be opened. Please sign in again.'); }).finally(() => { if (mounted.current) setReady(true); });
     return () => { mounted.current = false; operation.current?.abort(); };
   }, []);
   const sync = useCallback(async () => {
     const { store: libraryStore, session: account, canSync: allowed } = current.current;
-    if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || !allowed || !libraryStore.current.current) return;
+    if (!account?.backupEnabled || account.account.deletionPending || !account.account.emailVerified || running.current || !allowed || !libraryStore.current.current) return;
     if (Platform.OS === 'web' ? document.hidden : AppState.currentState !== 'active') return;
     if (backendUrl(libraryStore.current.current.settings.backendUrl) !== account.server) { setError('This account belongs to a different server. Sign out and sign in again to use this version of Little Say. Your local boards are safe.'); return; }
     running.current = true; setBusy(true); setError(''); setMessage('Syncing boards and assets…');
@@ -86,9 +92,18 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     finally { running.current = false; setBusy(false); }
   };
   const remember = async (value: AccountSession) => {
+    const previous = current.current.session;
+    value = { ...value, backupEnabled: previous?.server === value.server && previous.account.id === value.account.id && previous.backupEnabled === true };
     await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false);
-    setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. Preparing to sync…' : 'Verify your email before enabling backup. Local boards remain available.');
+    setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. AI is available when connected.' : 'Verify your email to use AI or enable backup. Local boards remain available.');
   };
+  const setBackupEnabled = async (enabled: boolean) => run(async () => {
+    const value = current.current.session;
+    if (!value || value.server !== backendUrl(store.current.current!.settings.backendUrl)) throw new Error('Sign in to this server before enabling backup.');
+    const updated = { ...value, backupEnabled: enabled };
+    await saveAccountSession(updated); current.current.session = updated; setSession(updated);
+    setMessage(enabled ? 'Backup enabled for this device.' : 'Backup paused. Saved server copies remain until you delete your account.');
+  });
   const prepare = async () => {
     // Loading public provider choices must never trap a guest on an unavailable server.
     const server = backendUrl(store.current.current!.settings.backendUrl);
@@ -128,6 +143,6 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     setMessage(deleting ? 'Account deletion requested. This server will finish removing the shared login and its backup. Local boards remain here.' : 'Signed out. Local boards remain on this device.');
   });
   const savedAt = store.library?.sync?.accountId === session?.account.id && store.library?.sync?.server === session?.server ? store.library?.sync?.savedAt : undefined;
-  return { session, ready, busy, message, error, needsLogin, savedAt, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, sync, socialAvailable: socialAuthAvailable() };
+  return { session, ready, busy, message, error, needsLogin, savedAt, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, sync, setBackupEnabled, socialAvailable: socialAuthAvailable() };
 }
 export type AccountController = ReturnType<typeof useAccount>;

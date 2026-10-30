@@ -14,16 +14,16 @@ Dependencies, Unicode/CLDR data and third-party picture libraries retain their o
 
 ## Run locally
 
-Use Node 24. Set `AAC_OPENAI_KEY` in your environment (or `OPENAI_API_KEY` in an ignored root `.env`), then run from the repository root:
+Use Node 24 and Docker Desktop with Linux containers. No cloud account is needed. From the repository root:
 
 ```powershell
 npm.cmd ci
 npm.cmd run dev
 ```
 
-On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a device on the same LAN. For client-only work against the deployed backend, use `npm run dev:remote`; no local API key is needed. `dev:web` and `dev:web:remote` open the browser version. Without AI, choose **Start without starter boards** and build manually.
+On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a device on the same LAN. For client-only work against the deployed backend, use `npm run dev:remote`; no local API key is needed. `dev:web` and `dev:web:remote` open the browser version. Verified sign-in enables AI when a developer key is configured, or set `AAC_AI_FIXTURES=true` for synthetic local responses. Without AI, choose **Start without starter boards** and build manually. Backup consent is separate.
 
-See [development tooling](scripts/README.md) for SDK compatibility, environment resolution, device connectivity, and troubleshooting. For a production web preview, run `npm run build` then `npm start` and open [localhost:8787](http://localhost:8787).
+See [development tooling](scripts/README.md) for SDK compatibility, environment resolution, device connectivity, and troubleshooting. For the full containerized browser stack, run `docker compose up --build` and open [localhost:8787](http://localhost:8787).
 
 ## Find the owning code
 
@@ -38,7 +38,7 @@ See [development tooling](scripts/README.md) for SDK compatibility, environment 
 | [Database migrations](apps/server/migrations/README.md) | PostgreSQL configuration, ordered history, and explicit migration commands |
 | [Tests](tests/README.md) | Automated checks, disposable service fixtures, and device validation |
 | [Release tooling](scripts/release/README.md) | Release selection, signing, publication, and recovery |
-| [Self-hosted deployment](deploy/self-hosted/README.md) | Shared deployment webhook, connectivity, and readiness |
+| [GCP deployment](deploy/gcp/README.md) | Terraform, Firebase/Cloud Run, release protection, recovery and launch acceptance |
 | [Prompt resources](prompts/README.md) | Maintained AI instructions and packaging |
 | [Brand assets](apps/mobile/assets/brand/README.md) | Mountain artwork, palette, and asset generation |
 

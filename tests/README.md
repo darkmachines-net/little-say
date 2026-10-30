@@ -11,7 +11,7 @@ npm run test:web
 
 `check` runs [lint with zero warnings](../scripts/README.md#linting), [release-contract checks](../scripts/release/README.md#recovery-and-validation), TypeScript (including unused code), unit/component/service tests, and server/web builds. The `Check` workflow runs this command and a separate `Lint` job for pull requests and pushes to `master`/`main`. Keep `Lint` required for `master`, require branches to be up to date, and enforce checks for administrators in GitHub's repository settings; protection is configured separately from the workflow. Existing PR branches must include the job to satisfy that required check.
 
-Browser tests use the production build, own an API on port 4175, and isolate device libraries. Ordinary guest tests disable API keys and mock AI/speech; they never use development processes or user boards. Service-worker/offline behavior must be tested against the built app, not Metro.
+Browser tests use the production build, own an API on a selected free loopback port, and isolate device libraries. Ordinary guest tests disable API keys and mock AI/speech; they never use development processes or user boards. Service-worker/offline behavior must be tested against the built app, not Metro.
 
 ## Browser scenarios and evidence
 
@@ -31,24 +31,13 @@ npm run test:web -- tests/web/app.spec.ts --grep "outside modal dismissal"
 
 ## Service tests
 
-`npm run test:integration` requires disposable PostgreSQL 17; account/Firebase cases also need the loopback Auth emulator. `npm run test:services` starts that emulator for the whole integration suite, using `demo-little-say` and the Java runtime required by Firebase tools. No hosted identities or provider credentials are needed. CI supplies PostgreSQL; unit tests remain independent of external services.
+`npm run test:services` starts checkout-independent PostgreSQL 17 and Firebase Auth containers with bundled Java, uses random loopback ports and a disposable database/media directory, runs integration tests, then removes only its own project volumes and files. It clears AI keys and uses explicit synthetic fixtures. Node and Docker are the only local service-test prerequisites; no cloud account is required. CI uses the same runner.
 
-Example local PostgreSQL on an available loopback port:
+After `npm run build`, run `npm run test:accounts:web` for verification, explicit backup consent, media restoration, offline conflicts, sign-out and server/account isolation. `npm run test:web -- <scenario>` uses the same dependency isolation for ordinary browser scenarios. Each runner selects a free API port and refuses an unrelated listener if that port becomes occupied. Test media never uses development cache directories.
 
-```powershell
-docker run -d --name little-say-test-postgres -p 127.0.0.1:15432:5432 -e POSTGRES_USER=little_say_test -e POSTGRES_PASSWORD=little_say_test -e POSTGRES_DB=little_say_test postgres:17-bookworm
-$env:TEST_PGDATABASE='little_say_test'
-$env:TEST_PGUSER='little_say_test'
-$env:TEST_PGPASSWORD='little_say_test'
-$env:TEST_PGPORT='15432'
-npm.cmd run test:services
-```
+`npm run test:integration` remains available to a deliberately provisioned test harness. It requires `TEST_PGDATABASE` ending in `_test` and `TEST_PGPASSWORD`; it never infers a target from application `PG*`. Optional `TEST_PGHOST`, `TEST_PGPORT`, `TEST_PGUSER`, `TEST_PGSSLMODE` select that test database. Each fixture migrates a random schema and drops only its own schema. Firebase cases require an explicitly local loopback emulator host.
 
-Fixtures require `TEST_PGDATABASE` ending in `_test` and `TEST_PGPASSWORD`; they never inherit application `PG*`. Optional `TEST_PGHOST`, `TEST_PGPORT`, `TEST_PGUSER`, and `TEST_PGSSLMODE` choose the test connection. Every fixture migrates its own random schema and drops only that schema on close. Stop/remove only a container you created.
-
-Coverage includes repeat migrations, lock contention/recovery, incompatible histories, transactions/rollback/connection reuse, fixture isolation, and accounts upgrade from the foundation ledger. The [migration module](../apps/server/migrations/README.md) owns the database contract.
-
-After building, run `npx firebase emulators:exec --only auth --project demo-little-say "npm run test:accounts:web"` with the same database settings. This separate browser suite owns its API and schema and checks verification, media restoration, offline conflicts, sign-out, and server/account isolation. Do not reuse an unowned process on its test ports. Synthetic credentials cannot establish real Google/Apple consent, SecureStore behavior, or interrupted Apple revocation.
+Coverage includes migrations/locks, concurrent quotas, owner boundaries, durable dispatch, cancellation before/after claims, duplicate delivery, interruption without paid replay, persisted fixture media, single-cookie CSRF, account deletion and isolated cleanup. Emulator/browser success does not prove real Hosting cookie behavior, provider OAuth, GCS recovery, or store-installed device flows; those are separate [deployment acceptance checks](../deploy/gcp/README.md#recovery-and-acceptance).
 
 ## Live AI and device validation
 
