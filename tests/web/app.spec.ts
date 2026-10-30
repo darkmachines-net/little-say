@@ -299,7 +299,7 @@ test('swipes are forgiving, speech is bounded, and locked navigation needs an un
 
 test('unlock completes automatically at one second and cancelled holds reset immediately', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
-  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
+  await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
   // The measured grid's first layout cancels active holds. Let it finish before freezing time.
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
