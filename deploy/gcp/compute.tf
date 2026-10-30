@@ -103,7 +103,7 @@ resource "google_cloud_run_v2_service" "service" {
         }
         initial_delay_seconds = 2
         period_seconds        = 5
-        # First-image cold starts can exceed 100 seconds; remain within Cloud Run's 240-second probe budget.
+        # First-image cold starts can exceed 100 seconds; allow a bounded 200-second probe window.
         failure_threshold = 40
         timeout_seconds   = 3
 
