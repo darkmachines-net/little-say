@@ -1,14 +1,22 @@
-# Protected releases federate GCP deployment before native/OTA delivery and reuse confirmed toolkit operations.
+# Selects coordinated GCP and Expo delivery while preserving the shared toolkit's profile and retry identities.
 name: Release
+run-name: ${{ inputs.destination == 'production' && 'Deploy to production (GCP + Expo beta)' || 'Public-store release (Expo production)' }}
 on:
   workflow_dispatch:
     inputs:
-      profile: { description: 'beta: testers; production: public channel and store draft', type: choice, required: true, options: [beta, production], default: beta }
+      destination:
+        description: 'production: GCP + Expo beta (TestFlight/Play internal); public-stores: production channel and store draft'
+        type: choice
+        required: true
+        options: [production, public-stores]
+        default: production
       rebuild: { description: Force a new native build, type: boolean, default: false }
 permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
     uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@cf95c38552aa1ed8877952c2002f40f5c65ac88f
-    with: { profile: '${{ inputs.profile }}', rebuild: '${{ inputs.rebuild }}' }
+    with:
+      profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination] }}
+      rebuild: ${{ inputs.rebuild }}
     secrets: inherit

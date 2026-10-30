@@ -12,10 +12,19 @@ Install with `npm ci`, then use the read-only CLI:
 
 ```sh
 npm run release -- validate
-npm run release -- plan --profile production
+npm run release -- plan --profile beta
 ```
 
-GitHub owns execution and approvals. Dispatch **Release** from the protected default branch, selecting `beta` or `production` and optionally a compatible rebuild. The hosted workflow installs the official EAS CLI version pinned by [eas.json](../../apps/mobile/eas.json). Android and iOS use EAS cloud builds, one mobile semantic version, independent managed build counters, and the existing application/project identities. Both profiles build store-distributable binaries and submit selected native releases through EAS; there is no direct-install release profile.
+GitHub owns execution and approvals. Dispatch **Release** from the protected default branch, selecting a destination and optionally a compatible rebuild:
+
+| Workflow destination | Toolkit profile and delivery |
+| --- | --- |
+| `production` (default) | Deploy to GCP and Expo's `beta` channel using the existing `beta` profile; native builds go to TestFlight and Play internal testing when needed |
+| `public-stores` | Use the existing `production` profile for GCP, the production OTA channel and store drafts; store review and public promotion remain separate |
+
+The default run appears as **Deploy to production (GCP + Expo beta)**. The destination labels do not rename toolkit profiles, so confirmed operations and successful release baselines remain reusable. CLI planning still uses `--profile beta` for the default destination, or `--profile production` for `public-stores`. API/CLI workflow dispatch callers use the `destination` input.
+
+The hosted workflow installs the official EAS CLI version pinned by [eas.json](../../apps/mobile/eas.json). Android and iOS use EAS cloud builds, one mobile semantic version, independent managed build counters, and the existing application/project identities. Both profiles build store-distributable binaries and submit selected native releases through EAS. The toolkit selects required backend, native and OTA operations; a production deployment is a full coordinated release, not an OTA-only command. Backend deployment must succeed before mobile delivery.
 
 `beta` delivers an Android AAB to Play's **internal testing** track with release status **completed**, and an iOS store-signed build to **TestFlight** for Apple ID `6826487372`. It uses the `beta` OTA channel, EAS `preview` environment and GitHub `internal` approval gate. `production` uses its own OTA channel, a Play production-track draft and the App Store Connect destination. Store review and public rollout remain store operations. OTA-only releases publish updates without resubmitting binaries.
 
