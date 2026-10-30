@@ -1,4 +1,4 @@
-/** @file Verifies fixed play headers, automatic unlock, timed input, draft/save recovery, motion and audio handoff. */
+/** @file Verifies asynchronous play entry, fixed headers, unlock timing, draft recovery, motion and audio handoff. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -9,6 +9,7 @@ async function play(page: Page) {
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
 }
 async function unlock(page: Page) {
+  await expect(page.getByTestId('play-board')).toBeVisible();
   if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
   const control = page.getByTestId('parent-control'), box = (await control.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
