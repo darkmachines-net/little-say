@@ -1,5 +1,5 @@
 /**
- * @file Guides device language selection and review of generated starter boards before entering the
+ * @file Guides shared user-language selection and review of generated starter boards before entering the
  * library.
  */
 
@@ -18,8 +18,8 @@ import { pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures } from '../services/pictures';
 
 /**
- * Resume saved setup progress, generate starter drafts for the chosen languages, and commit the
- * parent-approved result through onCommit.
+ * Resume setup with the shared searchable user-language editor, generate starter drafts for those
+ * languages, and commit the parent-approved result through onCommit.
  */
 export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onAccount: () => void }) {
   const setup = library.setup!;
@@ -81,7 +81,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
       <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
       {Boolean(error) && <Notice>{error}</Notice>}
-      {languageStep ? <LanguageProfileEditor value={profile} onChange={setProfile} disabled={Boolean(working)} expanded /> : <>
+      {languageStep ? <LanguageProfileEditor value={profile} onChange={setProfile} disabled={Boolean(working)} /> : <>
         {starterTopics.map(topic => {
           const selected = topics.includes(topic.id);
           const draft = setup.drafts.find(value => value.topic === topic.id)?.board;

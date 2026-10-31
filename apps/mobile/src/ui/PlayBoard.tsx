@@ -1,6 +1,6 @@
 /**
  * @file Coordinates child playback, independent touch and speech feedback, board languages, and optional
- * locking with fixed header slots, visible hold progress, and lock-aware Android back navigation.
+ * locking with fixed header slots, user-language subsets, and lock-aware Android back navigation.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -8,7 +8,7 @@ import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, use
 import { ArrowLeft } from 'lucide-react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
-import { gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
+import { boardPlayLanguages, gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
 import { speechQueue, type Voice } from '../services/speech';
 import { TouchSurface } from './TouchSurface';
 import { ParentControl } from './ParentControl';
@@ -19,8 +19,8 @@ import { useScreenFocus } from './screenFocus';
 import { styles, theme } from './theme';
 
 /**
- * Fit the board to the available screen, queue tile speech, and keep language and exit actions in the
- * header. Open unlocked; a tap locks navigation and a one-second hold automatically reveals back.
+ * Fit the board to the available screen, queue tile speech, and show the effective user-language
+ * subset beside exit actions. Open unlocked; a tap locks navigation and a one-second hold reveals back.
  * Android Back returns to the editor while unlocked and is consumed without leaving while locked.
  * Stop playback when the app backgrounds, the web page hides, or the screen unmounts.
  */
@@ -44,7 +44,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   const [error, setError] = useState('');
   const flashTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const language = selectedBoardLanguage(board, settings);
-  const playLanguages = board.playLanguages ?? [];
+  const playLanguages = boardPlayLanguages(board, settings);
   const compactLanguages = width < 700 || playLanguages.length > 3;
   const tiles = useMemo(() => board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false)), [board.tiles, board.translateLabels, language]);
   const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and selected voice in Settings.'), audioAsset, tag => speechSource(settings, tag)), [voices, settings, audioAsset]);

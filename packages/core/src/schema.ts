@@ -1,4 +1,4 @@
-/** @file Defines durable library and AI payload schemas and guards revision-safe board edits. */
+/** @file Defines durable library, optional board play subsets, and revision-safe AI/edit payloads. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -41,6 +41,8 @@ export const boardSchema = z.object({
   revision: z.number().int().nonnegative(), tiles: z.array(tileSchema).min(1).max(MAX_TILES),
   createdAt: z.string(), updatedAt: z.string(),
   playLanguages: playLanguagesSchema.optional(), translateLabels: z.boolean().optional(),
+  // Absent means follow the user profile; saved generated languages never restrict play.
+  playLanguageSubset: playLanguagesSchema.refine(tags => tags.length > 0, 'Keep at least one play language.').optional(),
   picturePolicy: picturePolicySchema.optional(),
 }).refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
 export const settingsSchema = z.object({
@@ -89,7 +91,7 @@ export type Tile = z.infer<typeof tileSchema>;
 export type Board = z.infer<typeof boardSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
 export type Library = z.infer<typeof librarySchema>;
-export type BoardChanges = Partial<Pick<Board, 'title' | 'tiles' | 'playLanguages' | 'translateLabels' | 'picturePolicy'>>;
+export type BoardChanges = Partial<Pick<Board, 'title' | 'tiles' | 'playLanguages' | 'playLanguageSubset' | 'translateLabels' | 'picturePolicy'>>;
 /**
  * Create a normalized source signature that invalidates translations when label, spoken text, or
  * language changes.
@@ -209,7 +211,7 @@ export function assertTranslationSourceLanguageChange(previous: Tile | undefined
 /**
  * Apply a revision-bound proposal, preserving saved corrections (including stale words for review).
  * Only a separate parent review may enable replaceTranslations; never derive it from model output.
- * Reject source-language changes that would shadow a protected saved translation.
+ * Retain user-owned board play subsets and reject source-language changes that shadow saved corrections.
  */
 export function applyProposal(current: Board | null, envelope: BoardProposal, id: () => string, now = new Date().toISOString(), replaceTranslations = false): Board {
   proposalSchema.parse(envelope);
@@ -222,6 +224,7 @@ export function applyProposal(current: Board | null, envelope: BoardProposal, id
     createdAt: current?.createdAt ?? now, updatedAt: now,
     ...(proposal.playLanguages ? { playLanguages: proposal.playLanguages } : current?.playLanguages ? { playLanguages: current.playLanguages } : {}),
     ...(current?.translateLabels !== undefined ? { translateLabels: current.translateLabels } : {}),
+    ...(current?.playLanguageSubset ? { playLanguageSubset: current.playLanguageSubset } : {}),
     ...(proposal.picturePolicy ? { picturePolicy: proposal.picturePolicy } : current?.picturePolicy ? { picturePolicy: current.picturePolicy } : {}),
     tiles: proposal.tiles.map((tile, index) => {
       const previous = current?.tiles.find(t => t.id === tile.existingId);

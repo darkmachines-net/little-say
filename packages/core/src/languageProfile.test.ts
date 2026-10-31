@@ -1,8 +1,8 @@
-/** @file Verifies device language defaults, board preference precedence, and profile validation. */
+/** @file Verifies shared user languages, board play subsets, profile changes, and preference validation. */
 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
-import { initialLanguageProfile, getLanguageProfile, newTileLanguage, profileLanguages, suggestedPlayLanguages } from './languageProfile';
+import { initialLanguageProfile, getLanguageProfile, newTileLanguage, profileLanguages, boardPlayLanguages, boardWithProfileLanguages } from './languageProfile';
 import { languageProfileSchema, migrateLibrary, proposalRequestSchema } from './schema';
 
 const profile = { languages: ['es-ES', 'fr-FR'], defaultLanguage: 'fr-FR' };
@@ -33,14 +33,24 @@ describe('device language preferences', () => {
     expect(legacy.boards).toEqual(restored.boards);
     expect(getLanguageProfile(legacy.settings)).toEqual(initialLanguageProfile());
   });
-  it('uses the default first for new boards but honors explicit board choices', () => {
+  it('uses shared languages in default order, ignoring historical board generation languages', () => {
     const settings = { languageProfile: profile };
     expect(profileLanguages(settings)).toEqual(['fr-FR', 'es-ES']);
     expect(newTileLanguage({}, settings)).toBe('fr-FR');
-    expect(newTileLanguage({ playLanguages: ['de-DE', 'it-IT'] }, settings)).toBe('de-DE');
-    expect(suggestedPlayLanguages({}, settings)).toEqual(['fr-FR', 'es-ES']);
-    expect(suggestedPlayLanguages({ playLanguages: ['de-DE', 'it-IT'] }, settings)).toEqual(['de-DE', 'it-IT']);
-    expect(suggestedPlayLanguages({ playLanguages: ['ja-JP'] }, settings)).toEqual(['ja-JP']);
+    const board = { ...starterLibrary().boards[0], playLanguages: ['de-DE', 'it-IT'] };
+    expect(boardPlayLanguages(board, settings)).toEqual(['fr-FR', 'es-ES']);
+    expect(boardWithProfileLanguages(board, settings).playLanguages).toEqual(['fr-FR', 'es-ES']);
+    expect(board.playLanguages).toEqual(['de-DE', 'it-IT']);
+    expect(newTileLanguage({ playLanguageSubset: ['es-ES'] }, settings)).toBe('es-ES');
+  });
+  it('limits play without losing stored words, follows new preferences, and recovers an obsolete subset', () => {
+    const board = { ...starterLibrary().boards[0], playLanguageSubset: ['es-es', 'de-DE'] };
+    expect(boardPlayLanguages(board, { languageProfile: profile })).toEqual(['es-ES']);
+    const changed = { languageProfile: { languages: ['fr-FR', 'uk-UA'], defaultLanguage: 'uk-UA' } };
+    expect(boardPlayLanguages(board, changed)).toEqual(['uk-UA']);
+    expect(boardPlayLanguages({ ...board, playLanguageSubset: undefined }, changed)).toEqual(['uk-UA', 'fr-FR']);
+    expect(board.tiles).toEqual(starterLibrary().boards[0].tiles);
+    expect(migrateLibrary({ ...starterLibrary(), boards: [board] }).boards[0].playLanguageSubset).toEqual(board.playLanguageSubset);
   });
   it('includes only validated language preferences in generation requests', () => {
     const request = { prompt: 'Animals', board: null, languageProfile: profile };

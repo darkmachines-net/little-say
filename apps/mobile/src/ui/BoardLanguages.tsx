@@ -1,92 +1,42 @@
-/** @file Lets parents choose board play languages and prepare missing translated words. */
+/** @file Selects a nonempty set of user languages for board play; closing delegates missing-translation preparation. */
 
-import { useEffect, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import { applyLanguageSetup, applyTranslations, canonicalLanguage, hasTileLanguage, languageName, missingTranslations, profileLanguages, storedTileTranslation, suggestedPlayLanguages, tileInLanguage, tileSource, type Board, type BoardChanges, type Settings } from '@little-say/core';
-import { prepareTranslations } from '../services/api';
+import { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { Check } from 'lucide-react-native';
+import { boardPlayLanguages, canonicalLanguage, languageName, profileLanguages, type Board, type BoardChanges, type Settings } from '@little-say/core';
 import { Button, Notice, Sheet } from './components';
-import { styles } from './theme';
-import { LanguageChoices } from './LanguageChoices';
+import { styles, theme } from './theme';
 
 /**
- * Edit play languages and stage generated translations for review; apply prepared translations only
- * if the source board revision still matches.
+ * Toggle play languages directly, retaining at least one. Selecting all removes the explicit subset
+ * so future user languages are inherited. Close/Done/backdrop share the caller's preparation action;
+ * card labels, spoken words and fixed-language behavior remain in the individual card editor.
  */
-export function BoardLanguages({ board, settings, onChange, onConsent, onClose }: { board: Board; settings: Settings; onChange: (changes: BoardChanges, expectedRevision?: number) => void; onConsent: () => Promise<void>; onClose: () => void }) {
-  const [choosing, setChoosing] = useState(false);
+export function BoardLanguages({ board, settings, onManageLanguages, onChange, onClose }: { board: Board; settings: Settings; onManageLanguages: () => void; onChange: (changes: BoardChanges) => void; onClose: () => void }) {
   const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [proposal, setProposal] = useState<{ board: Board; setup: boolean } | null>(null);
-  const controller = useRef<AbortController | null>(null);
-  useEffect(() => () => controller.current?.abort(), []);
-  const selected = board.playLanguages ?? [];
+  const selected = boardPlayLanguages(board, settings);
+  const preferred = profileLanguages(settings);
   const contains = (tag: string) => selected.some(value => canonicalLanguage(value) === canonicalLanguage(tag));
-  const suggested = suggestedPlayLanguages(board, settings);
-  const quickSetup = suggested.length > 1 && (selected.length < 2 || board.tiles.every(tile => tile.languageMode !== 'board'));
-  const setupLabel = suggested.map(languageName).join(' + ');
   const toggle = (tag: string) => {
+    const languages = preferred.filter(value => value === tag ? !contains(value) : contains(value));
+    if (!languages.length) { setError('Keep at least one language for play.'); return; }
     setError('');
-    if (!contains(tag) && selected.length >= 6) { setError('Choose up to six languages for this board.'); return; }
-    onChange({ playLanguages: contains(tag) ? selected.filter(value => canonicalLanguage(value) !== canonicalLanguage(tag)) : [...selected, canonicalLanguage(tag)] });
+    onChange({ playLanguageSubset: languages.length === preferred.length ? undefined : languages });
   };
-  const prepare = async (candidate: Board, setup = false) => {
-    controller.current?.abort();
-    const abort = new AbortController(); controller.current = abort;
-    setBusy(true); setError('');
-    try {
-      const request = missingTranslations(candidate);
-      let ready = candidate;
-      if (request) {
-        if (!settings.aiConsent) await onConsent();
-        if (abort.signal.aborted) return;
-        const result = await prepareTranslations(settings.backendUrl, request, abort.signal);
-        ready = { ...candidate, tiles: applyTranslations(candidate, result) };
-      }
-      if (controller.current === abort && !abort.signal.aborted) setProposal({ board: ready, setup });
-    } catch (e) { if (controller.current === abort && !abort.signal.aborted) setError((e as Error).message); }
-    finally { if (controller.current === abort && !abort.signal.aborted) setBusy(false); }
+  const finish = (next: () => void) => {
+    if (board.playLanguageSubset && selected.length === preferred.length) onChange({ playLanguageSubset: undefined });
+    next();
   };
-  const missing = missingTranslations(board);
-  const needsReview = board.tiles.flatMap(tile => (tile.translations ?? []).filter(value => value.origin !== 'generated' && value.source !== tileSource(tile))).length;
-  if (proposal) return <Sheet title={proposal.setup ? 'Review board languages' : 'Review translations'} subtitle="The language buttons will appear above the tiles in Play." onClose={() => setProposal(null)} footer={<Button onPress={() => {
-    try { onChange(applyLanguageSetup(board, proposal.board), proposal.board.revision); onClose(); }
-    catch (e) { setError((e as Error).message); setProposal(null); }
-  }}>{proposal.setup ? 'Use these languages' : 'Use translations'}</Button>}>
-    <Text style={styles.body}>{proposal.board.title} · {proposal.board.tiles.length} cards</Text>
-    {proposal.board.tiles.filter(tile => tile.languageMode === 'board').map(tile => <View key={tile.id} style={[styles.card, { gap: 8 }]}>
-      <Text style={styles.label}>{tile.label}</Text>
-      {(proposal.board.playLanguages ?? []).map(tag => {
-        if (!hasTileLanguage(tile, tag)) {
-          const saved = storedTileTranslation(tile, tag);
-          return <View key={tag} style={{ gap: 2 }}><Text style={styles.small}>{languageName(tag)} — {saved ? 'saved words need review' : 'translation missing'}</Text>{saved && <Text style={styles.body}>{saved.label} · says "{saved.speech}"</Text>}</View>;
-        }
-        const version = tileInLanguage(tile, tag);
-        return <View key={tag} style={{ gap: 2 }}><Text style={styles.small}>{languageName(tag)}</Text><Text style={styles.body}>{version.label}{version.speech !== version.label ? ` · says “${version.speech}”` : ''}</Text></View>;
-      })}
-    </View>)}
-    <Text style={styles.small}>Audio prepares in the background when automatic AI audio is enabled. Device speech works while clips are missing.</Text>
-  </Sheet>;
-  return <Sheet title="Board languages" onClose={onClose}>
-    {quickSetup && <View style={[styles.card, { gap: 12 }]}>
-      <Button busy={busy} onPress={() => void prepare({ ...board, playLanguages: suggested, tiles: board.tiles.map(tile => ({ ...tile, languageMode: 'board' })) }, true)}>{setupLabel}</Button>
-      <Text style={styles.body}>Make all {board.tiles.length} cards switch between {suggested.map(languageName).join(', ')}. Review the words before saving.</Text>
-      <Text style={styles.small}>You can keep individual cards in one language from their tile editor.</Text>
-      {!settings.aiConsent && <Text style={styles.small}>Tile words are sent to OpenAI through Little Say for translation.</Text>}
-    </View>}
-    {busy && <View style={styles.row}><Text accessibilityLiveRegion="polite" style={styles.body}>Preparing translations…</Text><Button kind="ghost" onPress={() => { controller.current?.abort(); setBusy(false); }}>Cancel</Button></View>}
+  return <Sheet title="Board languages" onClose={() => finish(onClose)} footer={<Button onPress={() => finish(onClose)}>Done</Button>}>
+    <Text style={styles.body}>Choose which of your languages are available for play.</Text>
     {Boolean(error) && <Notice>{error}</Notice>}
-    {needsReview > 0 && <Notice>{needsReview} saved translations need review after an original-word change. They are protected from automatic replacement; review them in their card editors.</Notice>}
-    <View style={{ gap: 14 }}>
-      <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}><Text style={styles.label}>Play languages</Text><Button disabled={busy} kind="secondary" onPress={() => setChoosing(value => !value)}>{choosing ? 'Done choosing' : 'Choose languages'}</Button></View>
-      {!choosing && <Text style={styles.body}>{selected.length ? selected.map(languageName).join(' · ') : 'No language toggle set up yet'}</Text>}
-      {choosing && <><Text style={styles.small}>Choose up to six languages to switch between during play. Your device languages appear first.</Text><LanguageChoices selected={selected} preferred={profileLanguages(settings)} onChoose={toggle} label="play language" multiple disabled={busy} /></>}
-      {selected.length > 0 && <>
-        <Text style={styles.small}>{board.tiles.filter(t => t.languageMode === 'board').length} of {board.tiles.length} cards follow the board language. Change individual cards in their editor.</Text>
-        <Button kind="secondary" disabled={busy || board.tiles.every(t => t.languageMode === 'board')} onPress={() => onChange({ tiles: board.tiles.map(t => ({ ...t, languageMode: 'board' })) })}>Make all cards switchable</Button>
-        <Button disabled={busy} kind="ghost" onPress={() => onChange({ translateLabels: board.translateLabels === false })}>{board.translateLabels === false ? 'Switch spoken words only' : 'Switch labels and spoken words'}</Button>
-        {!settings.aiConsent && <Text style={styles.small}>Translates with OpenAI. Review words before saving.</Text>}
-        <Button kind="secondary" busy={busy} disabled={!missing} onPress={() => void prepare(board)}>{missing ? `Prepare translations (${missing.tiles.reduce((sum, t) => sum + t.targets.length, 0)})` : needsReview ? 'Saved translations need review' : 'Translations ready'}</Button>
-      </>}
+    <View style={{ backgroundColor: theme.surface, borderRadius: 14, paddingHorizontal: 14 }}>
+      {preferred.map((tag, index) => <Pressable key={tag} accessibilityRole="checkbox" accessibilityLabel={`Play language ${languageName(tag)}`} aria-checked={contains(tag)} accessibilityState={{ checked: contains(tag) }} onPress={() => toggle(tag)} style={[styles.row, { minHeight: 58, paddingVertical: 12, borderBottomWidth: index === preferred.length - 1 ? 0 : 1, borderColor: theme.line }]}>
+        <Text style={{ color: theme.ink, fontSize: 16, flex: 1 }}>{languageName(tag)}</Text>
+        <View style={{ width: 24, height: 24, borderWidth: 1, borderColor: contains(tag) ? theme.accent : theme.line, borderRadius: 6, backgroundColor: contains(tag) ? theme.accent : theme.surface, alignItems: 'center', justifyContent: 'center' }}>{contains(tag) && <Check size={17} color={theme.surface} accessible={false} />}</View>
+      </Pressable>)}
     </View>
+    <Text style={styles.small}>{settings.aiConsent ? 'Missing translations are added automatically when you close.' : 'Uses OpenAI to add missing translations when you close.'}</Text>
+    <Button kind="ghost" onPress={() => finish(onManageLanguages)}>Manage your languages in Settings</Button>
   </Sheet>;
 }

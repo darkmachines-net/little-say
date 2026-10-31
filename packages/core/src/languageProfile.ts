@@ -1,6 +1,5 @@
 /**
- * @file Derives new-board and new-card language defaults from the device profile while preserving board
- * choices.
+ * @file Resolves shared user languages, optional board play subsets, and new-card defaults.
  */
 
 import { languageProfileSchema, type Board, type LanguageProfile, type Settings } from './schema';
@@ -15,8 +14,7 @@ export function initialLanguageProfile(locale = 'en-US'): LanguageProfile {
 }
 
 /**
- * Return saved device preferences or the fallback profile. Older libraries keep their boards
- * unchanged; preferences are opt-in.
+ * Return saved user preferences or the fallback profile without rewriting board content.
  */
 export function getLanguageProfile(settings: Pick<Settings, 'languageProfile'>): LanguageProfile {
   return settings.languageProfile ?? initialLanguageProfile();
@@ -29,24 +27,29 @@ export function profileLanguages(settings: Pick<Settings, 'languageProfile'>): s
 }
 
 /**
- * Prefer the profile default when supported by the board, then the first board language, then the
- * profile default.
+ * Resolve play languages in profile order. Ignore removed subset entries; if none remain, use the
+ * profile default so a board never becomes unplayable. Historical generated languages are retained
+ * on the board but do not restrict the user's selection.
  */
-export function newTileLanguage(board: Pick<Board, 'playLanguages'>, settings: Pick<Settings, 'languageProfile'>): string {
-  const profile = getLanguageProfile(settings);
-  return board.playLanguages?.find(tag => Intl.getCanonicalLocales(tag)[0] === profile.defaultLanguage) ?? board.playLanguages?.[0] ?? profile.defaultLanguage;
+export function boardPlayLanguages(board: Pick<Board, 'playLanguageSubset'>, settings: Pick<Settings, 'languageProfile'>): string[] {
+  const preferred = profileLanguages(settings);
+  if (!board.playLanguageSubset) return preferred;
+  const subset = board.playLanguageSubset.map(tag => Intl.getCanonicalLocales(tag)[0]);
+  const selected = preferred.filter(tag => subset.includes(tag));
+  return selected.length ? selected : [preferred[0]];
 }
 
 /**
- * Suggest play languages for setup, expanding to device preferences only when compatible with the
- * current selection. Explicit board choices take precedence over device defaults.
+ * Return a view of a board with effective play languages for editing, generation, and audio planning.
+ * The saved board and its translations remain untouched; persist explicit changes via reviseBoard.
  */
-export function suggestedPlayLanguages(board: Pick<Board, 'playLanguages'>, settings: Pick<Settings, 'languageProfile'>): string[] {
-  const selected = board.playLanguages ?? [];
-  const preferred = profileLanguages(settings);
-  if (selected.length >= 2) return selected;
-  if (selected.every(tag => preferred.includes(Intl.getCanonicalLocales(tag)[0]))) return preferred;
-  return selected;
+export function boardWithProfileLanguages(board: Board, settings: Pick<Settings, 'languageProfile'>): Board {
+  return { ...board, playLanguages: boardPlayLanguages(board, settings) };
+}
+
+/** Prefer the user default within the board's play subset, falling back to its first play language. */
+export function newTileLanguage(board: Pick<Board, 'playLanguageSubset'>, settings: Pick<Settings, 'languageProfile'>): string {
+  return boardPlayLanguages(board, settings)[0];
 }
 
 const greetings: Record<string, string> = { en: 'Hello', ru: 'Привет', es: 'Hola', fr: 'Bonjour', de: 'Hallo', it: 'Ciao', pt: 'Olá', zh: '你好', ja: 'こんにちは', ko: '안녕하세요', ar: 'مرحبًا', hi: 'नमस्ते', uk: 'Привіт', pl: 'Cześć', nl: 'Hallo', sv: 'Hej', tr: 'Merhaba', vi: 'Xin chào', id: 'Halo', he: 'שלום' };

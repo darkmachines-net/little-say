@@ -19,7 +19,11 @@ This directory owns app screens and shared controls for native and `/app` on web
 
 Prompts use editable text and the system keyboard's dictation. Parents review and send the text; there is no app recording or dictation button. Native plugins disable microphone permissions and web hosting disallows page microphone access. Removing permissions from an already installed native app requires a replacement binary.
 
-`BoardEditor` keeps a compact responsive preview and its AI/add/audio/board actions on one tablet page: beside the preview in landscape, below it in portrait. Small previews may scroll without hiding actions. Tile ordering belongs in `TileEditor`; manual boards support 1–24 cards. Board languages control the play toggle, while cards may retain explicit language overrides. Generated translations remain editable.
+`BoardEditor` keeps a compact responsive preview and its AI/add/audio/board actions on one tablet page: beside the preview in landscape, below it in portrait. Small previews may scroll without hiding actions. Tile ordering belongs in `TileEditor`; manual boards support 1–24 cards. Cards follow the user's languages unless explicitly fixed to one language. Generated translations remain editable.
+
+User languages in Settings supply the play choices for all boards, including existing boards; adding a language in Settings never initiates translation. `BoardLanguages` directly toggles a nonempty subset of those languages, with no enabling switch, separate catalog or custom-tag entry. Selecting all resumes inheritance, including future additions. Removed profile languages are ignored in subsets; if none remain, play uses the user default. Saved words and audio remain available if the language is selected again. Legacy `playLanguages` records generation context; `playLanguageSubset` alone restricts play.
+
+Closing the board language panel (Done, Close, backdrop, system Back, or the Settings link) starts [automatic missing-translation preparation](../services/README.md#board-translations). It closes immediately; progress, cancellation and retry appear in the editor, with no separate preparation/review step. Card labels, spoken words and fixed-language behavior belong to the individual card editor. New manual and starter cards follow the board even with only one user language; legacy fixed cards keep their words until individually changed. Audio follows each language's AI/device voice choice and prepares automatically after translated words are saved; downloaded clips remain usable offline. The language panel has no audio controls.
 
 `PlayBoard` prioritizes the grid. Boards open unlocked. The compact header reserves fixed 48-unit slots for Back on the left and the lock icon on the right, with the title and optional language toggle between them. Locking hides Back without collapsing its slot. Status and hold progress sit below the title, outside the lock target, in space reserved in every state. Play and editor use the shared measured, ordered rectangles in core: balanced rows, soft preference for square cards, and 44-unit minimum targets. Play fills the space without scrolling; if it cannot fit, explain the need for more room and recover after resize. Reflow cancels contacts tied to old geometry without restarting speech or reordering cards.
 
@@ -42,7 +46,7 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
 | root | Overview and current language/account summaries |
-| `/languages` | One to six device languages and default; existing boards stay unchanged |
+| `/languages` | One to six shared languages; direct search with a result dropdown, divided rows, removal under Edit, and one default selector |
 | `/voices`, `/voices/:language` | Profile and board languages; per-language source, device voice, and cancellable preview |
 | `/pictures` | New-board picture defaults and credits |
 | `/account`, `/account/login`, `/account/register`, `/account/reset` | Account backup, forms, deletion, and browser storage controls |
@@ -50,6 +54,8 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
 | `/privacy` | Storage, backup, AI processing, photos, dictation, and retention disclosures |
 | `/about` | Selectable running version, environment, and available native build/update details |
+
+`LanguageProfileEditor` shares the simple-list controls with first-time setup. Search accepts names, regions, and language tags, excludes selected choices, and closes after adding. Web uses a floating result dropdown with Enter, Escape, and keyboard focus dismissal; native expands results inside the parent's touch bounds. Region names replace raw tags where Intl supports them. **Edit** reveals removal controls, retaining one language; removing the default uses the first remaining choice. The single default control uses a browser select on web and a cancellable option sheet on native.
 
 Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
 

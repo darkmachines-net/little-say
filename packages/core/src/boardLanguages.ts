@@ -1,15 +1,17 @@
-/** @file Resolves board language variants and validates revision-bound translation updates. */
+/** @file Resolves profile-based board playback and validates revision-bound translation updates. */
 
 import { z } from 'zod';
 import { boardSchema, languageSchema, playLanguagesSchema, tileSource, translationSchema, type Board, type BoardChanges, type Tile, type Settings } from './schema';
 import { speechKey } from './speech';
+import { boardPlayLanguages } from './languageProfile';
 
 /** Canonicalize a BCP-47 language tag using Intl; invalid tags throw. */
 export const canonicalLanguage = (tag: string) => Intl.getCanonicalLocales(tag)[0];
-/** Use the saved language when it belongs to the board, otherwise the first play language or null. */
+/** Use the saved language within the user's effective board subset, otherwise its first language. */
 export function selectedBoardLanguage(board: Board, settings: Settings) {
   const preferred = settings.boardLanguages?.[board.id];
-  return board.playLanguages?.find(tag => preferred && canonicalLanguage(tag) === canonicalLanguage(preferred)) ?? board.playLanguages?.[0] ?? null;
+  const languages = boardPlayLanguages(board, settings);
+  return languages.find(tag => preferred && canonicalLanguage(tag) === canonicalLanguage(preferred)) ?? languages[0];
 }
 /**
  * Resolve each card for the selected board language, honoring fixed-language cards and
