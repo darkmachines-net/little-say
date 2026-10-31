@@ -1,13 +1,18 @@
 /**
  * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
- * layouts, and offline browser behavior.
+ * layouts, and offline browser behavior with scenario-specific speech-source fixtures.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import type { Settings } from '@little-say/core';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { openExistingLibrary } from './existingLibrary';
+
+const test = base.extend<{ librarySettings: Partial<Settings> }>({
+  librarySettings: [{}, { option: true }],
+});
 
 async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
@@ -36,10 +41,11 @@ async function leaveBoard(page: Page) {
   await page.getByTestId('board-back').click();
   await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeVisible();
 }
-test.beforeEach(async ({ page }) => { await setupSpeech(page); await openExistingLibrary(page); });
+test.beforeEach(async ({ page, librarySettings }) => { await setupSpeech(page); await openExistingLibrary(page, librarySettings); });
 
 test.describe('outside modal dismissal', () => {
-  test.use({ hasTouch: true });
+  // These touch assertions observe Web Speech, so cached AI clips must not replace that driver.
+  test.use({ hasTouch: true, librarySettings: { voiceSources: { 'en-US': 'device' } } });
   async function capture(page: Page, name: string, width: number) {
     const directory = 'artifacts/screenshots/modal-outside-dismiss';
     await mkdir(directory, { recursive: true });
