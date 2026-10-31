@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and Settings navigation. */
+/** @file Organizes saved boards by recent use and favorites beneath the shared app navigation header. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -8,12 +8,13 @@ import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
 import { type SpeechLibrary } from '../services/speechLibrary';
 import { Button } from './components';
-import { theme, styles } from './theme';
-import { Brand, MountainMark } from './Brand';
+import { styles } from './theme';
+import { MountainMark } from './Brand';
+import { AppHeader } from './AppHeader';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace, with a separate manual creation entry.
+ * AI creation workspace, with a separate manual creation entry and shared branded Settings navigation.
  */
 export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
@@ -27,12 +28,7 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
   const remaining = boards.filter(board => board.id !== recent?.id).sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)));
   const card = (board: Board, featured = false) => <BoardCard board={board} featured={featured} favorite={favorites.has(board.id)} wide={width > 620} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
-    <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
-      <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }]}>
-        <Brand />
-        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></View>
-      </View>
-    </View>
+    <AppHeader actions={<>{saving && <Text accessibilityLiveRegion="polite" style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>

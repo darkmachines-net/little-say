@@ -1,8 +1,8 @@
-/** @file Composes the compact board editor and its tile, language, AI, and audio actions. */
+/** @file Composes the board editor with one route header and contextual editing, language, AI, and audio controls. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
-import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
+import { Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
 import { MAX_TILES, speechSource, boardAudioTiles, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
 import { BoardLanguages } from './BoardLanguages';
@@ -13,18 +13,17 @@ import { styles, theme } from './theme';
 import { type SpeechLibrary } from '../services/speechLibrary';
 import { BoardPictures } from './BoardPictures';
 import { BoardTransition, type BoardGeometry, type BoardSnapshot } from './BoardTransition';
-import { useScreenFocus } from './screenFocus';
 import { EditingLanguages } from './EditingLanguages';
+import { AppHeader } from './AppHeader';
 
 /**
- * Show the editable board preview and contextual controls, delegating durable changes, undo, and
- * playback to the parent.
+ * Show one route header with Back, Undo, and Play; keep board language and picture controls with
+ * editing actions. Delegate durable changes, undo, and playback to the parent.
  * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a
  * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.
  */
 export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
   const { width, height } = useWindowDimensions();
-  const heading = useScreenFocus();
   const previewGrid = useRef<ViewInstance>(null);
   const [target, setTarget] = useState<BoardGeometry | null>(null);
   const [editing, setEditing] = useState<Tile | null>(null);
@@ -69,13 +68,13 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   const playLanguage = selectedBoardLanguage(board, settings);
   const untranslated = playLanguage ? board.tiles.filter(tile => tile.languageMode === 'board' && !hasTileLanguage(tile, playLanguage)).length : 0;
   const selectLanguage = (language: string | null) => { onStopPreview(); setEditingLanguage(language); };
+  const tools = <>
+    <Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={startingPlay || !canUndo} onPress={onUndo} />
+    <Button icon={Play} compact accessibilityLabel={returnToPlay ? 'Return to play' : 'Play board'} disabled={modalOpen} busy={startingPlay} onPress={onPlay}>{width >= 600 ? returnToPlay ? 'Return to play' : 'Play board' : undefined}</Button>
+  </>;
   return <View style={styles.page}>
-    <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}><View style={[styles.container, styles.row, { justifyContent: 'space-between', paddingVertical: 10, gap: 6 }]}>
-      <Button kind="ghost" compact={width < 600} icon={ChevronLeft} disabled={startingPlay || modalOpen} onPress={onBack}>Boards</Button>
-      <View style={[styles.row, { gap: 6 }]}><Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={startingPlay || !canUndo} onPress={onUndo} /><Button kind="secondary" compact={width < 600} icon={Languages} accessibilityLabel="Languages" disabled={startingPlay} onPress={() => setLanguagesOpen(true)}>{width >= 600 ? 'Languages' : undefined}</Button><Button icon={Play} compact={width < 600} disabled={modalOpen} busy={startingPlay} onPress={onPlay}>{returnToPlay ? 'Return to play' : 'Play board'}</Button></View>
-    </View></View>
+    <AppHeader title="Edit board" onBack={onBack} backLabel="Boards" backDisabled={startingPlay || modalOpen} actions={tools} />
     <View style={[styles.container, { flex: 1, minHeight: 0, paddingTop: 14, paddingBottom: 16, gap: 14 }]}>
-      <View ref={heading} accessible accessibilityRole="header" tabIndex={-1} style={{ alignSelf: 'flex-start', borderRadius: 4 }}><Text style={styles.small}>Edit board</Text></View>
       <View style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!startingPlay} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4, borderBottomWidth: 1, borderColor: theme.line }} /><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{board.tiles.length} / 24 tiles · tap to edit</Text><Text style={styles.small}>{saving ? 'Saving…' : saveError ? 'Not saved — retry saving' : 'Saved on this device'}</Text></View></View>
       {returnToPlay && untranslated > 0 && <Notice>{untranslated} switchable cards still use their original words. Prepare missing translations in Languages.</Notice>}
       {Boolean(board.playLanguages?.length) && <EditingLanguages languages={board.playLanguages ?? []} selected={editingLanguage} onChange={selectLanguage} disabled={startingPlay || modalOpen} />}
@@ -88,7 +87,10 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
           </ScrollView>
         </View>
         <View testID="editor-actions" onLayout={event => setActionsHeight(event.nativeEvent.layout.height)} style={{ width: wide ? 280 : '100%', gap: 12 }}>
-          <Button kind="secondary" disabled={startingPlay} onPress={() => { setAutomaticPictures(false); setPictureTarget(undefined); setPictures(board); }}>Pictures</Button>
+          <View style={{ flexDirection: wide ? 'column' : 'row', gap: 10 }}>
+            <View style={{ flex: wide ? undefined : 1 }}><Button kind="secondary" compact disabled={startingPlay} onPress={() => { setAutomaticPictures(false); setPictureTarget(undefined); setPictures(board); }}>Pictures</Button></View>
+            <View style={{ flex: wide ? undefined : 1 }}><Button kind="secondary" compact icon={Languages} disabled={startingPlay} onPress={() => setLanguagesOpen(true)}>Languages</Button></View>
+          </View>
           <View style={{ flexDirection: wide ? 'column' : 'row', gap: 10 }}><View style={{ flex: wide ? undefined : 1 }}><Button icon={WandSparkles} disabled={startingPlay} onPress={() => { onStopPreview(); onCompose(); }}>Edit with AI</Button></View>{board.tiles.length < MAX_TILES && <View style={{ flex: wide ? undefined : 1 }}><Button kind="secondary" icon={Plus} disabled={startingPlay} onPress={addTile}>Add a tile</Button></View>}</View>
           {audioTiles.length > 0 && <View style={{ backgroundColor: theme.surface, padding: 14, borderRadius: 18, gap: 8 }}>
             <Text accessibilityLiveRegion="polite" style={styles.small}>{readyAudio} of {audioTiles.length} voices saved{preparingAudio ? ` · Preparing ${preparingAudio}…` : ''}{failedAudio ? ` · ${failedAudio} failed. Check your connection and retry.` : ''}</Text>
