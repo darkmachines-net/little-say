@@ -28,6 +28,12 @@ Android clips use the [local tile-audio module](../../modules/tile-audio/README.
 
 On load, legacy `autoSpeech: false` maps profile languages, spoken board languages, and saved voice-language keys to device speech. Preserve voice IDs and boards; removing a profile language does not remove board content or saved voice preferences. Preview uses the same playback path, stops on page exit/backgrounding, and ignores late synthesis completion. Refresh device voices on foreground.
 
+## Board translations
+
+`useBoardTranslations` owns per-board requests across editor/Settings navigation. Closing board language choices checks the current effective languages and requests only missing or stale generated words for board-following cards. It flushes pending selection writes first, coalesces identical in-flight requests, and records AI use before generation. Existing fixed cards and saved manual/unknown-origin corrections are excluded.
+
+Results apply only while the job is current and the latest missing-word request still matches, including source words, board revision and effective language targets. Edits, deletion, or user-language changes cannot receive stale results. Cancellation and app unmount discard late completion. Failed generation can be retried in the editor; no automatic retry loop runs. Generated updates use the library's optimistic serialized writes and normal save-error recovery, preserving newer edits made while disk writes finish. Word changes then enter the existing automatic speech preparation flow.
+
 ## Picture drafts
 
 `pictures.ts` prepares detached previews, protects saved boards from partial work, and reports per-card progress. Shared source selection in core checks meaning and neighboring ambiguity; one missing picture never promotes an entire board to generated illustrations, including older `consistent: true` boards. Different labels for the same meaning may share a picture.

@@ -1,4 +1,4 @@
-/** @file Exercises simple-list language search/edit/default controls, Settings routes, durable saves, speech, and offline links. */
+/** @file Exercises shared language preferences, direct board choices, Settings routes, durable saves, speech, and offline links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -172,10 +172,12 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await expect(page.getByText('English · Spanish · French', { exact: true })).toBeVisible();
+  for (const name of ['English', 'Spanish', 'French']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await expect(page.getByRole('button', { name: 'Add language', exact: true })).toHaveCount(0);
   await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toHaveCount(0);
-  await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
+  await expect(page.getByRole('switch', { name: 'Limit languages for this board', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Prepare translations|Switch labels|Make all cards switchable/ })).toHaveCount(0);
+  await expect(page.getByText('Audio', { exact: true })).toHaveCount(0);
   await page.getByRole('checkbox', { name: 'Play language English', exact: true }).click();
   await page.getByRole('checkbox', { name: 'Play language French', exact: true }).click();
   await page.screenshot({ path: 'artifacts/screenshots/languages/board-subset.png' });
@@ -195,14 +197,21 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: 'Play language German', exact: true })).not.toBeChecked();
-  await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
-  await expect(page.getByText('English · Spanish · French · German', { exact: true })).toBeVisible();
+  for (const name of ['English', 'French', 'German']) await page.getByRole('checkbox', { name: `Play language ${name}`, exact: true }).click();
+  for (const name of ['English', 'Spanish', 'French', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit My little words', exact: true }).click();
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await expect(page.getByText('English · Spanish · French · German', { exact: true })).toBeVisible();
-  await expect(page.getByRole('switch', { name: 'Limit languages for this board', exact: true })).not.toBeChecked();
+  for (const name of ['English', 'Spanish', 'French', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
+  await page.getByRole('button', { name: 'Manage your languages in Settings', exact: true }).click();
+  await addUserLanguage(page, 'Italian');
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to board', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await expect(page.getByRole('checkbox', { name: 'Play language Italian', exact: true })).toBeChecked();
 });
 
 test('device speech overrides cached AI, previews the saved voice, and stops generating that language', async ({ page }) => {

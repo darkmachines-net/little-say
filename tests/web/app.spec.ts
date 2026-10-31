@@ -1,13 +1,13 @@
 /**
  * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
- * layouts, shared language search/edit/default controls, board play subsets, and offline browser behavior.
+ * layouts, shared language preferences, automatic board translations, and offline browser behavior.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pcmToWav } from '../../apps/server/src/synthesis';
-import { addUserLanguage, openExistingLibrary, removeUserLanguage } from './existingLibrary';
+import { addUserLanguage, followBoardLanguages, openExistingLibrary, removeUserLanguage } from './existingLibrary';
 
 async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
@@ -141,12 +141,11 @@ test('user languages persist offline and drive existing boards without changing 
     return route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: input.tiles.flatMap((tile: any) => tile.targets.map((language: string) => ({ tileId: tile.id, language, label: words[tile.label][language === 'fr-FR' ? 0 : 1], speech: words[tile.label][language === 'fr-FR' ? 0 : 1] }))) } });
   });
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await followBoardLanguages(page, ['Cow', 'Sheep', 'Horse', 'Pig', 'Chicken', 'Duck']);
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'English + Russian', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Make all cards switchable', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (12)', exact: true }).click();
-  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Vache', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Play board', exact: true }).click();
   await page.getByRole('button', { name: 'Vache', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Vache', lang: 'fr-FR' });
@@ -425,17 +424,10 @@ test('board languages translate switchable cards, preserve fixed cards, and save
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await followBoardLanguages(page, ['Cow', 'Horse', 'Pig', 'Chicken', 'Duck']);
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Make all cards switchable', exact: true }).click();
-  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit tile Sheep', exact: true }).click();
-  await page.getByRole('button', { name: 'Keep this card’s language', exact: true }).click();
-  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (5)', exact: true }).click();
-  await expect(page.getByText('Review translations', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
-  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await expect(page.getByText('Adding missing translations…', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Edit in Russian', exact: true }).last().click();
   await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('корова');
@@ -584,7 +576,7 @@ test('numbers 1–9 prepare missing translations with retry and preserve digit l
       request.onsuccess = () => {
         const library = request.result; const board = library.boards[0];
         const tile = board.tiles[0]; board.title = 'Numbers 1–9';
-        board.tiles = Array.from({ length: 9 }, (_, i) => ({ ...tile, id: `number-${i + 1}`, label: `${i + 1}`, speech: `${i + 1}`, languageMode: 'fixed', color: ['sage', 'peach', 'butter', 'sky', 'lilac', 'rose'][i % 6], illustration: { kind: 'emoji', emoji: `${i + 1}\uFE0F\u20E3` } }));
+        board.tiles = Array.from({ length: 9 }, (_, i) => ({ ...tile, id: `number-${i + 1}`, label: `${i + 1}`, speech: `${i + 1}`, languageMode: 'board', color: ['sage', 'peach', 'butter', 'sky', 'lilac', 'rose'][i % 6], illustration: { kind: 'emoji', emoji: `${i + 1}\uFE0F\u20E3` } }));
         library.boards = [board]; store.put(library, 'library');
       };
       tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error);
@@ -605,22 +597,18 @@ test('numbers 1–9 prepare missing translations with retry and preserve digit l
   const languages = page.getByRole('button', { name: 'Languages', exact: true });
   expect((await languages.boundingBox())!.y).toBeLessThan(100);
   await languages.click();
-  await expect(page.getByText('English · Russian', { exact: true })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: 'Play language Russian', exact: true })).toBeChecked();
   await page.waitForTimeout(300); // Let the native-style sheet fade finish for the screenshot.
   await page.screenshot({ path: 'artifacts/screenshots/numbers-bilingual-setup.png' });
-  await page.getByRole('button', { name: 'Make all cards switchable', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (9)', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect(page.getByText('Connection interrupted. Try again.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Prepare translations (9)', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Review translations', exact: true })).toBeVisible();
-  // Prepared words remain unsaved until review; switchable cards safely retain original words.
+  // A failed background request keeps original words until the retry succeeds.
   expect(await page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     const board = await new Promise<any>(resolve => { const request = db.transaction('state').objectStore('state').get('library'); request.onsuccess = () => resolve(request.result.boards[0]); }); db.close();
     return { languages: board.playLanguages ?? [], translated: board.tiles.some((tile: any) => tile.translations?.length) };
   })).toEqual({ languages: [], translated: false });
-  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
-  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Retry translations', exact: true }).click();
   await expect.poll(() => audioRequests.length).toBe(18);
   expect(audioRequests.filter(t => t.language === 'ru-RU').map(t => t.text).sort()).toEqual([...russian].sort());
   expect(audioRequests.filter(t => t.language === 'en-US').map(t => t.text).sort()).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
