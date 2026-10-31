@@ -1,6 +1,6 @@
 /**
  * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
- * layouts, and offline browser behavior.
+ * layouts, offline browser behavior, and explicit creation-draft exits after AI errors.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -739,12 +739,16 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await expect(page.getByTestId('play-board')).toBeVisible(); await expect(page.getByText('My farm', { exact: true })).toBeVisible();
 });
 
-test('AI sign-in requirement retains the parent prompt and existing boards', async ({ page }) => {
+test('AI request errors retain the parent prompt until explicitly discarded', async ({ page }) => {
+  await page.route('**/api/boards/propose', route => route.fulfill({ status: 503, json: { error: 'AI work is busy. Please try again.' } }));
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('A farm with six animals');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
-  await expect(page.getByText('Sign in to use AI or cloud backup.', { exact: false })).toBeVisible();
+  await expect(page.getByText('AI work is busy. Please try again.', { exact: true })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
 });

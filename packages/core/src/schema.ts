@@ -1,4 +1,4 @@
-/** @file Defines durable library and AI payload schemas and guards revision-safe board edits. */
+/** @file Defines durable libraries, explicitly saved creation drafts, and revision-safe AI payloads. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -77,18 +77,9 @@ export const syncSnapshotSchema = z.object({
   .refine(snapshot => new Set(snapshot.assets.map(asset => `${asset.kind}:${asset.key ?? asset.id}`)).size === snapshot.assets.length, 'Asset references must be unique.');
 export type SyncAsset = z.infer<typeof syncAssetSchema>;
 export type SyncSnapshot = z.infer<typeof syncSnapshotSchema>;
-export const librarySchema = z.object({
-  version: z.literal(2), boards: z.array(boardSchema), settings: settingsSchema, setup: setupSchema.optional(),
-  // Device usage belongs outside board content, revisions, AI requests, and undo.
-  boardLastPlayedAt: z.record(z.string(), z.number().int().nonnegative()).optional(),
-  favoriteBoardIds: z.array(z.string().min(1).max(100)).optional(),
-  // The acknowledged server snapshot travels atomically with local boards; credentials never do.
-  sync: z.object({ accountId: z.string(), server: z.string(), snapshot: syncSnapshotSchema, savedAt: z.string() }).optional(),
-});
 export type Tile = z.infer<typeof tileSchema>;
 export type Board = z.infer<typeof boardSchema>;
 export type Settings = z.infer<typeof settingsSchema>;
-export type Library = z.infer<typeof librarySchema>;
 export type BoardChanges = Partial<Pick<Board, 'title' | 'tiles' | 'playLanguages' | 'translateLabels' | 'picturePolicy'>>;
 /**
  * Create a normalized source signature that invalidates translations when label, spoken text, or
@@ -142,6 +133,31 @@ export const proposalSchema = z.object({
 });
 export const MAX_AI_TURNS = 20;
 export const conversationTurnSchema = z.object({ prompt: z.string().trim().min(1).max(4000), reply: z.string().trim().min(1).max(1000) });
+// Creation drafts are device-local and written only after Save draft. Active provider operations
+// are never restored; downloaded pictures and the last completed conversation remain usable.
+export const boardCreationDraftSchema = z.object({
+  prompt: z.string().max(4000), history: z.array(conversationTurnSchema).max(MAX_AI_TURNS),
+  draft: proposalSchema.omit({ preparation: true, speech: true, timing: true }).nullable(),
+  picturePolicy: picturePolicySchema, clarifying: z.boolean(),
+}).refine(value => Boolean(value.prompt.trim() || value.history.length || value.draft), 'There is no draft progress to save.')
+  .superRefine((value, ctx) => {
+    if (!value.draft) return;
+    try {
+      if (value.draft.boardId !== null || value.draft.baseRevision !== null || value.draft.proposal.needsClarification) throw new Error('Expected a new board draft.');
+      validateGeneratedBoard(value.draft.proposal, null);
+    } catch { ctx.addIssue({ code: 'custom', message: 'The saved creation draft is invalid.', path: ['draft'] }); }
+  });
+export type BoardCreationDraft = z.infer<typeof boardCreationDraftSchema>;
+export const librarySchema = z.object({
+  version: z.literal(2), boards: z.array(boardSchema), settings: settingsSchema, setup: setupSchema.optional(),
+  boardCreationDraft: boardCreationDraftSchema.optional(),
+  // Device usage belongs outside board content, revisions, AI requests, and undo.
+  boardLastPlayedAt: z.record(z.string(), z.number().int().nonnegative()).optional(),
+  favoriteBoardIds: z.array(z.string().min(1).max(100)).optional(),
+  // The acknowledged server snapshot travels atomically with local boards; credentials never do.
+  sync: z.object({ accountId: z.string(), server: z.string(), snapshot: syncSnapshotSchema, savedAt: z.string() }).optional(),
+});
+export type Library = z.infer<typeof librarySchema>;
 export const proposalRequestSchema = z.object({
   prompt: z.string().trim().min(1).max(4000), board: boardContextSchema.nullable(), languageProfile: languageProfileSchema.optional(),
   picturePolicy: picturePolicySchema.optional(), pictureCapability: z.literal(1).optional(),

@@ -1,11 +1,11 @@
 /**
- * @file Verifies durable data validation, AI proposal constraints, photo retention, and safe board
- * revision changes.
+ * @file Verifies library and saved creation-draft validation, AI constraints, and revision-safe edits.
  */
 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
-import { applyProposal, boardContext, migrateLibrary, validateGeneratedBoard, type GeneratedBoard } from './schema';
+import { applyProposal, boardContext, boardCreationDraftSchema, migrateLibrary, validateGeneratedBoard, type GeneratedBoard } from './schema';
+import { defaultPicturePolicy } from './pictures';
 const draft: GeneratedBoard = { title: 'Farm', explanation: 'A farm board.', needsClarification: false, tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage' }] };
 describe('safe local board proposals', () => {
   it('keeps a retained photo and mixed-language pronunciation, using new IDs only for replacements', () => {
@@ -44,5 +44,19 @@ describe('safe local board proposals', () => {
     const library = starterLibrary(); expect(migrateLibrary(library)).toEqual(library);
     expect(() => migrateLibrary({ ...library, version: 3 })).toThrow();
     expect(() => migrateLibrary({ ...library, boards: [{ ...library.boards[0], tiles: [] }] })).toThrow();
+  });
+  it('round-trips explicitly saved progress without retaining provider operation state', () => {
+    const progress = { prompt: 'Make the cow green', history: [{ prompt: 'Cow', reply: 'A farm board.' }], draft: { boardId: null, baseRevision: null, proposal: draft, timing: { draftMs: 100, resolveMs: 0, templateHit: false }, speech: [] }, picturePolicy: defaultPicturePolicy, clarifying: false };
+    const library = migrateLibrary({ ...starterLibrary(), boardCreationDraft: progress });
+    expect(library.boardCreationDraft).toEqual({ ...progress, draft: { boardId: null, baseRevision: null, proposal: draft } });
+    expect(migrateLibrary(JSON.parse(JSON.stringify(library)))).toEqual(library);
+    expect(boardCreationDraftSchema.parse({ ...progress, draft: null }).prompt).toBe(progress.prompt);
+  });
+  it('rejects empty creation progress and proposals for an existing board', () => {
+    const empty = { prompt: '   ', history: [], draft: null, picturePolicy: defaultPicturePolicy, clarifying: false };
+    expect(boardCreationDraftSchema.safeParse(empty).success).toBe(false);
+    expect(boardCreationDraftSchema.safeParse({ ...empty, prompt: 'Cow' }).success).toBe(true);
+    expect(boardCreationDraftSchema.safeParse({ ...empty, draft: { boardId: 'saved-board', baseRevision: 0, proposal: draft } }).success).toBe(false);
+    expect(boardCreationDraftSchema.safeParse({ ...empty, draft: { boardId: null, baseRevision: null, proposal: { ...draft, tiles: [] } } }).success).toBe(false);
   });
 });
