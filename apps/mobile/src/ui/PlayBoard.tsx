@@ -1,7 +1,7 @@
 /**
  * @file Coordinates child playback, independent touch and speech feedback, board languages, and optional
- * locking with fixed header slots, safe-area lock feedback, user-language subsets, and lock-aware
- * Android back navigation.
+ * locking with fixed header slots, safe-area lock feedback, user-language subsets, device speech
+ * fallback, and lock-aware Android back navigation.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -54,7 +54,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
   const playLanguages = boardPlayLanguages(board, settings);
   const compactLanguages = width < 700 || playLanguages.length > 3;
   const tiles = useMemo(() => board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false)), [board.tiles, board.translateLabels, language]);
-  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and selected voice in Settings.'), audioAsset, tag => speechSource(settings, tag)), [voices, settings, audioAsset]);
+  const queue = useMemo(() => speechQueue(voices, settings.voices, (a, p) => { setActive(a); setPending(p); }, () => setError('Sound is unavailable. Check the volume and your device’s speech settings.'), audioAsset, tag => speechSource(settings, tag)), [voices, settings, audioAsset]);
   useEffect(() => {
     const appState = AppState.addEventListener('change', state => { if (state !== 'active') { queue.stop(); clearTimeout(flashTimer.current); setFlash(null); setCancelToken(t => t + 1); } });
     return () => { appState.remove(); queue.stop(); clearTimeout(flashTimer.current); };

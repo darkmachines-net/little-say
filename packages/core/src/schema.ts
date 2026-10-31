@@ -1,4 +1,4 @@
-/** @file Defines durable libraries, saved creation drafts, optional board play subsets, and revision-safe AI/edit payloads. */
+/** @file Defines durable libraries, creation drafts, play subsets, compatible settings, and revision-safe AI/edit payloads. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -51,7 +51,7 @@ export const settingsSchema = z.object({
   // Local launch preference only; choosing guest never enables backup or AI consent.
   accountChoiceMade: z.boolean().optional(),
   autoSpeech: z.boolean().default(true),
-  // Per-language source replaces the legacy global automatic-audio switch; device IDs remain in voices.
+  // Read retired media preferences for compatibility; device loading restores the app defaults.
   voiceSources: z.record(z.string(), z.enum(['ai', 'device'])).optional(),
   pictureDefaults: picturePolicySchema.optional(),
   // Read older libraries losslessly; picture source now governs generation instead of this legacy flag.

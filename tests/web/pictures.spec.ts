@@ -1,4 +1,4 @@
-/** @file Exercises picture drafts, explicit exit/discard, fallback, cancellation, library selection, and offline PNG persistence. */
+/** @file Exercises picture drafts, exit/discard, default migration, retained board choices, and offline PNG persistence. */
 
 import { test, expect, type Page } from '@playwright/test';
 import sharp from 'sharp';
@@ -345,10 +345,10 @@ test('missing library and disabled server generation keep a usable emoji board w
   for (const label of labels) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
 });
 
-for (const [mode, label] of [['library', 'Library only'], ['emoji', 'Emoji only']] as const) test(`migrated cards honor inherited ${label} and explicit overrides`, async ({ page }) => {
+for (const [mode, label] of [['library', 'Library only'], ['emoji', 'Emoji only']] as const) test(`board choices retain inherited ${label} and explicit overrides after default migration`, async ({ page }) => {
   const value = await library(page);
-  value.settings.pictureDefaults = { ...policy, mode };
-  delete value.boards[0].picturePolicy;
+  value.settings.pictureDefaults = { ...policy, mode: 'generated' };
+  value.boards[0].picturePolicy = { ...policy, mode };
   const seed = async () => {
     await page.evaluate(async value => {
       const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
