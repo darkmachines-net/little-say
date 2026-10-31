@@ -1,4 +1,4 @@
-/** @file Verifies asynchronous play entry, headers, unlock timing, draft recovery, motion and explicit device-speech handoff. */
+/** @file Verifies asynchronous play entry, headers, unlock timing, draft recovery, motion, and device speech fallback. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -32,7 +32,8 @@ test.beforeEach(async ({ page }) => {
     } });
     Element.prototype.requestFullscreen = async () => {};
   });
-  await openExistingLibrary(page, { voiceSources: { 'en-US': 'device', 'ru-RU': 'device', 'fr-FR': 'device' } });
+  await page.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
+  await openExistingLibrary(page);
 });
 
 test('dashboard and reload entry bind the same board, preserve edits and stop active/pending audio', async ({ page }) => {

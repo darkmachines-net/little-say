@@ -1,6 +1,6 @@
 /**
  * @file Coordinates library persistence, board navigation, playback previews, and parent editing
- * actions.
+ * actions with default AI speech, automatic pictures, and focused parent settings.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -111,7 +111,7 @@ function Application() {
     if (!store.current.current!.settings.accountChoiceMade) await store.commit(current => ({ ...current, settings: { ...current.settings, accountChoiceMade: true } }));
     setAccountOpen(false);
   }} />;
-  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} voices={voices} audio={audio} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
+  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
   if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
   const activeBoard = library.boards.find(board => board.id === library.settings.activeBoardId);
   const selected = library.boards.find(board => board.id === selectedId);
@@ -176,7 +176,7 @@ function Application() {
       }).catch(() => {});
     }} />}
 
-    {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => (speechSource(library.settings, t.language) === 'device' || !audio.asset(t)) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => { setSoundCheck(null); settingsRoute.open({ page: 'voices' }); }}>Check voices</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
+    {soundCheck && <Sheet title="A quick sound check" onClose={() => setSoundCheck(null)}><Notice>Some tiles have neither saved audio nor a matching device voice for {Array.from(new Set(boardPlayTiles(soundCheck, library.settings).filter(t => (speechSource(library.settings, t.language) === 'device' || !audio.asset(t)) && !matchingVoice(t, voices, library.settings.voices)).map(t => languageName(t.language)))).join(', ')}. Playback may be silent or use an unsuitable voice.</Notice><Text style={styles.body}>Generate audio in the tile editor or install the missing voices in your device’s speech settings. On iPad, also check the volume and silent mode.</Text><Button onPress={() => setSoundCheck(null)}>Go back</Button><Button kind="ghost" onPress={() => void play(soundCheck).catch(() => setError('The session could not be saved.'))}>Continue to board</Button></Sheet>}
   </View>{accountScreen}</>;
 }
 /**

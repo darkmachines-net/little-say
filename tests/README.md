@@ -15,7 +15,7 @@ Browser tests use the production build, own an API on a selected free loopback p
 
 ## Browser scenarios and evidence
 
-`settings.spec.ts` covers routes, preference migration, save retry, AI/device source selection, canceled preview, and offline links. `safe-area.spec.ts` overrides browser insets to check controls after resizing/rotation. Conversation/picture scenarios cover revision-safe partial previews, direct first-send behavior, protected pictures, gap-only generation, source controls/focus, reduced motion, cancellation, downloads, attribution, migration, and offline fallback. Photo, grid, speech, translation, setup, and account scenarios cover their corresponding flows; file headers describe their responsibility.
+`settings.spec.ts` covers the simplified menu, retired media links, default media migration, language save retry, cached AI playback, and offline links. `safe-area.spec.ts` overrides browser insets to check controls after resizing/rotation. Conversation/picture scenarios cover revision-safe partial previews, direct first-send behavior, protected pictures, gap-only generation, source controls/focus, reduced motion, cancellation, downloads, attribution, migration, and offline fallback. Photo, grid, speech, translation, setup, and account scenarios cover their corresponding flows; file headers describe their responsibility.
 
 `landing.spec.ts` checks desktop/phone layouts, keyboard navigation, inactive store placeholders, direct `/app` access, older installed-web-app launches, and absence of library/API initialization on `/`. After changing the entry split, export iOS and Android with source maps and confirm `Entry.web.tsx` and `src/website/` are absent from native sources.
 
