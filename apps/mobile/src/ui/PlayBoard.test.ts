@@ -1,4 +1,4 @@
-/** @file Verifies Android Back follows the board lock state, stops playback only on exit, and cleans up pending navigation. */
+/** @file Verifies Android Back follows the board lock state with zero screen insets, stops playback only on exit, and cleans up pending navigation. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -17,6 +17,7 @@ vi.mock('react-native', () => ({
 vi.mock('lucide-react-native', () => ({ ArrowLeft: 'ArrowLeft', LockKeyhole: 'LockKeyhole', LockKeyholeOpen: 'LockKeyholeOpen' }));
 vi.mock('expo-keep-awake', () => ({ useKeepAwake() {} }));
 vi.mock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
+vi.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }) }));
 vi.mock('../services/speech', () => ({ speechQueue: () => queue }));
 vi.mock('./TouchSurface', () => ({ TouchSurface: 'TouchSurface' }));
 vi.mock('./components', () => ({ Notice: 'Notice' }));
