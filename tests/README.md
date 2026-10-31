@@ -11,7 +11,7 @@ npm run test:web
 
 `check` runs [lint with zero warnings](../scripts/README.md#linting), [release-contract checks](../scripts/release/README.md#recovery-and-validation), TypeScript (including unused code), unit/component/service tests, and server/web builds. The `Check` workflow runs this command and a separate `Lint` job for pull requests and pushes to `master`/`main`. Keep `Lint` required for `master`, require branches to be up to date, and enforce checks for administrators in GitHub's repository settings; protection is configured separately from the workflow. Existing PR branches must include the job to satisfy that required check.
 
-Browser tests use the production build, own an API on a selected free loopback port, and isolate device libraries. Ordinary guest tests disable API keys and mock AI/speech; they never use development processes or user boards. Service-worker/offline behavior must be tested against the built app, not Metro.
+Browser tests use the production build, own an API on a selected free loopback port, and isolate device libraries. Ordinary guest tests disable API keys and mock AI/speech; they never use development processes or user boards. Scenarios asserting Web Speech calls must seed `voiceSources` as `device` for the tested locales through `openExistingLibrary`; background AI clips can otherwise satisfy playback without calling Web Speech. Service-worker/offline behavior must be tested against the built app, not Metro.
 
 ## Browser scenarios and evidence
 
