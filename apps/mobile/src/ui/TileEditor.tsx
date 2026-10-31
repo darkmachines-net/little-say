@@ -1,4 +1,4 @@
-/** @file Edits a card draft with language variants, pictures, photos, emoji, and speech generation. */
+/** @file Edits card drafts, language variants, pictures, photos, emoji, and default AI speech with device fallback. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
@@ -105,7 +105,7 @@ export function TileEditor({ tile, board, playLanguages = [], editingLanguage = 
         })().catch(error => { if (attempt === voiceOperation.current) setError((error as Error).message); });
       }}>{voiceReady && speech.asset ? 'Regenerate audio' : 'Generate audio'}</Button>
       {Boolean(speech.error) && <Notice>{speech.error}</Notice>}
-      </> : <Text style={styles.small}>Uses the device voice selected in Settings → Voices.</Text>}
+      </> : <Text style={styles.small}>Uses a matching voice from your device.</Text>}
     </View>
     <View><Text style={styles.label}>Tile color</Text><View style={styles.row}>{colors.map(color => <Pressable key={color} accessibilityLabel={`${color} tile color`} accessibilityRole="button" accessibilityState={{ selected: draft.color === color }} onPress={() => update({ color })} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: palettes[color].background, borderWidth: draft.color === color ? 3 : 1, borderColor: draft.color === color ? theme.accent : theme.line }} />)}</View></View>
     {Boolean(error) && error !== speech.error && <Notice>{error}</Notice>}

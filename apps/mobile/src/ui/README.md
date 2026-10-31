@@ -29,7 +29,7 @@ Photos use native picker/cropper or the browser cropper. Later adjustment suppor
 
 ## Picture controls
 
-`PicturePreferences` supplies new-board defaults; `BoardPictures` and `CardPictures` provide deliberate board/card changes. The workspace header keeps **Picture settings** reachable during work; changes apply to the next update. Use one labeled source selector with vertically expanded descriptions and current-value guidance, separate protection switches, and explicit inherited card source. Do not restore wrapping chips, the legacy consistency switch, or a style selector. New artwork uses simple color; existing artwork stays readable.
+New boards use the core Automatic picture defaults. `PicturePreferences` edits draft/board choices; `BoardPictures` and `CardPictures` provide deliberate board/card changes. The workspace header keeps **Picture settings** reachable during work; changes apply to the next update. Use one labeled source selector with vertically expanded descriptions and current-value guidance, separate protection switches, and explicit inherited card source. Do not restore wrapping chips, the legacy consistency switch, or a style selector. New artwork uses simple color; existing artwork stays readable.
 
 Automatic keeps accurate, unambiguous emoji, uses the library for gaps, and generates only remaining gaps. Library only and Emoji only never generate. Completed drafts go to save/refinement without illustration upsells. Parents may deliberately choose AI illustrations and **Update draft pictures**, or board **Improve pictures** / **Restyle board**, with preview and explicit apply. Card options include library search, description, overrides, and **Keep this picture**. Credits belong in parent controls.
 
@@ -43,12 +43,12 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | --- | --- |
 | root | Overview and current language/account summaries |
 | `/languages` | One to six device languages and default; existing boards stay unchanged |
-| `/voices`, `/voices/:language` | Profile and board languages; per-language source, device voice, and cancellable preview |
-| `/pictures` | New-board picture defaults and credits |
 | `/account`, `/account/login`, `/account/register`, `/account/reset` | Account backup, forms, deletion, and browser storage controls |
 | `/screen-guidance` | Platform-specific Guided Access/screen-pinning links or browser guidance |
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
-| `/privacy` | Storage, backup, AI processing, photos, dictation, and retention disclosures |
+| `/privacy` | Storage, backup, AI processing, photos, dictation, retention disclosures, and picture credits |
+
+Voices and Pictures have no app-wide settings pages. Speech and new pictures use the defaults described in [client services](../services/README.md#speech); existing board/card picture choices remain editable. Retired `/voices`, `/voices/:language`, and `/pictures` links open the Settings overview.
 
 Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
 
