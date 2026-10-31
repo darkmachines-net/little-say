@@ -1,4 +1,4 @@
-/** @file Organizes Settings into focused preference, help, and About pages with durable per-page changes. */
+/** @file Organizes durable preferences, shared-language search and defaults, account controls, help, and About pages. */
 
 import { useRef, useState } from 'react';
 import { Linking, Platform, Text, View } from 'react-native';
@@ -18,12 +18,12 @@ import { PictureCredits, PicturePreferences } from './PicturePreferences';
 import { PrivacyPolicy } from './PrivacyPolicy';
 import { SettingsGroup, SettingsPage, SettingsRow } from './SettingsPage';
 import { VoiceSettings } from './VoiceSettings';
-import { styles } from './theme';
+import { styles, theme } from './theme';
 
 const pictureNames = { auto: 'Automatic', library: 'Library only', generated: 'AI illustrations', emoji: 'Emoji only' };
 const titles = { overview: 'Settings', languages: 'Languages', voices: 'Voices', pictures: 'Pictures', account: 'Account & backup', 'screen-guidance': 'Keep the app on screen', privacy: 'Privacy Policy', updates: 'App updates', about: 'About' };
 
-/** Render the selected Settings route; preference writes are atomic, with failed changes available to retry. */
+/** Render focused Settings pages with a simple shared-language list; save atomically and offer failed changes for retry. */
 export function SettingsScreen({ route, library, account, voices, audio, returnLabel = 'Boards', onNavigate, onBack, onSave, onBeforeRestart }: {
   route: SettingsRoute; library: Library; account: AccountController; voices: Voice[]; audio: SpeechLibrary;
   returnLabel?: string; onNavigate: (route: SettingsRoute) => void; onBack: () => void; onSave: (patch: Partial<Settings>) => Promise<void>; onBeforeRestart: () => Promise<void>;
@@ -44,7 +44,7 @@ export function SettingsScreen({ route, library, account, voices, audio, returnL
   const accountSummary = account.error ? 'Backup needs attention' : account.needsLogin ? 'Sign in again' : !account.session ? 'Not signed in' : !account.session.account.emailVerified ? 'Verify your email' : account.busy ? 'Syncing…' : account.savedAt ? 'Backup enabled' : 'Backup pending';
   const title = route.language ? languageName(route.language) : route.mode === 'login' ? 'Log in' : route.mode === 'register' ? 'Create an account' : route.mode === 'reset' ? 'Reset your password' : titles[route.page];
   const backLabel = route.language ? 'Voices' : route.mode ? 'Back' : route.page === 'overview' ? returnLabel : 'Settings';
-  return <SettingsPage key={`${route.page}:${route.language ?? ''}:${route.mode ?? ''}`} title={title} backLabel={backLabel} onBack={onBack} busy={saving} status={saving ? 'Saving…' : undefined}>
+  return <SettingsPage key={`${route.page}:${route.language ?? ''}:${route.mode ?? ''}`} title={title} description={route.page === 'languages' ? 'The languages you use on your boards.' : undefined} backgroundColor={route.page === 'languages' ? theme.surface : undefined} backLabel={backLabel} onBack={onBack} busy={saving} status={saving ? 'Saving…' : undefined}>
     {failed && <Notice action={<Button kind="secondary" onPress={() => save(failed)}>Retry saving</Button>}>That change could not be saved. Your previous preference is still in use. Check device storage and retry.</Notice>}
     {route.page === 'overview' && <>
       <SettingsGroup title="Preferences">
@@ -60,7 +60,7 @@ export function SettingsScreen({ route, library, account, voices, audio, returnL
         <SettingsRow label="About" icon={Info} summary="Version & build information" onPress={() => onNavigate({ page: 'about' })} last />
       </SettingsGroup>
     </>}
-    {route.page === 'languages' && <><LanguageProfileEditor value={profile} onChange={languageProfile => save({ languageProfile })} disabled={saving} /><Text style={styles.body}>Choose up to six languages. The default is used for new cards and boards. Existing boards keep their own languages.</Text></>}
+    {route.page === 'languages' && <LanguageProfileEditor value={profile} onChange={languageProfile => save({ languageProfile })} disabled={saving} />}
     {route.page === 'voices' && (route.language ? <VoiceSettings language={route.language} settings={settings} voices={voices} audio={audio} busy={saving} onChange={save} /> : <SettingsGroup title="By language">{voiceLanguages(library).map((language, index, list) => <SettingsRow key={language} label={languageName(language)} summary={speechSource(settings, language) === 'ai' ? 'AI voice' : settings.voices[language] ? voices.find(voice => voice.identifier === settings.voices[language])?.name ?? 'Device voice · saved voice unavailable' : 'Device voice · automatic'} onPress={() => onNavigate({ page: 'voices', language })} last={index === list.length - 1} />)}</SettingsGroup>)}
     {route.page === 'pictures' && <><PicturePreferences value={pictureDefaults} onChange={value => save({ pictureDefaults: value })} disabled={saving} /><Text style={styles.body}>Applies to new boards. Existing boards keep their pictures and source preferences.</Text><Text style={styles.body}>Automatic can fill gaps with AI illustrations. Downloaded pictures remain available offline.</Text><PictureCredits /></>}
     {route.page === 'account' && <>

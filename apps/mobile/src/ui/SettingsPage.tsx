@@ -1,4 +1,4 @@
-/** @file Supplies the responsive routed Settings page shell and compact grouped navigation rows. */
+/** @file Supplies the responsive Settings shell, optional heading description and surface, and grouped navigation rows. */
 
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -7,10 +7,10 @@ import { Button } from './components';
 import { useScreenFocus } from './screenFocus';
 import { styles, theme } from './theme';
 
-/** Render a full page with an accessible heading and Back action, never a modal or global save footer. */
-export function SettingsPage({ title, backLabel, onBack, busy = false, status, children }: { title: string; backLabel: string; onBack: () => void; busy?: boolean; status?: string; children: ReactNode }) {
+/** Render a routed page with Back and an accessible heading; keep its optional description directly below the title. */
+export function SettingsPage({ title, description, backgroundColor = theme.background, backLabel, onBack, busy = false, status, children }: { title: string; description?: string; backgroundColor?: string; backLabel: string; onBack: () => void; busy?: boolean; status?: string; children: ReactNode }) {
   const heading = useScreenFocus();
-  return <View style={styles.page}>
+  return <View style={[styles.page, { backgroundColor }]}>
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
       <View style={[styles.container, styles.row, { maxWidth: 720, minHeight: 64, justifyContent: 'space-between' }]}>
         <Button compact kind="ghost" icon={ArrowLeft} disabled={busy} onPress={onBack}>{backLabel}</Button>
@@ -18,7 +18,7 @@ export function SettingsPage({ title, backLabel, onBack, busy = false, status, c
       </View>
     </View>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 680, paddingTop: 24, paddingBottom: 40, gap: 24 }]}>
-      <View ref={heading} accessible tabIndex={-1} accessibilityRole="header" accessibilityLabel={title}><Text style={styles.heading}>{title}</Text></View>
+      <View style={{ gap: 10 }}><View ref={heading} accessible tabIndex={-1} accessibilityRole="header" accessibilityLabel={title}><Text style={styles.heading}>{title}</Text></View>{description && <Text style={styles.body}>{description}</Text>}</View>
       {children}
     </ScrollView>
   </View>;

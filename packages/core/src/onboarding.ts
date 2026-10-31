@@ -1,6 +1,6 @@
 /**
  * @file Defines resumable first-use setup and validates generated starter boards against selected
- * languages.
+ * languages, with cards following future user-language changes.
  */
 
 import { starterConcepts, starterPromptText } from './promptPresets';
@@ -27,14 +27,14 @@ export function starterPrompt(topic: StarterTopic): string {
 
 /**
  * Apply a new-board proposal and require six cards covering every selected language; keep only the
- * chosen language variants.
+ * chosen variants and make cards follow future user-language additions, even for a single-language start.
  */
 export function starterBoard(proposal: BoardProposal, profile: LanguageProfile, id: () => string): Board {
   const board = applyProposal(null, proposal, id);
   const languages = profileLanguages({ languageProfile: profile });
   if (board.tiles.length !== 6 || board.tiles.some(tile => canonicalLanguage(tile.language) !== profile.defaultLanguage || languages.some(tag => !hasTileLanguage(tile, tag)))) throw new Error('Some cards or language versions were missing. Please retry this board.');
   // The setup choices are authoritative; never add an unselected language.
-  return { ...board, playLanguages: languages, tiles: board.tiles.map(tile => ({ ...tile, languageMode: languages.length > 1 ? 'board' : 'fixed', translations: tile.translations?.filter(translation => languages.includes(canonicalLanguage(translation.language)) && canonicalLanguage(translation.language) !== profile.defaultLanguage) })) };
+  return { ...board, playLanguages: languages, tiles: board.tiles.map(tile => ({ ...tile, languageMode: 'board', translations: tile.translations?.filter(translation => languages.includes(canonicalLanguage(translation.language)) && canonicalLanguage(translation.language) !== profile.defaultLanguage) })) };
 }
 
 /**

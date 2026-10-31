@@ -1,6 +1,6 @@
 /**
  * @file Verifies fixed and board-following language resolution, translation freshness, and
- * revision-safe application.
+ * revision-safe application with shared user languages and optional board subsets.
  */
 
 import { starterLibrary } from '../../../tests/fixtures/library';
@@ -27,7 +27,7 @@ describe('board languages', () => {
     const saved = reviseBoard(source, applyLanguageSetup(source, prepared));
     expect(saved.revision).toBe(source.revision + 1);
     expect(saved.tiles.map(tile => tile.id)).toEqual(source.tiles.map(tile => tile.id));
-    expect(boardPlayTiles(saved, { ...starterLibrary().settings, boardLanguages: { [source.id]: 'ru-RU' } }).every(tile => tile.speech === 'слово')).toBe(true);
+    expect(boardPlayTiles(saved, { ...starterLibrary().settings, languageProfile: { languages: ['en-US', 'ru-RU'], defaultLanguage: 'en-US' }, boardLanguages: { [source.id]: 'ru-RU' } }).every(tile => tile.speech === 'слово')).toBe(true);
     expect(() => applyLanguageSetup(reviseBoard(source, { title: 'Edited' }), prepared)).toThrow('changed');
     expect(() => applyLanguageSetup({ ...source, id: 'other' }, prepared)).toThrow('changed');
   });
@@ -40,10 +40,11 @@ describe('board languages', () => {
   });
   it('can switch speech only, persists the chosen language, and ignores a removed choice', () => {
     const board = bilingual(); board.translateLabels = false;
-    const settings = { ...starterLibrary().settings, boardLanguages: { [board.id]: 'ru-RU' } };
+    const settings = { ...starterLibrary().settings, languageProfile: { languages: ['en-US', 'ru-RU'], defaultLanguage: 'en-US' }, boardLanguages: { [board.id]: 'ru-RU' } };
     expect(boardPlayTiles(board, settings)[0]).toMatchObject({ label: 'Cow', speech: 'корова', language: 'ru-RU' });
-    expect(selectedBoardLanguage({ ...board, playLanguages: ['en-US'] }, settings)).toBe('en-US');
-    expect(selectedBoardLanguage({ ...board, playLanguages: [] }, settings)).toBeNull();
+    expect(selectedBoardLanguage({ ...board, playLanguageSubset: ['en-US'] }, settings)).toBe('en-US');
+    expect(selectedBoardLanguage({ ...board, playLanguages: [] }, settings)).toBe('ru-RU');
+    expect(selectedBoardLanguage(board, { ...settings, languageProfile: { languages: ['en-US'], defaultLanguage: 'en-US' } })).toBe('en-US');
   });
   it('never speaks original words with the wrong language when a translation is missing or stale', () => {
     const board = bilingual(); board.tiles[0].speech = 'Moo';
@@ -78,9 +79,11 @@ describe('board languages', () => {
   });
   it('retains fresh translations and modes across unrelated legacy AI edits', () => {
     const board = bilingual();
+    board.playLanguageSubset = ['en-US'];
     const proposal = { title: 'Our animals', explanation: 'Renamed.', needsClarification: false, tiles: board.tiles.map(t => ({ existingId: t.id, label: t.label, speech: t.speech, language: t.language, emoji: '🐄', color: t.color })) };
     const next = applyProposal(board, { boardId: board.id, baseRevision: board.revision, proposal }, () => 'unused');
     expect(next.playLanguages).toEqual(board.playLanguages);
+    expect(next.playLanguageSubset).toEqual(['en-US']);
     expect(next.tiles[0].translations).toEqual(board.tiles[0].translations);
     expect(next.tiles[0].languageMode).toBe('board');
     expect(JSON.stringify(boardContext(board))).not.toContain('source');

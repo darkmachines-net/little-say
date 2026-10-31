@@ -1,4 +1,4 @@
-/** @file Exercises selected-language drafts, correction persistence, stale results and explicit AI replacement review. */
+/** @file Exercises per-card language drafts, direct board choices, background translation retries, and protected corrections. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -28,7 +28,7 @@ async function openTranslations(page: Page, missingSpanish = false, legacy = fal
   board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
   if (missingSpanish) board.tiles[0].translations.pop();
   if (legacy) delete board.tiles[0].translations[0].origin;
-  library.settings = { ...library.settings, accountChoiceMade: true, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
+  library.settings = { ...library.settings, languageProfile: { languages: board.playLanguages, defaultLanguage: 'en-US' }, accountChoiceMade: true, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
@@ -277,8 +277,7 @@ test('direct play entry inherits Russian and returns with corrected speech while
 test('removing the selected language shows original words without deleting its correction', async ({ page }) => {
   const original = await openTranslations(page);
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Choose languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Remove play language Russian', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language Russian', exact: true }).click();
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Original words', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
@@ -307,20 +306,20 @@ test('missing variants stay blank, drafts survive switching and cancelled transl
     await route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: [{ tileId: input.tiles[0].id, language: 'es-ES', label: call === 1 ? 'Obsoleto' : 'Vaca nueva', speech: call === 1 ? 'obsoleto' : 'vaca nueva' }] } }).catch(() => {});
   });
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect.poll(() => calls).toBe(1);
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
+  await page.getByRole('button', { name: 'Cancel translations', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
   await expect(page.getByText('Translation unavailable. Try again.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Use translations', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Retry translations', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Vaca nueva', exact: true })).toBeVisible();
   release();
-  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Vaca nueva', exact: true })).toBeVisible();
   expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('корова');
 });
 
-test('prepared translation review identifies retained stale words instead of presenting English as Russian', async ({ page }) => {
+test('automatic translations keep stale corrections for review in their individual card', async ({ page }) => {
   await openTranslations(page, true);
   await page.getByRole('button', { name: 'Edit tile Корова', exact: true }).click();
   await page.getByRole('button', { name: 'Original words', exact: true }).last().click();
@@ -332,11 +331,42 @@ test('prepared translation review identifies retained stale words instead of pre
     return route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: [{ tileId: input.tiles[0].id, language: 'es-ES', label: 'Vaca', speech: 'muu' }] } });
   });
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Prepare translations (1)', exact: true }).click();
-  await expect(page.getByText('Russian — saved words need review', { exact: true })).toBeVisible();
-  await expect(page.getByText('Корова · says "корова"', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Use translations', exact: true }).click();
+  await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: 4 } });
+  await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'es-ES')?.speech).toBe('muu');
+  await page.getByRole('button', { name: 'Edit in Russian', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit tile Cow, translation needs attention', exact: true }).click();
+  await expect(page.getByText('The original words changed.', { exact: false })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Russian spoken words', exact: true })).toHaveValue('корова');
   expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('корова');
+});
+
+test('closing language choices prepares once and continues after leaving the editor', async ({ page }) => {
+  await openTranslations(page, true);
+  let calls = 0; let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/api/boards/translate', async route => {
+    const input = route.request().postDataJSON(); calls++;
+    expect(input.tiles).toHaveLength(1);
+    expect(input.tiles[0].targets).toEqual(['es-ES']);
+    await gate;
+    await route.fulfill({ json: { boardId: input.boardId, baseRevision: input.baseRevision, translations: [{ tileId: input.tiles[0].id, language: 'es-ES', label: 'Vaca', speech: 'vaca' }] } });
+  });
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language Spanish', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language Spanish', exact: true }).click();
+  expect(calls).toBe(0);
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await expect.poll(() => calls).toBe(1);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  release();
+  await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((value: any) => value.language === 'es-ES')?.speech).toBe('vaca');
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit in Spanish', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit tile Vaca', exact: true })).toBeVisible();
+  expect(calls).toBe(1);
+  expect((await savedBoard(page)).playLanguageSubset).toBeUndefined();
 });
 
 test('a failed save keeps the corrected board visible and retry persists it before reload', async ({ page }) => {
