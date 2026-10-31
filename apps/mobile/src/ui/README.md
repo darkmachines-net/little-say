@@ -49,7 +49,10 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | `/screen-guidance` | Platform-specific Guided Access/screen-pinning links or browser guidance |
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
 | `/privacy` | Storage, backup, AI processing, photos, dictation, and retention disclosures |
+| `/about` | Selectable running version, environment, and available native build/update details |
 
 Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
 
 Native manual updates wait for pending local writes before restart. Leaving the page cancels further actions, though an active download may finish for a later launch. Web retains its service-worker update banner. Settings never edits the service origin. Use OS Guided Access or Android screen pinning for system containment; app controls cannot suppress system navigation.
+
+`AboutSettings` reads local metadata through [`appInfo`](../services/README.md#installed-app-information), so identifying the installed release works offline. Version describes the running bundle; installed version and build number describe the native binary and may differ after an app update. Values are selectable for support requests.

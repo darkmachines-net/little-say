@@ -1,8 +1,8 @@
-/** @file Organizes Settings into grouped links and focused pages with durable per-page preference changes. */
+/** @file Organizes Settings into focused preference, help, and About pages with durable per-page changes. */
 
 import { useRef, useState } from 'react';
 import { Linking, Platform, Text, View } from 'react-native';
-import { CircleUserRound, Download, Image, Languages, ShieldCheck, Smartphone, Volume2 } from 'lucide-react-native';
+import { CircleUserRound, Download, Image, Info, Languages, ShieldCheck, Smartphone, Volume2 } from 'lucide-react-native';
 import { defaultPicturePolicy, getLanguageProfile, languageName, speechSource, voiceLanguages, type Library, type Settings } from '@little-say/core';
 import type { AccountController } from '../services/useAccount';
 import type { SettingsRoute } from '../services/settingsRoute';
@@ -10,6 +10,7 @@ import type { Voice } from '../services/speech';
 import type { SpeechLibrary } from '../services/speechLibrary';
 import { requestPersistence } from '../data/storage';
 import { AccountPanel } from './AccountPanel';
+import { AboutSettings } from './AboutSettings';
 import { AppUpdateSettings } from './AppUpdateSettings';
 import { Button, Notice } from './components';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
@@ -20,7 +21,7 @@ import { VoiceSettings } from './VoiceSettings';
 import { styles } from './theme';
 
 const pictureNames = { auto: 'Automatic', library: 'Library only', generated: 'AI illustrations', emoji: 'Emoji only' };
-const titles = { overview: 'Settings', languages: 'Languages', voices: 'Voices', pictures: 'Pictures', account: 'Account & backup', 'screen-guidance': 'Keep the app on screen', privacy: 'Privacy Policy', updates: 'App updates' };
+const titles = { overview: 'Settings', languages: 'Languages', voices: 'Voices', pictures: 'Pictures', account: 'Account & backup', 'screen-guidance': 'Keep the app on screen', privacy: 'Privacy Policy', updates: 'App updates', about: 'About' };
 
 /** Render the selected Settings route; preference writes are atomic, with failed changes available to retry. */
 export function SettingsScreen({ route, library, account, voices, audio, returnLabel = 'Boards', onNavigate, onBack, onSave, onBeforeRestart }: {
@@ -55,7 +56,8 @@ export function SettingsScreen({ route, library, account, voices, audio, returnL
         <SettingsRow label="Account & backup" icon={CircleUserRound} summary={accountSummary} onPress={() => onNavigate({ page: 'account' })} />
         <SettingsRow label="Keep the app on screen" icon={Smartphone} summary={guidance} onPress={() => onNavigate({ page: 'screen-guidance' })} />
         {Platform.OS !== 'web' && <SettingsRow label="App updates" icon={Download} summary="Check for a newer version" onPress={() => onNavigate({ page: 'updates' })} />}
-        <SettingsRow label="Privacy Policy" icon={ShieldCheck} summary="Data, storage & AI" onPress={() => onNavigate({ page: 'privacy' })} last />
+        <SettingsRow label="Privacy Policy" icon={ShieldCheck} summary="Data, storage & AI" onPress={() => onNavigate({ page: 'privacy' })} />
+        <SettingsRow label="About" icon={Info} summary="Version & build information" onPress={() => onNavigate({ page: 'about' })} last />
       </SettingsGroup>
     </>}
     {route.page === 'languages' && <><LanguageProfileEditor value={profile} onChange={languageProfile => save({ languageProfile })} disabled={saving} /><Text style={styles.body}>Choose up to six languages. The default is used for new cards and boards. Existing boards keep their own languages.</Text></>}
@@ -70,6 +72,7 @@ export function SettingsScreen({ route, library, account, voices, audio, returnL
       <View style={{ gap: 10 }}><Text accessibilityRole="header" style={styles.title}>Return to editing</Text><Text style={styles.body}>Boards open unlocked. Tap the lock icon to lock navigation. Hold it for one second to unlock automatically, then tap Back to edit. With a screen reader, activate the lock control to start the one-second unlock; activate again to cancel.</Text></View>
     </>}
     {route.page === 'privacy' && <PrivacyPolicy />}
+    {route.page === 'about' && <AboutSettings />}
     {route.page === 'updates' && (Platform.OS === 'web' ? <Text style={styles.body}>Browser updates download automatically. When an update is ready, return to Boards to install it.</Text> : <AppUpdateSettings visible showHeading={false} onBeforeRestart={onBeforeRestart} />)}
   </SettingsPage>;
 }

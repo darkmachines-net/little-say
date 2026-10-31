@@ -1,6 +1,6 @@
-/** @file Defines Settings page URLs and deterministic parent navigation for web and native stacks. */
+/** @file Defines Settings and About URLs with deterministic parent navigation for web and native stacks. */
 
-export type SettingsRoute = { page: 'overview' | 'languages' | 'voices' | 'pictures' | 'account' | 'screen-guidance' | 'privacy' | 'updates'; language?: string; mode?: 'login' | 'register' | 'reset' };
+export type SettingsRoute = { page: 'overview' | 'languages' | 'voices' | 'pictures' | 'account' | 'screen-guidance' | 'privacy' | 'updates' | 'about'; language?: string; mode?: 'login' | 'register' | 'reset' };
 
 /** Read a Settings URL, canonicalizing language tags and returning the overview for unknown children. */
 export function readSettingsRoute(pathname: string): SettingsRoute | null {
@@ -11,7 +11,7 @@ export function readSettingsRoute(pathname: string): SettingsRoute | null {
     try { return { page, language: Intl.getCanonicalLocales(decodeURIComponent(parts[1]))[0] }; } catch { return { page }; }
   }
   if (page === 'account') return { page, ...(['login', 'register', 'reset'].includes(parts[1]) ? { mode: parts[1] as SettingsRoute['mode'] } : {}) };
-  return { page: ['languages', 'voices', 'pictures', 'screen-guidance', 'privacy', 'updates'].includes(page) ? page as SettingsRoute['page'] : 'overview' };
+  return { page: ['languages', 'voices', 'pictures', 'screen-guidance', 'privacy', 'updates', 'about'].includes(page) ? page as SettingsRoute['page'] : 'overview' };
 }
 
 /** Build the public web URL for the same logical page used in native navigation. */
