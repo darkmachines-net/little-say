@@ -1,6 +1,6 @@
-/** @file Gives the board workspace a full-screen route with browser history and native state navigation. */
+/** @file Routes board workspaces while guarding browser exits and pending durable saves. */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 
 type DraftRoute = { boardId: string | null } | null;
@@ -12,10 +12,15 @@ function currentRoute(): DraftRoute {
   try { return match ? { boardId: decodeURIComponent(match[1]) } : null; } catch { return null; }
 }
 
-/** Open a dedicated workspace, restore its source on web reload, and defer history navigation during durable saves. Unsaved drafts remain in memory. */
+/** Open a workspace, restore its route on reload, and defer browser exits for confirmation or durable writes. */
 export function useBoardDraftRoute() {
   const [route, setRoute] = useState<DraftRoute>(currentRoute);
   const pendingSave = useRef<{ url: string; state: unknown } | null>(null);
+  const exitGuard = useRef<{ url: string; state: unknown; /** Ask the mounted workspace to confirm leaving. */ request: () => void } | null>(null);
+  /** Register a browser-exit confirmation while retaining the current URL; pass null on unmount. */
+  const beforeClose = useCallback((request: (() => void) | null) => {
+    exitGuard.current = request && Platform.OS === 'web' ? { url: window.location.href, state: window.history.state, request } : null;
+  }, []);
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     const changed = () => {
@@ -25,6 +30,13 @@ export function useBoardDraftRoute() {
         if (window.location.href !== savedRoute.url) window.history.pushState(savedRoute.state, '', savedRoute.url);
         return;
       }
+      const guard = exitGuard.current;
+      if (guard && window.location.href !== guard.url) {
+        // Keep the live workspace and restore its URL while the parent chooses Save or Discard.
+        window.history.pushState(guard.state, '', guard.url);
+        guard.request();
+        return;
+      }
       setRoute(currentRoute());
     };
     window.addEventListener('popstate', changed); window.addEventListener('hashchange', changed);
@@ -32,6 +44,7 @@ export function useBoardDraftRoute() {
   }, []);
   return {
     route,
+    beforeClose,
     /** Keep the current workspace mounted until a durable save succeeds or reports its error. */
     async save(work: () => Promise<void>) {
       if (Platform.OS === 'web') pendingSave.current = { url: window.location.href, state: window.history.state };
@@ -45,6 +58,7 @@ export function useBoardDraftRoute() {
     /** Return to the entry page; direct links have no app-owned entry to pop. */
     close() {
       if (pendingSave.current) return;
+      exitGuard.current = null;
       if (Platform.OS === 'web') {
         if (window.history.state?.littleSayDraft) { window.history.back(); return; }
         window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`);

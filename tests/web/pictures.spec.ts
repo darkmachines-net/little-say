@@ -1,4 +1,4 @@
-/** @file Exercises automatic picture drafts, default generation, fallback, cancellation, manual library selection, and offline PNG persistence. */
+/** @file Exercises picture drafts, explicit exit/discard, fallback, cancellation, library selection, and offline PNG persistence. */
 
 import { test, expect, type Page } from '@playwright/test';
 import sharp from 'sharp';
@@ -171,6 +171,7 @@ test('stopping picture jobs cancels queued work and discards the partial preview
   expect(requests.slice(1).map(request => request.conversation)).toEqual([{ history: [], draft: null }, { history: [], draft: null }]);
   await expect(page.getByTestId('ai-transcript').getByText('Six distinct construction vehicles.', { exact: true })).toHaveCount(1);
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
 });
 
@@ -293,8 +294,11 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   expect(reducedFrames).toEqual(['0.45']);
   ready.add(labels[1]);
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(1);
-  await expect(page.getByTestId(`draft-card-${jobs[1].tileId}`)).toContainText('Ready');
-  await expect(page.getByTestId(`draft-card-${jobs[0].tileId}`)).toContainText('Improving picture');
+  // Concurrent requests may reach the mock in either order; identify cards by their content.
+  const finished = jobs.find(job => job.concept.description === labels[1])!;
+  const active = jobs.find(job => job.concept.description === labels[0])!;
+  await expect(page.getByTestId(`draft-card-${finished.tileId}`)).toContainText('Ready');
+  await expect(page.getByTestId(`draft-card-${active.tileId}`)).toContainText('Improving picture');
   await expect.poll(() => jobs.length).toBe(3);
   expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);
   await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeDisabled();
@@ -314,6 +318,7 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   await expect(page.getByTestId('ai-draft').getByTestId('card-picture')).toHaveCount(0);
   expect(jobs).toHaveLength(6);
   await page.goBack();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
 
