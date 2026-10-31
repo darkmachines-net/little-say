@@ -1,4 +1,4 @@
-/** @file Exercises shared language preferences, direct board choices, Settings routes, durable saves, speech, and offline links. */
+/** @file Exercises simplified Settings, About, shared-language choices, default media migration, and offline links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -31,7 +31,8 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/settings$/);
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  for (const label of ['Languages', 'Voices', 'Pictures', 'Account & backup', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  for (const label of ['Languages', 'Account & backup', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  for (const label of ['Voices', 'Pictures']) await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
   await expect(page.getByRole('textbox')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Save settings|Enable automatic AI/ })).toHaveCount(0);
   await expect(page.getByText(/Your home server|Parent settings|Private server address/)).toHaveCount(0);
@@ -52,9 +53,6 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.goForward();
   await page.reload();
   await expect(page.getByText(/Spanish \(default\)/)).toBeVisible();
-  await page.getByRole('button', { name: 'Voices', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Russian', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Keep the app on screen', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'In your browser', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
@@ -214,7 +212,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await expect(page.getByRole('checkbox', { name: 'Play language Italian', exact: true })).toBeChecked();
 });
 
-test('device speech overrides cached AI, previews the saved voice, and stops generating that language', async ({ page }) => {
+test('retired media links show the overview and saved overrides return to default AI speech', async ({ page }) => {
   await mockVoices(page);
   const wave = pcmToWav(Buffer.alloc(24000));
   const id = createHash('sha256').update(wave).digest('hex');
@@ -224,40 +222,28 @@ test('device speech overrides cached AI, previews the saved voice, and stops gen
     await route.fulfill({ json: { text: input.text, language: input.language, id, cacheHit: false } });
   });
   await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
-  await openExistingLibrary(page);
+  await openExistingLibrary(page, { autoSpeech: false, voiceSources: { 'en-US': 'device' }, voices: { 'en-US': 'missing-voice' }, pictureDefaults: { mode: 'emoji', style: 'line', consistent: true } });
   await expect.poll(() => requested.includes('en-US') && requested.includes('ru-RU')).toBe(true);
   await expect.poll(() => page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
     return new Promise<boolean>(resolve => { const r = db.transaction('speech').objectStore('speech').get(JSON.stringify(['Cow', 'en-US'])); r.onsuccess = () => { db.close(); resolve(Boolean(r.result)); }; });
   })).toBe(true);
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Voices', exact: true }).click();
-  await page.getByRole('button', { name: 'English', exact: true }).click();
-  await page.getByRole('button', { name: 'Device voice', exact: true }).click();
-  await page.getByRole('radio', { name: 'English device voice', exact: true }).click();
-  await page.getByRole('button', { name: 'Preview voice', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Hello', language: 'en-US', voice: 'test-en' });
-  expect(await page.evaluate(() => (window as any).__clips)).toEqual([]);
-  await page.getByRole('button', { name: 'Voices', exact: true }).click();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  for (const path of ['voices', 'voices/en-US', 'pictures']) {
+    await page.goto('/app/settings/' + path);
+    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
+    for (const label of ['Voices', 'Pictures']) await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
+  }
+  const settings = await page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
+    return new Promise<any>(resolve => { const r = db.transaction('state').objectStore('state').get('library'); r.onsuccess = () => { db.close(); resolve(r.result.settings); }; });
+  });
+  expect(settings.voiceSources).toEqual({}); expect(settings.voices).toEqual({});
+  expect(settings.autoSpeech).toBe(true); expect(settings.pictureDefaults).toBeUndefined();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Cow', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Cow', language: 'en-US', voice: 'test-en' });
-  expect(await page.evaluate(() => (window as any).__clips)).toEqual([]);
-  await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
-    await new Promise<void>(resolve => {
-      const tx = db.transaction('state', 'readwrite'); const store = tx.objectStore('state'); const r = store.get('library');
-      r.onsuccess = () => { const library = r.result; library.settings.activeBoardId = null; for (const board of library.boards) for (const tile of board.tiles) tile.speech += '!'; store.put(library, 'library'); };
-      tx.oncomplete = () => resolve();
-    }); db.close();
-  });
-  requested.length = 0;
-  await page.goto('/app/settings/voices');
-  await expect(page.getByText('English device voice', { exact: true })).toBeVisible();
-  await expect.poll(() => requested.includes('ru-RU')).toBe(true);
-  expect(requested).not.toContain('en-US');
+  await expect.poll(() => page.evaluate(() => (window as any).__clips.length)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
 });
 
 test('direct policy and account pages work without sign-in and survive an offline refresh', async ({ page, context }) => {
@@ -276,40 +262,4 @@ test('direct policy and account pages work without sign-in and survive an offlin
   await page.getByRole('button', { name: 'Back', exact: true }).click();
   await expect(page).toHaveURL(/\/settings\/account$/);
   await expect(page.getByLabel('Email', { exact: true })).toHaveCount(0);
-});
-
-test('AI preview ignores late synthesis after leaving, reuses its saved clip, and offers a device fallback', async ({ page }) => {
-  await mockVoices(page);
-  const wave = pcmToWav(Buffer.alloc(24000));
-  const id = createHash('sha256').update(wave).digest('hex');
-  let release!: () => void;
-  let requested = 0;
-  const gate = new Promise<void>(resolve => { release = resolve; });
-  await page.route('**/api/speech', async route => {
-    const input = route.request().postDataJSON();
-    if (input.text !== 'Hello') return route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } });
-    requested++; await gate;
-    await route.fulfill({ json: { ...input, id, cacheHit: false } });
-  });
-  await page.route('**/api/speech/*.wav', route => route.fulfill({ body: wave, contentType: 'audio/wav' }));
-  await openExistingLibrary(page);
-  await page.goto('/app/settings/voices/en-US');
-  await page.getByRole('button', { name: 'Preview voice', exact: true }).click();
-  await expect.poll(() => requested).toBe(1);
-  await page.getByRole('button', { name: 'Voices', exact: true }).click();
-  release();
-  await expect.poll(() => page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
-    return new Promise<boolean>(resolve => { const r = db.transaction('speech').objectStore('speech').get(JSON.stringify(['Hello', 'en-US'])); r.onsuccess = () => { db.close(); resolve(Boolean(r.result)); }; });
-  })).toBe(true);
-  expect(await page.evaluate(() => (window as any).__clips)).toEqual([]);
-  await page.getByRole('button', { name: 'English', exact: true }).click();
-  await page.getByRole('button', { name: 'Preview voice', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as any).__clips.length)).toBe(1);
-  expect(requested).toBe(1);
-  await expect(page.getByRole('button', { name: 'Preview voice', exact: true })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Preview words', exact: true }).fill('Fallback sample');
-  await page.getByRole('button', { name: 'Preview voice', exact: true }).click();
-  await expect(page.getByText('AI speech is unavailable right now. Previewing the device fallback.', { exact: true })).toBeVisible();
-  await expect.poll(() => page.evaluate(() => (window as any).__spoken.at(-1)?.text)).toBe('Fallback sample');
 });

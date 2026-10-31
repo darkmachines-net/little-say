@@ -24,9 +24,9 @@ Android clips use the [local tile-audio module](../../modules/tile-audio/README.
 
 `hybridSpeech` selects downloaded AI clips or device TTS. `speechLibrary` prepares missing clips without blocking editing; `useSpeechLibrary` owns lifecycle and progress, resolving effective profile languages and board play subsets before planning clips. Playback finishes the current utterance and retains only the latest queued selection. Clip identity must match the current text, language, model, voice, and format; never play an old clip for changed words. Downloaded media works offline; AI failure falls back to a matching device voice. Parents should review pronunciation.
 
-`settings.voiceSources` selects `ai` or `device` for each canonical language tag; AI is the default. `settings.voices` retains device voice IDs for explicit device speech and AI fallback. Device-selected languages bypass cached AI and skip automatic/board-level generation. AI speech preparation does not consult legacy `aiConsent`.
+AI speech is the default for every language, with automatic matching device speech when a downloaded clip is unavailable. AI speech preparation does not consult legacy `aiConsent`. The schemas still read retired `voiceSources`, `voices`, and `pictureDefaults` fields for compatibility.
 
-On load, legacy `autoSpeech: false` maps profile languages, spoken board languages, and saved voice-language keys to device speech. Preserve voice IDs and boards; removing a profile language does not remove board content or saved voice preferences. Preview uses the same playback path, stops on page exit/backgrounding, and ignores late synthesis completion. Refresh device voices on foreground.
+On load, `migrateDeviceSettings` clears retired speech-source/device-voice overrides and new-board picture preferences, enables automatic speech, and restores core Automatic picture defaults. It preserves boards, board/card picture choices, languages, account state, and resumed play. Device voices refresh on foreground.
 
 ## Board translations
 
