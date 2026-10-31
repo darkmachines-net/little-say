@@ -1,5 +1,5 @@
 /**
- * @file Coordinates library persistence, board navigation, playback, and normal Undo for manual edits
+ * @file Requires sign-in, restores cloud data, and coordinates library persistence, board navigation, playback, and normal Undo for manual edits
  * and automatically saved AI turns, explicit creation-draft saves, shared languages, and translations.
  */
 
@@ -28,12 +28,13 @@ import { Brand } from './ui/Brand';
 import { defaultPicturePolicy } from '@little-say/core';
 import { useAccount } from './services/useAccount';
 import { AccountScreen } from './ui/AccountScreen';
+import { useAccountRoute } from './services/useAccountRoute';
 
 function Application() {
   const store = useLibrary();
   const draftRoute = useBoardDraftRoute();
   const settingsRoute = useSettingsRoute();
-  const audio = useSpeechLibrary(store.library);
+  const accountRoute = useAccountRoute();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [workingDraft, setWorkingDraft] = useState<CreationDraft | null>(null);
   const workingDraftRef = useRef(workingDraft);
@@ -54,8 +55,6 @@ function Application() {
     const suggestion = legacy?.draft ? { base: board, board: { ...applyProposal(null, legacy.draft, () => Crypto.randomUUID()), id: board.id, createdAt: now } } : null;
     updateDraft({ board, prompt: legacy?.prompt ?? '', suggestion, history: legacy?.history ?? [], reply: legacy?.clarifying ? legacy.history.at(-1)?.reply ?? '' : '' });
   }, [draftRoute.route, store.library]);
-  const [accountOpen, setAccountOpen] = useState(false);
-  const [entryChecked, setEntryChecked] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [error, setError] = useState('');
   const [soundCheck, setSoundCheck] = useState<Board | null>(null);
@@ -67,11 +66,9 @@ function Application() {
   const [updateReady, setUpdateReady] = useState(false);
   const [undo, setUndo] = useState<Record<string, Board[]>>({});
   const account = useAccount(store, !draftRoute.route && !selectedId && !store.library?.settings.activeBoardId, () => audio.reload());
-  useEffect(() => {
-    if (entryChecked || !store.library || !account.ready) return;
-    setEntryChecked(true);
-    if (!account.session && !store.library.settings.accountChoiceMade && !store.library.settings.activeBoardId && !draftRoute.route && !settingsRoute.route) setAccountOpen(true);
-  }, [entryChecked, store.library, account.ready, account.session, draftRoute.route, settingsRoute.route]);
+  const requiresAccount = !account.session || account.needsLogin;
+  const audio = useSpeechLibrary(account.ready && !requiresAccount ? store.library : null);
+  const openAccount = accountRoute.open;
   const previewSettings = store.library?.settings;
   const previewQueue = useMemo(() => speechQueue(voices, previewSettings?.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset, tag => previewSettings ? speechSource(previewSettings, tag) : 'ai'), [voices, previewSettings, audio]);
   useEffect(() => () => previewQueue.stop(), [previewQueue]);
@@ -89,7 +86,7 @@ function Application() {
   }, []);
   const remember = (board: Board) => setUndo(current => ({ ...current, [board.id]: [...(current[board.id] ?? []).slice(-19), board] }));
   const translations = useBoardTranslations(store, remember);
-  const setSettings = (patch: Partial<Settings>) => settingsRoute.save(() => store.commit(current => ({ ...current, settings: { ...current.settings, ...patch, activeBoardId: current.settings.activeBoardId, accountChoiceMade: current.settings.accountChoiceMade } })));
+  const setSettings = (patch: Partial<Settings>) => settingsRoute.save(() => store.commit(current => ({ ...current, settings: { ...current.settings, ...patch, activeBoardId: current.settings.activeBoardId } })));
   const deleteBoard = (id: string) => {
     previewQueue.stop();
     void store.change(current => {
@@ -126,17 +123,20 @@ function Application() {
   };
   const preview = (tile: Tile) => { previewQueue.stop(); previewQueue.enqueue(tile); };
   if (store.loadError) return <View style={[styles.page, { justifyContent: 'center', padding: 30, gap: 20 }]}><Notice>{store.loadError}</Notice><Button onPress={() => void store.reload()}>Try opening again</Button></View>;
-  if (!store.library || !entryChecked) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
+  if (!store.library || !account.ready) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
   const library = store.library;
-  const accountScreen = accountOpen && <AccountScreen account={account} onClose={async () => {
-    if (!store.current.current!.settings.accountChoiceMade) await store.commit(current => ({ ...current, settings: { ...current.settings, accountChoiceMade: true } }));
-    setAccountOpen(false);
+  const accountScreen = (accountRoute.route || requiresAccount || account.restoring) && <AccountScreen account={account} mode={accountRoute.route?.mode ?? null} onMode={mode => openAccount(mode, mode === null)} onBack={accountRoute.back} onClose={() => {
+    if (requiresAccount || account.restoring) return;
+    accountRoute.close();
   }} />;
-  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
-  if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
+  if (requiresAccount || account.restoring) return accountScreen;
+  const accountLabel = account.session && !account.needsLogin ? 'Account & backup' : 'Sign in / Register';
+  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
+  if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => openAccount()} accountLabel={accountLabel} />{accountScreen}</>;
   const boards = library.boards.map(board => boardWithProfileLanguages(board, library.settings));
   const activeBoard = boards.find(board => board.id === library.settings.activeBoardId);
   const selected = boards.find(board => board.id === (draftRoute.route?.boardId ?? selectedId)) ?? (draftRoute.route && !draftRoute.route.boardId && workingDraft ? boardWithProfileLanguages(workingDraft.board, library.settings) : undefined);
+  if (activeBoard && accountScreen) return accountScreen;
   if (activeBoard) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onEdit={snapshot => {
     if (draftRoute.route?.boardId !== activeBoard.id) draftRoute.open(activeBoard.id); setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
     void store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })).catch(() => {});
@@ -157,7 +157,6 @@ function Application() {
   if (draftRoute.route?.boardId && !selected) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
   return <><View style={styles.page}>
     <StatusBar style="dark" />
-    {!selected && account.session && <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={styles.small}>{account.error ? 'Backup needs attention' : account.busy ? 'Syncing account backup…' : account.savedAt ? 'Account backup enabled' : 'Account backup pending'}</Text><Button compact kind="ghost" onPress={() => settingsRoute.open({ page: 'account' })}>Account & backup</Button></View>}
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
@@ -196,7 +195,7 @@ function Application() {
         setSelectedId(null); draftRoute.replace(null);
       }
       setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
-    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
+    }} /> : <Dashboard library={library} audio={audio} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onAccount={() => openAccount()} accountLabel={accountLabel} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
@@ -208,8 +207,8 @@ function Application() {
   </View>{accountScreen}</>;
 }
 /**
- * Mount the app with safe-area support and the library-driven setup, dashboard, editor, and play
- * screens. Seed the stable root provider with native window insets for the first render; subsequent
+ * Mount the app with safe-area support for account entry, setup, dashboard, editor, and play.
+ * Seed the stable root provider with native window insets for the first render; subsequent
  * system-bar visibility and orientation changes are measured by the provider.
  */
 export default function App() { return <SafeAreaProvider initialMetrics={initialWindowMetrics}><SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}><Application /></SafeAreaView></SafeAreaProvider>; }

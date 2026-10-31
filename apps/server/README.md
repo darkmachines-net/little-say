@@ -2,7 +2,7 @@
 
 `src/index.ts` starts the API using shared PostgreSQL and Firebase configuration. `src/worker.ts` executes durable AI jobs and maintenance. `src/app.ts` registers HTTP routes and serves the built browser app; its injectable provider mode is retained for isolated unit fixtures. `/api/health` reports capabilities; `/api/ready` verifies the additive migration prefix. Shutdown drains owned resources.
 
-Verified sign-in is required for server-funded AI. Owner checks protect jobs, cancellation and personal generated-media downloads, including direct Cloud Run URLs. Public catalog access, manual boards, device speech and downloaded content remain available without sign-in. [Account sessions](src/accounts/README.md) and the [shared hosting runtime](src/hosting/README.md) own these contracts. Sign-in does not enable backups automatically.
+Registered account identities own server-funded AI requests. Owner checks protect jobs, cancellation and personal generated-media downloads, including direct Cloud Run URLs. Downloaded content remains available offline. [Account sessions](src/accounts/README.md) and the [shared hosting runtime](src/hosting/README.md) own these contracts; [client services](../mobile/src/services/README.md#accounts-and-sync) own sign-in and automatic backup behavior.
 
 ## Configuration
 

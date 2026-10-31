@@ -1,5 +1,6 @@
-/** @file Exercises setup language search/edit/default controls, generated starter drafts, retries, and persistence. */
+/** @file Exercises authenticated setup language search/edit/default controls, generated starter drafts, retries, and persistence. */
 
+import { openSignedInApp } from './accountFixture';
 import { expect, test, type Page } from '@playwright/test';
 import { addUserLanguage, removeUserLanguage } from './existingLibrary';
 import { type ProposalRequest, type StarterTopic } from '../../packages/core/src/schema';
@@ -38,8 +39,7 @@ test.beforeEach(async ({ page }) => {
     } });
     Element.prototype.requestFullscreen = async () => {};
   });
-  await page.goto('/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await openSignedInApp(page);
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 

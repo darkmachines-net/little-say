@@ -1,4 +1,4 @@
-/** @file Persists the native library in SQLite and keeps photo, picture, and speech files in app document storage. */
+/** @file Owns offline native library and media storage using SQLite indexes and app document files. */
 
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -63,9 +63,6 @@ export async function pruneAssets(keep: Set<string>): Promise<void> {
     if (file.endsWith('.jpg') && !keep.has(file.slice(0, -4))) await FileSystem.deleteAsync(`${directory}${file}`, { idempotent: true });
   }
 }
-/** Return true because native document storage needs no browser-style persistence request. */
-export async function requestPersistence(): Promise<boolean> { return true; }
-
 /** Restore the speech-key index, skipping invalid IDs and audio files that no longer exist. */
 export async function loadSpeechAssets(): Promise<Record<string, SpeechAsset>> {
   const rows = await (await database).getAllAsync<{ key: string; asset_id: string }>('SELECT key, asset_id FROM speech');

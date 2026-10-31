@@ -1,6 +1,6 @@
-# Optional accounts and private backups
+# Accounts and private backups
 
-`routes.ts` owns `/api/account`, `firebase.ts` verifies identity, and `store.ts` owns PostgreSQL persistence. Firebase provides identity only: no Firestore or Firebase Storage. The [client services](../../../mobile/src/services/README.md) own launch consent, sync scheduling, and device credentials. Shared payloads and three-way merge behavior are defined in `packages/core/src/account.ts`.
+`routes.ts` owns `/api/account`, `firebase.ts` verifies identity, and `store.ts` owns PostgreSQL persistence. Firebase provides identity only: no Firestore or Firebase Storage. The [client services](../../../mobile/src/services/README.md) own required account entry, sync scheduling, and device credentials. Shared payloads and three-way merge behavior are defined in `packages/core/src/account.ts`.
 
 ## Configuration and identity
 
@@ -12,15 +12,15 @@ Accounts have internal UUIDs and unique Firebase project/UID mappings. Emails ar
 
 ## Session and API boundaries
 
-- `GET /api/account/config` returns public client settings only. Passwords stay with Firebase.
-- `POST /session` exchanges a Firebase ID token for a private owner. Automatic AI guests supply `guest: true`, which accepts only an anonymous identity; returning native guests may refresh without recent sign-in. Registered account exchanges still require authentication within five minutes. Native requests subsequently use refreshed bearer tokens.
+- `GET /api/account/config` returns public client settings. Hosted passwords stay with Firebase. Only a `NODE_ENV=development` API using the Auth emulator and password provider includes `developmentAccount` public fixture credentials; API startup provisions that verified identity if absent. See [local test sign-in](../../../../scripts/README.md#development-launcher) for its use and persistence. Release clients never show the shortcut.
+- `POST /session` exchanges a Firebase ID token for a private owner. Only registered identities with a linked sign-in provider are accepted, and exchanges require authentication within five minutes. Anonymous tokens and old guest cookies are rejected. Native requests subsequently use refreshed bearer tokens.
 - Browser authentication uses one 14-day opaque `__session` cookie, HttpOnly, SameSite=Strict, Secure in production, scoped to `/api`. PostgreSQL stores the Firebase session token and CSRF state; no JWT is carried in the browser cookie. Firebase Hosting forwards this single cookie. Logout revokes only that login.
 - Browser mutations require the server-side token bound to `__session` from `GET /csrf`, the app header, and exact allowed-origin checks. Bearer requests do not use browser cookie authority. The expected-account header rejects cross-tab account changes.
-- `GET /session`, `POST /logout`, `POST /delete`, `GET/POST /backup`, and `GET/POST /assets/:hash` complete the API under `/api/account`. Responses are `no-store`; errors are sanitized. Email verification gates backup access only. AI accepts automatic anonymous guests and unverified registered accounts. Shared access checks also protect AI jobs, cancellation and personal generated media.
+- `GET /session`, `POST /logout`, `POST /delete`, `GET/POST /backup`, and `GET/POST /assets/:hash` complete the API under `/api/account`. Responses are `no-store`; errors are sanitized. Email verification gates backup access only. AI requires a registered account; email verification is required only for backups. Shared access checks also protect AI jobs, cancellation and personal generated media.
 
 ## Backup persistence
 
-Backups include boards, personal photos, illustrations, and downloaded speech. They are visible to the server operator and are not end-to-end encrypted. Sign-in enables identity only; a separate per-device choice enables backup. Device settings, consent, favorites, play history, drafts, and undo remain local. Account sign-out preserves downloaded data.
+Backups include boards, personal photos, illustrations, and downloaded speech. They are visible to the server operator and are not end-to-end encrypted. The [client account service](../../../mobile/src/services/README.md#accounts-and-sync) owns automatic backup after verified sign-in. Device settings, consent, favorites, play history, drafts, and undo remain local. Account sign-out preserves downloaded data.
 
 The account row is locked before revision, completeness, and quota checks. Stale writers receive HTTP 409. Limits are 500 boards, 10 MB per asset, and 256 MB of private assets per account. Assets are owner-scoped even for identical bytes; unreferenced uploads count against quota until deletion. Snapshots have a relational revision and JSONB boards/manifest; immutable bytes currently live in `bytea`. There is no automatic eviction or history UI.
 

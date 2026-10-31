@@ -1,4 +1,4 @@
-/** @file Persists browser library, photos, pictures, and speech in IndexedDB and manages reusable blob URLs. */
+/** @file Owns offline browser library and media storage in IndexedDB, including reusable blob URLs. */
 
 import { openDB } from 'idb';
 import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
@@ -69,9 +69,6 @@ export async function pruneAssets(keep: Set<string>): Promise<void> {
     urls.delete(String(id));
   }
 }
-/** Ask the browser to retain origin storage; return false when the persistence API is unavailable. */
-export async function requestPersistence(): Promise<boolean> { return navigator.storage?.persist ? navigator.storage.persist() : false; }
-
 const audioUrls = new Map<string, string>();
 function audioAsset(id: string, blob: Blob): SpeechAsset {
   let uri = audioUrls.get(id);

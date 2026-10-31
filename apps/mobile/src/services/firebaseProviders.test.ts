@@ -1,4 +1,4 @@
-/** @file Ensures Expo Go email/guest startup never loads native social modules and explains unsupported actions. */
+/** @file Ensures Expo Go email sign-in never loads native social modules and explains unsupported actions. */
 import { expect, it, vi } from 'vitest';
 vi.mock('react-native', () => ({ Platform: { OS: 'android' } }));
 vi.mock('expo-constants', () => ({ default: { executionEnvironment: 'storeClient' }, ExecutionEnvironment: { StoreClient: 'storeClient' } }));

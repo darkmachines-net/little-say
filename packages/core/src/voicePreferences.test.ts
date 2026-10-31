@@ -1,4 +1,4 @@
-/** @file Verifies default media migration preserves boards and unrelated settings, plus compatible speech-source lookup. */
+/** @file Verifies default media migration preserves boards and playback settings, plus compatible speech-source lookup. */
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
@@ -12,7 +12,6 @@ describe('managed device settings', () => {
     library.settings.voices = { 'en-US': 'saved-device-voice', 'fr-FR': 'saved-french' };
     library.settings.pictureDefaults = { ...defaultPicturePolicy, mode: 'emoji' };
     library.settings.activeBoardId = library.boards[0].id;
-    library.settings.accountChoiceMade = true;
     library.boards[0].picturePolicy = { ...defaultPicturePolicy, mode: 'library' };
     const migrated = migrateDeviceSettings(library);
     expect(migrated.boards).toBe(library.boards);

@@ -1,20 +1,22 @@
-/** @file Verifies shared navigation rows, unified-editor settings access, accessible titles, touch targets, and separate full-screen play. */
+/** @file Waits for route headers before verifying authenticated navigation, account entry, unified-editor settings, accessible titles, touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';
 import { openBoardLanguages, openBoardPictures } from './boardEditor';
+import { openSignedInApp } from './accountFixture';
 
 async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   const header = page.getByTestId('app-header').last();
   const bar = page.getByTestId('app-header-bar').last();
+  await expect(bar).toBeVisible();
+  if (title) await expect(bar.getByRole('heading', { name: title, exact: true })).toBeVisible();
   const bounds = (await bar.boundingBox())!;
   // A contextual toolbar must not create a second row beneath the navigation bar.
   expect((await header.boundingBox())!.height).toBe(bounds.height + 1);
   if (title) {
     const heading = page.getByRole('heading', { name: title, exact: true });
     await expect(heading).toHaveCount(1);
-    await expect(bar.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await expect(bar.locator('img')).toHaveCount(0);
     const headingBox = (await heading.boundingBox())!;
     expect(headingBox.y).toBeGreaterThanOrEqual(bounds.y);
@@ -61,12 +63,10 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await page.getByRole('button', { name: 'Languages', exact: true }).click();
     expect(await headerGeometry(page, 'Languages', 'Settings')).toEqual(dashboard);
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
-    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-    await page.getByRole('button', { name: 'Log in', exact: true }).click();
-    expect(await headerGeometry(page, 'Log in', 'Back')).toEqual(dashboard);
-    await page.getByRole('button', { name: 'Back', exact: true }).click();
-    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('button', { name: 'Boards', exact: true }).click();
+    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+    expect(await headerGeometry(page, 'Account & backup', 'Back')).toEqual(dashboard);
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
     await page.getByRole('button', { name: 'New board', exact: true }).click();
     expect(await headerGeometry(page, 'New board', 'Boards')).toEqual(dashboard);
     await page.screenshot({ path: `artifacts/screenshots/headers/ai-${viewport.width}.png` });
@@ -94,16 +94,17 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
 test('account and setup use route headings and compact single rows after a phone resize', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/app');
-  await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toBeVisible();
-  const desktop = await headerGeometry(page, 'Welcome to Little Say', 'Back');
+  await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
+  const desktop = await headerGeometry(page, 'Welcome to Little Say');
   await page.setViewportSize({ width: 320, height: 740 });
   await expect.poll(async () => (await page.getByTestId('app-header-bar').last().boundingBox())!.height).toBeLessThan(desktop.height);
-  const phone = await headerGeometry(page, 'Welcome to Little Say', 'Back');
+  const phone = await headerGeometry(page, 'Welcome to Little Say');
   expect(phone.height).toBeLessThan(desktop.height);
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await openSignedInApp(page);
   expect(await headerGeometry(page, 'Set up Little Say')).toEqual(phone);
-  await page.getByRole('button', { name: 'Sign in or restore boards', exact: true }).click();
-  expect(await headerGeometry(page, 'Welcome to Little Say', 'Back')).toEqual(phone);
+  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+  expect(await headerGeometry(page, 'Account & backup', 'Back')).toEqual(phone);
   await page.getByRole('button', { name: 'Back', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });

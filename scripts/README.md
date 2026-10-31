@@ -35,6 +35,8 @@ Normal shutdown releases only that launcher's claims. The next mutation prunes c
 
 PostgreSQL/Auth containers continue running after Ctrl+C or an abrupt launcher exit. To stop them, use the exact project printed by that worktree: `docker compose --project-name little-say-<checkout-hash> --file compose.yaml stop postgres auth`. Allow Auth's graceful export to finish. This preserves volumes. Before deleting a worktree, stop its launcher/containers and optionally remove its firewall rules with `dev-firewall.ps1 -Remove`. Removing a directory alone does not remove Docker resources or firewall rules. No daemon or automatic volume deletion is involved.
 
+For one-tap local sign-in, run `npm run dev` or `npm run dev:web`, open **Sign in**, then choose **Sign in with test account**. The development API creates the verified `tester@little-say.test` account with password `little-say-local-test-only` if absent and reuses it across restarts; no registration or verification email is needed. Its boards and backup belong to the same account on every device using that emulator, following the normal [automatic backup behavior](../apps/mobile/src/services/README.md#accounts-and-sync). These are public local fixture credentials, not a hosted account. The shortcut requires both a development app build (including Expo Go) and the local emulator configuration; it is absent in release exports and remote-backend mode. Local authentication continues to use email/password; Google and Apple are not simulated by this shortcut.
+
 ## Environment and browser proxy
 
 Resolution order is inherited process environment, `.env.local`, then `.env`. Local mode prefers `AAC_OPENAI_KEY` over `OPENAI_API_KEY`, with Windows User environment fallback only when no explicit process/file key exists. Keys are never printed or written by the launcher. Remote mode does not look up local keys or create `.env`.
@@ -54,7 +56,7 @@ Remote native requests use HTTPS directly. Browser `/api/` requests stream throu
 
 ## Device connectivity
 
-Keep computer and device on the same reachable trusted LAN; wired computer plus Wi-Fi tablet is fine. Scan the QR code for the selected target (Expo Go or the installed Little Say Dev client) and allow local-network access. For the development client, its launcher can also accept the printed HTTP client-server URL. On physical iOS, sign the CLI (`npx expo login` in `apps/mobile`) and Expo Go into the same Expo account when required by Expo Go. This is separate from optional Little Say accounts.
+Keep computer and device on the same reachable trusted LAN; wired computer plus Wi-Fi tablet is fine. Scan the QR code for the selected target (Expo Go or the installed Little Say Dev client) and allow local-network access. For the development client, its launcher can also accept the printed HTTP client-server URL. On physical iOS, sign the CLI (`npx expo login` in `apps/mobile`) and Expo Go into the same Expo account when required by Expo Go. This is separate from Little Say sign-in.
 
 Run doctor, then open the printed `/api/health` URL on the actual device: success on the computer alone does not prove LAN access. Check `status: ok` and, for AI, `aiConfigured: true`. If the address is wrong, choose an assigned `DEV_HOST`; check VPN/WSL/Docker adapters. For timeouts, check local-network permissions and guest/client-isolated Wi-Fi. Expo's bundler tunnel does not tunnel this API.
 

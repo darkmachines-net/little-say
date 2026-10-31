@@ -1,16 +1,16 @@
-/** @file Verifies automatic guest AI saves, session isolation, backup consent, deterministic media restore, offline conflicts, and local-preserving sign-out. */
+/** @file Exercises required web accounts, first-device cloud restoration, automatic verified-account backup, media restoration, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
+import { createTestAccount, openSignedInApp } from './accountFixture';
 import { starterLibrary } from '../fixtures/library';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { waitForAiTurn } from './boardEditor';
 
 const password = 'a test family passphrase';
 
-test('guests create a fixture AI board without registration and retain private session ownership on reload', async ({ page, browser }) => {
-  await page.goto('/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+test('registered accounts create AI boards and retain private ownership on reload', async ({ page, browser }) => {
+  const credentials = await openSignedInApp(page);
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
   const accepted = page.waitForResponse(response => response.url().endsWith('/api/boards/propose') && response.status() === 202);
@@ -24,10 +24,10 @@ test('guests create a fixture AI board without registration and retain private s
   expect(created.tiles.length).toBeGreaterThan(0);
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
   const owner = (await (await page.request.get('/api/account/session')).json()).account;
-  expect(owner).toMatchObject({ email: null, emailVerified: false, providers: [] });
-  expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
-  expect((await readLibrary(page)).sync).toBeUndefined();
-  expect((await page.request.get('/api/account/backup')).status()).toBe(403);
+  expect(owner).toMatchObject({ email: credentials.email, emailVerified: true, providers: ['password'] });
+  expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toContain(credentials.email);
+  expect((await readLibrary(page)).sync.accountId).toBe(owner.id);
+  expect((await page.request.get('/api/account/backup')).status()).toBe(200);
   await page.reload();
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
   expect((await readLibrary(page)).boards[0]).toEqual(created);
@@ -39,71 +39,40 @@ test('guests create a fixture AI board without registration and retain private s
   } finally { await other.close(); }
 });
 
-test('launch choices, form back/cancel and settings navigation preserve guest state across relaunch', async ({ page }) => {
+test('web sign-in gates legacy local boards, cancelled forms, settings links, and signed-out reloads', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app');
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await expect(page.getByLabel('Email', { exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Create an account', exact: true }).click();
-  await page.getByLabel('Password', { exact: true }).fill('never submitted');
+  await page.getByRole('button', { name: 'Register', exact: true }).click();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
-  const before = await readLibrary(page);
-  expect(before.settings.accountChoiceMade).toBe(true);
-  expect(before.settings.aiConsent).toBe(false);
-  await page.reload();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await expect(page.getByLabel('Email', { exact: true })).toHaveCount(0);
-  await expect(page.getByLabel('Private server address', { exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.evaluate(() => navigator.serviceWorker.ready);
-  await page.context().setOffline(true); await page.reload();
-  await expect(page.getByText('No boards yet', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await page.getByRole('button', { name: 'Back to Settings', exact: true }).click();
-  expect(await readLibrary(page)).toEqual(before);
-});
-
-test('an existing guest library survives the new launch choice and failed choice persistence', async ({ page }) => {
-  await page.goto('/app');
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
   const library = starterLibrary(); library.settings.autoSpeech = false;
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
-    await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); }); db.close();
+    await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put({ ...library, settings: { ...library.settings, accountChoiceMade: true } }, 'library'); tx.oncomplete = () => resolve(); }); db.close();
   }, library);
+  await page.goto('/app/settings/privacy');
+  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toHaveCount(0);
+  expect((await page.request.get('/api/account/backup')).status()).toBe(401);
+  await openSignedInApp(page);
+  await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+  expect((await readLibrary(page)).boards).toEqual(library.boards);
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.context().setOffline(true); await page.reload();
+  await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
-  await page.evaluate(() => {
-    const original = IDBObjectStore.prototype.put;
-    IDBObjectStore.prototype.put = function (...args: any[]) {
-      if (this.name === 'state' && args[0]?.settings?.accountChoiceMade === true) {
-        IDBObjectStore.prototype.put = original;
-        throw new DOMException('Synthetic full storage', 'QuotaExceededError');
-      }
-      return original.apply(this, args as any);
-    };
-  });
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
-  await expect(page.getByText('Your choice could not be saved. Check device storage and try again.', { exact: true })).toBeVisible();
-  expect((await readLibrary(page)).boards).toEqual(library.boards);
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
-  await page.reload();
-  await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toHaveCount(0);
   expect((await readLibrary(page)).boards).toEqual(library.boards);
 });
+
 async function readLibrary(page: Page) {
   return page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>(resolve => { const r = indexedDB.open('little-say'); r.onsuccess = () => resolve(r.result); });
@@ -111,11 +80,10 @@ async function readLibrary(page: Page) {
   });
 }
 async function signIn(page: Page, username: string) {
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await page.getByRole('button', { name: 'Enable backup on this device', exact: true }).click();
 }
 async function changeTitle(page: Page, title: string) {
   await page.evaluate(async title => {
@@ -137,13 +105,12 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     // Keep the owned photo/picture/speech fixture fixed while app defaults allow automatic AI audio.
     for (const device of [page, other]) await device.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
     await page.goto('/app');
-    await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
     // Seed a device with already-owned files. Everything after this uses the live account API.
     const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a6XcAAAAASUVORK5CYII=';
     const pictureId = createHash('sha256').update(Buffer.from(png, 'base64')).digest('hex');
     const audio = pcmToWav(Buffer.alloc(2400)); const audioId = createHash('sha256').update(audio).digest('hex');
-    const library = starterLibrary(); library.settings.accountChoiceMade = true; library.settings.autoSpeech = false; library.settings.aiConsent = false;
+    const library = starterLibrary(); library.settings.autoSpeech = false; library.settings.aiConsent = false;
     library.boards = [library.boards[0]];
     library.boards[0].tiles[0].illustration = { kind: 'photo', assetId: 'family-photo', zoom: 1.4, x: 0.2, y: -0.3 };
     library.boards[0].tiles[1].illustration = { kind: 'generated', assetId: pictureId, style: 'color', description: 'Test picture', model: 'fixture' };
@@ -159,14 +126,13 @@ test('accounts restore all asset types to a fresh device and merge offline confl
       }); db.close();
     }, { library, png, pictureId, audio: [...audio], audioId, speechKey });
     await page.reload();
-    await page.getByRole('button', { name: 'Settings', exact: true }).click();
-    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-    await page.getByRole('button', { name: 'Create an account', exact: true }).click();
+    await page.getByRole('button', { name: 'Register', exact: true }).click();
     await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
-    await expect(page.getByText('Verify your email to enable backup. AI is available now, and your boards still work offline.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Verify your email to start automatic backup. AI is available now, and your boards still work offline.', { exact: true })).toBeVisible();
+    expect((await readLibrary(page)).sync).toBeUndefined();
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
     expect(verification).toBeTruthy();
@@ -174,9 +140,8 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     expect(verified.ok()).toBe(true);
     await page.getByLabel('Password for verification', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Check email verification', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Enable backup on this device', exact: true })).toBeVisible();
-    expect((await readLibrary(page)).sync).toBeUndefined();
-    await page.getByRole('button', { name: 'Enable backup on this device', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Enable backup on this device', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Request persistent browser storage', exact: true })).toHaveCount(0);
     await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await expect.poll(async () => (await readLibrary(page)).sync.snapshot.assets.length).toBe(3);
     expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).not.toContain('token');
@@ -200,34 +165,35 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await changeTitle(page, 'Edited on tablet'); await changeTitle(other, 'Edited on phone');
     await expect(other.getByRole('button', { name: 'Play Edited on phone', exact: true })).toBeVisible();
     await page.context().setOffline(false);
-    await page.getByRole('button', { name: 'Settings', exact: true }).click();
-    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+    await page.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
     await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await second.setOffline(false);
-    await other.getByRole('button', { name: 'Settings', exact: true }).click();
-    await other.getByRole('button', { name: 'Account & backup', exact: true }).click();
+    await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
     await expect(other.getByText(/Conflicting edits were kept/)).toBeVisible();
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
     await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
-    await expect(other.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
-    await other.getByRole('button', { name: 'Back to Settings', exact: true }).click();
-    await other.getByRole('button', { name: 'Boards', exact: true }).click();
     await second.setOffline(true); await other.reload();
-    await expect(other.getByRole('button', { name: 'Play Edited on tablet', exact: true })).toBeVisible();
+    await expect(other.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Play Edited on tablet', exact: true })).toHaveCount(0);
     expect(await other.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
   } finally { await second.close(); }
 });
 
-test('a parent can skip accounts and finish setup without an account request', async ({ page }) => {
-  const accountRequests: string[] = []; page.on('request', request => { if (request.url().includes('/api/account/')) accountRequests.push(request.url()); });
-  await page.goto('/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click(); await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
-  expect(accountRequests).toEqual([]);
+test('an empty device waits for cloud data and can retry a failed first restoration', async ({ page }) => {
+  const credentials = await createTestAccount();
+  await page.route('**/api/account/backup', route => route.fulfill({ status: 503, json: { error: 'Restore temporarily unavailable.' } }));
+  await page.goto('/app'); await signIn(page, credentials.email);
+  await expect(page.getByText('Restore temporarily unavailable.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Continue to boards', exact: true })).toBeDisabled();
+  await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
+  await page.unroute('**/api/account/backup');
+  await page.getByRole('button', { name: 'Retry loading boards', exact: true }).click();
+  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
-
 
 test('cross-tab account changes and legacy server overrides never silently redirect a backup', async ({ page, context }) => {
   const emails = [randomUUID() + '@example.test', randomUUID() + '@example.test'];
@@ -239,24 +205,21 @@ test('cross-tab account changes and legacy server overrides never silently redir
     const code = oobCodes.find((value: { email: string }) => value.email === email);
     expect((await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
   }
-  await page.goto('/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await page.goto('/app'); await signIn(page, emails[0]);
+  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await signIn(page, emails[0]);
-  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
   const other = await context.newPage();
   try {
     await other.goto('/app');
-    await other.getByRole('button', { name: 'Settings', exact: true }).click();
-    await other.getByRole('button', { name: 'Account & backup', exact: true }).click();
+    await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
     await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
     await signIn(other, emails[1]);
     await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     await page.bringToFront();
-    await page.getByRole('button', { name: 'Sync now', exact: true }).click();
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
     await expect(page.getByText('Your session has expired. Sign in again to resume sync.', { exact: true })).toBeVisible();
     await other.bringToFront();
     const sent: string[] = [];
@@ -271,7 +234,6 @@ test('cross-tab account changes and legacy server overrides never silently redir
       }); db.close();
     });
     await other.reload();
-    await other.getByRole('button', { name: 'Sync now', exact: true }).click();
     await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
     expect((await readLibrary(other)).settings.backendUrl).toBe('');
     expect(sent).toEqual([]);

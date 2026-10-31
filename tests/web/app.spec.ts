@@ -1,5 +1,5 @@
 /**
- * @file Exercises automatic AI turns, toolbar settings, card limits, editing/play, modal dismissal,
+ * @file Exercises automatic AI turns, toolbar settings, card limits, signed-in editing/play, modal dismissal,
  * shared language preferences, automatic translations, device speech fallback, responsive layouts, and offline behavior.
  */
 

@@ -1,5 +1,6 @@
-/** @file Seeds isolated browser libraries and exercises shared language choices and per-card language following. */
+/** @file Signs into isolated accounts, seeds browser libraries, and exercises shared language choices and per-card language following. */
 
+import { openSignedInApp } from './accountFixture';
 import { starterLibrary } from '../fixtures/library';
 import { expect, type Page } from '@playwright/test';
 import { type Library } from '@little-say/core';
@@ -26,10 +27,9 @@ export async function followBoardLanguages(page: Page, labels: string[]) {
   }
 }
 
-/** Bypass first-use setup with stable boards; overrides make feature assumptions such as speech source explicit. */
+/** Authenticate and replace first-use setup with stable boards; overrides make feature assumptions such as speech source explicit. */
 export async function openExistingLibrary(page: Page, settings: Partial<Library['settings']> = {}) {
-  await page.goto('/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
+  await openSignedInApp(page);
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
@@ -37,7 +37,7 @@ export async function openExistingLibrary(page: Page, settings: Partial<Library[
       const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library');
       tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error);
     }); db.close();
-  }, { ...starterLibrary(), settings: { ...starterLibrary().settings, accountChoiceMade: true, ...settings } });
+  }, { ...starterLibrary(), settings: { ...starterLibrary().settings, ...settings } });
   await page.reload();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 }
