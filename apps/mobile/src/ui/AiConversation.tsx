@@ -1,11 +1,11 @@
 /**
- * @file Hosts a full-page conversation and live board canvas with shared app chrome, cancellable work, and explicit saves.
+ * @file Hosts a conversation and live board canvas beneath one route header, with cancellable work and explicit saves.
  */
 
 import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions, type ScrollViewInstance, type TextInputInstance } from 'react-native';
-import { ArrowLeft, ArrowUp, SlidersHorizontal, Square } from 'lucide-react-native';
+import { ArrowUp, SlidersHorizontal, Square } from 'lucide-react-native';
 import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { proposeBoard } from '../services/api';
 import { Button, Notice, Sheet } from './components';
@@ -42,7 +42,8 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * Render a creation or editing conversation that preserves the source board until Apply, supports
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
  * Text entry supports system keyboard dictation; explicit sends enable AI without an interstitial.
- * Shared branded navigation cancels pending work; only an in-progress board save prevents leaving.
+ * The single route header keeps Back and picture controls reachable; navigation cancels pending work
+ * and only an in-progress board save prevents leaving.
  * Phone previews use the measured workspace below the header so message controls retain their space.
  * onAiUse persists the legacy AI-enabled preference.
  * onApply's second argument authorizes replacing protected manual/legacy translations for this
@@ -173,12 +174,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
   const preview = draft ? proposalPreview(source, draft, reviewedDraft === draft) : source ?? null;
   const canvasMessage = busy === 'generate' ? pictureMessage || 'Updating your board…' : clarifying ? 'Waiting for your answer · Your current draft stays here.' : '';
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : Platform.OS === 'android' ? 'height' : undefined} testID="ai-conversation" style={{ flex: 1, backgroundColor: theme.background }}>
-    <AppHeader actions={<Button kind="ghost" compact icon={ArrowLeft} disabled={busy === 'save'} accessibilityLabel={source ? 'Back to board' : 'Back to boards'} onPress={close}>{source ? 'Board' : 'Boards'}</Button>}>
-      <View style={[styles.row, { justifyContent: 'space-between' }]}>
-        <View style={{ flex: 1, minWidth: 0, gap: 3 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text><Text numberOfLines={1} style={styles.small}>{source?.title ?? profileLanguages(settings).map(languageName).join(' · ')}</Text></View>
-        <Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>
-      </View>
-    </AppHeader>
+    <AppHeader title={title} subtitle={source?.title ?? profileLanguages(settings).map(languageName).join(' · ')} onBack={close} backLabel={source ? 'Back to board' : 'Back to boards'} backDisabled={busy === 'save'} actions={<Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>} />
     <View onLayout={event => setWorkspaceHeight(event.nativeEvent.layout.height)} style={{ flex: 1, minHeight: 0, width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 8 : 18, gap: 16, flexDirection: sideBySide ? 'row' : 'column-reverse' }}>
       <View testID="ai-chat-panel" style={{ flex: sideBySide ? 0.85 : 1, minHeight: 0, minWidth: 0, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
         <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current && (history.length > 0 || submitted || busy)) transcript.current?.scrollToEnd({ animated: false }); }}>

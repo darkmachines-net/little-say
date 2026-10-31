@@ -1,23 +1,16 @@
-/** @file Supplies routed Settings pages with shared branded navigation and compact grouped rows. */
+/** @file Supplies Settings pages with one route header, guarded Back navigation, and compact grouped rows. */
 
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ArrowLeft, ChevronRight, type LucideIcon } from 'lucide-react-native';
-import { Button } from './components';
+import { ChevronRight, type LucideIcon } from 'lucide-react-native';
 import { AppHeader } from './AppHeader';
-import { useScreenFocus } from './screenFocus';
 import { styles, theme } from './theme';
 
-/** Render a branded page with an accessible heading, guarded Back action, and live preference-save status. */
+/** Put the focused page title, guarded Back action, and live save status in one navigation row. */
 export function SettingsPage({ title, backLabel, onBack, busy = false, status, children }: { title: string; backLabel: string; onBack: () => void; busy?: boolean; status?: string; children: ReactNode }) {
-  const heading = useScreenFocus();
   return <View style={styles.page}>
-    <AppHeader actions={<Button compact kind="ghost" icon={ArrowLeft} disabled={busy} onPress={onBack}>{backLabel}</Button>} />
+    <AppHeader title={title} onBack={onBack} backLabel={backLabel} backDisabled={busy} actions={<Text accessibilityLiveRegion="polite" style={styles.small}>{status ?? ''}</Text>} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 680, paddingTop: 24, paddingBottom: 40, gap: 24 }]}>
-      <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-        <View ref={heading} accessible tabIndex={-1} accessibilityRole="header" accessibilityLabel={title}><Text style={styles.heading}>{title}</Text></View>
-        <Text accessibilityLiveRegion="polite" style={styles.small}>{status ?? ''}</Text>
-      </View>
       {children}
     </ScrollView>
   </View>;

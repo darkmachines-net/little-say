@@ -17,7 +17,7 @@ Browser tests use the production build, own an API on a selected free loopback p
 
 `settings.spec.ts` covers routes, preference migration, save retry, AI/device source selection, canceled preview, and offline links. `safe-area.spec.ts` overrides browser insets to check controls after resizing/rotation. Conversation/picture scenarios cover revision-safe partial previews, direct first-send behavior, protected pictures, gap-only generation, source controls/focus, reduced motion, cancellation, downloads, attribution, migration, and offline fallback. Photo, grid, speech, translation, setup, and account scenarios cover their corresponding flows; file headers describe their responsibility.
 
-`headers.spec.ts` compares branding and masthead geometry across parent pages at phone and desktop widths, checks header touch targets and account/setup resizing, and preserves the separate play header.
+`headers.spec.ts` verifies a single navigation row across phone and desktop widths: branding only on Home, Back and one route heading on the left of subpages, and page actions on the right. It checks header touch targets, account/setup resizing, and the separate play header.
 
 `landing.spec.ts` checks desktop/phone layouts, keyboard navigation, inactive store placeholders, direct `/app` access, older installed-web-app launches, and absence of library/API initialization on `/`. After changing the entry split, export iOS and Android with source maps and confirm `Entry.web.tsx` and `src/website/` are absent from native sources.
 
