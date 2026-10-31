@@ -1,9 +1,9 @@
-/** @file Verifies three-way board synchronization preserves edits, propagates deletions, and requires complete assets. */
+/** @file Verifies sync preserves edits and saved language audio, propagates deletions, and requires complete assets. */
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { mergeAssets, mergeBoards } from './account';
-import { syncSnapshotSchema, type SyncAsset } from './schema';
+import { syncSnapshotSchema, tileSource, type SyncAsset } from './schema';
 
 const board = starterLibrary().boards[0];
 const edited = { ...board, revision: board.revision + 1, title: 'Changed here' };
@@ -41,6 +41,12 @@ describe('board sync', () => {
     expect(mergeAssets([photoBoard], [], [photo], [])).toEqual([photo]);
     expect(mergeAssets([], [], [photo], [])).toEqual([]);
     expect(() => mergeAssets([photoBoard], [], [photo], [{ ...photo, hash: 'b'.repeat(64) }])).toThrow('conflicting');
+  });
+  it('keeps saved translated audio when the user removes a language or limits board play', () => {
+    const tile = { ...board.tiles[0], languageMode: 'board' as const, translations: [{ language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]) }] };
+    const limited = { ...board, playLanguages: ['en-US'], playLanguageSubset: ['en-US'], tiles: [tile] };
+    const clip: SyncAsset = { kind: 'speech', id: 'a'.repeat(64), hash: 'b'.repeat(64), key: JSON.stringify(['vaca', 'es-ES']) };
+    expect(mergeAssets([limited], [], [clip], [])).toEqual([clip]);
   });
   it('rejects duplicate board IDs, duplicate asset keys and unsafe local file IDs', () => {
     expect(syncSnapshotSchema.safeParse({ revision: 0, boards: [board, board], assets: [] }).success).toBe(false);

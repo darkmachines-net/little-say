@@ -19,7 +19,11 @@ This directory owns app screens and shared controls for native and `/app` on web
 
 Prompts use editable text and the system keyboard's dictation. Parents review and send the text; there is no app recording or dictation button. Native plugins disable microphone permissions and web hosting disallows page microphone access. Removing permissions from an already installed native app requires a replacement binary.
 
-`BoardEditor` keeps a compact responsive preview and its AI/add/audio/board actions on one tablet page: beside the preview in landscape, below it in portrait. Small previews may scroll without hiding actions. Tile ordering belongs in `TileEditor`; manual boards support 1–24 cards. Board languages control the play toggle, while cards may retain explicit language overrides. Generated translations remain editable.
+`BoardEditor` keeps a compact responsive preview and its AI/add/audio/board actions on one tablet page: beside the preview in landscape, below it in portrait. Small previews may scroll without hiding actions. Tile ordering belongs in `TileEditor`; manual boards support 1–24 cards. Cards follow the user's languages unless explicitly fixed to one language. Generated translations remain editable.
+
+User languages in Settings supply the play choices for all boards, including existing boards; adding a language never initiates translation. `BoardLanguages` optionally limits play to a nonempty subset of those languages, with no separate language catalog or custom-tag entry. Turning the limit off resumes inheritance, including future additions. Removed profile languages are ignored in subsets; if none remain, play uses the user default. Saved words and audio remain available if the language is selected again. Legacy `playLanguages` records generation context; `playLanguageSubset` alone restricts play.
+
+The board language panel links to user language settings and offers missing-translation review and missing-audio preparation. Existing fixed-language cards require **Make all cards switchable** before they can use translations. Preparation preserves manual corrections and checks the board revision before applying. Audio follows each language's AI/device voice choice; downloaded clips remain usable offline. New manual and starter cards follow the board even when the user currently has only one language.
 
 `PlayBoard` prioritizes the grid. Boards open unlocked. The compact header reserves fixed 48-unit slots for Back on the left and the lock icon on the right, with the title and optional language toggle between them. Locking hides Back without collapsing its slot. Status and hold progress sit below the title, outside the lock target, in space reserved in every state. Play and editor use the shared measured, ordered rectangles in core: balanced rows, soft preference for square cards, and 44-unit minimum targets. Play fills the space without scrolling; if it cannot fit, explain the need for more room and recover after resize. Reflow cancels contacts tied to old geometry without restarting speech or reordering cards.
 
@@ -42,7 +46,7 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
 | root | Overview and current language/account summaries |
-| `/languages` | One to six device languages and default; existing boards stay unchanged |
+| `/languages` | One to six shared user languages and default; searchable add dropdown, selected-language list, default and removal actions |
 | `/voices`, `/voices/:language` | Profile and board languages; per-language source, device voice, and cancellable preview |
 | `/pictures` | New-board picture defaults and credits |
 | `/account`, `/account/login`, `/account/register`, `/account/reset` | Account backup, forms, deletion, and browser storage controls |

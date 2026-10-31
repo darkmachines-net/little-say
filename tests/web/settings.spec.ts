@@ -1,10 +1,10 @@
-/** @file Exercises grouped Settings and About routes, durable preferences, failed saves, speech overrides, and offline deep links. */
+/** @file Exercises searchable languages, Settings and About routes, durable preferences, save retries, speech, and offline links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { pcmToWav } from '../../apps/server/src/synthesis';
-import { openExistingLibrary } from './existingLibrary';
+import { addUserLanguage, openExistingLibrary } from './existingLibrary';
 import release from '../../native-release.json' with { type: 'json' };
 
 async function mockVoices(page: Page) {
@@ -43,8 +43,7 @@ test('grouped overview links to focused pages and language defaults persist thro
   }
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page).toHaveURL(/\/settings\/languages$/);
-  await page.getByRole('button', { name: 'More languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Add device language Spanish', exact: true }).click();
+  await addUserLanguage(page, 'Spanish');
   await page.getByRole('button', { name: 'Default language Spanish', exact: true }).click();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByText(/Spanish \(default\)/)).toBeVisible();
@@ -92,7 +91,6 @@ test('About shows the loaded web release and survives direct links and offline r
 test('a failed preference write keeps the old choice and can be retried on its page', async ({ page }) => {
   await openExistingLibrary(page);
   await page.goto('/app/settings/languages');
-  await page.getByRole('button', { name: 'More languages', exact: true }).click();
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;
     IDBObjectStore.prototype.put = function (...args) {
@@ -100,13 +98,68 @@ test('a failed preference write keeps the old choice and can be retried on its p
       return original.apply(this, args);
     };
   });
-  await page.getByRole('button', { name: 'Add device language Spanish', exact: true }).click();
+  await addUserLanguage(page, 'Spanish');
   await expect(page.getByText(/Your previous preference is still in use/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add device language Spanish', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Add language', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Remove device language Spanish', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('button', { name: 'Default language Spanish', exact: true })).toBeVisible();
+});
+
+test('boards inherit user languages and only offer a persistent play subset with a route back to Settings', async ({ page }) => {
+  await openExistingLibrary(page, { voiceSources: { 'en-US': 'device', 'es-ES': 'device', 'fr-FR': 'device', 'de-DE': 'device' } });
+  await page.goto('/app/settings/languages');
+  await addUserLanguage(page, 'span', 'Spanish');
+  await addUserLanguage(page, 'French');
+  await mkdir('artifacts/screenshots/languages', { recursive: true });
+  for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    await page.getByRole('button', { name: 'Add language', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Search languages', exact: true }).fill('ger');
+    await expect(page.getByRole('button', { name: 'Add language German', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Add language Spanish', exact: true })).toHaveCount(0);
+    await page.screenshot({ path: `artifacts/screenshots/languages/picker-${viewport.width}.png` });
+    await page.getByRole('textbox', { name: 'Search languages', exact: true }).press('Escape');
+    await expect(page.getByRole('button', { name: 'Add language', exact: true })).toBeFocused();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await expect(page.getByText('English · Spanish · French', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add language', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('textbox', { name: 'Search languages', exact: true })).toHaveCount(0);
+  await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language English', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language French', exact: true }).click();
+  await page.screenshot({ path: 'artifacts/screenshots/languages/board-subset.png' });
+  await page.getByRole('checkbox', { name: 'Play language Spanish', exact: true }).click();
+  await expect(page.getByText('Keep at least one language for play.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
+  await page.getByRole('button', { name: 'Manage your languages in Settings', exact: true }).click();
+  await expect(page).toHaveURL(/\/settings\/languages$/);
+  await addUserLanguage(page, 'German');
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to board', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Edit in Spanish', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit in German', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Play language German', exact: true })).not.toBeChecked();
+  await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
+  await expect(page.getByText('English · Spanish · French · German', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit My little words', exact: true }).click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await expect(page.getByText('English · Spanish · French · German', { exact: true })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Limit languages for this board', exact: true })).not.toBeChecked();
 });
 
 test('device speech overrides cached AI, previews the saved voice, and stops generating that language', async ({ page }) => {

@@ -1,4 +1,4 @@
-/** @file Verifies asynchronous play entry, headers, unlock timing, draft recovery, motion and explicit device-speech handoff. */
+/** @file Verifies play entry, shared-language handoff, unlock timing, draft recovery, motion and device-speech safeguards. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -66,6 +66,7 @@ test('selected play language, missing translations and voice safeguards survive 
       const tx = db.transaction('state', 'readwrite'), store = tx.objectStore('state'), request = store.get('library');
       request.onsuccess = () => {
         const library = request.result, board = library.boards[0];
+        library.settings.languageProfile = { languages: ['en-US', 'fr-FR'], defaultLanguage: 'en-US' };
         board.playLanguages = ['en-US', 'fr-FR']; board.tiles.forEach((tile: any) => { tile.languageMode = 'board'; });
         board.tiles[0].translations = [{ label: 'Vache', speech: 'Vache', language: 'fr-FR', source: JSON.stringify(['Cow', 'Cow', 'en-US']) }];
         library.settings.activeBoardId = board.id; library.settings.boardLanguages = { [board.id]: 'fr-FR' };

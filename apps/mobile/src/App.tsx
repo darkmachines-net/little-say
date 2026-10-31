@@ -1,6 +1,6 @@
 /**
  * @file Coordinates library persistence, board navigation, playback previews, and parent editing
- * actions.
+ * actions, resolving board languages from user preferences before editing or play.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -8,7 +8,7 @@ import { ActivityIndicator, AppState, Platform, Text, View } from 'react-native'
 import { initialWindowMetrics, SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Crypto from 'expo-crypto';
-import { applyProposal, speechSource, boardPlayTiles, firstWord, getLanguageProfile, languageName, profileLanguages, reviseBoard, type Board, type BoardProposal, type Settings, type Tile } from '@little-say/core';
+import { applyProposal, speechSource, boardPlayTiles, boardWithProfileLanguages, firstWord, getLanguageProfile, languageName, profileLanguages, reviseBoard, type Board, type BoardProposal, type Settings, type Tile } from '@little-say/core';
 import { useLibrary } from './data/useLibrary';
 import { getVoices, matchingVoice, speechQueue, type Voice } from './services/speech';
 import { useSpeechLibrary } from './services/useSpeechLibrary';
@@ -113,8 +113,9 @@ function Application() {
   }} />;
   if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} voices={voices} audio={audio} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
   if (library.setup) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => setAccountOpen(true)} />{accountScreen}</>;
-  const activeBoard = library.boards.find(board => board.id === library.settings.activeBoardId);
-  const selected = library.boards.find(board => board.id === selectedId);
+  const boards = library.boards.map(board => boardWithProfileLanguages(board, library.settings));
+  const activeBoard = boards.find(board => board.id === library.settings.activeBoardId);
+  const selected = boards.find(board => board.id === selectedId);
   if (activeBoard) return <PlayBoard board={activeBoard} settings={library.settings} voices={voices} audioAsset={audio.asset} onLanguageChange={language => store.change(current => ({ ...current, settings: { ...current.settings, boardLanguages: { ...current.settings.boardLanguages, [activeBoard.id]: language } } }))} onEdit={snapshot => {
     setSelectedId(activeBoard.id); setReturnBoardId(activeBoard.id); setTransition(snapshot);
     void store.change(current => ({ ...current, boardLastPlayedAt: { ...current.boardLastPlayedAt, [activeBoard.id]: Date.now() }, settings: { ...current.settings, activeBoardId: null } })).catch(() => {});
@@ -138,11 +139,11 @@ function Application() {
     const language = getLanguageProfile(settings).defaultLanguage;
     const word = firstWord(language);
     const playLanguages = profileLanguages(settings);
-    const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, picturePolicy: settings.pictureDefaults ?? defaultPicturePolicy, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: playLanguages.length > 1 ? 'board' : 'fixed', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
+    const board: Board = { id: Crypto.randomUUID(), title: 'Our new board', revision: 0, createdAt: now, updatedAt: now, playLanguages, picturePolicy: settings.pictureDefaults ?? defaultPicturePolicy, tiles: [{ id: Crypto.randomUUID(), label: word.label, speech: word.speech, language, languageMode: 'board', color: 'sage', illustration: { kind: 'emoji', emoji: word.emoji } }] };
     void store.change(current => ({ ...current, boards: [...current.boards, board] })).catch(() => {}); setSelectedId(board.id);
   };
   if (draftRoute.route) {
-    const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
+    const source = draftRoute.route.boardId ? boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
     return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={(proposal, replaceTranslations) => draftRoute.save(() => accept(proposal, replaceTranslations))} onAiUse={consent} onClose={draftRoute.close} onSpeechReady={() => audio.reload()} />;
   }
@@ -152,7 +153,7 @@ function Application() {
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
-    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
+    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} onManageLanguages={() => settingsRoute.open({ page: 'languages' })} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; previewQueue.stop(); setTransition(null); setReturnBoardId(null); setSelectedId(null); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
       const current = store.current.current!.boards.find(b => b.id === selected.id)!;
       if (expectedRevision !== undefined && current.revision !== expectedRevision) throw new Error('This board changed while editing. Your saved changes are kept; reopen the current card or prepare translations again.');
       remember(current);

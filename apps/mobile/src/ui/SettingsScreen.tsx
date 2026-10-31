@@ -1,4 +1,4 @@
-/** @file Organizes Settings into focused preference, help, and About pages with durable per-page changes. */
+/** @file Organizes durable user preferences, shared board languages, account controls, help, and About pages. */
 
 import { useRef, useState } from 'react';
 import { Linking, Platform, Text, View } from 'react-native';
@@ -23,7 +23,7 @@ import { styles } from './theme';
 const pictureNames = { auto: 'Automatic', library: 'Library only', generated: 'AI illustrations', emoji: 'Emoji only' };
 const titles = { overview: 'Settings', languages: 'Languages', voices: 'Voices', pictures: 'Pictures', account: 'Account & backup', 'screen-guidance': 'Keep the app on screen', privacy: 'Privacy Policy', updates: 'App updates', about: 'About' };
 
-/** Render the selected Settings route; preference writes are atomic, with failed changes available to retry. */
+/** Render focused Settings pages, including shared user languages; save atomically and offer failed changes for retry. */
 export function SettingsScreen({ route, library, account, voices, audio, returnLabel = 'Boards', onNavigate, onBack, onSave, onBeforeRestart }: {
   route: SettingsRoute; library: Library; account: AccountController; voices: Voice[]; audio: SpeechLibrary;
   returnLabel?: string; onNavigate: (route: SettingsRoute) => void; onBack: () => void; onSave: (patch: Partial<Settings>) => Promise<void>; onBeforeRestart: () => Promise<void>;
@@ -60,7 +60,7 @@ export function SettingsScreen({ route, library, account, voices, audio, returnL
         <SettingsRow label="About" icon={Info} summary="Version & build information" onPress={() => onNavigate({ page: 'about' })} last />
       </SettingsGroup>
     </>}
-    {route.page === 'languages' && <><LanguageProfileEditor value={profile} onChange={languageProfile => save({ languageProfile })} disabled={saving} /><Text style={styles.body}>Choose up to six languages. The default is used for new cards and boards. Existing boards keep their own languages.</Text></>}
+    {route.page === 'languages' && <><Text style={styles.body}>Choose the languages you use across your boards. Each board uses these languages unless you limit it to a smaller set for play.</Text><LanguageProfileEditor value={profile} onChange={languageProfile => save({ languageProfile })} disabled={saving} /><Text style={styles.small}>Add a language here, then open a board’s Languages to generate any missing translations or audio. Saved words are kept when you remove a language.</Text></>}
     {route.page === 'voices' && (route.language ? <VoiceSettings language={route.language} settings={settings} voices={voices} audio={audio} busy={saving} onChange={save} /> : <SettingsGroup title="By language">{voiceLanguages(library).map((language, index, list) => <SettingsRow key={language} label={languageName(language)} summary={speechSource(settings, language) === 'ai' ? 'AI voice' : settings.voices[language] ? voices.find(voice => voice.identifier === settings.voices[language])?.name ?? 'Device voice · saved voice unavailable' : 'Device voice · automatic'} onPress={() => onNavigate({ page: 'voices', language })} last={index === list.length - 1} />)}</SettingsGroup>)}
     {route.page === 'pictures' && <><PicturePreferences value={pictureDefaults} onChange={value => save({ pictureDefaults: value })} disabled={saving} /><Text style={styles.body}>Applies to new boards. Existing boards keep their pictures and source preferences.</Text><Text style={styles.body}>Automatic can fill gaps with AI illustrations. Downloaded pictures remain available offline.</Text><PictureCredits /></>}
     {route.page === 'account' && <>

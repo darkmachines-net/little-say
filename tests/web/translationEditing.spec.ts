@@ -1,4 +1,4 @@
-/** @file Exercises selected-language drafts, correction persistence, stale results and explicit AI replacement review. */
+/** @file Exercises shared-language drafts, board play subsets, saved corrections, stale results and AI review. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -28,7 +28,7 @@ async function openTranslations(page: Page, missingSpanish = false, legacy = fal
   board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
   if (missingSpanish) board.tiles[0].translations.pop();
   if (legacy) delete board.tiles[0].translations[0].origin;
-  library.settings = { ...library.settings, accountChoiceMade: true, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
+  library.settings = { ...library.settings, languageProfile: { languages: board.playLanguages, defaultLanguage: 'en-US' }, accountChoiceMade: true, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
@@ -277,8 +277,8 @@ test('direct play entry inherits Russian and returns with corrected speech while
 test('removing the selected language shows original words without deleting its correction', async ({ page }) => {
   const original = await openTranslations(page);
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Choose languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Remove play language Russian', exact: true }).click();
+  await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Play language Russian', exact: true }).click();
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Original words', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
@@ -316,6 +316,7 @@ test('missing variants stay blank, drafts survive switching and cancelled transl
   await expect(page.getByRole('button', { name: 'Use translations', exact: true })).toBeVisible();
   release();
   await page.getByRole('button', { name: 'Use translations', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Vaca nueva', exact: true })).toBeVisible();
   expect((await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('корова');
 });

@@ -1,8 +1,15 @@
-/** @file Seeds an existing browser library with explicit optional settings for isolated feature scenarios. */
+/** @file Seeds isolated browser libraries and selects user languages through the searchable dropdown. */
 
 import { starterLibrary } from '../fixtures/library';
 import { expect, type Page } from '@playwright/test';
 import { type Library } from '@little-say/core';
+
+/** Add a named language or regional tag through the shared user-language picker. */
+export async function addUserLanguage(page: Page, search: string, option = search) {
+  await page.getByRole('button', { name: 'Add language', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Search languages', exact: true }).fill(search);
+  await page.getByRole('button', { name: `Add language ${option}`, exact: true }).click();
+}
 
 /** Bypass first-use setup with stable boards; overrides make feature assumptions such as speech source explicit. */
 export async function openExistingLibrary(page: Page, settings: Partial<Library['settings']> = {}) {
