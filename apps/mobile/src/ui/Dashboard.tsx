@@ -1,9 +1,9 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and Settings navigation. */
+/** @file Organizes saved boards by use and favorites, showing effective user languages and board actions. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { Plus, Settings as SettingsIcon } from 'lucide-react-native';
-import { type Board, type Library } from '@little-say/core';
+import { boardWithProfileLanguages, type Board, type Library } from '@little-say/core';
 import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
 import { type SpeechLibrary } from '../services/speechLibrary';
@@ -13,19 +13,21 @@ import { Brand, MountainMark } from './Brand';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace, with a separate manual creation entry.
+ * AI creation workspace, with a separate manual creation entry. Resolve user languages and play
+ * subsets for board summaries and missing-audio actions.
  */
 export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
-  const menuBoard = library.boards.find(board => board.id === menuId);
+  const menuSource = library.boards.find(board => board.id === menuId);
+  const menuBoard = menuSource && boardWithProfileLanguages(menuSource, library.settings);
   const columns = width > 1050 ? 3 : width > 620 ? 2 : 1;
   // Stable ties preserve the existing order for boards with no play history.
   const boards = [...library.boards].sort((a, b) => (library.boardLastPlayedAt?.[b.id] ?? 0) - (library.boardLastPlayedAt?.[a.id] ?? 0));
   const recent = boards[0] && library.boardLastPlayedAt?.[boards[0].id] !== undefined ? boards[0] : undefined;
   const favorites = new Set(library.favoriteBoardIds);
   const remaining = boards.filter(board => board.id !== recent?.id).sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)));
-  const card = (board: Board, featured = false) => <BoardCard board={board} featured={featured} favorite={favorites.has(board.id)} wide={width > 620} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
+  const card = (board: Board, featured = false) => <BoardCard board={boardWithProfileLanguages(board, library.settings)} featured={featured} favorite={favorites.has(board.id)} wide={width > 620} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
       <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }]}>

@@ -1,4 +1,4 @@
-/** @file Defines optional account contracts and loss-avoiding, three-way board and asset synchronization. */
+/** @file Defines account sync contracts, retaining board edits and saved pronunciation assets across play subsets. */
 
 import { z } from 'zod';
 import { type Board, type SyncAsset } from './schema';
@@ -35,13 +35,13 @@ export function mergeBoards(base: Board[], local: Board[], remote: Board[], id: 
   return merged;
 }
 
-/** List the image references and current pronunciation keys needed for complete offline boards. */
+/** Retain image references and every current saved pronunciation, including languages excluded from play. */
 export function boardAssetKeys(boards: Board[]) {
   const images = new Set(boards.flatMap(board => board.tiles.flatMap(tile => {
     const picture = tile.illustration;
     return picture.kind === 'photo' ? [`photo:${picture.assetId}`] : picture.kind === 'library' || picture.kind === 'generated' ? [`picture:${picture.assetId}`] : [];
   })));
-  const speech = new Set(boards.flatMap(boardAudioTiles).map(tile => speechKey({ text: tile.speech, language: tile.language })));
+  const speech = new Set(boards.flatMap(board => boardAudioTiles({ ...board, playLanguages: [...new Set(board.tiles.flatMap(tile => [tile.language, ...(tile.translations ?? []).map(translation => translation.language)]))] })).map(tile => speechKey({ text: tile.speech, language: tile.language })));
   return { images, speech };
 }
 

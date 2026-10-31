@@ -1,4 +1,4 @@
-/** @file Edits a card draft with language variants, pictures, photos, emoji, and speech generation. */
+/** @file Owns individual card labels, spoken variants and language-following choices alongside pictures and audio. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
@@ -73,7 +73,7 @@ export function TileEditor({ tile, board, playLanguages = [], editingLanguage = 
     {cropping ? <PhotoCropEditor tile={draft} photo={cropping} onChange={setCropping} onReady={setPhotoReady} /> : <>
     {onMove && position !== undefined && tileCount !== undefined && <View style={[styles.row, { justifyContent: 'space-between' }]}><Button compact kind="secondary" icon={ArrowLeft} disabled={position === 0} accessibilityLabel={`Move ${tile.label} earlier`} onPress={() => onMove(-1)} /><Text style={styles.small}>Position {position + 1} of {tileCount}</Text><Button compact kind="secondary" icon={ArrowRight} disabled={position === tileCount - 1} accessibilityLabel={`Move ${tile.label} later`} onPress={() => onMove(1)} /></View>}
     {draft.languageMode === 'board' && validLanguage && <EditingLanguages languages={playLanguages} selected={audioLanguage} onChange={selectLanguage} />}
-    {target && !translation && <Notice>No {languageName(target)} translation yet. Enter both fields, or prepare missing translations in Languages.</Notice>}
+    {target && !translation && <Notice>No {languageName(target)} translation yet. Enter both fields, or close Languages to fill missing translations automatically.</Notice>}
     {stale && <Notice action={<Button kind="secondary" onPress={() => { if (target) { voiceOperation.current++; onStopPreview(); setDraft(current => editTileTranslation(current, target, {})); } }}>Use reviewed translation</Button>}>The original words changed. Your saved translation is kept below. Review it before using its audio.</Notice>}
     <View style={{ gap: 14 }}>
       <View testID="tile-photo-preview" style={{ width: photo ? Math.min(290, width - 100) : 150, height: photo ? Math.min(290, width - 100) + 56 : 150, alignSelf: 'center' }}><TileFace tile={voiceTile} size={photo ? 70 : 65} /></View>

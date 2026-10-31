@@ -1,4 +1,4 @@
-/** @file Defines common language choices and resolves display names for custom language tags. */
+/** @file Defines common language choices and resolves readable language and region names with tag fallbacks. */
 
 export const languages = [
   { tag: 'en-US', name: 'English' }, { tag: 'ru-RU', name: 'Russian' },
@@ -21,4 +21,12 @@ export function languageName(tag: string): string {
   if (known) return known.name;
   try { return new Intl.DisplayNames(['en'], { type: 'language' }).of(tag) ?? tag; }
   catch { return tag; }
+}
+
+/** Name a language tag's region in English; retain the tag when no region or Intl support is available. */
+export function languageRegion(tag: string): string {
+  try {
+    const region = new Intl.Locale(tag).region;
+    return region ? new Intl.DisplayNames(['en'], { type: 'region' }).of(region) ?? tag : tag;
+  } catch { return tag; }
 }

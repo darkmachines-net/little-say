@@ -1,16 +1,18 @@
-/** @file Composes the compact board editor and its tile, language, AI, and audio actions. */
+/** @file Composes board editing, direct language selection, automatic translation feedback, and individual card actions. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
-import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
+import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
-import { MAX_TILES, speechSource, boardAudioTiles, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
+import { MAX_TILES, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
 import { BoardLanguages } from './BoardLanguages';
+import { BoardAudio } from './BoardAudio';
 import { TileFace } from './TileFace';
 import { TileEditor } from './TileEditor';
 import { Button, Confirm, Notice } from './components';
 import { styles, theme } from './theme';
 import { type SpeechLibrary } from '../services/speechLibrary';
+import type { BoardTranslationStatus } from '../services/useBoardTranslations';
 import { BoardPictures } from './BoardPictures';
 import { BoardTransition, type BoardGeometry, type BoardSnapshot } from './BoardTransition';
 import { useScreenFocus } from './screenFocus';
@@ -19,10 +21,13 @@ import { EditingLanguages } from './EditingLanguages';
 /**
  * Show the editable board preview and contextual controls, delegating durable changes, undo, and
  * playback to the parent.
- * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a
+ * The board carries effective user/profile languages; onManageLanguages opens the shared preference
+ * page and returns here after changes. Closing language choices starts app-owned background translation;
+ * progress, cancellation and failures appear here while individual card controls own their words.
+ * Tile saves pass expectedRevision to onChange; the parent must throw on a
  * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.
  */
-export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
+export function BoardEditor({ board, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, onStopPreview, onBack, onChange, onPlay, onDelete, onDuplicate, onCompose, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; onPrepareTranslations: () => void; onCancelTranslations: () => void; onManageLanguages: () => void; onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onCompose: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
   const { width, height } = useWindowDimensions();
   const heading = useScreenFocus();
   const previewGrid = useRef<ViewInstance>(null);
@@ -35,7 +40,6 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   const [pictures, setPictures] = useState<Board | null>(null);
   const [automaticPictures, setAutomaticPictures] = useState(false);
   const [pictureTarget, setPictureTarget] = useState<string | undefined>();
-  const [audioError, setAudioError] = useState('');
   const [area, setArea] = useState({ width: 600, height: 400 });
   const [contentHeight, setContentHeight] = useState(400);
   const [actionsHeight, setActionsHeight] = useState(280);
@@ -54,11 +58,6 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   };
   const layout = gridLayout(board.tiles.length, Math.max(44, area.width - 24), Math.max(1, area.height - 24), 8,
     { minHeight: 64, maxWidth: 164, maxHeight: 148, scroll: true });
-  const audioTiles = boardAudioTiles(board).filter(tile => speechSource(settings, tile.language) === 'ai');
-  const readyAudio = audioTiles.filter(tile => audio.asset(tile)).length;
-  const preparingAudio = audioTiles.filter(tile => audio.status(tile).state === 'preparing').length;
-  const failedAudio = audioTiles.filter(tile => audio.status(tile).state === 'error' && !audio.asset(tile)).length;
-  const missingAudio = audioTiles.filter(tile => !audio.asset(tile) && audio.status(tile).state !== 'preparing');
   const closeTile = () => { onStopPreview(); setEditing(null); };
   const editingIndex = board.tiles.findIndex(t => t.id === editing?.id);
   const reorder = (offset: number) => {
@@ -77,7 +76,9 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
     <View style={[styles.container, { flex: 1, minHeight: 0, paddingTop: 14, paddingBottom: 16, gap: 14 }]}>
       <View ref={heading} accessible accessibilityRole="header" tabIndex={-1} style={{ alignSelf: 'flex-start', borderRadius: 4 }}><Text style={styles.small}>Edit board</Text></View>
       <View style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!startingPlay} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4, borderBottomWidth: 1, borderColor: theme.line }} /><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{board.tiles.length} / 24 tiles · tap to edit</Text><Text style={styles.small}>{saving ? 'Saving…' : saveError ? 'Not saved — retry saving' : 'Saved on this device'}</Text></View></View>
-      {returnToPlay && untranslated > 0 && <Notice>{untranslated} switchable cards still use their original words. Prepare missing translations in Languages.</Notice>}
+      {translationStatus?.busy && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text accessibilityLiveRegion="polite" style={styles.body}>Adding missing translations…</Text><Button kind="ghost" compact onPress={onCancelTranslations}>Cancel translations</Button></View>}
+      {translationStatus?.error && <Notice action={<Button kind="secondary" onPress={onPrepareTranslations}>Retry translations</Button>}>{translationStatus.error}</Notice>}
+      {returnToPlay && untranslated > 0 && !translationStatus?.busy && <Notice>{untranslated} cards still use their original words. Close Languages to fill missing translations, or review saved words in each card.</Notice>}
       {Boolean(board.playLanguages?.length) && <EditingLanguages languages={board.playLanguages ?? []} selected={editingLanguage} onChange={selectLanguage} disabled={startingPlay || modalOpen} />}
       <ScrollView onLayout={event => setContentHeight(event.nativeEvent.layout.height)} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, flexDirection: wide ? 'row' : 'column', gap: 14 }}>
         <View testID="editor-preview" onLayout={event => setArea(event.nativeEvent.layout)} style={{ flex: wide ? 1 : undefined, height: wide ? Math.max(180, contentHeight) : Math.max(short ? 200 : 180, contentHeight - actionsHeight - 14), borderRadius: 22, backgroundColor: theme.surface, overflow: 'hidden' }}>
@@ -90,17 +91,13 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
         <View testID="editor-actions" onLayout={event => setActionsHeight(event.nativeEvent.layout.height)} style={{ width: wide ? 280 : '100%', gap: 12 }}>
           <Button kind="secondary" disabled={startingPlay} onPress={() => { setAutomaticPictures(false); setPictureTarget(undefined); setPictures(board); }}>Pictures</Button>
           <View style={{ flexDirection: wide ? 'column' : 'row', gap: 10 }}><View style={{ flex: wide ? undefined : 1 }}><Button icon={WandSparkles} disabled={startingPlay} onPress={() => { onStopPreview(); onCompose(); }}>Edit with AI</Button></View>{board.tiles.length < MAX_TILES && <View style={{ flex: wide ? undefined : 1 }}><Button kind="secondary" icon={Plus} disabled={startingPlay} onPress={addTile}>Add a tile</Button></View>}</View>
-          {audioTiles.length > 0 && <View style={{ backgroundColor: theme.surface, padding: 14, borderRadius: 18, gap: 8 }}>
-            <Text accessibilityLiveRegion="polite" style={styles.small}>{readyAudio} of {audioTiles.length} voices saved{preparingAudio ? ` · Preparing ${preparingAudio}…` : ''}{failedAudio ? ` · ${failedAudio} failed. Check your connection and retry.` : ''}</Text>
-            <Button kind="secondary" icon={Volume2} disabled={startingPlay || !missingAudio.length} onPress={() => { setAudioError(''); void (async () => { await Promise.allSettled(missingAudio.map(tile => audio.generate(tile, settings.backendUrl))); })().catch(() => setAudioError('Could not prepare audio. Check storage and try again.')); }}>{missingAudio.length ? `${failedAudio ? 'Retry' : 'Prepare'} missing audio (${missingAudio.length})` : preparingAudio ? 'Preparing audio…' : 'All audio saved'}</Button>
-            {Boolean(audioError) && <Notice>{audioError}</Notice>}
-          </View>}
+          <View style={{ backgroundColor: theme.surface, padding: 14, borderRadius: 18 }}><BoardAudio board={board} settings={settings} audio={audio} disabled={startingPlay} /></View>
           <View style={{ flexDirection: wide ? 'column' : 'row', justifyContent: 'space-between', gap: 8, ...(wide ? { marginTop: 'auto' } : {}) }}><Button kind="ghost" icon={Copy} disabled={startingPlay} onPress={onDuplicate}>Duplicate board</Button><Button kind="danger" icon={Trash2} disabled={startingPlay} onPress={() => setDeleting(true)}>Delete board</Button></View>
         </View>
       </ScrollView>
     </View>
     {transition && <BoardTransition source={transition} target={target} onDone={onTransitionDone} />}
-    {languagesOpen && <BoardLanguages board={board} settings={settings} onChange={onChange} onConsent={onConsent} onClose={() => setLanguagesOpen(false)} />}
+    {languagesOpen && <BoardLanguages board={board} settings={settings} onManageLanguages={() => { setLanguagesOpen(false); onPrepareTranslations(); onStopPreview(); onManageLanguages(); }} onChange={onChange} onClose={() => { setLanguagesOpen(false); onPrepareTranslations(); }} />}
     {editing && <TileEditor key={editing.id} board={board} tile={editing} editingLanguage={editingLanguage} onEditingLanguage={selectLanguage} onStopPreview={onStopPreview} position={editingIndex} tileCount={board.tiles.length} onMove={reorder} playLanguages={board.playLanguages} settings={settings} audio={audio} onConsent={onConsent} canDelete={board.tiles.length > 1} canDuplicate={board.tiles.length < MAX_TILES} onClose={closeTile} onPreview={onPreview} onSave={tile => {
       const currentTile = board.tiles.find(value => value.id === tile.id);
       if (!currentTile || JSON.stringify(tileSchema.parse(currentTile)) !== JSON.stringify(tileSchema.parse(editing))) throw new Error('This card changed while you were editing. Your draft is still here. Cancel and reopen the current card before saving.');
