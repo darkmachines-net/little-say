@@ -1,14 +1,20 @@
-/** @file Seeds isolated browser libraries and selects user languages through the searchable dropdown. */
+/** @file Seeds isolated browser libraries and adds/removes shared languages through their visible controls. */
 
 import { starterLibrary } from '../fixtures/library';
 import { expect, type Page } from '@playwright/test';
 import { type Library } from '@little-say/core';
 
-/** Add a named language or regional tag through the shared user-language picker. */
+/** Search directly for a named language or regional tag and choose its dropdown result. */
 export async function addUserLanguage(page: Page, search: string, option = search) {
-  await page.getByRole('button', { name: 'Add language', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Search languages', exact: true }).fill(search);
+  await page.getByRole('textbox', { name: 'Add a language', exact: true }).fill(search);
   await page.getByRole('button', { name: `Add language ${option}`, exact: true }).click();
+}
+
+/** Reveal removal controls if needed, then remove the named selected language. */
+export async function removeUserLanguage(page: Page, name: string) {
+  const edit = page.getByRole('button', { name: 'Edit languages', exact: true });
+  if (await edit.isVisible()) await edit.click();
+  await page.getByRole('button', { name: `Remove language ${name}`, exact: true }).click();
 }
 
 /** Bypass first-use setup with stable boards; overrides make feature assumptions such as speech source explicit. */

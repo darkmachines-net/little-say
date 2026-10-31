@@ -46,7 +46,7 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
 | root | Overview and current language/account summaries |
-| `/languages` | One to six shared user languages and default; searchable add dropdown, selected-language list, default and removal actions |
+| `/languages` | One to six shared languages; direct search with a result dropdown, divided rows, removal under Edit, and one default selector |
 | `/voices`, `/voices/:language` | Profile and board languages; per-language source, device voice, and cancellable preview |
 | `/pictures` | New-board picture defaults and credits |
 | `/account`, `/account/login`, `/account/register`, `/account/reset` | Account backup, forms, deletion, and browser storage controls |
@@ -54,6 +54,8 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
 | `/privacy` | Storage, backup, AI processing, photos, dictation, and retention disclosures |
 | `/about` | Selectable running version, environment, and available native build/update details |
+
+`LanguageProfileEditor` shares the simple-list controls with first-time setup. Search accepts names, regions, and language tags, excludes selected choices, and closes after adding. Web uses a floating result dropdown with Enter, Escape, and keyboard focus dismissal; native expands results inside the parent's touch bounds. Region names replace raw tags where Intl supports them. **Edit** reveals removal controls, retaining one language; removing the default uses the first remaining choice. The single default control uses a browser select on web and a cancellable option sheet on native.
 
 Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
 

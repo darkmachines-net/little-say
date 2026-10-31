@@ -1,13 +1,13 @@
 /**
  * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
- * layouts, shared user-language inheritance, board play subsets, and offline browser behavior.
+ * layouts, shared language search/edit/default controls, board play subsets, and offline browser behavior.
  */
 
 import { test, expect, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pcmToWav } from '../../apps/server/src/synthesis';
-import { addUserLanguage, openExistingLibrary } from './existingLibrary';
+import { addUserLanguage, openExistingLibrary, removeUserLanguage } from './existingLibrary';
 
 async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
@@ -114,8 +114,8 @@ test('user languages persist offline and drive existing boards without changing 
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await addUserLanguage(page, 'Spanish');
   await addUserLanguage(page, 'French');
-  await page.getByRole('button', { name: 'Default language French', exact: true }).click();
-  await page.getByRole('button', { name: 'Remove language English', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Default language', exact: true }).selectOption('fr-FR');
+  await removeUserLanguage(page, 'English');
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.screenshot({ path: 'artifacts/screenshots/device-languages.png' });
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
@@ -125,9 +125,10 @@ test('user languages persist offline and drive existing boards without changing 
   await page.reload(); await context.setOffline(true); await page.reload();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove language French', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Default language French', exact: true })).toHaveText('Default');
+  await expect(page.getByRole('combobox', { name: 'Default language', exact: true })).toHaveValue('fr-FR');
   await expect(page.getByRole('button', { name: 'Remove language Russian', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
@@ -156,8 +157,8 @@ test('user languages persist offline and drive existing boards without changing 
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
-  await page.getByRole('button', { name: 'Remove language French', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Default language Spanish', exact: true })).toHaveText('Default');
+  await removeUserLanguage(page, 'French');
+  await expect(page.getByRole('combobox', { name: 'Default language', exact: true })).toHaveValue('es-ES');
   await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
@@ -176,7 +177,7 @@ test('regional language preferences drive manual cards and AI requests', async (
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await addUserLanguage(page, 'es-mx', 'es-MX');
   await addUserLanguage(page, 'Spanish');
-  await page.getByRole('button', { name: 'Remove language English', exact: true }).click();
+  await removeUserLanguage(page, 'English');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);

@@ -1,7 +1,7 @@
-/** @file Exercises searchable setup languages, generated starter drafts, retries, and setup persistence. */
+/** @file Exercises setup language search/edit/default controls, generated starter drafts, retries, and persistence. */
 
 import { expect, test, type Page } from '@playwright/test';
-import { addUserLanguage } from './existingLibrary';
+import { addUserLanguage, removeUserLanguage } from './existingLibrary';
 import { type ProposalRequest, type StarterTopic } from '../../packages/core/src/schema';
 
 const words = {
@@ -58,8 +58,8 @@ test('first-time setup generates chosen languages, resumes partial success, and 
   await page.route('**/api/speech', async route => { audioRequests++; await audioGate; return route.fulfill({ status: 503, json: { error: 'Use device speech for this test' } }); });
   await addUserLanguage(page, 'Spanish');
   await addUserLanguage(page, 'French');
-  await page.getByRole('button', { name: 'Remove language English', exact: true }).click();
-  await page.getByRole('button', { name: 'Default language French', exact: true }).click();
+  await removeUserLanguage(page, 'English');
+  await page.getByRole('combobox', { name: 'Default language', exact: true }).selectOption('fr-FR');
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.getByRole('heading', { name: 'Choose your languages', exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'artifacts/screenshots/first-time-languages.png' });
@@ -94,7 +94,7 @@ test('first-time setup generates chosen languages, resumes partial success, and 
 
 test('offline setup can save a regional preference and start empty without English sample boards', async ({ page, context }) => {
   await addUserLanguage(page, 'es-MX', 'es-MX');
-  await page.getByRole('button', { name: 'Remove language English', exact: true }).click();
+  await removeUserLanguage(page, 'English');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Your first boards', exact: true })).toBeVisible();
   await page.evaluate(() => navigator.serviceWorker.ready);

@@ -1,4 +1,4 @@
-/** @file Exercises searchable languages, Settings and About routes, durable preferences, save retries, speech, and offline links. */
+/** @file Exercises simple-list language search/edit/default controls, Settings routes, durable saves, speech, and offline links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -44,7 +44,7 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page).toHaveURL(/\/settings\/languages$/);
   await addUserLanguage(page, 'Spanish');
-  await page.getByRole('button', { name: 'Default language Spanish', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Default language', exact: true }).selectOption('es-ES');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByText(/Spanish \(default\)/)).toBeVisible();
   await page.goBack();
@@ -100,12 +100,56 @@ test('a failed preference write keeps the old choice and can be retried on its p
   });
   await addUserLanguage(page, 'Spanish');
   await expect(page.getByText(/Your previous preference is still in use/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Add language', exact: true })).toBeEnabled();
+  await expect(page.getByText('Spanish', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toBeEditable();
   await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Remove language Spanish', exact: true })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Default language', exact: true }).getByRole('option', { name: 'Spanish', exact: true })).toHaveCount(1);
   await page.reload();
-  await expect(page.getByRole('button', { name: 'Default language Spanish', exact: true })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Default language', exact: true }).getByRole('option', { name: 'Spanish', exact: true })).toHaveCount(1);
+});
+
+test('simple-list controls support keyboard search, explicit editing, language limits, and a single default', async ({ page }) => {
+  await openExistingLibrary(page, { languageProfile: { languages: ['en-US', 'es-ES', 'fr-FR'], defaultLanguage: 'en-US' } });
+  await page.goto('/app/settings/languages');
+  const search = page.getByRole('textbox', { name: 'Add a language', exact: true });
+  const defaultLanguage = page.getByRole('combobox', { name: 'Default language', exact: true });
+  await expect(page.getByRole('button', { name: /Remove language|Make default/ })).toHaveCount(0);
+  await expect(page.getByText('United States', { exact: true })).toBeVisible();
+  await search.fill('Spain');
+  await expect(page.getByText('This language is already selected.', { exact: true })).toBeVisible();
+  await search.fill('Germany');
+  await search.press('ArrowDown');
+  await expect(page.getByRole('button', { name: 'Add language German', exact: true })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(search).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Add language German', exact: true })).toHaveCount(0);
+  await search.fill('ger');
+  await search.press('Enter');
+  await expect(page.getByText('4 of 6', { exact: true })).toBeVisible();
+  await expect(search).toHaveValue('');
+  await addUserLanguage(page, 'Italian');
+  await addUserLanguage(page, 'es-mx', 'es-MX');
+  await expect(search).not.toBeEditable();
+  await expect(page.getByText('6 of 6', { exact: true })).toBeVisible();
+  await defaultLanguage.selectOption('es-MX');
+  await expect(defaultLanguage).toHaveValue('es-MX');
+  await page.getByRole('button', { name: 'Edit languages', exact: true }).click();
+  await page.getByRole('button', { name: /^Remove language (Mexican Spanish|Spanish \(Mexico\))$/ }).click();
+  await expect(defaultLanguage).toHaveValue('en-US');
+  await expect(search).toBeEditable();
+  await page.getByRole('button', { name: 'Done editing languages', exact: true }).click();
+  await expect(page.getByRole('button', { name: /Remove language/ })).toHaveCount(0);
+  await search.fill('Japanese');
+  await defaultLanguage.focus();
+  await expect(page.getByRole('button', { name: 'Add language Japanese', exact: true })).toHaveCount(0);
+  await search.click();
+  await page.getByRole('heading', { name: 'Languages', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Add language Japanese', exact: true })).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 720 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.reload();
+  await expect(defaultLanguage).toHaveValue('en-US');
+  await expect(page.getByText('5 of 6', { exact: true })).toBeVisible();
 });
 
 test('boards inherit user languages and only offer a persistent play subset with a route back to Settings', async ({ page }) => {
@@ -116,13 +160,12 @@ test('boards inherit user languages and only offer a persistent play subset with
   await mkdir('artifacts/screenshots/languages', { recursive: true });
   for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
     await page.setViewportSize(viewport);
-    await page.getByRole('button', { name: 'Add language', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Search languages', exact: true }).fill('ger');
+    await page.getByRole('textbox', { name: 'Add a language', exact: true }).fill('ger');
     await expect(page.getByRole('button', { name: 'Add language German', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Add language Spanish', exact: true })).toHaveCount(0);
     await page.screenshot({ path: `artifacts/screenshots/languages/picker-${viewport.width}.png` });
-    await page.getByRole('textbox', { name: 'Search languages', exact: true }).press('Escape');
-    await expect(page.getByRole('button', { name: 'Add language', exact: true })).toBeFocused();
+    await page.getByRole('textbox', { name: 'Add a language', exact: true }).press('Escape');
+    await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
@@ -131,7 +174,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page.getByText('English · Spanish · French', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add language', exact: true })).toHaveCount(0);
-  await expect(page.getByRole('textbox', { name: 'Search languages', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toHaveCount(0);
   await page.getByRole('switch', { name: 'Limit languages for this board', exact: true }).click();
   await page.getByRole('checkbox', { name: 'Play language English', exact: true }).click();
   await page.getByRole('checkbox', { name: 'Play language French', exact: true }).click();
