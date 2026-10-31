@@ -1,4 +1,4 @@
-/** @file Coordinates optional account sign-in, explicit device backup consent, and foreground synchronization. */
+/** @file Coordinates persisted sign-in, explicit device backup consent, and foreground synchronization on web and native. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -10,7 +10,7 @@ import { accountContext, authenticateAccount, resetAccountPassword, signOutAccou
 import { accountRequest, syncAccount } from './accountSync';
 import { loadAccountSession, saveAccountSession, type AccountSession } from './accountSession';
 
-/** Keep account access optional and server-bound; never block local editing on connectivity or authentication. */
+/** Restore server-bound sign-in without a network check; App enforces native entry while backup stays optional. */
 export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolean, onRestored: () => Promise<void>) {
   const [session, setSession] = useState<AccountSession | null>(null);
   const [ready, setReady] = useState(false);

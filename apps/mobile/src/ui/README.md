@@ -15,6 +15,10 @@ This directory owns app screens and shared controls for native and `/app` on web
 
 `FirstTimeSetup` selects languages and optional starter boards. Persist completed drafts for resuming, show generated words, offer manual start when AI is unavailable, and never advance past a failed save or overwrite an existing library.
 
+`AccountScreen` is the native welcome screen before setup or saved boards when no sign-in is restored (or reauthentication is required). It offers **Sign in**, **Register**, and configured Apple sign-in on iOS or Google sign-in on Android. Native Back returns from forms to welcome; it cannot enter boards while signed out. Saved sign-ins remain usable offline. Only web offers **Continue without an account**. The dashboard and setup headers open account navigation; signed-in users can manage verification, optional backup, sign-in methods, sign-out, and deletion there.
+
+Account web routes are `/app/account`, `/app/account/login`, `/app/account/register`, and `/app/account/reset`; they support direct links, refresh, and browser history. Older `/app/settings/account` links redirect to their account counterparts. Form fields are discarded on navigation. [Account services](../services/README.md#accounts-and-sync) own session storage and backup consent.
+
 **New board** and **Edit with AI** open `AiConversation`, a full-page workspace with an independently scrolling canvas/transcript and message controls above the keyboard. Tablets show them side by side; phones stack the canvas above the conversation. Clarification preserves the canvas. Browser routes use `#boards/new` and `#boards/<id>/ai`; Back cancels active work and retains save guards, while reload starts a fresh conversation without saving partial output. Suggestions only fill the message field. **Build manually** remains a separate dashboard action.
 
 Prompts use editable text and the system keyboard's dictation. Parents review and send the text; there is no app recording or dictation button. Native plugins disable microphone permissions and web hosting disallows page microphone access. Removing permissions from an already installed native app requires a replacement binary.
@@ -37,21 +41,20 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 
 ## Settings
 
-`SettingsScreen` is a grouped navigation page with **Preferences** and **Account & help**. `SettingsPage` owns the surrounding page chrome; route parsing and history live in `services/settingsRoute.ts` and `useSettingsRoute.ts`.
+`SettingsScreen` is a grouped navigation page with **Preferences** and **Help**. `SettingsPage` owns the surrounding page chrome; route parsing and history live in `services/settingsRoute.ts` and `useSettingsRoute.ts`.
 
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
-| root | Overview and current language/account summaries |
+| root | Overview and current preference summaries |
 | `/languages` | One to six device languages and default; existing boards stay unchanged |
 | `/voices`, `/voices/:language` | Profile and board languages; per-language source, device voice, and cancellable preview |
 | `/pictures` | New-board picture defaults and credits |
-| `/account`, `/account/login`, `/account/register`, `/account/reset` | Account backup, forms, deletion, and browser storage controls |
 | `/screen-guidance` | Platform-specific Guided Access/screen-pinning links or browser guidance |
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
 | `/privacy` | Storage, backup, AI processing, photos, dictation, and retention disclosures |
 | `/about` | Selectable running version, environment, and available native build/update details |
 
-Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
+Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; web Privacy remains available before sign-in/setup. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and account launch state; there is no overview-level save action.
 
 Native manual updates wait for pending local writes before restart. Leaving the page cancels further actions, though an active download may finish for a later launch. Web retains its service-worker update banner. Settings never edits the service origin. Use OS Guided Access or Android screen pinning for system containment; app controls cannot suppress system navigation.
 

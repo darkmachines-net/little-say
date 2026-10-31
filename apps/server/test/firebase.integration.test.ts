@@ -1,4 +1,4 @@
-/** @file Verifies guest/account Auth-emulator credentials, session renewal, CSRF, revocation, backups, and deletion. */
+/** @file Verifies Firebase-emulator sessions, local test-account provisioning, CSRF, revocation, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -14,11 +14,11 @@ const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await action(); });
 const project = 'demo-little-say';
 const headers = { 'x-little-say': '1' };
-async function setup() {
+async function setup(environment = 'test') {
   if (!/^127\.0\.0\.1:\d+$/.test(process.env.FIREBASE_AUTH_EMULATOR_HOST || '')) throw new Error('Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.');
   const db = await testDatabase(); cleanup.push(() => db.close());
   const adminApp = initializeApp({ projectId: project }, randomUUID()), admin = getAuth(adminApp); cleanup.push(() => deleteApp(adminApp));
-  const auth = new FirebaseIdentity({ ...process.env, NODE_ENV: 'test', FIREBASE_PROJECT_ID: project, FIREBASE_API_KEY: 'demo-key', FIREBASE_APP_ID: 'demo-app', FIREBASE_AUTH_PROVIDERS: 'password' });
+  const auth = new FirebaseIdentity({ ...process.env, NODE_ENV: environment, FIREBASE_PROJECT_ID: project, FIREBASE_API_KEY: 'demo-key', FIREBASE_APP_ID: 'demo-app', FIREBASE_AUTH_PROVIDERS: 'password' });
   const accounts = new Accounts(db.pool), app = await createServer({ provider: null, accounts, auth, secureCookies: true });
   cleanup.push(() => app.close());
   const email = randomUUID() + '@example.test', password = 'a long test passphrase';
@@ -122,6 +122,35 @@ it('fails closed for emulator settings in production and for demo identities wit
   expect(() => firebaseConfig({ NODE_ENV: 'production', FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099' })).toThrow('forbidden');
   expect(() => firebaseConfig({ FIREBASE_PROJECT_ID: 'demo-little-say' })).toThrow();
   expect(() => firebaseConfig({ FIREBASE_AUTH_EMULATOR_HOST: 'https://evil.invalid:9099' })).toThrow();
+  for (const NODE_ENV of ['development', 'test', 'production']) {
+    expect(firebaseConfig({ NODE_ENV, FIREBASE_PROJECT_ID: 'hosted-little-say', FIREBASE_API_KEY: 'public-key', FIREBASE_APP_ID: 'public-app' }).developmentAccount).toBeUndefined();
+  }
+  for (const NODE_ENV of ['test', undefined]) {
+    expect(firebaseConfig({ NODE_ENV, FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099' }).developmentAccount).toBeUndefined();
+  }
+  expect(firebaseConfig({ NODE_ENV: 'development', FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099', FIREBASE_AUTH_PROVIDERS: 'google.com' }).developmentAccount).toBeUndefined();
+});
+
+it('prepares a verified development account once and reuses its ordinary native and browser sessions', async () => {
+  const f = await setup('development');
+  const config = (await f.app.inject('/api/account/config')).json();
+  expect(config.developmentAccount).toEqual({ email: 'tester@little-say.test', password: 'little-say-local-test-only' });
+  await Promise.all([f.auth.prepareDevelopmentAccount(), f.auth.prepareDevelopmentAccount()]);
+  const user = await f.admin.getUserByEmail(config.developmentAccount.email);
+  cleanup.push(() => f.admin.deleteUser(user.uid));
+  expect(user.emailVerified).toBe(true);
+  const first = await rest('accounts:signInWithPassword', { ...config.developmentAccount, returnSecureToken: true });
+  const login = await native({ ...f, token: first.idToken });
+  expect(login.statusCode).toBe(200);
+  const account = login.json().account;
+  expect(account).toMatchObject({ email: config.developmentAccount.email, emailVerified: true, providers: ['password'] });
+  const restarted = new FirebaseIdentity({ ...process.env, NODE_ENV: 'development', FIREBASE_PROJECT_ID: project, FIREBASE_AUTH_PROVIDERS: 'password' });
+  cleanup.push(() => restarted.close());
+  await restarted.prepareDevelopmentAccount();
+  const second = await rest('accounts:signInWithPassword', { ...config.developmentAccount, returnSecureToken: true });
+  expect(second.localId).toBe(user.uid);
+  expect((await browser({ ...f, token: second.idToken })).login.json().account.id).toBe(account.id);
+  expect((await f.app.inject({ url: '/api/account/backup', headers: { authorization: 'Bearer ' + second.idToken } })).statusCode).toBe(200);
 });
 
 it('links providers only to the authenticated UID and preserves both accounts on credential conflict', async () => {

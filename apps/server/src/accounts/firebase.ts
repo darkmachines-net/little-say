@@ -1,4 +1,4 @@
-/** @file Verifies registered and anonymous Firebase identities and exposes only public client configuration. */
+/** @file Verifies Firebase identities, exposes public client settings, and prepares a development-only emulator account. */
 import { initializeApp, applicationDefault, deleteApp } from 'firebase-admin/app';
 import { getAuth, type Auth, type DecodedIdToken } from 'firebase-admin/auth';
 import { authConfigSchema, type AuthConfig } from '@little-say/core';
@@ -19,7 +19,7 @@ export interface IdentityService {
   close(): Promise<void>;
 }
 
-/** Validate deliberate hosted auth settings; emulator acceptance is forbidden in production. */
+/** Validate hosted auth settings; only development emulators advertise public test credentials, never production. */
 export function firebaseConfig(env: NodeJS.ProcessEnv): AuthConfig {
   const emulator = env.FIREBASE_AUTH_EMULATOR_HOST;
   if (env.NODE_ENV === 'production' && (emulator || env.FIREBASE_AUTH_EMULATOR_URL)) throw new Error('Firebase emulation is forbidden in production.');
@@ -29,6 +29,7 @@ export function firebaseConfig(env: NodeJS.ProcessEnv): AuthConfig {
   const providers = (env.FIREBASE_AUTH_PROVIDERS || (emulator ? 'password' : 'password,google.com,apple.com')).split(',').map((value: string) => value.trim());
   const config = authConfigSchema.parse({ projectId, apiKey: env.FIREBASE_API_KEY || (emulator ? 'demo-key' : ''), appId: env.FIREBASE_APP_ID || (emulator ? 'demo-app' : ''), authDomain: env.FIREBASE_AUTH_DOMAIN || projectId + '.firebaseapp.com', providers,
     ...(emulator ? { emulatorUrl: env.FIREBASE_AUTH_EMULATOR_URL || 'http://' + emulator } : {}),
+    ...(emulator && env.NODE_ENV === 'development' && providers.includes('password') ? { developmentAccount: { email: 'tester@little-say.test', password: 'little-say-local-test-only' } } : {}),
     googleWebClientId: env.FIREBASE_GOOGLE_WEB_CLIENT_ID, googleIosClientId: env.FIREBASE_GOOGLE_IOS_CLIENT_ID,
     appleServiceId: env.FIREBASE_APPLE_SERVICE_ID, appleRedirectUri: env.FIREBASE_APPLE_REDIRECT_URI });
   if (!config.apiKey || !config.appId) throw new Error('Configure the public Firebase web app API key and app ID.');
@@ -47,6 +48,13 @@ export class FirebaseIdentity implements IdentityService {
     if (env.FIREBASE_AUTH_EMULATOR_HOST !== process.env.FIREBASE_AUTH_EMULATOR_HOST) throw new Error('Set the Firebase emulator environment on the server process before initialization.');
     this.app = initializeApp({ projectId: this.config.projectId, ...(this.config.emulatorUrl ? {} : { credential: applicationDefault() }), httpAgent: undefined }, 'little-say-' + crypto.randomUUID());
     this.auth = getAuth(this.app);
+  }
+  /** Create the verified local test login if absent; preserve its UID and data across development API restarts. */
+  async prepareDevelopmentAccount() {
+    const account = this.config.developmentAccount;
+    if (!this.config.emulatorUrl || !account) return;
+    try { await this.auth.createUser({ ...account, emailVerified: true, displayName: 'Test account' }); }
+    catch (error) { if ((error as { code?: string }).code !== 'auth/email-already-exists') throw error; }
   }
   /** Verify signature, audience, expiration, revocation and disabled status before mapping claims. */
   async verify(token: string, cookie = false): Promise<Identity> {

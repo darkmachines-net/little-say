@@ -1,4 +1,4 @@
-/** @file Exercises selected-language drafts, correction persistence, stale results and explicit AI replacement review. */
+/** @file Verifies header account cancellation alongside translation editing. Exercises selected-language drafts, correction persistence, stale results and explicit AI replacement review. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -75,13 +75,11 @@ test('account entry cancellation preserves corrected translations and the guest 
   await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('Saved Russian correction');
   const corrected = await savedBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in / Register', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await page.getByRole('button', { name: 'Back to Settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await page.reload();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: /^Edit tile / }).first().click();
