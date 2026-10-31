@@ -1,4 +1,4 @@
-# Build a development client with its matching hosted preview; Source selects the app branch or commit.
+# Uses the common toolkit pin to build a development client and matching preview from the selected Source.
 name: Development
 on:
   workflow_dispatch:
@@ -9,6 +9,6 @@ on:
 permissions: { contents: read }
 jobs:
   development:
-    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@743c841f70a6a34e7f3b17d8e2ef783e8dcf7cab
+    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@bd35cac92487667ecd5ecdc1f72d3fecee350faa
     with: { operation: '${{ inputs.operation }}', platform: '${{ inputs.platform }}', source: '${{ inputs.source }}' }
     secrets: inherit

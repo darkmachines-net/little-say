@@ -1,4 +1,4 @@
-/** @file Registers the offline web shell and defers waiting updates until parent approval. */
+/** @file Registers the production offline web shell, skips Metro on every port, and defers updates until parent approval. */
 
 let waiting: ServiceWorker | null = null;
 /**
@@ -6,7 +6,7 @@ let waiting: ServiceWorker | null = null;
  * removes the update-discovery listener.
  */
 export async function initializeUpdates(ready: () => void): Promise<() => void> {
-  if (!('serviceWorker' in navigator) || location.port === '8081') return () => {};
+  if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) return () => {};
   const registration = await navigator.serviceWorker.register('/sw.js');
   const found = () => {
     if (registration.waiting) { waiting = registration.waiting; ready(); }
