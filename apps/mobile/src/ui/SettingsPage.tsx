@@ -1,24 +1,17 @@
-/** @file Supplies the responsive Settings shell, optional heading description and surface, and grouped navigation rows. */
+/** @file Supplies Settings pages with one route header, optional description and surface, and grouped rows. */
 
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ArrowLeft, ChevronRight, type LucideIcon } from 'lucide-react-native';
-import { Button } from './components';
-import { useScreenFocus } from './screenFocus';
+import { ChevronRight, type LucideIcon } from 'lucide-react-native';
+import { AppHeader } from './AppHeader';
 import { styles, theme } from './theme';
 
-/** Render a routed page with Back and an accessible heading; keep its optional description directly below the title. */
+/** Keep title, guarded Back, and save status in one row; preserve the page's optional description and surface. */
 export function SettingsPage({ title, description, backgroundColor = theme.background, backLabel, onBack, busy = false, status, children }: { title: string; description?: string; backgroundColor?: string; backLabel: string; onBack: () => void; busy?: boolean; status?: string; children: ReactNode }) {
-  const heading = useScreenFocus();
   return <View style={[styles.page, { backgroundColor }]}>
-    <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
-      <View style={[styles.container, styles.row, { maxWidth: 720, minHeight: 64, justifyContent: 'space-between' }]}>
-        <Button compact kind="ghost" icon={ArrowLeft} disabled={busy} onPress={onBack}>{backLabel}</Button>
-        <Text accessibilityLiveRegion="polite" style={styles.small}>{status || 'Little Say'}</Text>
-      </View>
-    </View>
+    <AppHeader title={title} onBack={onBack} backLabel={backLabel} backDisabled={busy} actions={<Text accessibilityLiveRegion="polite" style={styles.small}>{status ?? ''}</Text>} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 680, paddingTop: 24, paddingBottom: 40, gap: 24 }]}>
-      <View style={{ gap: 10 }}><View ref={heading} accessible tabIndex={-1} accessibilityRole="header" accessibilityLabel={title}><Text style={styles.heading}>{title}</Text></View>{description && <Text style={styles.body}>{description}</Text>}</View>
+      {description && <Text style={styles.body}>{description}</Text>}
       {children}
     </ScrollView>
   </View>;

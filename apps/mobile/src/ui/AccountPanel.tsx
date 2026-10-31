@@ -1,4 +1,4 @@
-/** @file Presents optional backup accounts and verification while keeping local boards and AI available to guests. */
+/** @file Presents account and verification forms beneath the caller's route heading while preserving guest access. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { type AccountController } from '../services/useAccount';
@@ -7,7 +7,7 @@ import { Button, Field, Notice } from './components';
 import { styles } from './theme';
 const names: Record<Provider, string> = { password: 'email and password', 'google.com': 'Google', 'apple.com': 'Apple' };
 
-/** Keep guest use available and disclose exactly where boards upload and what account deletion removes. */
+/** Render account forms beneath the parent's heading, keeping guest access and backup/deletion disclosures available. */
 export function AccountPanel({ account, mode, setMode, onContinue, settingsPage = false }: { account: AccountController; mode: 'login' | 'register' | 'reset' | null; setMode: (mode: 'login' | 'register' | 'reset' | null) => void; onContinue: () => void; settingsPage?: boolean }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +27,6 @@ export function AccountPanel({ account, mode, setMode, onContinue, settingsPage 
   const begin = (next: 'login' | 'register') => { setMode(next); void account.prepare().catch(() => {}); };
   const signIn = (provider: Provider) => void account.authenticate(mode === 'register' ? 'register' : 'login', email, password, provider).then(() => { if (mounted.current) { clear(); setMode(null); } }).catch(() => {});
   return <View style={{ gap: 12 }}>
-    {!settingsPage && <Text accessibilityRole="header" style={styles.heading}>{signedIn ? 'Account & backup' : mode === 'register' ? 'Create an account' : mode === 'login' ? 'Log in' : mode === 'reset' ? 'Reset your password' : 'Welcome to Little Say'}</Text>}
     {Boolean(account.error) && <Notice>{account.error}</Notice>}
     {Boolean(account.message) && <Text accessibilityLiveRegion="polite" style={styles.body}>{account.message}</Text>}
     {signedIn ? <>
