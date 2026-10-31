@@ -1,9 +1,19 @@
-# Starts Expo with a watched local API or the existing self-hosted API; commands run from the repository root.
+# Starts isolated worktree stacks with Expo Go, the installed development client, or web; commands run from the repository root.
 version = 1
 name = "Little Say development"
 
 [setup]
 script = ""
+
+[[actions]]
+name = "Dev client + local backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --local --dev-client"
+
+[[actions]]
+name = "Dev client + self-hosted backend"
+icon = "run"
+command = "node --import tsx scripts/dev.ts --remote --dev-client"
 
 [[actions]]
 name = "Expo + local backend"
