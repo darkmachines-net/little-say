@@ -1,5 +1,5 @@
 /**
- * @file Hosts a full-page conversation and live board canvas with cancellable work and explicit saves.
+ * @file Hosts a full-page conversation and live board canvas with shared app chrome, cancellable work, and explicit saves.
  */
 
 import { conversationPrompts } from '@little-say/core';
@@ -11,7 +11,7 @@ import { proposeBoard } from '../services/api';
 import { Button, Notice, Sheet } from './components';
 import { DraftCanvas } from './DraftCanvas';
 import { theme, styles } from './theme';
-import { MountainMark } from './Brand';
+import { AppHeader } from './AppHeader';
 import { PictureGenerationInfo, PicturePreferences, pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures, proposalPreview, type PictureTileState } from '../services/pictures';
 
@@ -42,7 +42,8 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * Render a creation or editing conversation that preserves the source board until Apply, supports
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
  * Text entry supports system keyboard dictation; explicit sends enable AI without an interstitial.
- * Navigation cancels pending work; only an in-progress board save prevents leaving.
+ * Shared branded navigation cancels pending work; only an in-progress board save prevents leaving.
+ * Phone previews use the measured workspace below the header so message controls retain their space.
  * onAiUse persists the legacy AI-enabled preference.
  * onApply's second argument authorizes replacing protected manual/legacy translations for this
  * draft only; it is true only after explicit parent review and must not authorize another draft.
@@ -74,6 +75,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
   const input = useRef<TextInputInstance>(null);
   const nearBottom = useRef(true);
   const { width, height } = useWindowDimensions();
+  const [workspaceHeight, setWorkspaceHeight] = useState(height);
   const title = source ? 'Edit with AI' : 'New board';
   const atLimit = history.length >= MAX_AI_TURNS;
   const sideBySide = width >= 800;
@@ -171,13 +173,13 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
   const preview = draft ? proposalPreview(source, draft, reviewedDraft === draft) : source ?? null;
   const canvasMessage = busy === 'generate' ? pictureMessage || 'Updating your board…' : clarifying ? 'Waiting for your answer · Your current draft stays here.' : '';
   return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : Platform.OS === 'android' ? 'height' : undefined} testID="ai-conversation" style={{ flex: 1, backgroundColor: theme.background }}>
-    <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}><View style={[styles.row, { width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 10 : 16, gap: 10 }]}>
-      <Button kind="ghost" compact icon={ArrowLeft} disabled={busy === 'save'} accessibilityLabel={source ? 'Back to board' : 'Back to boards'} onPress={close} />
-      {sideBySide && <MountainMark size={40} />}
-      <View style={{ flex: 1, gap: 3 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text><Text numberOfLines={1} style={styles.small}>{source?.title ?? profileLanguages(settings).map(languageName).join(' · ')}</Text></View>
-      <Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>
-    </View></View>
-    <View style={{ flex: 1, minHeight: 0, width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 8 : 18, gap: 16, flexDirection: sideBySide ? 'row' : 'column-reverse' }}>
+    <AppHeader actions={<Button kind="ghost" compact icon={ArrowLeft} disabled={busy === 'save'} accessibilityLabel={source ? 'Back to board' : 'Back to boards'} onPress={close}>{source ? 'Board' : 'Boards'}</Button>}>
+      <View style={[styles.row, { justifyContent: 'space-between' }]}>
+        <View style={{ flex: 1, minWidth: 0, gap: 3 }}><Text accessibilityRole="header" style={styles.title}>{title}</Text><Text numberOfLines={1} style={styles.small}>{source?.title ?? profileLanguages(settings).map(languageName).join(' · ')}</Text></View>
+        <Button kind="ghost" compact icon={SlidersHorizontal} disabled={busy === 'save'} accessibilityLabel="Picture settings" onPress={() => setPictureOptionsOpen(true)}>{sideBySide ? 'Picture settings' : undefined}</Button>
+      </View>
+    </AppHeader>
+    <View onLayout={event => setWorkspaceHeight(event.nativeEvent.layout.height)} style={{ flex: 1, minHeight: 0, width: '100%', maxWidth: 1440, alignSelf: 'center', padding: width < 600 ? 8 : 18, gap: 16, flexDirection: sideBySide ? 'row' : 'column-reverse' }}>
       <View testID="ai-chat-panel" style={{ flex: sideBySide ? 0.85 : 1, minHeight: 0, minWidth: 0, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }}>
         <ScrollView ref={transcript} testID="ai-transcript" keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 18 }} scrollEventThrottle={100} onScroll={event => { const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent; nearBottom.current = contentOffset.y + layoutMeasurement.height >= contentSize.height - 80; }} onContentSizeChange={() => { if (nearBottom.current && (history.length > 0 || submitted || busy)) transcript.current?.scrollToEnd({ animated: false }); }}>
           {!history.length && !submitted && <View style={{ gap: 16 }}>
@@ -202,7 +204,7 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
           </>}
         </View>
       </View>
-      <View style={{ flex: sideBySide ? 1.15 : undefined, height: sideBySide ? undefined : Math.min(preview ? 480 : 170, height * (preview ? 0.5 : 0.25)), minHeight: 0, minWidth: 0, gap: 10 }}>
+      <View style={{ flex: sideBySide ? 1.15 : undefined, height: sideBySide ? undefined : Math.min(preview ? 480 : 170, workspaceHeight * (preview ? 0.5 : 0.25)), minHeight: 0, minWidth: 0, gap: 10 }}>
         <DraftCanvas board={preview} states={tileStates} message={canvasMessage} compact={!sideBySide} />
         {replacements.length > 0 && <View style={{ gap: 6 }}><Text style={styles.small}>{reviewedDraft === draft ? 'Reviewed translation replacements will be applied.' : `${replacements.length} saved translations will be kept. Review proposed replacements separately.`}</Text><Button compact kind="secondary" disabled={Boolean(busy)} onPress={() => setTranslationReview(true)}>Review translation replacements</Button></View>}
         {pictureIssues.length > 0 && <Text testID="picture-summary" accessibilityLiveRegion="polite" style={styles.small}>{pictureIssues.join(' ')}</Text>}
