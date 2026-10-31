@@ -1,4 +1,4 @@
-/** @file Organizes saved boards with shared navigation and effective languages, and resumes explicitly saved drafts. */
+/** @file Organizes saved boards by use and favorites, showing effective languages and one resumable creation entry under shared navigation. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -14,17 +14,16 @@ import { AppHeader } from './AppHeader';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace, with a separate manual creation entry. Resolve user languages and play
- * subsets for board summaries and missing-audio actions; the shared header opens Settings.
- * Only an explicitly saved creation draft changes the creation action to Resume draft.
+ * shared board workspace with resumable creation drafts. Resolve user languages and play subsets
+ * for board summaries and missing-audio actions; the shared header opens Settings.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuSource = library.boards.find(board => board.id === menuId);
   const menuBoard = menuSource && boardWithProfileLanguages(menuSource, library.settings);
   const columns = width > 1050 ? 3 : width > 620 ? 2 : 1;
-  const createLabel = library.boardCreationDraft ? 'Resume draft' : 'New board';
+  const createLabel = library.creationDraft || library.boardCreationDraft ? 'Resume draft' : 'New board';
   // Stable ties preserve the existing order for boards with no play history.
   const boards = [...library.boards].sort((a, b) => (library.boardLastPlayedAt?.[b.id] ?? 0) - (library.boardLastPlayedAt?.[a.id] ?? 0));
   const recent = boards[0] && library.boardLastPlayedAt?.[boards[0].id] !== undefined ? boards[0] : undefined;
@@ -36,13 +35,13 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>{createLabel}</Button><Button kind="ghost" compact onPress={onManual}>Build manually</Button></View>
+        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>{createLabel}</Button></View>
       </View>
       {recent && card(recent, true)}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 }}>
         {remaining.map(board => <View key={board.id} style={{ width: `${100 / columns}%`, padding: 8 }}>{card(board)}</View>)}
       </View>
-      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text><Button icon={Plus} onPress={onCompose}>{library.boardCreationDraft ? 'Resume draft' : 'Create your first board'}</Button></View>}
+      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text></View>}
     </ScrollView>
     {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
   </View>;

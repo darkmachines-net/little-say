@@ -1,4 +1,4 @@
-/** @file Exercises browser photo import and crop preview consistency through saving and playback. */
+/** @file Checks photos within the shared editor. Exercises browser photo import and crop preview consistency through saving and playback. */
 
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -116,7 +116,8 @@ test('cancelled crops and replacement uploads preserve the saved photo, includin
   await choose(page, 'Change photo'); await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await saveTile(page);
   expect((await storedPhotos(page))[0].illustration).toEqual(original);
-  await page.reload(); await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
+  await page.reload();
+  if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Adjust crop', exact: true }).click(); await expect(page.getByText('105%', { exact: true })).toBeVisible();
 });
 

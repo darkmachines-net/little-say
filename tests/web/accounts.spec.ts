@@ -1,9 +1,10 @@
-/** @file Exercises automatic guest AI, optional backup consent, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Verifies automatic guest AI saves, session isolation, backup consent, deterministic media restore, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
 import { starterLibrary } from '../fixtures/library';
 import { pcmToWav } from '../../apps/server/src/synthesis';
+import { waitForAiTurn } from './boardEditor';
 
 const password = 'a test family passphrase';
 
@@ -17,13 +18,19 @@ test('guests create a fixture AI board without registration and retain private s
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Create a hello board');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   const job = await (await accepted).json();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect.poll(async () => (await readLibrary(page)).boards.length).toBe(1);
+  await waitForAiTurn(page);
+  const created = (await readLibrary(page)).boards[0];
+  expect(created.tiles.length).toBeGreaterThan(0);
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
   const owner = (await (await page.request.get('/api/account/session')).json()).account;
   expect(owner).toMatchObject({ email: null, emailVerified: false, providers: [] });
   expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
   expect((await readLibrary(page)).sync).toBeUndefined();
   expect((await page.request.get('/api/account/backup')).status()).toBe(403);
   await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
+  expect((await readLibrary(page)).boards[0]).toEqual(created);
   expect((await (await page.request.get('/api/account/session')).json()).account.id).toBe(owner.id);
   expect((await page.request.get(`/api/ai/jobs/${job.id}`)).status()).toBe(200);
   const other = await browser.newContext();
@@ -80,7 +87,13 @@ test('an existing guest library survives the new launch choice and failed choice
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;
-    IDBObjectStore.prototype.put = function () { IDBObjectStore.prototype.put = original; throw new DOMException('Synthetic full storage', 'QuotaExceededError'); };
+    IDBObjectStore.prototype.put = function (...args: any[]) {
+      if (this.name === 'state' && args[0]?.settings?.accountChoiceMade === true) {
+        IDBObjectStore.prototype.put = original;
+        throw new DOMException('Synthetic full storage', 'QuotaExceededError');
+      }
+      return original.apply(this, args as any);
+    };
   });
   await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByText('Your choice could not be saved. Check device storage and try again.', { exact: true })).toBeVisible();
@@ -121,6 +134,8 @@ test('accounts restore all asset types to a fresh device and merge offline confl
   const username = `family_${randomUUID().slice(0, 8)}@example.test`;
   const second = await browser.newContext(); const other = await second.newPage();
   try {
+    // Keep the owned photo/picture/speech fixture fixed while app defaults allow automatic AI audio.
+    for (const device of [page, other]) await device.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
     await page.goto('/app');
     await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();

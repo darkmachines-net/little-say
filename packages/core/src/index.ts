@@ -1,6 +1,7 @@
-/** @file Exposes the platform-independent domain schemas and board, speech, gesture, and setup helpers. */
+/** @file Exposes platform-independent schemas and board workspace, speech, gesture, and setup helpers. */
 
 export * from './schema';
+export * from './boardWorkspace';
 export * from './interaction';
 export * from './languages';
 export * from './speech';
