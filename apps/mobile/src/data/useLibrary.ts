@@ -1,4 +1,4 @@
-/** @file Connects library loading and serialized durable writes to React state. */
+/** @file Connects library loading and serialized durable writes to React state, retaining creation-draft assets. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type Library, newLibrary, migrateDeviceSettings } from '@little-say/core';
@@ -24,7 +24,7 @@ export function useLibrary() {
       const migrated = migrateDeviceSettings(value);
       if (migrated !== value) { await storage.saveLibrary(migrated); value = migrated; }
       // Prune only during initial load, before transient drafts and undo history exist.
-      const boards = [...value.boards, ...(value.setup?.drafts.map(draft => draft.board) ?? [])];
+      const boards = [...value.boards, ...(value.setup?.drafts.map(draft => draft.board) ?? []), ...(value.creationDraft ? [value.creationDraft.board, ...(value.creationDraft.suggestion ? [value.creationDraft.suggestion.base, value.creationDraft.suggestion.board] : [])] : [])];
       const ids = new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'photo' ? [t.illustration.assetId] : [])));
       await storage.pruneAssets(ids).catch(() => {});
       await storage.prunePictures(new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'library' || t.illustration.kind === 'generated' ? [t.illustration.assetId] : [])))).catch(() => {});

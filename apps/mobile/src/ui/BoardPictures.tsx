@@ -1,4 +1,4 @@
-/** @file Stages board picture improvements and restyling for explicit preview, revision-checked apply, and cancellation. */
+/** @file Edits empty-board picture defaults and stages picture improvements for revision-checked apply. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -9,7 +9,7 @@ import { PictureGenerationInfo, PicturePreferences } from './PicturePreferences'
 import { TileFace } from './TileFace';
 import { styles } from './theme';
 
-/** Prepare pictures in a detached draft and apply only to the board revision originally opened. */
+/** Set defaults before creating cards, or prepare a detached picture draft for the revision originally opened. */
 export function BoardPictures({ board, currentRevision, automatic = false, changedTileId, settings, onConsent, onApply, onClose }: { board: Board; currentRevision: number; automatic?: boolean; changedTileId?: string; settings: Settings; onConsent: () => Promise<void>; onApply: (draft: Board, baseRevision: number) => void; onClose: () => void }) {
   const [source] = useState(board);
   const [draft, setDraft] = useState(board);
@@ -34,14 +34,13 @@ export function BoardPictures({ board, currentRevision, automatic = false, chang
     finally { if (request.current === controller) { request.current = null; setBusy(false); setMessage(''); } }
   }, [changedTileId, onConsent, policy, settings, source]);
   useEffect(() => { if (automatic && !started.current) { started.current = true; void prepare(false); } }, [automatic, prepare]);
-  return <Sheet title="Board pictures" onClose={close} wide footer={<Button disabled={busy || !prepared} onPress={() => { if (currentRevision !== source.revision) { setIssues(['This board changed. Close and reopen Pictures to keep your latest edits.']); return; } onApply(draft, source.revision); onClose(); }}>Apply pictures</Button>}>
+  return <Sheet title="Board pictures" onClose={close} wide footer={<Button disabled={busy || (Boolean(source.tiles.length) && !prepared)} onPress={() => { if (currentRevision !== source.revision) { setIssues(['This board changed. Close and reopen Pictures to keep your latest edits.']); return; } onApply(source.tiles.length ? draft : { ...source, picturePolicy: policy }, source.revision); onClose(); }}>{source.tiles.length ? 'Apply pictures' : 'Save picture settings'}</Button>}>
     <PicturePreferences value={policy} disabled={busy} onChange={value => { setPolicy(value); setPrepared(false); }} />
     <PictureGenerationInfo />
     <Text style={styles.small}>Improve pictures keeps suitable saved illustrations. Restyle board revisits all pictures that follow the board. Your photos and pictures marked “Keep this picture” stay in place.</Text>
-    <View style={styles.wrap}><Button busy={busy} onPress={() => void prepare(false)}>Improve pictures</Button><Button disabled={busy} kind="secondary" onPress={() => void prepare(true)}>Restyle board</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>
+    {source.tiles.length > 0 && <View style={styles.wrap}><Button busy={busy} onPress={() => void prepare(false)}>Improve pictures</Button><Button disabled={busy} kind="secondary" onPress={() => void prepare(true)}>Restyle board</Button>{busy && <Button kind="ghost" onPress={() => request.current?.abort()}>Stop pictures</Button>}</View>}
     {Boolean(message) && <Text accessibilityLiveRegion="polite" style={styles.small}>{message}</Text>}
     {issues.map((issue, index) => <Notice key={index}>{issue}</Notice>)}
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{draft.tiles.map(tile => <View key={tile.id} style={{ width: 140, height: 150 }}><TileFace tile={tile} compact size={64} /></View>)}</View>
-    {prepared && <Text style={styles.small}>Review every picture before applying. Cards that still need a picture can be edited individually.</Text>}
   </Sheet>;
 }

@@ -1,8 +1,8 @@
-/** @file Edits a card draft with language variants, pictures, photos, emoji, and speech generation. */
+/** @file Edits card words, media, and languages, with a validated handoff to scoped AI assistance. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
-import { ArrowLeft, ArrowRight, Copy, Crop, ImagePlus, Trash2, Volume2 } from 'lucide-react-native';
+import { ArrowLeft, ArrowRight, Copy, Crop, ImagePlus, Sparkles, Trash2, Volume2 } from 'lucide-react-native';
 import { speechSource, assertTranslationSourceLanguageChange, canonicalLanguage, colors, editTileTranslation, languageName, languageSchema, profileLanguages, storedTileTranslation, tileSource, tileSchema, type Tile, type Settings } from '@little-say/core';
 import { type SpeechLibrary } from '../services/speechLibrary';
 import { chooseTilePhoto, type TilePhoto } from '../services/photos';
@@ -18,9 +18,13 @@ import { EditingLanguages } from './EditingLanguages';
 
 /**
  * Stage card edits and previews in a dialog, exposing save, reorder, duplicate, delete, and
- * per-language audio actions through the supplied callbacks.
+ * per-language audio actions through the supplied callbacks. A scoped AI handoff validates and saves
+ * the current card before returning to the shared composer.
  */
-export function TileEditor({ tile, board, playLanguages = [], editingLanguage = null, onEditingLanguage, onStopPreview, settings, audio, onConsent, canDelete, canDuplicate, onSave, onDelete, onDuplicate, onClose, onPreview, position, tileCount, onMove }: { tile: Tile; board: Board; playLanguages?: string[]; editingLanguage?: string | null; onEditingLanguage?: (language: string | null) => void; onStopPreview: () => void; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; canDelete: boolean; canDuplicate: boolean; onSave: (tile: Tile) => void; onDelete: () => void; onDuplicate: (tile: Tile) => void; onClose: () => void; onPreview: (tile: Tile) => void; position?: number; tileCount?: number; onMove?: (offset: number) => void }) {
+export function TileEditor({ tile, board, playLanguages = [], editingLanguage = null, onEditingLanguage, onStopPreview, settings, audio, onConsent, canDelete, canDuplicate, onSave, onAskAi, onDelete, onDuplicate, onClose, onPreview, position, tileCount, onMove }: { tile: Tile; board: Board; playLanguages?: string[]; editingLanguage?: string | null; onEditingLanguage?: (language: string | null) => void; onStopPreview: () => void; settings: Settings; audio: SpeechLibrary; onConsent: () => Promise<void>; canDelete: boolean; canDuplicate: boolean; onSave: (tile: Tile) => void;
+  /** Save validated card edits before focusing AI on this card in the shared workspace. */
+  onAskAi?: (tile: Tile) => void;
+  onDelete: () => void; onDuplicate: (tile: Tile) => void; onClose: () => void; onPreview: (tile: Tile) => void; position?: number; tileCount?: number; onMove?: (offset: number) => void }) {
   const [draft, setDraft] = useState(tile);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -71,6 +75,7 @@ export function TileEditor({ tile, board, playLanguages = [], editingLanguage = 
   };
   return <Sheet title={cropping ? 'Crop photo' : 'Edit tile'} onClose={cropping ? () => setCropping(null) : onClose} footer={cropping ? <View style={[styles.row, { justifyContent: 'flex-end' }]}><Button kind="ghost" onPress={() => setCropping(null)}>Cancel</Button><Button disabled={!photoReady} onPress={() => { update({ illustration: cropping, pictureOptions: { ...draft.pictureOptions, locked: true, instruction: draft.pictureOptions?.instruction ?? '' } }); setCropping(null); }}>Use photo</Button></View> : <View style={styles.row}><Button kind="ghost" onPress={onClose}>Cancel</Button><Button onPress={() => { try { if (validated.success) { assertTranslationSourceLanguageChange(tile, validated.data, validated.data.translations); onSave(validated.data); } else setError('Complete both text fields for each translation before saving. ' + validated.error.issues[0].message); } catch (error) { setError((error as Error).message); } }} disabled={busy || pictureBusy}>Save tile</Button></View>}>
     {cropping ? <PhotoCropEditor tile={draft} photo={cropping} onChange={setCropping} onReady={setPhotoReady} /> : <>
+    {onAskAi && <Button kind="secondary" icon={Sparkles} disabled={busy || pictureBusy} onPress={() => { try { const valid = tileSchema.parse(draft); assertTranslationSourceLanguageChange(tile, valid, valid.translations); onAskAi(valid); } catch (error) { setError((error as Error).message); } }}>Ask AI about this card</Button>}
     {onMove && position !== undefined && tileCount !== undefined && <View style={[styles.row, { justifyContent: 'space-between' }]}><Button compact kind="secondary" icon={ArrowLeft} disabled={position === 0} accessibilityLabel={`Move ${tile.label} earlier`} onPress={() => onMove(-1)} /><Text style={styles.small}>Position {position + 1} of {tileCount}</Text><Button compact kind="secondary" icon={ArrowRight} disabled={position === tileCount - 1} accessibilityLabel={`Move ${tile.label} later`} onPress={() => onMove(1)} /></View>}
     {draft.languageMode === 'board' && validLanguage && <EditingLanguages languages={playLanguages} selected={audioLanguage} onChange={selectLanguage} />}
     {target && !translation && <Notice>No {languageName(target)} translation yet. Enter both fields, or prepare missing translations in Languages.</Notice>}
