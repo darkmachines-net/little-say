@@ -1,4 +1,4 @@
-/** @file Verifies mobile welcome cannot be dismissed, platform provider choices, and web-only guest continuation. */
+/** @file Verifies native sign-in gates, web guest continuation, provider choices, and development-only test-account sign-in. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -24,7 +24,7 @@ function button(label: string) { return buttons().find(node => React.Children.to
 async function mount(mode: AccountMode = null, controller = account) {
   await act(async () => { screen = create(React.createElement(AccountScreen, { account: controller, mode, onMode: modeChange, onBack: back, onClose: close })); });
 }
-beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks(); native.OS = 'android'; });
+beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
 it.each(['ios', 'android'])('requires sign-in on %s and offers the device provider', async platform => {
@@ -74,4 +74,46 @@ it('leaves authentication forms after sign-in and restores welcome after sign-ou
   await act(async () => screen!.update(React.createElement(AccountScreen, { account, mode: null, onMode: modeChange, onBack: back, onClose: close })));
   expect(button('Register')).toBeDefined(); expect(button('Continue to boards')).toBeUndefined();
   expect(button('Continue without an account')).toBeUndefined();
+});
+
+const developmentAccount = { email: 'tester@little-say.test', password: 'little-say-local-test-only' };
+const localConfig = { projectId: 'demo-little-say', apiKey: 'demo-key', appId: 'demo-app', authDomain: 'demo-little-say.firebaseapp.com',
+  providers: ['password'] as const, emulatorUrl: 'http://127.0.0.1:9099', developmentAccount };
+const localAccount = { ...account, config: { ...localConfig, providers: ['password'] } } as AccountController;
+
+it.each(['ios', 'android', 'web'])('signs into the preconfigured emulator account on %s without typing credentials', async platform => {
+  native.OS = platform; vi.stubGlobal('__DEV__', true);
+  await mount('login', localAccount);
+  expect(button('Sign in').props.disabled).toBe(true);
+  await act(async () => button('Sign in with test account').props.onPress());
+  expect(authenticate).toHaveBeenCalledWith('login', developmentAccount.email, developmentAccount.password, 'password');
+  expect(modeChange).toHaveBeenCalledWith(null);
+});
+
+it.each([
+  { label: 'release build', dev: false, config: localAccount.config },
+  { label: 'hosted backend', dev: true, config: { ...localAccount.config!, emulatorUrl: undefined } },
+  { label: 'non-demo project', dev: true, config: { ...localAccount.config!, projectId: 'hosted-little-say' } },
+  { label: 'missing fixture', dev: true, config: { ...localAccount.config!, developmentAccount: undefined } },
+  { label: 'unavailable backend', dev: true, config: undefined },
+  { label: 'disabled password provider', dev: true, config: { ...localAccount.config!, providers: [] } },
+])('hides the development shortcut for a $label', async ({ dev, config }) => {
+  vi.stubGlobal('__DEV__', dev); await mount('login', { ...account, config });
+  expect(button('Sign in with test account')).toBeUndefined();
+});
+
+it.each([null, 'register', 'reset'] as const)('limits the development shortcut to login, excluding %s', async mode => {
+  vi.stubGlobal('__DEV__', true); await mount(mode, localAccount);
+  expect(button('Sign in with test account')).toBeUndefined();
+});
+
+it('keeps failed test sign-in on the form for retry and reflects the account busy state', async () => {
+  vi.stubGlobal('__DEV__', true); authenticate.mockRejectedValueOnce(new Error('Offline'));
+  await mount('login', localAccount);
+  await act(async () => button('Sign in with test account').props.onPress());
+  expect(modeChange).not.toHaveBeenCalled();
+  await act(async () => button('Sign in with test account').props.onPress());
+  expect(modeChange).toHaveBeenCalledWith(null);
+  await act(async () => screen!.update(React.createElement(AccountScreen, { account: { ...localAccount, busy: true }, mode: 'login', onMode: modeChange, onBack: back, onClose: close })));
+  expect(button('Sign in with test account').props.busy).toBe(true);
 });

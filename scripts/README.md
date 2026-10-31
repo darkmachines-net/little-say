@@ -22,6 +22,8 @@ The `.codex/environments/environment.toml` actions invoke these same commands th
 
 Development accounts/database persist in checkout-named Docker volumes and media in `.cache/media`. Test runners use separate disposable projects and directories. Port conflicts fail without killing their owner; select unused ports for another checkout. `docker compose up --build` also provides a complete built browser/API/worker stack on localhost:8787. Do not delete volumes to fix startup problems.
 
+For one-tap local sign-in, run `npm run dev` or `npm run dev:web`, open **Sign in**, then choose **Sign in with test account**. The development API creates the verified `tester@little-say.test` account with password `little-say-local-test-only` if absent and reuses it across restarts; no registration or verification email is needed. Its boards and backup belong to the same account on every device using that emulator. Backup still requires a separate opt-in. These are public local fixture credentials, not a hosted account. The shortcut requires both a development app build (including Expo Go) and the local emulator configuration; it is absent in release exports and remote-backend mode. Local authentication continues to use email/password; Google and Apple are not simulated by this shortcut.
+
 ## Environment and browser proxy
 
 Resolution order is inherited process environment, `.env.local`, then `.env`. Local mode prefers `AAC_OPENAI_KEY` over `OPENAI_API_KEY`, with Windows User environment fallback only when no explicit process/file key exists. Keys are never printed or written by the launcher. Remote mode does not look up local keys or create `.env`.
@@ -41,7 +43,7 @@ Remote native requests use HTTPS directly. Browser `/api/` requests stream throu
 
 ## Device connectivity
 
-Keep computer and device on the same reachable trusted LAN; wired computer plus Wi-Fi tablet is fine. Scan the QR code with Expo Go on Android or Camera on iOS and allow local-network access. On physical iOS, sign the CLI (`npx expo login` in `apps/mobile`) and Expo Go into the same Expo account when required by Expo Go. This is separate from optional Little Say accounts.
+Keep computer and device on the same reachable trusted LAN; wired computer plus Wi-Fi tablet is fine. Scan the QR code with Expo Go on Android or Camera on iOS and allow local-network access. On physical iOS, sign the CLI (`npx expo login` in `apps/mobile`) and Expo Go into the same Expo account when required by Expo Go. This is separate from Little Say sign-in.
 
 Run doctor, then open the printed `/api/health` URL on the actual device: success on the computer alone does not prove LAN access. Check `status: ok` and, for AI, `aiConfigured: true`. If the address is wrong, choose an assigned `DEV_HOST`; check VPN/WSL/Docker adapters. For timeouts, check local-network permissions and guest/client-isolated Wi-Fi. Expo's bundler tunnel does not tunnel this API.
 

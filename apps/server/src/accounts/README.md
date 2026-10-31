@@ -12,7 +12,7 @@ Accounts have internal UUIDs and unique Firebase project/UID mappings. Emails ar
 
 ## Session and API boundaries
 
-- `GET /api/account/config` returns public client settings only. Passwords stay with Firebase.
+- `GET /api/account/config` returns public client settings. Hosted passwords stay with Firebase. Only a `NODE_ENV=development` API using the Auth emulator and password provider includes `developmentAccount` public fixture credentials; API startup provisions that verified identity if absent. See [local test sign-in](../../../../scripts/README.md#development-launcher) for its use and persistence. Release clients never show the shortcut.
 - `POST /session` exchanges a Firebase ID token for a private owner. Automatic AI guests supply `guest: true`, which accepts only an anonymous identity; returning native guests may refresh without recent sign-in. Registered account exchanges still require authentication within five minutes. Native requests subsequently use refreshed bearer tokens.
 - Browser authentication uses one 14-day opaque `__session` cookie, HttpOnly, SameSite=Strict, Secure in production, scoped to `/api`. PostgreSQL stores the Firebase session token and CSRF state; no JWT is carried in the browser cookie. Firebase Hosting forwards this single cookie. Logout revokes only that login.
 - Browser mutations require the server-side token bound to `__session` from `GET /csrf`, the app header, and exact allowed-origin checks. Bearer requests do not use browser cookie authority. The expected-account header rejects cross-tab account changes.

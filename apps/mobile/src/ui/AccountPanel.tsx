@@ -1,4 +1,4 @@
-/** @file Presents platform-aware sign-in, registration, verification, and explicit device backup consent. */
+/** @file Presents platform-aware account flows, development-only emulator sign-in, and explicit device backup consent. */
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import { type AccountController } from '../services/useAccount';
@@ -8,7 +8,7 @@ import { Button, Field, Notice } from './components';
 import { styles } from './theme';
 const names: Record<Provider, string> = { password: 'email and password', 'google.com': 'Google', 'apple.com': 'Apple' };
 
-/** Offer guest continuation only on web; authentication and backup consent remain separate choices. */
+/** Offer web guest continuation and an emulator shortcut only in development; sign-in never implies backup consent. */
 export function AccountPanel({ account, mode, setMode, onContinue }: { account: AccountController; mode: AccountMode; setMode: (mode: AccountMode) => void; onContinue: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,13 +26,14 @@ export function AccountPanel({ account, mode, setMode, onContinue }: { account: 
     if (!signedIn && (mode || Platform.OS !== 'web')) void prepare.current().catch(() => {});
   }, [mode, signedIn]);
   const providers = account.config?.providers ?? ['password'];
+  const developmentAccount = __DEV__ && account.config?.emulatorUrl && account.config.projectId.startsWith('demo-') && providers.includes('password') ? account.config.developmentAccount : undefined;
   const socialProviders = (['apple.com', 'google.com'] as const).filter(provider => providers.includes(provider) && (Platform.OS === 'web' || provider === (Platform.OS === 'ios' ? 'apple.com' : 'google.com')));
   const currentProviders = (account.session?.account.providers ?? []).filter((value): value is Provider => value in names);
   const current = chosen && currentProviders.includes(chosen) ? chosen : currentProviders[0] ?? 'password';
   const passwordNeeded = current === 'password';
   const clear = () => { setPassword(''); setConfirmation(''); setNewPassword(''); };
   const begin = (next: 'login' | 'register') => setMode(next);
-  const signIn = (provider: Provider) => void account.authenticate(mode === 'register' ? 'register' : 'login', email, password, provider).then(() => { if (mounted.current) { clear(); setMode(null); } }).catch(() => {});
+  const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) { clear(); setMode(null); } }).catch(() => {});
   return <View style={{ gap: 12 }}>
     <Text accessibilityRole="header" style={[styles.heading, !signedIn && !mode && { textAlign: 'center' }]}>{signedIn ? 'Account & backup' : mode === 'register' ? 'Create an account' : mode === 'login' ? 'Sign in' : mode === 'reset' ? 'Reset your password' : 'Welcome to Little Say'}</Text>
     {Boolean(account.error) && <Notice>{account.error}</Notice>}
@@ -83,6 +84,10 @@ export function AccountPanel({ account, mode, setMode, onContinue }: { account: 
       <Text style={[styles.body, !mode && { textAlign: 'center' }]}>{Platform.OS === 'web' ? 'Create boards and use AI without an account. Sign in to back up boards across devices.' : 'Create soundboards for your family. Sign in or register to get started.'}</Text>
       {Platform.OS === 'web' && <Text style={styles.small}>Without a backup, clearing browser storage removes these boards.</Text>}
       {!account.config && Boolean(account.error) && <Button kind="secondary" disabled={account.busy} onPress={() => void account.prepare().catch(() => {})}>Retry sign-in options</Button>}
+      {mode === 'login' && developmentAccount && <View style={{ gap: 6 }}>
+        <Button kind="secondary" busy={account.busy} disabled={!account.ready} onPress={() => signIn('password', developmentAccount)}>Sign in with test account</Button>
+        <Text style={styles.small}>Local development · {developmentAccount.email}</Text>
+      </View>}
       {mode ? <>
         <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />
         {mode !== 'reset' && <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} maxLength={128} />}
