@@ -1,4 +1,4 @@
-/** @file Verifies web and native account gating across launch, saved guest choices, play restoration, sign-out, and offline sessions. */
+/** @file Verifies account gating and cached play restoration while isolating unrelated speech and translation services. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -15,6 +15,7 @@ vi.mock('expo-crypto', () => ({}));
 vi.mock('./data/useLibrary', () => ({ useLibrary: () => ({ library: state.library, current: { current: state.library }, commit: state.commit }) }));
 vi.mock('./services/useAccount', () => ({ useAccount: () => state.account }));
 vi.mock('./services/useSpeechLibrary', () => ({ useSpeechLibrary: (library: unknown) => { state.audio(library); return {}; } }));
+vi.mock('./services/useBoardTranslations', () => ({ useBoardTranslations: () => ({ status: {}, prepare: vi.fn(), cancel: vi.fn() }) }));
 vi.mock('./services/speech', () => ({ getVoices: async () => [], speechQueue: () => ({ stop() {} }) }));
 vi.mock('./services/updates', () => ({ initializeUpdates: async () => () => {}, applyUpdate: vi.fn() }));
 vi.mock('./ui/AccountScreen', () => ({ AccountScreen: 'AccountScreen' }));
@@ -26,7 +27,6 @@ vi.mock('./ui/Dashboard', () => ({ Dashboard: 'Dashboard' }));
 vi.mock('./ui/FirstTimeSetup', () => ({ FirstTimeSetup: 'FirstTimeSetup' }));
 vi.mock('./ui/SettingsScreen', () => ({ SettingsScreen: 'SettingsScreen' }));
 vi.mock('./ui/BoardEditor', () => ({ BoardEditor: 'BoardEditor' }));
-vi.mock('./ui/AiConversation', () => ({ AiConversation: 'AiConversation' }));
 vi.mock('./ui/PlayBoard', () => ({ PlayBoard: 'PlayBoard' }));
 vi.mock('./ui/components', () => ({ Button: 'Button', Notice: 'Notice', Sheet: 'Sheet' }));
 
