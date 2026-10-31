@@ -1,23 +1,16 @@
-/** @file Supplies routed Settings pages with shared branding, optional description and surface, and grouped rows. */
+/** @file Supplies Settings pages with one route header, optional description and surface, and grouped rows. */
 
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { ArrowLeft, ChevronRight, type LucideIcon } from 'lucide-react-native';
-import { Button } from './components';
+import { ChevronRight, type LucideIcon } from 'lucide-react-native';
 import { AppHeader } from './AppHeader';
-import { useScreenFocus } from './screenFocus';
 import { styles, theme } from './theme';
 
-/** Render a branded page with guarded Back navigation, live save status, and an optional heading description. */
+/** Keep title, guarded Back, and save status in one row; preserve the page's optional description and surface. */
 export function SettingsPage({ title, description, backgroundColor = theme.background, backLabel, onBack, busy = false, status, children }: { title: string; description?: string; backgroundColor?: string; backLabel: string; onBack: () => void; busy?: boolean; status?: string; children: ReactNode }) {
-  const heading = useScreenFocus();
   return <View style={[styles.page, { backgroundColor }]}>
-    <AppHeader actions={<Button compact kind="ghost" icon={ArrowLeft} disabled={busy} onPress={onBack}>{backLabel}</Button>} />
+    <AppHeader title={title} onBack={onBack} backLabel={backLabel} backDisabled={busy} actions={<Text accessibilityLiveRegion="polite" style={styles.small}>{status ?? ''}</Text>} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 680, paddingTop: 24, paddingBottom: 40, gap: 24 }]}>
-      <View style={[styles.row, { justifyContent: 'space-between', flexWrap: 'wrap' }]}>
-        <View ref={heading} accessible tabIndex={-1} accessibilityRole="header" accessibilityLabel={title}><Text style={styles.heading}>{title}</Text></View>
-        <Text accessibilityLiveRegion="polite" style={styles.small}>{status ?? ''}</Text>
-      </View>
       {description && <Text style={styles.body}>{description}</Text>}
       {children}
     </ScrollView>

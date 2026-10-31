@@ -1,6 +1,6 @@
 /**
  * @file Guides shared user-language selection and review of generated starter boards before entering the
- * library, with shared branded navigation to account restoration.
+ * library, with a single setup header and access to account restoration.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -19,7 +19,7 @@ import { prepareProposalPictures } from '../services/pictures';
 
 /**
  * Resume setup with the shared searchable user-language editor, generate starter drafts for those
- * languages, and commit the parent-approved result through onCommit. Shared navigation opens account restoration.
+ * languages, and commit the parent-approved result through onCommit. The setup header opens account restoration.
  */
 export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onAccount: () => void }) {
   const setup = library.setup!;
@@ -75,7 +75,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
   };
   const languageStep = setup.stage === 'languages';
   return <View style={styles.page}>
-    <AppHeader actions={<Button compact kind="ghost" accessibilityLabel="Sign in or restore boards" disabled={Boolean(working)} onPress={onAccount}>Sign in</Button>} />
+    <AppHeader title="Set up Little Say" actions={<Button compact kind="ghost" accessibilityLabel="Sign in or restore boards" disabled={Boolean(working)} onPress={onAccount}>Sign in</Button>} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
       <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
       {Boolean(error) && <Notice>{error}</Notice>}
