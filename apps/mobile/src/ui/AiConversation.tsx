@@ -1,12 +1,12 @@
 /**
- * @file Hosts a full-page conversation and live board canvas with cancellable work and explicit saves.
+ * @file Hosts a cancellable board conversation with explicit board saves and Save draft or Discard exits.
  */
 
 import { conversationPrompts } from '@little-say/core';
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions, type ScrollViewInstance, type TextInputInstance } from 'react-native';
+import { AccessibilityInfo, Animated, BackHandler, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, useWindowDimensions, type ScrollViewInstance, type TextInputInstance } from 'react-native';
 import { ArrowLeft, ArrowUp, SlidersHorizontal, Square } from 'lucide-react-native';
-import { MAX_AI_TURNS, boardContext, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
+import { MAX_AI_TURNS, boardContext, boardCreationDraftSchema, defaultPicturePolicy, getLanguageProfile, languageName, profileLanguages, proposalTranslationReplacements, validateGeneratedBoard, type Board, type BoardCreationDraft, type BoardProposal, type ConversationTurn, type Settings } from '@little-say/core';
 import { proposeBoard } from '../services/api';
 import { Button, Notice, Sheet } from './components';
 import { DraftCanvas } from './DraftCanvas';
@@ -42,27 +42,33 @@ function Working({ label, pictures = false }: { label: string; pictures?: boolea
  * Render a creation or editing conversation that preserves the source board until Apply, supports
  * follow-up prompts, and cancels outstanding work when the parent leaves the workspace.
  * Text entry supports system keyboard dictation; explicit sends enable AI without an interstitial.
- * Navigation cancels pending work; only an in-progress board save prevents leaving.
+ * Creation exits cancel pending work and ask whether to save the last completed draft or discard.
+ * Empty drafts cannot be saved. Failed writes leave the workspace open for retry. Saved creation
+ * state is restored only on mount; editing existing boards retains its direct cancellation path.
+ * onSaveDraft/onDiscardDraft resolve after durable retention/removal; onBeforeClose registers the
+ * browser exit guard and clears it on unmount. Successful board application bypasses this prompt.
  * onAiUse persists the legacy AI-enabled preference.
  * onApply's second argument authorizes replacing protected manual/legacy translations for this
  * draft only; it is true only after explicit parent review and must not authorize another draft.
  */
-export function AiConversation({ settings, board, onApply, onAiUse, onClose, onSpeechReady }: { settings: Settings; board?: Board; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void; onSpeechReady?: () => Promise<void> }) {
+export function AiConversation({ settings, board, savedDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onApply, onAiUse, onClose, onSpeechReady }: { settings: Settings; board?: Board; savedDraft?: BoardCreationDraft; onSaveDraft: (draft: BoardCreationDraft) => Promise<void>; onDiscardDraft: () => Promise<void>; onBeforeClose: (request: (() => void) | null) => void; onApply: (proposal: BoardProposal, replaceTranslations?: boolean) => Promise<void>; onAiUse: () => Promise<void>; onClose: () => void; onSpeechReady?: () => Promise<void> }) {
   // Keep IDs/revision stable throughout all turns, even as background audio updates.
   const [source] = useState(board);
-  const [prompt, setPrompt] = useState('');
-  const [history, setHistory] = useState<ConversationTurn[]>([]);
-  const [draft, setDraft] = useState<BoardProposal | null>(null);
+  const [prompt, setPrompt] = useState(savedDraft?.prompt ?? '');
+  const [history, setHistory] = useState<ConversationTurn[]>(savedDraft?.history ?? []);
+  const [draft, setDraft] = useState<BoardProposal | null>(savedDraft?.draft ?? null);
   const [translationReview, setTranslationReview] = useState(false);
   const [reviewedDraft, setReviewedDraft] = useState<BoardProposal | null>(null);
-  const [picturePolicy, setPicturePolicy] = useState(source?.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy);
+  const [picturePolicy, setPicturePolicy] = useState(savedDraft?.picturePolicy ?? source?.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy);
   const [pictureOptionsOpen, setPictureOptionsOpen] = useState(false);
   const [pictureMessage, setPictureMessage] = useState('');
   const [pictureIssues, setPictureIssues] = useState<string[]>([]);
   const [tileStates, setTileStates] = useState<Record<string, PictureTileState>>({});
   const policyRef = useRef(picturePolicy); policyRef.current = picturePolicy;
   const draftBeforeRequest = useRef<BoardProposal | null>(null);
-  const [clarifying, setClarifying] = useState(false);
+  const [clarifying, setClarifying] = useState(savedDraft?.clarifying ?? false);
+  const [leaving, setLeaving] = useState(false);
+  const [exitError, setExitError] = useState('');
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [busy, setBusy] = useState<'generate' | 'save' | null>(null);
   const [saveable, setSaveable] = useState(false);
@@ -79,9 +85,21 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
   const sideBySide = width >= 800;
   const picturesChanged = Boolean(draft?.proposal.picturePolicy && JSON.stringify(picturePolicy) !== JSON.stringify(draft.proposal.picturePolicy));
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
-  const close = () => { if (saving.current) return; request.current?.abort(); onClose(); };
+  const close = () => {
+    if (saving.current) return;
+    if (source) { request.current?.abort(); onClose(); return; }
+    if (request.current) { cancel(); setError(''); }
+    Keyboard.dismiss();
+    setPictureOptionsOpen(false); setTranslationReview(false);
+    setExitError(''); setLeaving(true);
+  };
   const closeRef = useRef(close); closeRef.current = close;
   useEffect(() => { const subscription = BackHandler.addEventListener('hardwareBackPress', () => { closeRef.current(); return true; }); return () => subscription.remove(); }, []);
+  useEffect(() => {
+    if (source) return;
+    onBeforeClose(() => closeRef.current());
+    return () => onBeforeClose(null);
+  }, [source, onBeforeClose]);
   const enableAi = async (controller: AbortController) => {
     if (!settings.aiConsent) await onAiUse();
     return live.current && request.current === controller && !controller.signal.aborted;
@@ -167,6 +185,18 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
     catch (e) { if (live.current) setError((e as Error).message || 'The board could not be saved. Please try again.'); }
     finally { saving.current = false; if (live.current) setBusy(null); }
   };
+  const hasProgress = Boolean(prompt.trim() || history.length || draft);
+  const leave = async (saveDraft: boolean) => {
+    if (saving.current || (saveDraft && !hasProgress)) return;
+    saving.current = true; setBusy('save'); setExitError('');
+    try {
+      if (saveDraft) await onSaveDraft(boardCreationDraftSchema.parse({ prompt, history, draft, picturePolicy, clarifying }));
+      else await onDiscardDraft();
+      if (live.current) onClose();
+    } catch { if (live.current) setExitError(saveDraft ? 'Your draft could not be saved. Please try again.' : 'Your draft could not be discarded. Please try again.'); }
+    finally { saving.current = false; if (live.current) setBusy(null); }
+  };
+  const keepEditing = () => { if (!saving.current) { setLeaving(false); setExitError(''); } };
   const replacements = draft ? proposalTranslationReplacements(source, draft) : [];
   const preview = draft ? proposalPreview(source, draft, reviewedDraft === draft) : source ?? null;
   const canvasMessage = busy === 'generate' ? pictureMessage || 'Updating your board…' : clarifying ? 'Waiting for your answer · Your current draft stays here.' : '';
@@ -209,6 +239,15 @@ export function AiConversation({ settings, board, onApply, onAiUse, onClose, onS
         {draft && !clarifying && <View style={{ gap: 6 }}>{(!pictureIssues.length || Boolean(busy) || picturesChanged || Boolean(prompt.trim())) && <Text style={styles.small}>{busy === 'generate' ? saveable ? 'You can save these pictures now. Saving stops remaining picture work.' : 'Improving the remaining pictures. Clear pictures stay in place.' : picturesChanged ? 'Update draft pictures to apply your source choice.' : prompt.trim() ? 'Send your message to update the draft.' : 'Ready to save, or keep adjusting in the conversation.'}</Text>}<Button disabled={(Boolean(busy) && !saveable) || Boolean(prompt.trim()) || picturesChanged} busy={busy === 'save'} onPress={() => void apply()}>{source ? 'Apply changes' : 'Use this board'}</Button></View>}
       </View>
     </View>
+    {leaving && <Sheet title="Save your draft?" onClose={keepEditing} footer={<>
+      <Button disabled={!hasProgress || busy === 'save'} onPress={() => void leave(true)}>Save draft</Button>
+      <Button kind="danger" disabled={busy === 'save'} onPress={() => void leave(false)}>Discard</Button>
+      <Button kind="ghost" disabled={busy === 'save'} onPress={keepEditing}>Keep editing</Button>
+    </>}>
+      <Text style={styles.body}>{hasProgress ? 'Save your progress to finish this board later, or discard it and start fresh.' : 'There’s nothing to save yet. Discard to return to your boards, or keep editing.'}</Text>
+      {busy === 'save' && <Text accessibilityLiveRegion="polite" style={styles.small}>Saving…</Text>}
+      {Boolean(exitError) && <Notice>{exitError}</Notice>}
+    </Sheet>}
     {translationReview && draft && <Sheet title="Review translation replacements" onClose={() => setTranslationReview(false)} footer={<><Button kind="secondary" onPress={() => { setReviewedDraft(null); setTranslationReview(false); }}>Keep saved translations</Button><Button onPress={() => { setReviewedDraft(draft); setTranslationReview(false); }}>Use proposed translations</Button></>}>
       <Text style={styles.body}>These saved words are protected. Compare each change before choosing replacements. Nothing is saved until you apply the board.</Text>
       {replacements.map(({ tileId, card, saved, proposed }) => <View key={`${tileId}:${saved.language}`} style={[styles.card, { gap: 8 }]}><Text style={styles.label}>{card} - {languageName(saved.language)}</Text><Text style={styles.body}>Saved: {saved.label} / {saved.speech}</Text><Text style={styles.body}>Proposed: {proposed.label} / {proposed.speech}</Text></View>)}

@@ -1,6 +1,6 @@
 /**
  * @file Exercises conversational board creation and edits, including clarification, cancellation, and
- * draft application and text review without app microphone capture. Review screenshots are written
+ * explicit draft retention/discard, application, and text review without app microphone capture. Review screenshots are written
  * to ignored artifacts for temporary CI retention, not source documentation.
  */
 
@@ -22,6 +22,112 @@ async function send(page: Page, message: string) {
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 }
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page); });
+
+for (const exit of ['page back', 'browser back'] as const) test(`an untouched creation offers discard on ${exit} and reopens with the default prompt`, async ({ page }) => {
+  if (exit === 'browser back') await page.setViewportSize({ width: 390, height: 700 });
+  let requests = 0;
+  await page.route('**/api/boards/propose', route => { requests++; return route.fulfill({ json: envelope() }); });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  if (exit === 'browser back') await page.goBack();
+  else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Discard', exact: true })).toBeInViewport({ ratio: 1 });
+  await expect(page.getByRole('button', { name: 'Keep editing', exact: true })).toBeInViewport({ ratio: 1 });
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toHaveCount(0);
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
+  await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeDisabled();
+  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
+  expect(requests).toBe(0);
+});
+
+test('only saving a draft makes it resumable, and discarding clears its prompt across reloads', async ({ page }) => {
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('button', { name: '🐾 Farm animals', exact: true }).click();
+  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
+  const prompt = await input.inputValue();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Keep editing', exact: true }).click();
+  await expect(input).toHaveValue(prompt);
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toBeVisible();
+  expect((await saved(page)).boardCreationDraft.prompt).toBe(prompt);
+  await page.reload();
+  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
+  await expect(input).toHaveValue(prompt);
+  await input.fill('A different unsent message');
+  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Picture source: Automatic', exact: true }).click();
+  await page.getByRole('button', { name: 'Emoji only', exact: true }).click();
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Picture settings', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(input).toHaveValue('');
+  await expect(page.getByTestId('ai-draft')).toHaveCount(0);
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+  await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Picture source: Automatic', exact: true })).toBeVisible();
+});
+
+test('saved conversation and canvas resume after reload and applying the board consumes the draft', async ({ page }) => {
+  const requests: any[] = [];
+  await page.route('**/api/boards/propose', route => { requests.push(route.request().postDataJSON()); return route.fulfill({ json: envelope() }); });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await send(page, 'Cow');
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Make it green');
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Resume draft', exact: true })).toBeVisible();
+  expect((await saved(page)).boards).toHaveLength(3);
+  await page.reload();
+  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
+  await expect(page.getByTestId('ai-draft')).toContainText('Cow');
+  await expect(page.getByTestId('ai-transcript')).toContainText('Here is Cow.');
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('Make it green');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  expect(requests[1].conversation.history).toEqual([{ prompt: 'Cow', reply: 'Here is Cow.' }]);
+  expect(requests[1].conversation.draft.title).toBe('Animal words');
+  await page.getByRole('button', { name: 'Use this board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Animal words');
+  expect((await saved(page)).boards).toHaveLength(4);
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+});
+
+test('failed draft saves and discards keep the conversation open for retry', async ({ page }) => {
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
+  await input.fill('My animals');
+  await page.evaluate(() => { const put = IDBObjectStore.prototype.put; IDBObjectStore.prototype.put = function (...args: any[]) { if ((window as any).__failWrites) throw new DOMException('Storage full', 'QuotaExceededError'); return put.apply(this, args as any); }; (window as any).__failWrites = true; });
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await expect(page.getByText('Your draft could not be saved. Please try again.', { exact: true })).toBeVisible();
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+  await page.evaluate(() => { (window as any).__failWrites = false; });
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
+  await expect(input).toHaveValue('My animals');
+  await page.evaluate(() => { (window as any).__failWrites = true; });
+  await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.getByText('Your draft could not be discarded. Please try again.', { exact: true })).toBeVisible();
+  expect((await saved(page)).boardCreationDraft.prompt).toBe('My animals');
+  await page.evaluate(() => { (window as any).__failWrites = false; });
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'New board', exact: true })).toBeVisible();
+  expect((await saved(page)).boardCreationDraft).toBeUndefined();
+});
 
 test('manual creation starts from the library and suggestions stay in the conversation without an opt-in screen', async ({ page }) => {
   let requests = 0;
@@ -149,6 +255,8 @@ test('stopping and retrying ignores late replies and does not duplicate conversa
   await expect(page.getByText('A cow', { exact: true })).toHaveCount(1);
   await expect(page.getByTestId('ai-draft')).not.toContainText('Wrong late word');
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
+  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
   expect((await saved(page)).boards).toHaveLength(3);
 });
 
@@ -282,6 +390,8 @@ for (const dismissal of ['page back', 'browser back']) test(`prompt text stays e
   await input.fill('An unsent follow-up');
   if (dismissal === 'browser back') await page.goBack();
   else await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByTestId('ai-conversation')).toHaveCount(0);
   expect(requests).toHaveLength(2);
   expect(transcriptions).toBe(0);

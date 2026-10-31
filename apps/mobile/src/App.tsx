@@ -1,6 +1,5 @@
 /**
- * @file Coordinates library persistence, board navigation, playback previews, and parent editing
- * actions.
+ * @file Coordinates library persistence, explicit creation-draft retention, board navigation, and playback.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -127,7 +126,7 @@ function Application() {
       if (proposal.boardId && !current) throw new Error('The original board was deleted. Please create a new proposal.');
       candidate = applyProposal(current, proposal, () => Crypto.randomUUID(), undefined, replaceTranslations);
       original = current;
-      return { ...lib, boards: current ? lib.boards.map(b => b.id === candidate.id ? candidate : b) : [...lib.boards, candidate] };
+      return { ...lib, boardCreationDraft: current ? lib.boardCreationDraft : undefined, boards: current ? lib.boards.map(b => b.id === candidate.id ? candidate : b) : [...lib.boards, candidate] };
     });
     if (original) remember(original);
     setSelectedId(candidate.id);
@@ -144,7 +143,13 @@ function Application() {
   if (draftRoute.route) {
     const source = draftRoute.route.boardId ? library.boards.find(board => board.id === draftRoute.route!.boardId) : undefined;
     if (draftRoute.route.boardId && !source) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
-    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source} onApply={(proposal, replaceTranslations) => draftRoute.save(() => accept(proposal, replaceTranslations))} onAiUse={consent} onClose={draftRoute.close} onSpeechReady={() => audio.reload()} />;
+    return <AiConversation key={source?.id ?? 'new'} settings={library.settings} board={source}
+      savedDraft={source ? undefined : library.boardCreationDraft}
+      onSaveDraft={draft => draftRoute.save(() => store.commit(current => ({ ...current, boardCreationDraft: draft })))}
+      onDiscardDraft={() => store.current.current?.boardCreationDraft ? draftRoute.save(() => store.commit(current => ({ ...current, boardCreationDraft: undefined }))) : Promise.resolve()}
+      onBeforeClose={draftRoute.beforeClose}
+      onApply={(proposal, replaceTranslations) => draftRoute.save(() => accept(proposal, replaceTranslations))}
+      onAiUse={consent} onClose={draftRoute.close} onSpeechReady={() => audio.reload()} />;
   }
   return <><View style={styles.page}>
     <StatusBar style="dark" />
