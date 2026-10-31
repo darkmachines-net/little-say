@@ -1,9 +1,10 @@
-/** @file Exercises automatic guest AI, optional backup consent, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Verifies durable automatic guest AI saves, session isolation, backup consent, media restore, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
 import { starterLibrary } from '../fixtures/library';
 import { pcmToWav } from '../../apps/server/src/synthesis';
+import { waitForAiTurn } from './boardEditor';
 
 const password = 'a test family passphrase';
 
@@ -17,13 +18,19 @@ test('guests create a fixture AI board without registration and retain private s
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Create a hello board');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   const job = await (await accepted).json();
-  await expect(page.getByRole('button', { name: 'Use this board', exact: true })).toBeEnabled();
+  await expect.poll(async () => (await readLibrary(page)).boards.length).toBe(1);
+  await waitForAiTurn(page);
+  const created = (await readLibrary(page)).boards[0];
+  expect(created.tiles.length).toBeGreaterThan(0);
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
   const owner = (await (await page.request.get('/api/account/session')).json()).account;
   expect(owner).toMatchObject({ email: null, emailVerified: false, providers: [] });
   expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
   expect((await readLibrary(page)).sync).toBeUndefined();
   expect((await page.request.get('/api/account/backup')).status()).toBe(403);
   await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue(created.title);
+  expect((await readLibrary(page)).boards[0]).toEqual(created);
   expect((await (await page.request.get('/api/account/session')).json()).account.id).toBe(owner.id);
   expect((await page.request.get(`/api/ai/jobs/${job.id}`)).status()).toBe(200);
   const other = await browser.newContext();

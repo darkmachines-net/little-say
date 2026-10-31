@@ -1,6 +1,7 @@
 /** @file Exercises simplified Settings, About, shared-language choices, default media migration, and offline links. */
 
 import { test, expect, type Page } from '@playwright/test';
+import { openBoardLanguages } from './boardEditor';
 import { createHash } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { pcmToWav } from '../../apps/server/src/synthesis';
@@ -169,7 +170,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await openBoardLanguages(page);
   for (const name of ['English', 'Spanish', 'French']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await expect(page.getByRole('button', { name: 'Add language', exact: true })).toHaveCount(0);
   await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toHaveCount(0);
@@ -187,12 +188,14 @@ test('boards inherit user languages and only offer a persistent play subset with
   await addUserLanguage(page, 'German');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Back to board', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Edit in Spanish', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Edit in German', exact: true })).toHaveCount(0);
+  await openBoardLanguages(page);
+  await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Play language German', exact: true })).not.toBeChecked();
+  await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.reload();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await openBoardLanguages(page);
   await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: 'Play language German', exact: true })).not.toBeChecked();
   for (const name of ['English', 'French', 'German']) await page.getByRole('checkbox', { name: `Play language ${name}`, exact: true }).click();
@@ -200,7 +203,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit My little words', exact: true }).click();
-  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await openBoardLanguages(page);
   for (const name of ['English', 'Spanish', 'French', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Manage your languages in Settings', exact: true }).click();
   await addUserLanguage(page, 'Italian');
@@ -208,7 +211,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await page.getByRole('button', { name: 'Back to board', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Languages', exact: true }).click();
+  await openBoardLanguages(page);
   await expect(page.getByRole('checkbox', { name: 'Play language Italian', exact: true })).toBeChecked();
 });
 

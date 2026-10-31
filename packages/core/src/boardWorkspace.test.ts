@@ -1,4 +1,4 @@
-/** @file Verifies concurrent manual/AI edits, scoped changes, deletions, ordering, and local-only empty drafts. */
+/** @file Verifies concurrent manual/AI edits, play-language subsets, scoped changes, ordering, and local-only empty drafts. */
 
 import { describe, expect, it } from 'vitest';
 import { starterLibrary } from '../../../tests/fixtures/library';
@@ -6,6 +6,19 @@ import { mergeBoardSuggestion, scopeBoardSuggestion } from './boardWorkspace';
 import { boardSchema, migrateLibrary, syncSnapshotSchema } from './schema';
 
 describe('shared board workspace', () => {
+  it('merges play-language choices, restores inheritance, and protects newer choices from stale previews', () => {
+    const base = { ...starterLibrary().boards[0], playLanguageSubset: ['en-US'] };
+    const proposed = { ...base, playLanguageSubset: ['ru-RU'] };
+    const current = { ...base, title: 'Our animals' };
+    expect(mergeBoardSuggestion(base, proposed, current).board).toMatchObject({ title: 'Our animals', playLanguageSubset: ['ru-RU'] });
+    expect(mergeBoardSuggestion(base, { ...base, playLanguageSubset: undefined }, current).board.playLanguageSubset).toBeUndefined();
+    const newer = { ...current, playLanguageSubset: ['es-ES'] };
+    expect(mergeBoardSuggestion(base, { ...base, title: 'AI title' }, newer).board.playLanguageSubset).toEqual(['es-ES']);
+    const conflicted = mergeBoardSuggestion(base, proposed, newer);
+    expect(conflicted.conflicts).toContain('Play language choices');
+    expect(conflicted.board.playLanguageSubset).toEqual(['es-ES']);
+    expect(mergeBoardSuggestion(base, proposed, newer, 'suggested').board.playLanguageSubset).toEqual(['ru-RU']);
+  });
   it('merges disjoint fields and retains direct additions without replacing current content', () => {
     const base = starterLibrary().boards[0];
     const proposed = structuredClone(base); proposed.tiles[0].speech = 'Hello cow';

@@ -1,4 +1,4 @@
-/** @file Reconciles AI suggestions with intervening direct edits and enforces selected-card scope. */
+/** @file Reconciles AI suggestions with direct card and shared-language subset edits while enforcing selected-card scope. */
 
 import { assertTranslationSourceLanguageChange, boardSchema, tileSource, type Board, type Tile } from './schema';
 
@@ -14,6 +14,7 @@ export function scopeBoardSuggestion(source: Board, proposed: Board, tileId: str
 
 /**
  * Merge only fields changed by the suggestion, retaining newer direct edits and additions.
+ * Play-language subsets merge independently from the proposal's language generation context.
  * Conflicts, including newer picture protection or source choices, default to current values.
  * They must be reviewed before committing. An explicit choice
  * resolves only overlapping changes; it never replaces the entire current board with an old snapshot.
@@ -71,6 +72,7 @@ export function mergeBoardSuggestion(base: Board, proposed: Board, current: Boar
   const result = boardSchema.parse({ ...current,
     title: merge(base.title, proposed.title, current.title, 'Board title'),
     playLanguages: merge(base.playLanguages, proposed.playLanguages, current.playLanguages, 'Board languages'),
+    playLanguageSubset: merge(base.playLanguageSubset, proposed.playLanguageSubset, current.playLanguageSubset, 'Play language choices'),
     picturePolicy: merge(base.picturePolicy, proposed.picturePolicy, current.picturePolicy, 'Picture settings'),
     translateLabels: merge(base.translateLabels, proposed.translateLabels, current.translateLabels, 'Label translations'),
     tiles: arranged,

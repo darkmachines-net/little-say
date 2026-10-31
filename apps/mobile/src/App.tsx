@@ -1,6 +1,6 @@
 /**
  * @file Coordinates library persistence, board navigation, playback, and normal Undo for manual edits
- * and automatically saved AI turns, shared languages, and background translations in one workspace.
+ * and automatically saved AI turns, shared languages, and translations, retaining board callers through Settings.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -32,9 +32,12 @@ import { AccountScreen } from './ui/AccountScreen';
 function Application() {
   const store = useLibrary();
   const draftRoute = useBoardDraftRoute();
+  const settingsRoute = useSettingsRoute();
   const audio = useSpeechLibrary(store.library);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  useEffect(() => { setSelectedId(draftRoute.route?.boardId ?? null); }, [draftRoute.route?.boardId]);
+  // Settings has its own URL without the board hash. Keep the caller until its history restores the
+  // editor route; ordinary browser Back/Forward still updates selection outside Settings.
+  useEffect(() => { if (!settingsRoute.route) setSelectedId(draftRoute.route?.boardId ?? null); }, [draftRoute.route?.boardId, settingsRoute.route]);
   useEffect(() => {
     if (!store.library || !draftRoute.route || draftRoute.route.boardId || store.library.creationDraft) return;
     const now = new Date().toISOString();
@@ -43,7 +46,6 @@ function Application() {
       prompt: '', suggestion: null,
     } }).catch(() => {});
   }, [draftRoute.route, store]);
-  const settingsRoute = useSettingsRoute();
   const [accountOpen, setAccountOpen] = useState(false);
   const [entryChecked, setEntryChecked] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);

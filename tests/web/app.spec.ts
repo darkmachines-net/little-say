@@ -614,6 +614,7 @@ test('numbers 1–9 prepare missing translations with retry and preserve digit l
   const languages = page.getByRole('button', { name: 'Board settings', exact: true });
   expect((await languages.boundingBox())!.y).toBeLessThan(100);
   await languages.click();
+  await page.getByRole('button', { name: 'Languages', exact: true }).click();
   await expect(page.getByRole('checkbox', { name: 'Play language Russian', exact: true })).toBeChecked();
   await page.waitForTimeout(300); // Let the native-style sheet fade finish for the screenshot.
   await page.screenshot({ path: 'artifacts/screenshots/numbers-bilingual-setup.png' });
