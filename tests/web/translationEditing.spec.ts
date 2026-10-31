@@ -1,4 +1,4 @@
-/** @file Verifies a primary-language canvas, per-card drafts, shared language choices, background translations, and protected corrections. */
+/** @file Verifies signed-in account navigation, a primary-language canvas, per-card drafts, shared language choices, background translations, and protected corrections. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
@@ -29,7 +29,7 @@ async function openTranslations(page: Page, missingSpanish = false, legacy = fal
   board.tiles[0].translations = [{ language: 'ru-RU', label: 'Корова', speech: 'корова', source: tileSource(board.tiles[0]), origin: 'manual' }, { language: 'es-ES', label: 'Vaca', speech: 'vaca', source: tileSource(board.tiles[0]), origin: 'generated' }];
   if (missingSpanish) board.tiles[0].translations.pop();
   if (legacy) delete board.tiles[0].translations[0].origin;
-  library.settings = { ...library.settings, languageProfile: { languages: board.playLanguages, defaultLanguage: 'en-US' }, accountChoiceMade: true, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
+  library.settings = { ...library.settings, languageProfile: { languages: board.playLanguages, defaultLanguage: 'en-US' }, aiConsent: true, voiceSources: { 'en-US': 'ai', 'ru-RU': 'ai', 'es-ES': 'ai' }, boardLanguages: { [board.id]: 'ru-RU' } };
   await page.evaluate(async library => {
     const db = await new Promise<IDBDatabase>(resolve => { const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); });
     await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
@@ -77,7 +77,7 @@ test('canvas stays in the primary language while individual cards retain their l
   await openRussianTile(page); await expect(speech).toHaveValue('коровушка');
 });
 
-test('account entry cancellation preserves corrected translations and the guest library', async ({ page }) => {
+test('account navigation preserves corrected translations and the signed-in library', async ({ page }) => {
   const original = await openTranslations(page);
   await openRussianTile(page);
   await page.getByRole('textbox', { name: 'Russian spoken words', exact: true }).fill('Saved Russian correction');
@@ -85,13 +85,8 @@ test('account entry cancellation preserves corrected translations and the guest 
   await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('Saved Russian correction');
   const corrected = await savedBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await page.getByRole('button', { name: 'Back to Settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
   await page.reload();
   if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await openRussianTile(page);

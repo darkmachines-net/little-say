@@ -16,7 +16,7 @@ The API permits public invocation but enforces account identity/ownership for pr
 
 ## Identity, secrets and native binaries
 
-Terraform registers Firebase's public client configuration, email/password and anonymous guest auth plus the existing Android/iOS package identities `net.darkmachines.littlesay`. Import existing Firebase registrations if they are already present. Configure Google with the actual Play App Signing certificate fingerprints, upload/test certificates where applicable, Android OAuth package/fingerprint clients, a web client ID, and an iOS OAuth client/URL scheme. Supply the public client IDs in Terraform variables and `LITTLE_SAY_GOOGLE_IOS_URL_SCHEME` in the release environment. Preserve the existing EAS project and application IDs.
+Terraform registers Firebase's public client configuration, email/password auth with anonymous sign-in disabled, plus the existing Android/iOS package identities `net.darkmachines.littlesay`. Import existing Firebase registrations if they are already present. Configure Google with the actual Play App Signing certificate fingerprints, upload/test certificates where applicable, Android OAuth package/fingerprint clients, a web client ID, and an iOS OAuth client/URL scheme. Supply the public client IDs in Terraform variables and `LITTLE_SAY_GOOGLE_IOS_URL_SCHEME` in the release environment. Preserve the existing EAS project and application IDs.
 
 Configure Apple with the existing app identifier's Sign in with Apple entitlement, Services ID, team/key ID, private key, Firebase callback `https://little-say.firebaseapp.com/__/auth/handler`, and approved private-email relay sender/domain. Enable Google/Apple in Firebase before setting their public Terraform variables; email/password remains the only advertised method until then. OAuth provider secrets and Apple keys belong in Secret Manager/provider consoles, never Git or client bundles. `google-client-secret` and `apple-private-key` are reserved secret resources, not automatically populated provider configurations.
 
@@ -40,7 +40,7 @@ For media, create an operator-owned probe object, record its generation, delete 
 
 Before launch, demonstrate actual Hosting `__session`/CSRF behavior, direct API authorization, object round trips, authenticated queued execution, queue failure, duplicate delivery, worker termination and redeployment. Verify the image digest, migration state, HTTPS, SQL/storage/job/readiness alerts and $25/$50/$100 billing thresholds. Alerts are not spending caps. Check SQL restoration and object recovery into isolated resources. Record evidence in ignored `artifacts/` or the PR.
 
-Test guest AI, sign-in, verified backup restore, account deletion and offline playback on TestFlight and Play-installed binaries, plus LAN development separately. Emulator/browser tests cannot establish store OAuth identities, device networking or native storage behavior.
+Test required sign-in, registered-account AI, verified backup restore, account deletion and offline playback on TestFlight and Play-installed binaries, plus LAN development separately. Emulator/browser tests cannot establish store OAuth identities, device networking or native storage behavior.
 
 ## Feasibility checkpoint and fallback
 

@@ -1,36 +1,36 @@
-/** @file Hosts full-screen account forms under one route header without discarding local settings drafts. */
-import { useState } from 'react';
+/** @file Hosts required sign-in and first cloud restoration on every platform, plus header account navigation. */
+import { useEffect } from 'react';
 import { Modal, Platform, ScrollView } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { type AccountController } from '../services/useAccount';
+import { type AccountMode } from '../services/accountRoute';
 import { AccountPanel } from './AccountPanel';
+import { Brand } from './Brand';
 import { AppHeader } from './AppHeader';
-import { Notice } from './components';
 import { styles, theme } from './theme';
 
 /**
- * Open account forms with a single route heading and insets measured in the native modal window.
- * Back leaves forms before returning to the caller; scrolling stays within the system bars.
+ * Open full-screen account navigation under the shared route header, with insets measured in its native modal window.
+ * Back leaves forms first; signed-out users and empty devices awaiting cloud restoration cannot dismiss the gate.
  * Web fades in place so the safe-area provider never measures a sliding, offscreen viewport.
  */
-export function AccountScreen({ account, onClose }: { account: AccountController; onClose: () => Promise<void> }) {
-  const [mode, setMode] = useState<'login' | 'register' | 'reset' | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+export function AccountScreen({ account, mode, onMode, onBack, onClose }: { account: AccountController; mode: AccountMode; onMode: (mode: AccountMode) => void; onBack: () => void; onClose: () => void }) {
+  const signedIn = Boolean(account.session && !account.needsLogin);
+  useEffect(() => { if (signedIn && mode) onMode(null); }, [signedIn, mode, onMode]);
+  const canClose = signedIn && !account.restoring;
+  const welcome = !signedIn && !mode;
   const close = () => {
-    if (saving || account.busy) return;
-    setSaving(true); setError('');
-    void onClose().catch(() => setError('Your choice could not be saved. Check device storage and try again.')).finally(() => setSaving(false));
+    if (!account.busy && canClose) onClose();
   };
-  const back = () => { if (!account.busy && !saving) { if (mode) setMode(mode === 'reset' ? 'login' : null); else close(); } };
-  const title = account.session && !account.needsLogin ? 'Account & backup' : mode === 'register' ? 'Create an account' : mode === 'login' ? 'Log in' : mode === 'reset' ? 'Reset your password' : 'Welcome to Little Say';
+  const back = () => { if (!account.busy) { if (mode && !signedIn) onBack(); else close(); } };
+  const title = signedIn ? 'Account & backup' : mode === 'register' ? 'Create an account' : mode === 'login' ? 'Sign in' : mode === 'reset' ? 'Reset your password' : 'Welcome to Little Say';
   return <Modal visible animationType={Platform.OS === 'web' ? 'fade' : 'slide'} presentationStyle="fullScreen" onRequestClose={back} statusBarTranslucent navigationBarTranslucent>
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        <AppHeader key={title} title={title} onBack={back} backDisabled={account.busy || saving} />
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 620, paddingVertical: 28, gap: 20 }]}>
-          {Boolean(error) && <Notice>{error}</Notice>}
-          <AccountPanel key={mode ?? (account.session && !account.needsLogin ? 'signed-in' : 'choices')} account={account} mode={mode} setMode={setMode} onContinue={close} />
+        <AppHeader key={title} title={title} onBack={canClose || mode ? back : undefined} backDisabled={account.busy} />
+        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 520, paddingTop: 24, paddingBottom: 36, gap: 24, flexGrow: welcome ? 1 : undefined, justifyContent: welcome ? 'center' : undefined }]}>
+          {welcome && <Brand stacked />}
+          <AccountPanel key={mode ?? (signedIn ? 'signed-in' : 'choices')} account={account} mode={mode} setMode={onMode} onContinue={close} />
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>

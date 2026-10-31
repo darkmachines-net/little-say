@@ -1,6 +1,6 @@
 # Little Say
 
-A local-first AAC soundboard for parents and toddlers, built with Expo, React Native, TypeScript, and Fastify. Families create boards with emoji, licensed illustrations, generated pictures, or their own photos, then play words in their preferred languages. Boards and downloaded media work offline; account backup is optional.
+A local-first AAC soundboard for parents and toddlers, built with Expo, React Native, TypeScript, and Fastify. Families create boards with emoji, licensed illustrations, generated pictures, or their own photos, then play words in their preferred languages. Sign-in is required on web and mobile. Boards back up automatically, and cached boards and media work offline.
 
 ## License
 
@@ -21,7 +21,7 @@ npm.cmd ci
 npm.cmd run dev
 ```
 
-On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a device on the same LAN. For client-only work against the deployed backend, use `npm run dev:remote`; no local API key is needed. `dev:web` and `dev:web:remote` open the browser version. Verified sign-in enables AI when a developer key is configured, or set `AAC_AI_FIXTURES=true` for synthetic local responses. Without AI, choose **Start without starter boards** and build manually. Backup consent is separate.
+On macOS/Linux, use `npm` instead of `npm.cmd`. Scan Expo's QR code on a device on the same LAN. For client-only work against the deployed backend, use `npm run dev:remote`; no local API key is needed. `dev:web` and `dev:web:remote` open the browser version. A developer key enables local AI, or set `AAC_AI_FIXTURES=true` for synthetic local responses. Without AI, choose **Start without starter boards** and build manually. See [account behavior](apps/mobile/src/services/README.md#accounts-and-sync) for automatic backup and offline use.
 
 Use `npm run dev:native` with an installed Little Say Dev client. Multiple worktrees can run concurrently with automatically selected ports. See [development tooling](scripts/README.md) for client setup, port coordination, environment resolution, device connectivity, and troubleshooting. For the full containerized browser stack, run `docker compose up --build` and open [localhost:8787](http://localhost:8787).
 

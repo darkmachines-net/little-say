@@ -1,4 +1,4 @@
-/** @file Exchanges guest/account identities for opaque sessions; backups and deletion retain explicit account verification. */
+/** @file Exchanges registered account identities for opaque sessions; backups and deletion retain explicit account verification. */
 import { type FastifyInstance, type FastifyRequest, type FastifyReply } from 'fastify';
 import { syncSnapshotSchema } from '@little-say/core';
 import { z } from 'zod';
@@ -30,15 +30,14 @@ export async function accountRoutes(app: FastifyInstance, accounts: Accounts, au
       if (session.cookie !== sessionCookie(request)) setCookie(reply, session.cookie, secureCookies, 86400);
       return { csrfToken: session.csrf };
     });
-    // This exchanges already authenticated ID tokens, including automatic guests; Firebase owns password attempts.
+    // This exchanges registered account ID tokens; Firebase owns password attempts.
     routes.post('/api/account/session', { config: { rateLimit: { max: 120, timeWindow: '1 minute', groupId: 'session-exchange' } } }, async (request, reply) => {
-      const parsed = z.object({ idToken: z.string().min(1).max(16000), native: z.boolean().default(false), guest: z.boolean().default(false) }).safeParse(request.body);
+      const parsed = z.object({ idToken: z.string().min(1).max(16000), native: z.boolean().default(false) }).safeParse(request.body);
       if (!parsed.success) return reply.code(400).send({ error: 'A Firebase sign-in token is required.' });
       if (!parsed.data.native) await csrf(request);
       const identity = await auth.verify(parsed.data.idToken);
-      // Persisted native guests can refresh without a registration ceremony. Account actions still need recent proof.
-      if (parsed.data.guest && !identity.anonymous) throw new AccountError('A guest session requires an anonymous identity.', 403);
-      if (!parsed.data.guest) recent(identity.authTime);
+      if (!identity.providers.length) throw new AccountError('Sign in with a registered account.', 401);
+      recent(identity.authTime);
       const account = await accounts.provision(identity);
       if (!parsed.data.native) setCookie(reply, await accounts.issueCookie(account, await auth.cookie(parsed.data.idToken), Math.floor(Date.now() / 1000) + COOKIE_SECONDS, sessionCookie(request)), secureCookies, COOKIE_SECONDS);
       return { account };

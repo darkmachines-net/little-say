@@ -4,7 +4,8 @@
  *
  * Each request uses fresh browser storage. Cold requests get separate empty reuse caches with bundled
  * assets available; warm requests share a cache after one warmup per fixture; concurrent requests use
- * four sessions and an initially empty shared cache. Only synthetic fixtures are used, never accounts.
+ * four sessions and an initially empty shared cache. Browser sign-in uses synthetic metadata and CSRF,
+ * never a real Firebase account; the isolated benchmark API measures provider work without account persistence.
  * `--conditions cold,warm,concurrent` selects populations; `--fixtures` selects fixture families.
  *
  * Drafting is billable. New artwork requires `--generate`; add `--unseeded` to bypass generated seeds.
@@ -80,13 +81,15 @@ async function pageFor(browser: Browser, url: string) {
   const context = await browser.newContext({ viewport: { width: 1180, height: 900 }, serviceWorkers: 'block' });
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
+  await page.route('**/api/account/csrf', route => route.fulfill({ json: { csrfToken: 'benchmark-only' } }));
   await page.goto(url + '/app');
-  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
-  await page.getByRole('heading', { name: 'Choose your languages', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Welcome to Little Say', exact: true }).waitFor();
   await page.evaluate(async library => {
+    localStorage.setItem('little-say-firebase-account', JSON.stringify({ account: { id: '00000000-0000-4000-8000-000000000001', email: 'benchmark@example.test', displayName: 'Benchmark', emailVerified: false, providers: ['password'] },
+      server: location.origin, firebaseUid: 'benchmark', authConfig: { projectId: 'demo-benchmark', apiKey: 'fixture', appId: 'fixture', authDomain: 'localhost', providers: ['password'] } }));
     const db = await new Promise<IDBDatabase>(resolve => { const opening = indexedDB.open('little-say'); opening.onsuccess = () => resolve(opening.result); });
     await new Promise<void>((resolve, reject) => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put(library, 'library'); tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); }); db.close();
-  }, { ...starterLibrary(), settings: { ...starterLibrary().settings, accountChoiceMade: true } });
+  }, starterLibrary());
   await page.reload();
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   return { context, page };

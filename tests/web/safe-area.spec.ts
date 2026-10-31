@@ -1,6 +1,8 @@
-/** @file Verifies editor typing, account, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
+/** @file Verifies editor typing, required account entry, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
+import { openSignedInApp } from './accountFixture';
 import { openExistingLibrary } from './existingLibrary';
 
 type Insets = { top: number; bottom: number; left: number; right: number };
@@ -28,11 +30,13 @@ test('account and setup navigation stay within system bars', async ({ page, cont
     await route.fulfill({ response, body: (await response.text()).replace('</head>', '<style>* { animation-duration: 1s !important; }</style></head>') });
   });
   await page.goto('/app');
-  await expectInsideSafeArea(page.getByRole('button', { name: 'Back', exact: true }), page, bars);
-  const guest = page.getByRole('button', { name: 'Continue without an account', exact: true });
-  await guest.scrollIntoViewIfNeeded();
-  await expectInsideSafeArea(guest, page, bars);
-  await guest.click();
+  await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
+  const login = page.getByRole('button', { name: 'Sign in', exact: true });
+  await login.scrollIntoViewIfNeeded();
+  await expectInsideSafeArea(login, page, bars);
+  await mkdir('artifacts/screenshots/accounts', { recursive: true });
+  await page.screenshot({ path: 'artifacts/screenshots/accounts/welcome-phone.png', animations: 'disabled' });
+  await openSignedInApp(page);
   await expectInsideSafeArea(page.getByRole('heading', { name: 'Choose your languages', exact: true }), page, bars);
   const next = page.getByRole('button', { name: 'Continue', exact: true });
   await next.scrollIntoViewIfNeeded();
@@ -45,6 +49,9 @@ test('Settings navigation stays safe while scrolling and rotating its pages', as
   await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
   await openExistingLibrary(page);
   await expectInsideSafeArea(page.getByRole('button', { name: 'Settings', exact: true }), page, bars);
+  await expectInsideSafeArea(page.getByRole('button', { name: 'Account & backup', exact: true }), page, bars);
+  await mkdir('artifacts/screenshots/accounts', { recursive: true });
+  await page.screenshot({ path: 'artifacts/screenshots/accounts/header-phone.png' });
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   for (const { viewport, insets } of [
     { viewport: portrait, insets: bars },

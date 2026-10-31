@@ -1,11 +1,11 @@
-/** @file Attaches origin-bound guest/account credentials to AI and private media without requiring registration. */
+/** @file Requires registered, origin-bound account credentials for AI and private media. */
 import { loadAccountSession } from './accountSession';
 
-/** Use explicit account credentials or establish a guest owner lazily, without enabling backup. */
+/** Require a saved account for this origin; missing sign-in never creates an anonymous identity. */
 export async function applicationHeaders(server: string, mutation = false): Promise<Record<string, string>> {
   const session = await loadAccountSession();
-  const { accountAuthHeaders, guestAuthHeaders } = await import('./firebaseAccount');
-  if (!session || session.server !== server) return guestAuthHeaders(server, mutation);
+  const { accountAuthHeaders } = await import('./firebaseAccount');
+  if (!session || session.server !== server) throw new Error('Sign in to use Little Say.');
   return { 'X-Little-Say-Account': session.account.id, ...await accountAuthHeaders(session, mutation) };
 }
 

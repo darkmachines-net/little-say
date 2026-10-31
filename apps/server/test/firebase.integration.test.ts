@@ -1,4 +1,4 @@
-/** @file Verifies guest/account Auth-emulator credentials, session renewal, CSRF, revocation, backups, and deletion. */
+/** @file Verifies registered Firebase-emulator sessions and guest rejection, local test-account provisioning, CSRF, revocation, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -14,11 +14,11 @@ const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await action(); });
 const project = 'demo-little-say';
 const headers = { 'x-little-say': '1' };
-async function setup() {
+async function setup(environment = 'test') {
   if (!/^127\.0\.0\.1:\d+$/.test(process.env.FIREBASE_AUTH_EMULATOR_HOST || '')) throw new Error('Start the local Auth emulator and set FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099.');
   const db = await testDatabase(); cleanup.push(() => db.close());
   const adminApp = initializeApp({ projectId: project }, randomUUID()), admin = getAuth(adminApp); cleanup.push(() => deleteApp(adminApp));
-  const auth = new FirebaseIdentity({ ...process.env, NODE_ENV: 'test', FIREBASE_PROJECT_ID: project, FIREBASE_API_KEY: 'demo-key', FIREBASE_APP_ID: 'demo-app', FIREBASE_AUTH_PROVIDERS: 'password' });
+  const auth = new FirebaseIdentity({ ...process.env, NODE_ENV: environment, FIREBASE_PROJECT_ID: project, FIREBASE_API_KEY: 'demo-key', FIREBASE_APP_ID: 'demo-app', FIREBASE_AUTH_PROVIDERS: 'password' });
   const accounts = new Accounts(db.pool), app = await createServer({ provider: null, accounts, auth, secureCookies: true });
   cleanup.push(() => app.close());
   const email = randomUUID() + '@example.test', password = 'a long test passphrase';
@@ -41,7 +41,7 @@ async function browser(fixture: Awaited<ReturnType<typeof setup>>) {
   return { login, headers: { ...headers, cookie: String(login.headers['set-cookie']).split(';')[0] + '; ' + csrfCookie, 'x-little-say-csrf': csrf.json().csrfToken } };
 }
 
-it('keeps guest APIs available and gates backup on verified email with no password endpoint', async () => {
+it('keeps health available and gates backup on verified email with no password endpoint', async () => {
   const f = await setup(); expect((await f.app.inject('/api/health')).statusCode).toBe(200);
   expect((await f.app.inject('/api/account/backup')).statusCode).toBe(401);
   expect((await native(f)).statusCode).toBe(200);
@@ -51,20 +51,20 @@ it('keeps guest APIs available and gates backup on verified email with no passwo
   expect((await f.app.inject({ url: '/api/account/backup', headers: access })).statusCode).toBe(200);
   expect((await f.app.inject({ method: 'POST', url: '/api/account/register', headers, payload: {} })).statusCode).toBe(404);
 });
-it('restores persisted native guests without recent sign-in and rejects account credentials disguised as guests', async () => {
+it('rejects anonymous tokens and legacy guest cookies before granting app access', async () => {
   const f = await setup();
   const guest = await rest('accounts:signUp', { returnSecureToken: true });
   cleanup.push(() => f.admin.deleteUser(guest.localId));
-  expect(await f.auth.verify(guest.idToken)).toMatchObject({ anonymous: true, email: null, emailVerified: false });
-  // The emulator permits editing this unsigned claim to model a refreshed ID token from an older guest login.
-  const parts = guest.idToken.split('.'), claims = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-  claims.auth_time -= 86400;
-  const token = parts[0] + '.' + Buffer.from(JSON.stringify(claims)).toString('base64url') + '.' + parts[2];
-  const request = { method: 'POST' as const, url: '/api/account/session', headers, payload: { idToken: token, native: true, guest: true } };
-  const first = await f.app.inject(request), second = await f.app.inject(request);
-  expect(first.statusCode).toBe(200); expect(second.json().account.id).toBe(first.json().account.id);
-  expect((await f.app.inject({ url: '/api/account/backup', headers: { authorization: 'Bearer ' + token } })).statusCode).toBe(403);
-  expect((await f.app.inject({ ...request, payload: { ...request.payload, idToken: f.token } })).statusCode).toBe(403);
+  await expect(f.auth.verify(guest.idToken)).rejects.toMatchObject({ statusCode: 401 });
+  expect((await native({ ...f, token: guest.idToken })).statusCode).toBe(401);
+  const identity = { project, uid: guest.localId, email: null, displayName: null, emailVerified: false, providers: [], authTime: Math.floor(Date.now() / 1000), expires: Math.floor(Date.now() / 1000) + 3600 };
+  // Model a persisted guest cookie created by an older app release.
+  const owner = await f.accounts.provision(identity);
+  const cookie = await f.accounts.issueCookie(owner, await f.auth.cookie(guest.idToken), identity.expires);
+  for (const access of [{ authorization: 'Bearer ' + guest.idToken }, { cookie: '__session=' + cookie }]) {
+    expect((await f.app.inject({ url: '/api/account/session', headers: access })).statusCode).toBe(401);
+    expect((await f.app.inject({ url: '/api/account/backup', headers: access })).statusCode).toBe(401);
+  }
 });
 it('protects cookie exchange and mutation with CSRF, uses secure cookies, and invalidates only logout cookie', async () => {
   const f = await setup(); await f.admin.updateUser(f.uid, { emailVerified: true });
@@ -122,6 +122,35 @@ it('fails closed for emulator settings in production and for demo identities wit
   expect(() => firebaseConfig({ NODE_ENV: 'production', FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099' })).toThrow('forbidden');
   expect(() => firebaseConfig({ FIREBASE_PROJECT_ID: 'demo-little-say' })).toThrow();
   expect(() => firebaseConfig({ FIREBASE_AUTH_EMULATOR_HOST: 'https://evil.invalid:9099' })).toThrow();
+  for (const NODE_ENV of ['development', 'test', 'production']) {
+    expect(firebaseConfig({ NODE_ENV, FIREBASE_PROJECT_ID: 'hosted-little-say', FIREBASE_API_KEY: 'public-key', FIREBASE_APP_ID: 'public-app' }).developmentAccount).toBeUndefined();
+  }
+  for (const NODE_ENV of ['test', undefined]) {
+    expect(firebaseConfig({ NODE_ENV, FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099' }).developmentAccount).toBeUndefined();
+  }
+  expect(firebaseConfig({ NODE_ENV: 'development', FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099', FIREBASE_AUTH_PROVIDERS: 'google.com' }).developmentAccount).toBeUndefined();
+});
+
+it('prepares a verified development account once and reuses its ordinary native and browser sessions', async () => {
+  const f = await setup('development');
+  const config = (await f.app.inject('/api/account/config')).json();
+  expect(config.developmentAccount).toEqual({ email: 'tester@little-say.test', password: 'little-say-local-test-only' });
+  await Promise.all([f.auth.prepareDevelopmentAccount(), f.auth.prepareDevelopmentAccount()]);
+  const user = await f.admin.getUserByEmail(config.developmentAccount.email);
+  cleanup.push(() => f.admin.deleteUser(user.uid));
+  expect(user.emailVerified).toBe(true);
+  const first = await rest('accounts:signInWithPassword', { ...config.developmentAccount, returnSecureToken: true });
+  const login = await native({ ...f, token: first.idToken });
+  expect(login.statusCode).toBe(200);
+  const account = login.json().account;
+  expect(account).toMatchObject({ email: config.developmentAccount.email, emailVerified: true, providers: ['password'] });
+  const restarted = new FirebaseIdentity({ ...process.env, NODE_ENV: 'development', FIREBASE_PROJECT_ID: project, FIREBASE_AUTH_PROVIDERS: 'password' });
+  cleanup.push(() => restarted.close());
+  await restarted.prepareDevelopmentAccount();
+  const second = await rest('accounts:signInWithPassword', { ...config.developmentAccount, returnSecureToken: true });
+  expect(second.localId).toBe(user.uid);
+  expect((await browser({ ...f, token: second.idToken })).login.json().account.id).toBe(account.id);
+  expect((await f.app.inject({ url: '/api/account/backup', headers: { authorization: 'Bearer ' + second.idToken } })).statusCode).toBe(200);
 });
 
 it('links providers only to the authenticated UID and preserves both accounts on credential conflict', async () => {

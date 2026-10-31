@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, guest/account ownership, private media, CSRF, cancellation, and interruption in isolated PostgreSQL. */
+/** @file Verifies durable jobs, registered-account ownership and anonymous rejection, private media, CSRF, cancellation, and interruption in isolated PostgreSQL. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -110,9 +110,9 @@ it('persists fixture speech through a worker restart and grants downloads only t
   await expect(new DatabaseCache(f.pool, restarted, 'speech', f.alice.id).read('contract.json')).rejects.toMatchObject({ code: 'ENOENT' });
   await expect(restarted.read('../escape')).rejects.toThrow('Invalid storage key');
 });
-it.each([false, true])('allows unverified or guest AI (anonymous=%s) while protecting CSRF, jobs, media and backups', async anonymous => {
+it.each([false, true])('requires registered accounts for AI (anonymous=%s) and protects CSRF, jobs, media and backups', async anonymous => {
   const f = await setup();
-  Object.assign(f.identity, { emailVerified: false, anonymous, ...(anonymous ? { email: null, providers: [] } : {}) });
+  Object.assign(f.identity, { emailVerified: false, ...(anonymous ? { email: null, providers: [] } : {}) });
   const auth: IdentityService = {
     config: { projectId: 'demo-little-say', appId: 'demo-app', apiKey: 'demo-key', authDomain: 'localhost', providers: ['password'] },
     /** Return only this fixture's enrolled identity. */
@@ -131,6 +131,11 @@ it.each([false, true])('allows unverified or guest AI (anonymous=%s) while prote
   const app = await createServer({ provider: null, ...caches, accounts: f.accounts, auth, hosting, secureCookies: true }); cleanup.push(() => app.close());
   const csrf = await app.inject('/api/account/csrf'), initialCookie = String(csrf.headers['set-cookie']).split(';')[0];
   const login = await app.inject({ method: 'POST', url: '/api/account/session', headers: { cookie: initialCookie, 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken }, payload: { idToken: 'fixture', guest: anonymous } });
+  if (anonymous) {
+    expect(login.statusCode).toBe(401);
+    expect((await app.inject({ method: 'POST', url: '/api/ai/jobs', headers: { authorization: 'Bearer legacy', 'x-little-say': '1' }, payload: { id: randomUUID(), kind: 'speech', input: { text: 'Hello', language: 'en' } } })).statusCode).toBe(401);
+    return;
+  }
   expect(login.statusCode).toBe(200); expect(login.headers['set-cookie']).toMatch(/^__session=[a-f0-9]{64}; Path=\/api; HttpOnly; SameSite=Strict;.*Secure$/);
   const headers = { cookie: String(login.headers['set-cookie']).split(';')[0], 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken };
   const id = randomUUID(), payload = { id, kind: 'speech', input: { text: 'Hello', language: 'en' } };

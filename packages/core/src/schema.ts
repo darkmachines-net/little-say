@@ -1,4 +1,4 @@
-/** @file Defines durable libraries, creation drafts, play subsets, compatible settings, and revision-safe AI/edit payloads. */
+/** @file Defines account-required durable libraries, creation drafts, play subsets, compatible settings, and revision-safe AI/edit payloads. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -53,8 +53,6 @@ export type BoardSuggestion = z.infer<typeof boardSuggestionSchema>;
 export const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),
-  // Local launch preference only; choosing guest never enables backup or AI consent.
-  accountChoiceMade: z.boolean().optional(),
   autoSpeech: z.boolean().default(true),
   // Read retired media preferences for compatibility; device loading restores the app defaults.
   voiceSources: z.record(z.string(), z.enum(['ai', 'device'])).optional(),

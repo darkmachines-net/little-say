@@ -1,4 +1,4 @@
-/** @file Protects asynchronous AI jobs and media with automatic guest or registered ownership. */
+/** @file Protects asynchronous AI jobs and private media with registered account ownership. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
