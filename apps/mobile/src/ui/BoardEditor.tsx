@@ -1,4 +1,4 @@
-/** @file Edits a primary-language board in a bounded keyboard viewport under the shared route header with fixed prompt controls, a scrolling canvas, and translation feedback. */
+/** @file Edits a primary-language board with bounded keyboard layout, automatic AI turns, and explicit Save/Discard for unfinished creation drafts. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
@@ -35,15 +35,21 @@ import { useBoardAssistant } from '../services/useBoardAssistant';
  * Toolbar and composer are outside scrolling content; only the canvas and bounded AI context scroll.
  * Typing collapses secondary chrome without remounting the input or caching a screen-height baseline.
  */
-export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
+export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
   /** Prepare missing words for the saved board through the app-owned translation job. */
   onPrepareTranslations: () => void;
   /** Cancel only this board's translation job. */
   onCancelTranslations: () => void;
   /** Open shared language preferences and return to the current board afterward. */
   onManageLanguages: () => void;
-  /** Persist the local creation session while it remains outside the playable library. */
-  onDraft: (state: Pick<CreationDraft, 'prompt' | 'suggestion'>) => void;
+  /** Update creation progress in memory without persisting unsaved input. */
+  onDraft: (state: Pick<CreationDraft, 'prompt' | 'suggestion' | 'history' | 'reply'>) => void;
+  /** Persist an explicitly retained creation session; reject to keep the exit dialog open. */
+  onSaveDraft: (snapshot: CreationDraft) => Promise<void>;
+  /** Remove any previously saved creation session; reject to allow retry. */
+  onDiscardDraft: () => Promise<void>;
+  /** Register the browser-exit guard, or clear it on promotion and unmount. */
+  onBeforeClose: (request: (() => void) | null) => void;
   /** Apply an AI turn against the latest saved board and record a normal Undo step. */
   onAccept: (suggestion: BoardSuggestion, choice?: 'current' | 'suggested') => Promise<void>;
   onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
@@ -68,6 +74,10 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   const [automaticPictures, setAutomaticPictures] = useState(false);
   const [pictureTarget, setPictureTarget] = useState<string | undefined>();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [exitBusy, setExitBusy] = useState(false);
+  const [exitError, setExitError] = useState('');
+  const exitWriting = useRef(false);
   const [area, setArea] = useState({ width: 600, height: 400 });
   const [contentHeight, setContentHeight] = useState(400);
   const [promptFocused, setPromptFocused] = useState(false);
@@ -78,9 +88,30 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   const blocked = startingPlay || assistant.busy === 'save';
   const undoAvailable = canUndo && !assistant.busy && !assistant.suggestion;
   const undo = () => { assistant.clear(); onUndo(); };
-  const back = () => { if (!blocked) void assistant.stop().then(saved => { if (saved) onBack(); }); };
+  const back = () => {
+    if (blocked || exitWriting.current || leaving) return;
+    void assistant.stop().then(saved => {
+      if (!saved) return;
+      if (draft && !board.tiles.length) { Keyboard.dismiss(); setExitError(''); setLeaving(true); }
+      else { onBeforeClose(null); onBack(); }
+    });
+  };
+  const finishCreation = async (save: boolean) => {
+    if (exitWriting.current) return;
+    exitWriting.current = true; setExitBusy(true); setExitError('');
+    try {
+      if (save) await onSaveDraft({ board, prompt: assistant.prompt, suggestion: assistant.suggestion, history: assistant.history, reply: assistant.reply });
+      else await onDiscardDraft();
+      onBeforeClose(null); onBack();
+    } catch { setExitError(`Your draft could not be ${save ? 'saved' : 'discarded'}. Please try again.`); }
+    finally { exitWriting.current = false; setExitBusy(false); }
+  };
+  const keepEditing = () => { if (!exitWriting.current) { setLeaving(false); setExitError(''); } };
+  const hasProgress = Boolean(assistant.prompt.trim() || assistant.history.length || assistant.suggestion || board.title !== 'New board');
   const play = () => { void assistant.stop().then(saved => { if (saved) onPlay(); }); };
   const backRef = useRef(back); backRef.current = back;
+  const creating = Boolean(draft);
+  useEffect(() => { onBeforeClose(creating ? () => backRef.current() : null); return () => onBeforeClose(null); }, [creating, onBeforeClose]);
   useEffect(() => { const listener = BackHandler.addEventListener('hardwareBackPress', () => { backRef.current(); return true; }); return () => listener.remove(); }, []);
   useEffect(() => {
     const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKeyboardVisible(true));
@@ -108,7 +139,7 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
     if (editingIndex < 0 || editingIndex + offset < 0 || editingIndex + offset >= board.tiles.length) return;
     const next = [...board.tiles]; [next[editingIndex], next[editingIndex + offset]] = [next[editingIndex + offset], next[editingIndex]]; setTiles(next);
   };
-  const modalOpen = Boolean(editing || limitOpen || settingsOpen || languagesOpen || pictures || deleting);
+  const modalOpen = Boolean(editing || limitOpen || settingsOpen || languagesOpen || pictures || deleting || leaving);
   const playLanguage = selectedBoardLanguage(board, settings);
   const untranslated = playLanguage ? board.tiles.filter(tile => tile.languageMode === 'board' && !hasTileLanguage(tile, playLanguage)).length : 0;
   return <KeyboardAvoidingView testID="board-workspace" behavior={Platform.OS === 'web' ? undefined : 'padding'} keyboardVerticalOffset={Platform.OS === 'web' ? 0 : safeAreaTop} style={styles.page}>
@@ -118,7 +149,7 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
       <Button icon={Play} compact accessibilityLabel={returnToPlay ? 'Return to play' : 'Play board'} disabled={modalOpen || !savedBoard.tiles.length || Boolean(assistant.suggestion)} busy={blocked} onPress={play}>{width >= 600 ? returnToPlay ? 'Return to play' : 'Play board' : undefined}</Button>
     </>} />
     <View style={[styles.container, { flex: 1, minHeight: 0, paddingTop: typing ? 8 : 14, paddingBottom: typing ? 8 : 16, gap: typing ? 8 : 14 }]}>
-      {!typing && <View testID="editor-heading" style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!blocked} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4 }} /><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{saving ? 'Saving…' : saveError ? 'Not saved — retry saving' : assistant.suggestion ? 'AI changes not saved' : draft ? 'Draft saved' : 'Saved on this device'}</Text></View></View>}
+      {!typing && <View testID="editor-heading" style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!blocked} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4 }} /><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{saving ? 'Saving…' : saveError ? 'Not saved — retry saving' : assistant.suggestion ? 'AI changes not saved' : draft ? 'New board draft' : 'Saved on this device'}</Text></View></View>}
       {!typing && translationStatus?.busy && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text accessibilityLiveRegion="polite" style={styles.body}>Adding missing translations…</Text><Button kind="ghost" compact onPress={onCancelTranslations}>Cancel translations</Button></View>}
       {!typing && translationStatus?.error && <Notice action={<Button kind="secondary" onPress={onPrepareTranslations}>Retry translations</Button>}>{translationStatus.error}</Notice>}
       {!typing && returnToPlay && untranslated > 0 && !translationStatus?.busy && <Notice>{untranslated} cards still use their original words. Close Languages in Board settings to fill missing translations, or review saved words in each card.</Notice>}
@@ -138,6 +169,11 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
       </View>
     </View>
     {transition && <BoardTransition source={transition} target={target} onDone={onTransitionDone} />}
+    {leaving && <Sheet title="Save your draft?" onClose={keepEditing} footer={<>
+      <Button disabled={exitBusy || !hasProgress} onPress={() => finishCreation(true)}>Save draft</Button>
+      <Button kind="danger" disabled={exitBusy} onPress={() => finishCreation(false)}>Discard</Button>
+      <Button kind="ghost" disabled={exitBusy} onPress={keepEditing}>Keep editing</Button>
+    </>}><Text style={styles.body}>Save this unfinished draft to continue later, or discard it.</Text>{Boolean(exitError) && <Notice>{exitError}</Notice>}</Sheet>}
     {limitOpen && <Sheet title="Board is full" onClose={() => setLimitOpen(false)} footer={<Button onPress={() => setLimitOpen(false)}>Got it</Button>}><Text style={styles.body}>{limitMessage}</Text></Sheet>}
     {settingsOpen && <Sheet title="Board settings" onClose={() => setSettingsOpen(false)}>
       <Button kind="secondary" icon={Languages} disabled={blocked || !board.tiles.length} onPress={() => { setSettingsOpen(false); setLanguagesOpen(true); }}>Languages</Button>

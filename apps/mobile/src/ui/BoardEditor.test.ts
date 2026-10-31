@@ -1,4 +1,4 @@
-/** @file Verifies native keyboard lifecycle, safe-area offsets, and a persistent composer below shared navigation and outside scrolling ancestors. */
+/** @file Verifies native keyboard layout and input identity, plus Android draft exits, explicit retention, and failed-write recovery. */
 
 import React, { act } from 'react';
 import { create, type ReactTestInstance, type ReactTestRenderer } from 'react-test-renderer';
@@ -10,7 +10,7 @@ const native = vi.hoisted(() => ({
   platform: 'android', width: 390, height: 844, top: 48, visible: false,
   listeners: new Map<string, () => void>(),
 }));
-const state = vi.hoisted(() => ({ reply: '' }));
+const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words' }));
 vi.mock('react-native', () => ({
   Platform: { get OS() { return native.platform; } },
   View: 'View', Text: 'Text', TextInput: 'TextInput', ScrollView: 'ScrollView', Pressable: 'Pressable',
@@ -21,12 +21,15 @@ vi.mock('react-native', () => ({
     isVisible: () => native.visible, dismiss: vi.fn(),
     addListener: (name: string, callback: () => void) => { native.listeners.set(name, callback); return { remove: () => native.listeners.delete(name) }; },
   },
-  BackHandler: { addEventListener: () => ({ remove() {} }) },
+  BackHandler: { addEventListener: (name: string, callback: () => void) => { native.listeners.set(name, callback); return { remove: () => native.listeners.delete(name) }; } },
 }));
 vi.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: native.top }) }));
 vi.mock('lucide-react-native', () => ({ ChevronLeft: 'ChevronLeft', Copy: 'Copy', Languages: 'Languages', Play: 'Play', Plus: 'Plus', Settings: 'Settings', Trash2: 'Trash2', Undo2: 'Undo2', Volume2: 'Volume2', ArrowUp: 'ArrowUp', Keyboard: 'Keyboard', Square: 'Square', X: 'X' }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => 'new-card' }));
-vi.mock('./components', () => ({ Button: 'Button', Notice: 'Notice', Sheet: 'Sheet', Confirm: 'Confirm' }));
+vi.mock('./components', () => ({ Button: 'Button', Notice: 'Notice', Confirm: 'Confirm',
+  /** Render dialog actions so native exit scenarios exercise their callbacks. */
+  Sheet: (props: { children?: React.ReactNode; footer?: React.ReactNode }) => React.createElement('Sheet', props, props.children, props.footer),
+}));
 vi.mock('./BoardLanguages', () => ({ BoardLanguages: 'BoardLanguages' }));
 vi.mock('./BoardPictures', () => ({ BoardPictures: 'BoardPictures' }));
 vi.mock('./TileEditor', () => ({ TileEditor: 'TileEditor' }));
@@ -37,9 +40,9 @@ vi.mock('./AppHeader', () => ({ AppHeader: 'AppHeader' }));
 vi.mock('./screenFocus', () => ({ useScreenFocus: () => null }));
 vi.mock('../services/useBoardAssistant', () => ({
   useBoardAssistant: ({ board }: { board: Board }) => ({
-    preview: board, prompt: 'Keep my words', reply: state.reply, scope: null, busy: null,
+    preview: board, prompt: state.prompt, reply: state.reply, history: [], scope: null, busy: null,
     suggestion: null, error: '', mergeError: '', progress: '', states: {}, translations: [],
-    setPrompt: vi.fn(), clear: vi.fn(), stop: vi.fn(), generate: vi.fn(),
+    setPrompt: vi.fn(), clear: vi.fn(), stop: vi.fn().mockResolvedValue(true), generate: vi.fn(),
   }),
 }));
 
@@ -50,7 +53,7 @@ const settings: Settings = { backendUrl: '', voices: {}, activeBoardId: board.id
 const props: React.ComponentProps<typeof BoardEditor> = {
   board, settings, audio: {} as React.ComponentProps<typeof BoardEditor>['audio'],
   onPrepareTranslations: vi.fn(), onCancelTranslations: vi.fn(), onManageLanguages: vi.fn(),
-  onDraft: vi.fn(), onAccept: vi.fn(), onStopPreview: vi.fn(), onBack: vi.fn(),
+  onDraft: vi.fn(), onSaveDraft: vi.fn(), onDiscardDraft: vi.fn(), onBeforeClose: vi.fn(), onAccept: vi.fn(), onStopPreview: vi.fn(), onBack: vi.fn(),
   /** Return the unchanged fixture; these scenarios exercise layout rather than persistence. */
   onChange: () => board,
   onPlay: vi.fn(), onDelete: vi.fn(), onDuplicate: vi.fn(), onConsent: vi.fn(), onUndo: vi.fn(),
@@ -74,7 +77,8 @@ function expectFixedPrompt() {
 beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   Object.assign(native, { width: 390, height: 844, top: 48, visible: false });
-  native.listeners.clear(); state.reply = '';
+  native.listeners.clear(); state.reply = ''; state.prompt = 'Keep my words';
+  vi.clearAllMocks(); vi.mocked(props.onSaveDraft).mockResolvedValue(undefined); vi.mocked(props.onDiscardDraft).mockResolvedValue(undefined);
 });
 afterEach(async () => {
   await act(async () => { screen.unmount(); });
@@ -108,4 +112,48 @@ it.each(['android', 'ios'])('keeps the same %s input across overlay, resize, rot
     expect(screen.root.findAllByProps({ testID: 'editor-heading' })).toHaveLength(1);
     expect(input()).toBe(mountedInput); expectFixedPrompt();
   }
+});
+
+const hosts = (name: string) => screen.root.findAll(node => typeof node.type === 'string' && String(node.type) === name);
+const host = (name: string) => hosts(name)[0];
+const emptyBoard: Board = { ...board, title: 'New board', tiles: [] };
+async function createDraft(prompt = '') {
+  state.prompt = prompt;
+  await act(async () => { screen = create(React.createElement(BoardEditor, { ...props, board: emptyBoard, draft: { board: emptyBoard, prompt, suggestion: null } })); });
+}
+const exitButton = (label: string) => screen.root.findAll(node => typeof node.type === 'string' && String(node.type) === 'Button').find(node => node.props.children === label)!;
+async function pressExit(label: string) { await act(async () => { await exitButton(label).props.onPress(); }); }
+async function back() { await act(async () => { native.listeners.get('hardwareBackPress')?.(); }); }
+
+it('asks before leaving an untouched creation on Android Back and disables saving empty progress', async () => {
+  await createDraft(); await back();
+  expect(host('Sheet').props.title).toBe('Save your draft?');
+  expect(exitButton('Save draft').props.disabled).toBe(true);
+  await pressExit('Discard');
+  expect(props.onDiscardDraft).toHaveBeenCalledOnce(); expect(props.onSaveDraft).not.toHaveBeenCalled(); expect(props.onBack).toHaveBeenCalledOnce();
+});
+
+it('keeps unsent input on cancel and persists only after Save draft', async () => {
+  await createDraft('Cow and sheep'); await back(); await pressExit('Keep editing');
+  expect(hosts('Sheet')).toHaveLength(0);
+  expect(input().props.value).toBe('Cow and sheep'); expect(props.onSaveDraft).not.toHaveBeenCalled();
+  await back(); await pressExit('Save draft');
+  expect(props.onSaveDraft).toHaveBeenCalledWith({ board: emptyBoard, prompt: 'Cow and sheep', suggestion: null, history: [], reply: '' });
+  expect(props.onBack).toHaveBeenCalledOnce();
+});
+
+it.each(['Save draft', 'Discard'])('keeps the exit dialog and blocks Back/cancel while %s is pending or fails', async label => {
+  let fail!: (error: Error) => void;
+  const pending = new Promise<void>((_resolve, reject) => { fail = reject; });
+  const write = vi.mocked(label === 'Save draft' ? props.onSaveDraft : props.onDiscardDraft);
+  write.mockReturnValueOnce(pending);
+  await createDraft('Cow and sheep'); await back();
+  await act(async () => { void exitButton(label).props.onPress(); });
+  expect(exitButton('Discard').props.disabled).toBe(true);
+  await back(); await pressExit('Keep editing');
+  expect(hosts('Sheet')).toHaveLength(1); expect(props.onBack).not.toHaveBeenCalled();
+  await act(async () => { fail(new Error('Storage full')); });
+  expect(host('Notice').props.children).toContain('Please try again.');
+  expect(exitButton(label).props.disabled).toBe(false); expect(input().props.value).toBe('Cow and sheep');
+  await pressExit(label); expect(props.onBack).toHaveBeenCalledOnce();
 });

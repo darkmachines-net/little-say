@@ -3,7 +3,7 @@
  * shared language preferences, automatic translations, responsive layouts, and offline behavior.
  */
 
-import { test, expect, type Page } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -44,10 +44,9 @@ async function leaveBoard(page: Page) {
   await page.getByTestId('board-back').click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
 }
-test.beforeEach(async ({ page }, info) => {
+test.beforeEach(async ({ page, librarySettings }) => {
   await setupSpeech(page);
-  const deviceSpeech = info.titlePath.includes('outside modal dismissal');
-  await openExistingLibrary(page, deviceSpeech ? { voiceSources: { 'en-US': 'device', 'ru-RU': 'device' } } : {});
+  await openExistingLibrary(page, librarySettings);
 });
 
 test.describe('outside modal dismissal', () => {

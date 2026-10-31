@@ -74,6 +74,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close Board pictures', exact: true }).click();
     await page.getByRole('button', { name: 'Boards', exact: true }).click();
+    await page.getByRole('button', { name: 'Discard', exact: true }).click();
     await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
     expect(await headerGeometry(page, 'Edit board', 'Boards')).toEqual(dashboard);
     await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();

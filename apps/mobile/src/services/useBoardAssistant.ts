@@ -17,16 +17,16 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   onConsent: () => Promise<void>;
   /** Durably merge against the latest saved board and record one normal Undo step; reject unresolved conflicts. */
   onAccept: (suggestion: BoardSuggestion, choice?: 'current' | 'suggested') => Promise<void>;
-  /** Persist a new-board session without adding it to the playable library. */
-  onDraft: (state: Pick<CreationDraft, 'prompt' | 'suggestion'>) => void;
+  /** Update the in-memory creation session; only an explicit exit choice persists it. */
+  onDraft: (state: Pick<CreationDraft, 'prompt' | 'suggestion' | 'history' | 'reply'>) => void;
   /** Reload verified speech files when preparation makes them available. */
   onSpeechReady: () => Promise<void>;
 }) {
   const [prompt, setPrompt] = useState(draft?.prompt ?? '');
   const [suggestion, setSuggestion] = useState<BoardSuggestion | null>(draft?.suggestion ?? null);
   const [scope, setScope] = useState<string | null>(null);
-  const [history, setHistory] = useState<ConversationTurn[]>([]);
-  const [reply, setReply] = useState('');
+  const [history, setHistory] = useState<ConversationTurn[]>(draft?.history ?? []);
+  const [reply, setReply] = useState(draft?.reply ?? '');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState<'generate' | 'save' | null>(null);
   const [progress, setProgress] = useState('');
@@ -40,8 +40,8 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
   useEffect(() => {
     // A queued optimistic draft snapshot must not overwrite the durable AI commit in progress.
-    if (!writing.current && busy !== 'save') latest.current.onDraft({ prompt, suggestion });
-  }, [draft?.board.id, prompt, suggestion, busy]);
+    if (!writing.current && busy !== 'save') latest.current.onDraft({ prompt, suggestion, history, reply });
+  }, [draft?.board.id, prompt, suggestion, history, reply, busy]);
   let preview = board;
   let conflicts: string[] = [];
   let mergeError = '';
@@ -150,5 +150,5 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
     const next = { ...current, tiles: current.tiles.map(tile => ({ ...tile, translations: replacements.has(tile.id) ? candidate.tiles.find(value => value.id === tile.id)?.translations ?? tile.translations : tile.translations })) };
     if (await apply({ base: current, board: next })) { setTranslations([]); translationCandidate.current = null; }
   };
-  return { prompt, setPrompt, suggestion, preview, scope, setScope, reply, error, mergeError, busy, progress, states, conflicts, translations, useTranslations, generate, accept, stop, clear, edit };
+  return { prompt, setPrompt, suggestion, preview, scope, setScope, history, reply, error, mergeError, busy, progress, states, conflicts, translations, useTranslations, generate, accept, stop, clear, edit };
 }

@@ -46,6 +46,7 @@ test('one entry opens an empty local draft; direct creation needs no AI and canc
   await page.getByRole('textbox', { name: 'Board title' }).fill('Our snacks');
   await page.getByRole('textbox', { name: 'Message to AI' }).fill('Maybe add drinks');
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click();
   expect((await saved(page)).boards).toHaveLength(count);
   await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
   await page.reload();
