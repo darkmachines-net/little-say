@@ -92,7 +92,10 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
     if (blocked || exitWriting.current || leaving) return;
     void assistant.stop().then(saved => {
       if (!saved) return;
-      if (draft && !board.tiles.length) { Keyboard.dismiss(); setExitError(''); setLeaving(true); }
+      if (draft && !board.tiles.length) {
+        Keyboard.dismiss(); onStopPreview(); setEditing(null); setAdding(false); setSettingsOpen(false); setLanguagesOpen(false); setPictures(null); setLimitOpen(false); setDeleting(false);
+        setExitError(''); setLeaving(true);
+      }
       else { onBeforeClose(null); onBack(); }
     });
   };

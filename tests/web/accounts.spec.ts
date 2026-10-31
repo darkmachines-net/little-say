@@ -1,4 +1,4 @@
-/** @file Verifies durable automatic guest AI saves, session isolation, backup consent, media restore, offline conflicts, and local-preserving sign-out. */
+/** @file Verifies automatic guest AI saves, session isolation, backup consent, deterministic media restore, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -87,7 +87,13 @@ test('an existing guest library survives the new launch choice and failed choice
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
   await page.evaluate(() => {
     const original = IDBObjectStore.prototype.put;
-    IDBObjectStore.prototype.put = function () { IDBObjectStore.prototype.put = original; throw new DOMException('Synthetic full storage', 'QuotaExceededError'); };
+    IDBObjectStore.prototype.put = function (...args: any[]) {
+      if (this.name === 'state' && args[0]?.settings?.accountChoiceMade === true) {
+        IDBObjectStore.prototype.put = original;
+        throw new DOMException('Synthetic full storage', 'QuotaExceededError');
+      }
+      return original.apply(this, args as any);
+    };
   });
   await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByText('Your choice could not be saved. Check device storage and try again.', { exact: true })).toBeVisible();
@@ -128,6 +134,8 @@ test('accounts restore all asset types to a fresh device and merge offline confl
   const username = `family_${randomUUID().slice(0, 8)}@example.test`;
   const second = await browser.newContext(); const other = await second.newPage();
   try {
+    // Keep the owned photo/picture/speech fixture fixed while app defaults allow automatic AI audio.
+    for (const device of [page, other]) await device.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
     await page.goto('/app');
     await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();

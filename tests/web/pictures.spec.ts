@@ -286,7 +286,6 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   await expect(page.getByTestId('picture-active-animation')).toHaveCount(0);
   expect(jobs).toHaveLength(3);
   await page.goBack();
-  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
 });
 

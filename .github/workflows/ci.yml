@@ -1,4 +1,4 @@
-# Checks code and isolated services/browser flows, retaining current editor and navigation screenshots as temporary evidence.
+# Checks code and isolated services/browser flows, including saved drafts; retains temporary editor and navigation captures.
 name: Check
 on:
   pull_request:
@@ -57,7 +57,7 @@ jobs:
       - run: npm run test:accounts:web
       - name: Conversation end-to-end checks
         id: conversation
-        run: npm run test:web -- tests/web/conversation.spec.ts
+        run: npm run test:web -- tests/web/conversation.spec.ts tests/web/creation-drafts.spec.ts
       - name: Retain conversation screenshots for review
         if: ${{ !cancelled() && steps.conversation.outcome != 'skipped' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

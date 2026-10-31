@@ -95,7 +95,8 @@ function Application() {
     void store.change(current => {
       const boardLanguages = { ...current.settings.boardLanguages }; delete boardLanguages[id];
       const boardLastPlayedAt = { ...current.boardLastPlayedAt }; delete boardLastPlayedAt[id];
-      return { ...current, creationDraft: current.creationDraft?.board.id === id ? undefined : current.creationDraft, boards: current.boards.filter(board => board.id !== id), boardLastPlayedAt, favoriteBoardIds: current.favoriteBoardIds?.filter(boardId => boardId !== id), settings: { ...current.settings, boardLanguages, activeBoardId: current.settings.activeBoardId === id ? null : current.settings.activeBoardId } };
+      const deletingDraft = workingDraftRef.current?.board.id === id;
+      return { ...current, creationDraft: current.creationDraft?.board.id === id ? undefined : current.creationDraft, boardCreationDraft: deletingDraft ? undefined : current.boardCreationDraft, boards: current.boards.filter(board => board.id !== id), boardLastPlayedAt, favoriteBoardIds: current.favoriteBoardIds?.filter(boardId => boardId !== id), settings: { ...current.settings, boardLanguages, activeBoardId: current.settings.activeBoardId === id ? null : current.settings.activeBoardId } };
     }).catch(() => {});
     if (workingDraftRef.current?.board.id === id) updateDraft(null);
     draftRoute.close(); setSelectedId(current => current === id ? null : current);
@@ -164,7 +165,7 @@ function Application() {
       const current = workingDraftRef.current;
       if (current?.board.id === selected.id) updateDraft({ ...current, ...state });
     }} onBeforeClose={draftRoute.beforeClose} onSaveDraft={snapshot => draftRoute.save(() => store.commit(lib => ({ ...lib, creationDraft: snapshot, boardCreationDraft: undefined })))} onDiscardDraft={() => draftRoute.save(async () => {
-      if (store.current.current?.creationDraft || store.current.current?.boardCreationDraft) await store.commit(lib => ({ ...lib, creationDraft: undefined, boardCreationDraft: undefined }));
+      if (store.current.current?.creationDraft || store.current.current?.boardCreationDraft || store.error) await store.commit(lib => ({ ...lib, creationDraft: undefined, boardCreationDraft: undefined }));
     })} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; void store.flush().then(() => { previewQueue.stop(); setTransition(null); setReturnBoardId(null); updateDraft(null); setSelectedId(null); draftRoute.close(); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }).catch(() => setError('Your changes could not be saved. Retry saving before leaving.')); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
       const current = store.current.current!.boards.find(b => b.id === selected.id) ?? workingDraftRef.current!.board;
       if (expectedRevision !== undefined && current.revision !== expectedRevision) throw new Error('This board changed while editing. Your saved changes are kept; reopen the current card or prepare translations again.');

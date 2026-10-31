@@ -1,19 +1,14 @@
 /**
  * @file Exercises automatic AI turns, toolbar settings, card limits, editing/play, modal dismissal,
- * shared language preferences, automatic translations, responsive layouts, and offline behavior.
+ * shared language preferences, automatic translations, device speech fallback, responsive layouts, and offline behavior.
  */
 
-import { test as base, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
 import { mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import type { Settings } from '@little-say/core';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { addUserLanguage, followBoardLanguages, openExistingLibrary, removeUserLanguage } from './existingLibrary';
-
-const test = base.extend<{ librarySettings: Partial<Settings> }>({
-  librarySettings: [{}, { option: true }],
-});
 
 async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
@@ -44,14 +39,16 @@ async function leaveBoard(page: Page) {
   await page.getByTestId('board-back').click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
 }
-test.beforeEach(async ({ page, librarySettings }) => {
+test.beforeEach(async ({ page }) => {
   await setupSpeech(page);
-  await openExistingLibrary(page, librarySettings);
+  // Exercise automatic device fallback unless a scenario supplies its own successful speech API.
+  await page.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
+  await openExistingLibrary(page);
 });
 
 test.describe('outside modal dismissal', () => {
-  // Keep navigation checks on device speech, independent of background AI clip preparation.
-  test.use({ hasTouch: true, librarySettings: { voiceSources: { 'en-US': 'device' } } });
+  // Navigation uses the same unavailable-speech fixture as the playback fallback checks.
+  test.use({ hasTouch: true });
   async function capture(page: Page, name: string, width: number) {
     const directory = 'artifacts/screenshots/modal-outside-dismiss';
     await mkdir(directory, { recursive: true });
@@ -765,6 +762,7 @@ test('AI sign-in requirement retains the parent prompt and existing boards', asy
   await expect(page.getByText('Sign in to use AI or cloud backup.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
