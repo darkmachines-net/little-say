@@ -1,6 +1,6 @@
 /**
  * @file Guides device language selection and review of generated starter boards before entering the
- * library.
+ * library, with shared branded navigation to account restoration.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -12,14 +12,14 @@ import { proposeBoard } from '../services/api';
 import { LanguageProfileEditor } from './LanguageProfileEditor';
 import { Button, Notice } from './components';
 import { styles, theme } from './theme';
-import { Brand } from './Brand';
+import { AppHeader } from './AppHeader';
 import { defaultPicturePolicy } from '@little-say/core';
 import { pictureDataDisclosure } from './PicturePreferences';
 import { prepareProposalPictures } from '../services/pictures';
 
 /**
  * Resume saved setup progress, generate starter drafts for the chosen languages, and commit the
- * parent-approved result through onCommit.
+ * parent-approved result through onCommit. Shared header navigation opens sign-in or board restoration.
  */
 export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onAccount: () => void }) {
   const setup = library.setup!;
@@ -75,9 +75,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount }: { library: Libr
   };
   const languageStep = setup.stage === 'languages';
   return <View style={styles.page}>
-    <View style={{ borderBottomWidth: 1, borderColor: theme.line, backgroundColor: theme.surface }}>
-      <View style={[styles.container, styles.row, { minHeight: 76, justifyContent: 'space-between', flexWrap: 'wrap' }]}><Brand /><Button kind="ghost" disabled={Boolean(working)} onPress={onAccount}>Sign in or restore boards</Button></View>
-    </View>
+    <AppHeader actions={<Button compact kind="ghost" accessibilityLabel="Sign in or restore boards" disabled={Boolean(working)} onPress={onAccount}>Sign in</Button>} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
       <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
       {Boolean(error) && <Notice>{error}</Notice>}

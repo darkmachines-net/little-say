@@ -1,8 +1,8 @@
-/** @file Composes the compact board editor and its tile, language, AI, and audio actions. */
+/** @file Composes the board editor with shared branded navigation and responsive editing, language, AI, and audio actions. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
-import { ChevronLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
+import { ArrowLeft, Copy, Languages, Play, Plus, Trash2, Undo2, Volume2, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
 import { MAX_TILES, speechSource, boardAudioTiles, canonicalLanguage, colors, firstWord, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile } from '@little-say/core';
 import { BoardLanguages } from './BoardLanguages';
@@ -15,10 +15,11 @@ import { BoardPictures } from './BoardPictures';
 import { BoardTransition, type BoardGeometry, type BoardSnapshot } from './BoardTransition';
 import { useScreenFocus } from './screenFocus';
 import { EditingLanguages } from './EditingLanguages';
+import { AppHeader } from './AppHeader';
 
 /**
- * Show the editable board preview and contextual controls, delegating durable changes, undo, and
- * playback to the parent.
+ * Show the editable board preview and contextual controls beneath shared app chrome, moving header
+ * tools to a second row on narrow screens. Delegate durable changes, undo, and playback to the parent.
  * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a
  * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.
  */
@@ -69,11 +70,15 @@ export function BoardEditor({ board, settings, audio, onStopPreview, onBack, onC
   const playLanguage = selectedBoardLanguage(board, settings);
   const untranslated = playLanguage ? board.tiles.filter(tile => tile.languageMode === 'board' && !hasTileLanguage(tile, playLanguage)).length : 0;
   const selectLanguage = (language: string | null) => { onStopPreview(); setEditingLanguage(language); };
+  const tools = <>
+    <Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={startingPlay || !canUndo} onPress={onUndo} />
+    <Button kind="secondary" compact icon={Languages} accessibilityLabel="Languages" disabled={startingPlay} onPress={() => setLanguagesOpen(true)}>{width >= 600 ? 'Languages' : undefined}</Button>
+    <Button icon={Play} compact disabled={modalOpen} busy={startingPlay} onPress={onPlay}>{returnToPlay ? 'Return to play' : 'Play board'}</Button>
+  </>;
   return <View style={styles.page}>
-    <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}><View style={[styles.container, styles.row, { justifyContent: 'space-between', paddingVertical: 10, gap: 6 }]}>
-      <Button kind="ghost" compact={width < 600} icon={ChevronLeft} disabled={startingPlay || modalOpen} onPress={onBack}>Boards</Button>
-      <View style={[styles.row, { gap: 6 }]}><Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={startingPlay || !canUndo} onPress={onUndo} /><Button kind="secondary" compact={width < 600} icon={Languages} accessibilityLabel="Languages" disabled={startingPlay} onPress={() => setLanguagesOpen(true)}>{width >= 600 ? 'Languages' : undefined}</Button><Button icon={Play} compact={width < 600} disabled={modalOpen} busy={startingPlay} onPress={onPlay}>{returnToPlay ? 'Return to play' : 'Play board'}</Button></View>
-    </View></View>
+    <AppHeader actions={<><Button kind="ghost" compact icon={ArrowLeft} disabled={startingPlay || modalOpen} onPress={onBack}>Boards</Button>{width >= 800 && tools}</>}>
+      {width < 800 && <View style={[styles.row, { justifyContent: 'flex-end', gap: 6 }]}>{tools}</View>}
+    </AppHeader>
     <View style={[styles.container, { flex: 1, minHeight: 0, paddingTop: 14, paddingBottom: 16, gap: 14 }]}>
       <View ref={heading} accessible accessibilityRole="header" tabIndex={-1} style={{ alignSelf: 'flex-start', borderRadius: 4 }}><Text style={styles.small}>Edit board</Text></View>
       <View style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!startingPlay} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4, borderBottomWidth: 1, borderColor: theme.line }} /><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{board.tiles.length} / 24 tiles · tap to edit</Text><Text style={styles.small}>{saving ? 'Saving…' : saveError ? 'Not saved — retry saving' : 'Saved on this device'}</Text></View></View>
