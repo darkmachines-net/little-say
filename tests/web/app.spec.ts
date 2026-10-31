@@ -1,7 +1,7 @@
 /**
  * @file Exercises board editing and play, safe modal dismissal, one-second navigation holds, responsive
- * layouts, shared language preferences, automatic board translations, and offline browser behavior
- * with scenario-specific speech-source fixtures.
+ * layouts, shared languages, automatic translations, offline behavior, and explicit draft exits after
+ * AI errors, with scenario-specific speech-source fixtures.
  */
 
 import { test as base, expect, type Page } from '@playwright/test';
@@ -748,5 +748,8 @@ test('AI sign-in requirement retains the parent prompt and existing boards', asy
   await expect(page.getByText('Sign in to use AI or cloud backup.', { exact: false })).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('A farm with six animals');
   await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Discard', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('');
 });

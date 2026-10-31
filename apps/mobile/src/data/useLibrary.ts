@@ -1,4 +1,4 @@
-/** @file Connects library loading and serialized durable writes to React state. */
+/** @file Loads libraries, retains saved draft media, and serializes durable writes into React state. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { type Library, newLibrary, migrateDeviceSettings } from '@little-say/core';
@@ -23,11 +23,12 @@ export function useLibrary() {
       if (!value) { value = newLibrary(Intl.DateTimeFormat().resolvedOptions().locale); await storage.saveLibrary(value); }
       const migrated = migrateDeviceSettings(value);
       if (migrated !== value) { await storage.saveLibrary(migrated); value = migrated; }
-      // Prune only during initial load, before transient drafts and undo history exist.
+      // Prune only during initial load, retaining explicitly saved creation-draft pictures too.
       const boards = [...value.boards, ...(value.setup?.drafts.map(draft => draft.board) ?? [])];
+      const draftPictures = value.boardCreationDraft?.draft?.pictures?.map(picture => picture.illustration) ?? [];
       const ids = new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'photo' ? [t.illustration.assetId] : [])));
       await storage.pruneAssets(ids).catch(() => {});
-      await storage.prunePictures(new Set(boards.flatMap(b => b.tiles.flatMap(t => t.illustration.kind === 'library' || t.illustration.kind === 'generated' ? [t.illustration.assetId] : [])))).catch(() => {});
+      await storage.prunePictures(new Set([...boards.flatMap(b => b.tiles.map(t => t.illustration)), ...draftPictures].flatMap(illustration => illustration.kind === 'library' || illustration.kind === 'generated' ? [illustration.assetId] : []))).catch(() => {});
       latest.current = value; setLibrary(value);
     } catch { setLoadError('Your saved boards could not be opened. They have not been reset. Check available device storage and try again.'); }
   }, []);

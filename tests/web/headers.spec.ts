@@ -1,4 +1,4 @@
-/** @file Verifies one navigation row, home-only branding, left Back/route titles, right actions, and separate full-screen play. */
+/** @file Verifies single-row headers, home-only branding, Back/route titles, actions, draft exits, and full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -73,6 +73,8 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await expect(page.getByRole('heading', { name: 'Picture settings', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close Picture settings', exact: true }).click();
     await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Discard', exact: true }).click();
     await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
     expect(await headerGeometry(page, 'Edit board', 'Boards')).toEqual(dashboard);
     await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();
