@@ -1,4 +1,4 @@
-/** @file Verifies website-only marketing, inactive store links, direct app access, and installed-web-app compatibility. */
+/** @file Verifies website-only marketing, inactive store links, explicit web guest entry, and installed-web-app compatibility. */
 
 import { test, expect } from '@playwright/test';
 
@@ -28,6 +28,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844
     await page.getByRole('heading', { name: 'Make room for their words.', exact: true }).scrollIntoViewIfNeeded();
     await page.screenshot({ path: `artifacts/screenshots/landing/stores-${viewport.width}.png` });
     await page.getByRole('link', { name: 'Try Little Say on the web', exact: true }).last().click();
+    await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
     await expect(page).toHaveURL(/\/app$/);
     await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
     await expect(page.locator('.ls-site')).toHaveCount(0);
@@ -51,12 +52,14 @@ test('homepage navigation works with a keyboard and installed web apps launch in
   await expect(page).toHaveURL(/#features$/);
   await expect(page.getByRole('heading', { name: /Small touches\.\s*So many ways to connect\./ })).toBeInViewport();
   await page.goto('/app/');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 
 test('older iOS home-screen installs bypass the homepage at their original root URL', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { value: true }));
   await page.goto('/');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await expect(page.locator('.ls-site')).toHaveCount(0);
 });
@@ -68,6 +71,7 @@ test('standalone display mode also bypasses the homepage for older installs', as
       ? Object.defineProperty(original(query), 'matches', { value: true }) : original(query);
   });
   await page.goto('/');
+  await page.getByRole('button', { name: 'Continue without an account', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await expect(page.locator('.ls-site')).toHaveCount(0);
 });

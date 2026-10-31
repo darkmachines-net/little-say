@@ -1,4 +1,4 @@
-/** @file Defines durable library and AI payload schemas and guards revision-safe board edits. */
+/** @file Defines durable library/device preferences and AI payload schemas and guards revision-safe board edits. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -46,7 +46,7 @@ export const boardSchema = z.object({
 export const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),
-  // Local launch preference only; choosing guest never enables backup or AI consent.
+  // Web launch preference only; native ignores it. Guest choice never enables backup or AI consent.
   accountChoiceMade: z.boolean().optional(),
   autoSpeech: z.boolean().default(true),
   // Per-language source replaces the legacy global automatic-audio switch; device IDs remain in voices.

@@ -1,4 +1,4 @@
-/** @file Exercises grouped Settings and About routes, durable preferences, failed saves, speech overrides, and offline deep links. */
+/** @file Exercises grouped Settings and About routes, durable preferences, failed saves, cached-audio source overrides, offline deep links, and header-only account access. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -31,7 +31,8 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/settings$/);
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  for (const label of ['Languages', 'Voices', 'Pictures', 'Account & backup', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  for (const label of ['Languages', 'Voices', 'Pictures', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Account & backup', exact: true })).toHaveCount(0);
   await expect(page.getByRole('textbox')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Save settings|Enable automatic AI/ })).toHaveCount(0);
   await expect(page.getByText(/Your home server|Parent settings|Private server address/)).toHaveCount(0);
@@ -164,13 +165,31 @@ test('direct policy and account pages work without sign-in and survive an offlin
   await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/settings$/);
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await expect(page).toHaveURL(/\/settings\/account\/login$/);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in / Register', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/account\/login$/);
   await page.getByLabel('Email', { exact: true }).fill('unsent@example.test');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await expect(page).toHaveURL(/\/settings\/account$/);
+  await expect(page).toHaveURL(/\/app\/account$/);
   await expect(page.getByLabel('Email', { exact: true })).toHaveCount(0);
+});
+
+test('legacy account links open standalone forms with refresh and browser history', async ({ page }) => {
+  await page.goto('/app/settings/account/login');
+  await expect(page).toHaveURL(/\/app\/account\/login$/);
+  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Forgot password?', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/account\/reset$/);
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('button', { name: 'Register', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/account\/register$/);
+  await page.reload();
+  await expect(page.getByLabel('Confirm password', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
 });
 
 test('AI preview ignores late synthesis after leaving, reuses its saved clip, and offers a device fallback', async ({ page }) => {

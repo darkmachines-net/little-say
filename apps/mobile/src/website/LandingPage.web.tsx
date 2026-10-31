@@ -1,6 +1,6 @@
 /**
  * @file Presents the public, web-only feature overview using the shared mountain identity and palette.
- * Describe implemented features, link into /app, and keep store links inactive until listings exist.
+ * Describe implemented features and web guest access, link into /app, and keep store links inactive until listings exist.
  * Entry.web.tsx is the only entry owner; native bundles must never import this page or its styles.
  */
 
@@ -35,7 +35,7 @@ function StoreLinks() {
   </div>;
 }
 
-/** Describe the app without initializing a library, requesting permissions, or starting account/AI services. */
+/** Describe the app and web guest access without initializing a library or starting account/AI services. */
 export default function LandingPage() {
   const brandColors = { '--ls-background': colors.background, '--ls-ink': colors.ink, '--ls-muted': colors.muted, '--ls-accent': colors.accent, '--ls-line': colors.line } as CSSProperties;
   return <div className="ls-site" style={brandColors}>
@@ -57,7 +57,7 @@ export default function LandingPage() {
           <p className="ls-intro">A picture. A tap. A way to say it. Little Say helps you create talking picture boards for your child’s everyday world.</p>
           <p className="ls-hero-detail">From “more, please” to “love you,” make space for what they want to share.</p>
           <a className="ls-primary" href="/app">Try Little Say on the web <Arrow /></a>
-          <p className="ls-no-account">No account needed to get started.</p>
+          <p className="ls-no-account">No account needed to try it on the web.</p>
           <StoreLinks />
         </div>
         <div className="ls-hero-visual">
@@ -83,7 +83,7 @@ export default function LandingPage() {
           <article><span className="ls-feature-icon ls-sky" aria-hidden="true">Aa</span><h3>More than one way to say it.</h3><p>Create multilingual boards and switch languages during play. Personalize individual cards for family names and the words you use at home.</p></article>
           <article><span className="ls-feature-icon ls-butter" aria-hidden="true">☀</span><h3>Little hands, welcome.</h3><p>Big, colorful tiles respond to taps and swipes with spoken words. A hold-to-unlock parent control helps keep the focus on the board.</p></article>
           <article><span className="ls-feature-icon ls-sage" aria-hidden="true">♫</span><h3>Everyday words, on the go.</h3><p>Keep saved boards, pictures, and downloaded speech on your device for offline play. Creating AI content needs a connection; using prepared boards doesn’t.</p></article>
-          <article><span className="ls-feature-icon ls-rose" aria-hidden="true">♡</span><h3>Your family. Your choice.</h3><p>Start without an account and keep boards on your device. Build manually or choose AI help, with every draft yours to review before saving.</p></article>
+          <article><span className="ls-feature-icon ls-rose" aria-hidden="true">♡</span><h3>Your family. Your choice.</h3><p>Try it on the web without an account, or sign in to get started on mobile. Build manually or choose AI help, with every draft yours to review before saving.</p></article>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by recent use and favorites and exposes creation and Settings navigation. */
+/** @file Organizes saved boards by recent use and favorites with header access to accounts and Settings. */
 
 import { useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -13,9 +13,9 @@ import { Brand, MountainMark } from './Brand';
 
 /**
  * Spotlight the most recently played board, place favorites next, and present library actions and the
- * AI creation workspace, with a separate manual creation entry.
+ * AI creation workspace, with separate account, Settings, and manual creation entries.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onManual, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onManual: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const menuBoard = library.boards.find(board => board.id === menuId);
@@ -28,9 +28,9 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onCompos
   const card = (board: Board, featured = false) => <BoardCard board={board} featured={featured} favorite={favorites.has(board.id)} wide={width > 620} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
     <View style={{ backgroundColor: theme.surface, borderBottomWidth: 1, borderColor: theme.line }}>
-      <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }]}>
+      <View style={[styles.container, { minHeight: 76, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', paddingVertical: 10, gap: 12 }]}>
         <Brand />
-        <View style={styles.row}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></View>
+        <View style={[styles.row, { flexWrap: 'wrap' }]}>{saving && <Text style={styles.small}>Saving…</Text>}<Button kind="ghost" compact onPress={onAccount}>{accountLabel}</Button><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></View>
       </View>
     </View>
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
