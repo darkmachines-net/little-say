@@ -1,4 +1,4 @@
-# Checks code and complete isolated local services/browser flows, retaining only temporary review evidence.
+# Checks code and isolated services/browser flows, retaining current editor and navigation screenshots as temporary evidence.
 name: Check
 on:
   pull_request:
@@ -63,6 +63,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: conversation-screenshots
-          path: artifacts/screenshots/ai-conversation-*.png
+          path: |
+            artifacts/screenshots/unified-editor-*.png
+            artifacts/screenshots/editor-typing-*.png
           if-no-files-found: error
           retention-days: 7

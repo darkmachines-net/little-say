@@ -1,42 +1,51 @@
-/** @file Renders the compact AI composer and contextual review actions without a conversation transcript. */
+/** @file Keeps the prompt row fixed while AI replies and recovery controls scroll within the editor's height budget. */
 
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Text, TextInput, View, type TextInputInstance } from 'react-native';
-import { ArrowUp, Info, Square, X } from 'lucide-react-native';
-import { conversationPrompts, languageName } from '@little-say/core';
+import { ActivityIndicator, Keyboard, ScrollView, Text, TextInput, View, type TextInputInstance } from 'react-native';
+import { ArrowUp, Keyboard as KeyboardIcon, Square, X } from 'lucide-react-native';
+import { languageName } from '@little-say/core';
 import { type useBoardAssistant } from '../services/useBoardAssistant';
 import { Button, Notice, Sheet } from './components';
-import { pictureDataDisclosure } from './PicturePreferences';
 import { styles, theme } from './theme';
 
-/** Keep prompting beside the editable canvas, with only the current question or suggestion visible. */
-export function BoardAssistant({ assistant, disabled = false }: { assistant: ReturnType<typeof useBoardAssistant>; disabled?: boolean }) {
+/**
+ * Keep one mounted input and Send row outside the scrolling AI context. The editor supplies the
+ * available height; long text scrolls in the input and long replies scroll above it, preserving the
+ * prompt's full touch targets even when a keyboard leaves little room. Completed turns auto-apply.
+ */
+export function BoardAssistant({ assistant, disabled = false, compact = false, maxHeight, onFocusChange }: { assistant: ReturnType<typeof useBoardAssistant>; disabled?: boolean; compact?: boolean; maxHeight?: number;
+  /** Report prompt focus without replacing the mounted input when the keyboard changes layout. */
+  onFocusChange?: (focused: boolean) => void;
+}) {
   const input = useRef<TextInputInstance>(null);
   useEffect(() => { if (assistant.scope) input.current?.focus(); }, [assistant.scope]);
-  const [info, setInfo] = useState(false);
   const [translations, setTranslations] = useState(false);
   const selected = assistant.preview.tiles.find(tile => tile.id === assistant.scope);
   const busy = Boolean(assistant.busy);
-  const fill = (text: string) => { assistant.setPrompt(text); input.current?.focus(); };
-  return <View testID="board-assistant" style={{ backgroundColor: theme.surface, borderRadius: 18, padding: 12, gap: 10, borderWidth: 1, borderColor: theme.line }}>
+  const finishTyping = () => { input.current?.blur(); Keyboard.dismiss(); onFocusChange?.(false); };
+  const context = Boolean(selected || assistant.reply || assistant.busy || assistant.error || assistant.mergeError || assistant.suggestion || assistant.progress || assistant.translations.length);
+  const padding = compact ? 8 : 12;
+  const inputHeight = Math.min(compact ? 86 : 110, Math.max(50, (maxHeight ?? 200) - padding * 2 - 2 - (context ? compact ? 6 : 10 : 0)));
+  return <View testID="board-assistant" style={{ backgroundColor: theme.surface, borderRadius: 18, padding: compact ? 8 : 12, gap: compact ? 6 : 10, borderWidth: 1, borderColor: theme.line, maxHeight }}>
+    {context && <ScrollView testID="assistant-context" keyboardShouldPersistTaps="handled" style={{ flexGrow: 0, flexShrink: 1, minHeight: 0 }} contentContainerStyle={{ gap: compact ? 6 : 10 }}>
     {selected && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{selected.label}</Text><Button compact kind="ghost" icon={X} accessibilityLabel="Apply AI request to the whole board" onPress={() => assistant.setScope(null)} /></View>}
     {Boolean(assistant.reply) && <Text accessibilityLiveRegion="polite" style={styles.body}>{assistant.reply}</Text>}
     {assistant.busy === 'generate' && <View testID="ai-working" style={styles.row}><ActivityIndicator color={theme.accent} /><Text accessibilityLiveRegion="polite" style={[styles.small, { flex: 1 }]}>{assistant.progress || 'Working…'}</Text></View>}
+    {assistant.busy === 'save' && <Text accessibilityLiveRegion="polite" style={styles.small}>Saving changes…</Text>}
     {Boolean(assistant.error || assistant.mergeError) && <Notice>{assistant.error || assistant.mergeError}</Notice>}
     {assistant.suggestion && <View style={{ gap: 8 }}>
-      {assistant.conflicts.length > 0 ? <><Notice>{assistant.conflicts.join(', ')} changed while AI was working.</Notice><View style={[styles.row, { flexWrap: 'wrap' }]}><Button compact kind="secondary" disabled={disabled || assistant.busy === 'save'} onPress={() => void assistant.accept('current')}>Keep my edits</Button><Button compact disabled={disabled || assistant.busy === 'save'} onPress={() => void assistant.accept('suggested')}>Use suggested changes</Button></View></> : <View style={[styles.row, { justifyContent: 'flex-end', flexWrap: 'wrap' }]}><Button compact kind="ghost" disabled={assistant.busy === 'save'} onPress={assistant.clear}>Dismiss</Button><Button compact busy={assistant.busy === 'save'} disabled={disabled || Boolean(assistant.mergeError)} onPress={() => void assistant.accept()}>Keep changes</Button></View>}
-      {assistant.conflicts.length > 0 && <Button compact kind="ghost" disabled={assistant.busy === 'save'} onPress={assistant.clear}>Dismiss</Button>}
+      {!busy && (assistant.conflicts.length > 0 ? <><Notice>{assistant.conflicts.join(', ')} changed while AI was working.</Notice><View style={[styles.row, { flexWrap: 'wrap' }]}><Button compact kind="secondary" disabled={disabled} onPress={() => void assistant.accept('current')}>Keep my edits</Button><Button compact disabled={disabled} onPress={() => void assistant.accept('suggested')}>Use suggested changes</Button></View></> : <Button compact disabled={disabled || Boolean(assistant.mergeError)} onPress={() => void assistant.accept()}>Retry saving AI changes</Button>)}
       {assistant.suggestion.base.tiles.some(tile => !assistant.suggestion!.board.tiles.some(next => next.id === tile.id)) && <Text style={styles.small}>Removing: {assistant.suggestion.base.tiles.filter(tile => !assistant.suggestion!.board.tiles.some(next => next.id === tile.id)).map(tile => tile.label).join(', ')}</Text>}
-      {assistant.translations.length > 0 && <Button compact kind="secondary" disabled={busy} onPress={() => setTranslations(true)}>Review translation replacements</Button>}
     </View>}
+    {assistant.translations.length > 0 && <Button compact kind="secondary" disabled={busy || Boolean(assistant.suggestion)} onPress={() => setTranslations(true)}>Review translation replacements</Button>}
     {!busy && Boolean(assistant.progress) && <Text testID="picture-summary" style={styles.small}>{assistant.progress}</Text>}
-    <View style={[styles.row, { alignItems: 'flex-end' }]}>
-      <TextInput ref={input} accessibilityLabel="Message to AI" accessibilityHint="Type or use your keyboard’s dictation, then send." value={assistant.prompt} onChangeText={assistant.setPrompt} editable={!disabled && assistant.busy !== 'save'} multiline maxLength={3800} placeholder={assistant.preview.tiles.length ? 'Ask AI for a change…' : 'Describe a board…'} placeholderTextColor={theme.muted} style={{ flex: 1, color: theme.ink, fontSize: 16, minHeight: 58, maxHeight: 110, padding: 4, textAlignVertical: 'top' }} />
-      {assistant.busy === 'generate' ? <Button compact kind="secondary" icon={Square} accessibilityLabel="Stop request" onPress={assistant.stop} /> : <Button compact icon={ArrowUp} accessibilityLabel="Send message" disabled={disabled || busy || !assistant.prompt.trim()} onPress={() => void assistant.generate()} />}
+    </ScrollView>}
+    <View style={[styles.row, { alignItems: 'flex-end', flexShrink: 0, gap: compact ? 6 : 10 }]}>
+      <TextInput ref={input} accessibilityLabel="Message to AI" accessibilityHint="Type or use your keyboard’s dictation, then send." value={assistant.prompt} onChangeText={assistant.setPrompt} onFocus={() => onFocusChange?.(true)} onBlur={() => onFocusChange?.(false)} editable={!disabled && assistant.busy !== 'save'} multiline maxLength={3800} placeholder={selected ? 'Change this card, e.g. “Say moo twice”' : assistant.preview.tiles.length ? 'Ask for a change, e.g. “Add a water card”' : 'Describe a board, e.g. “Six farm animals”'} placeholderTextColor={theme.muted} style={{ flex: 1, color: theme.ink, fontSize: 16, minHeight: Math.min(58, inputHeight), maxHeight: inputHeight, padding: 4, textAlignVertical: 'top' }} />
+      {compact && <Button compact kind="ghost" icon={KeyboardIcon} accessibilityLabel="Done typing" onPress={finishTyping} />}
+      {assistant.busy === 'generate' ? <Button compact kind="secondary" icon={Square} accessibilityLabel="Stop request" onPress={() => void assistant.stop()} /> : <Button compact icon={ArrowUp} accessibilityLabel="Send message" disabled={disabled || busy || Boolean(assistant.suggestion) || !assistant.prompt.trim()} onPress={() => { finishTyping(); void assistant.generate(); }} />}
     </View>
-    <View style={[styles.row, { flexWrap: 'wrap', gap: 6 }]}>{(assistant.preview.tiles.length ? [['Add a drink', 'Add a drink and keep the other cards.'], ['Shorter words', 'Use shorter spoken words and keep the cards in place.']] : [['Farm animals', conversationPrompts.farm], ['Snack time', conversationPrompts.snack]]).map(([label, prompt]) => <Button key={label} compact kind="secondary" disabled={disabled || busy} onPress={() => fill(prompt)}>{label}</Button>)}<Button kind="ghost" compact icon={Info} accessibilityLabel="About AI" onPress={() => setInfo(true)} /></View>
-    {info && <Sheet title="About AI" onClose={() => setInfo(false)}><Text style={styles.body}>Messages and board words go to AI when you send. {pictureDataDisclosure}</Text></Sheet>}
-    {translations && <Sheet title="Review translation replacements" onClose={() => setTranslations(false)} footer={<><Button kind="secondary" onPress={() => setTranslations(false)}>Keep saved translations</Button><Button onPress={() => { assistant.useTranslations(); setTranslations(false); }}>Use proposed translations</Button></>}>
+    {translations && <Sheet title="Review translation replacements" onClose={() => setTranslations(false)} footer={<><Button kind="secondary" onPress={() => setTranslations(false)}>Keep saved translations</Button><Button onPress={() => { void assistant.useTranslations(); setTranslations(false); }}>Use proposed translations</Button></>}>
       {assistant.translations.map(({ tileId, card, saved, proposed }) => <View key={`${tileId}:${saved.language}`} style={{ gap: 8 }}><Text style={styles.label}>{card} · {languageName(saved.language)}</Text><Text style={styles.body}>Saved: {saved.label} / {saved.speech}</Text><Text style={styles.body}>Proposed: {proposed.label} / {proposed.speech}</Text></View>)}
     </Sheet>}
   </View>;

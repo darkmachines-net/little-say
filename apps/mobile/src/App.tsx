@@ -1,6 +1,6 @@
 /**
- * @file Coordinates library persistence, board navigation, playback previews, and parent editing
- * actions, effective shared languages, and background translations within one board workspace.
+ * @file Coordinates library persistence, board navigation, playback, and normal Undo for manual edits
+ * and automatically saved AI turns, shared languages, and background translations in one workspace.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

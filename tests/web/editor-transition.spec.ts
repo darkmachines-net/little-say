@@ -1,7 +1,8 @@
-/** @file Verifies play entry, shared-language handoff, unlock timing, drafts, motion, and device speech fallback. */
+/** @file Verifies toolbar settings, shared-language play handoff, unlock timing, drafts, motion, and speech safeguards. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
+import { openBoardLanguages } from './boardEditor';
 import { openExistingLibrary } from './existingLibrary';
 
 async function play(page: Page) {
@@ -168,7 +169,7 @@ test('a pending return keeps the editor visible and prevents concurrent edits un
   await page.getByRole('button', { name: 'Return to play', exact: true }).click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).not.toBeEditable();
-  for (const name of ['Boards', 'Edit tile Cow', 'Add card', 'Languages']) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
+  for (const name of ['Boards', 'Edit tile Cow', 'Add card', 'Board settings']) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
   await page.evaluate(() => (window as any).__finishWrites());
   await expect(page.getByRole('heading', { name: 'Saved before play', exact: true })).toBeVisible();
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
@@ -200,7 +201,7 @@ for (const viewport of [{ width: 1180, height: 820 }, { width: 820, height: 1180
   test(`existing editing controls and drafts remain usable at ${viewport.width}x${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport); await play(page); await unlock(page);
     const preview = await page.getByTestId('editor-preview').boundingBox(), actions = await page.getByTestId('editor-actions').boundingBox();
-    if (viewport.width >= 900) expect(preview!.x + preview!.width).toBeLessThanOrEqual(actions!.x);
+    if (viewport.width >= 900 || (viewport.width >= 600 && viewport.height < 600)) expect(preview!.x + preview!.width).toBeLessThanOrEqual(actions!.x);
     else expect(preview!.y + preview!.height).toBeLessThanOrEqual(actions!.y);
     await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
     await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Unsaved calf');
@@ -210,7 +211,7 @@ for (const viewport of [{ width: 1180, height: 820 }, { width: 820, height: 1180
 
     await expect(page.getByTestId('board-assistant')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Return to play', exact: true })).toBeEnabled();
-    await page.getByRole('button', { name: 'Languages', exact: true }).click();
+    await openBoardLanguages(page);
     await expect(page.getByRole('heading', { name: 'Board languages', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
     await page.getByRole('button', { name: 'Return to play', exact: true }).click();
