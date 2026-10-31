@@ -1,4 +1,4 @@
-/** @file Verifies toolbar settings, shared-language play handoff, unlock timing, drafts, motion, and speech safeguards. */
+/** @file Verifies shared-header focus, toolbar settings, language/play handoff, unlock timing, drafts, motion, and speech safeguards. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -44,7 +44,7 @@ test('dashboard and reload entry bind the same board, preserve edits and stop ac
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
   await unlock(page);
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
-  await expect(page.getByTestId('editor-heading')).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();
   await expect(page.getByText('Leave this board?')).toHaveCount(0);
   await page.evaluate(() => (window as any).__allSpeech[0].onend?.());
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);

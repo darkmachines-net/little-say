@@ -1,4 +1,4 @@
-/** @file Verifies native keyboard lifecycle, safe-area offsets, and a persistent composer outside all scrolling ancestors. */
+/** @file Verifies native keyboard lifecycle, safe-area offsets, and a persistent composer below shared navigation and outside scrolling ancestors. */
 
 import React, { act } from 'react';
 import { create, type ReactTestInstance, type ReactTestRenderer } from 'react-test-renderer';

@@ -1,8 +1,9 @@
-/** @file Verifies single-row headers, home-only branding, Back/route titles, actions, draft exits, and full-screen play. */
+/** @file Verifies shared navigation rows, unified-editor settings access, accessible titles, touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';
+import { openBoardLanguages, openBoardPictures } from './boardEditor';
 
 async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   const header = page.getByTestId('app-header').last();
@@ -67,21 +68,20 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('button', { name: 'Boards', exact: true }).click();
     await page.getByRole('button', { name: 'New board', exact: true }).click();
-    expect(await headerGeometry(page, 'New board', 'Back to boards')).toEqual(dashboard);
+    expect(await headerGeometry(page, 'New board', 'Boards')).toEqual(dashboard);
     await page.screenshot({ path: `artifacts/screenshots/headers/ai-${viewport.width}.png` });
-    await page.getByRole('button', { name: 'Picture settings', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Picture settings', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Close Picture settings', exact: true }).click();
-    await page.getByRole('button', { name: 'Back to boards', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Discard', exact: true }).click();
+    await openBoardPictures(page);
+    await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Close Board pictures', exact: true }).click();
+    await page.getByRole('button', { name: 'Boards', exact: true }).click();
     await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
     expect(await headerGeometry(page, 'Edit board', 'Boards')).toEqual(dashboard);
     await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();
-    expect(await page.getByRole('heading', { name: 'Edit board', exact: true }).getByText('Edit board', { exact: true }).evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    // Narrow titles may ellipsize; their full accessible name and all toolbar actions stay usable.
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await expect(page.getByTestId('app-header').getByRole('button', { name: 'Languages', exact: true })).toHaveCount(0);
     await page.screenshot({ path: `artifacts/screenshots/headers/editor-${viewport.width}.png` });
-    await page.getByRole('button', { name: 'Languages', exact: true }).click();
+    await openBoardLanguages(page);
     await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
     await page.getByRole('button', { name: 'Play board', exact: true }).click();
     await expect(page.getByTestId('play-board')).toBeVisible();
