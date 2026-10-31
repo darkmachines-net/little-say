@@ -1,4 +1,4 @@
-/** @file Verifies account, Settings, modal and unlocked/locked play controls stay within system-bar/cutout insets and live rotation. */
+/** @file Verifies editor typing, account, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
@@ -98,6 +98,61 @@ test('long dialogs keep close and save actions safe while insets and orientation
   await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByTestId('modal-backdrop').click({ position: { x: 4, y: bars.top + 4 } });
   await expect(close).toHaveCount(0);
+});
+
+test('editor keeps a fixed composer and live preview safe through repeated keyboard-sized resizes and long AI replies', async ({ page, context }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const device = await context.newCDPSession(page);
+  await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
+  await openExistingLibrary(page, { voiceSources: { 'en-US': 'device' } });
+  const reply = 'Which animals and sounds would you like to keep on this board? '.repeat(35);
+  await page.route('**/api/boards/propose', route => route.fulfill({ json: {
+    boardId: route.request().postDataJSON().board.id,
+    baseRevision: route.request().postDataJSON().board.revision,
+    proposal: { title: 'Farmyard friends', explanation: reply, needsClarification: true, playLanguages: ['en-US'], tiles: [] },
+  } }));
+  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
+  const input = page.getByRole('textbox', { name: 'Message to AI', exact: true });
+  const send = page.getByRole('button', { name: 'Send message', exact: true });
+  await input.fill('Help me refine this board'); await send.click();
+  await expect(page.getByTestId('board-assistant')).toContainText(reply.trim());
+  const scenarios = [
+    { viewport: { width: 390, height: 430 }, insets: bars },
+    { viewport: { width: 390, height: 340 }, insets: { top: 48, bottom: 24, left: 0, right: 0 } },
+    { viewport: { width: 720, height: 330 }, insets: { top: 24, bottom: 24, left: 48, right: 48 } },
+    { viewport: { width: 1180, height: 420 }, insets: { top: 24, bottom: 24, left: 0, right: 0 } },
+  ];
+  for (let cycle = 0; cycle < 2; cycle++) {
+    await input.fill('Keep the cow.\nKeep the sheep.\nUse short words.\nKeep their pictures.\nAdd a water card.');
+    const mountedInput = await input.elementHandle();
+    for (const { viewport, insets } of scenarios) {
+      await page.setViewportSize(viewport);
+      await device.send('Emulation.setSafeAreaInsetsOverride', { insets });
+      expect(await page.evaluate(element => element === document.activeElement, mountedInput)).toBe(true);
+      for (const control of [input, send, page.getByRole('button', { name: 'Done typing', exact: true }), page.getByTestId('editor-preview')]) {
+        await expectInsideSafeArea(control, page, insets);
+        await expect(control).toBeInViewport({ ratio: 1 });
+      }
+      const preview = page.getByTestId('editor-preview');
+      expect((await preview.boundingBox())!.height).toBeGreaterThan(70);
+      await expect(preview).toContainText('Sheep');
+      await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveCount(0);
+      // Scrolling lengthy AI context must leave the input and Send in their fixed positions.
+      const before = await input.boundingBox();
+      const aiContext = page.getByTestId('assistant-context');
+      await expect.poll(() => aiContext.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+      await aiContext.evaluate(element => { element.scrollTop = element.scrollHeight; });
+      expect(await aiContext.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+      expect(await input.boundingBox()).toEqual(before);
+    }
+    await page.getByRole('button', { name: 'Done typing', exact: true }).click();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
+    await expectInsideSafeArea(input, page, bars);
+    await expectInsideSafeArea(page.getByRole('button', { name: 'Board settings', exact: true }), page, bars);
+    await expect(page.getByRole('textbox', { name: 'Board title' })).toBeVisible();
+    await expect(input).toHaveValue(/Keep their pictures/);
+  }
 });
 
 test('play controls and tiles use the inset viewport', async ({ page, context }) => {

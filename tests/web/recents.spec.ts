@@ -1,6 +1,6 @@
 /**
- * @file Covers the shared board workspace. Verifies recent-board spotlight ordering and persistent favorite actions in the browser
- * library.
+ * @file Verifies recent-board ordering, persistent favorites, and settings-gear duplication without
+ * changing play history.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -53,7 +53,7 @@ test('recent play order persists offline and stays independent of edits, undo, c
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words']);
   await page.getByRole('button', { name: 'Edit Our family', exact: true }).click();
-  await page.getByRole('button', { name: 'Board options', exact: true }).click();
+  await page.getByRole('button', { name: 'Board settings', exact: true }).click();
   await page.getByRole('button', { name: 'Duplicate board', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words', 'Our family (copy)']);
@@ -150,7 +150,7 @@ test('favorites work before first play, retry failed saves, and are independent 
   await page.getByRole('button', { name: 'Edit Our family', exact: true }).click();
   await page.getByRole('textbox', { name: 'Board title', exact: true }).fill('People');
   await page.getByRole('button', { name: 'Undo last board change', exact: true }).click();
-  await page.getByRole('button', { name: 'Board options', exact: true }).click();
+  await page.getByRole('button', { name: 'Board settings', exact: true }).click();
   await page.getByRole('button', { name: 'Duplicate board', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove Our family from favorites', exact: true })).toBeVisible();

@@ -1,17 +1,21 @@
-/** @file Owns cancellable AI suggestions, latest-board context, scoped edits, and reviewable media for the shared editor. */
+/** @file Applies completed AI turns through durable board commits, with cancellable previews and explicit conflict/save recovery. */
 
 import { useEffect, useRef, useState } from 'react';
 import * as Crypto from 'expo-crypto';
-import { applyProposal, boardContext, defaultPicturePolicy, getLanguageProfile, MAX_AI_TURNS, mergeBoardSuggestion, proposalTranslationReplacements, reviseBoard, scopeBoardSuggestion, type Board, type BoardChanges, type BoardProposal, type BoardSuggestion, type ConversationTurn, type CreationDraft, type Settings } from '@little-say/core';
+import { applyProposal, boardContext, defaultPicturePolicy, getLanguageProfile, MAX_AI_TURNS, mergeBoardSuggestion, proposalTranslationReplacements, reviseBoard, scopeBoardSuggestion, tileSource, type Board, type BoardChanges, type BoardProposal, type BoardSuggestion, type ConversationTurn, type CreationDraft, type Settings } from '@little-say/core';
 import { proposeBoard } from './api';
 import { prepareProposalPictures, type PictureTileState } from './pictures';
 
-/** Keep AI optional and confined to a staged suggestion; newer manual edits are merged only after review. */
+/**
+ * Show media previews while a turn runs, then commit the completed turn as one normal board Undo step.
+ * Stopping or directly editing a preview saves its usable state and cancels remaining media work.
+ * Only conflicting edits or a failed write pause application; their preview and retry text stay visible.
+ */
 export function useBoardAssistant({ board, settings, draft, onConsent, onAccept, onDraft, onSpeechReady }: {
   board: Board; settings: Settings; draft?: CreationDraft;
   /** Persist explicit AI use before sending board words. */
   onConsent: () => Promise<void>;
-  /** Durably merge against the latest saved board, rejecting unreviewed conflicts. */
+  /** Durably merge against the latest saved board and record one normal Undo step; reject unresolved conflicts. */
   onAccept: (suggestion: BoardSuggestion, choice?: 'current' | 'suggested') => Promise<void>;
   /** Persist a new-board session without adding it to the playable library. */
   onDraft: (state: Pick<CreationDraft, 'prompt' | 'suggestion'>) => void;
@@ -30,31 +34,55 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   const [translations, setTranslations] = useState<ReturnType<typeof proposalTranslationReplacements>>([]);
   const translationCandidate = useRef<Board | null>(null);
   const request = useRef<AbortController | null>(null);
+  const writing = useRef(false);
   const live = useRef(true);
-  const latest = useRef({ board, suggestion, onDraft }); latest.current = { board, suggestion, onDraft };
+  const latest = useRef({ board, suggestion, onDraft, onAccept }); latest.current = { board, suggestion, onDraft, onAccept };
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
-  useEffect(() => { latest.current.onDraft({ prompt, suggestion }); }, [draft?.board.id, prompt, suggestion]);
+  useEffect(() => {
+    // A queued optimistic draft snapshot must not overwrite the durable AI commit in progress.
+    if (!writing.current && busy !== 'save') latest.current.onDraft({ prompt, suggestion });
+  }, [draft?.board.id, prompt, suggestion, busy]);
   let preview = board;
   let conflicts: string[] = [];
   let mergeError = '';
   if (suggestion) {
     try { const merged = mergeBoardSuggestion(suggestion.base, suggestion.board, board); preview = { ...merged.board, revision: Math.max(merged.board.revision, suggestion.board.revision) }; conflicts = merged.conflicts; }
-    catch { preview = suggestion.board; mergeError = 'This suggestion no longer fits the current board. Dismiss it and try again.'; }
+    catch { preview = suggestion.board; mergeError = 'These changes no longer fit the saved board. Adjust the cards before retrying the save.'; }
   }
-  const stop = () => { const active = request.current; request.current = null; active?.abort(); setBusy(null); setProgress(''); setStates({}); };
-  const clear = () => { stop(); setSuggestion(null); setReply(''); setError(''); setTranslations([]); };
+  const cancel = () => { const active = request.current; request.current = null; active?.abort(); setBusy(null); setProgress(''); setStates({}); };
+  const apply = async (candidate: BoardSuggestion, choice?: 'current' | 'suggested') => {
+    if (writing.current) return false;
+    setSuggestion(candidate);
+    try {
+      if (!choice && mergeBoardSuggestion(candidate.base, candidate.board, latest.current.board).conflicts.length) { setBusy(null); return false; }
+      writing.current = true; setBusy('save'); setError('');
+      await latest.current.onAccept(candidate, choice);
+      if (live.current) { setSuggestion(null); setReply(''); }
+      return true;
+    } catch (e) { if (live.current) setError((e as Error).message); return false; }
+    finally { writing.current = false; if (live.current) setBusy(null); }
+  };
+  const recovered = useRef(draft?.suggestion ?? null);
+  const applyRef = useRef(apply); applyRef.current = apply;
+  useEffect(() => {
+    const candidate = recovered.current; recovered.current = null;
+    if (candidate) void applyRef.current(candidate);
+  }, []);
+  const stop = async () => { const pending = latest.current.suggestion; cancel(); return pending ? apply(pending) : true; };
+  const clear = () => { cancel(); setSuggestion(null); setReply(''); setError(''); setTranslations([]); };
   const edit = (changes: BoardChanges) => {
-    stop(); setTranslations([]); translationCandidate.current = null;
+    cancel(); setTranslations([]); translationCandidate.current = null;
     const next = reviseBoard(preview, changes);
-    setSuggestion({ base: suggestion?.base ?? board, board: next });
+    void apply({ base: suggestion?.base ?? board, board: next });
     return next;
   };
   const generate = async () => {
     const message = prompt.trim();
-    if (!message || request.current || busy === 'save') return;
+    if (!message || request.current || writing.current || suggestion) return;
     const controller = new AbortController(); request.current = controller;
     const source = preview.tiles.length ? preview : undefined;
     const base = board;
+    let pending: BoardSuggestion | null = null;
     const selected = preview.tiles.find(tile => tile.id === scope)?.id ?? null;
     const ids: string[] = [];
     // Allocate once per response so picture updates and direct edits keep stable tile identities.
@@ -66,6 +94,7 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
     const publish = (envelope: BoardProposal) => {
       if (!live.current || request.current !== controller) return;
       const candidate = stableMaterialize(envelope);
+      pending = { base, board: candidate };
       setSuggestion(previous => ({ base, board: { ...candidate, revision: Math.max(candidate.revision, (previous?.board.revision ?? board.revision) + 1) } }));
     };
     setBusy('generate'); setError(''); setReply(''); setProgress(''); setStates({}); setTranslations([]);
@@ -100,20 +129,26 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
         if (request.current !== controller) return;
         publish(prepared.proposal); setProgress(prepared.issues.join(' '));
       }
-    } catch (e) { if (live.current && request.current === controller) { setError((e as Error).message); setPrompt(value => value || message); } }
+      if (pending && request.current === controller && !await apply(pending)) setPrompt(value => value || message);
+    } catch (e) {
+      if (live.current && request.current === controller) {
+        if (pending) await apply(pending);
+        setError((e as Error).message); setPrompt(value => value || message);
+      }
+    }
     finally { if (live.current && request.current === controller) { request.current = null; setBusy(null); setStates({}); } }
   };
   const accept = async (choice?: 'current' | 'suggested') => {
-    if (!suggestion || busy === 'save') return;
-    stop(); setBusy('save'); setError('');
-    try { await onAccept(suggestion, choice); setSuggestion(null); setTranslations([]); setReply(''); }
-    catch (e) { setError((e as Error).message); }
-    finally { if (live.current) setBusy(null); }
+    if (!latest.current.suggestion || writing.current) return;
+    const pending = latest.current.suggestion; cancel(); await apply(pending, choice);
   };
-  const useTranslations = () => {
-    stop();
-    if (translationCandidate.current && suggestion) setSuggestion({ ...suggestion, board: { ...suggestion.board, tiles: suggestion.board.tiles.map(tile => ({ ...tile, translations: translationCandidate.current!.tiles.find(value => value.id === tile.id)?.translations ?? tile.translations })) } });
-    setTranslations([]);
+  const useTranslations = async () => {
+    const candidate = translationCandidate.current, current = latest.current.board;
+    if (!candidate || writing.current || latest.current.suggestion) return;
+    const replacements = new Set(translations.map(value => value.tileId));
+    if (current.tiles.some(tile => replacements.has(tile.id) && tileSource(tile) !== tileSource(candidate.tiles.find(value => value.id === tile.id)!))) { setError('Card words changed. Ask AI again before replacing their translations.'); return; }
+    const next = { ...current, tiles: current.tiles.map(tile => ({ ...tile, translations: replacements.has(tile.id) ? candidate.tiles.find(value => value.id === tile.id)?.translations ?? tile.translations : tile.translations })) };
+    if (await apply({ base: current, board: next })) { setTranslations([]); translationCandidate.current = null; }
   };
   return { prompt, setPrompt, suggestion, preview, scope, setScope, reply, error, mergeError, busy, progress, states, conflicts, translations, useTranslations, generate, accept, stop, clear, edit };
 }
