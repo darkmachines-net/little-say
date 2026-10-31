@@ -2,6 +2,10 @@
 
 These services connect the UI to the shared core, backend, device storage, and operating system. `*.web.ts` implementations replace native adapters at bundle time. The [UI module](../ui/README.md) owns interaction conventions; [server modules](../../../server/README.md) own HTTP security, caches, and retention.
 
+## Installed app information
+
+`appInfo` reads the active bundle's `extra.releaseVersion` (falling back to Expo config version), plus the installed binary's version and platform build number from `expo-application`. It never substitutes the config's build counters, which can differ from EAS-managed binary counters. Enabled release updates also expose the active channel, runtime, source, and update ID from `expo-updates`. Expo Go is labeled explicitly and hides its host binary metadata; development builds are labeled and omit release-update details. Missing versions show **Unavailable**. The web adapter reports only the loaded bundle version and environment, including when cached offline; neither adapter queries a server.
+
 ## Accounts and sync
 
 `useAccount` coordinates explicit account actions with `firebaseAccount`, `firebaseProviders`, platform session storage, and `accountSync`. On the first launch without a saved sign-in, account choices offer login, registration, or guest use. Continuing as guest persists only a launch preference and makes no account request. Existing boards and resumed play are preserved. Signing out keeps downloaded data and returns to account choices.

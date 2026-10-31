@@ -1,10 +1,11 @@
-/** @file Exercises grouped Settings routes, durable preferences, failed saves, cached-audio source overrides, and offline deep links. */
+/** @file Exercises grouped Settings and About routes, durable preferences, failed saves, speech overrides, and offline deep links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { openExistingLibrary } from './existingLibrary';
+import release from '../../native-release.json' with { type: 'json' };
 
 async function mockVoices(page: Page) {
   await page.addInitScript(() => {
@@ -30,7 +31,7 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/settings$/);
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  for (const label of ['Languages', 'Voices', 'Pictures', 'Account & backup', 'Keep the app on screen', 'Privacy Policy']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  for (const label of ['Languages', 'Voices', 'Pictures', 'Account & backup', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
   await expect(page.getByRole('textbox')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Save settings|Enable automatic AI/ })).toHaveCount(0);
   await expect(page.getByText(/Your home server|Parent settings|Private server address/)).toHaveCount(0);
@@ -60,6 +61,32 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Privacy Policy', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'AI processing', exact: true })).toBeVisible();
+});
+
+test('About shows the loaded web release and survives direct links and offline refresh', async ({ page, context }) => {
+  await openExistingLibrary(page);
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'About', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/settings\/about$/);
+  await expect(page.getByRole('heading', { name: 'About', exact: true })).toBeVisible();
+  await expect(page.getByText(release.version, { exact: true })).toBeVisible();
+  await expect(page.getByText('Web', { exact: true })).toBeVisible();
+  await expect(page.getByText('Build number', { exact: true })).toHaveCount(0);
+  await mkdir('artifacts/screenshots/settings', { recursive: true });
+  for (const [name, viewport] of [['phone', { width: 390, height: 844 }], ['desktop', { width: 1280, height: 900 }]] as const) {
+    await page.setViewportSize(viewport);
+    await expect(page.getByText(release.version, { exact: true })).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.screenshot({ path: `artifacts/screenshots/settings/about-${name}.png` });
+  }
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/settings$/);
+  await page.goto('/app/settings/about');
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'About', exact: true })).toBeVisible();
+  await expect(page.getByText(release.version, { exact: true })).toBeVisible();
 });
 
 test('a failed preference write keeps the old choice and can be retried on its page', async ({ page }) => {
