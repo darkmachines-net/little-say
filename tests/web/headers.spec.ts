@@ -1,4 +1,4 @@
-/** @file Verifies authenticated shared navigation rows and account entry, unified-editor settings access, accessible titles, touch targets, and separate full-screen play. */
+/** @file Waits for route headers before verifying authenticated navigation, account entry, unified-editor settings, accessible titles, touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -9,13 +9,14 @@ import { openSignedInApp } from './accountFixture';
 async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   const header = page.getByTestId('app-header').last();
   const bar = page.getByTestId('app-header-bar').last();
+  await expect(bar).toBeVisible();
+  if (title) await expect(bar.getByRole('heading', { name: title, exact: true })).toBeVisible();
   const bounds = (await bar.boundingBox())!;
   // A contextual toolbar must not create a second row beneath the navigation bar.
   expect((await header.boundingBox())!.height).toBe(bounds.height + 1);
   if (title) {
     const heading = page.getByRole('heading', { name: title, exact: true });
     await expect(heading).toHaveCount(1);
-    await expect(bar.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await expect(bar.locator('img')).toHaveCount(0);
     const headingBox = (await heading.boundingBox())!;
     expect(headingBox.y).toBeGreaterThanOrEqual(bounds.y);
