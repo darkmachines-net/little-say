@@ -40,7 +40,7 @@
     "test:services": "tsx scripts/test-services.ts",
     "test:accounts:web": "tsx scripts/test-services.ts --browser",
     "preview": "expo-release preview",
-    "dev:native": "expo-release dev"
+    "dev:native": "tsx scripts/dev.ts --dev-client"
   },
   "engines": {
     "node": "^22.14.0 || ^24.3.0 || ^26.0.0 || >=27.0.0"
@@ -53,17 +53,19 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#743c841f70a6a34e7f3b17d8e2ef783e8dcf7cab",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
+    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#bd35cac92487667ecd5ecdc1f72d3fecee350faa",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.23.1",
+    "@types/proper-lockfile": "^4.1.4",
     "eslint": "^10.13.0",
     "eslint-plugin-jsdoc": "63.3.3",
     "eslint-plugin-react-hooks": "^7.1.1",
     "firebase-tools": "^15.32.1",
     "globals": "^17.13.0",
+    "proper-lockfile": "^4.1.2",
     "tsx": "^4.20.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.0",

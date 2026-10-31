@@ -1,4 +1,4 @@
-/** @file Selects local/hosted development, resolves LAN addresses, and isolates Expo from all backend credentials. */
+/** @file Selects backend/client targets, resolves LAN URLs from assigned ports, and isolates Expo from server credentials. */
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { networkInterfaces, type NetworkInterfaceInfo } from 'node:os';
@@ -7,6 +7,7 @@ import { resolve } from 'node:path';
 import { parse } from 'dotenv';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { developmentPort as port } from './dev-ports';
 
 type Environment = Record<string, string | undefined>;
 export type LanAddress = { name: string; address: string };
@@ -15,7 +16,7 @@ export type DevelopmentBackend = 'local' | 'remote';
 /** Validate launcher arguments before reading credentials or starting any services. */
 export function developmentOptions(args: string[]) {
   const flags = new Set(args);
-  const supported = ['--local', '--remote', '--web', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help'];
+  const supported = ['--local', '--remote', '--web', '--dev-client', '--server-only', '--app-only', '--setup', '--doctor', '--clear', '--help'];
   const unknown = [...flags].filter(flag => !supported.includes(flag));
   if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}. Use npm run dev -- --help.`);
   if (['--server-only', '--app-only', '--setup', '--doctor'].filter(flag => flags.has(flag)).length > 1) throw new Error('Choose one launch mode.');
@@ -39,23 +40,25 @@ function score(value: LanAddress) {
   const privateIp = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(value.address);
   return (virtual ? -100 : 0) + (privateIp ? 20 : 0) + (/wi-?fi|wlan|ethernet|^en\d|^eth\d/i.test(value.name) ? 10 : 0);
 }
-function port(value: string | undefined, fallback: number, name: string) {
-  if (!value?.trim()) return fallback;
-  if (!/^\d+$/.test(value) || Number(value) < 1024 || Number(value) > 65535) throw new Error(`${name} must be a port between 1024 and 65535.`);
-  return Number(value);
+/** Select an assigned, reachable LAN IPv4 address before reserving ports or starting any service. */
+export function developmentHost(env: Environment, addresses = lanAddresses()) {
+  const host = env.DEV_HOST?.trim() || addresses[0]?.address;
+  if (!host) throw new Error('No LAN IPv4 address found. Connect to Wi-Fi/Ethernet, or set DEV_HOST in .env.');
+  if (!isIPv4(host) || host === '0.0.0.0' || host.startsWith('127.') || host.startsWith('169.254.')) throw new Error('DEV_HOST must be this computer’s reachable LAN IPv4 address, not localhost, a URL, or 0.0.0.0.');
+  if (!addresses.some(entry => entry.address === host)) throw new Error('DEV_HOST is not assigned to this computer. Run npm run dev:doctor to list current addresses, then update .env.');
+  return host;
 }
 /**
  * Derive Expo LAN URLs and the selected API origin. Remote sessions ignore local API port settings;
  * their optional override must be an HTTPS origin without credentials, a path, a query, or a fragment.
  */
 export function developmentConfig(env: Environment, addresses = lanAddresses(), backend: DevelopmentBackend = 'local') {
-  const host = env.DEV_HOST?.trim() || addresses[0]?.address;
-  if (!host) throw new Error('No LAN IPv4 address found. Connect to Wi-Fi/Ethernet, or set DEV_HOST in .env.');
-  if (!isIPv4(host) || host === '0.0.0.0' || host.startsWith('127.') || host.startsWith('169.254.')) throw new Error('DEV_HOST must be this computer’s reachable LAN IPv4 address, not localhost, a URL, or 0.0.0.0.');
-  if (!addresses.some(entry => entry.address === host)) throw new Error('DEV_HOST is not assigned to this computer. Run npm run dev:doctor to list current addresses, then update .env.');
+  const host = developmentHost(env, addresses);
   const apiPort = backend === 'local' ? port(env.DEV_API_PORT, 8788, 'DEV_API_PORT') : 8788;
   const expoPort = port(env.DEV_EXPO_PORT, 8081, 'DEV_EXPO_PORT');
-  if (backend === 'local' && apiPort === expoPort) throw new Error('DEV_API_PORT and DEV_EXPO_PORT must be different.');
+  const pgPort = backend === 'local' ? port(env.DEV_PG_PORT, 15432, 'DEV_PG_PORT') : 15432;
+  const authPort = backend === 'local' ? port(env.DEV_AUTH_PORT, 9099, 'DEV_AUTH_PORT') : 9099;
+  if (backend === 'local' && new Set([apiPort, expoPort, pgPort, authPort]).size !== 4) throw new Error('Development service ports must be different.');
   let apiUrl = `http://${host}:${apiPort}`;
   if (backend === 'remote') {
     const value = env.DEV_REMOTE_API_URL?.trim() || 'https://littlesay.app';
@@ -65,7 +68,7 @@ export function developmentConfig(env: Environment, addresses = lanAddresses(), 
     apiUrl = url.origin;
   }
   const webUrl = `http://${host}:${expoPort}`;
-  return { backend, host, apiPort, expoPort, apiUrl, webUrl, expoUrl: `exp://${host}:${expoPort}`, addresses,
+  return { backend, host, apiPort, expoPort, pgPort, authPort, apiUrl, webUrl, expoUrl: `exp://${host}:${expoPort}`, addresses,
     origins: [webUrl, `http://localhost:${expoPort}`, `http://127.0.0.1:${expoPort}`, apiUrl, `http://localhost:${apiPort}`, `http://127.0.0.1:${apiPort}`] };
 }
 export type DevelopmentConfig = ReturnType<typeof developmentConfig>;

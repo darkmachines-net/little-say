@@ -1,4 +1,4 @@
-# Selects coordinated GCP and Expo delivery while preserving the shared toolkit's profile and retry identities.
+# Delegates coordinated GCP/Expo delivery to the same pinned toolkit used by the development launcher.
 name: Release
 run-name: ${{ inputs.destination == 'production' && 'Deploy to production (GCP + Expo beta)' || 'Public-store release (Expo production)' }}
 on:
@@ -15,7 +15,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@743c841f70a6a34e7f3b17d8e2ef783e8dcf7cab
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@bd35cac92487667ecd5ecdc1f72d3fecee350faa
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination] }}
       rebuild: ${{ inputs.rebuild }}
