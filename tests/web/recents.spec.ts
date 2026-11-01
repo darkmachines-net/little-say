@@ -1,6 +1,6 @@
 /**
- * @file Verifies recent-board ordering, persistent favorites, and settings-gear duplication without
- * changing play history.
+ * @file Verifies creation/play ordering, persistent favorites, and settings-gear duplication that
+ * records fresh use without changing the source board's history.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
   await openExistingLibrary(page);
 });
 
-test('recent play order persists offline and stays independent of edits, undo, copies and deletion', async ({ page, context }) => {
+test('recent use persists offline, ignores edits and undo, and puts new copies first', async ({ page, context }) => {
   const titles = page.getByTestId('board-card-title');
   await expect(titles).toHaveText(['Farmyard friends', 'My little words', 'Our family']);
   await expect(page.getByTestId('recent-board')).toHaveCount(0);
@@ -56,18 +56,21 @@ test('recent play order persists offline and stays independent of edits, undo, c
   await page.getByRole('button', { name: 'Board settings', exact: true }).click();
   await page.getByRole('button', { name: 'Duplicate board', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words', 'Our family (copy)']);
-  expect((await savedLibrary(page)).boardLastPlayedAt).toEqual(before.boardLastPlayedAt);
+  await expect(titles).toHaveText(['Our family (copy)', 'Our family', 'Farmyard friends', 'My little words']);
+  const duplicated = await savedLibrary(page);
+  const copy = duplicated.boards.find((board: any) => board.title === 'Our family (copy)');
+  expect(duplicated.boardLastPlayedAt).toMatchObject(before.boardLastPlayedAt);
+  expect(duplicated.boardLastPlayedAt[copy.id]).toBeGreaterThan(before.boardLastPlayedAt['starter-family']);
   await page.getByRole('button', { name: 'More options for Our family', exact: true }).click();
   await expect(page.getByRole('button', { name: /(?:Generate missing|Retry missing) audio \(6\)/ })).toBeVisible();
   await page.getByRole('button', { name: 'Delete board', exact: true }).click();
   await page.getByRole('button', { name: 'Delete board', exact: true }).click();
-  await expect(page.getByTestId('recent-board').getByTestId('board-card-title')).toHaveText('Farmyard friends');
+  await expect(page.getByTestId('recent-board').getByTestId('board-card-title')).toHaveText('Our family (copy)');
   await expect(page.getByText('Saving…', { exact: true })).toHaveCount(0);
   await page.reload();
   expect((await savedLibrary(page)).boardLastPlayedAt['starter-family']).toBeUndefined();
-  await expect(titles).toHaveText(['Farmyard friends', 'My little words', 'Our family (copy)']);
-  await page.getByRole('button', { name: 'Resume Farmyard friends', exact: true }).click();
+  await expect(titles).toHaveText(['Our family (copy)', 'Farmyard friends', 'My little words']);
+  await page.getByRole('button', { name: 'Resume Our family (copy)', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible();
 });
 
@@ -161,5 +164,5 @@ test('favorites work before first play, retry failed saves, and are independent 
   await expect(page.getByText('Saving…', { exact: true })).toHaveCount(0);
   await page.reload();
   expect((await savedLibrary(page)).favoriteBoardIds).toEqual([]);
-  await expect(page.getByTestId('board-card-title')).toHaveText(['Farmyard friends', 'My little words', 'Our family (copy)']);
+  await expect(page.getByTestId('board-card-title')).toHaveText(['Our family (copy)', 'Farmyard friends', 'My little words']);
 });

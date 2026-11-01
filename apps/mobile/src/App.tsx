@@ -1,6 +1,6 @@
 /**
  * @file Requires sign-in, restores cloud data, and coordinates library persistence, board navigation, playback, and normal Undo for manual edits
- * and automatically saved AI turns, explicit creation-draft saves, shared languages, and translations.
+ * and automatically saved AI turns, explicit creation-draft saves, creation/play recency, shared languages, and translations.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -150,7 +150,9 @@ function Application() {
       if (merged.conflicts.length && !choice) throw new Error('Newer edits need review. Choose which changes to keep.');
       original = current;
       const exists = lib.boards.some(b => b.id === current.id);
-      return { ...lib, creationDraft: exists ? lib.creationDraft : undefined, boardCreationDraft: exists ? lib.boardCreationDraft : undefined, boards: exists ? lib.boards.map(b => b.id === current.id ? merged.board : b) : [...lib.boards, merged.board] };
+      return { ...lib, creationDraft: exists ? lib.creationDraft : undefined, boardCreationDraft: exists ? lib.boardCreationDraft : undefined,
+        boardLastPlayedAt: exists ? lib.boardLastPlayedAt : { ...lib.boardLastPlayedAt, [current.id]: Date.now() },
+        boards: exists ? lib.boards.map(b => b.id === current.id ? merged.board : b) : [...lib.boards, merged.board] };
     }));
     remember(original); updateDraft(null); setSelectedId(original.id); draftRoute.replace(original.id);
   };
@@ -175,7 +177,9 @@ function Application() {
       } else {
         void store.change(lib => {
           const exists = lib.boards.some(b => b.id === next.id);
-          return { ...lib, creationDraft: exists ? lib.creationDraft : undefined, boardCreationDraft: exists ? lib.boardCreationDraft : undefined, boards: exists ? lib.boards.map(b => b.id === next.id ? next : b) : [...lib.boards, next] };
+          return { ...lib, creationDraft: exists ? lib.creationDraft : undefined, boardCreationDraft: exists ? lib.boardCreationDraft : undefined,
+            boardLastPlayedAt: exists ? lib.boardLastPlayedAt : { ...lib.boardLastPlayedAt, [next.id]: Date.now() },
+            boards: exists ? lib.boards.map(b => b.id === next.id ? next : b) : [...lib.boards, next] };
         }).catch(() => {});
         if (!draftRoute.route?.boardId) { updateDraft(null); setSelectedId(next.id); draftRoute.replace(next.id); }
       }
@@ -183,7 +187,7 @@ function Application() {
     }} onDelete={() => deleteBoard(selected.id)} onDuplicate={() => {
       if (!selected.tiles.length) return;
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
-      void store.change(lib => ({ ...lib, boards: [...lib.boards, copy] })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
+      void store.change(lib => ({ ...lib, boards: [...lib.boards, copy], boardLastPlayedAt: { ...lib.boardLastPlayedAt, [copy.id]: Date.now() } })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
     }} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
       const history = undo[selected.id] ?? []; const previous = history.at(-1); if (!previous) return;
       const current = store.current.current!.boards.find(b => b.id === selected.id) ?? workingDraftRef.current!.board;

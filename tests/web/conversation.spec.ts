@@ -1,4 +1,4 @@
-/** @file Verifies minimal example-led AI input, automatic turns, Undo, save/conflict recovery, and keyboard-sized layouts. */
+/** @file Verifies minimal example-led AI input, manual-creation recency, automatic turns, Undo, save/conflict recovery, and keyboard-sized layouts. */
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
 import { mkdir } from 'node:fs/promises';
@@ -48,6 +48,7 @@ test('one entry opens an empty local draft; direct creation needs no AI and canc
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Save draft', exact: true }).click();
   expect((await saved(page)).boards).toHaveLength(count);
+  await expect(page.getByTestId('recent-board')).toHaveCount(0);
   await page.getByRole('button', { name: 'Resume draft', exact: true }).click();
   await page.reload();
   await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Our snacks');
@@ -57,6 +58,10 @@ test('one entry opens an empty local draft; direct creation needs no AI and canc
   await expect(page).toHaveURL(/#boards\/[^/]+\/edit$/);
   await expect.poll(async () => (await saved(page)).boards.length).toBe(count + 1);
   expect(requests).toBe(0); expect((await saved(page)).settings.aiConsent).toBe(false);
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
+  await expect(page.getByTestId('recent-board').getByTestId('board-card-title')).toHaveText('Our snacks');
+  await page.reload();
+  await expect(page.getByTestId('board-card-title')).toHaveText(['Our snacks', 'Farmyard friends', 'My little words', 'Our family']);
 });
 
 test('clarification and follow-ups apply automatically with one normal Undo per turn or direct edit', async ({ page }) => {

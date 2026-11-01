@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by use and favorites, showing effective languages and one resumable creation entry under shared account and navigation icons. */
+/** @file Organizes saved boards by creation/play recency and favorites, showing effective languages and one resumable creation entry under shared account and navigation icons. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -13,7 +13,7 @@ import { MountainMark } from './Brand';
 import { AppHeader } from './AppHeader';
 
 /**
- * Spotlight the most recently played board, place favorites next, and present library actions and the
+ * Spotlight the most recently created or played board, place favorites next, and present library actions and the
  * shared board workspace with resumable creation drafts. Resolve user languages and play subsets
  * for board summaries and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
  */
@@ -24,7 +24,7 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccoun
   const menuBoard = menuSource && boardWithProfileLanguages(menuSource, library.settings);
   const columns = width > 1050 ? 3 : width > 620 ? 2 : 1;
   const createLabel = library.creationDraft || library.boardCreationDraft ? 'Resume draft' : 'New board';
-  // Stable ties preserve the existing order for boards with no play history.
+  // Stable ties preserve the existing order for boards with no recorded creation or play.
   const boards = [...library.boards].sort((a, b) => (library.boardLastPlayedAt?.[b.id] ?? 0) - (library.boardLastPlayedAt?.[a.id] ?? 0));
   const recent = boards[0] && library.boardLastPlayedAt?.[boards[0].id] !== undefined ? boards[0] : undefined;
   const favorites = new Set(library.favoriteBoardIds);
