@@ -1,4 +1,4 @@
-/** @file Keeps account entry and management pages in browser history and an in-memory native stack. */
+/** @file Keeps account entry and management history, returning authenticated users to Home without waiting for sync. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
@@ -35,9 +35,12 @@ export function useAccountRoute() {
       if (Platform.OS === 'web') window.history.replaceState(null, '', accountPath(mode));
       setRoute({ mode });
     },
-    /** Leave account navigation after the caller confirms sign-in and first-device restoration. */
+    /** Return to Home without waiting for sync, notifying other web route owners so prior direct links cannot remain visible. */
     close() {
-      if (Platform.OS === 'web') window.history.replaceState(null, '', '/app');
+      if (Platform.OS === 'web') {
+        window.history.replaceState(null, '', '/app');
+        window.dispatchEvent(new Event('popstate'));
+      }
       stack.current = [];
       setRoute(null);
     },

@@ -1,4 +1,4 @@
-/** @file Hosts required account entry, status-first backup, and routed account management within native-safe full-screen navigation. */
+/** @file Hosts required account entry and dismissible status-first account management within native-safe full-screen navigation. */
 import { useEffect } from 'react';
 import { Modal, Platform, ScrollView } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -15,18 +15,18 @@ const titles = { login: 'Sign in', register: 'Create an account', reset: 'Reset 
 
 /**
  * Open full-screen account navigation under the shared route header, with insets measured in its native modal window.
- * Back leaves child pages first; signed-out users and empty devices awaiting restoration cannot dismiss the gate.
+ * Back leaves child pages first; signed-out users cannot dismiss entry, while signed-in users can return during restoration.
  * Background sync permits navigation; authentication actions guard navigation until they settle.
  * Web fades in place so the safe-area provider never measures a sliding, offscreen viewport.
  */
 export function AccountScreen({ account, mode, onMode, onBack, onClose }: { account: AccountController; mode: AccountMode; onMode: (mode: AccountMode) => void; onBack: () => void; onClose: () => void }) {
   const signedIn = Boolean(account.session && !account.needsLogin);
   const incompatible = signedIn ? mode !== null && isAccountEntryMode(mode) : !isAccountEntryMode(mode);
-  useEffect(() => { if (incompatible) onMode(null); }, [incompatible, onMode]);
+  useEffect(() => { if (incompatible && !signedIn) onMode(null); }, [incompatible, signedIn, onMode]);
   const page = incompatible ? null : mode;
   const clearFeedback = account.clearFeedback;
   useEffect(() => { if (signedIn) clearFeedback(); }, [page, signedIn, clearFeedback]);
-  const canClose = signedIn && !account.restoring;
+  const canClose = signedIn;
   const welcome = !signedIn && !page;
   const navigationBusy = account.busy && !account.syncing;
   const close = () => {

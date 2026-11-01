@@ -58,9 +58,19 @@ it('starts backup after sign-in without a separate action and stops after sign-o
   await mount(null); await advance(); expect(mocks.sync).not.toHaveBeenCalled();
   await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
   expect(mocks.save).toHaveBeenCalledWith(session);
+  expect(controller.syncing).toBe(false);
   await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
   await act(async () => controller.disconnect());
   await advance(30000); expect(mocks.sync).toHaveBeenCalledOnce(); expect(mocks.save).toHaveBeenLastCalledWith(null);
+});
+
+it('reports active sync until restored content is applied, independently of initial restoration', async () => {
+  let finish!: (snapshot: { revision: number; boards: Library['boards']; assets: [] }) => void;
+  mocks.sync.mockReturnValueOnce(new Promise(resolve => { finish = resolve; }));
+  await mount(); expect(controller.syncing).toBe(false);
+  await advance(); expect(controller.syncing).toBe(true); expect(controller.restoring).toBe(false);
+  await act(async () => { finish({ revision: 0, boards: library.boards, assets: [] }); });
+  expect(controller.syncing).toBe(false); expect(library.sync?.accountId).toBe(session.account.id);
 });
 
 it('waits for verification then backs up automatically', async () => {
@@ -117,6 +127,7 @@ it('keeps an empty device in restoration after failure until a successful cloud 
   mocks.sync.mockRejectedValueOnce(new Error('Offline'));
   await mount(); expect(controller.restoring).toBe(true);
   await advance(); expect(controller.restoring).toBe(true);
+  expect(controller.syncing).toBe(false); expect(controller.backup.error).toBe('Offline');
   await act(async () => controller.retrySync());
   expect(controller.restoring).toBe(false); expect(library.boards.length).toBeGreaterThan(0);
 });

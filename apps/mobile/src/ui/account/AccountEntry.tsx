@@ -1,4 +1,4 @@
-/** @file Presents signed-out welcome, email/provider authentication, password reset, and the local emulator shortcut. */
+/** @file Presents signed-out welcome and authentication, leaving successful Home navigation to the application session boundary. */
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import type { AccountController } from '../../services/useAccount';
@@ -8,7 +8,7 @@ import { Button, Field, Notice } from '../components';
 import { styles } from '../theme';
 import { providerNames } from './components';
 
-/** Render required account entry; credentials are local to the mounted form and cleared after successful authentication. */
+/** Render required account entry; clear local credentials on success while the application returns Home as soon as the session is saved. */
 export function AccountEntry({ account, mode, setMode }: { account: AccountController; mode: AccountEntryMode; setMode: (mode: AccountEntryMode) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +21,7 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
   const developmentAccount = __DEV__ && account.config?.emulatorUrl && account.config.projectId.startsWith('demo-') && providers.includes('password') ? account.config.developmentAccount : undefined;
   const socialProviders = (['apple.com', 'google.com'] as const).filter(provider => providers.includes(provider) && (Platform.OS === 'web' || provider === (Platform.OS === 'ios' ? 'apple.com' : 'google.com')));
   const clear = () => { setPassword(''); setConfirmation(''); };
-  const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) { clear(); setMode(null); } }).catch(() => {});
+  const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) clear(); }).catch(() => {});
   return <View style={{ gap: 12 }}>
     {Boolean(account.error) && <Notice>{account.error}</Notice>}
     {Boolean(account.message) && <Text accessibilityLiveRegion="polite" style={styles.body}>{account.message}</Text>}
