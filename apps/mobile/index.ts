@@ -1,5 +1,7 @@
-/** @file Registers Expo's platform-resolved entry so website content stays out of native bundles. */
+/** @file Checks development-client compatibility before loading the platform-resolved application entry. */
 
-import { registerRootComponent } from 'expo';
-import App from './src/Entry';
-registerRootComponent(App);
+import { registerRootComponent } from '@mchartier/expo-release/register';
+
+// A static import would evaluate native dependencies before the compatibility check can run.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+registerRootComponent(() => require('./src/Entry').default);
