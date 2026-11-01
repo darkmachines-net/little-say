@@ -1,4 +1,4 @@
-/** @file Verifies authenticated balanced grids, toolbar settings access, touch geometry through rotation, and compact-window recovery. */
+/** @file Verifies balanced grids, grouped manual actions, toolbar settings, rotation touch geometry, and compact-window recovery. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { starterLibrary } from '../fixtures/library';
@@ -146,7 +146,7 @@ for (const count of [7, 24]) {
         expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(1);
         for (const button of await buttons.all()) await expect(button).toBeInViewport({ ratio: 1 });
       }).toPass();
-      for (const name of ['Board settings', 'Play board']) {
+      for (const name of ['Board settings', 'Accept']) {
         await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
       }
     }

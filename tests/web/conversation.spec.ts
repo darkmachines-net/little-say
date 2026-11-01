@@ -1,4 +1,4 @@
-/** @file Verifies example-led AI input, manual-creation recency, automatic turns, Undo, save/conflict recovery, keyboard-sized layouts, and dashboard return. */
+/** @file Verifies AI input, grouped manual controls, automatic turns, Undo/Redo branching, save recovery, keyboard layouts, and dashboard return. */
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
 import { mkdir } from 'node:fs/promises';
@@ -21,7 +21,7 @@ async function send(page: Page, message: string) {
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
 }
 async function add(page: Page, label: string) {
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill(label);
   await page.getByRole('textbox', { name: 'What it says', exact: true }).fill(label);
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
@@ -38,9 +38,9 @@ test('one entry opens an empty local draft; direct creation needs no AI and canc
   await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('New board');
   await expect(page.getByText(/^\d+ \/ 24$/)).toHaveCount(0);
   await expect(page.getByRole('textbox', { name: 'Message to AI' })).toHaveAttribute('placeholder', /Six farm animals/);
-  await expect(page.getByRole('button', { name: 'Play board', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Accept', exact: true })).toBeDisabled();
   await expect(page.getByRole('button', { name: /Build manually|Edit with AI|History/ })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
   await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
   await page.getByRole('textbox', { name: 'Board title' }).fill('Our snacks');
@@ -64,7 +64,7 @@ test('one entry opens an empty local draft; direct creation needs no AI and canc
   await expect(page.getByTestId('board-card-title')).toHaveText(['Our snacks', 'Farmyard friends', 'My little words', 'Our family']);
 });
 
-test('clarification and follow-ups apply automatically with one normal Undo per turn or direct edit', async ({ page }) => {
+test('clarification and follow-ups share Undo/Redo with direct edits, including restoration from an empty draft', async ({ page }) => {
   const requests: any[] = [];
   await page.route('**/api/boards/propose', route => {
     const input = route.request().postDataJSON(); requests.push(input);
@@ -91,6 +91,8 @@ test('clarification and follow-ups apply automatically with one normal Undo per 
   expect(requests[2].conversation.draft).toBeNull(); expect(requests[2].conversation.history).toHaveLength(2);
   await expect(page.getByRole('button', { name: 'Edit tile Moo', exact: true })).toBeVisible();
   expect((await saved(page)).boards).toHaveLength(4);
+  const original = (await saved(page)).boards.at(-1);
+  const recency = (await saved(page)).boardLastPlayedAt[original.id];
   await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeVisible();
   await page.getByRole('button', { name: 'Undo last board change' }).click();
   await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Animal words');
@@ -100,6 +102,21 @@ test('clarification and follow-ups apply automatically with one normal Undo per 
   await page.getByRole('button', { name: 'Undo last board change' }).click();
   await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
   await expect.poll(async () => (await saved(page)).boards.length).toBe(3);
+  const redo = page.getByRole('button', { name: 'Redo last board change', exact: true });
+  await expect(page.getByRole('button', { name: 'Undo last board change', exact: true })).toBeDisabled();
+  await redo.click();
+  await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
+  await expect.poll(async () => (await saved(page)).boards.length).toBe(4);
+  await redo.click();
+  await expect(page.getByRole('button', { name: 'Edit tile Moo', exact: true })).toBeVisible();
+  await redo.click();
+  await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Our animals');
+  await expect(redo).toBeDisabled();
+  await expect.poll(async () => (await saved(page)).boards.at(-1).tiles).toEqual(original.tiles);
+  const restored = await saved(page);
+  expect(restored.boards.at(-1).id).toBe(original.id);
+  expect(restored.boards.at(-1).revision).toBeGreaterThan(original.revision);
+  expect(restored.boardLastPlayedAt[original.id]).toBe(recency);
 });
 
 test('newer direct edits merge with a pending request and conflicting fields require a choice', async ({ page }) => {
@@ -170,7 +187,7 @@ test('stop ignores late replies and retry keeps the first generated board withou
   await expect(page.getByTestId('editor-preview')).toContainText('Cow');
 });
 
-test('AI turns and later manual edits share the normal Undo stack without clearing earlier work', async ({ page }) => {
+test('a new AI turn after partial Redo discards the remaining redo branch and preserves earlier work', async ({ page }) => {
   const requests: any[] = [];
   await page.route('**/api/pictures/analyze', route => route.fulfill({ status: 503, json: { error: 'Pictures unavailable' } }));
   await page.route('**/api/boards/propose', route => {
@@ -199,11 +216,17 @@ test('AI turns and later manual edits share the normal Undo stack without cleari
   await expect.poll(async () => (await saved(page)).boards.at(-1).tiles[0].color).toBe('sage');
   await expect(page.getByRole('textbox', { name: 'Message to AI', exact: true })).toHaveValue('My next request');
   await expect(page.getByRole('button', { name: 'Undo last AI change', exact: true })).toHaveCount(0);
+  const redo = page.getByRole('button', { name: 'Redo last board change', exact: true });
+  await redo.click();
+  await expect.poll(async () => (await saved(page)).boards.at(-1).tiles[0].color).toBe('sky');
+  await expect(redo).toBeEnabled();
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect.poll(() => requests.length).toBe(3);
+  await waitForAiTurn(page);
+  await expect(redo).toBeDisabled();
   expect(requests[2].conversation.history).toHaveLength(2);
   expect(requests[2].board.tiles.map((tile: any) => tile.label)).toEqual(['Cow', 'Sheep']);
-  expect(requests[2].board.tiles[0].color).toBe('sage');
+  expect(requests[2].board.tiles[0].color).toBe('sky');
   expect(requests[2].board.tiles[1].speech).toBe('Sheep');
 });
 
@@ -274,6 +297,8 @@ test('minimal example-led composer fits phones and tablets without suggestion pi
   await mkdir('artifacts/screenshots', { recursive: true });
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Board options', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Saved on this device', { exact: true })).toHaveCount(0);
+  await expect(page.getByTestId('app-header').getByRole('button', { name: 'Accept', exact: true })).toHaveCount(0);
   await expect(page.getByText('Editing language', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Pictures', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Board settings', exact: true }).click();
@@ -281,7 +306,12 @@ test('minimal example-led composer fits phones and tablets without suggestion pi
   await page.getByRole('button', { name: 'Close Board settings', exact: true }).click();
   for (const size of [{ width: 390, height: 844 }, { width: 820, height: 1180 }, { width: 1180, height: 820 }]) {
     await page.setViewportSize(size);
-    for (const name of ['Add card', 'Board settings', 'Send message', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    for (const name of ['Add Card', 'Board settings', 'Send message', 'Accept']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    const controls = page.getByTestId('manual-edit-controls');
+    await expect(controls.getByRole('button', { name: 'Accept', exact: true })).toBeVisible();
+    await expect(controls.getByRole('button', { name: 'Add Card', exact: true })).toBeVisible();
+    const manualBox = (await controls.boundingBox())!, composerBox = (await page.getByTestId('board-assistant').boundingBox())!;
+    expect(manualBox.y + manualBox.height).toBeLessThanOrEqual(composerBox.y);
     await expect(page.getByRole('textbox', { name: 'Message to AI' })).toBeInViewport({ ratio: 1 });
     await page.screenshot({ path: `artifacts/screenshots/unified-editor-${size.width}.png` });
   }

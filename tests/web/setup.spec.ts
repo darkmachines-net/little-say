@@ -1,4 +1,4 @@
-/** @file Exercises authenticated setup languages, generated starter drafts, retries, persistence, and entry to the dashboard creation action. */
+/** @file Exercises authenticated setup, generated drafts, retries, persistence, and manual creation through Add Card. */
 
 import { openSignedInApp } from './accountFixture';
 import { expect, test, type Page } from '@playwright/test';
@@ -110,7 +110,7 @@ test('offline setup can save a regional preference and start empty without Engli
   expect(saved.settings.languageProfile).toEqual({ languages: ['es-MX'], defaultLanguage: 'es-MX' });
   await page.getByRole('button', { name: 'New board', exact: true }).click();
   await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await page.getByRole('button', { name: 'Change original language', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
 });

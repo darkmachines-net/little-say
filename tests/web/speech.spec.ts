@@ -1,7 +1,4 @@
-/**
- * @file Verifies automatically saved AI boards, generated-audio controls, language-specific clips, and fallback behavior in the
- * browser.
- */
+/** @file Verifies automatically saved AI boards, generated-audio controls, language-specific clips, fallback speech, and Accept/play handoff. */
 
 import { test, expect } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
@@ -67,7 +64,7 @@ test('generates from draft text and language, regenerates, persists offline, and
   await page.waitForTimeout(300); // Let the native-style modal fade finish for its screenshot.
   await page.screenshot({ path: 'artifacts/screenshots/tile-generated-audio.png' });
   await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible(); // Session save is async.
   await page.evaluate(() => navigator.serviceWorker.ready);
   await context.setOffline(true); await page.reload();

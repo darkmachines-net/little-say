@@ -1,5 +1,5 @@
 /**
- * @file Requires sign-in, shows cloud restoration on Home, and coordinates library persistence, board navigation, playback, and normal Undo for manual edits
+ * @file Requires sign-in, shows cloud restoration on Home, and coordinates library persistence, board navigation, playback, and Undo/Redo for manual edits
  * and automatically saved AI turns, explicit creation-draft saves, creation/play recency, shared languages, and translations.
  */
 
@@ -16,6 +16,7 @@ import { useBoardTranslations } from './services/useBoardTranslations';
 import { initializeUpdates, applyUpdate } from './services/updates';
 import { Dashboard } from './ui/Dashboard';
 import { useBoardDraftRoute } from './services/useBoardDraftRoute';
+import { useBoardHistory } from './services/useBoardHistory';
 import { BoardEditor } from './ui/BoardEditor';
 import type { BoardSnapshot } from './ui/BoardTransition';
 import { PlayBoard } from './ui/PlayBoard';
@@ -65,7 +66,7 @@ function Application() {
   const [transition, setTransition] = useState<BoardSnapshot | null>(null);
   const finishTransition = useCallback(() => setTransition(null), []);
   const [updateReady, setUpdateReady] = useState(false);
-  const [undo, setUndo] = useState<Record<string, Board[]>>({});
+  const history = useBoardHistory();
   const account = useAccount(store, !draftRoute.route && !selectedId && !store.library?.settings.activeBoardId, () => audio.reload());
   const requiresAccount = !account.session || account.needsLogin;
   const signedInPreviously = useRef<boolean | null>(null);
@@ -93,7 +94,7 @@ function Application() {
     void initializeUpdates(() => setUpdateReady(true)).then(fn => { if (active) cleanup = fn; else fn(); }).catch(() => {});
     return () => { active = false; clearTimeout(timer); foreground.remove(); cleanup?.(); if (Platform.OS === 'web') window.speechSynthesis?.removeEventListener('voiceschanged', refresh); };
   }, []);
-  const remember = (board: Board) => setUndo(current => ({ ...current, [board.id]: [...(current[board.id] ?? []).slice(-19), board] }));
+  const remember = history.remember;
   const translations = useBoardTranslations(store, remember);
   const setSettings = (patch: Partial<Settings>) => settingsRoute.save(() => store.commit(current => ({ ...current, settings: { ...current.settings, ...patch, activeBoardId: current.settings.activeBoardId } })));
   const deleteBoard = (id: string) => {
@@ -106,7 +107,7 @@ function Application() {
     }).catch(() => {});
     if (workingDraftRef.current?.board.id === id) updateDraft(null);
     draftRoute.close(); setSelectedId(current => current === id ? null : current);
-    setUndo(current => { const next = { ...current }; delete next[id]; return next; });
+    history.forget(id);
   };
   const play = async (board: Board) => {
     if (playRequest.current) return;
@@ -165,6 +166,28 @@ function Application() {
     }));
     remember(original); updateDraft(null); setSelectedId(original.id); draftRoute.replace(original.id);
   };
+  const restore = (direction: 'undo' | 'redo') => {
+    if (!selected) return;
+    const current = store.current.current!.boards.find(board => board.id === selected.id) ?? workingDraftRef.current?.board;
+    if (!current) return;
+    const restored = history.restore(current, direction);
+    if (!restored) return;
+    if (restored.tiles.length) {
+      // Redo can promote an empty creation draft back into the library without changing recency.
+      void store.change(lib => ({ ...lib,
+        creationDraft: lib.creationDraft?.board.id === restored.id ? undefined : lib.creationDraft,
+        boards: lib.boards.some(board => board.id === restored.id)
+          ? lib.boards.map(board => board.id === restored.id ? restored : board) : [...lib.boards, restored],
+      })).catch(() => {});
+      if (workingDraftRef.current?.board.id === restored.id) {
+        updateDraft(null); setSelectedId(restored.id); draftRoute.replace(restored.id);
+      }
+    } else {
+      updateDraft({ board: restored, prompt: '', suggestion: null });
+      void store.change(lib => ({ ...lib, boards: lib.boards.filter(board => board.id !== restored.id) })).catch(() => {});
+      setSelectedId(null); draftRoute.replace(null);
+    }
+  };
   if (!account.restoring && draftRoute.route?.boardId && !selected) return <View style={[styles.page, { padding: 24, gap: 16 }]}><Notice>This board is no longer available.</Notice><Button onPress={draftRoute.close}>Back to boards</Button></View>;
   return <><View style={styles.page}>
     <StatusBar style="dark" />
@@ -176,11 +199,12 @@ function Application() {
       if (current?.board.id === selected.id) updateDraft({ ...current, ...state });
     }} onBeforeClose={draftRoute.beforeClose} onSaveDraft={snapshot => draftRoute.save(() => store.commit(lib => ({ ...lib, creationDraft: snapshot, boardCreationDraft: undefined })))} onDiscardDraft={() => draftRoute.save(async () => {
       if (store.current.current?.creationDraft || store.current.current?.boardCreationDraft || store.error) await store.commit(lib => ({ ...lib, creationDraft: undefined, boardCreationDraft: undefined }));
+      history.forget(selected.id);
     })} onStopPreview={() => previewQueue.stop()} saving={store.saving} saveError={store.error} startingPlay={startingPlay} returnToPlay={returnBoardId === selected.id} transition={transition} onTransitionDone={finishTransition} onBack={() => { if (playRequest.current) return; void store.flush().then(() => { previewQueue.stop(); setTransition(null); setReturnBoardId(null); updateDraft(null); setSelectedId(null); draftRoute.close(); if (Platform.OS === 'web' && document.fullscreenElement) void document.exitFullscreen().catch(() => {}); }).catch(() => setError('Your changes could not be saved. Retry saving before leaving.')); }} onPlay={() => preparePlay(selected)} onChange={(changes, expectedRevision) => {
       const current = store.current.current!.boards.find(b => b.id === selected.id) ?? workingDraftRef.current!.board;
       if (expectedRevision !== undefined && current.revision !== expectedRevision) throw new Error('This board changed while editing. Your saved changes are kept; reopen the current card or prepare translations again.');
-      remember(current);
       const next = (changes.tiles ?? current.tiles).length ? reviseBoard(current, changes) : draftBoardSchema.parse({ ...current, ...changes, revision: current.revision + 1, updatedAt: new Date().toISOString() });
+      remember(current);
       if (!next.tiles.length) {
         updateDraft({ ...workingDraftRef.current!, board: next });
       } else {
@@ -197,17 +221,8 @@ function Application() {
       if (!selected.tiles.length) return;
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
       void store.change(lib => ({ ...lib, boards: [...lib.boards, copy], boardLastPlayedAt: { ...lib.boardLastPlayedAt, [copy.id]: Date.now() } })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
-    }} onConsent={consent} onPreview={preview} canUndo={Boolean(undo[selected.id]?.length)} onUndo={() => {
-      const history = undo[selected.id] ?? []; const previous = history.at(-1); if (!previous) return;
-      const current = store.current.current!.boards.find(b => b.id === selected.id) ?? workingDraftRef.current!.board;
-      const restored = { ...previous, revision: current.revision + 1, updatedAt: new Date().toISOString() };
-      if (restored.tiles.length) void store.change(lib => ({ ...lib, boards: lib.boards.map(b => b.id === selected.id ? restored : b) })).catch(() => {});
-      else {
-        updateDraft({ board: restored, prompt: '', suggestion: null });
-        void store.change(lib => ({ ...lib, boards: lib.boards.filter(b => b.id !== selected.id) })).catch(() => {});
-        setSelectedId(null); draftRoute.replace(null);
-      }
-      setUndo(old => ({ ...old, [selected.id]: history.slice(0, -1) }));
+    }} onConsent={consent} onPreview={preview} canUndo={Boolean(history.entries[selected.id]?.undo.length)} canRedo={Boolean(history.entries[selected.id]?.redo.length)} onRedo={() => restore('redo')} onUndo={() => {
+      restore('undo');
     }} /> : <Dashboard library={library} audio={audio} sync={account} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onAccount={() => openAccount()} accountLabel={accountLabel} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);

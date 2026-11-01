@@ -1,4 +1,4 @@
-/** @file Verifies shared-header focus, toolbar settings, language/play handoff, unlock timing, drafts, motion, and speech safeguards. */
+/** @file Verifies Edit heading focus, grouped Accept controls, language/play handoff, unlock timing, drafts, motion, and save safeguards. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -44,12 +44,12 @@ test('dashboard and reload entry bind the same board, preserve edits and stop ac
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
   await unlock(page);
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Farmyard friends');
-  await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Edit', exact: true })).toBeFocused();
   await expect(page.getByText('Leave this board?')).toHaveCount(0);
   await page.evaluate(() => (window as any).__allSpeech[0].onend?.());
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual(['Cow']);
   await page.getByRole('textbox', { name: 'Board title', exact: true }).fill('Our farm');
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Our farm', exact: true })).toBeFocused();
   await expect(page.getByTestId('tile-playing')).toHaveCount(0);
@@ -80,11 +80,11 @@ test('selected play language, missing translations and voice safeguards survive 
   const original = await page.evaluate(() => (window as any).__expectedBoard);
   await page.reload(); await expect(page.getByTestId('play-board')).toBeVisible(); await unlock(page);
   await expect(page.getByText('5 cards still use their original words.', { exact: false })).toBeVisible();
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'A quick sound check', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close A quick sound check', exact: true }).click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await page.getByRole('button', { name: 'Continue to board', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Vache', exact: true })).toBeVisible();
   const saved = await page.evaluate(async () => {
@@ -155,7 +155,7 @@ test('leaving the control or a second contact before completion cancels unlock',
 test('a pending return keeps the editor visible and prevents concurrent edits until the save completes', async ({ page }) => {
   await play(page); await unlock(page);
   await page.getByRole('textbox', { name: 'Board title', exact: true }).fill('Saved before play');
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
   await page.evaluate(() => {
     const original = IDBTransaction.prototype.addEventListener;
     const completions: (() => void)[] = [];
@@ -166,10 +166,10 @@ test('a pending return keeps the editor visible and prevents concurrent edits un
       return original.call(this, type, wrapped, options);
     };
   });
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).not.toBeEditable();
-  for (const name of ['Boards', 'Edit tile Cow', 'Add card', 'Board settings']) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
+  for (const name of ['Boards', 'Edit tile Cow', 'Add Card', 'Board settings']) await expect(page.getByRole('button', { name, exact: true })).toBeDisabled();
   await page.evaluate(() => (window as any).__finishWrites());
   await expect(page.getByRole('heading', { name: 'Saved before play', exact: true })).toBeVisible();
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
@@ -185,13 +185,13 @@ test('a failed save retains edits and editor until retry without requesting boar
   });
   await page.getByRole('textbox', { name: 'Board title', exact: true }).fill('Keep my changes');
   await expect(page.getByRole('button', { name: 'Retry saving', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('editor-heading')).toBeVisible();
   await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Keep my changes');
   await page.evaluate(() => (window as any).__restoreWrites());
   await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry saving', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Keep my changes', exact: true })).toBeVisible();
   await page.reload(); await expect(page.getByRole('heading', { name: 'Keep my changes', exact: true })).toBeVisible();
   expect(aiRequests).toBe(0);
@@ -205,16 +205,16 @@ for (const viewport of [{ width: 1180, height: 820 }, { width: 820, height: 1180
     else expect(preview!.y + preview!.height).toBeLessThanOrEqual(actions!.y);
     await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
     await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Unsaved calf');
-    await expect(page.getByRole('button', { name: 'Return to play', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Accept', exact: true })).toBeDisabled();
     await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
 
     await expect(page.getByTestId('board-assistant')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Return to play', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Accept', exact: true })).toBeEnabled();
     await openBoardLanguages(page);
     await expect(page.getByRole('heading', { name: 'Board languages', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
-    await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+    await page.getByRole('button', { name: 'Accept', exact: true }).click();
     await expect(page.getByTestId('play-board')).toBeVisible();
   });
 }
@@ -228,7 +228,7 @@ test('cards shrink toward the measured preview while existing controls are alrea
   const control = (await page.getByTestId('parent-control').boundingBox())!;
   await page.mouse.move(control.x + 20, control.y + 20); await page.mouse.down();
   await page.clock.runFor(1000); await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(1);
-  await expect(page.getByRole('button', { name: 'Add card', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Add Card', exact: true })).toBeEnabled();
   const overlay = page.getByTestId('board-transition'); await expect(overlay).toHaveAttribute('aria-hidden', 'true');
   // ResizeObserver measurements are delivered between browser tasks, separately from the fake clock.
   await expect(async () => { await page.clock.runFor(16); expect(await overlay.locator(':scope > div').count()).toBe(6); }).toPass({ timeout: 1500, intervals: [16] });
@@ -244,7 +244,7 @@ test('cards shrink toward the measured preview while existing controls are alrea
 test('reduced motion and resize during the transition always leave a usable editor', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' }); await play(page); await unlock(page);
   await expect(page.getByTestId('board-transition')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await unlock(page); await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByTestId('board-transition')).toHaveCount(0);

@@ -1,6 +1,6 @@
 /**
- * @file Exercises automatic AI turns, toolbar settings, card limits, signed-in editing/play, modal dismissal,
- * shared languages, translations, device speech fallback, responsive layouts, and offline dashboard return.
+ * @file Exercises automatic AI turns, toolbar settings, grouped manual controls, card limits, signed-in editing/play,
+ * modal dismissal, shared languages, translations, device speech fallback, responsive layouts, and offline dashboard return.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -70,7 +70,7 @@ test.describe('outside modal dismissal', () => {
         await page.getByTestId('board-back').click();
         await expect(page.getByTestId('editor-heading')).toBeVisible();
         await expect(page.getByText('Leave this board?')).toHaveCount(0);
-        await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+        await page.getByRole('button', { name: 'Accept', exact: true }).click();
         await expect(page.getByTestId('play-board')).toBeVisible();
         expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
         expect(await page.evaluate(() => (window as any).__clips)).toEqual([]);
@@ -152,7 +152,7 @@ test('user languages persist offline and drive existing boards without changing 
   await expect(page.getByRole('button', { name: 'English + Russian', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Vache', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await page.getByRole('button', { name: 'Vache', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'Vache', lang: 'fr-FR' });
   await page.getByRole('button', { name: 'Play in Spanish', exact: true }).click();
@@ -188,12 +188,12 @@ test('regional language preferences drive manual cards and AI requests', async (
   await expect(page.getByRole('button', { name: 'Save settings', exact: true })).toHaveCount(0);
   await page.reload();
   await page.getByRole('button', { name: 'New board', exact: true }).click();
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Hola');
   await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Hola');
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await page.setViewportSize({ width: 540, height: 820 });
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   // Intl.DisplayNames uses either regional spelling across supported browser/CLDR versions.
   await expect(page.getByRole('button', { name: /^Play in (Mexican Spanish|Spanish \(Mexico\))$/ })).toHaveText('ES-MX');
   await expect(page.getByRole('button', { name: 'Play in Spanish', exact: true })).toHaveText('ES-ES');
@@ -204,7 +204,7 @@ test('regional language preferences drive manual cards and AI requests', async (
   await expect(page.getByRole('textbox', { name: 'Language tag', exact: true })).toHaveValue('es-MX');
   await expect(page.getByRole('button', { name: 'Choose tile language Russian', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Close Edit tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Agua');
   await page.getByRole('textbox', { name: 'What it says', exact: true }).fill('Agua');
   await page.getByRole('button', { name: 'Change original language', exact: true }).click();
@@ -234,7 +234,7 @@ test('starter library, manual edit, mixed-language data, and persistence', async
   await page.getByRole('textbox', { name: 'Words on the tile', exact: true }).fill('Baba');
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Baba', exact: true })).toBeVisible();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
   await page.reload();
   if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Our family', exact: true }).click();
   await page.getByRole('button', { name: 'Edit tile Baba', exact: true }).click();
@@ -269,7 +269,7 @@ test('complete emoji search finds blueberries for a plum card and persists offli
   await expect(page.getByRole('textbox', { name: 'What it says', exact: true })).toHaveValue('Plum');
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit tile Plum', exact: true })).toBeVisible();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
   await context.setOffline(true);
@@ -325,7 +325,7 @@ test('unlock completes automatically at one second and cancelled holds reset imm
     await down(); await page.clock.runFor(999); await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
     await page.clock.runFor(1); await expect(page.getByTestId('board-back')).toBeVisible();
     await page.mouse.up(); await page.getByTestId('board-back').click(); await page.clock.runFor(800); await expect(page.getByTestId('editor-heading')).toBeVisible();
-    await page.getByRole('button', { name: 'Return to play', exact: true }).click(); await page.getByTestId('board-lock').click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
+    await page.getByRole('button', { name: 'Accept', exact: true }).click(); await page.getByTestId('board-lock').click(); await expect(control).toBeVisible(); await page.clock.runFor(100);
   }
   for (const elapsed of [500, 999]) {
     const box = await down(); await page.clock.runFor(elapsed);
@@ -448,7 +448,7 @@ test('board languages translate switchable cards, preserve fixed cards, and save
   await expect(page.getByRole('button', { name: 'Regenerate audio', exact: true })).toBeEnabled();
   expect(requests).toContainEqual({ text: 'коровушка', language: 'ru-RU', regenerate: false });
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await page.getByRole('button', { name: 'Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Sheep', exact: true }).click();
   await page.getByRole('button', { name: 'Play in Russian', exact: true }).click();
@@ -626,7 +626,7 @@ test('numbers 1–9 prepare missing translations with retry and preserve digit l
   await expect.poll(() => audioRequests.length).toBe(18);
   expect(audioRequests.filter(t => t.language === 'ru-RU').map(t => t.text).sort()).toEqual([...russian].sort());
   expect(audioRequests.filter(t => t.language === 'en-US').map(t => t.text).sort()).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play in English', exact: true })).toBeVisible();
   await page.getByRole('button', { name: '1', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: '1', lang: 'en-US' });
@@ -693,7 +693,7 @@ test('24 tiles fit both tablet orientations and explain the limit only when anot
   await waitForAiTurn(page);
   await expect(page.getByText(/^\d+ \/ 24$/)).toHaveCount(0);
   await expect(page.getByText(/Boards can have up to 24 cards/)).toHaveCount(0);
-  await page.getByRole('button', { name: 'Add card', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Card', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Board is full', exact: true })).toBeVisible();
   await expect(page.getByText('Boards can have up to 24 cards. Remove a card before adding another.', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Edit tile', exact: true })).toHaveCount(0);
@@ -704,10 +704,10 @@ test('24 tiles fit both tablet orientations and explain the limit only when anot
     const tiles = page.getByTestId('editor-preview').getByRole('button');
     await expect(tiles).toHaveCount(24);
     for (const tile of await tiles.all()) await expect(tile).toBeInViewport({ ratio: 1 });
-    for (const name of ['Board settings', 'Play board']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    for (const name of ['Board settings', 'Accept']) await expect(page.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
     await page.screenshot({ path: `artifacts/screenshots/editor-24-${size.width}.png` });
   }
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   for (const size of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }]) {
     await page.setViewportSize(size);
     await expect(async () => {
@@ -729,7 +729,7 @@ test('photo attachments survive reload and remain on the device', async ({ page 
   for (let i = 0; i < 5; i++) await page.keyboard.press('+');
   await page.getByRole('button', { name: 'Use photo', exact: true }).click();
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
   await page.reload(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
   await page.getByRole('button', { name: 'Adjust crop', exact: true }).click();
   await expect(page.getByText('125%', { exact: true })).toBeVisible();
@@ -741,7 +741,7 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await page.getByRole('textbox', { name: 'Board title', exact: true }).fill('My farm');
   await expect(page.getByRole('button', { name: 'Retry saving', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByText('The play session could not be saved.', { exact: false })).toBeVisible();
   await expect(page.getByTestId('play-board')).toHaveCount(0);
   await page.evaluate(() => { (window as any).__failWrites = false; });
@@ -750,7 +750,7 @@ test('failed local writes are visible, retryable, and do not enter play prematur
   await page.reload();
   // Retrying saves the edits without reviving a failed navigation request after restart.
   await expect(page.getByTestId('play-board')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible(); await expect(page.getByText('My farm', { exact: true })).toBeVisible();
 });
 
