@@ -1,9 +1,9 @@
-/** @file Edits a primary-language board with bounded keyboard layout, automatic AI turns, and explicit Save/Discard for unfinished creation drafts. */
+/** @file Edits a primary-language board with Undo/Redo, bounded keyboard layout, automatic AI turns, and explicit Save/Discard for unfinished creation drafts. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Copy, Languages, Play, Plus, Settings as SettingsIcon, Trash2, Undo2 } from 'lucide-react-native';
+import { Copy, Languages, Play, Plus, Redo2, Settings as SettingsIcon, Trash2, Undo2 } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
 import { MAX_TILES, colors, gridLayout, hasTileLanguage, newTileLanguage, selectedBoardLanguage, tileInLanguage, tileSchema, type BoardChanges, type Board, type Settings, type Tile, type CreationDraft, type BoardSuggestion } from '@little-say/core';
 import { AppHeader } from './AppHeader';
@@ -23,7 +23,8 @@ import { useBoardAssistant } from '../services/useBoardAssistant';
 
 /**
  * Keep manual edits and streamed AI previews on one canvas. Each completed or stopped AI turn saves
- * automatically through the parent's normal Undo history; only conflicts and failed writes need action.
+ * automatically through the parent's shared Undo/Redo history; only conflicts and failed writes need action.
+ * Both history actions stay disabled during AI work, unresolved previews, playback startup, and dialogs.
  * The canvas uses the first effective board/profile language; language variants are selected inside each
  * tile editor. Pictures, languages, audio, and board management live behind the toolbar settings gear.
  * Closing language choices starts app-owned translation work; shared preferences return to this board.
@@ -35,7 +36,7 @@ import { useBoardAssistant } from '../services/useBoardAssistant';
  * Toolbar and composer are outside scrolling content; only the canvas and bounded AI context scroll.
  * Typing collapses secondary chrome without remounting the input or caching a screen-height baseline.
  */
-export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
+export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onRedo, canRedo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
   /** Prepare missing words for the saved board through the app-owned translation job. */
   onPrepareTranslations: () => void;
   /** Cancel only this board's translation job. */
@@ -52,7 +53,12 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   onBeforeClose: (request: (() => void) | null) => void;
   /** Apply an AI turn against the latest saved board and record a normal Undo step. */
   onAccept: (suggestion: BoardSuggestion, choice?: 'current' | 'suggested') => Promise<void>;
-  onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onConsent: () => Promise<void>; onUndo: () => void; canUndo: boolean; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
+  /** Restore the preceding board snapshot, retaining the current board for Redo. */
+  onUndo: () => void;
+  /** Restore the next undone snapshot without starting a new history branch. */
+  onRedo: () => void;
+  canUndo: boolean; canRedo: boolean;
+  onStopPreview: () => void; onBack: () => void; onChange: (changes: BoardChanges, expectedRevision?: number) => Board; onPlay: () => void; onDelete: () => void; onDuplicate: () => void; onConsent: () => Promise<void>; onPreview: (tile: Tile) => void; saving: boolean; saveError?: string; startingPlay: boolean; returnToPlay: boolean; transition: BoardSnapshot | null; onTransitionDone: () => void }) {
   const assistant = useBoardAssistant({ board: savedBoard, settings, draft, onDraft, onAccept, onConsent, onSpeechReady: () => audio.reload() });
   const board = assistant.preview;
   const onChange = (changes: BoardChanges, revision?: number) => {
@@ -86,8 +92,9 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   const short = height < 600;
   const typing = promptFocused && (keyboardVisible || short);
   const blocked = startingPlay || assistant.busy === 'save';
-  const undoAvailable = canUndo && !assistant.busy && !assistant.suggestion;
+  const historyBlocked = Boolean(assistant.busy || assistant.suggestion);
   const undo = () => { assistant.clear(); onUndo(); };
+  const redo = () => { assistant.clear(); onRedo(); };
   const back = () => {
     if (blocked || exitWriting.current || leaving) return;
     void assistant.stop().then(saved => {
@@ -147,7 +154,8 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   const untranslated = playLanguage ? board.tiles.filter(tile => tile.languageMode === 'board' && !hasTileLanguage(tile, playLanguage)).length : 0;
   return <KeyboardAvoidingView testID="board-workspace" behavior={Platform.OS === 'web' ? undefined : 'padding'} keyboardVerticalOffset={Platform.OS === 'web' ? 0 : safeAreaTop} style={styles.page}>
     <AppHeader title={draft ? 'New board' : 'Edit board'} onBack={back} backLabel="Boards" backDisabled={blocked || modalOpen} actions={typing ? undefined : <>
-      <Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={blocked || !undoAvailable || modalOpen} onPress={undo} />
+      <Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={blocked || historyBlocked || !canUndo || modalOpen} onPress={undo} />
+      <Button kind="ghost" compact icon={Redo2} accessibilityLabel="Redo last board change" disabled={blocked || historyBlocked || !canRedo || modalOpen} onPress={redo} />
       <Button kind="ghost" compact icon={SettingsIcon} accessibilityLabel="Board settings" disabled={blocked || modalOpen} onPress={() => setSettingsOpen(true)} />
       <Button icon={Play} compact accessibilityLabel={returnToPlay ? 'Return to play' : 'Play board'} disabled={modalOpen || !savedBoard.tiles.length || Boolean(assistant.suggestion)} busy={blocked} onPress={play}>{width >= 600 ? returnToPlay ? 'Return to play' : 'Play board' : undefined}</Button>
     </>} />
