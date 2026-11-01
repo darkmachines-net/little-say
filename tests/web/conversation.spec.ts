@@ -1,4 +1,4 @@
-/** @file Verifies minimal example-led AI input, creation recency, automatic turns, Undo/Redo and branching, save/conflict recovery, and keyboard-sized layouts. */
+/** @file Verifies example-led AI input, creation recency, automatic turns, Undo/Redo and branching, save/conflict recovery, keyboard-sized layouts, and dashboard return. */
 import { expect, test, type Page, type Route } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
 import { mkdir } from 'node:fs/promises';
@@ -290,7 +290,7 @@ for (const outcome of ['failure', 'success'] as const) test(`browser navigation 
   await expect(page.getByRole('button', { name: 'Edit tile Cow', exact: true })).toBeVisible();
   expect((await saved(page)).boards).toHaveLength(4);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 });
 
 test('minimal example-led composer fits phones and tablets without suggestion pills or an info action', async ({ page }) => {
@@ -382,5 +382,5 @@ test('editing route reloads and keyboard text never requests microphone access',
   await expect(page.getByRole('textbox', { name: 'Board title' })).toHaveValue('Farmyard friends');
   await expect(page.getByRole('button', { name: 'Voice prompt', exact: true })).toHaveCount(0);
   await page.goBack();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 });

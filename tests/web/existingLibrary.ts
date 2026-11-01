@@ -1,4 +1,4 @@
-/** @file Signs into isolated accounts, seeds browser libraries, and exercises shared language choices and per-card language following. */
+/** @file Signs into isolated accounts, seeds libraries ready at the dashboard action, and exercises shared and per-card languages. */
 
 import { openSignedInApp } from './accountFixture';
 import { starterLibrary } from '../fixtures/library';
@@ -27,7 +27,7 @@ export async function followBoardLanguages(page: Page, labels: string[]) {
   }
 }
 
-/** Authenticate and replace first-use setup with stable boards; overrides make feature assumptions such as speech source explicit. */
+/** Authenticate, seed stable boards, and wait for the dashboard creation action; settings overrides make assumptions such as speech source explicit. */
 export async function openExistingLibrary(page: Page, settings: Partial<Library['settings']> = {}) {
   await openSignedInApp(page);
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
@@ -39,5 +39,5 @@ export async function openExistingLibrary(page: Page, settings: Partial<Library[
     }); db.close();
   }, { ...starterLibrary(), settings: { ...starterLibrary().settings, ...settings } });
   await page.reload();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 }

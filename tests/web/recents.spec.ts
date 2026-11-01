@@ -1,6 +1,6 @@
 /**
- * @file Verifies playable previews, responsive board actions, creation/play ordering, persistent
- * favorites, and duplication that records fresh use without changing the source board's history.
+ * @file Verifies playable previews, responsive board actions, creation/play ordering, dashboard return,
+ * persistent favorites, and duplication that records fresh use without changing the source board's history.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -16,7 +16,7 @@ async function savedLibrary(page: Page) {
 async function leaveBoard(page: Page) {
   await page.getByTestId('board-back').click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 }
 async function play(page: Page, name: string) {
   await page.getByRole('button', { name: `Play ${name}`, exact: true }).click();
