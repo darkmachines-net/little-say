@@ -1,6 +1,6 @@
 /**
  * @file Exercises automatic AI turns, toolbar settings, card limits, signed-in editing/play, modal dismissal,
- * shared language preferences, automatic translations, device speech fallback, responsive layouts, and offline behavior.
+ * shared languages, translations, device speech fallback, responsive layouts, and offline dashboard return.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -78,7 +78,7 @@ test.describe('outside modal dismissal', () => {
       await page.getByRole('button', { name: 'Cow', exact: true }).tap();
       await expect.poll(() => page.evaluate(() => (window as any).__spoken.length + (window as any).__clips.length)).toBe(1);
       await leaveBoard(page); await page.getByRole('button', { name: 'Boards', exact: true }).click();
-      await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
     });
 
     test(`outside taps cancel editing and deletion at ${viewport.width}px`, async ({ page }) => {
@@ -306,7 +306,7 @@ test('swipes are forgiving, speech is bounded, and locked navigation needs an un
   await page.mouse.move(control.x + 20, control.y + 20); await page.mouse.down(); await page.mouse.move(control.x - 20, control.y + 20);
   await page.waitForTimeout(2100); await page.mouse.up(); await expect(page.getByText('Leave this board?')).toHaveCount(0);
   await leaveBoard(page); await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 });
 
 test('unlock completes automatically at one second and cancelled holds reset immediately', async ({ page }) => {
@@ -662,9 +662,9 @@ test('AI applies directly to the board and can be undone', async ({ page }) => {
 
 test('offline shell and local boards survive a disconnected reload', async ({ page, context }) => {
   await page.evaluate(() => navigator.serviceWorker.ready);
-  await page.reload(); await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await page.reload(); await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
   await context.setOffline(true); await page.reload();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Cow', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1).text)).toBe('Cow');

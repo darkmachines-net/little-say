@@ -1,4 +1,4 @@
-/** @file Verifies live AI stages, centered placeholders and faded replacements, independent picture downloads, saved turns, and offline fallbacks. */
+/** @file Verifies live AI stages, centered placeholders and faded replacements, independent picture downloads, saved turns, dashboard return, and offline fallbacks. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardPictures } from './boardEditor';
@@ -365,7 +365,7 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   await expect(page.getByTestId('picture-active-animation')).toHaveCount(0);
   expect(jobs).toHaveLength(3);
   await page.goBack();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
 });
 
 test('missing library and disabled server generation keep a usable emoji board with one summary', async ({ page, context }) => {

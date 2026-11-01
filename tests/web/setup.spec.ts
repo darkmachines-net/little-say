@@ -1,4 +1,4 @@
-/** @file Exercises authenticated setup language search/edit/default controls, generated starter drafts, retries, and persistence. */
+/** @file Exercises authenticated setup languages, generated starter drafts, retries, persistence, and entry to the dashboard creation action. */
 
 import { openSignedInApp } from './accountFixture';
 import { expect, test, type Page } from '@playwright/test';
@@ -75,7 +75,7 @@ test('first-time setup generates chosen languages, resumes partial success, and 
   expect(attempts).toEqual({ farm: 1, everyday: 1, family: 2 });
   await page.screenshot({ path: 'artifacts/screenshots/first-time-boards-ready.png' });
   await page.getByRole('button', { name: 'Open my boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
   await expect.poll(() => audioRequests).toBeGreaterThan(0);
   releaseAudio();
   const saved = await readLibrary(page);
@@ -139,6 +139,6 @@ test('setup waits for durable saves and retains generated drafts when final savi
   expect((await readLibrary(page)).setup.drafts).toHaveLength(1);
   await page.reload();
   await page.getByRole('button', { name: 'Open my boards', exact: true }).click();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
   expect(requests).toBe(1); expect((await readLibrary(page)).boards).toHaveLength(1);
 });
