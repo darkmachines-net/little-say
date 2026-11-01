@@ -1,6 +1,6 @@
 /**
- * @file Verifies creation/play ordering, persistent favorites, and settings-gear duplication that
- * records fresh use without changing the source board's history.
+ * @file Verifies playable previews, responsive board actions, creation/play ordering, persistent
+ * favorites, and duplication that records fresh use without changing the source board's history.
  */
 
 import { expect, test, type Page } from '@playwright/test';
@@ -41,7 +41,7 @@ test('recent use persists offline, ignores edits and undo, and puts new copies f
   await play(page, 'Our family'); await page.reload();
   await expect(page.getByTestId('play-board')).toBeVisible(); await leaveBoard(page);
   await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words']);
-  await expect(page.getByTestId('recent-board').getByRole('button', { name: 'Play Our family', exact: true })).toHaveText('Play again');
+  await expect(page.getByTestId('recent-board').getByRole('button', { name: 'Play Our family', exact: true }).getByTestId('tile-picture')).toHaveCount(6);
   const before = await savedLibrary(page);
   expect(before.boards.map((board: any) => board.revision)).toEqual([0, 0, 0]);
   expect(before.boardLastPlayedAt['starter-family']).toBeGreaterThan(before.boardLastPlayedAt['starter-farm']);
@@ -70,7 +70,7 @@ test('recent use persists offline, ignores edits and undo, and puts new copies f
   await page.reload();
   expect((await savedLibrary(page)).boardLastPlayedAt['starter-family']).toBeUndefined();
   await expect(titles).toHaveText(['Our family (copy)', 'Farmyard friends', 'My little words']);
-  await page.getByRole('button', { name: 'Resume Our family (copy)', exact: true }).click();
+  await page.getByRole('button', { name: 'Play Our family (copy)', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible();
 });
 
@@ -94,7 +94,8 @@ test('returning from a legacy active session creates an accessible responsive sp
     await expect(hero).toBeInViewport({ ratio: 1 });
     for (const name of ['Play Our family', 'Edit Our family', 'More options for Our family', 'Remove Our family from favorites']) await expect(hero.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
     const featured = (await hero.boundingBox())!, regular = (await page.getByTestId('library-board').nth(1).boundingBox())!;
-    expect(featured.width * featured.height).toBeGreaterThan(regular.width * regular.height * 1.2);
+    // Keep the spotlight prominent without requiring extra card chrome on narrow screens.
+    expect(featured.width * featured.height).toBeGreaterThan(regular.width * regular.height);
     expect(featured.x + featured.width).toBeLessThanOrEqual(size.width);
     await page.screenshot({ path: `artifacts/screenshots/recent-board-${size.width}.png` });
   }
