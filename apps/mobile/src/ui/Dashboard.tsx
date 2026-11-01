@@ -1,4 +1,4 @@
-/** @file Shows centered first-restore progress/recovery and playable boards with responsive creation actions and safe scroll clearance. */
+/** @file Shows first-restore recovery or playable board previews with responsive creation actions. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -17,11 +17,9 @@ const floatingInset = 24;
 const floatingClearance = 16;
 
 /**
- * Spotlight the most recently created or played board, place favorites next, and present library actions and the
- * shared board workspace with an inline phone action or a floating action above 620 units. Reserve its measured
- * height beneath scrollable content; the app root owns safe-area insets on native and web. Resolve user languages and play subsets
- * for board previews and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
- * Keep cached boards usable during background sync; first restoration fills the empty page with loading or connection/failure recovery.
+ * Keep cached boards usable during sync; first restoration replaces creation and previews with progress/recovery.
+ * Resolve profile languages for previews and audio actions, with recent boards before favorites.
+ * Reserve the measured floating action height below the list; the app root owns native/web safe-area insets.
  */
 export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const syncError = sync.backup.error || (sync.backup.state === 'offline' ? 'Waiting for a connection. Your content will sync when you’re back online.' : '');

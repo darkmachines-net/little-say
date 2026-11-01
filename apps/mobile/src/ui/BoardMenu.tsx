@@ -1,4 +1,4 @@
-/** @file Provides dashboard overflow actions for board deletion and missing speech generation. */
+/** @file Provides missing-speech generation and confirmation of synced board deletion from the dashboard. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -10,7 +10,7 @@ import { styles } from './theme';
 
 /**
  * Show board actions, offering audio preparation only when clips are missing and requiring confirmation
- * before deletion.
+ * before deletion, including its effect on other synced devices.
  */
 export function BoardMenu({ board, settings, audio, onDelete, onClose }: {
   board: Board; settings: Settings; audio: SpeechLibrary; onDelete: () => void; onClose: () => void;
@@ -35,7 +35,7 @@ export function BoardMenu({ board, settings, audio, onDelete, onClose }: {
   };
   return <Sheet title={deleting ? 'Delete board?' : board.title} onClose={onClose}>
     {deleting ? <>
-      <Text style={styles.body}>Delete “{board.title}” from this device? This cannot be undone.</Text>
+      <Text style={styles.body}>Delete “{board.title}”? This cannot be undone. The deletion syncs to your other devices.</Text>
       <View style={[styles.row, { justifyContent: 'flex-end', flexWrap: 'wrap' }]}>
         <Button kind="ghost" onPress={() => setDeleting(false)}>Keep board</Button>
         <Button kind="danger" icon={Trash2} onPress={onDelete}>Delete board</Button>

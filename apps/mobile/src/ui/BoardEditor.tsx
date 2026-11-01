@@ -201,6 +201,6 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
       closeTile();
     }} onDelete={() => { setTiles(board.tiles.filter(t => t.id !== editing.id)); closeTile(); }} onDuplicate={tile => { setTiles([...board.tiles, { ...tile, id: Crypto.randomUUID() }]); closeTile(); }} />}
     {pictures && <BoardPictures board={pictures} currentRevision={board.revision} automatic={automaticPictures} changedTileId={pictureTarget} settings={settings} onConsent={onConsent} onApply={(draft, revision) => { if (board.revision === revision) onChange({ tiles: draft.tiles, picturePolicy: draft.picturePolicy }); }} onClose={() => setPictures(null)} />}
-    {deleting && <Confirm title={`Delete ${board.title}?`} message="This board is stored only on this device. Deleting it cannot be undone." confirmLabel="Delete board" danger onConfirm={onDelete} onClose={() => setDeleting(false)} />}
+    {deleting && <Confirm title={`Delete ${board.title}?`} message="Deleting this board cannot be undone. The deletion syncs to your other devices." confirmLabel="Delete board" danger onConfirm={onDelete} onClose={() => setDeleting(false)} />}
   </KeyboardAvoidingView>;
 }

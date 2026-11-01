@@ -457,7 +457,7 @@ test('board card menu confirms deletion and preserves other boards after reload'
   await page.waitForTimeout(300);
   await page.screenshot({ path: 'artifacts/screenshots/board-card-menu.png' });
   await page.getByRole('button', { name: 'Delete board', exact: true }).click();
-  await expect(page.getByText('Delete “Farmyard friends” from this device? This cannot be undone.', { exact: true })).toBeVisible();
+  await expect(page.getByText('Delete “Farmyard friends”? This cannot be undone. The deletion syncs to your other devices.', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Keep board', exact: true }).click();
   await page.getByRole('button', { name: 'Close Farmyard friends', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
