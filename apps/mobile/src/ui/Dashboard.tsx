@@ -1,4 +1,4 @@
-/** @file Organizes compact playable boards by creation/play recency and favorites, with one resumable creation entry and shared navigation icons. */
+/** @file Places a full-width creation action above compact playable boards ordered by creation/play recency and favorites, with shared navigation icons. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -14,7 +14,7 @@ import { AppHeader } from './AppHeader';
 
 /**
  * Spotlight the most recently created or played board, place favorites next, and present library actions and the
- * shared board workspace with resumable creation drafts. Resolve user languages and play subsets
+ * shared board workspace with a full-width new-board or resume-draft action. Resolve user languages and play subsets
  * for board previews and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
  */
 export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
@@ -32,16 +32,15 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccoun
   const card = (board: Board, featured = false) => <BoardCard board={boardWithProfileLanguages(board, library.settings)} featured={featured} favorite={favorites.has(board.id)} wide={width > 620} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
     <AppHeader actions={<>{saving && <ActivityIndicator size="small" accessibilityLabel="Saving changes" />}<Button kind="ghost" icon={UserRound} compact onPress={onAccount} accessibilityLabel={accountLabel} /><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
-    <ScrollView contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 20 }]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-        <Text accessibilityRole="header" style={styles.heading}>Your soundboards</Text>
-        <View style={[styles.row, { flexWrap: 'wrap', gap: 8 }]}><Button icon={Plus} onPress={onCompose}>{createLabel}</Button></View>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: 16, paddingBottom: 32, gap: 16 }]}>
+      <Button icon={Plus} onPress={onCompose}>{createLabel}</Button>
+      <View style={{ gap: 28 }}>
+        {recent && card(recent, true)}
+        {remaining.length > 0 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8, rowGap: 16 }}>
+          {remaining.map(board => <View key={board.id} style={{ width: `${100 / columns}%`, paddingHorizontal: 8 }}>{card(board)}</View>)}
+        </View>}
+        {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text></View>}
       </View>
-      {recent && card(recent, true)}
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 }}>
-        {remaining.map(board => <View key={board.id} style={{ width: `${100 / columns}%`, padding: 8 }}>{card(board)}</View>)}
-      </View>
-      {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text></View>}
     </ScrollView>
     {menuBoard && <BoardMenu key={menuBoard.id} board={menuBoard} settings={library.settings} audio={audio} onDelete={() => { onDelete(menuBoard.id); setMenuId(null); }} onClose={() => setMenuId(null)} />}
   </View>;

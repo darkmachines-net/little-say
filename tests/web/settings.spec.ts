@@ -1,4 +1,4 @@
-/** @file Exercises signed-in simplified Settings, About, shared-language choices, default media migration, and offline links. */
+/** @file Exercises signed-in Settings, About, shared languages, media migration, offline links, and navigation back to the dashboard action. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
@@ -50,7 +50,7 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByText(/Spanish \(default\)/)).toBeVisible();
   await page.goBack();
-  await expect(page.getByText('Your soundboards', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
   await page.goForward();
   await page.reload();
   await expect(page.getByText(/Spanish \(default\)/)).toBeVisible();
