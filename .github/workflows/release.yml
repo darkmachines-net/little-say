@@ -1,4 +1,4 @@
-# Delegates coordinated GCP/Expo delivery to the same pinned toolkit used by the development launcher.
+# Delegates coordinated GCP/Expo delivery to the same pinned toolkit used by development and app startup.
 name: Release
 run-name: ${{ inputs.destination == 'production' && 'Deploy to production (GCP + Expo beta)' || 'Public-store release (Expo production)' }}
 on:
@@ -15,7 +15,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@bd35cac92487667ecd5ecdc1f72d3fecee350faa
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@424a37e227a32621f08a316c3fe369e0feec5dba
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination] }}
       rebuild: ${{ inputs.rebuild }}

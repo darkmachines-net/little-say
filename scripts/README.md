@@ -2,6 +2,8 @@
 
 Run commands from the repository root. Use `npm.cmd` / `npx.cmd` in Windows PowerShell and `npm` / `npx` elsewhere. Install with `npm ci`; Node 24 is the normal development runtime. `package.json` records the supported Node range. Docker Desktop (Linux containers) is also required locally; Java runs inside the Auth container. No GCP account or credentials are needed. Use an Expo Go build compatible with the SDK in `apps/mobile/package.json`; native dependency/SDK changes require a replacement development or release binary before loading the new bundle.
 
+The mobile entrypoint uses the toolkit's [early compatibility check](https://github.com/darkmachines-net/expo-release-template/blob/main/src/consumer/README.md#early-development-client-compatibility-check): a stale development client shows rebuild instructions before app imports run. After native changes, restart Metro and reopen its QR/link; Fast Refresh is not a compatibility check.
+
 ## Development launcher
 
 `dev.ts` owns child processes and connectivity checks, `dev-ports.ts` coordinates worktree port assignments, `dev-config.ts` resolves environment/LAN settings, `dev-expo.ts` prepares Go or toolkit-owned native launches, `dev-proxy.cjs` forwards browser API calls, and `dev-firewall.ps1` provides optional Windows firewall rules. The root launcher is the supported connected development entry point: bare `expo start` does not inject the API address.
