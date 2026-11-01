@@ -1,4 +1,4 @@
-/** @file Organizes saved boards by creation/play recency and favorites, showing effective languages and one resumable creation entry under shared account and navigation icons. */
+/** @file Organizes compact playable boards by creation/play recency and favorites, with one resumable creation entry and shared navigation icons. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -15,7 +15,7 @@ import { AppHeader } from './AppHeader';
 /**
  * Spotlight the most recently created or played board, place favorites next, and present library actions and the
  * shared board workspace with resumable creation drafts. Resolve user languages and play subsets
- * for board summaries and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
+ * for board previews and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
  */
 export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const { width } = useWindowDimensions();
