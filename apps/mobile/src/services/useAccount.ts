@@ -1,4 +1,4 @@
-/** @file Coordinates persisted sign-in, first-device cloud restoration, and automatic foreground backup. */
+/** @file Coordinates persisted sign-in, restoration gates, and automatic backup with independent sync and account-action feedback. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -9,8 +9,9 @@ import { ApiError, backendUrl } from './api';
 import { accountContext, authenticateAccount, resetAccountPassword, signOutAccount, accountDeletionProof, verifyAccountEmail, linkAccountProvider, accountError, socialAuthAvailable, type Provider } from './firebaseAccount';
 import { accountRequest, syncAccount } from './accountSync';
 import { loadAccountSession, saveAccountSession, type AccountSession } from './accountSession';
+import { accountBackupState, backupConnectionFailure } from './accountBackup';
 
-/** Restore sign-in locally, wait for cloud data on empty devices, and sync verified accounts outside play/editing. */
+/** Restore sign-in, gate empty devices on cloud restoration, and expose snapshot-based backup status separately from authentication feedback. */
 export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolean, onRestored: () => Promise<void>) {
   const [session, setSession] = useState<AccountSession | null>(null);
   const [ready, setReady] = useState(false);
@@ -19,7 +20,10 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   const [error, setError] = useState('');
   const [needsLogin, setNeedsLogin] = useState(false);
   const [config, setConfig] = useState<AuthConfig | null>(null);
-  const current = useRef({ store, session, canSync, onRestored }); current.current = { store, session, canSync, onRestored };
+  const [syncing, setSyncing] = useState(false);
+  const [syncFailure, setSyncFailure] = useState<{ message: string; offline: boolean } | null>(null);
+  const [online, setOnline] = useState(() => Platform.OS !== 'web' || navigator.onLine !== false);
+  const current = useRef({ store, session, canSync, onRestored, online }); current.current = { store, session, canSync, onRestored, online };
   const operation = useRef<AbortController | null>(null);
   const running = useRef(false);
   const mounted = useRef(true);
@@ -39,10 +43,10 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     const local = libraryStore.current.current;
     // Initial account entry gates an empty device, including direct editor links, until this restore finishes.
     const initialRestore = Boolean(account && local && !local.boards.length && (local.sync?.accountId !== account.account.id || local.sync.server !== account.server));
-    if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || (!allowed && !initialRestore) || !local) return;
+    if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || (!allowed && !initialRestore) || !local || !current.current.online) return;
     if (Platform.OS === 'web' ? document.hidden : AppState.currentState !== 'active') return;
-    if (backendUrl(local.settings.backendUrl) !== account.server) { setError('This account belongs to a different server. Sign out and sign in again to use this version of Little Say. Your local boards are safe.'); return; }
-    running.current = true; setBusy(true); setError(''); setMessage('Syncing boards and assets…');
+    if (backendUrl(local.settings.backendUrl) !== account.server) { setNeedsLogin(true); setMessage('This account belongs to a different server. Sign in again. Your local boards are safe.'); return; }
+    running.current = true; setBusy(true); setSyncing(true); setSyncFailure(null);
     const controller = new AbortController(); operation.current = controller;
     try {
       await libraryStore.flush();
@@ -64,20 +68,25 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
           settings: { ...local.settings, activeBoardId: boards.some(board => board.id === local.settings.activeBoardId) ? local.settings.activeBoardId : null } };
       });
       await current.current.onRestored();
-      const newerEdits = JSON.stringify(libraryStore.current.current?.boards) !== JSON.stringify(snapshot.boards);
-      setMessage(newerEdits ? 'Backup saved. Your newer edits are waiting for the next sync.' : snapshot.boards.some(board => board.title.endsWith('(conflict copy)')) ? 'Synced. Conflicting edits were kept as separate boards marked “conflict copy”.' : 'All boards and assets are synced.'); setNeedsLogin(false);
+      setNeedsLogin(false);
     } catch (e) {
       if (!controller.signal.aborted && mounted.current) {
         const expired = e instanceof ApiError && e.status === 401;
-        setError(expired ? '' : (e as Error).message);
-        setMessage(expired ? 'Your session has expired. Sign in again to resume sync.' : 'Changes stay on this device until sync succeeds.');
-        if (expired) setNeedsLogin(true);
+        if (expired) { setNeedsLogin(true); setMessage('Your session has expired. Sign in again to resume sync.'); }
+        else setSyncFailure({ message: e instanceof Error ? e.message : 'Backup could not complete.', offline: backupConnectionFailure(e) });
       }
-    } finally { running.current = false; operation.current = null; if (mounted.current) setBusy(false); }
+    } finally { running.current = false; operation.current = null; if (mounted.current) { setBusy(false); setSyncing(false); } }
   }, []);
   const signature = JSON.stringify(store.library?.boards);
   const savedAt = store.library?.sync?.accountId === session?.account.id && store.library?.sync?.server === session?.server ? store.library?.sync?.savedAt : undefined;
   const restoring = Boolean(session?.account.emailVerified && !session.account.deletionPending && !needsLogin && store.library && !store.library.boards.length && !savedAt);
+  const pending = !savedAt || signature !== JSON.stringify(store.library?.sync?.snapshot.boards);
+  const backup = {
+    state: accountBackupState({ needsLogin: !session || needsLogin, deletionPending: Boolean(session?.account.deletionPending), verified: Boolean(session?.account.emailVerified),
+      offline: !online || Boolean(syncFailure?.offline), error: Boolean(syncFailure), restoring, syncing, pending }),
+    savedAt, pending, error: syncFailure?.message ?? '',
+    conflicts: Boolean(savedAt && store.library?.boards.some(board => board.title.endsWith('(conflict copy)'))),
+  };
   useEffect(() => {
     if (!ready || !session || needsLogin || (!canSync && !restoring)) return;
     const timer = setTimeout(() => void sync(), 1500);
@@ -88,18 +97,26 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     const retry = () => { void sync(); };
     const timer = setInterval(retry, 30000);
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') retry(); });
-    if (Platform.OS === 'web') window.addEventListener('online', retry);
-    return () => { clearInterval(timer); subscription.remove(); if (Platform.OS === 'web') window.removeEventListener('online', retry); };
+    return () => { clearInterval(timer); subscription.remove(); };
   }, [session, needsLogin, sync]);
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const connected = () => { current.current.online = true; setOnline(true); void sync(); };
+    const disconnected = () => { current.current.online = false; setOnline(false); };
+    window.addEventListener('online', connected); window.addEventListener('offline', disconnected);
+    return () => { window.removeEventListener('online', connected); window.removeEventListener('offline', disconnected); };
+  }, [sync]);
   const run = async (action: () => Promise<void>) => {
-    if (running.current) return;
-    running.current = true; setBusy(true); setError('');
+    if (running.current) {
+      const message = 'Another account operation is finishing. Please try again in a moment.';
+      setError(message); throw new Error(message);
+    }
+    running.current = true; setBusy(true); setError(''); setMessage('');
     try { await action(); } catch (e) { setError(accountError(e)); throw e; }
     finally { running.current = false; setBusy(false); }
   };
   const remember = async (value: AccountSession) => {
-    await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false);
-    setMessage(value.account.deletionPending ? 'Deletion is pending. Retry Delete account to finish Apple confirmation.' : value.account.emailVerified ? 'Signed in. Your boards will sync automatically.' : 'Verify your email to start automatic backup. AI and local boards are already available.');
+    await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false); setSyncFailure(null);
   };
   const prepare = async () => {
     // Provider choices can be retried after a connection failure without losing the login form.
@@ -124,7 +141,7 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   const verifyEmail = async (password: string, resend: boolean, provider: Provider = 'password') => run(async () => {
     if (!session) return;
     await remember(await verifyAccountEmail(session, password, resend, provider));
-    if (resend) setMessage('Verification email sent. Open the link, then check verification here.');
+    setMessage(resend ? 'Verification email sent. Open the link, then check verification here.' : 'Email verification checked.');
   });
   const link = async (target: Provider, email: string, newPassword: string, provider: Provider, password: string) => run(async () => {
     if (!session) return;
@@ -136,9 +153,11 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     if (deleting) await accountRequest(session, '/delete', await accountDeletionProof(session, provider, password));
     else await accountRequest(session, '/logout', {}).catch(() => {});
     await signOutAccount(session);
-    await saveAccountSession(null); current.current.session = null; setSession(null); setNeedsLogin(false);
+    await saveAccountSession(null); current.current.session = null; setSession(null); setNeedsLogin(false); setSyncFailure(null);
     setMessage(deleting ? 'Account deletion requested. This server will finish removing the shared login and its backup. Local boards remain here.' : 'Signed out. Local boards remain on this device.');
   });
-  return { session, ready, busy, message, error, needsLogin, savedAt, restoring, retrySync: sync, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, socialAvailable: socialAuthAvailable() };
+  /** Clear page-specific authentication feedback without changing backup status or an in-flight operation. */
+  const clearFeedback = useCallback(() => { setError(''); setMessage(''); }, []);
+  return { session, ready, busy, syncing, backup, message, error, clearFeedback, needsLogin, savedAt, restoring, retrySync: sync, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, socialAvailable: socialAuthAvailable() };
 }
 export type AccountController = ReturnType<typeof useAccount>;

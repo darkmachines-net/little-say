@@ -1,4 +1,4 @@
-/** @file Verifies automatic account backup, empty-device cloud restoration, retry, and safe lifecycle boundaries. */
+/** @file Verifies automatic backup states, raced edits, isolated action feedback, restoration gates, retry, and safe lifecycle boundaries. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -78,8 +78,37 @@ it('defers sync during play or editing and resumes when it is safe', async () =>
 
 it('keeps local edits after a network failure and retries automatically', async () => {
   mocks.sync.mockRejectedValueOnce(new Error('Offline'));
-  await mount(); await advance(); expect(controller.error).toBe('Offline'); expect(library.sync).toBeUndefined();
+  await mount(); await advance(); expect(controller.backup.error).toBe('Offline'); expect(controller.backup.state).toBe('error'); expect(library.sync).toBeUndefined();
   await advance(30000); expect(mocks.sync).toHaveBeenCalledTimes(2); expect(library.sync?.accountId).toBe(session.account.id);
+});
+
+it('reports transport loss separately and clears it only after another sync starts', async () => {
+  mocks.sync.mockRejectedValueOnce(new Error('Cannot reach service', { cause: new TypeError('Network request failed') }));
+  await mount(); await advance(); expect(controller.backup.state).toBe('offline');
+  await act(async () => controller.clearFeedback()); expect(controller.backup.state).toBe('offline');
+  await advance(30000); expect(controller.backup.state).toBe('synced');
+});
+
+it('keeps newer edits pending when they arrive during an in-flight backup', async () => {
+  let finish!: (snapshot: { revision: number; boards: Library['boards']; assets: [] }) => void;
+  const original = library.boards;
+  mocks.sync.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+  await mount(); expect(controller.backup.state).toBe('pending');
+  await advance(); expect(controller.syncing).toBe(true); expect(controller.backup.state).toBe('syncing');
+  library = { ...library, boards: library.boards.map(board => ({ ...board, title: 'Newer edit', revision: board.revision + 1 })) };
+  store.library = store.current.current = library;
+  await act(async () => { screen!.update(React.createElement(Harness)); finish({ revision: 1, boards: original, assets: [] }); });
+  expect(controller.backup.state).toBe('pending'); expect(controller.savedAt).toBeDefined();
+  expect(library.boards[0].title).toBe('Newer edit');
+});
+
+it('preserves an authentication error when automatic backup succeeds', async () => {
+  await mount(); await advance();
+  mocks.verify.mockRejectedValueOnce(new Error('Wrong password'));
+  await act(async () => { await controller.verifyEmail('wrong', false).catch(() => {}); });
+  expect(controller.error).toBe('Wrong password');
+  await advance(30000);
+  expect(controller.backup.state).toBe('synced'); expect(controller.error).toBe('Wrong password');
 });
 
 it('keeps an empty device in restoration after failure until a successful cloud retry', async () => {

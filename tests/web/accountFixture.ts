@@ -1,4 +1,4 @@
-/** @file Creates isolated verified emulator accounts and signs browser feature tests into the real account flow. */
+/** @file Creates isolated verified accounts and leaves the status-first account screen after its initial backup succeeds. */
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
@@ -13,14 +13,14 @@ export async function createTestAccount() {
   return credentials;
 }
 
-/** Sign in through the app and await its first cloud sync before continuing to setup or cached boards. */
+/** Sign in through the app, await its first cloud sync, then use header Back to reach setup or cached boards. */
 export async function openSignedInApp(page: Page) {
   const credentials = await createTestAccount();
   await page.goto('/app/account/login');
   await page.getByLabel('Email', { exact: true }).fill(credentials.email);
   await page.getByLabel('Password', { exact: true }).fill(credentials.password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Up to date', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   return credentials;
 }

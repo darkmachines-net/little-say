@@ -1,4 +1,4 @@
-/** @file Applies completed AI turns through durable board commits, with cancellable previews and explicit conflict/save recovery. */
+/** @file Shows live word/picture progress and applies AI turns through cancellable previews and durable, recoverable board commits. */
 
 import { useEffect, useRef, useState } from 'react';
 import * as Crypto from 'expo-crypto';
@@ -7,7 +7,7 @@ import { proposeBoard } from './api';
 import { prepareProposalPictures, type PictureTileState } from './pictures';
 
 /**
- * Show media previews while a turn runs, then commit the completed turn as one normal board Undo step.
+ * Show words before media, report observed stages, then commit the turn as one normal board Undo step.
  * Stopping or directly editing a preview saves its usable state and cancels remaining media work.
  * Only conflicting edits or a failed write pause application; their preview and retry text stay visible.
  */
@@ -97,7 +97,7 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
       pending = { base, board: candidate };
       setSuggestion(previous => ({ base, board: { ...candidate, revision: Math.max(candidate.revision, (previous?.board.revision ?? board.revision) + 1) } }));
     };
-    setBusy('generate'); setError(''); setReply(''); setProgress(''); setStates({}); setTranslations([]);
+    setBusy('generate'); setError(''); setReply(''); setProgress('Connecting to AI…'); setStates({}); setTranslations([]);
     try {
       if (!settings.aiConsent) await onConsent();
       if (controller.signal.aborted) return;
@@ -106,9 +106,10 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
         board: source ? boardContext(source) : null, languageProfile: getLanguageProfile(settings),
         picturePolicy: preview.picturePolicy ?? settings.pictureDefaults ?? defaultPicturePolicy, pictureCapability: 1,
         conversation: { history: history.slice(-(MAX_AI_TURNS - 1)), draft: null },
-      }, controller.signal);
+      }, controller.signal, value => { if (live.current && request.current === controller) setProgress(value); });
       if (!live.current || request.current !== controller) return;
       if (response.boardId !== (source?.id ?? null) || response.baseRevision !== (source?.revision ?? null)) throw new Error('This reply refers to a different board. Please try again.');
+      setProgress('');
       setHistory(old => [...old.slice(-(MAX_AI_TURNS - 2)), { prompt: message, reply: response.proposal.explanation }]);
       setPrompt(value => value.trim() === message ? '' : value);
       if (response.proposal.needsClarification) { setReply(response.proposal.explanation); return; }
@@ -132,6 +133,7 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
       if (pending && request.current === controller && !await apply(pending)) setPrompt(value => value || message);
     } catch (e) {
       if (live.current && request.current === controller) {
+        setProgress('');
         if (pending) await apply(pending);
         setError((e as Error).message); setPrompt(value => value || message);
       }

@@ -1,4 +1,4 @@
-/** @file Verifies generic-only reuse, bundled offline pictures, aggregate preparation, source enforcement, cancellation, and interrupted recovery. */
+/** @file Verifies early word publication, generic reuse, bundled pictures, source enforcement, cancellation, and interrupted recovery. */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
@@ -42,6 +42,39 @@ async function finished(service: BoardPreparation, id: string) {
 }
 
 describe('fast preparation', () => {
+  it('publishes detached validated words and a pollable batch before any picture lookup', async () => {
+    const { preparation, pictures } = await setup(draft(['cow']));
+    const seed = vi.spyOn(pictures, 'seed');
+    const input = request();
+    const published = vi.fn(async (preview: Awaited<ReturnType<BoardPreparation['propose']>>) => {
+      expect(seed).not.toHaveBeenCalled();
+      expect(preview.proposal.tiles[0].label).toBe('cow');
+      expect(preview.pictures).toEqual([]);
+      expect(preview.preparation).toEqual(await preparation.status(input.preparationId!));
+      expect(preview.preparation!.tiles).toEqual([{ index: 0, state: 'finding' }]);
+    });
+    const completed = await preparation.propose(input, published);
+    expect(published).toHaveBeenCalledOnce();
+    expect(completed.preparation!.tiles[0].state).toBe('ready');
+    expect(published.mock.calls[0][0].preparation!.tiles[0].state).toBe('finding');
+  });
+  it('cancels from the word preview before starting picture work', async () => {
+    const { preparation, pictures, picturesProvider } = await setup(draft(['cow']));
+    const seed = vi.spyOn(pictures, 'seed');
+    const input = request();
+    await expect(preparation.propose(input, async () => { await preparation.cancel(input.preparationId!); })).rejects.toThrow();
+    expect((await preparation.status(input.preparationId!))!.state).toBe('cancelled');
+    expect(seed).not.toHaveBeenCalled(); expect(picturesProvider.generate).not.toHaveBeenCalled();
+  });
+  it('does not publish a board for clarification or invalid model output', async () => {
+    const { preparation, provider } = await setup();
+    const publish = vi.fn();
+    provider.prepare.mockResolvedValueOnce({ ...draft(), needsClarification: true, tiles: [] });
+    expect((await preparation.propose(request(), publish)).proposal.needsClarification).toBe(true);
+    provider.prepare.mockResolvedValueOnce({ ...draft(), title: '' });
+    await expect(preparation.propose(request(), publish)).rejects.toThrow();
+    expect(publish).not.toHaveBeenCalled();
+  });
   it('distinguishes drafting from downstream validation failures and never replays a failed request ID', async () => {
     const events: PreparationMetric[] = [];
     const { preparation, provider, picturesProvider } = await setup(draft(), {}, true, event => events.push(event));

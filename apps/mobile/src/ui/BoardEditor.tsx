@@ -1,4 +1,4 @@
-/** @file Edits a primary-language board with Undo/Redo, bounded keyboard layout, automatic AI turns, and explicit Save/Discard for unfinished creation drafts. */
+/** @file Edits boards with Undo/Redo, progressive picture-frame status, bounded keyboard layout, and explicit unfinished-draft retention. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
@@ -17,12 +17,12 @@ import { type SpeechLibrary } from '../services/speechLibrary';
 import type { BoardTranslationStatus } from '../services/useBoardTranslations';
 import { BoardPictures } from './BoardPictures';
 import { BoardTransition, type BoardGeometry, type BoardSnapshot } from './BoardTransition';
-import { PictureStatus } from './PictureStatus';
 import { BoardAssistant } from './BoardAssistant';
 import { useBoardAssistant } from '../services/useBoardAssistant';
 
 /**
- * Keep manual edits and streamed AI previews on one canvas. Each completed or stopped AI turn saves
+ * Keep manual edits and streamed AI previews on one canvas. New cards reserve picture space while
+ * their words are ready and artwork is pending; replacements fade existing pictures under a centered indicator. Each completed or stopped AI turn saves
  * automatically through the parent's shared Undo/Redo history; only conflicts and failed writes need action.
  * Both history actions stay disabled during AI work, unresolved previews, playback startup, and dialogs.
  * The canvas uses the first effective board/profile language; language variants are selected inside each
@@ -169,7 +169,7 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
           <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1, minHeight: 0, opacity: transition ? 0 : 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 12 }}>
             {!board.tiles.length && <Text style={styles.body}>Add a card or describe a board below.</Text>}
             <View ref={previewGrid} collapsable={false} onLayout={() => { if (transition) previewGrid.current?.measureInWindow((x, y, width, height) => setTarget({ x, y, width, height, rects: layout.rects.map((rect, i) => ({ ...rect, id: board.tiles[i].id })) })); }} style={{ width: layout.width, height: layout.height }}>
-              {board.tiles.map((tile, index) => { const rect = layout.rects[index]; const shown = tileInLanguage(tile, primaryLanguage); const missing = primaryLanguage && tile.languageMode === 'board' && !hasTileLanguage(tile, primaryLanguage); const changed = assistant.suggestion && JSON.stringify(savedBoard.tiles.find(t => t.id === tile.id)) !== JSON.stringify(tile); const pictureState = assistant.states[tile.id]; return rect && <Pressable key={tile.id} accessibilityRole="button" accessibilityLabel={`Edit tile ${shown.label}${changed ? ', suggested change' : ''}${missing ? ', translation needs attention' : ''}`} disabled={blocked} onPress={() => { setAdding(false); setEditing(tile); }} style={({ pressed }) => ({ position: 'absolute', left: rect.x, top: rect.y, width: rect.width, height: rect.height, opacity: pressed ? 0.75 : 1, borderWidth: changed ? 2 : 0, borderColor: theme.accent, borderStyle: changed ? 'dashed' : 'solid', borderRadius: 18 })}><TileFace tile={shown} compact size={Math.min(64, rect.height * 0.43)} />{pictureState ? <PictureStatus state={pictureState} /> : missing ? <Text style={{ ...styles.small, position: 'absolute', bottom: 2, alignSelf: 'center', backgroundColor: theme.surface }}>Needs translation</Text> : null}</Pressable>; })}
+              {board.tiles.map((tile, index) => { const rect = layout.rects[index]; const shown = tileInLanguage(tile, primaryLanguage); const missing = primaryLanguage && tile.languageMode === 'board' && !hasTileLanguage(tile, primaryLanguage); const changed = assistant.suggestion && JSON.stringify(savedBoard.tiles.find(t => t.id === tile.id)) !== JSON.stringify(tile); const pictureState = assistant.states[tile.id]; return rect && <Pressable key={tile.id} accessibilityRole="button" accessibilityLabel={`Edit tile ${shown.label}${changed ? ', suggested change' : ''}${missing ? ', translation needs attention' : ''}`} disabled={blocked} onPress={() => { setAdding(false); setEditing(tile); }} style={({ pressed }) => ({ position: 'absolute', left: rect.x, top: rect.y, width: rect.width, height: rect.height, opacity: pressed ? 0.75 : 1, borderWidth: changed ? 2 : 0, borderColor: theme.accent, borderStyle: changed ? 'dashed' : 'solid', borderRadius: 18 })}><TileFace tile={shown} compact pictureState={pictureState} picturePending={Boolean(pictureState && pictureState !== 'ready' && pictureState !== 'fallback' && tile.illustration.kind === 'emoji' && !savedBoard.tiles.some(saved => saved.id === tile.id))} size={Math.min(64, rect.height * 0.43)} />{missing ? <Text style={{ ...styles.small, position: 'absolute', bottom: 2, alignSelf: 'center', backgroundColor: theme.surface }}>Needs translation</Text> : null}</Pressable>; })}
             </View>
           </ScrollView>
         </View>

@@ -1,4 +1,4 @@
-/** @file Verifies required sign-in with shared headers, device providers, emulator login, and cloud restoration gating. */
+/** @file Verifies status-first account pages, credential isolation, provider confirmation, and required entry/restoration navigation. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -8,8 +8,8 @@ import type { AccountMode } from '../services/accountRoute';
 import { AccountScreen } from './AccountScreen';
 
 const native = vi.hoisted(() => ({ OS: 'android' }));
-vi.mock('react-native', () => ({ Platform: native, Modal: 'Modal', ScrollView: 'ScrollView', View: 'View', Text: 'Text', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
-vi.mock('lucide-react-native', () => ({ ArrowLeft: 'ArrowLeft' }));
+vi.mock('react-native', () => ({ Platform: native, Modal: 'Modal', ScrollView: 'ScrollView', View: 'View', Text: 'Text', Pressable: 'Pressable', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
+vi.mock('lucide-react-native', () => Object.fromEntries(['ArrowLeft', 'ChevronRight', 'CloudCheck', 'CloudOff', 'CloudAlert', 'CloudDownload', 'RefreshCw', 'Mail', 'CircleAlert', 'Clock3', 'UserRound', 'KeyRound', 'LogOut', 'LayoutGrid', 'Image', 'Volume2'].map(name => [name, name])));
 vi.mock('./screenFocus', () => ({ useScreenFocus: () => null }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView' }));
 vi.mock('./Brand', () => ({ Brand: 'Brand' }));
@@ -19,6 +19,7 @@ let screen: ReactTestRenderer | undefined;
 const close = vi.fn(), back = vi.fn(), modeChange = vi.fn();
 const prepare = vi.fn(async () => {}), authenticate = vi.fn(async () => {});
 const account = { ready: true, session: null, needsLogin: false, busy: false, error: '', message: '', socialAvailable: true, prepare, authenticate,
+  syncing: false, backup: { state: 'synced', pending: false, error: '', conflicts: false }, clearFeedback: vi.fn(),
   config: { providers: ['password', 'google.com', 'apple.com'] } } as unknown as AccountController;
 function buttons() { return screen!.root.findAllByType('Button' as any); }
 function button(label: string) { return buttons().find(node => (node.props.accessibilityLabel || React.Children.toArray(node.props.children).join('')) === label)!; }
@@ -62,8 +63,8 @@ it('requires web sign-in and cannot dismiss welcome', async () => {
 it('waits for cloud restoration before allowing an empty device into boards and offers retry', async () => {
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
   const retrySync = vi.fn();
-  await mount(null, { ...account, session, restoring: true, error: 'Offline', retrySync });
-  expect(button('Continue to boards').props.disabled).toBe(true); expect(button('Back')).toBeUndefined();
+  await mount(null, { ...account, session, restoring: true, backup: { ...account.backup, state: 'error', error: 'Offline' }, retrySync });
+  expect(button('Continue to boards')).toBeUndefined(); expect(button('Back')).toBeUndefined();
   await act(async () => button('Retry loading boards').props.onPress()); expect(retrySync).toHaveBeenCalledOnce();
 });
 
@@ -79,7 +80,7 @@ it('leaves authentication forms after sign-in and restores welcome after sign-ou
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
   await mount('login', { ...account, session });
   expect(modeChange).toHaveBeenCalledWith(null);
-  await act(async () => button('Continue to boards').props.onPress());
+  await act(async () => button('Back').props.onPress());
   expect(close).toHaveBeenCalledOnce();
   await act(async () => screen!.update(React.createElement(AccountScreen, { account, mode: null, onMode: modeChange, onBack: back, onClose: close })));
   expect(button('Register')).toBeDefined(); expect(button('Continue to boards')).toBeUndefined();
@@ -91,11 +92,64 @@ it.each(['ios', 'android', 'web'])('shows automatic backup status without backup
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
   await mount(null, { ...account, session });
   for (const label of ['Enable backup on this device', 'Pause backup', 'Sync now', 'Request persistent browser storage']) expect(button(label)).toBeUndefined();
-  expect(JSON.stringify(screen!.toJSON())).toContain('back up and sync automatically');
+  expect(JSON.stringify(screen!.toJSON())).toContain('Up to date');
+  expect(button('Backup details')).toBeDefined();
   expect(JSON.stringify(screen!.toJSON())).not.toContain('Storage on this device');
   await act(async () => screen!.update(React.createElement(AccountScreen, { account, mode: null, onMode: modeChange, onBack: back, onClose: close })));
   expect(button('Request persistent browser storage')).toBeUndefined();
   expect(JSON.stringify(screen!.toJSON())).not.toContain('Storage on this device');
+});
+
+it('opens child account pages and returns through their route history during background sync', async () => {
+  const session = { account: { id: 'family', email: 'parent@example.test', providers: ['password'], emailVerified: true } } as AccountController['session'];
+  await mount(null, { ...account, session, busy: true, syncing: true, backup: { ...account.backup, state: 'syncing' } });
+  await act(async () => button('Backup details').props.onPress());
+  expect(modeChange).toHaveBeenCalledWith('backup');
+  await act(async () => screen!.update(React.createElement(AccountScreen, { account: { ...account, session }, mode: 'sign-in-methods', onMode: modeChange, onBack: back, onClose: close })));
+  expect(button('Current password')).toBeUndefined();
+  await act(async () => button('Back').props.onPress());
+  expect(back).toHaveBeenCalledOnce(); expect(close).not.toHaveBeenCalled();
+});
+
+it('requires verification credentials on the separate page and discards them when leaving', async () => {
+  const session = { account: { id: 'family', providers: ['password'], email: 'parent@example.test', emailVerified: false } } as AccountController['session'];
+  const verifyEmail = vi.fn(async () => {});
+  const controller = { ...account, session, verifyEmail, backup: { ...account.backup, state: 'unverified' as const } };
+  await mount('verify-email', controller);
+  expect(button('I’ve verified my email').props.disabled).toBe(true);
+  await act(async () => screen!.root.findByType('Field' as any).props.onChangeText('my password'));
+  await act(async () => button('I’ve verified my email').props.onPress());
+  expect(verifyEmail).toHaveBeenCalledWith('my password', false, 'password');
+  await act(async () => screen!.root.findByType('Field' as any).props.onChangeText('another password'));
+  await act(async () => screen!.update(React.createElement(AccountScreen, { account: controller, mode: 'delete', onMode: modeChange, onBack: back, onClose: close })));
+  expect(screen!.root.findByType('Field' as any).props.value).toBe('');
+});
+
+it('requires Apple confirmation for deletion even when a password is also linked', async () => {
+  const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
+  const disconnect = vi.fn(async () => {});
+  await mount('delete', { ...account, session, disconnect });
+  expect(screen!.root.findAllByType('Field' as any)).toHaveLength(0);
+  await act(async () => button('Permanently delete account').props.onPress());
+  expect(disconnect).toHaveBeenCalledWith(true, '', 'apple.com');
+});
+
+it('confirms sign-out on its own screen and does not disconnect merely by navigating there', async () => {
+  const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
+  const disconnect = vi.fn(async () => {});
+  await mount('sign-out', { ...account, session, disconnect, backup: { ...account.backup, pending: true } });
+  expect(disconnect).not.toHaveBeenCalled();
+  expect(JSON.stringify(screen!.toJSON())).toContain('Some changes haven’t backed up yet');
+  await act(async () => button('Sign out').props.onPress());
+  expect(disconnect).toHaveBeenCalledOnce();
+});
+
+it('redirects signed-out management links to required entry and blocks navigation during account mutations', async () => {
+  await mount('delete'); expect(modeChange).toHaveBeenCalledWith(null); expect(button('Register')).toBeDefined();
+  const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
+  await act(async () => screen!.update(React.createElement(AccountScreen, { account: { ...account, session, busy: true }, mode: 'delete', onMode: modeChange, onBack: back, onClose: close })));
+  await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose());
+  expect(back).not.toHaveBeenCalled(); expect(close).not.toHaveBeenCalled();
 });
 
 const developmentAccount = { email: 'tester@little-say.test', password: 'little-say-local-test-only' };

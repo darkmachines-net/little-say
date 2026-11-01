@@ -1,4 +1,4 @@
-/** @file Verifies explicit creation-draft retention, guarded exits, reload isolation, clarification recovery, first-save recency, and write retry in the unified editor. */
+/** @file Verifies creation-draft retention and guarded exits from a ready editor, reload isolation, clarification recovery, first-save recency, and write retry. */
 import { expect, test, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
 import { openBoardPictures, waitForAiTurn } from './boardEditor';
@@ -16,6 +16,9 @@ test.beforeEach(async ({ page }) => { await openExistingLibrary(page, { voiceSou
 for (const exit of ['page back', 'browser back']) test(`an untouched creation asks before ${exit} and discards without adding a board`, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 700 });
   await button(page, 'New board').click();
+  // Browser Back does not auto-wait for a destination element like the in-app Boards button does.
+  await expect(page.getByTestId('board-workspace')).toBeVisible();
+  await expect(prompt(page)).toHaveValue('');
   if (exit === 'browser back') await page.goBack(); else await button(page, 'Boards').click();
   await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toBeVisible();
   await expect(button(page, 'Save draft')).toBeDisabled();
