@@ -1,12 +1,13 @@
-/** @file Keeps required account entry and header account forms in browser history and native navigation. */
+/** @file Keeps account entry and management pages in browser history and an in-memory native stack. */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
-import { accountPath, readAccountRoute, type AccountMode, type AccountRoute } from './accountRoute';
+import { accountParent, accountPath, readAccountRoute, type AccountMode, type AccountRoute } from './accountRoute';
 
-/** Restore direct account links and browser Back/Forward without storing authentication form fields. */
+/** Restore account links and Back/Forward; history stores destinations only, never credentials. */
 export function useAccountRoute() {
   const [route, setRoute] = useState<AccountRoute | null>(() => Platform.OS === 'web' ? readAccountRoute(window.location.pathname) : null);
+  const stack = useRef<AccountMode[]>([]);
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     const initial = readAccountRoute(window.location.pathname);
@@ -17,24 +18,27 @@ export function useAccountRoute() {
   }, []);
   return {
     route,
-    /** Show a form or welcome page; launch and successful authentication replace the current entry. */
+    /** Show an account page; authentication transitions replace the entry and discard native form history. */
     open(mode: AccountMode = null, replace = false) {
       if (Platform.OS === 'web') {
         if (replace) window.history.replaceState(null, '', accountPath(mode));
         else window.history.pushState({ littleSayAccount: true }, '', accountPath(mode));
       }
+      if (replace) stack.current = [];
+      else if (route) stack.current.push(route.mode);
       setRoute({ mode });
     },
-    /** Return through form history, falling back to the welcome page for direct links. */
+    /** Return through owned history, or to the logical parent when entering through a direct link. */
     back() {
       if (Platform.OS === 'web' && window.history.state?.littleSayAccount) { window.history.back(); return; }
-      const mode = route?.mode === 'reset' ? 'login' : null;
+      const mode = Platform.OS !== 'web' && stack.current.length ? stack.current.pop()! : accountParent(route?.mode ?? null);
       if (Platform.OS === 'web') window.history.replaceState(null, '', accountPath(mode));
       setRoute({ mode });
     },
     /** Leave account navigation after the caller confirms sign-in and first-device restoration. */
     close() {
       if (Platform.OS === 'web') window.history.replaceState(null, '', '/app');
+      stack.current = [];
       setRoute(null);
     },
   };

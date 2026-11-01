@@ -1,4 +1,4 @@
-/** @file Exercises required web accounts, first-device cloud restoration, automatic verified-account backup, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Exercises routed account verification, status-first backup, restoration, offline conflicts, and confirmed local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -66,7 +66,7 @@ test('web sign-in gates legacy local boards, cancelled forms, settings links, an
   await page.context().setOffline(true); await page.reload();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
+  await signOut(page);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toHaveCount(0);
@@ -84,6 +84,12 @@ async function signIn(page: Page, username: string) {
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+}
+async function signOut(page: Page) {
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Sign out on this device?', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
 }
 async function changeTitle(page: Page, title: string) {
   await page.evaluate(async title => {
@@ -131,23 +137,25 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
-    await expect(page.getByText('Verify your email to start automatic backup. AI is available now, and your boards still work offline.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Verify email to back up', exact: true })).toBeVisible();
     expect((await readLibrary(page)).sync).toBeUndefined();
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
     expect(verification).toBeTruthy();
     const verified = await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: verification.oobCode } });
     expect(verified.ok()).toBe(true);
-    await page.getByLabel('Password for verification', { exact: true }).fill(password);
-    await page.getByRole('button', { name: 'Check email verification', exact: true }).click();
+    await page.getByRole('button', { name: 'Verify email', exact: true }).click();
+    await page.getByLabel('Current password', { exact: true }).fill(password);
+    await page.getByRole('button', { name: 'I’ve verified my email', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to account', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Enable backup on this device', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Request persistent browser storage', exact: true })).toHaveCount(0);
-    await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
     await expect.poll(async () => (await readLibrary(page)).sync.snapshot.assets.length).toBe(3);
     expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).not.toContain('token');
     await other.goto('/app');
     await signIn(other, username);
-    await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+    await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     const restored = await readLibrary(other);
     expect(restored.boards).toEqual(library.boards); expect(restored.setup).toBeUndefined();
     expect(restored.settings.aiConsent).toBe(false);
@@ -166,12 +174,14 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await expect(other.getByRole('button', { name: 'Play Edited on phone', exact: true })).toBeVisible();
     await page.context().setOffline(false);
     await page.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
-    await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
     await second.setOffline(false);
     await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
+    await other.getByRole('button', { name: 'Backup details', exact: true }).click();
     await expect(other.getByText(/Conflicting edits were kept/)).toBeVisible();
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
-    await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
+    await other.getByRole('button', { name: 'Back', exact: true }).click();
+    await signOut(other);
     await expect(other.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
     await second.setOffline(true); await other.reload();
@@ -185,13 +195,13 @@ test('an empty device waits for cloud data and can retry a failed first restorat
   const credentials = await createTestAccount();
   await page.route('**/api/account/backup', route => route.fulfill({ status: 503, json: { error: 'Restore temporarily unavailable.' } }));
   await page.goto('/app'); await signIn(page, credentials.email);
-  await expect(page.getByText('Restore temporarily unavailable.', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Continue to boards', exact: true })).toBeDisabled();
+  await expect(page.getByRole('heading', { name: 'Backup needs attention', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
   await page.unroute('**/api/account/backup');
   await page.getByRole('button', { name: 'Retry loading boards', exact: true }).click();
-  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
+  await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 
@@ -206,8 +216,8 @@ test('cross-tab account changes and legacy server overrides never silently redir
     expect((await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
   }
   await page.goto('/app'); await signIn(page, emails[0]);
-  await expect(page.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
+  await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
@@ -215,9 +225,9 @@ test('cross-tab account changes and legacy server overrides never silently redir
   try {
     await other.goto('/app');
     await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
-    await other.getByRole('button', { name: 'Sign out and keep local boards', exact: true }).click();
+    await signOut(other);
     await signIn(other, emails[1]);
-    await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+    await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     await page.bringToFront();
     await page.evaluate(() => window.dispatchEvent(new Event('online')));
     await expect(page.getByText('Your session has expired. Sign in again to resume sync.', { exact: true })).toBeVisible();
@@ -234,7 +244,7 @@ test('cross-tab account changes and legacy server overrides never silently redir
       }); db.close();
     });
     await other.reload();
-    await expect(other.getByText('All boards and assets are synced.', { exact: true })).toBeVisible();
+    await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     expect((await readLibrary(other)).settings.backendUrl).toBe('');
     expect(sent).toEqual([]);
   } finally { await other.close(); }
