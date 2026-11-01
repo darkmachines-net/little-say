@@ -1,4 +1,4 @@
-/** @file Verifies editor typing, illustrated account entry, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
+/** @file Verifies editor typing, illustrated account entry, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. Includes unified Settings navigation. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -49,7 +49,6 @@ test('Settings navigation stays safe while scrolling and rotating its pages', as
   await device.send('Emulation.setSafeAreaInsetsOverride', { insets: bars });
   await openExistingLibrary(page);
   await expectInsideSafeArea(page.getByRole('button', { name: 'Settings', exact: true }), page, bars);
-  await expectInsideSafeArea(page.getByRole('button', { name: 'Account & backup', exact: true }), page, bars);
   await mkdir('artifacts/screenshots/accounts', { recursive: true });
   await page.screenshot({ path: 'artifacts/screenshots/accounts/header-phone.png' });
   await page.getByRole('button', { name: 'Settings', exact: true }).click();

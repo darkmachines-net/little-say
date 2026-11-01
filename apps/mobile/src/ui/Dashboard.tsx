@@ -1,8 +1,8 @@
-/** @file Shows playable boards, first-restore recovery, and a fixed-size navbar refresh/progress control. */
+/** @file Shows playable boards, first-restore recovery, fixed-size refresh/progress, and one Settings entry point. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
-import { Plus, RefreshCw, UserRound, Settings as SettingsIcon } from 'lucide-react-native';
+import { Plus, RefreshCw, Settings as SettingsIcon } from 'lucide-react-native';
 import { boardWithProfileLanguages, type Board, type Library } from '@little-say/core';
 import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
@@ -19,10 +19,11 @@ const floatingClearance = 16;
 /**
  * Keep cached boards usable during sync; first restoration replaces creation and previews with progress/recovery.
  * Refresh manually from the navbar; its fixed-size busy control keeps background sync out of the list layout.
+ * One Settings action opens preferences, backup, and account controls.
  * Resolve profile languages for previews and audio actions, with recent boards before favorites.
  * Reserve the measured floating action height below the list; the app root owns native/web safe-area insets.
  */
-export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const syncError = sync.backup.error || (sync.backup.state === 'offline' ? 'Waiting for a connection. Your content will sync when you’re back online.' : '');
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, on
   return <View style={styles.page}>
     <AppHeader actions={<><View style={{ width: 44, height: 50 }}>
       <Button kind="ghost" icon={RefreshCw} compact busy={sync.syncing || saving} disabled={['sign-in-required', 'unverified', 'deletion-pending'].includes(sync.backup.state)} onPress={() => void sync.retrySync()} accessibilityLabel={saving && !sync.syncing ? 'Saving changes' : 'Refresh content'} />
-    </View><Button kind="ghost" icon={UserRound} compact onPress={onAccount} accessibilityLabel={accountLabel} /><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
+    </View><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
     <ScrollView testID="dashboard-scroll" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 16, paddingBottom: wide ? creationHeight + floatingInset + floatingClearance : 32, gap: 16 }, sync.restoring && { flexGrow: 1, paddingTop: 32, paddingBottom: 32, justifyContent: 'center', alignItems: 'center' }]}>
       {sync.restoring ? <View testID="initial-sync-state" style={{ width: '100%', maxWidth: 520, alignItems: 'center', gap: 24 }}>
         {syncError ? <Notice action={<Button kind="secondary" onPress={() => void sync.retrySync()}>Retry sync</Button>}>{`Your content couldn’t sync. ${syncError}`}</Notice> : <>

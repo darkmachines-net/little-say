@@ -1,4 +1,4 @@
-/** @file Exercises illustrated required entry, Home restoration/retry, verified backup, media/conflict recovery, manual cross-tab refresh, and local-preserving sign-out. */
+/** @file Exercises illustrated required entry, Home restoration/retry, verified backup, media/conflict recovery, manual cross-tab refresh, and local-preserving sign-out. Verifies conditional email verification in Settings and retained backup detail links. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -65,7 +65,7 @@ test('web sign-in gates legacy local boards, cancelled forms, settings links, an
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.context().setOffline(true); await page.reload();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await signOut(page);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
@@ -138,8 +138,8 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await expect(page).toHaveURL(/\/app$/);
-    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-    await expect(page.getByRole('heading', { name: 'Verify email to back up', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Verify email', exact: true })).toBeVisible();
     expect((await readLibrary(page)).sync).toBeUndefined();
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
@@ -149,9 +149,14 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByRole('button', { name: 'Verify email', exact: true }).click();
     await page.getByLabel('Current password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'I’ve verified my email', exact: true }).click();
-    await page.getByRole('button', { name: 'Back to account', exact: true }).click();
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+    await expect(page).toHaveURL(/\/app\/settings$/);
+    await page.getByRole('button', { name: 'Boards', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Enable backup on this device', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Request persistent browser storage', exact: true })).toHaveCount(0);
+    await page.goto('/app/settings/backup');
     await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
     await expect.poll(async () => (await readLibrary(page)).sync.snapshot.assets.length).toBe(3);
     expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).not.toContain('token');
@@ -177,14 +182,15 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await changeTitle(page, 'Edited on tablet'); await changeTitle(other, 'Edited on phone');
     await expect(other.getByRole('button', { name: 'Play Edited on phone', exact: true })).toBeVisible();
     await page.context().setOffline(false);
-    await page.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
+    await page.getByRole('button', { name: /^(Settings|Sign in \/ Register)$/ }).click();
+    await page.goto('/app/settings/backup');
     await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
     await second.setOffline(false);
-    await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
-    await other.getByRole('button', { name: 'Backup details', exact: true }).click();
+    await other.getByRole('button', { name: /^(Settings|Sign in \/ Register)$/ }).click();
+    await other.goto('/app/settings/backup');
     await expect(other.getByText(/Conflicting edits were kept/)).toBeVisible();
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
-    await other.getByRole('button', { name: 'Back', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await signOut(other);
     await expect(other.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
@@ -206,7 +212,7 @@ test('sign-in centers first-sync loading on empty Home and can retry restoration
     await expect(page.getByRole('heading', { name: 'Syncing your content…', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Your soundboards', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'New board', exact: true })).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Account & backup', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toHaveCount(0);
     await expect(page.getByText('No boards yet', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
     for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
@@ -242,18 +248,19 @@ test('cross-tab account changes and legacy server overrides never silently redir
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   const other = await context.newPage();
   try {
     await other.goto('/app');
-    await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
+    await other.getByRole('button', { name: /^(Settings|Sign in \/ Register)$/ }).click();
     await signOut(other);
     await signIn(other, emails[1]);
     await expect(other).toHaveURL(/\/app$/);
-    await other.getByRole('button', { name: 'Account & backup', exact: true }).click();
+    await other.getByRole('button', { name: 'Settings', exact: true }).click();
+    await other.goto('/app/settings/backup');
     await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     await page.bringToFront();
-    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await page.getByRole('button', { name: 'Boards', exact: true }).click();
     await page.getByRole('button', { name: 'Refresh content', exact: true }).click();
     await expect(page.getByText('Your session has expired. Sign in again to resume sync.', { exact: true })).toBeVisible();
     await other.bringToFront();
@@ -269,6 +276,7 @@ test('cross-tab account changes and legacy server overrides never silently redir
       }); db.close();
     });
     await other.reload();
+    await other.goto('/app/settings/backup');
     await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     expect((await readLibrary(other)).settings.backendUrl).toBe('');
     expect(sent).toEqual([]);

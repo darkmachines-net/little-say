@@ -1,11 +1,11 @@
 /**
  * @file Guides shared user-language selection and review of generated starter boards before entering the
- * library, with a single setup header and a compact account icon.
+ * library, with a single setup header and a compact Settings icon.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { Check, ChevronLeft, UserRound, WandSparkles } from 'lucide-react-native';
+import { Check, ChevronLeft, Settings as SettingsIcon, WandSparkles } from 'lucide-react-native';
 import * as Crypto from 'expo-crypto';
 import { configureSetup, finishSetup, getLanguageProfile, languageName, profileLanguages, saveStarterDraft, starterBoard, starterPrompt, starterTopics, type Library, type StarterTopic } from '@little-say/core';
 import { proposeBoard } from '../services/api';
@@ -19,9 +19,9 @@ import { prepareProposalPictures } from '../services/pictures';
 
 /**
  * Resume setup with the shared searchable user-language editor, generate starter drafts for those
- * languages, and commit the parent-approved result through onCommit. The setup header opens account controls with an accessible icon.
+ * languages, and commit the parent-approved result through onCommit. The setup header opens Settings with an accessible icon.
  */
-export function FirstTimeSetup({ library, onCommit, onAccount, accountLabel }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onAccount: () => void; accountLabel: string }) {
+export function FirstTimeSetup({ library, onCommit, onSettings }: { library: Library; onCommit: (update: (current: Library) => Library) => Promise<void>; onSettings: () => void }) {
   const setup = library.setup!;
   const [profile, setProfile] = useState(() => getLanguageProfile(library.settings));
   const [topics, setTopics] = useState(setup.topics);
@@ -75,7 +75,7 @@ export function FirstTimeSetup({ library, onCommit, onAccount, accountLabel }: {
   };
   const languageStep = setup.stage === 'languages';
   return <View style={styles.page}>
-    <AppHeader title="Set up Little Say" actions={<Button compact kind="ghost" icon={UserRound} accessibilityLabel={accountLabel} disabled={Boolean(working)} onPress={onAccount} />} />
+    <AppHeader title="Set up Little Say" actions={<Button compact kind="ghost" icon={SettingsIcon} accessibilityLabel="Settings" disabled={Boolean(working)} onPress={onSettings} />} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.container, { maxWidth: 760, paddingVertical: 28, gap: 22 }]}>
       <View style={{ gap: 8 }}><Text style={styles.small}>{languageStep ? '1 of 2' : '2 of 2'}</Text><Text accessibilityRole="header" style={styles.heading}>{languageStep ? 'Choose your languages' : 'Your first boards'}</Text><Text style={styles.body}>{languageStep ? 'Choose the languages you use together, then pick a default. You can change these later in Settings.' : `Six cards per board, in ${profileLanguages({ languageProfile: profile }).map(languageName).join(' · ')}.`}</Text></View>
       {Boolean(error) && <Notice>{error}</Notice>}

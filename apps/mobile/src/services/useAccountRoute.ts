@@ -1,31 +1,36 @@
-/** @file Keeps account entry and management history, returning authenticated users to Home without waiting for sync. */
+/** @file Keeps authentication form history separate from signed-in Settings and returns successful sign-ins to Home. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
-import { accountParent, accountPath, readAccountRoute, type AccountMode, type AccountRoute } from './accountRoute';
+import { accountParent, accountPath, isAccountEntryMode, readAccountRoute, type AccountEntryMode, type AccountRoute } from './accountRoute';
 
-/** Restore account links and Back/Forward; history stores destinations only, never credentials. */
+function readEntryRoute(pathname: string): AccountRoute | null {
+  const route = readAccountRoute(pathname);
+  return route && route.mode !== null && isAccountEntryMode(route.mode) ? route : null;
+}
+
+/** Restore authentication links and Back/Forward; signed-in management is owned by useSettingsRoute. */
 export function useAccountRoute() {
-  const [route, setRoute] = useState<AccountRoute | null>(() => Platform.OS === 'web' ? readAccountRoute(window.location.pathname) : null);
-  const stack = useRef<AccountMode[]>([]);
+  const [route, setRoute] = useState<AccountRoute | null>(() => Platform.OS === 'web' ? readEntryRoute(window.location.pathname) : null);
+  const stack = useRef<AccountEntryMode[]>([]);
   useEffect(() => {
     if (Platform.OS !== 'web') return;
-    const initial = readAccountRoute(window.location.pathname);
+    const initial = readEntryRoute(window.location.pathname);
     if (initial) window.history.replaceState(null, '', accountPath(initial.mode));
-    const changed = () => setRoute(readAccountRoute(window.location.pathname));
+    const changed = () => setRoute(readEntryRoute(window.location.pathname));
     window.addEventListener('popstate', changed);
     return () => window.removeEventListener('popstate', changed);
   }, []);
   return {
     route,
-    /** Show an account page; authentication transitions replace the entry and discard native form history. */
-    open(mode: AccountMode = null, replace = false) {
+    /** Open an authentication form; replacement discards native form history without storing credentials. */
+    open(mode: AccountEntryMode = null, replace = false) {
       if (Platform.OS === 'web') {
         if (replace) window.history.replaceState(null, '', accountPath(mode));
         else window.history.pushState({ littleSayAccount: true }, '', accountPath(mode));
       }
       if (replace) stack.current = [];
-      else if (route) stack.current.push(route.mode);
+      else if (route && isAccountEntryMode(route.mode)) stack.current.push(route.mode);
       setRoute({ mode });
     },
     /** Return through owned history, or to the logical parent when entering through a direct link. */

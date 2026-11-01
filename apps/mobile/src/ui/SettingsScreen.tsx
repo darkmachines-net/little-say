@@ -1,10 +1,14 @@
-/** @file Organizes shared languages, help, and About settings while media uses app defaults. */
+/** @file Groups shared languages, account actions, and help in Settings without routine sync status. */
 
 import { useRef, useState } from 'react';
 import { Linking, Platform, Text, View } from 'react-native';
 import { Download, Info, Languages, ShieldCheck, Smartphone } from 'lucide-react-native';
 import { getLanguageProfile, languageName, type Library, type Settings } from '@little-say/core';
 import type { SettingsRoute } from '../services/settingsRoute';
+import { isAccountEntryMode, type AccountMode } from '../services/accountRoute';
+import type { AccountController } from '../services/useAccount';
+import { AccountSettingsGroup } from './account/AccountOverview';
+import { AccountSettingsPage } from './account/AccountSettingsPage';
 import { AboutSettings } from './AboutSettings';
 import { AppUpdateSettings } from './AppUpdateSettings';
 import { Button, Notice } from './components';
@@ -15,9 +19,9 @@ import { styles, theme } from './theme';
 
 const titles = { overview: 'Settings', languages: 'Languages', 'screen-guidance': 'Keep the app on screen', privacy: 'Privacy Policy', updates: 'App updates', about: 'About' };
 
-/** Render shared-language, help, and About pages; save preferences atomically with retry after failure. */
-export function SettingsScreen({ route, library, returnLabel = 'Boards', onNavigate, onBack, onSave, onBeforeRestart }: {
-  route: SettingsRoute; library: Library;
+/** Keep preferences and account actions in focused groups and save preferences atomically with retry. */
+export function SettingsScreen({ route, library, account, returnLabel = 'Boards', onNavigate, onBack, onSave, onBeforeRestart }: {
+  route: SettingsRoute; library: Library; account: AccountController;
   returnLabel?: string; onNavigate: (route: SettingsRoute) => void; onBack: () => void; onSave: (patch: Partial<Settings>) => Promise<void>; onBeforeRestart: () => Promise<void>;
 }) {
   const [saving, setSaving] = useState(false);
@@ -31,6 +35,8 @@ export function SettingsScreen({ route, library, returnLabel = 'Boards', onNavig
     void onSave(patch).catch(() => setFailed(patch)).finally(() => { savingNow.current = false; setSaving(false); });
   };
   const guidance = Platform.OS === 'ios' ? 'Guided Access on iPhone & iPad' : Platform.OS === 'android' ? 'Screen pinning on Android' : 'Browser & full-screen guidance';
+  const navigateAccount = (mode: AccountMode) => onNavigate(isAccountEntryMode(mode) ? { page: 'overview' } : { page: 'account', mode });
+  if (route.page === 'account') return <AccountSettingsPage key={route.mode} account={account} mode={route.mode} onNavigate={navigateAccount} onBack={onBack} />;
   const title = titles[route.page];
   const backLabel = route.page === 'overview' ? returnLabel : 'Settings';
   return <SettingsPage key={route.page} title={title} description={route.page === 'languages' ? 'The languages you use on your boards.' : undefined} backgroundColor={route.page === 'languages' ? theme.surface : undefined} backLabel={backLabel} onBack={onBack} busy={saving} status={saving ? 'Saving…' : undefined}>
@@ -39,6 +45,7 @@ export function SettingsScreen({ route, library, returnLabel = 'Boards', onNavig
       <SettingsGroup title="Preferences">
         <SettingsRow label="Languages" icon={Languages} summary={profile.languages.map(tag => `${languageName(tag)}${tag === profile.defaultLanguage ? ' (default)' : ''}`).join(' · ')} onPress={() => onNavigate({ page: 'languages' })} last />
       </SettingsGroup>
+      <AccountSettingsGroup account={account} onNavigate={navigateAccount} />
       <SettingsGroup title="Help">
         <SettingsRow label="Keep the app on screen" icon={Smartphone} summary={guidance} onPress={() => onNavigate({ page: 'screen-guidance' })} />
         {Platform.OS !== 'web' && <SettingsRow label="App updates" icon={Download} summary="Check for a newer version" onPress={() => onNavigate({ page: 'updates' })} />}

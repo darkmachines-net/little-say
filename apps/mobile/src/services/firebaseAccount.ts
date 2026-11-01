@@ -1,4 +1,4 @@
-/** @file Coordinates registered account sign-in with origin-bound Firebase credentials for automatic backup. */
+/** @file Coordinates registered account sign-in with origin-bound Firebase credentials for automatic backup and Settings account recovery. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
@@ -127,10 +127,10 @@ export async function accountDeletionProof(session: AccountSession, provider: Pr
   finally { if (Platform.OS === 'web') await signOut(context.auth); }
 }
 
-/** Explain provider conflicts without displaying Firebase implementation details in account flows. */
+/** Explain provider conflicts with Settings recovery guidance while keeping Firebase implementation details out of account flows. */
 export function accountError(error: unknown): string {
   const code = (error as { code?: string }).code;
-  if (['auth/account-exists-with-different-credential', 'auth/credential-already-in-use', 'auth/email-already-in-use'].includes(code ?? '')) return 'Sign in with the method already associated with this account, then link the additional method in Account & backup.';
+  if (['auth/account-exists-with-different-credential', 'auth/credential-already-in-use', 'auth/email-already-in-use'].includes(code ?? '')) return 'Sign in with the method already associated with this account, then link the additional method in Settings under Account.';
   if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'].includes(code ?? '')) return 'Check your email and sign-in details, then try again.';
   if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return 'Sign-in was cancelled. Your local boards are unchanged.';
   if (code === 'auth/too-many-requests') return 'Too many attempts. Try again shortly.';

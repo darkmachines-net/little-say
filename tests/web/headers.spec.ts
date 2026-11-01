@@ -1,4 +1,4 @@
-/** @file Verifies illustrated welcome copy and actions, settled responsive headers, accessible touch targets, and separate full-screen play. */
+/** @file Verifies illustrated welcome actions and settled responsive headers, Settings account actions, accessible touch targets, and separate full-screen play. Includes unified Settings navigation. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -10,9 +10,9 @@ async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   const header = page.getByTestId('app-header').last();
   const bar = page.getByTestId('app-header-bar').last();
   await expect(bar).toBeVisible();
-  const account = bar.getByRole('button', { name: 'Account & backup', exact: true });
-  if (await account.count()) {
-    await expect(account).toHaveText('');
+  const settings = bar.getByRole('button', { name: 'Settings', exact: true });
+  if (await settings.count() && !title) {
+    await expect(settings).toHaveText('');
     // React Native applies its Dimensions update after the browser viewport changes.
     await expect.poll(async () => (await bar.boundingBox())?.height).toBe(page.viewportSize()!.width < 600 ? 64 : 76);
   }
@@ -74,9 +74,11 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     expect(await headerGeometry(page, 'Languages', 'Settings')).toEqual(dashboard);
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('button', { name: 'Boards', exact: true }).click();
-    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-    expect(await headerGeometry(page, 'Account & backup', 'Back')).toEqual(dashboard);
-    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Sign-in methods', exact: true }).click();
+    expect(await headerGeometry(page, 'Sign-in methods', 'Settings')).toEqual(dashboard);
+    await page.getByRole('button', { name: 'Settings', exact: true }).click();
+    await page.getByRole('button', { name: 'Boards', exact: true }).click();
     await page.getByRole('button', { name: 'New board', exact: true }).click();
     expect(await headerGeometry(page, 'Create', 'Boards')).toEqual(dashboard);
     await page.screenshot({ path: `artifacts/screenshots/headers/ai-${viewport.width}.png` });
@@ -130,8 +132,8 @@ test('welcome anchors account actions below its artwork while forms and setup ke
   expect(phone.height).toBeLessThan(desktop.height);
   await openSignedInApp(page);
   expect(await headerGeometry(page, 'Set up Little Say')).toEqual(phone);
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  expect(await headerGeometry(page, 'Account & backup', 'Back')).toEqual(phone);
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  expect(await headerGeometry(page, 'Settings', 'Back to setup')).toEqual(phone);
+  await page.getByRole('button', { name: 'Back to setup', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });

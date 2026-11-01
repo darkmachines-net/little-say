@@ -1,4 +1,4 @@
-/** @file Defines account entry and management destinations, logical parents, and legacy Settings redirects. */
+/** @file Defines authentication modes and recognizes account URLs for entry and migration into unified Settings. */
 
 export type AccountEntryMode = 'login' | 'register' | 'reset' | null;
 export type AccountManagementMode = 'backup' | 'sign-in-methods' | 'verify-email' | 'sign-out' | 'delete' | 'link-email' | 'link-google' | 'link-apple';
@@ -21,7 +21,7 @@ export function readAccountRoute(pathname: string): AccountRoute | null {
   return match ? { mode: match[1] as AccountMode || null } : null;
 }
 
-/** Build the canonical account URL used by header actions and browser history. */
+/** Build an authentication or legacy account URL; signed-in navigation uses settingsPath instead. */
 export function accountPath(mode: AccountMode): string {
   return '/app/account' + (mode ? `/${mode}` : '');
 }

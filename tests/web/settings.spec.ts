@@ -1,4 +1,4 @@
-/** @file Exercises Settings, the three-language cap and replacements, About, media migration, offline links, and navigation to the dashboard or illustrated account entry. */
+/** @file Exercises grouped preferences/account Settings without routine sync status, the three-language cap and replacements, About, media migration, offline links, and dashboard/account-entry navigation. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
@@ -32,7 +32,10 @@ test('grouped overview links to focused pages and language defaults persist thro
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/settings$/);
   await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
-  for (const label of ['Languages', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Account', exact: true })).toBeVisible();
+  await expect(page.getByTestId('backup-status')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Backup details', exact: true })).toHaveCount(0);
+  for (const label of ['Languages', 'Sign-in methods', 'Sign out', 'Delete account', 'Keep the app on screen', 'Privacy Policy', 'About']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
   for (const label of ['Voices', 'Pictures', 'Account & backup']) await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
   await expect(page.getByRole('textbox')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Save settings|Enable automatic AI/ })).toHaveCount(0);
@@ -265,8 +268,8 @@ test('settings deep links require sign-in, then remain available offline with th
   await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Account & backup', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Settings', exact: true })).toBeVisible();
 });
 
 test('legacy account links open standalone forms with refresh and browser history', async ({ page }) => {
