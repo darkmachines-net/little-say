@@ -1,16 +1,17 @@
-/** @file Verifies native keyboard layout and input identity, plus Android draft exits, explicit retention, and failed-write recovery. */
+/** @file Verifies native picture-frame status handoff, keyboard/input stability, draft exits, retention, and failed-write recovery. */
 
 import React, { act } from 'react';
 import { create, type ReactTestInstance, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { Board, Settings } from '@little-say/core';
+import type { PictureTileState } from '../services/pictures';
 import { BoardEditor } from './BoardEditor';
 
 const native = vi.hoisted(() => ({
   platform: 'android', width: 390, height: 844, top: 48, visible: false,
   listeners: new Map<string, () => void>(),
 }));
-const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words' }));
+const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words', preview: undefined as Board | undefined, states: {} as Record<string, PictureTileState> }));
 vi.mock('react-native', () => ({
   Platform: { get OS() { return native.platform; } },
   View: 'View', Text: 'Text', TextInput: 'TextInput', ScrollView: 'ScrollView', Pressable: 'Pressable',
@@ -34,14 +35,14 @@ vi.mock('./BoardLanguages', () => ({ BoardLanguages: 'BoardLanguages' }));
 vi.mock('./BoardPictures', () => ({ BoardPictures: 'BoardPictures' }));
 vi.mock('./TileEditor', () => ({ TileEditor: 'TileEditor' }));
 vi.mock('./TileFace', () => ({ TileFace: 'TileFace' }));
-vi.mock('./PictureStatus', () => ({ PictureStatus: 'PictureStatus' }));
 vi.mock('./BoardTransition', () => ({ BoardTransition: 'BoardTransition' }));
 vi.mock('./AppHeader', () => ({ AppHeader: 'AppHeader' }));
 vi.mock('./screenFocus', () => ({ useScreenFocus: () => null }));
 vi.mock('../services/useBoardAssistant', () => ({
+  /** Supply controlled previews and picture states while retaining the real editor/composer layout. */
   useBoardAssistant: ({ board }: { board: Board }) => ({
-    preview: board, prompt: state.prompt, reply: state.reply, history: [], scope: null, busy: null,
-    suggestion: null, error: '', mergeError: '', progress: '', states: {}, translations: [],
+    preview: state.preview ?? board, prompt: state.prompt, reply: state.reply, history: [], scope: null, busy: null,
+    suggestion: null, error: '', mergeError: '', progress: '', states: state.states, translations: [],
     setPrompt: vi.fn(), clear: vi.fn(), stop: vi.fn().mockResolvedValue(true), generate: vi.fn(),
   }),
 }));
@@ -77,12 +78,24 @@ function expectFixedPrompt() {
 beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   Object.assign(native, { width: 390, height: 844, top: 48, visible: false });
-  native.listeners.clear(); state.reply = ''; state.prompt = 'Keep my words';
+  native.listeners.clear(); state.reply = ''; state.prompt = 'Keep my words'; state.preview = undefined; state.states = {};
   vi.clearAllMocks(); vi.mocked(props.onSaveDraft).mockResolvedValue(undefined); vi.mocked(props.onDiscardDraft).mockResolvedValue(undefined);
 });
 afterEach(async () => {
   await act(async () => { screen.unmount(); });
   expect(native.listeners.size).toBe(0); vi.unstubAllGlobals();
+});
+
+it('reserves picture space only for new pending cards and reveals usable fallbacks when work stops', async () => {
+  state.preview = { ...board, tiles: [...board.tiles, { ...board.tiles[0], id: 'new-card', label: 'Sheep' }] };
+  state.states = { cow: 'generating', 'new-card': 'loading' };
+  await act(async () => { screen = create(React.createElement(BoardEditor, props)); });
+  const faces = () => screen.root.findAllByType('TileFace' as never);
+  expect(faces().map(face => [face.props.tile.label, face.props.picturePending])).toEqual([['Cow', false], ['Sheep', true]]);
+  expect(faces().map(face => face.props.pictureState)).toEqual(['generating', 'loading']);
+  state.states = {};
+  await act(async () => { screen.update(React.createElement(BoardEditor, props)); });
+  expect(faces().map(face => face.props.picturePending)).toEqual([false, false]);
 });
 
 it.each(['android', 'ios'])('keeps the same %s input across overlay, resize, rotation, replies, and repeated keyboard openings', async platform => {

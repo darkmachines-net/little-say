@@ -1,4 +1,4 @@
-/** @file Verifies saved picture turns, stopped results, fallback, and offline images with device voices isolating picture work. */
+/** @file Verifies live AI stages, centered placeholders and faded replacements, independent picture downloads, saved turns, and offline fallbacks. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardPictures } from './boardEditor';
@@ -40,6 +40,85 @@ async function mockPictures(page: Page, pending = false) {
   return { jobs, cancelled, images, ready };
 }
 test.beforeEach(async ({ page }) => { await openExistingLibrary(page, { voiceSources: { 'en-US': 'device', 'ru-RU': 'device' } }); });
+
+test('shows queue and word progress, then fills cards independently before saving one Undo step', async ({ page }) => {
+  const { images } = await mockPictures(page);
+  const proposal = draft(); proposal.proposal.tiles = proposal.proposal.tiles.slice(0, 2);
+  let id = '', phase = 'queued', picturesReady = false;
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const batch = () => ({ id, state: picturesReady ? 'complete' : 'working', tiles: proposal.proposal.tiles.map((_tile, index) => ({ index, state: picturesReady ? 'ready' : 'generating', ...(picturesReady ? { result: { kind: 'generated', assetId: images[index].id, style: 'color', description: labels[index], model: 'mock' } } : {}) })) });
+  await page.route('**/api/boards/propose', route => {
+    id = route.request().postDataJSON().preparationId;
+    return route.fulfill({ status: 202, json: { id, kind: 'proposal', state: 'queued', result: null } });
+  });
+  await page.route('**/api/ai/jobs/*', route => route.fulfill({ json: { id, kind: 'proposal', state: phase === 'queued' ? 'queued' : 'working', result: phase === 'words' ? { ...proposal, preparation: batch() } : null } }));
+  await page.route('**/api/pictures/batches/*', route => route.fulfill({ json: batch() }));
+  await page.route(`**/api/pictures/assets/${images[1].id}.png`, async route => { await gate; await route.fulfill({ body: images[1].bytes, contentType: 'image/png' }); });
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Two construction vehicles');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  const status = page.getByTestId('ai-working'), canvas = page.getByTestId('editor-preview');
+  await expect(status).toContainText('Waiting for AI to start');
+  phase = 'working'; await expect(status).toContainText('Choosing words and translations');
+  phase = 'words'; await expect(canvas.getByRole('button')).toHaveCount(2);
+  await expect(canvas).toContainText('Dump truck'); await expect(canvas).toContainText('Concrete truck');
+  await expect(canvas.getByTestId('tile-picture').first()).toContainText('Generating illustration');
+  await expect(canvas.getByTestId('tile-picture-artwork')).toHaveCount(0);
+  const frame = (await canvas.getByTestId('tile-picture').first().boundingBox())!;
+  const indicator = (await canvas.getByTestId('picture-work-status').first().boundingBox())!;
+  expect(Math.abs(indicator.y + indicator.height / 2 - frame.y - frame.height / 2)).toBeLessThan(1);
+  await expect(status).toContainText('Creating pictures · 0 of 2 ready');
+  picturesReady = true;
+  await expect(canvas.getByTestId('card-picture')).toHaveCount(1);
+  await expect(status).toContainText('Loading pictures · 1 of 2 ready');
+  await mkdir('artifacts/turn-progress', { recursive: true });
+  await page.screenshot({ path: 'artifacts/turn-progress/partial-board.png' });
+  release(); await waitForAiTurn(page);
+  await expect(canvas.getByTestId('card-picture')).toHaveCount(2);
+  await expect(canvas.getByTestId('picture-work-status')).toHaveCount(0);
+  expect((await library(page)).boards.at(-1).tiles.every((tile: any) => tile.illustration.kind === 'generated')).toBe(true);
+  await page.getByRole('button', { name: 'Undo last board change' }).click();
+  await expect(canvas.getByRole('button')).toHaveCount(0);
+});
+
+test('fades an existing picture behind a centered replacement overlay and restores it when stopped', async ({ page }) => {
+  const { images } = await mockPictures(page);
+  let id = '';
+  const pending = () => ({ id, state: 'working', tiles: [{ index: 0, state: 'generating' }, { index: 1, state: 'ready' }] });
+  await page.route('**/api/boards/propose', route => {
+    const input = route.request().postDataJSON(); id = input.preparationId;
+    const value = draft(); value.proposal.tiles = value.proposal.tiles.slice(0, 2);
+    if (input.board) {
+      value.boardId = input.board.id; value.baseRevision = input.board.revision;
+      value.proposal.tiles = value.proposal.tiles.map((tile, index) => ({ ...tile, existingId: input.board.tiles[index].id, replacePicture: index === 0 }));
+    }
+    return route.fulfill({ json: { ...value, preparation: input.board ? pending() : { id, state: 'complete', tiles: value.proposal.tiles.map((_tile, index) => ({ index, state: 'ready', result: { kind: 'generated', assetId: images[index].id, style: 'color', description: labels[index], model: 'mock' } })) } } });
+  });
+  await page.route('**/api/pictures/batches/*', route => route.fulfill({ json: pending() }));
+  await page.route('**/api/pictures/batches/*/cancel', route => route.fulfill({ json: { ...pending(), state: 'cancelled' } }));
+  await page.getByRole('button', { name: 'New board', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Two construction vehicles');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await waitForAiTurn(page);
+  const canvas = page.getByTestId('editor-preview');
+  await expect(canvas.getByTestId('card-picture')).toHaveCount(2);
+  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Improve the dump truck picture');
+  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  const tile = canvas.getByRole('button', { name: /^Edit tile Dump truck/ });
+  await expect(tile.getByTestId('picture-work-status')).toHaveText('Replacing picture');
+  await expect(tile.getByTestId('tile-picture-artwork')).toHaveCSS('opacity', '0.25');
+  await expect(canvas.getByRole('button', { name: /^Edit tile Concrete truck/ }).getByTestId('tile-picture-artwork')).toHaveCSS('opacity', '1');
+  await expect(tile.getByTestId('card-picture')).toBeVisible();
+  const frame = (await tile.getByTestId('tile-picture').boundingBox())!;
+  const overlay = (await tile.getByTestId('picture-work-status').boundingBox())!;
+  expect(Math.abs(overlay.y + overlay.height / 2 - frame.y - frame.height / 2)).toBeLessThan(1);
+  await page.getByRole('button', { name: 'Stop request', exact: true }).click();
+  await waitForAiTurn(page);
+  await expect(tile.getByTestId('picture-work-status')).toHaveCount(0);
+  await expect(tile.getByTestId('tile-picture-artwork')).toHaveCSS('opacity', '1');
+  expect((await library(page)).boards.at(-1).tiles[0].illustration.assetId).toBe(images[0].id);
+});
 
 test('a complete emoji board is ready to save without suggesting AI illustrations', async ({ page }) => {
   const { jobs } = await mockPictures(page);
@@ -270,7 +349,7 @@ test('full-page canvas streams finished pictures, distinguishes active and queue
   expect(reducedFrames).toEqual(['0.45']);
   ready.add(labels[1]);
   await expect(page.getByTestId('editor-preview').getByTestId('card-picture')).toHaveCount(1);
-  await expect(page.getByRole('button', { name: 'Edit tile Concrete truck, suggested change', exact: true })).toContainText('Ready');
+  await expect(page.getByRole('button', { name: 'Edit tile Concrete truck, suggested change', exact: true }).getByTestId('picture-work-status')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Edit tile Dump truck, suggested change', exact: true })).toContainText('Improving picture');
   await expect.poll(() => jobs.length).toBe(3);
   expect((await library(page)).boards.some((board: any) => board.title === 'Construction vehicles')).toBe(false);

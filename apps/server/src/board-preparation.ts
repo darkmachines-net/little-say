@@ -1,4 +1,4 @@
-/** @file Prepares drafts with immediate reusable pictures and durable cancellable batches, isolating shared generic content from request data. */
+/** @file Publishes validated words before picture resolution and prepares durable cancellable batches with isolated generic reuse. */
 
 import { createHash } from 'node:crypto';
 import { cacheStore, type CacheStore } from './hosting/storage';
@@ -66,8 +66,9 @@ export class BoardPreparation {
    * Trusted pictures resolve immediately without visual review. Pending work returns in one aggregate
    * batch. A previous preparation may retain private draft pictures only while source revision, meaning
    * and presentation match; retention does not admit them to shared reuse.
+   * onDraft publishes a detached word preview with a persisted, pollable batch before picture lookup.
    */
-  async propose(request: ProposalRequest): Promise<BoardProposal> {
+  async propose(request: ProposalRequest, onDraft?: (draft: BoardProposal) => Promise<void>): Promise<BoardProposal> {
     await this.ready;
     if (!request.preparationId || this.closed) throw new Error('Preparation unavailable.');
     const id = request.preparationId;
@@ -78,11 +79,11 @@ export class BoardPreparation {
       if (previous.fingerprint !== hash(request) || !previous.envelope || previous.batch.state === 'cancelled') throw new Error('Preparation request is already used or cancelled.');
       return structuredClone({ ...previous.envelope, preparation: previous.batch });
     }
-    const work = this.start(request);
+    const work = this.start(request, onDraft);
     this.pending.set(id, work);
     try { return await work; } finally { this.pending.delete(id); }
   }
-  private async start(request: ProposalRequest): Promise<BoardProposal> {
+  private async start(request: ProposalRequest, onDraft?: (draft: BoardProposal) => Promise<void>): Promise<BoardProposal> {
     const id = request.preparationId!;
     const controller = new AbortController(); this.active.set(id, controller);
     const record: Record = { fingerprint: hash(request), batch: { id, state: 'working', tiles: [] } };
@@ -107,6 +108,16 @@ export class BoardPreparation {
       record.envelope = envelope;
       if (proposal.needsClarification) { record.batch.state = 'complete'; await this.persist(record); this.active.delete(id); return { ...envelope, preparation: structuredClone(record.batch) }; }
       if (proposal.tiles.some(tile => !tile.pictureConcept)) throw new Error('Missing picture concepts.');
+      stage = 'speech';
+      envelope.speech = await this.speech?.lookup(proposal.tiles.flatMap(tile => [{ text: tile.speech, language: tile.language }, ...(tile.translations ?? []).map(value => ({ text: value.speech, language: value.language }))])).catch(() => []);
+      controller.signal.throwIfAborted();
+      record.batch.tiles = proposal.tiles.map((tile, index) => ({ index, state: (tile.existingId && !tile.replacePicture) || (tile.pictureOptions?.mode ?? proposal.picturePolicy?.mode) === 'emoji' ? 'ready' : 'finding' }));
+      if (onDraft) {
+        stage = 'publish';
+        await this.persist(record);
+        await onDraft(structuredClone({ ...envelope, preparation: record.batch }));
+        controller.signal.throwIfAborted();
+      }
       stage = 'pictures';
       const pending: PendingTile[] = [];
       const prior = request.previousPreparationId && request.conversation?.draft ? this.records.get(request.previousPreparationId) : undefined;
@@ -118,32 +129,31 @@ export class BoardPreparation {
         const mode = tile.pictureOptions?.mode ?? proposal.picturePolicy?.mode ?? defaultPicturePolicy.mode;
         const style = tile.pictureOptions?.style ?? proposal.picturePolicy?.style ?? defaultPicturePolicy.style;
         const regenerate = Boolean(tile.replacePicture && mode === 'generated');
-        const state: PictureBatch['tiles'][number] = { index, state: 'ready' };
-        record.batch.tiles.push(state);
-        if (tile.existingId && !tile.replacePicture) return;
-        if (mode === 'emoji') return;
+        const state = record.batch.tiles[index];
+        if (tile.existingId && !tile.replacePicture) { state.state = 'ready'; return; }
+        if (mode === 'emoji') { state.state = 'ready'; return; }
         if (sameSource && prior?.envelope && !tile.replacePicture && JSON.stringify(proposal.picturePolicy) === JSON.stringify(prior.envelope.proposal.picturePolicy)) {
           const previous = prior.envelope.proposal.tiles.findIndex(value => signature(value) === signature(tile));
           const retained = prior.batch.tiles.find(value => value.index === previous && value.state === 'ready')?.result;
-          if (retained && retained.kind !== 'unresolved' && (mode !== 'library' || retained.kind === 'library') && (mode !== 'generated' || retained.kind === 'generated') && await this.pictures.read(retained.assetId)) { state.result = retained; return; }
+          if (retained && retained.kind !== 'unresolved' && (mode !== 'library' || retained.kind === 'library') && (mode !== 'generated' || retained.kind === 'generated') && await this.pictures.read(retained.assetId)) { state.result = retained; state.state = 'ready'; return; }
         }
         const instruction = tile.pictureOptions?.instruction ?? '';
         const known = genericConcept(concept, instruction);
         const cached = known && !regenerate && (template?.pictures.find(value => value.index === index)?.picture ?? await this.content.picture(known, style));
         if (cached && cached.kind !== 'unresolved' && cached.style === style && (mode !== 'library' || cached.kind === 'library') && (mode !== 'generated' || cached.kind === 'generated') && await this.pictures.read(cached.assetId)) {
-          state.result = cached; this.metric?.({ operation: 'picture-cache-hit', count: 1 }); return;
+          state.result = cached; state.state = 'ready'; this.metric?.({ operation: 'picture-cache-hit', count: 1 }); return;
         }
         if (known?.source && mode !== 'generated' && style === 'color') {
           // Bundled assets never wait on an external catalog download in the proposal path.
           const seeded = await this.pictures.seed(known.source);
-          if (seeded) { state.result = seeded; await this.content.rememberPicture(known, seeded); this.metric?.({ operation: 'seed-hit', count: 1 }); return; }
+          if (seeded) { state.result = seeded; state.state = 'ready'; await this.content.rememberPicture(known, seeded); this.metric?.({ operation: 'seed-hit', count: 1 }); return; }
         }
         if (known && mode !== 'library' && !regenerate) {
           const seeded = await this.pictures.generatedSeed(known.id, style);
-          if (seeded) { state.result = seeded; await this.content.rememberPicture(known, seeded); this.metric?.({ operation: 'seed-hit', count: 1 }); return; }
+          if (seeded) { state.result = seeded; state.state = 'ready'; await this.content.rememberPicture(known, seeded); this.metric?.({ operation: 'seed-hit', count: 1 }); return; }
         }
         const emojiAccurate = concept.emojiAccurate && !instruction && !proposal.tiles.some(other => other !== tile && other.emoji === tile.emoji && other.pictureConcept?.description !== concept.description);
-        if (mode === 'auto' && emojiAccurate) return;
+        if (mode === 'auto' && emojiAccurate) { state.state = 'ready'; return; }
         const requiredConcept = instruction ? { ...concept, features: [...concept.features, `Picture requirement: ${instruction}`] } : concept;
         state.state = 'queued'; pending.push({ index, concept: requiredConcept, mode, style, instruction, regenerate });
       }));
@@ -158,8 +168,6 @@ export class BoardPreparation {
       }
       record.batch.tiles.sort((a, b) => a.index - b.index);
       envelope.pictures = record.batch.tiles.flatMap(tile => tile.result && tile.result.kind !== 'unresolved' ? [{ index: tile.index, illustration: tile.result, concept: proposal.tiles[tile.index].pictureConcept }] : []);
-      stage = 'speech';
-      envelope.speech = await this.speech?.lookup(proposal.tiles.flatMap(tile => [{ text: tile.speech, language: tile.language }, ...(tile.translations ?? []).map(value => ({ text: value.speech, language: value.language }))])).catch(() => []);
       envelope.timing = { draftMs, resolveMs: Date.now() - resolveStart, templateHit: Boolean(template) };
       if (!pending.length) record.batch.state = 'complete';
       stage = 'persist';

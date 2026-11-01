@@ -1,4 +1,4 @@
-/** @file Wires shared services for local polling and cloud delivery without process-local durability. */
+/** @file Wires durable local/cloud workers and publishes validated board words before picture preparation finishes. */
 import { resolve } from 'node:path';
 import { type Pool } from 'pg';
 import { type ProposalRequest, type TranslationRequest, type PictureAnalysisRequest, type PictureJobRequest, type SpeechInput, validateGeneratedBoard, validateTranslations } from '@little-say/core';
@@ -44,7 +44,7 @@ export function apiCaches(runtime: Pick<Runtime, 'pool' | 'objects' | 'env'>) {
     speechCache: new SpeechCache(new DatabaseCache(runtime.pool, runtime.objects, 'speech'), speechProfile(runtime.env), null) };
 }
 
-/** Execute an already-claimed operation, retaining the request until partial picture work completes. */
+/** Execute a claimed operation, publishing pollable word previews while retaining the claim through picture completion. */
 export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jobs' | 'env'>, job: Job, signal: AbortSignal) {
   const { pool, objects, jobs, env } = runtime;
   const fixture = env.AAC_AI_FIXTURES === 'true' ? fixtureProviders() : undefined;
@@ -61,7 +61,7 @@ export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jo
         if (!provider) throw new Error('AI unavailable.');
         const input = { ...job.input as ProposalRequest, preparationId: job.id };
         if (!preparation) return { boardId: input.board?.id ?? null, baseRevision: input.board?.revision ?? null, proposal: validateGeneratedBoard(await provider.propose(input), input.board) };
-        const result = await preparation.propose(input); signal.throwIfAborted();
+        const result = await preparation.propose(input, async draft => { signal.throwIfAborted(); await jobs.progress(job, draft); }); signal.throwIfAborted();
         await jobs.progress(job, result); await preparation.drain(job.id, signal);
         return { ...result, preparation: await preparation.status(job.id) };
       }

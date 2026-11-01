@@ -1,4 +1,4 @@
-/** @file Verifies request routing, capability negotiation, and cancellation with isolated session headers. */
+/** @file Verifies request routing, observed AI queue/draft progress, capability negotiation, and cancellation. */
 import { afterEach, expect, it, vi } from 'vitest';
 
 vi.mock('react-native', () => ({ Platform: { OS: 'web' } }));
@@ -6,7 +6,28 @@ vi.mock('expo-constants', () => ({ default: { expoConfig: {} } }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => '10000000-0000-4000-8000-000000000001' }));
 vi.mock('./accountSession', () => ({ loadAccountSession: async () => null }));
 vi.mock('./requestAuth', () => ({ applicationHeaders: async () => ({}) }));
-afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.resetModules(); });
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.resetModules(); });
+
+it('reports queue and drafting states until a usable partial board is available', async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal('__DEV__', false); vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const envelope = { boardId: null, baseRevision: null, proposal: { title: '', explanation: 'Which animals?', needsClarification: true, tiles: [] } };
+  const job = { id: '10000000-0000-4000-8000-000000000001', kind: 'proposal', state: 'queued', result: null };
+  const response = (data: unknown, status = 200) => ({ ok: true, status, json: async () => data });
+  const fetch = vi.fn().mockResolvedValueOnce(response(job, 202))
+    .mockResolvedValueOnce(response({ ...job, state: 'working' }))
+    .mockResolvedValueOnce(response({ ...job, state: 'working', result: envelope }));
+  vi.stubGlobal('fetch', fetch);
+  const { proposeBoard } = await import('./api'); const progress = vi.fn();
+  const work = proposeBoard('https://app.example', { prompt: 'Animals', board: null }, undefined, progress);
+  await vi.advanceTimersByTimeAsync(0);
+  expect(progress).toHaveBeenLastCalledWith('Waiting for AI to start…');
+  await vi.advanceTimersByTimeAsync(500);
+  expect(progress).toHaveBeenLastCalledWith('Choosing words and translations…');
+  await vi.advanceTimersByTimeAsync(500);
+  expect(await work).toEqual(envelope);
+  expect(fetch).toHaveBeenCalledTimes(3);
+});
 
 it('pins account credentials to the consented server while ordinary requests follow the development backend', async () => {
   vi.stubGlobal('__DEV__', true);

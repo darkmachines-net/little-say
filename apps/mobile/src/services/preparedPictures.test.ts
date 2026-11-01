@@ -1,4 +1,4 @@
-/** @file Verifies verified-before-save publication, aggregate polling, source enforcement, and cancellation of prepared board pictures. */
+/** @file Verifies early word previews, independent verified picture publication, honest readiness, source enforcement, and cancellation. */
 
 import { beforeEach, expect, it, vi } from 'vitest';
 import { type BoardProposal, defaultPicturePolicy } from '@little-say/core';
@@ -13,15 +13,58 @@ const picture = { kind: 'generated' as const, assetId: 'a'.repeat(64), style: 'c
 const envelope = (): BoardProposal => ({ boardId: null, baseRevision: null, proposal: { title: 'Animals', explanation: 'Here are animals.', needsClarification: false, picturePolicy: defaultPicturePolicy, tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', color: 'sage', emoji: '🐄', pictureConcept: { description: 'cow', features: [], searchTerms: ['cow'], emojiAccurate: true } }] }, preparation: { id, state: 'complete', tiles: [{ index: 0, state: 'ready', result: picture }] } });
 beforeEach(() => { vi.clearAllMocks(); mocks.save.mockResolvedValue(undefined); mocks.fetch.mockResolvedValue({}); });
 
-it('only publishes a saveable asset after its bytes have been verified locally', async () => {
+it('publishes usable words immediately and only installs assets after their bytes are verified locally', async () => {
   let release!: () => void; mocks.save.mockImplementation(() => new Promise<void>(resolve => { release = resolve; }));
-  const preview = vi.fn(), available = vi.fn();
-  const work = prepareServerPictures(undefined, envelope(), starterLibrary().settings, { preview, available });
+  const preview = vi.fn(), available = vi.fn(), progress = vi.fn(), tileProgress = vi.fn();
+  const work = prepareServerPictures(undefined, envelope(), starterLibrary().settings, { preview, available, progress, tileProgress });
   await vi.waitFor(() => expect(mocks.save).toHaveBeenCalled());
-  expect(preview).not.toHaveBeenCalled(); expect(available).not.toHaveBeenCalled();
+  expect(preview).toHaveBeenCalledOnce(); expect(available).toHaveBeenCalledOnce();
+  expect(preview.mock.calls[0][0].tiles[0]).toMatchObject({ label: 'Cow', illustration: { kind: 'emoji' } });
+  expect(progress).toHaveBeenLastCalledWith('Loading pictures · 0 of 1 ready');
+  expect(tileProgress).toHaveBeenLastCalledWith('draft-1', 'loading');
   release(); const result = await work;
   expect(available).toHaveBeenCalledOnce(); expect(result.proposal.pictures![0].illustration).toEqual(picture);
+  expect(progress).toHaveBeenLastCalledWith('Pictures prepared · 1 of 1 ready');
   expect(mocks.fetch).not.toHaveBeenCalled();
+});
+
+it('fills each downloaded picture without waiting for a slower card and keeps tile identities stable', async () => {
+  const input = envelope();
+  input.proposal.tiles.push({ ...input.proposal.tiles[0], label: 'Sheep' });
+  const sheep = { ...picture, assetId: 'b'.repeat(64) };
+  input.preparation!.tiles.push({ index: 1, state: 'ready', result: sheep });
+  const releases = new Map<string, () => void>();
+  mocks.save.mockImplementation((id: string) => new Promise<void>(resolve => { releases.set(id, resolve); }));
+  const preview = vi.fn(), progress = vi.fn();
+  const work = prepareServerPictures(undefined, input, starterLibrary().settings, { preview, progress });
+  await vi.waitFor(() => expect(releases.size).toBe(2));
+  const ids = preview.mock.calls[0][0].tiles.map((tile: { id: string }) => tile.id);
+  releases.get(sheep.assetId)!();
+  await vi.waitFor(() => expect(progress).toHaveBeenLastCalledWith('Loading pictures · 1 of 2 ready'));
+  expect(preview.mock.lastCall![0].tiles.map((tile: { illustration: { kind: string } }) => tile.illustration.kind)).toEqual(['emoji', 'generated']);
+  expect(preview.mock.lastCall![0].tiles.map((tile: { id: string }) => tile.id)).toEqual(ids);
+  releases.get(picture.assetId)!(); await work;
+});
+
+it('keeps the initial words and ignores a late download after cancellation', async () => {
+  let release!: () => void;
+  mocks.save.mockImplementation(() => new Promise<void>(resolve => { release = resolve; }));
+  const controller = new AbortController(), preview = vi.fn();
+  const work = prepareServerPictures(undefined, envelope(), starterLibrary().settings, { signal: controller.signal, preview });
+  const assertion = expect(work).rejects.toThrow('stopped');
+  await vi.waitFor(() => expect(mocks.save).toHaveBeenCalled());
+  controller.abort(); release(); await assertion;
+  expect(preview).toHaveBeenCalledOnce();
+  expect(preview.mock.calls[0][0].tiles[0].illustration.kind).toBe('emoji');
+});
+
+it('reports failed downloads as kept fallbacks rather than ready pictures', async () => {
+  mocks.save.mockRejectedValue(new Error('Offline'));
+  const progress = vi.fn();
+  const result = await prepareServerPictures(undefined, envelope(), starterLibrary().settings, { progress });
+  expect(progress).toHaveBeenLastCalledWith('Pictures prepared · 0 of 1 ready · 1 kept');
+  expect(result.proposal.pictures![0].illustration.kind).toBe('emoji');
+  expect(result.issues).toHaveLength(1);
 });
 
 it('keeps the last visible preview stable and cancels its batch when saved during generation', async () => {
