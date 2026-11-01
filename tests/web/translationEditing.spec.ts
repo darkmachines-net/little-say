@@ -1,4 +1,4 @@
-/** @file Verifies signed-in account navigation, a primary-language canvas, per-card drafts, shared language choices, background translations, and protected corrections. */
+/** @file Verifies account-header return navigation, a primary-language canvas, per-card drafts, shared language choices, background translations, and protected corrections. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
@@ -86,7 +86,7 @@ test('account navigation preserves corrected translations and the signed-in libr
   const corrected = await savedBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Continue to boards', exact: true }).click();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page.reload();
   if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await openRussianTile(page);
