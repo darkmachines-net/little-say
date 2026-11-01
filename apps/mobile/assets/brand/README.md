@@ -6,7 +6,7 @@ The identity conveys a welcoming challenge and room to grow without a slogan or 
 
 ## Files and usage
 
-- `mountain-source.png`: selected transparent master generated with the built-in image generation tool, October 3, 2026.
+- `mountain-source.png`: selected transparent master generated with the built-in image generation tool, October 3, 2026. `MountainMark` uses it above 128 logical units for crisp hero artwork.
 - `mountain.png`, `mountain@2x.png`, `mountain@3x.png`: native/web UI sizes, loaded by `src/ui/Brand.tsx`.
 - `app-icon.png`: 1024-square opaque icon; operating systems apply their own corner masks.
 - `adaptive-foreground.png`: transparent padded Android foreground.

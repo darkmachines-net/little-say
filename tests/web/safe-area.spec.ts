@@ -1,4 +1,4 @@
-/** @file Verifies editor typing, required account entry, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
+/** @file Verifies editor typing, illustrated account entry, Settings, dialogs, and play controls stay inside changing system-bar/cutout insets. */
 
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -31,7 +31,7 @@ test('account and setup navigation stay within system bars', async ({ page, cont
   });
   await page.goto('/app');
   await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
-  const login = page.getByRole('button', { name: 'Sign in', exact: true });
+  const login = page.getByRole('button', { name: 'Log in', exact: true });
   await login.scrollIntoViewIfNeeded();
   await expectInsideSafeArea(login, page, bars);
   await mkdir('artifacts/screenshots/accounts', { recursive: true });

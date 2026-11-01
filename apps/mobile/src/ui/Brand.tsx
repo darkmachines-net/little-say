@@ -1,12 +1,13 @@
-/** @file Shares the Little Say mountain mark and wordmark in compact, standard, and stacked layouts. */
+/** @file Shares the Little Say mountain mark and wordmark, selecting the full-resolution artwork for large hero displays. */
 
 import { Image, Text, View } from 'react-native';
 import { theme } from './theme';
 
 // Decorative and never a touch target; the adjacent name/content supplies context.
-/** Render the bundled mountain artwork at the requested logical size. */
+/** Render decorative mountain art at the requested logical size, using the master above 128 units to keep large displays sharp. */
 export function MountainMark({ size = 56 }: { size?: number }) {
-  return <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" pointerEvents="none" style={{ width: size, height: size, flexShrink: 0 }}><Image source={require('../../assets/brand/mountain.png')} accessible={false} resizeMode="contain" style={{ width: size, height: size }} /></View>;
+  const source = size > 128 ? require('../../assets/brand/mountain-source.png') : require('../../assets/brand/mountain.png');
+  return <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" pointerEvents="none" style={{ width: size, height: size, flexShrink: 0 }}><Image source={source} accessible={false} resizeMode="contain" style={{ width: size, height: size }} /></View>;
 }
 
 /** Arrange the decorative mark and app name; compact reduces horizontal branding while stacked takes precedence. */

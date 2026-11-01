@@ -1,4 +1,4 @@
-/** @file Verifies status-first account pages, credential isolation, required entry, and dismissible account navigation during restoration. */
+/** @file Verifies illustrated required entry, device providers, credential isolation, and dismissible status-first account navigation during restoration. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -8,11 +8,11 @@ import type { AccountMode } from '../services/accountRoute';
 import { AccountScreen } from './AccountScreen';
 
 const native = vi.hoisted(() => ({ OS: 'android' }));
-vi.mock('react-native', () => ({ Platform: native, Modal: 'Modal', ScrollView: 'ScrollView', View: 'View', Text: 'Text', Pressable: 'Pressable', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
+vi.mock('react-native', () => ({ Platform: native, Modal: 'Modal', ScrollView: 'ScrollView', View: 'View', Text: 'Text', Pressable: 'Pressable', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390, height: 844 }), StyleSheet: { create: (value: unknown) => value } }));
 vi.mock('lucide-react-native', () => Object.fromEntries(['ArrowLeft', 'ChevronRight', 'CloudCheck', 'CloudOff', 'CloudAlert', 'CloudDownload', 'RefreshCw', 'Mail', 'CircleAlert', 'Clock3', 'UserRound', 'KeyRound', 'LogOut', 'LayoutGrid', 'Image', 'Volume2'].map(name => [name, name])));
 vi.mock('./screenFocus', () => ({ useScreenFocus: () => null }));
-vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView' }));
-vi.mock('./Brand', () => ({ Brand: 'Brand' }));
+vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', useSafeAreaInsets: () => ({ top: 48, bottom: 34, left: 0, right: 0 }) }));
+vi.mock('./Brand', () => ({ Brand: 'Brand', MountainMark: 'MountainMark' }));
 vi.mock('./components', () => ({ Button: 'Button', Field: 'Field', Notice: 'Notice' }));
 
 let screen: ReactTestRenderer | undefined;
@@ -33,7 +33,9 @@ it.each(['ios', 'android'])('requires sign-in on %s and offers the device provid
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
-  expect(button('Sign in')).toBeDefined(); expect(button('Register')).toBeDefined();
+  expect(button('Log in')).toBeDefined(); expect(button('Register')).toBeDefined();
+  expect(screen!.root.findAllByProps({ testID: 'app-header' })).toHaveLength(0);
+  expect(screen!.root.findByProps({ accessibilityLabel: 'Little Say: Learn to Talk!' }).props.accessibilityRole).toBe('header');
   const provider = platform === 'ios' ? 'Apple' : 'Google';
   expect(button(`Continue with ${provider}`)).toBeDefined();
   expect(button(`Continue with ${platform === 'ios' ? 'Google' : 'Apple'}`)).toBeUndefined();
