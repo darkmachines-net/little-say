@@ -1,4 +1,4 @@
-/** @file Verifies Home sync progress, first-restore retry, empty-state timing, and access to cached boards during sync. */
+/** @file Verifies first-restore loading replaces empty Home controls, retry stays available, and cached boards remain usable during sync. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -29,11 +29,12 @@ it('shows progress before the first request starts and avoids an empty library o
   expect(nodes('ActivityIndicator')).toHaveLength(1);
   expect(nodes('Text').map(node => node.props.children)).toContain('Syncing your content…');
   expect(nodes('Text').map(node => node.props.children)).not.toContain('No boards yet');
-  expect(nodes('Button').find(node => node.props.children === 'New board')!.props.disabled).toBe(true);
+  expect(nodes('Button').find(node => node.props.children === 'New board')).toBeUndefined();
+  expect(nodes('Text').map(node => node.props.children)).not.toContain('Your soundboards');
   await render(false);
   expect(nodes('ActivityIndicator')).toHaveLength(0);
   expect(nodes('Text').map(node => node.props.children)).toContain('No boards yet');
-  expect(nodes('Button').find(node => node.props.children === 'New board')!.props.disabled).toBe(false);
+  expect(nodes('Button').find(node => node.props.children === 'New board')).toBeDefined();
 });
 
 it('offers first-restore retry on Home and replaces failure with progress on retry', async () => {
@@ -52,7 +53,7 @@ it('keeps cached boards and creation usable during background sync, then removes
   expect(nodes('ActivityIndicator')).toHaveLength(1);
   await act(async () => nodes('BoardCard')[0].props.onPlay()); expect(onPlay).toHaveBeenCalledOnce();
   const createButton = nodes('Button').find(node => node.props.children === 'New board')!;
-  expect(createButton.props.disabled).toBe(false);
+  expect(createButton.props.disabled).toBeFalsy();
   await act(async () => createButton.props.onPress()); expect(onCompose).toHaveBeenCalledOnce();
   await render(false, false, '', false);
   expect(nodes('ActivityIndicator')).toHaveLength(0); expect(nodes('BoardCard').length).toBeGreaterThan(0);

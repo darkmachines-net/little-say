@@ -1,4 +1,4 @@
-/** @file Exercises immediate Home entry with sync progress/retry, verified-account backup, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Exercises immediate Home entry with centered first-sync loading/retry, verified backup, media restoration, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -195,7 +195,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
   } finally { await second.close(); }
 });
 
-test('sign-in opens Home during a slow first sync and can retry restoration there before setup', async ({ page }) => {
+test('sign-in centers first-sync loading on empty Home and can retry restoration there before setup', async ({ page }) => {
   const credentials = await createTestAccount();
   let release!: () => void;
   const responseReady = new Promise<void>(resolve => { release = resolve; });
@@ -203,14 +203,25 @@ test('sign-in opens Home during a slow first sync and can retry restoration ther
   try {
     await page.goto('/app/settings/privacy'); await signIn(page, credentials.email);
     await expect(page).toHaveURL(/\/app$/);
-    await expect(page.getByRole('heading', { name: 'Your soundboards', exact: true })).toBeVisible();
-    await expect(page.getByText('Syncing your content…', { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Syncing your content…', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your soundboards', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'New board', exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Account & backup', exact: true })).toHaveCount(0);
     await expect(page.getByText('No boards yet', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
+    for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await expect.poll(async () => {
+        const status = (await page.getByTestId('initial-sync-state').boundingBox())!;
+        const header = (await page.getByTestId('app-header-bar').boundingBox())!;
+        const contentTop = header.y + header.height;
+        return Math.max(Math.abs(status.x + status.width / 2 - viewport.width / 2), Math.abs(status.y + status.height / 2 - (contentTop + viewport.height) / 2));
+      }).toBeLessThan(4);
+      expect((await page.getByLabel('Syncing content', { exact: true }).boundingBox())!.height).toBeGreaterThanOrEqual(50);
+    }
   } finally { release(); }
   await expect(page.getByText('Your content couldn’t sync. Restore temporarily unavailable.', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Your soundboards', exact: true })).toBeVisible();
+  await expect(page.getByTestId('initial-sync-state').getByRole('button', { name: 'Retry sync', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
   await page.unroute('**/api/account/backup');
   await page.getByRole('button', { name: 'Retry sync', exact: true }).click();
