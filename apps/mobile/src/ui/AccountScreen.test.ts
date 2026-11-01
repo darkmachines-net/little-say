@@ -1,4 +1,4 @@
-/** @file Verifies status-first account pages, credential isolation, provider confirmation, and required entry/restoration navigation. */
+/** @file Verifies status-first account pages, credential isolation, required entry, and dismissible account navigation during restoration. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -60,12 +60,13 @@ it('requires web sign-in and cannot dismiss welcome', async () => {
   expect(close).not.toHaveBeenCalled();
 });
 
-it('waits for cloud restoration before allowing an empty device into boards and offers retry', async () => {
+it('allows returning Home from account settings while cloud restoration is running', async () => {
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
   const retrySync = vi.fn();
-  await mount(null, { ...account, session, restoring: true, backup: { ...account.backup, state: 'error', error: 'Offline' }, retrySync });
-  expect(button('Continue to boards')).toBeUndefined(); expect(button('Back')).toBeUndefined();
-  await act(async () => button('Retry loading boards').props.onPress()); expect(retrySync).toHaveBeenCalledOnce();
+  await mount(null, { ...account, session, restoring: true, syncing: true, busy: true, retrySync });
+  expect(button('Continue to boards')).toBeUndefined(); expect(button('Back').props.disabled).toBeFalsy();
+  await act(async () => button('Back').props.onPress()); expect(close).toHaveBeenCalledOnce();
+  await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose()); expect(close).toHaveBeenCalledTimes(2);
 });
 
 it('offers both configured web providers and retries unavailable sign-in options', async () => {
@@ -76,10 +77,9 @@ it('offers both configured web providers and retries unavailable sign-in options
   expect(prepare).toHaveBeenCalledTimes(2);
 });
 
-it('leaves authentication forms after sign-in and restores welcome after sign-out', async () => {
+it('shows signed-in management and restores welcome after sign-out', async () => {
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
-  await mount('login', { ...account, session });
-  expect(modeChange).toHaveBeenCalledWith(null);
+  await mount(null, { ...account, session });
   await act(async () => button('Back').props.onPress());
   expect(close).toHaveBeenCalledOnce();
   await act(async () => screen!.update(React.createElement(AccountScreen, { account, mode: null, onMode: modeChange, onBack: back, onClose: close })));
@@ -163,7 +163,7 @@ it.each(['ios', 'android', 'web'])('signs into the preconfigured emulator accoun
   expect(button('Sign in').props.disabled).toBe(true);
   await act(async () => button('Sign in with test account').props.onPress());
   expect(authenticate).toHaveBeenCalledWith('login', developmentAccount.email, developmentAccount.password, 'password');
-  expect(modeChange).toHaveBeenCalledWith(null);
+  expect(modeChange).not.toHaveBeenCalled();
 });
 
 it.each([
@@ -189,7 +189,8 @@ it('keeps failed test sign-in on the form for retry and reflects the account bus
   await act(async () => button('Sign in with test account').props.onPress());
   expect(modeChange).not.toHaveBeenCalled();
   await act(async () => button('Sign in with test account').props.onPress());
-  expect(modeChange).toHaveBeenCalledWith(null);
+  expect(authenticate).toHaveBeenCalledTimes(2);
+  expect(modeChange).not.toHaveBeenCalled();
   await act(async () => screen!.update(React.createElement(AccountScreen, { account: { ...localAccount, busy: true }, mode: 'login', onMode: modeChange, onBack: back, onClose: close })));
   expect(button('Sign in with test account').props.busy).toBe(true);
 });

@@ -1,4 +1,4 @@
-/** @file Coordinates persisted sign-in, restoration gates, and automatic backup with independent sync and account-action feedback. */
+/** @file Coordinates persisted sign-in, Home restoration, and automatic backup with independent sync and account-action feedback. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -11,7 +11,7 @@ import { accountRequest, syncAccount } from './accountSync';
 import { loadAccountSession, saveAccountSession, type AccountSession } from './accountSession';
 import { accountBackupState, backupConnectionFailure } from './accountBackup';
 
-/** Restore sign-in, gate empty devices on cloud restoration, and expose snapshot-based backup status separately from authentication feedback. */
+/** Restore sign-in, keep empty devices on Home during restoration, and expose backup status separately from authentication feedback. */
 export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolean, onRestored: () => Promise<void>) {
   const [session, setSession] = useState<AccountSession | null>(null);
   const [ready, setReady] = useState(false);
@@ -41,7 +41,7 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   const sync = useCallback(async () => {
     const { store: libraryStore, session: account, canSync: allowed } = current.current;
     const local = libraryStore.current.current;
-    // Initial account entry gates an empty device, including direct editor links, until this restore finishes.
+    // Empty devices show restoration on Home, including direct editor links, until cloud content is known.
     const initialRestore = Boolean(account && local && !local.boards.length && (local.sync?.accountId !== account.account.id || local.sync.server !== account.server));
     if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || (!allowed && !initialRestore) || !local || !current.current.online) return;
     if (Platform.OS === 'web' ? document.hidden : AppState.currentState !== 'active') return;

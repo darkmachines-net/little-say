@@ -1,4 +1,4 @@
-/** @file Exercises routed account verification, status-first backup, restoration, offline conflicts, and confirmed local-preserving sign-out. */
+/** @file Exercises immediate Home entry with centered first-sync loading/retry, verified backup, media restoration, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -137,6 +137,8 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
+    await expect(page).toHaveURL(/\/app$/);
+    await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Verify email to back up', exact: true })).toBeVisible();
     expect((await readLibrary(page)).sync).toBeUndefined();
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
@@ -155,7 +157,9 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     expect(await page.evaluate(() => localStorage.getItem('little-say-firebase-account'))).not.toContain('token');
     await other.goto('/app');
     await signIn(other, username);
-    await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
+    await expect(other).toHaveURL(/\/app$/);
+    await expect(other.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toBeVisible();
+    await expect(other.getByText('Syncing your content…', { exact: true })).toHaveCount(0);
     const restored = await readLibrary(other);
     expect(restored.boards).toEqual(library.boards); expect(restored.setup).toBeUndefined();
     expect(restored.settings.aiConsent).toBe(false);
@@ -191,17 +195,36 @@ test('accounts restore all asset types to a fresh device and merge offline confl
   } finally { await second.close(); }
 });
 
-test('an empty device waits for cloud data and can retry a failed first restoration', async ({ page }) => {
+test('sign-in centers first-sync loading on empty Home and can retry restoration there before setup', async ({ page }) => {
   const credentials = await createTestAccount();
-  await page.route('**/api/account/backup', route => route.fulfill({ status: 503, json: { error: 'Restore temporarily unavailable.' } }));
-  await page.goto('/app'); await signIn(page, credentials.email);
-  await expect(page.getByRole('heading', { name: 'Backup needs attention', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
+  let release!: () => void;
+  const responseReady = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/api/account/backup', async route => { await responseReady; await route.fulfill({ status: 503, json: { error: 'Restore temporarily unavailable.' } }); });
+  try {
+    await page.goto('/app/settings/privacy'); await signIn(page, credentials.email);
+    await expect(page).toHaveURL(/\/app$/);
+    await expect(page.getByRole('heading', { name: 'Syncing your content…', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your soundboards', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'New board', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Account & backup', exact: true })).toHaveCount(0);
+    await expect(page.getByText('No boards yet', { exact: true })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
+    for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await expect.poll(async () => {
+        const status = (await page.getByTestId('initial-sync-state').boundingBox())!;
+        const header = (await page.getByTestId('app-header-bar').boundingBox())!;
+        const contentTop = header.y + header.height;
+        return Math.max(Math.abs(status.x + status.width / 2 - viewport.width / 2), Math.abs(status.y + status.height / 2 - (contentTop + viewport.height) / 2));
+      }).toBeLessThan(4);
+      expect((await page.getByLabel('Syncing content', { exact: true }).boundingBox())!.height).toBeGreaterThanOrEqual(50);
+    }
+  } finally { release(); }
+  await expect(page.getByText('Your content couldn’t sync. Restore temporarily unavailable.', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('initial-sync-state').getByRole('button', { name: 'Retry sync', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toHaveCount(0);
   await page.unroute('**/api/account/backup');
-  await page.getByRole('button', { name: 'Retry loading boards', exact: true }).click();
-  await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Retry sync', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
 });
 
@@ -216,8 +239,7 @@ test('cross-tab account changes and legacy server overrides never silently redir
     expect((await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
   }
   await page.goto('/app'); await signIn(page, emails[0]);
-  await expect(page.getByText('Up to date', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
@@ -227,6 +249,8 @@ test('cross-tab account changes and legacy server overrides never silently redir
     await other.getByRole('button', { name: /^(Account & backup|Sign in \/ Register)$/ }).click();
     await signOut(other);
     await signIn(other, emails[1]);
+    await expect(other).toHaveURL(/\/app$/);
+    await other.getByRole('button', { name: 'Account & backup', exact: true }).click();
     await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     await page.bringToFront();
     await page.evaluate(() => window.dispatchEvent(new Event('online')));
