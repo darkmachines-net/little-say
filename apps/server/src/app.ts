@@ -1,6 +1,6 @@
 /**
  * @file Builds the Fastify API with input validation, origin checks, request limits, speech/picture
- * services, and optional web hosting.
+ * services, fixed per-IP rate limits, and optional web hosting.
  */
 
 import Fastify from 'fastify';
@@ -27,20 +27,18 @@ import { hostingRoutes, type HostedServices } from './hosting/api';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
   hosting?: HostedServices;
-  /** Trusted harness override; deployed servers retain thirty AI requests per IP per minute. */
-  aiRequestsPerMinute?: number;
 }
 
 /**
- * Construct and register a server with injected AI, speech, and picture services without opening a listening
- * socket; the caller owns listen and close.
+ * Register validated, rate-limited routes with injected AI, speech, and picture services.
+ * The caller owns listen and close; construction does not open a listening socket.
  */
 export async function createServer(options: ServerOptions) {
   const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
   await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'X-Little-Say-Request', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
   await app.register(rateLimit, { global: false });
-  const aiLimits = { config: { rateLimit: { max: options.aiRequestsPerMinute ?? 30, timeWindow: '1 minute' } } };
+  const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
   let active = 0;
   const maxConcurrent = options.maxConcurrent ?? (options.preparation ? 6 : 2);
   app.addHook('onRequest', async (request, reply) => {

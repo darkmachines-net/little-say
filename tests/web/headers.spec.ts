@@ -1,4 +1,4 @@
-/** @file Verifies responsive route headers, compact Edit/Create titles, grouped manual actions outside navigation, touch targets, and full-screen play. */
+/** @file Verifies settled responsive headers, compact account actions, accessible touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -10,6 +10,12 @@ async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   const header = page.getByTestId('app-header').last();
   const bar = page.getByTestId('app-header-bar').last();
   await expect(bar).toBeVisible();
+  const account = bar.getByRole('button', { name: 'Account & backup', exact: true });
+  if (await account.count()) {
+    await expect(account).toHaveText('');
+    // React Native applies its Dimensions update after the browser viewport changes.
+    await expect.poll(async () => (await bar.boundingBox())?.height).toBe(page.viewportSize()!.width < 600 ? 64 : 76);
+  }
   if (title) await expect(bar.getByRole('heading', { name: title, exact: true })).toBeVisible();
   const bounds = (await bar.boundingBox())!;
   // A contextual toolbar must not create a second row beneath the navigation bar.

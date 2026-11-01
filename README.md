@@ -31,7 +31,8 @@ Use `npm run dev:native` with an installed Little Say Dev client. Multiple workt
 | --- | --- |
 | [Parent and child UI](apps/mobile/src/ui/README.md) | Interaction, layout, Settings, pictures, and accessibility conventions |
 | [Client services](apps/mobile/src/services/README.md) | Account sync, media preparation, speech, and platform boundaries |
-| [Shared core](packages/core/src/index.ts) | Schemas, migrations of device data, and pure board behavior; contracts on exports |
+| [Local data](apps/mobile/src/data/README.md) | Serialized saves, platform storage, and media retention |
+| [Shared core](packages/core/README.md) | Schemas, migrations of device data, and pure board behavior |
 | [Server](apps/server/README.md) | API lifecycle, configuration, privacy, and hosting |
 | [Accounts](apps/server/src/accounts/README.md) | Firebase identity, session security, private backups, and deletion |
 | [Pictures](apps/server/src/pictures/README.md) | Licensed catalog, job protocol, generation, and cache ownership |

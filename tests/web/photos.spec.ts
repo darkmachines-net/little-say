@@ -1,4 +1,4 @@
-/** @file Checks photo import and crop consistency through saving, quiet saved state, and the grouped Accept action. */
+/** @file Verifies photo import and crop consistency through the editor, dashboard play previews, and offline playback. */
 
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -74,7 +74,7 @@ test('fine crop controls match the final photo in the editor, library and rotate
   await saveTile(page);
   await sameRegion(page.getByRole('button', { name: 'Edit tile Mama', exact: true }).getByTestId('photo-frame'), expected);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await sameRegion(page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).getByTestId('photo-frame'), expected);
+  await sameRegion(page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).getByTestId('photo-frame'), expected);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await context.setOffline(true); await page.reload();
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();

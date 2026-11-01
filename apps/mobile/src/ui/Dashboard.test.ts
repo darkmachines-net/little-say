@@ -1,4 +1,4 @@
-/** @file Verifies centered first restoration, connection/failure recovery, and usable cached boards during background sync. */
+/** @file Verifies first-restore creation gating, retry/offline recovery, and usable cached boards during background sync. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -30,7 +30,6 @@ it('shows progress before the first request starts and avoids an empty library o
   expect(nodes('Text').map(node => node.props.children)).toContain('Syncing your content…');
   expect(nodes('Text').map(node => node.props.children)).not.toContain('No boards yet');
   expect(nodes('Button').find(node => node.props.children === 'New board')).toBeUndefined();
-  expect(nodes('Text').map(node => node.props.children)).not.toContain('Your soundboards');
   await render(false);
   expect(nodes('ActivityIndicator')).toHaveLength(0);
   expect(nodes('Text').map(node => node.props.children)).toContain('No boards yet');

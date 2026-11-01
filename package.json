@@ -27,7 +27,6 @@
     "start": "npm run start -w @little-say/server",
     "check": "npm run lint && npm run test:release && npm run typecheck && npm test && npm run build",
     "eval:ai": "tsx scripts/evaluate-ai.ts",
-    "eval:boards": "tsx scripts/benchmark-board-preparation.ts",
     "pictures:seeds": "tsx scripts/prepare-picture-seeds.ts",
     "emoji:update": "tsx scripts/update-emoji-catalog.ts",
     "pictures:update": "tsx scripts/update-picture-catalog.ts",
