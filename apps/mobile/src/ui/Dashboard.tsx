@@ -1,4 +1,4 @@
-/** @file Organizes compact playable boards with an inline phone creation action or a floating wide-screen action that reserves scroll clearance. */
+/** @file Shows centered first-restore progress/recovery and playable boards with responsive creation actions and safe scroll clearance. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -7,7 +7,8 @@ import { boardWithProfileLanguages, type Board, type Library } from '@little-say
 import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
 import { type SpeechLibrary } from '../services/speechLibrary';
-import { Button } from './components';
+import { type AccountController } from '../services/useAccount';
+import { Button, Notice } from './components';
 import { styles, theme } from './theme';
 import { MountainMark } from './Brand';
 import { AppHeader } from './AppHeader';
@@ -20,8 +21,10 @@ const floatingClearance = 16;
  * shared board workspace with an inline phone action or a floating action above 620 units. Reserve its measured
  * height beneath scrollable content; the app root owns safe-area insets on native and web. Resolve user languages and play subsets
  * for board previews and missing-audio actions; the shared header opens account controls and Settings with accessible icons.
+ * Keep cached boards usable during background sync; first restoration fills the empty page with loading or connection/failure recovery.
  */
-export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, onAccount, accountLabel, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onAccount: () => void; accountLabel: string; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+  const syncError = sync.backup.error || (sync.backup.state === 'offline' ? 'Waiting for a connection. Your content will sync when you’re back online.' : '');
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
   const [creationHeight, setCreationHeight] = useState(50);
@@ -38,8 +41,21 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccoun
   const card = (board: Board, featured = false) => <BoardCard board={boardWithProfileLanguages(board, library.settings)} featured={featured} favorite={favorites.has(board.id)} wide={wide} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
     <AppHeader actions={<>{saving && <ActivityIndicator size="small" accessibilityLabel="Saving changes" />}<Button kind="ghost" icon={UserRound} compact onPress={onAccount} accessibilityLabel={accountLabel} /><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
-    <ScrollView testID="dashboard-scroll" contentContainerStyle={[styles.container, { paddingTop: 16, paddingBottom: wide ? creationHeight + floatingInset + floatingClearance : 32, gap: 16 }]}>
+    <ScrollView testID="dashboard-scroll" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 16, paddingBottom: wide ? creationHeight + floatingInset + floatingClearance : 32, gap: 16 }, sync.restoring && { flexGrow: 1, paddingTop: 32, paddingBottom: 32, justifyContent: 'center', alignItems: 'center' }]}>
+      {sync.restoring ? <View testID="initial-sync-state" style={{ width: '100%', maxWidth: 520, alignItems: 'center', gap: 24 }}>
+        {syncError ? <Notice action={<Button kind="secondary" onPress={() => void sync.retrySync()}>Retry sync</Button>}>{`Your content couldn’t sync. ${syncError}`}</Notice> : <>
+          <View style={{ width: 80, height: 80, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={theme.accent} accessibilityLabel="Syncing content" style={{ transform: [{ scale: 1.6 }] }} />
+          </View>
+          <Text accessibilityRole="header" accessibilityLiveRegion="polite" style={[styles.heading, { fontSize: width < 600 ? 28 : 32, textAlign: 'center' }]}>Syncing your content…</Text>
+          <Text style={[styles.body, { maxWidth: 360, fontSize: 16, lineHeight: 24, textAlign: 'center' }]}>Your boards, photos and saved voices will appear here.</Text>
+        </>}
+      </View> : <>
       {!wide && <Button icon={Plus} onPress={onCompose}>{createLabel}</Button>}
+      {sync.syncing && <View style={[styles.card, styles.row, { gap: 12 }]}>
+        <ActivityIndicator color={theme.accent} accessibilityLabel="Syncing content" />
+        <Text accessibilityLiveRegion="polite" style={[styles.body, { flex: 1 }]}>Syncing your content…</Text>
+      </View>}
       <View style={{ gap: 28 }}>
         {recent && card(recent, true)}
         {remaining.length > 0 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8, rowGap: 16 }}>
@@ -47,8 +63,9 @@ export function Dashboard({ library, audio, onOpen, onPlay, onSettings, onAccoun
         </View>}
         {library.boards.length === 0 && <View style={[styles.card, { gap: 12, alignItems: 'center', paddingVertical: 28 }]}><MountainMark size={112} /><Text style={styles.title}>No boards yet</Text></View>}
       </View>
+      </>}
     </ScrollView>
-    {wide && <View pointerEvents="box-none" style={{ position: 'absolute', left: floatingInset, right: floatingInset, bottom: floatingInset, alignItems: 'flex-end' }}>
+    {!sync.restoring && wide && <View pointerEvents="box-none" style={{ position: 'absolute', left: floatingInset, right: floatingInset, bottom: floatingInset, alignItems: 'flex-end' }}>
       <View onLayout={event => setCreationHeight(event.nativeEvent.layout.height)} style={{ maxWidth: '100%', borderRadius: 15, backgroundColor: theme.accent, boxShadow: '0 4px 16px rgba(32, 59, 53, 0.24)' }}>
         <Button icon={Plus} onPress={onCompose}>{createLabel}</Button>
       </View>

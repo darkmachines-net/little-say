@@ -1,4 +1,4 @@
-/** @file Verifies account gating, cached play, and shared board Undo/Redo across edits, AI, translations, drafts, and navigation. */
+/** @file Verifies sign-in and Home restoration, account routes, cached play, and shared Undo/Redo across edits, AI, translations, drafts, and navigation. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -7,7 +7,7 @@ import { boardWithProfileLanguages, newLibrary, type Board, type Library } from 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import App from './App';
 
-const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false }, audio: vi.fn(), commit: vi.fn(), change: vi.fn(), route: null as { boardId: string | null } | null, translated: null as null | ((board: Board) => void) }));
+const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } }, audio: vi.fn(), commit: vi.fn(), change: vi.fn(), route: null as { boardId: string | null } | null, translated: null as null | ((board: Board) => void) }));
 vi.mock('react-native', () => ({ Platform: state, View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator', StyleSheet: { create: (value: unknown) => value }, AppState: { addEventListener: () => ({ remove() {} }) }, BackHandler: { addEventListener: () => ({ remove() {} }) } }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', initialWindowMetrics: null }));
 vi.mock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
@@ -20,7 +20,6 @@ vi.mock('./services/speech', () => ({ getVoices: async () => [], speechQueue: ()
 vi.mock('./services/updates', () => ({ initializeUpdates: async () => () => {}, applyUpdate: vi.fn() }));
 vi.mock('./ui/AccountScreen', () => ({ AccountScreen: 'AccountScreen' }));
 vi.mock('./ui/Brand', () => ({ Brand: 'Brand' }));
-vi.mock('./services/useAccountRoute', () => ({ useAccountRoute: () => ({ route: null, open: vi.fn(), close: vi.fn(), back: vi.fn() }) }));
 vi.mock('./services/useSettingsRoute', () => ({ useSettingsRoute: () => ({ route: null }) }));
 vi.mock('./services/useBoardDraftRoute', () => ({ useBoardDraftRoute: () => ({ route: state.route,
   open: (boardId: string | null) => { state.route = { boardId }; },
@@ -40,8 +39,8 @@ function nodes(name: string) { return screen!.root.findAllByType(name as any); }
 beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks();
   state.library = starterLibrary(); state.library.settings.accountChoiceMade = true; state.OS = 'android';
-  vi.stubGlobal('window', { speechSynthesis: undefined });
-  state.account = { ready: true, session: null, needsLogin: false };
+  vi.stubGlobal('window', { speechSynthesis: undefined, location: { pathname: '/app' }, history: { replaceState: vi.fn(), pushState: vi.fn() }, addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn() });
+  state.account = { ready: true, session: null, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } };
   state.route = null; state.translated = null;
   state.change.mockReset().mockImplementation(async (update: (library: Library) => Library) => { state.library = update(state.library); });
   state.commit.mockReset().mockImplementation(async (update: (library: Library) => Library) => { state.library = update(state.library); });
@@ -192,4 +191,57 @@ it('bounds history at 20 edits and keeps rapid traversal ordered before a render
   const redo = editor().onRedo;
   await act(async () => { for (let index = 0; index < 21; index++) redo(); });
   expect(editor().board.title).toBe('Title 25'); expect(editor().canRedo).toBe(false);
+});
+
+it.each(['android', 'ios', 'web'])('leaves account entry on %s immediately after sign-in and restores content on Home', async platform => {
+  state.OS = platform; state.library = newLibrary('en-US');
+  await render();
+  await act(async () => nodes('AccountScreen')[0].props.onMode('login'));
+  state.account.session = { account: { id: 'family' } }; state.account.restoring = true;
+  await render();
+  expect(nodes('AccountScreen')).toHaveLength(0);
+  expect(nodes('FirstTimeSetup')).toHaveLength(0);
+  expect(nodes('Dashboard')[0].props.sync.restoring).toBe(true);
+  if (platform === 'web') expect(window.history.replaceState).toHaveBeenLastCalledWith(null, '', '/app');
+  state.account.backup.error = 'Offline'; await render();
+  expect(nodes('Dashboard')[0].props.sync.backup.error).toBe('Offline');
+  expect(nodes('AccountScreen')).toHaveLength(0);
+  state.library = starterLibrary(); state.account.restoring = false; state.account.backup.error = ''; await render();
+  expect(nodes('Dashboard')[0].props.library.boards.length).toBeGreaterThan(0);
+  expect(nodes('FirstTimeSetup')).toHaveLength(0);
+});
+
+it.each([null, 'register'] as const)('closes %s entry after authentication but keeps explicitly opened account settings available during sync', async mode => {
+  await render();
+  await act(async () => nodes('AccountScreen')[0].props.onMode(mode));
+  state.account.session = { account: { id: 'family' } }; state.account.syncing = true; await render();
+  expect(nodes('AccountScreen')).toHaveLength(0);
+  await act(async () => nodes('Dashboard')[0].props.onAccount());
+  expect(nodes('AccountScreen')).toHaveLength(1);
+  await act(async () => nodes('AccountScreen')[0].props.onClose());
+  expect(nodes('AccountScreen')).toHaveLength(0);
+});
+
+it('restores an existing session on Home and opens setup only after confirming the cloud library is empty', async () => {
+  state.library = newLibrary('en-US'); state.account.session = { account: { id: 'family' } }; state.account.restoring = true;
+  await render();
+  expect(nodes('Dashboard')).toHaveLength(1); expect(nodes('AccountScreen')).toHaveLength(0);
+  expect(nodes('FirstTimeSetup')).toHaveLength(0);
+  state.account.restoring = false; await render();
+  expect(nodes('FirstTimeSetup')).toHaveLength(1); expect(nodes('Dashboard')).toHaveLength(0);
+});
+
+it.each(['android', 'ios', 'web'])('keeps explicitly opened account child pages available on %s during restoration', async platform => {
+  state.OS = platform; state.library = newLibrary('en-US');
+  state.account.session = { account: { id: 'family' } }; state.account.restoring = true;
+  await render();
+  await act(async () => nodes('Dashboard')[0].props.onAccount());
+  await act(async () => nodes('AccountScreen')[0].props.onMode('backup'));
+  expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
+  await act(async () => nodes('AccountScreen')[0].props.onMode('verify-email'));
+  expect(nodes('AccountScreen')[0].props.mode).toBe('verify-email');
+  if (platform !== 'web') {
+    await act(async () => nodes('AccountScreen')[0].props.onBack());
+    expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
+  }
 });
