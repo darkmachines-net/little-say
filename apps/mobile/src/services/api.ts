@@ -1,4 +1,4 @@
-/** @file Resolves the backend and authenticates cancellable JSON requests, including polling durable AI operations. */
+/** @file Authenticates cancellable requests and reports durable AI queue/drafting progress while polling results. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -26,8 +26,9 @@ export class ApiError extends Error {
  * Request backend JSON with a 60-second HTTP timeout and independently polled asynchronous AI results;
  * surface network and HTTP failures as errors. Account requests pin the exact consented server
  * to prevent credentials following a development override or changed backend.
+ * onJobState reports observed queue/execution states until a usable result is available.
  */
-export async function apiFetch(configured: string, path: string, init: RequestInit = {}, externalSignal?: AbortSignal, exactServer = false) {
+export async function apiFetch(configured: string, path: string, init: RequestInit = {}, externalSignal?: AbortSignal, exactServer = false, onJobState?: (state: 'queued' | 'working') => void) {
   const abort = new AbortController();
   const timeout = setTimeout(() => abort.abort(), 60000);
   const server = exactServer ? configured : backendUrl(configured);
@@ -49,6 +50,7 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
         abort.signal.throwIfAborted();
         if (['cancelled', 'error', 'interrupted'].includes(job.state)) throw new ApiError(job.error || 'AI work stopped. Your saved board is unchanged.', 409);
         if (job.result !== null && job.result !== undefined) return job.result;
+        if (job.state === 'queued' || job.state === 'working') onJobState?.(job.state);
         if (Date.now() > deadline) throw new Error('AI work took too long. Your saved board is unchanged.');
         await new Promise<void>((done, reject) => {
           const stop = () => { clearTimeout(timer); abort.signal.removeEventListener('abort', stop); reject(new Error('Cancelled')); };
@@ -71,8 +73,10 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
  * Health preparation.version=1 permits a caller-generated UUID preparationId alongside pictures.version=1;
  * aborting also cancels that batch before a proposal returns. Capability discovery is cached per backend
  * session. Older peers retain the original picture/proposal protocol.
+ * Progress describes observed service stages rather than estimating model completion.
  */
-export async function proposeBoard(url: string, request: ProposalRequest, signal?: AbortSignal): Promise<BoardProposal> {
+export async function proposeBoard(url: string, request: ProposalRequest, signal?: AbortSignal, progress?: (message: string) => void): Promise<BoardProposal> {
+  progress?.('Connecting to AI…');
   let input = request;
   if (request.pictureCapability) {
     const health = await serverCapabilities(url, signal);
@@ -83,7 +87,9 @@ export async function proposeBoard(url: string, request: ProposalRequest, signal
   const cancel = () => { if (input.preparationId) void apiFetch(url, `/api/pictures/batches/${input.preparationId}/cancel`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {}); };
   signal?.addEventListener('abort', cancel, { once: true });
   try {
-    const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal);
+    const drafting = request.board ? 'Updating words and translations…' : 'Choosing words and translations…';
+    progress?.(drafting);
+    const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal, false, state => progress?.(state === 'queued' ? 'Waiting for AI to start…' : drafting));
     if (signal?.aborted) { cancel(); throw new Error('Request cancelled.'); }
     return proposalSchema.parse(response);
   } catch (error) { cancel(); throw error; }

@@ -1,4 +1,4 @@
-/** @file Shows per-card picture work with reduced-motion-aware activity and concise status. */
+/** @file Centers picture-work indicators in the artwork area, with replacement overlays and reduced-motion-aware activity. */
 import { useEffect, useRef } from 'react';
 import { AccessibilityInfo, Animated, Platform, Text, View } from 'react-native';
 import { Sparkles } from 'lucide-react-native';
@@ -17,9 +17,14 @@ function ActivePicture() {
   return <Animated.View testID="picture-active-animation" accessible={false} style={{ opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.45, 1] }), transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1.1] }) }] }}><Sparkles size={14} color={theme.accent} /></Animated.View>;
 }
 
-/** Display activity only for running work; queued and finished cards remain static. */
-export function PictureStatus({ state }: { state: PictureTileState }) {
-  const active = state === 'working' || state === 'finding' || state === 'generating';
-  const label = state === 'finding' ? 'Finding a picture' : state === 'generating' ? 'Generating illustration' : active ? 'Improving picture' : state === 'queued' ? 'Queued' : state === 'ready' ? 'Ready' : 'Kept picture';
-  return <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: theme.surface, borderRadius: 6, padding: 2 }}>{active && <ActivePicture />}<Text style={{ color: theme.muted, fontSize: 10 }}>{label}</Text></View>;
+/** Center pending work over its picture frame; replacements use a readable overlay and finished pictures stay unobstructed. */
+export function PictureStatus({ state, replacing = false, compact = false }: { state: PictureTileState; replacing?: boolean; compact?: boolean }) {
+  if (state === 'ready' || state === 'fallback') return null;
+  const active = state === 'working' || state === 'finding' || state === 'generating' || state === 'loading';
+  const label = replacing ? state === 'queued' ? 'Replacement queued' : 'Replacing picture' : state === 'finding' ? 'Finding a picture' : state === 'generating' ? 'Generating illustration' : state === 'loading' ? 'Loading picture' : active ? 'Improving picture' : 'Queued';
+  return <View testID="picture-work-status" pointerEvents="none" style={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', padding: 4 }}>
+    <View style={{ flexDirection: compact ? 'row' : 'column', alignItems: 'center', justifyContent: 'center', gap: compact ? 4 : 6, maxWidth: '100%', borderRadius: 10, padding: compact ? 3 : 8, backgroundColor: replacing ? 'rgba(255, 255, 255, 0.92)' : 'transparent' }}>
+      {active && <ActivePicture />}<Text style={{ color: theme.ink, fontSize: 11, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{label}</Text>
+    </View>
+  </View>;
 }

@@ -1,4 +1,4 @@
-/** @file Keeps the prompt row fixed while AI replies and recovery controls scroll within the editor's height budget. */
+/** @file Keeps the prompt row fixed while live AI stages, replies, and recovery controls scroll within the editor height. */
 
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Keyboard, ScrollView, Text, TextInput, View, type TextInputInstance } from 'react-native';
@@ -11,7 +11,8 @@ import { styles, theme } from './theme';
 /**
  * Keep one mounted input and Send row outside the scrolling AI context. The editor supplies the
  * available height; long text scrolls in the input and long replies scroll above it, preserving the
- * prompt's full touch targets even when a keyboard leaves little room. Completed turns auto-apply.
+ * prompt's full touch targets even when a keyboard leaves little room. Observed progress is announced
+ * politely to assistive technology; completed turns auto-apply.
  */
 export function BoardAssistant({ assistant, disabled = false, compact = false, maxHeight, onFocusChange }: { assistant: ReturnType<typeof useBoardAssistant>; disabled?: boolean; compact?: boolean; maxHeight?: number;
   /** Report prompt focus without replacing the mounted input when the keyboard changes layout. */
@@ -30,7 +31,7 @@ export function BoardAssistant({ assistant, disabled = false, compact = false, m
     {context && <ScrollView testID="assistant-context" keyboardShouldPersistTaps="handled" style={{ flexGrow: 0, flexShrink: 1, minHeight: 0 }} contentContainerStyle={{ gap: compact ? 6 : 10 }}>
     {selected && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={styles.small}>{selected.label}</Text><Button compact kind="ghost" icon={X} accessibilityLabel="Apply AI request to the whole board" onPress={() => assistant.setScope(null)} /></View>}
     {Boolean(assistant.reply) && <Text accessibilityLiveRegion="polite" style={styles.body}>{assistant.reply}</Text>}
-    {assistant.busy === 'generate' && <View testID="ai-working" style={styles.row}><ActivityIndicator color={theme.accent} /><Text accessibilityLiveRegion="polite" style={[styles.small, { flex: 1 }]}>{assistant.progress || 'Working…'}</Text></View>}
+    {assistant.busy === 'generate' && <View testID="ai-working" style={styles.row}><ActivityIndicator color={theme.accent} /><Text accessibilityLiveRegion="polite" style={[styles.small, { flex: 1 }]}>{assistant.progress || 'Choosing words and translations…'}</Text></View>}
     {assistant.busy === 'save' && <Text accessibilityLiveRegion="polite" style={styles.small}>Saving changes…</Text>}
     {Boolean(assistant.error || assistant.mergeError) && <Notice>{assistant.error || assistant.mergeError}</Notice>}
     {assistant.suggestion && <View style={{ gap: 8 }}>

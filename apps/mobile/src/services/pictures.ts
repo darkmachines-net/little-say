@@ -1,4 +1,4 @@
-/** @file Resolves staged board pictures with bounded jobs, local downloads, cancellation, and revision-safe proposal previews. */
+/** @file Resolves staged board pictures with bounded jobs, local download progress, cancellation, and revision-safe previews. */
 
 import * as Crypto from 'expo-crypto';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ import { savePictureAsset } from '../data/storage';
 import { prepareServerPictures } from './preparedPictures';
 
 const json = (body: unknown): RequestInit => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-export type PictureTileState = 'queued' | 'working' | 'finding' | 'generating' | 'ready' | 'fallback';
+export type PictureTileState = 'queued' | 'working' | 'finding' | 'generating' | 'loading' | 'ready' | 'fallback';
 export interface PictureWorkOptions {
   signal?: AbortSignal;
   targetIds?: Set<string>;
@@ -17,13 +17,13 @@ export interface PictureWorkOptions {
   forceIds?: Set<string>;
   replaceProtected?: boolean;
   allowGeneration?: boolean;
-  /** Initial local downloads are verified; the visible preview may now be saved while work continues. */
+  /** The initial word preview contains only fallback or verified local images and may be saved immediately. */
   available?: () => void;
   /** Refresh the independent audio library after cache-only speech downloads complete. */
   speechReady?: () => void | Promise<void>;
   /** Report parent-facing progress without publishing draft changes to the saved board. */
   progress?: (message: string) => void;
-  /** Publish detached previews; saving is permitted after available, or after legacy work completes. */
+  /** Publish detached previews, including words before downloads; every included asset must be locally verified. */
   preview?: (board: Board) => void;
   /** Report individual card work without treating queued jobs as active generation. */
   tileProgress?: (tileId: string, state: PictureTileState) => void;
