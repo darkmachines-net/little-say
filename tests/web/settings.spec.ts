@@ -1,11 +1,11 @@
-/** @file Exercises Settings, About, shared languages, media migration, offline links, and navigation to the dashboard or illustrated account entry. */
+/** @file Exercises Settings, the three-language cap and replacements, About, media migration, offline links, and navigation to the dashboard or illustrated account entry. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
 import { createHash } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
 import { pcmToWav } from '../../apps/server/src/synthesis';
-import { addUserLanguage, openExistingLibrary } from './existingLibrary';
+import { addUserLanguage, openExistingLibrary, removeUserLanguage } from './existingLibrary';
 import release from '../../native-release.json' with { type: 'json' };
 
 async function mockVoices(page: Page) {
@@ -108,7 +108,7 @@ test('a failed preference write keeps the old choice and can be retried on its p
 });
 
 test('simple-list controls support keyboard search, explicit editing, language limits, and a single default', async ({ page }) => {
-  await openExistingLibrary(page, { languageProfile: { languages: ['en-US', 'es-ES', 'fr-FR'], defaultLanguage: 'en-US' } });
+  await openExistingLibrary(page, { languageProfile: { languages: ['en-US', 'es-ES'], defaultLanguage: 'en-US' } });
   await page.goto('/app/settings/languages');
   const search = page.getByRole('textbox', { name: 'Add a language', exact: true });
   const defaultLanguage = page.getByRole('combobox', { name: 'Default language', exact: true });
@@ -124,15 +124,18 @@ test('simple-list controls support keyboard search, explicit editing, language l
   await expect(page.getByRole('button', { name: 'Add language German', exact: true })).toHaveCount(0);
   await search.fill('ger');
   await search.press('Enter');
-  await expect(page.getByText('4 of 6', { exact: true })).toBeVisible();
+  await expect(page.getByText('3 of 3', { exact: true })).toBeVisible();
   await expect(search).toHaveValue('');
-  await addUserLanguage(page, 'Italian');
+  await expect(search).not.toBeEditable();
+  await expect(page.getByText('Remove a language to add another.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit languages', exact: true }).click();
+  await page.getByRole('button', { name: 'Remove language German', exact: true }).click();
+  await expect(search).toBeEditable();
   await addUserLanguage(page, 'es-mx', 'es-MX');
   await expect(search).not.toBeEditable();
-  await expect(page.getByText('6 of 6', { exact: true })).toBeVisible();
+  await expect(page.getByText('3 of 3', { exact: true })).toBeVisible();
   await defaultLanguage.selectOption('es-MX');
   await expect(defaultLanguage).toHaveValue('es-MX');
-  await page.getByRole('button', { name: 'Edit languages', exact: true }).click();
   await page.getByRole('button', { name: /^Remove language (Mexican Spanish|Spanish \(Mexico\))$/ }).click();
   await expect(defaultLanguage).toHaveValue('en-US');
   await expect(search).toBeEditable();
@@ -148,14 +151,13 @@ test('simple-list controls support keyboard search, explicit editing, language l
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.reload();
   await expect(defaultLanguage).toHaveValue('en-US');
-  await expect(page.getByText('5 of 6', { exact: true })).toBeVisible();
+  await expect(page.getByText('2 of 3', { exact: true })).toBeVisible();
 });
 
 test('boards inherit user languages and only offer a persistent play subset with a route back to Settings', async ({ page }) => {
   await openExistingLibrary(page, { voiceSources: { 'en-US': 'device', 'es-ES': 'device', 'fr-FR': 'device', 'de-DE': 'device' } });
   await page.goto('/app/settings/languages');
   await addUserLanguage(page, 'span', 'Spanish');
-  await addUserLanguage(page, 'French');
   await mkdir('artifacts/screenshots/languages', { recursive: true });
   for (const viewport of [{ width: 390, height: 844 }, { width: 1180, height: 900 }]) {
     await page.setViewportSize(viewport);
@@ -167,6 +169,7 @@ test('boards inherit user languages and only offer a persistent play subset with
     await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toBeFocused();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
+  await addUserLanguage(page, 'French');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
@@ -185,6 +188,7 @@ test('boards inherit user languages and only offer a persistent play subset with
   await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Manage your languages in Settings', exact: true }).click();
   await expect(page).toHaveURL(/\/settings\/languages$/);
+  await removeUserLanguage(page, 'French');
   await addUserLanguage(page, 'German');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Back to board', exact: true }).click();
@@ -198,14 +202,15 @@ test('boards inherit user languages and only offer a persistent play subset with
   await openBoardLanguages(page);
   await expect(page.getByRole('checkbox', { name: 'Play language Spanish', exact: true })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: 'Play language German', exact: true })).not.toBeChecked();
-  for (const name of ['English', 'French', 'German']) await page.getByRole('checkbox', { name: `Play language ${name}`, exact: true }).click();
-  for (const name of ['English', 'Spanish', 'French', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
+  for (const name of ['English', 'German']) await page.getByRole('checkbox', { name: `Play language ${name}`, exact: true }).click();
+  for (const name of ['English', 'Spanish', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.getByRole('button', { name: 'Edit My little words', exact: true }).click();
   await openBoardLanguages(page);
-  for (const name of ['English', 'Spanish', 'French', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
+  for (const name of ['English', 'Spanish', 'German']) await expect(page.getByRole('checkbox', { name: `Play language ${name}`, exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Manage your languages in Settings', exact: true }).click();
+  await removeUserLanguage(page, 'German');
   await addUserLanguage(page, 'Italian');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Back to board', exact: true }).click();

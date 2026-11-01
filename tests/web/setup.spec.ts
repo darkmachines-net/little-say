@@ -1,4 +1,4 @@
-/** @file Exercises authenticated setup, generated drafts, retries, persistence, and manual creation through Add Card. */
+/** @file Exercises authenticated setup with a three-language cap, generated drafts, retries, persistence, and manual creation through Add Card. */
 
 import { openSignedInApp } from './accountFixture';
 import { expect, test, type Page } from '@playwright/test';
@@ -58,7 +58,10 @@ test('first-time setup generates chosen languages, resumes partial success, and 
   await page.route('**/api/speech', async route => { audioRequests++; await audioGate; return route.fulfill({ status: 503, json: { error: 'Use device speech for this test' } }); });
   await addUserLanguage(page, 'Spanish');
   await addUserLanguage(page, 'French');
+  await expect(page.getByText('3 of 3', { exact: true })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).not.toBeEditable();
   await removeUserLanguage(page, 'English');
+  await expect(page.getByRole('textbox', { name: 'Add a language', exact: true })).toBeEditable();
   await page.getByRole('combobox', { name: 'Default language', exact: true }).selectOption('fr-FR');
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.getByRole('heading', { name: 'Choose your languages', exact: true }).scrollIntoViewIfNeeded();
