@@ -1,4 +1,4 @@
-/** @file Verifies required sign-in, immediate Home navigation with cloud restoration, and cached play while isolating speech and translations. */
+/** @file Verifies required sign-in, immediate Home restoration, retained account management routes, and cached play while isolating speech. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -7,7 +7,7 @@ import { newLibrary } from '@little-say/core';
 import { starterLibrary } from '../../../tests/fixtures/library';
 import App from './App';
 
-const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false, restoring: false, syncing: false, error: '' }, audio: vi.fn(), commit: vi.fn(), back: null as null | (() => boolean) }));
+const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } }, audio: vi.fn(), commit: vi.fn(), back: null as null | (() => boolean) }));
 vi.mock('react-native', () => ({ Platform: state, View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator', StyleSheet: { create: (value: unknown) => value }, AppState: { addEventListener: () => ({ remove() {} }) }, BackHandler: { addEventListener: () => ({ remove() {} }) } }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', initialWindowMetrics: null }));
 vi.mock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
@@ -36,7 +36,7 @@ beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks();
   state.library = starterLibrary(); state.library.settings.accountChoiceMade = true; state.OS = 'android';
   vi.stubGlobal('window', { speechSynthesis: undefined, location: { pathname: '/app' }, history: { replaceState: vi.fn(), pushState: vi.fn() }, addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn() });
-  state.account = { ready: true, session: null, needsLogin: false, restoring: false, syncing: false, error: '' };
+  state.account = { ready: true, session: null, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } };
 });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
@@ -88,10 +88,10 @@ it.each(['android', 'ios', 'web'])('leaves account entry on %s immediately after
   expect(nodes('FirstTimeSetup')).toHaveLength(0);
   expect(nodes('Dashboard')[0].props.sync.restoring).toBe(true);
   if (platform === 'web') expect(window.history.replaceState).toHaveBeenLastCalledWith(null, '', '/app');
-  state.account.error = 'Offline'; await render();
-  expect(nodes('Dashboard')[0].props.sync.error).toBe('Offline');
+  state.account.backup.error = 'Offline'; await render();
+  expect(nodes('Dashboard')[0].props.sync.backup.error).toBe('Offline');
   expect(nodes('AccountScreen')).toHaveLength(0);
-  state.library = starterLibrary(); state.account.restoring = false; state.account.error = ''; await render();
+  state.library = starterLibrary(); state.account.restoring = false; state.account.backup.error = ''; await render();
   expect(nodes('Dashboard')[0].props.library.boards.length).toBeGreaterThan(0);
   expect(nodes('FirstTimeSetup')).toHaveLength(0);
 });
@@ -114,4 +114,19 @@ it('restores an existing session on Home and opens setup only after confirming t
   expect(nodes('FirstTimeSetup')).toHaveLength(0);
   state.account.restoring = false; await render();
   expect(nodes('FirstTimeSetup')).toHaveLength(1); expect(nodes('Dashboard')).toHaveLength(0);
+});
+
+it.each(['android', 'ios', 'web'])('keeps explicitly opened account child pages available on %s during restoration', async platform => {
+  state.OS = platform; state.library = newLibrary('en-US');
+  state.account.session = { account: { id: 'family' } }; state.account.restoring = true;
+  await render();
+  await act(async () => nodes('Dashboard')[0].props.onAccount());
+  await act(async () => nodes('AccountScreen')[0].props.onMode('backup'));
+  expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
+  await act(async () => nodes('AccountScreen')[0].props.onMode('verify-email'));
+  expect(nodes('AccountScreen')[0].props.mode).toBe('verify-email');
+  if (platform !== 'web') {
+    await act(async () => nodes('AccountScreen')[0].props.onBack());
+    expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
+  }
 });

@@ -1,4 +1,4 @@
-/** @file Verifies first-restore loading replaces empty Home controls, retry stays available, and cached boards remain usable during sync. */
+/** @file Verifies centered first restoration, connection/failure recovery, and usable cached boards during background sync. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -16,9 +16,9 @@ vi.mock('./components', () => ({ Button: 'Button', Notice: 'Notice' }));
 let screen: ReactTestRenderer | undefined;
 const retrySync = vi.fn(async () => {}), onPlay = vi.fn(), onCompose = vi.fn();
 function nodes(name: string) { return screen!.root.findAllByType(name as any); }
-async function render(restoring: boolean, syncing = false, error = '', empty = true) {
+async function render(restoring: boolean, syncing = false, error = '', empty = true, offline = false) {
   const library = starterLibrary(); if (empty) library.boards = [];
-  const props = { library, audio: {} as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, error, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onAccount: vi.fn(), accountLabel: 'Account & backup', onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
+  const props = { library, audio: {} as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, backup: { error, state: offline ? 'offline' as const : 'synced' as const }, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onAccount: vi.fn(), accountLabel: 'Account & backup', onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
   await act(async () => { if (screen) screen.update(React.createElement(Dashboard, props)); else screen = create(React.createElement(Dashboard, props)); });
 }
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks(); });
@@ -57,4 +57,12 @@ it('keeps cached boards and creation usable during background sync, then removes
   await act(async () => createButton.props.onPress()); expect(onCompose).toHaveBeenCalledOnce();
   await render(false, false, '', false);
   expect(nodes('ActivityIndicator')).toHaveLength(0); expect(nodes('BoardCard').length).toBeGreaterThan(0);
+});
+
+it('explains connection loss instead of spinning while an empty device is offline', async () => {
+  await render(true, false, '', true, true);
+  expect(nodes('ActivityIndicator')).toHaveLength(0);
+  expect(nodes('Notice')[0].props.children).toContain('Waiting for a connection');
+  await render(true, true);
+  expect(nodes('Notice')).toHaveLength(0); expect(nodes('ActivityIndicator')).toHaveLength(1);
 });

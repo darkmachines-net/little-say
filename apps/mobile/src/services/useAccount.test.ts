@@ -1,4 +1,4 @@
-/** @file Verifies automatic backup states, raced edits, isolated action feedback, restoration gates, retry, and safe lifecycle boundaries. */
+/** @file Verifies automatic backup health, distinct active sync, raced edits, isolated action feedback, first restoration, and safe retries. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
