@@ -1,7 +1,7 @@
-/** @file Resolves profile-based board playback and validates revision-bound translation updates. */
+/** @file Resolves profile-based playback and prepares and applies revision-bound translations. */
 
 import { z } from 'zod';
-import { boardSchema, languageSchema, playLanguagesSchema, tileSource, translationSchema, type Board, type BoardChanges, type Tile, type Settings } from './schema';
+import { languageSchema, playLanguagesSchema, tileSource, translationSchema, type Board, type Tile, type Settings } from './schema';
 import { speechKey } from './speech';
 import { boardPlayLanguages } from './languageProfile';
 
@@ -14,17 +14,12 @@ export function selectedBoardLanguage(board: Board, settings: Settings) {
   return languages.find(tag => preferred && canonicalLanguage(tag) === canonicalLanguage(preferred)) ?? languages[0];
 }
 /**
- * Resolve each card for the selected board language, honoring fixed-language cards and
- * label-translation settings.
+ * Resolve the selected play language once for the whole board, honoring fixed-language cards
+ * and label-translation settings.
  */
 export function boardPlayTiles(board: Board, settings: Settings) {
-  return board.tiles.map(tile => tileInLanguage(tile, selectedBoardLanguage(board, settings), board.translateLabels !== false));
-}
-/** Extract validated language changes from a prepared board; reject a mismatched board ID or revision. */
-export function applyLanguageSetup(current: Board, prepared: Board): BoardChanges {
-  if (current.id !== prepared.id || current.revision !== prepared.revision) throw new Error('This board changed while translating. Prepare translations again to keep your latest edits.');
-  const valid = boardSchema.parse(prepared);
-  return { playLanguages: valid.playLanguages, tiles: valid.tiles, translateLabels: valid.translateLabels };
+  const language = selectedBoardLanguage(board, settings);
+  return board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false));
 }
 /** Find a translation for the requested language only when it still matches the card source text. */
 export function tileTranslation(tile: Tile, language: string) {

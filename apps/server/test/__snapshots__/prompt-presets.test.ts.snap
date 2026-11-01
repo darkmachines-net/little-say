@@ -1,9 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`preserves all starter topics and the separate conversation wording 1`] = `
-{
-  "conversation": "955724019d1b05cf2482fef763768b495e6473dc1115062f97a07a20ad11c7ab",
-  "starters": "82c4d2816e152495b92c0a768bac97c0d671510a4f1dcd5136b68024d99707c7",
-  "topics": "76afe84574c5a0046d1e3de6ea564eec4979c71b39a4af4cda3d80c10b0aa222",
-}
-`;

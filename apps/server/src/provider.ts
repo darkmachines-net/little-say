@@ -1,12 +1,13 @@
 /**
- * @file Implements server-side OpenAI board proposals and translation behind an
- * injectable provider.
+ * @file Requests structured OpenAI boards and translations, normalizing picture choices for both
+ * synchronous proposals and prepared drafts.
  */
 
 import { boardPrompts, picturePrompts, preparationPrompts } from './prompts';
 import { genericConceptInstructions } from './generic-concepts';
 import { draftFailure, draftRequestId, DraftResponseError, type DraftMetric } from './draft-diagnostics';
 import OpenAI from 'openai';
+import { type z } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { aiGeneratedBoardSchema, aiPictureGeneratedBoardSchema, aiPreparedBoardSchema, generatedTranslationsSchema, type GeneratedBoard, type ProposalRequest, type TranslationRequest, type GeneratedTranslations } from '@little-say/core';
 
@@ -22,9 +23,26 @@ export interface AiProvider {
   translate?(request: TranslationRequest): Promise<GeneratedTranslations>;
 }
 
-export const boardInstructions = boardPrompts.instructions;
-
-const pictureInstructions = boardPrompts.pictures;
+// Both board protocols use the same picture protection rules and always create color artwork.
+function normalizePictureDraft(draft: z.infer<typeof aiPictureGeneratedBoardSchema>, request: ProposalRequest): GeneratedBoard {
+  return {
+    ...draft,
+    picturePolicy: { ...draft.picturePolicy, style: 'color' },
+    tiles: draft.tiles.map(({ pictureInstruction, pictureMode, pictureStyle: _style, replacePicture, ...tile }) => {
+      const previous = request.conversation?.draft?.tiles.find(value => value.existingId !== null && value.existingId === tile.existingId)
+        ?? request.board?.tiles.find(value => value.id === tile.existingId);
+      return {
+        ...tile,
+        replacePicture,
+        pictureOptions: {
+          locked: replacePicture ? Boolean(pictureInstruction || pictureMode) : previous?.pictureOptions?.locked ?? false,
+          instruction: pictureInstruction,
+          ...(pictureMode ? { mode: pictureMode } : {}),
+        },
+      };
+    }),
+  };
+}
 
 /**
  * Create the OpenAI-backed provider from server environment settings, or return null when no API key is
@@ -49,7 +67,7 @@ export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMet
       try {
         // Separate transport from local parsing so failed structured output is not mislabeled as an outage.
         const response = await client.responses.create({ model, reasoning: { effort: effort as 'none' | 'low' | 'medium' | 'high' }, store: false, max_output_tokens: 14000,
-          input: [{ role: 'system', content: boardInstructions + pictureInstructions + '\n' + picturePrompts.analysis + preparationPrompts.draft + genericConceptInstructions() + preparationPrompts.templates },
+          input: [{ role: 'system', content: boardPrompts.instructions + boardPrompts.pictures + '\n' + picturePrompts.analysis + preparationPrompts.draft + genericConceptInstructions() + preparationPrompts.templates },
             { role: 'user', content: JSON.stringify({ request: input, templates }) }],
           text: { format: zodTextFormat(aiPreparedBoardSchema, 'prepared_soundboard') },
         }, { signal });
@@ -61,10 +79,7 @@ export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMet
         stage = 'json'; const decoded: unknown = JSON.parse(response.output_text);
         stage = 'schema'; const draft = aiPreparedBoardSchema.parse(decoded);
         stage = 'normalize';
-        const result = { ...draft, picturePolicy: { ...draft.picturePolicy, style: 'color' as const }, tiles: draft.tiles.map(({ pictureInstruction, pictureMode, pictureStyle: _style, replacePicture, ...tile }) => {
-          const previous = request.conversation?.draft?.tiles.find(value => value.existingId !== null && value.existingId === tile.existingId) ?? request.board?.tiles.find(value => value.id === tile.existingId);
-          return { ...tile, replacePicture, pictureOptions: { locked: replacePicture ? Boolean(pictureInstruction || pictureMode) : previous?.pictureOptions?.locked ?? false, instruction: pictureInstruction, ...(pictureMode ? { mode: pictureMode } : {}) } };
-        }) };
+        const result = normalizePictureDraft(draft, request);
         metric?.({ operation: initial ? 'draft' : 'refine', milliseconds: Date.now() - started, ...usage, requestId: draftRequestId(request.preparationId), outcome: 'success' });
         return result;
       } catch (error) {
@@ -77,21 +92,18 @@ export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMet
         const response = await client.responses.parse({
           model: env.OPENAI_BOARD_MODEL || 'gpt-6.1-sol', reasoning: { effort: (env.OPENAI_REASONING_EFFORT || 'low') as 'low' | 'medium' | 'high' },
           store: false, max_output_tokens: 14000,
-          input: [{ role: 'system', content: boardInstructions + pictureInstructions }, { role: 'user', content: JSON.stringify(request) }],
+          input: [{ role: 'system', content: boardPrompts.instructions + boardPrompts.pictures }, { role: 'user', content: JSON.stringify(request) }],
           text: { format: zodTextFormat(aiPictureGeneratedBoardSchema, 'picture_soundboard') },
         });
         const draft = response.output_parsed;
         if (!draft || response.status !== 'completed') throw new Error('Incomplete board draft.');
-        return { ...draft, picturePolicy: { ...draft.picturePolicy, style: 'color' }, tiles: draft.tiles.map(({ pictureInstruction, pictureMode, pictureStyle: _style, replacePicture, ...tile }) => {
-          const previous = request.conversation?.draft?.tiles.find(value => value.existingId !== null && value.existingId === tile.existingId) ?? request.board?.tiles.find(value => value.id === tile.existingId);
-          return { ...tile, replacePicture, pictureOptions: { locked: replacePicture ? Boolean(pictureInstruction || pictureMode) : previous?.pictureOptions?.locked ?? false, instruction: pictureInstruction, ...(pictureMode ? { mode: pictureMode } : {}) } };
-        }) };
+        return normalizePictureDraft(draft, request);
       }
       const response = await client.responses.parse({
         model: env.OPENAI_BOARD_MODEL || 'gpt-6.1-sol',
         reasoning: { effort: (env.OPENAI_REASONING_EFFORT || 'low') as 'low' | 'medium' | 'high' },
         store: false, max_output_tokens: 12000,
-        input: [{ role: 'system', content: boardInstructions }, { role: 'user', content: JSON.stringify(request) }],
+        input: [{ role: 'system', content: boardPrompts.instructions }, { role: 'user', content: JSON.stringify(request) }],
         text: { format: zodTextFormat(aiGeneratedBoardSchema, 'soundboard') },
       });
       if (!response.output_parsed || response.status !== 'completed') throw new Error('The model did not return a complete board.');

@@ -1,4 +1,4 @@
-/** @file Defines account-required durable libraries, creation drafts, play subsets, compatible settings, and revision-safe AI/edit payloads. */
+/** @file Defines durable library and AI payload schemas, device-data migration, and revision-safe proposal application. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -175,7 +175,7 @@ export const proposalRequestSchema = z.object({
   picturePolicy: picturePolicySchema.optional(), pictureCapability: z.literal(1).optional(),
   preparationId: z.string().uuid().optional(),
   previousPreparationId: z.string().uuid().optional(),
-  // The source board stays immutable until Apply. Draft IDs always refer to it,
+  // Each request is bound to its source-board snapshot. Existing tile IDs refer to that snapshot,
   // so a refinement cannot accidentally reuse a replaced tile's photo.
   conversation: z.object({ history: z.array(conversationTurnSchema).max(MAX_AI_TURNS - 1), draft: generatedBoardSchema.nullable() }).optional(),
 }).superRefine((request, ctx) => {
@@ -197,14 +197,13 @@ export function boardContext(board: Board): BoardContext {
 }
 
 /**
- * Validate a draft against the source board, rejecting invalid references and content; clarification
- * replies return no tiles.
+ * Validate a draft against the source board, rejecting invalid references and content.
+ * Every reply needs an explanation; clarification replies discard tiles without requiring a title.
  */
 export function validateGeneratedBoard(value: GeneratedBoard, context: BoardContext | null): GeneratedBoard {
   generatedBoardSchema.parse(value);
   if (!value.explanation.trim() || value.explanation.length > 1000) throw new Error('The board reply was empty or too long. Please try again.');
   if (value.needsClarification) {
-    if (!value.explanation.trim()) throw new Error('The board request needs more detail.');
     return { ...value, tiles: [] };
   }
   if (!value.title.trim() || value.title.length > 100 || value.tiles.length < 1 || value.tiles.length > MAX_TILES) throw new Error('The proposed board must contain 1–24 tiles and a title.');

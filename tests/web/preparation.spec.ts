@@ -1,20 +1,9 @@
-/** @file Verifies streamed draft pictures, visible fallback states, verified downloads, and automatic saving when work is stopped. */
+/** @file Verifies fallback previews and durable saving of downloaded pictures when generation is stopped. */
 
 import { expect, test } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
 import { openExistingLibrary } from './existingLibrary';
 import seeds from '../../apps/server/src/pictures/data/picture-seeds.json' with { type: 'json' };
-import { mkdir, writeFile } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-
-const evidence = 'artifacts/screenshots/preparation';
-async function capture(page: import('@playwright/test').Page, name: string) {
-  await mkdir(evidence, { recursive: true });
-  await page.screenshot({ path: `${evidence}/${name}.png`, fullPage: true });
-  await writeFile(`${evidence}/manifest.json`, JSON.stringify({ baseCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), viewport: page.viewportSize(), scenario: 'Same two-card fixture; legacy vs prepared protocol with pending picture work. Deterministic mocked provider responses.', files: Object.fromEntries(['apps/mobile/src/services/useBoardAssistant.ts', 'apps/mobile/src/services/preparedPictures.ts', 'apps/mobile/dist/index.html', 'tests/web/preparation.spec.ts'].map(file => [file, createHash('sha256').update(readFileSync(file)).digest('hex')])) }, null, 2));
-}
 
 test('legacy emoji previews stay visible during picture work without an acceptance action', async ({ page }) => {
   await page.route('**/api/health', route => route.fulfill({ json: { pictures: { version: 1 } } }));
@@ -34,7 +23,6 @@ test('legacy emoji previews stay visible during picture work without an acceptan
     await expect(page.getByTestId('editor-preview').getByRole('button')).toHaveCount(2);
     await expect(page.getByRole('button', { name: 'Keep changes', exact: true })).toHaveCount(0);
     await expect(page.getByTestId('board-assistant').getByText('Choosing pictures for your cards…', { exact: true })).toBeVisible();
-    await capture(page, 'legacy-pending');
   } finally { release(); }
 });
 
@@ -60,7 +48,6 @@ test('saves exactly the visible draft and cancels pending generation', async ({ 
   await expect(page.getByTestId('card-picture')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Stop request', exact: true })).toBeEnabled();
   await expect(page.getByText('Generating illustration', { exact: true })).toBeVisible();
-  await capture(page, 'prepared-pending');
   await page.getByRole('button', { name: 'Stop request', exact: true }).click();
   await waitForAiTurn(page);
   await expect.poll(() => cancelled).toBe(true);
