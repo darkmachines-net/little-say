@@ -1,4 +1,4 @@
-/** @file Edits boards with Undo/Redo, progressive picture-frame status, bounded keyboard layout, and explicit unfinished-draft retention. */
+/** @file Provides compact Edit/Create screens with Undo/Redo, progressive picture-frame status, bounded keyboard layout, and explicit unfinished-draft retention. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
@@ -25,6 +25,7 @@ import { useBoardAssistant } from '../services/useBoardAssistant';
  * their words are ready and artwork is pending; replacements fade existing pictures under a centered indicator. Each completed or stopped AI turn saves
  * automatically through the parent's shared Undo/Redo history; only conflicts and failed writes need action.
  * Both history actions stay disabled during AI work, unresolved previews, playback startup, and dialogs.
+ * The route heading is Create for unfinished drafts and Edit for saved boards to leave room for toolbar actions.
  * The canvas uses the first effective board/profile language; language variants are selected inside each
  * tile editor. Pictures, languages, audio, and board management live behind the toolbar settings gear.
  * Closing language choices starts app-owned translation work; shared preferences return to this board.
@@ -153,7 +154,7 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
   const playLanguage = selectedBoardLanguage(board, settings);
   const untranslated = playLanguage ? board.tiles.filter(tile => tile.languageMode === 'board' && !hasTileLanguage(tile, playLanguage)).length : 0;
   return <KeyboardAvoidingView testID="board-workspace" behavior={Platform.OS === 'web' ? undefined : 'padding'} keyboardVerticalOffset={Platform.OS === 'web' ? 0 : safeAreaTop} style={styles.page}>
-    <AppHeader title={draft ? 'New board' : 'Edit board'} onBack={back} backLabel="Boards" backDisabled={blocked || modalOpen} actions={typing ? undefined : <>
+    <AppHeader title={draft ? 'Create' : 'Edit'} onBack={back} backLabel="Boards" backDisabled={blocked || modalOpen} actions={typing ? undefined : <>
       <Button kind="ghost" compact icon={Undo2} accessibilityLabel="Undo last board change" disabled={blocked || historyBlocked || !canUndo || modalOpen} onPress={undo} />
       <Button kind="ghost" compact icon={Redo2} accessibilityLabel="Redo last board change" disabled={blocked || historyBlocked || !canRedo || modalOpen} onPress={redo} />
       <Button kind="ghost" compact icon={SettingsIcon} accessibilityLabel="Board settings" disabled={blocked || modalOpen} onPress={() => setSettingsOpen(true)} />

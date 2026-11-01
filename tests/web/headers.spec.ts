@@ -1,4 +1,4 @@
-/** @file Waits for route headers before verifying authenticated navigation, account entry, unified-editor settings, accessible titles, touch targets, and separate full-screen play. */
+/** @file Verifies responsive route headers, compact Edit/Create titles, authenticated navigation, touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -17,6 +17,10 @@ async function headerGeometry(page: Page, title?: string, backLabel?: string) {
   if (title) {
     const heading = page.getByRole('heading', { name: title, exact: true });
     await expect(heading).toHaveCount(1);
+    if (title === 'Edit' || title === 'Create') {
+      const label = heading.getByText(title, { exact: true });
+      expect(await label.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    }
     await expect(bar.locator('img')).toHaveCount(0);
     const headingBox = (await heading.boundingBox())!;
     expect(headingBox.y).toBeGreaterThanOrEqual(bounds.y);
@@ -68,7 +72,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     expect(await headerGeometry(page, 'Account & backup', 'Back')).toEqual(dashboard);
     await page.getByRole('button', { name: 'Back', exact: true }).click();
     await page.getByRole('button', { name: 'New board', exact: true }).click();
-    expect(await headerGeometry(page, 'New board', 'Boards')).toEqual(dashboard);
+    expect(await headerGeometry(page, 'Create', 'Boards')).toEqual(dashboard);
     await page.screenshot({ path: `artifacts/screenshots/headers/ai-${viewport.width}.png` });
     await openBoardPictures(page);
     await expect(page.getByRole('heading', { name: 'Board pictures', exact: true })).toBeVisible();
@@ -76,9 +80,9 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await page.getByRole('button', { name: 'Boards', exact: true }).click();
     await page.getByRole('button', { name: 'Discard', exact: true }).click();
     await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-    expect(await headerGeometry(page, 'Edit board', 'Boards')).toEqual(dashboard);
-    await expect(page.getByRole('heading', { name: 'Edit board', exact: true })).toBeFocused();
-    // Narrow titles may ellipsize; their full accessible name and all toolbar actions stay usable.
+    expect(await headerGeometry(page, 'Edit', 'Boards')).toEqual(dashboard);
+    await expect(page.getByRole('heading', { name: 'Edit', exact: true })).toBeFocused();
+    // The short route heading and every toolbar action fit even on the smallest phone viewport.
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await expect(page.getByTestId('app-header').getByRole('button', { name: 'Languages', exact: true })).toHaveCount(0);
     await page.screenshot({ path: `artifacts/screenshots/headers/editor-${viewport.width}.png` });
