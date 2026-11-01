@@ -1,4 +1,4 @@
-/** @file Coordinates persisted sign-in, Home restoration, and automatic backup with independent sync and account-action feedback. */
+/** @file Coordinates sign-in, prompt local backups, throttled remote refresh, and independent sync/account-action feedback. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -11,7 +11,13 @@ import { accountRequest, syncAccount } from './accountSync';
 import { loadAccountSession, saveAccountSession, type AccountSession } from './accountSession';
 import { accountBackupState, backupConnectionFailure } from './accountBackup';
 
-/** Restore sign-in, keep empty devices on Home during restoration, and expose backup status separately from authentication feedback. */
+const remoteRefreshInterval = 15 * 60 * 1000;
+
+/**
+ * Restore sign-in and empty libraries, promptly back up edits, and check unchanged libraries at most
+ * every 15 minutes after success. Manual refresh bypasses that interval; failures retry while active.
+ * Defer transfers during editing/play and keep backup status separate from authentication feedback.
+ */
 export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolean, onRestored: () => Promise<void>) {
   const [session, setSession] = useState<AccountSession | null>(null);
   const [ready, setReady] = useState(false);
@@ -23,7 +29,8 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   const [syncing, setSyncing] = useState(false);
   const [syncFailure, setSyncFailure] = useState<{ message: string; offline: boolean } | null>(null);
   const [online, setOnline] = useState(() => Platform.OS !== 'web' || navigator.onLine !== false);
-  const current = useRef({ store, session, canSync, onRestored, online }); current.current = { store, session, canSync, onRestored, online };
+  const current = useRef({ store, session, canSync, onRestored, online, needsLogin, syncFailure }); current.current = { store, session, canSync, onRestored, online, needsLogin, syncFailure };
+  const lastSync = useRef<{ session: AccountSession; at: number } | null>(null);
   const operation = useRef<AbortController | null>(null);
   const running = useRef(false);
   const mounted = useRef(true);
@@ -38,14 +45,18 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     }).catch(() => { if (mounted.current) setError('Saved sign-in could not be opened. Please sign in again.'); }).finally(() => { if (mounted.current) setReady(true); });
     return () => { mounted.current = false; operation.current?.abort(); };
   }, []);
-  const sync = useCallback(async () => {
+  const sync = useCallback(async (automatic = false) => {
     const { store: libraryStore, session: account, canSync: allowed } = current.current;
     const local = libraryStore.current.current;
     // Empty devices show restoration on Home, including direct editor links, until cloud content is known.
     const initialRestore = Boolean(account && local && !local.boards.length && (local.sync?.accountId !== account.account.id || local.sync.server !== account.server));
-    if (!account || account.account.deletionPending || !account.account.emailVerified || running.current || (!allowed && !initialRestore) || !local || !current.current.online) return;
+    if (!account || current.current.needsLogin || account.account.deletionPending || !account.account.emailVerified || running.current || (!allowed && !initialRestore) || !local || !current.current.online) return;
     if (Platform.OS === 'web' ? document.hidden : AppState.currentState !== 'active') return;
     if (backendUrl(local.settings.backendUrl) !== account.server) { setNeedsLogin(true); setMessage('This account belongs to a different server. Sign in again. Your local boards are safe.'); return; }
+    const pending = local.sync?.accountId !== account.account.id || local.sync.server !== account.server || JSON.stringify(local.boards) !== JSON.stringify(local.sync.snapshot.boards);
+    // Only acknowledged, unchanged content is throttled. New sessions, edits and failures still
+    // sync promptly; returning from an editor or foregrounding alone does not force a fresh pull.
+    if (automatic && lastSync.current?.session === account && !pending && !current.current.syncFailure && Date.now() - lastSync.current.at < remoteRefreshInterval) return;
     running.current = true; setBusy(true); setSyncing(true); setSyncFailure(null);
     const controller = new AbortController(); operation.current = controller;
     try {
@@ -68,6 +79,7 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
           settings: { ...local.settings, activeBoardId: boards.some(board => board.id === local.settings.activeBoardId) ? local.settings.activeBoardId : null } };
       });
       await current.current.onRestored();
+      lastSync.current = { session: account, at: Date.now() };
       setNeedsLogin(false);
     } catch (e) {
       if (!controller.signal.aborted && mounted.current) {
@@ -88,20 +100,20 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     conflicts: Boolean(savedAt && store.library?.boards.some(board => board.title.endsWith('(conflict copy)'))),
   };
   useEffect(() => {
-    if (!ready || !session || needsLogin || (!canSync && !restoring)) return;
-    const timer = setTimeout(() => void sync(), 1500);
+    if (!ready || !session || needsLogin || syncing || syncFailure || (!canSync && !restoring)) return;
+    const timer = setTimeout(() => void sync(true), 1500);
     return () => clearTimeout(timer);
-  }, [ready, session, needsLogin, canSync, restoring, signature, sync]);
+  }, [ready, session, needsLogin, canSync, restoring, signature, syncing, syncFailure, sync]);
   useEffect(() => {
     if (!session || needsLogin) return;
-    const retry = () => { void sync(); };
+    const retry = () => { void sync(true); };
     const timer = setInterval(retry, 30000);
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') retry(); });
     return () => { clearInterval(timer); subscription.remove(); };
   }, [session, needsLogin, sync]);
   useEffect(() => {
     if (Platform.OS !== 'web') return;
-    const connected = () => { current.current.online = true; setOnline(true); void sync(); };
+    const connected = () => { current.current.online = true; setOnline(true); void sync(true); };
     const disconnected = () => { current.current.online = false; setOnline(false); };
     window.addEventListener('online', connected); window.addEventListener('offline', disconnected);
     return () => { window.removeEventListener('online', connected); window.removeEventListener('offline', disconnected); };
@@ -158,6 +170,8 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
   });
   /** Clear page-specific authentication feedback without changing backup status or an in-flight operation. */
   const clearFeedback = useCallback(() => { setError(''); setMessage(''); }, []);
-  return { session, ready, busy, syncing, backup, message, error, clearFeedback, needsLogin, savedAt, restoring, retrySync: sync, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, socialAvailable: socialAuthAvailable() };
+  /** Refresh immediately on request, honoring account, connectivity, foreground and in-flight guards. */
+  const retrySync = useCallback(() => sync(), [sync]);
+  return { session, ready, busy, syncing, backup, message, error, clearFeedback, needsLogin, savedAt, restoring, retrySync, config: config ?? session?.authConfig, prepare, authenticate, resetPassword, verifyEmail, link, disconnect, socialAvailable: socialAuthAvailable() };
 }
 export type AccountController = ReturnType<typeof useAccount>;

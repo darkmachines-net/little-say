@@ -1,4 +1,4 @@
-/** @file Verifies automatic backup health, distinct active sync, raced edits, isolated action feedback, first restoration, and safe retries. */
+/** @file Verifies throttled remote refresh, prompt/raced-edit backups, manual refresh, recovery, and account gates. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -6,12 +6,18 @@ import { starterLibrary } from '../../../../tests/fixtures/library';
 import type { Library } from '@little-say/core';
 import type { AccountSession } from './accountSession';
 import { useAccount, type AccountController } from './useAccount';
+import { ApiError } from './api';
 
-const state = vi.hoisted(() => ({ server: 'https://example.test', foreground: 'active' }));
+const state = vi.hoisted(() => ({ server: 'https://example.test', foreground: 'active', OS: 'android', listeners: new Set<(state: string) => void>() }));
 const mocks = vi.hoisted(() => ({ load: vi.fn(), save: vi.fn(), authenticate: vi.fn(), verify: vi.fn(), sync: vi.fn(), request: vi.fn(), restored: vi.fn() }));
-vi.mock('react-native', () => ({ Platform: { OS: 'android' }, AppState: {
+vi.mock('react-native', () => ({ Platform: state, AppState: {
   /** Expose foreground state to the scheduler under test. */
-  get currentState() { return state.foreground; }, addEventListener: vi.fn(() => ({ remove: vi.fn() })),
+  get currentState() { return state.foreground; },
+  /** Register lifecycle callbacks so tests can simulate foreground recovery. */
+  addEventListener: (_event: string, callback: (state: string) => void) => {
+    state.listeners.add(callback);
+    return { /** Release the subscription on dependency changes or unmount. */ remove: () => { state.listeners.delete(callback); } };
+  },
 } }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => crypto.randomUUID() }));
 vi.mock('./api', () => ({ backendUrl: () => state.server, ApiError: class extends Error {
@@ -41,7 +47,7 @@ async function mount(saved: AccountSession | null = session) {
 async function advance(ms = 1500) { await act(async () => { await vi.advanceTimersByTimeAsync(ms); }); }
 beforeEach(() => {
   vi.useFakeTimers(); vi.clearAllMocks(); vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
-  state.server = session.server; state.foreground = 'active'; allowed = true;
+  state.server = session.server; state.foreground = 'active'; state.OS = 'android'; state.listeners.clear(); allowed = true;
   library = starterLibrary(); store.library = store.current.current = library;
   mocks.sync.mockResolvedValue({ revision: 0, boards: library.boards, assets: [] });
   mocks.authenticate.mockResolvedValue(session); mocks.verify.mockResolvedValue(session); mocks.request.mockResolvedValue({});
@@ -107,9 +113,14 @@ it('keeps newer edits pending when they arrive during an in-flight backup', asyn
   await advance(); expect(controller.syncing).toBe(true); expect(controller.backup.state).toBe('syncing');
   library = { ...library, boards: library.boards.map(board => ({ ...board, title: 'Newer edit', revision: board.revision + 1 })) };
   store.library = store.current.current = library;
-  await act(async () => { screen!.update(React.createElement(Harness)); finish({ revision: 1, boards: original, assets: [] }); });
+  await act(async () => { screen!.update(React.createElement(Harness)); });
+  await advance(5000); // The edit's debounce must not be lost while the older transfer is running.
+  await act(async () => { finish({ revision: 1, boards: original, assets: [] }); });
   expect(controller.backup.state).toBe('pending'); expect(controller.savedAt).toBeDefined();
   expect(library.boards[0].title).toBe('Newer edit');
+  mocks.sync.mockResolvedValue({ revision: 2, boards: library.boards, assets: [] });
+  await advance();
+  expect(mocks.sync).toHaveBeenCalledTimes(2); expect(controller.backup.state).toBe('synced');
 });
 
 it('preserves an authentication error when automatic backup succeeds', async () => {
@@ -117,7 +128,7 @@ it('preserves an authentication error when automatic backup succeeds', async () 
   mocks.verify.mockRejectedValueOnce(new Error('Wrong password'));
   await act(async () => { await controller.verifyEmail('wrong', false).catch(() => {}); });
   expect(controller.error).toBe('Wrong password');
-  await advance(30000);
+  await advance(16 * 60 * 1000); expect(mocks.sync).toHaveBeenCalledTimes(2);
   expect(controller.backup.state).toBe('synced'); expect(controller.error).toBe('Wrong password');
 });
 
@@ -138,4 +149,94 @@ it('does not sync an account belonging to another server or pending deletion', a
   await act(async () => screen!.unmount());
   await mount({ ...session, account: { ...session.account, deletionPending: true } }); await advance(30000);
   expect(mocks.sync).not.toHaveBeenCalled();
+});
+
+it('refreshes once at startup and limits healthy remote checks to every 15 minutes', async () => {
+  library.sync = { accountId: session.account.id, server: session.server, savedAt: new Date().toISOString(), snapshot: { revision: 1, boards: library.boards, assets: [] } };
+  await mount(); await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
+  await advance(14 * 60 * 1000); expect(mocks.sync).toHaveBeenCalledOnce();
+  await advance(90 * 1000); expect(mocks.sync).toHaveBeenCalledTimes(2);
+});
+
+it('does not pull again on foreground or returning from an unchanged editor, but backs up edits promptly', async () => {
+  await mount(); await advance();
+  await act(async () => { state.listeners.forEach(listener => listener('active')); });
+  allowed = false; await act(async () => screen!.update(React.createElement(Harness)));
+  allowed = true; await act(async () => screen!.update(React.createElement(Harness)));
+  await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
+  allowed = false;
+  library = { ...library, boards: library.boards.map(board => ({ ...board, title: 'Edited', revision: board.revision + 1 })) };
+  store.library = store.current.current = library;
+  mocks.sync.mockResolvedValue({ revision: 2, boards: library.boards, assets: [] });
+  await act(async () => screen!.update(React.createElement(Harness)));
+  await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
+  allowed = true; await act(async () => screen!.update(React.createElement(Harness)));
+  await advance(); expect(mocks.sync).toHaveBeenCalledTimes(2); expect(controller.backup.state).toBe('synced');
+});
+
+it('does not echo a downloaded board change back as another automatic sync', async () => {
+  library.sync = { accountId: session.account.id, server: session.server, savedAt: new Date().toISOString(), snapshot: { revision: 0, boards: library.boards, assets: [] } };
+  mocks.sync.mockResolvedValue({ revision: 1, boards: library.boards.map(board => ({ ...board, title: 'From another device', revision: board.revision + 1 })), assets: [] });
+  await mount(); await advance();
+  expect(library.boards[0].title).toBe('From another device');
+  await advance(60000); expect(mocks.sync).toHaveBeenCalledOnce();
+});
+
+it('defers stale remote refresh in the background and resumes on foreground', async () => {
+  await mount(); await advance();
+  state.foreground = 'background';
+  await advance(16 * 60 * 1000); expect(mocks.sync).toHaveBeenCalledOnce();
+  state.foreground = 'active';
+  await act(async () => { state.listeners.forEach(listener => listener('active')); });
+  expect(mocks.sync).toHaveBeenCalledTimes(2);
+});
+
+it('allows immediate manual refresh while coalescing overlapping attempts', async () => {
+  await mount(); await advance();
+  let finish!: () => void;
+  mocks.sync.mockImplementationOnce(() => new Promise(resolve => { finish = () => resolve({ revision: 1, boards: library.boards, assets: [] }); }));
+  let manual!: Promise<void>;
+  await act(async () => { manual = controller.retrySync(); });
+  expect(controller.syncing).toBe(true);
+  await act(async () => controller.retrySync());
+  expect(mocks.sync).toHaveBeenCalledTimes(2);
+  await act(async () => { finish(); await manual; });
+  expect(controller.syncing).toBe(false);
+  await advance(60000); expect(mocks.sync).toHaveBeenCalledTimes(2);
+});
+
+it('retries a failed manual refresh promptly even after a recent successful sync', async () => {
+  await mount(); await advance();
+  mocks.sync.mockRejectedValueOnce(new Error('Server unavailable'));
+  await act(async () => controller.retrySync());
+  expect(controller.backup.state).toBe('error');
+  await advance(10000); expect(mocks.sync).toHaveBeenCalledTimes(2);
+  await advance(30000); expect(mocks.sync).toHaveBeenCalledTimes(3); expect(controller.backup.state).toBe('synced');
+});
+
+it('resumes pending web backups on reconnection without refreshing recently synced content', async () => {
+  state.OS = 'web';
+  const browser = new EventTarget();
+  vi.stubGlobal('window', browser); vi.stubGlobal('navigator', { onLine: true }); vi.stubGlobal('document', { hidden: false });
+  await mount(); await advance();
+  await act(async () => { browser.dispatchEvent(new Event('offline')); });
+  expect(controller.backup.state).toBe('offline');
+  await act(async () => { browser.dispatchEvent(new Event('online')); });
+  expect(mocks.sync).toHaveBeenCalledOnce();
+  await act(async () => { browser.dispatchEvent(new Event('offline')); });
+  library = { ...library, boards: [] }; store.library = store.current.current = library;
+  mocks.sync.mockResolvedValue({ revision: 2, boards: [], assets: [] });
+  await act(async () => screen!.update(React.createElement(Harness)));
+  await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
+  await act(async () => { browser.dispatchEvent(new Event('online')); });
+  expect(mocks.sync).toHaveBeenCalledTimes(2); expect(controller.backup.state).toBe('synced');
+});
+
+it('blocks automatic and manual sync after expiry until the account signs in again', async () => {
+  mocks.sync.mockRejectedValueOnce(new ApiError('Session expired', 401));
+  await mount(); await advance(); expect(controller.needsLogin).toBe(true);
+  await act(async () => controller.retrySync());
+  await advance(16 * 60 * 1000); expect(mocks.sync).toHaveBeenCalledOnce();
+  await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
+  await advance(); expect(mocks.sync).toHaveBeenCalledTimes(2);
 });

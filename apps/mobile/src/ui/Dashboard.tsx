@@ -1,8 +1,8 @@
-/** @file Shows first-restore recovery or playable board previews with responsive creation actions. */
+/** @file Shows playable boards, first-restore recovery, and a fixed-size navbar refresh/progress control. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
-import { Plus, UserRound, Settings as SettingsIcon } from 'lucide-react-native';
+import { Plus, RefreshCw, UserRound, Settings as SettingsIcon } from 'lucide-react-native';
 import { boardWithProfileLanguages, type Board, type Library } from '@little-say/core';
 import { BoardMenu } from './BoardMenu';
 import { BoardCard } from './BoardCard';
@@ -18,6 +18,7 @@ const floatingClearance = 16;
 
 /**
  * Keep cached boards usable during sync; first restoration replaces creation and previews with progress/recovery.
+ * Refresh manually from the navbar; its fixed-size busy control keeps background sync out of the list layout.
  * Resolve profile languages for previews and audio actions, with recent boards before favorites.
  * Reserve the measured floating action height below the list; the app root owns native/web safe-area insets.
  */
@@ -38,7 +39,9 @@ export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, on
   const remaining = boards.filter(board => board.id !== recent?.id).sort((a, b) => Number(favorites.has(b.id)) - Number(favorites.has(a.id)));
   const card = (board: Board, featured = false) => <BoardCard board={boardWithProfileLanguages(board, library.settings)} featured={featured} favorite={favorites.has(board.id)} wide={wide} onPlay={() => onPlay(board)} onEdit={() => onOpen(board.id)} onMore={() => setMenuId(board.id)} onFavorite={() => onFavorite(board.id)} />;
   return <View style={styles.page}>
-    <AppHeader actions={<>{saving && <ActivityIndicator size="small" accessibilityLabel="Saving changes" />}<Button kind="ghost" icon={UserRound} compact onPress={onAccount} accessibilityLabel={accountLabel} /><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
+    <AppHeader actions={<><View style={{ width: 44, height: 50 }}>
+      <Button kind="ghost" icon={RefreshCw} compact busy={sync.syncing || saving} disabled={['sign-in-required', 'unverified', 'deletion-pending'].includes(sync.backup.state)} onPress={() => void sync.retrySync()} accessibilityLabel={saving && !sync.syncing ? 'Saving changes' : 'Refresh content'} />
+    </View><Button kind="ghost" icon={UserRound} compact onPress={onAccount} accessibilityLabel={accountLabel} /><Button kind="secondary" icon={SettingsIcon} compact onPress={onSettings} accessibilityLabel="Settings" /></>} />
     <ScrollView testID="dashboard-scroll" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 16, paddingBottom: wide ? creationHeight + floatingInset + floatingClearance : 32, gap: 16 }, sync.restoring && { flexGrow: 1, paddingTop: 32, paddingBottom: 32, justifyContent: 'center', alignItems: 'center' }]}>
       {sync.restoring ? <View testID="initial-sync-state" style={{ width: '100%', maxWidth: 520, alignItems: 'center', gap: 24 }}>
         {syncError ? <Notice action={<Button kind="secondary" onPress={() => void sync.retrySync()}>Retry sync</Button>}>{`Your content couldn’t sync. ${syncError}`}</Notice> : <>
@@ -50,10 +53,6 @@ export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, on
         </>}
       </View> : <>
       {!wide && <Button icon={Plus} onPress={onCompose}>{createLabel}</Button>}
-      {sync.syncing && <View style={[styles.card, styles.row, { gap: 12 }]}>
-        <ActivityIndicator color={theme.accent} accessibilityLabel="Syncing content" />
-        <Text accessibilityLiveRegion="polite" style={[styles.body, { flex: 1 }]}>Syncing your content…</Text>
-      </View>}
       <View style={{ gap: 28 }}>
         {recent && card(recent, true)}
         {remaining.length > 0 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8, rowGap: 16 }}>

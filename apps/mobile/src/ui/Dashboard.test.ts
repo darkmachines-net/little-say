@@ -1,4 +1,4 @@
-/** @file Verifies first-restore creation gating, retry/offline recovery, and usable cached boards during background sync. */
+/** @file Verifies first-restore recovery and navbar refresh/progress without altering the usable cached board list. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -6,8 +6,11 @@ import { starterLibrary } from '../../../../tests/fixtures/library';
 import { Dashboard } from './Dashboard';
 
 vi.mock('react-native', () => ({ View: 'View', Text: 'Text', ScrollView: 'ScrollView', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
-vi.mock('lucide-react-native', () => ({ Plus: 'Plus', UserRound: 'UserRound', Settings: 'Settings' }));
-vi.mock('./AppHeader', () => ({ AppHeader: 'AppHeader' }));
+vi.mock('lucide-react-native', () => ({ Plus: 'Plus', RefreshCw: 'RefreshCw', UserRound: 'UserRound', Settings: 'Settings' }));
+vi.mock('./AppHeader', () => ({
+  /** Expose header actions to assertions while leaving header layout to browser coverage. */
+  AppHeader: ({ actions }: { actions: React.ReactNode }) => React.createElement('AppHeader', null, actions),
+}));
 vi.mock('./Brand', () => ({ MountainMark: 'MountainMark' }));
 vi.mock('./BoardCard', () => ({ BoardCard: 'BoardCard' }));
 vi.mock('./BoardMenu', () => ({ BoardMenu: 'BoardMenu' }));
@@ -47,15 +50,21 @@ it('offers first-restore retry on Home and replaces failure with progress on ret
   expect(nodes('Notice')).toHaveLength(0); expect(nodes('ActivityIndicator')).toHaveLength(1);
 });
 
-it('keeps cached boards and creation usable during background sync, then removes progress', async () => {
+it('refreshes from the navbar and keeps cached boards and creation usable without inline sync progress', async () => {
+  await render(false, false, '', false);
+  const refresh = () => nodes('Button').find(node => node.props.accessibilityLabel === 'Refresh content')!;
+  expect(refresh().props.busy).toBe(false);
+  await act(async () => refresh().props.onPress()); expect(retrySync).toHaveBeenCalledOnce();
   await render(false, true, '', false);
-  expect(nodes('ActivityIndicator')).toHaveLength(1);
+  expect(refresh().props.busy).toBe(true);
+  expect(nodes('ScrollView')[0].findAllByType('ActivityIndicator' as any)).toHaveLength(0);
+  expect(nodes('Text').map(node => node.props.children)).not.toContain('Syncing your content…');
   await act(async () => nodes('BoardCard')[0].props.onPlay()); expect(onPlay).toHaveBeenCalledOnce();
   const createButton = nodes('Button').find(node => node.props.children === 'New board')!;
   expect(createButton.props.disabled).toBeFalsy();
   await act(async () => createButton.props.onPress()); expect(onCompose).toHaveBeenCalledOnce();
   await render(false, false, '', false);
-  expect(nodes('ActivityIndicator')).toHaveLength(0); expect(nodes('BoardCard').length).toBeGreaterThan(0);
+  expect(refresh().props.busy).toBe(false); expect(nodes('BoardCard').length).toBeGreaterThan(0);
 });
 
 it('explains connection loss instead of spinning while an empty device is offline', async () => {
