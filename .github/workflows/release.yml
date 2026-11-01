@@ -1,7 +1,9 @@
-# Delegates coordinated GCP/Expo delivery to the same pinned toolkit used by development and app startup.
+# Prepares changed Dev clients and development OTA on master, gates beta promotion, then delegates GCP/Expo delivery.
 name: Release
-run-name: ${{ inputs.destination == 'production' && 'Deploy to production (GCP + Expo beta)' || 'Public-store release (Expo production)' }}
+run-name: ${{ inputs.destination == 'public-stores' && 'Public-store release (Expo production)' || 'Continuous delivery (Development → approval → beta)' }}
 on:
+  push:
+    branches: [master]
   workflow_dispatch:
     inputs:
       destination:
@@ -15,8 +17,8 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@81715f8c46676020a3348d3db5584c8bce676bd0
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@4f252863f0d5f53d0d0c72af80f2e44235427e0f
     with:
-      profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination] }}
-      rebuild: ${{ inputs.rebuild }}
+      profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination || 'production'] }}
+      rebuild: ${{ inputs.rebuild || false }}
     secrets: inherit

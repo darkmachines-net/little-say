@@ -156,6 +156,8 @@
     }
   },
   "development": {
+    "channel": "development",
+    "promotionEnvironment": "beta",
     "easProfile": "development",
     "environment": "preview",
     "approvalEnvironment": "internal",
