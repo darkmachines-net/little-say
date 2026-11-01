@@ -1,4 +1,4 @@
-/** @file Verifies settled responsive headers, compact account actions, accessible touch targets, and separate full-screen play. */
+/** @file Verifies illustrated welcome copy and actions, settled responsive headers, accessible touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -101,15 +101,32 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
   });
 }
 
-test('account and setup use route headings and compact single rows after a phone resize', async ({ page }) => {
+test('welcome anchors account actions below its artwork while forms and setup keep compact route headers', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/app');
   await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
-  const desktop = await headerGeometry(page, 'Welcome to Little Say');
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+  await expect(page.getByTestId('app-header')).toHaveCount(0);
+  for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 740 }]) {
+    await page.setViewportSize(viewport);
+    const actions = page.getByTestId('account-welcome-actions');
+    await expect(page.getByText('Make your own custom speaking soundboards for learning new words in seconds.', { exact: true })).toBeVisible();
+    await expect(page.getByText("Free with no ads to support your child's learning.", { exact: true })).toBeVisible();
+    await expect.poll(async () => {
+      const box = (await actions.boundingBox())!;
+      return Math.abs(viewport.height - box.y - box.height - 20);
+    }).toBeLessThan(2);
+    await expect(actions.getByRole('button', { name: 'Register', exact: true })).toBeInViewport();
+    await expect(actions.getByRole('button', { name: 'Log in', exact: true })).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  const desktop = await headerGeometry(page, 'Sign in', 'Back');
   await page.setViewportSize({ width: 320, height: 740 });
   await expect.poll(async () => (await page.getByTestId('app-header-bar').last().boundingBox())!.height).toBeLessThan(desktop.height);
-  const phone = await headerGeometry(page, 'Welcome to Little Say');
+  const phone = await headerGeometry(page, 'Sign in', 'Back');
   expect(phone.height).toBeLessThan(desktop.height);
   await openSignedInApp(page);
   expect(await headerGeometry(page, 'Set up Little Say')).toEqual(phone);

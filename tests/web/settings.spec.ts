@@ -1,4 +1,4 @@
-/** @file Exercises signed-in Settings, About, shared languages, media migration, offline links, and navigation back to the dashboard action. */
+/** @file Exercises Settings, About, shared languages, media migration, offline links, and navigation to the dashboard or illustrated account entry. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
@@ -251,7 +251,7 @@ test('retired media links show the overview and saved overrides return to defaul
 
 test('settings deep links require sign-in, then remain available offline with the saved account', async ({ page, context }) => {
   await page.goto('/app/settings/privacy');
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
   await openExistingLibrary(page);
   await page.goto('/app/settings/privacy');
   await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toBeVisible();
@@ -278,5 +278,5 @@ test('legacy account links open standalone forms with refresh and browser histor
   await page.reload();
   await expect(page.getByLabel('Confirm password', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
 });

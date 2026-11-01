@@ -1,4 +1,4 @@
-/** @file Exercises immediate Home entry with centered first-sync loading/retry, verified backup, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Exercises illustrated required entry, first-sync loading/retry, verified backup, media restoration, offline conflicts, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -42,10 +42,10 @@ test('registered accounts create AI boards and retain private ownership on reloa
 test('web sign-in gates legacy local boards, cancelled forms, settings links, and signed-out reloads', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app');
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
   await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page.getByRole('button', { name: 'Register', exact: true }).click();
@@ -56,7 +56,7 @@ test('web sign-in gates legacy local boards, cancelled forms, settings links, an
     await new Promise<void>(resolve => { const tx = db.transaction('state', 'readwrite'); tx.objectStore('state').put({ ...library, settings: { ...library.settings, accountChoiceMade: true } }, 'library'); tx.oncomplete = () => resolve(); }); db.close();
   }, library);
   await page.goto('/app/settings/privacy');
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toHaveCount(0);
   expect((await page.request.get('/api/account/backup')).status()).toBe(401);
   await openSignedInApp(page);
@@ -68,7 +68,7 @@ test('web sign-in gates legacy local boards, cancelled forms, settings links, an
   await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
   await signOut(page);
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Play Farmyard friends', exact: true })).toHaveCount(0);
   expect((await readLibrary(page)).boards).toEqual(library.boards);
 });
@@ -80,7 +80,7 @@ async function readLibrary(page: Page) {
   });
 }
 async function signIn(page: Page, username: string) {
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Log in', exact: true }).click();
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -89,7 +89,7 @@ async function signOut(page: Page) {
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Sign out on this device?', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
 }
 async function changeTitle(page: Page, title: string) {
   await page.evaluate(async title => {
@@ -111,7 +111,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     // Keep the owned photo/picture/speech fixture fixed while app defaults allow automatic AI audio.
     for (const device of [page, other]) await device.route('**/api/speech', route => route.fulfill({ status: 503, json: { error: 'Synthetic unavailable speech' } }));
     await page.goto('/app');
-    await expect(page.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
     // Seed a device with already-owned files. Everything after this uses the live account API.
     const png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a6XcAAAAASUVORK5CYII=';
     const pictureId = createHash('sha256').update(Buffer.from(png, 'base64')).digest('hex');
@@ -186,10 +186,10 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
     await other.getByRole('button', { name: 'Back', exact: true }).click();
     await signOut(other);
-    await expect(other.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
     await second.setOffline(true); await other.reload();
-    await expect(other.getByRole('heading', { name: 'Welcome to Little Say', exact: true })).toBeVisible();
+    await expect(other.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'Play Edited on tablet', exact: true })).toHaveCount(0);
     expect(await other.evaluate(() => localStorage.getItem('little-say-firebase-account'))).toBeNull();
   } finally { await second.close(); }
