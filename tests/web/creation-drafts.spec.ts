@@ -1,4 +1,4 @@
-/** @file Verifies explicit creation-draft retention, guarded exits, reload isolation, clarification recovery, and write retry in the unified editor. */
+/** @file Verifies explicit creation-draft retention, guarded exits, reload isolation, clarification recovery, first-save recency, and write retry in the unified editor. */
 import { expect, test, type Page } from '@playwright/test';
 import { openExistingLibrary } from './existingLibrary';
 import { openBoardPictures, waitForAiTurn } from './boardEditor';
@@ -70,6 +70,9 @@ test('saved clarification history resumes and the first completed AI turn consum
   expect((await saved(page)).creationDraft).toBeUndefined(); expect((await saved(page)).boards).toHaveLength(4);
   await button(page, 'Boards').click(); await expect(button(page, 'New board')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Save your draft?', exact: true })).toHaveCount(0);
+  await expect(page.getByTestId('recent-board').getByTestId('board-card-title')).toHaveText('Animal words');
+  await page.reload();
+  await expect(page.getByTestId('board-card-title')).toHaveText(['Animal words', 'Farmyard friends', 'My little words', 'Our family']);
 });
 
 test('failed Save and Discard keep the draft and allow retry', async ({ page }) => {
