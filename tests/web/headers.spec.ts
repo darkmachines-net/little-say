@@ -1,4 +1,4 @@
-/** @file Verifies responsive route headers, compact Edit/Create titles, authenticated navigation, touch targets, and separate full-screen play. */
+/** @file Verifies responsive route headers, compact Edit/Create titles, grouped manual actions outside navigation, touch targets, and full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -88,7 +88,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
     await page.screenshot({ path: `artifacts/screenshots/headers/editor-${viewport.width}.png` });
     await openBoardLanguages(page);
     await page.getByRole('button', { name: 'Close Board languages', exact: true }).click();
-    await page.getByRole('button', { name: 'Play board', exact: true }).click();
+    await page.getByRole('button', { name: 'Accept', exact: true }).click();
     await expect(page.getByTestId('play-board')).toBeVisible();
     await expect(page.getByTestId('app-header')).toHaveCount(0);
     await expect(page.getByTestId('board-back')).toBeVisible();

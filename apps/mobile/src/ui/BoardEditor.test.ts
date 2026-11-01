@@ -1,4 +1,4 @@
-/** @file Verifies native picture-frame status, keyboard/input stability, Undo/Redo controls, draft exits, and failed-write recovery. */
+/** @file Verifies grouped manual actions, quiet save status, native keyboard/input stability, Undo/Redo, picture progress, and draft recovery. */
 
 import React, { act } from 'react';
 import { create, type ReactTestInstance, type ReactTestRenderer } from 'react-test-renderer';
@@ -11,7 +11,7 @@ const native = vi.hoisted(() => ({
   platform: 'android', width: 390, height: 844, top: 48, visible: false,
   listeners: new Map<string, () => void>(),
 }));
-const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words', busy: null as string | null, suggestion: null as object | null, clear: vi.fn(), preview: undefined as Board | undefined, states: {} as Record<string, PictureTileState> }));
+const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words', busy: null as string | null, suggestion: null as object | null, clear: vi.fn(), stop: vi.fn(), preview: undefined as Board | undefined, states: {} as Record<string, PictureTileState> }));
 vi.mock('react-native', () => ({
   Platform: { get OS() { return native.platform; } },
   View: 'View', Text: 'Text', TextInput: 'TextInput', ScrollView: 'ScrollView', Pressable: 'Pressable',
@@ -25,7 +25,7 @@ vi.mock('react-native', () => ({
   BackHandler: { addEventListener: (name: string, callback: () => void) => { native.listeners.set(name, callback); return { remove: () => native.listeners.delete(name) }; } },
 }));
 vi.mock('react-native-safe-area-context', () => ({ useSafeAreaInsets: () => ({ top: native.top }) }));
-vi.mock('lucide-react-native', () => ({ ChevronLeft: 'ChevronLeft', Copy: 'Copy', Languages: 'Languages', Play: 'Play', Plus: 'Plus', Redo2: 'Redo2', Settings: 'Settings', Trash2: 'Trash2', Undo2: 'Undo2', Volume2: 'Volume2', ArrowUp: 'ArrowUp', Keyboard: 'Keyboard', Square: 'Square', X: 'X' }));
+vi.mock('lucide-react-native', () => ({ Check: 'Check', ChevronLeft: 'ChevronLeft', Copy: 'Copy', Languages: 'Languages', Plus: 'Plus', Redo2: 'Redo2', Settings: 'Settings', Trash2: 'Trash2', Undo2: 'Undo2', Volume2: 'Volume2', ArrowUp: 'ArrowUp', Keyboard: 'Keyboard', Square: 'Square', X: 'X' }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => 'new-card' }));
 vi.mock('./components', () => ({ Button: 'Button', Notice: 'Notice', Confirm: 'Confirm',
   /** Render dialog actions so native exit scenarios exercise their callbacks. */
@@ -43,7 +43,7 @@ vi.mock('../services/useBoardAssistant', () => ({
   useBoardAssistant: ({ board }: { board: Board }) => ({
     preview: state.preview ?? board, prompt: state.prompt, reply: state.reply, history: [], scope: null, busy: state.busy,
     suggestion: state.suggestion, error: '', mergeError: '', progress: '', states: state.states, translations: [], conflicts: [],
-    setPrompt: vi.fn(), clear: state.clear, stop: vi.fn().mockResolvedValue(true), generate: vi.fn(),
+    setPrompt: vi.fn(), clear: state.clear, stop: state.stop, generate: vi.fn(),
   }),
 }));
 
@@ -80,6 +80,7 @@ beforeEach(() => {
   Object.assign(native, { width: 390, height: 844, top: 48, visible: false });
   native.listeners.clear(); state.reply = ''; state.prompt = 'Keep my words'; state.busy = null; state.suggestion = null; state.preview = undefined; state.states = {};
   vi.clearAllMocks(); vi.mocked(props.onSaveDraft).mockResolvedValue(undefined); vi.mocked(props.onDiscardDraft).mockResolvedValue(undefined);
+  state.stop.mockReset().mockResolvedValue(true);
 });
 afterEach(async () => {
   await act(async () => { screen.unmount(); });
@@ -107,6 +108,7 @@ it.each(['android', 'ios'])('keeps the same %s input across overlay, resize, rot
     await keyboard(true);
     expectFixedPrompt();
     expect(screen.root.findAllByProps({ testID: 'editor-heading' })).toHaveLength(0);
+    expect(screen.root.findAllByProps({ testID: 'manual-edit-controls' })).toHaveLength(0);
     // Overlay keyboards leave window dimensions unchanged; resized windows and rotation do not.
     for (const [width, height, top] of [[390, 844, 48], [390, 430, 48], [720, 330, 24]]) {
       Object.assign(native, { width, height, top });
@@ -123,6 +125,7 @@ it.each(['android', 'ios'])('keeps the same %s input across overlay, resize, rot
     await act(async () => { input().props.onBlur(); });
     Object.assign(native, { width: 390, height: 844, top: 48 }); await render();
     expect(screen.root.findAllByProps({ testID: 'editor-heading' })).toHaveLength(1);
+    expect(screen.root.findAllByProps({ testID: 'manual-edit-controls' })).toHaveLength(1);
     expect(input()).toBe(mountedInput); expectFixedPrompt();
   }
 });
@@ -130,6 +133,30 @@ it.each(['android', 'ios'])('keeps the same %s input across overlay, resize, rot
 const hosts = (name: string) => screen.root.findAll(node => typeof node.type === 'string' && String(node.type) === name);
 const host = (name: string) => hosts(name)[0];
 const toolbar = (label: string) => (React.Children.toArray(host('AppHeader').props.actions.props.children) as React.ReactElement<any>[]).find(element => element.props.accessibilityLabel === label)!.props;
+
+it('groups Add Card and Accept outside navigation and keeps saved boards quiet', async () => {
+  await act(async () => { screen = create(React.createElement(BoardEditor, props)); });
+  const buttons = screen.root.findByProps({ testID: 'manual-edit-controls' }).findAllByType('Button' as never);
+  expect(buttons.map(button => button.props.children)).toEqual(['Add Card', 'Accept']);
+  expect(buttons[1].props.icon).toBe('Check');
+  expect(React.Children.toArray(host('AppHeader').props.actions.props.children)).toHaveLength(3);
+  expect(screen.root.findAllByProps({ testID: 'board-save-status' })).toHaveLength(0);
+  await act(async () => { screen.update(React.createElement(BoardEditor, { ...props, saving: true })); });
+  expect(screen.root.findByProps({ testID: 'board-save-status' }).props.children).toBe('Saving…');
+  await act(async () => { screen.update(React.createElement(BoardEditor, { ...props, saveError: 'Storage full' })); });
+  expect(screen.root.findByProps({ testID: 'board-save-status' }).props.children).toBe('Not saved — retry saving');
+});
+
+it.each([true, false])('Accept waits for pending work and opens play only after successful completion (%s)', async saved => {
+  let finish!: (saved: boolean) => void;
+  state.stop.mockReturnValueOnce(new Promise<boolean>(resolve => { finish = resolve; }));
+  await act(async () => { screen = create(React.createElement(BoardEditor, props)); });
+  const accept = screen.root.findByProps({ testID: 'manual-edit-controls' }).findAllByType('Button' as never)[1];
+  await act(async () => accept.props.onPress());
+  expect(props.onPlay).not.toHaveBeenCalled();
+  await act(async () => finish(saved));
+  expect(props.onPlay).toHaveBeenCalledTimes(saved ? 1 : 0);
+});
 
 it('exposes independent Undo/Redo controls and preserves unsent input during history navigation', async () => {
   await act(async () => { screen = create(React.createElement(BoardEditor, props)); });

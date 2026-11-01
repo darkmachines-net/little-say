@@ -1,4 +1,4 @@
-/** @file Checks photos within the shared editor. Exercises browser photo import and crop preview consistency through saving and playback. */
+/** @file Checks photo import and crop consistency through saving, quiet saved state, and the grouped Accept action. */
 
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -29,7 +29,7 @@ async function choose(page: Page, name = 'Choose photo') {
 }
 async function saveTile(page: Page) {
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
 }
 async function region(frame: Locator) {
   const f = (await frame.boundingBox())!, i = (await frame.getByTestId('photo-image').boundingBox())!;

@@ -1,4 +1,4 @@
-/** @file Verifies live AI stages, centered placeholders and faded replacements, independent picture downloads, saved turns, dashboard return, and offline fallbacks. */
+/** @file Verifies live AI stages, centered placeholders and faded replacements, independent downloads, saved turns, Accept/play handoff, and offline fallbacks. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardPictures } from './boardEditor';
@@ -199,7 +199,7 @@ test('construction pictures are generated, saved automatically offline, and reta
   await waitForAiTurn(page);
   expect(jobs).toHaveLength(6);
   expect((await library(page)).boards.at(-1).tiles.map((tile: any) => tile.illustration)).toEqual(stored.tiles.map((tile: any) => tile.illustration));
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('card-picture')).toHaveCount(6);
   await context.setOffline(true); await page.reload(); await expect(page.getByTestId('card-picture')).toHaveCount(6);
   await expect(page.getByText('Picture unavailable', { exact: true })).toHaveCount(0);
@@ -382,7 +382,7 @@ test('missing library and disabled server generation keep a usable emoji board w
   await expect(page.getByText(/Enable AI pictures|Needs a picture|No clear library match/)).toHaveCount(0);
   await waitForAiTurn(page);
   expect((await library(page)).boards.at(-1).tiles.every((tile: any) => tile.illustration.kind === 'emoji')).toBe(true);
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   const continueToBoard = page.getByRole('button', { name: 'Continue to board', exact: true });
   if (await continueToBoard.isVisible()) await continueToBoard.click();
   await expect(page.getByTestId('play-board')).toBeVisible();

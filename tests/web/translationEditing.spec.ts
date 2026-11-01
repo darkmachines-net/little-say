@@ -1,4 +1,4 @@
-/** @file Verifies account-header return navigation, a primary-language canvas, per-card drafts, shared language choices, background translations, and protected corrections. */
+/** @file Verifies account-header return, a primary-language canvas, per-card drafts, shared languages, background translations, protected corrections, and Accept/play handoff. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
@@ -259,7 +259,7 @@ test('AI source-language collisions are refused without replacing saved correcti
 
 test('direct play entry inherits Russian and returns with corrected speech while source labels stay enabled', async ({ page }) => {
   await openTranslations(page);
-  await page.getByRole('button', { name: 'Play board', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
   await page.getByTestId('board-back').click();
   await openRussianTile(page);
@@ -267,7 +267,7 @@ test('direct play entry inherits Russian and returns with corrected speech while
   await page.getByRole('button', { name: 'Listen to translation', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: 'коровушка', language: 'ru-RU' });
   await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await page.getByRole('button', { name: 'Return to play', exact: true }).click();
+  await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await page.getByRole('button', { name: 'Cow', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'коровушка', language: 'ru-RU' }, { text: 'коровушка', language: 'ru-RU' }]);
 });
@@ -387,7 +387,7 @@ test('a failed save keeps the corrected board visible and retry persists it befo
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.evaluate(() => { (window as any).__failSave = false; });
   await page.getByRole('button', { name: 'Retry saving', exact: true }).click();
-  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
   await page.reload();
   if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await openRussianTile(page);
