@@ -1,5 +1,5 @@
 /**
- * @file Resolves shared user languages, optional board play subsets, and new-card defaults.
+ * @file Resolves shared user languages, optional board play subsets, and new-card language defaults.
  */
 
 import { languageProfileSchema, type Board, type LanguageProfile, type Settings } from './schema';
@@ -50,15 +50,4 @@ export function boardWithProfileLanguages(board: Board, settings: Pick<Settings,
 /** Prefer the user default within the board's play subset, falling back to its first play language. */
 export function newTileLanguage(board: Pick<Board, 'playLanguageSubset'>, settings: Pick<Settings, 'languageProfile'>): string {
   return boardPlayLanguages(board, settings)[0];
-}
-
-const greetings: Record<string, string> = { en: 'Hello', ru: 'Привет', es: 'Hola', fr: 'Bonjour', de: 'Hallo', it: 'Ciao', pt: 'Olá', zh: '你好', ja: 'こんにちは', ko: '안녕하세요', ar: 'مرحبًا', hi: 'नमस्ते', uk: 'Привіт', pl: 'Cześć', nl: 'Hallo', sv: 'Hej', tr: 'Merhaba', vi: 'Xin chào', id: 'Halo', he: 'שלום' };
-/**
- * Provide a greeting and emoji for a new card, using the digit one when no greeting is bundled for that
- * language.
- */
-export function firstWord(language: string): { label: string; speech: string; emoji: string } {
-  const greeting = greetings[language.split('-')[0].toLowerCase()];
-  // A digit remains pronounceable in languages without a bundled greeting.
-  return { label: greeting ?? '1', speech: greeting ?? '1', emoji: greeting ? '👋' : '1️⃣' };
 }

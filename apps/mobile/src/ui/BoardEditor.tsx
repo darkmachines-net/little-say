@@ -1,4 +1,4 @@
-/** @file Groups manual Accept/Add Card controls beside AI composition, with Undo/Redo, quiet saved state, and bounded keyboard layout. */
+/** @file Coordinates manual board edits, streamed AI previews, keyboard layout, and unfinished-draft retention. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
@@ -21,24 +21,13 @@ import { BoardAssistant } from './BoardAssistant';
 import { useBoardAssistant } from '../services/useBoardAssistant';
 
 /**
- * Keep manual edits and streamed AI previews on one canvas. New cards reserve picture space while
- * their words are ready and artwork is pending; replacements fade existing pictures under a centered indicator. Each completed or stopped AI turn saves
- * automatically through the parent's shared Undo/Redo history; only conflicts and failed writes need action.
- * Both history actions stay disabled during AI work, unresolved previews, playback startup, and dialogs.
- * The route heading is Create for unfinished drafts and Edit for saved boards to leave room for toolbar actions.
- * The canvas uses the first effective board/profile language; language variants are selected inside each
- * tile editor. Pictures, languages, audio, and board management live behind the toolbar settings gear.
- * Closing language choices starts app-owned translation work; shared preferences return to this board.
- * Accept and Add Card share a manual-edit section above the AI composer. Accept flushes edits before
- * opening the board for play; empty boards and unresolved AI previews cannot be accepted.
- * Add Card stays available at capacity and explains the limit only when another card is requested.
- * Saved boards show no idle status; only pending saves, write failures, and unsaved AI previews are announced.
- * Tile and translation saves pass expectedRevision to onChange; the parent must throw on a
- * revision mismatch. The save error keeps the editor draft open instead of applying stale changes.
- * The app root owns all safe-area insets. Keyboard padding consumes only overlap with that inset
- * viewport on both native platforms, including Android windows that already resize for the IME.
- * Toolbar and composer are outside scrolling content; only the canvas and bounded AI context scroll.
- * Typing collapses secondary chrome without remounting the input or caching a screen-height baseline.
+ * Edit the board canvas while AI previews stream into it; completed or stopped turns commit through
+ * onAccept and the parent's Undo/Redo history. Failed writes keep drafts available for retry.
+ * onChange must reject an expectedRevision mismatch; onSaveDraft/onDiscardDraft must resolve only
+ * after durable storage succeeds. Closing language choices starts app-owned translation work.
+ * Accept opens play through onPlay; that callback must flush pending writes before leaving the editor.
+ * The root supplies safe-area insets. Native keyboard padding accounts only for remaining overlap;
+ * the toolbar and persistent composer stay outside scrolling content on both native and web.
  */
 export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onRedo, canRedo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
   /** Prepare missing words for the saved board through the app-owned translation job. */

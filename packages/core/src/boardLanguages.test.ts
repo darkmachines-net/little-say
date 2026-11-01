@@ -1,12 +1,12 @@
 /**
  * @file Verifies fixed and board-following language resolution, translation freshness, and
- * revision-safe application with shared user languages and optional board subsets.
+ * revision-safe translation application with shared user languages and optional board subsets.
  */
 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { describe, expect, it } from 'vitest';
 import { applyProposal, boardContext, migrateLibrary, playLanguagesSchema, reviseBoard, tileSource } from './schema';
-import { applyLanguageSetup, applyTranslations, boardAudioTiles, boardPlayTiles, missingTranslations, selectedBoardLanguage, tileInLanguage, translationRequestSchema, validateTranslations } from './boardLanguages';
+import { applyTranslations, boardAudioTiles, boardPlayTiles, missingTranslations, selectedBoardLanguage, tileInLanguage, translationRequestSchema, validateTranslations } from './boardLanguages';
 
 function bilingual() {
   const board = starterLibrary().boards[0];
@@ -17,20 +17,6 @@ function bilingual() {
   return board;
 }
 describe('board languages', () => {
-  it('applies prepared bilingual setup as one revision without changing the source while preparing', () => {
-    const source = starterLibrary().boards[0];
-    const prepared = { ...source, playLanguages: ['en-US', 'ru-RU'], tiles: source.tiles.map(tile => ({ ...tile, languageMode: 'board' as const })) };
-    const request = missingTranslations(prepared)!;
-    prepared.tiles = applyTranslations(prepared, validateTranslations(request, { translations: request.tiles.map(tile => ({ tileId: tile.id, language: 'ru-RU', label: 'слово', speech: 'слово' })) })) as typeof prepared.tiles;
-    expect(source.playLanguages).toBeUndefined();
-    expect(source.tiles.every(tile => tile.languageMode === undefined)).toBe(true);
-    const saved = reviseBoard(source, applyLanguageSetup(source, prepared));
-    expect(saved.revision).toBe(source.revision + 1);
-    expect(saved.tiles.map(tile => tile.id)).toEqual(source.tiles.map(tile => tile.id));
-    expect(boardPlayTiles(saved, { ...starterLibrary().settings, languageProfile: { languages: ['en-US', 'ru-RU'], defaultLanguage: 'en-US' }, boardLanguages: { [source.id]: 'ru-RU' } }).every(tile => tile.speech === 'слово')).toBe(true);
-    expect(() => applyLanguageSetup(reviseBoard(source, { title: 'Edited' }), prepared)).toThrow('changed');
-    expect(() => applyLanguageSetup({ ...source, id: 'other' }, prepared)).toThrow('changed');
-  });
   it('keeps existing and explicitly fixed cards unchanged while switching both label and speech', () => {
     const board = bilingual();
     expect(tileInLanguage(board.tiles[0], 'ru-RU')).toMatchObject({ id: board.tiles[0].id, label: 'Корова', speech: 'корова', language: 'ru-RU' });

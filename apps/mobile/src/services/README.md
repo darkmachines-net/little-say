@@ -44,7 +44,7 @@ Board defaults apply unless a card overrides them. Unrelated text edits preserve
 
 Explicit AI use permits the picture preparation flow; the legacy `autoImages` flag no longer gates Automatic. Server capabilities still limit availability. Missing analysis/matches, failed downloads, unavailable generation, and rejected pictures retain the best analyzed/original emoji or existing asset-backed picture. No automatic paid retries occur. The board remains usable and saveable.
 
-PNG downloads are digest-verified before references are saveable. `data/storage.ts` keeps native PNGs separate from cropped JPEG photos; `storage.web.ts` uses IndexedDB v3. Library v2 migrates v1 without changing board appearance. Initial-load pruning retains board, starter-draft, and explicitly saved creation-draft assets; active drafts and undo are not pruned mid-session. Creation drafts are device-local and excluded from account snapshots. Deleting browser storage or uninstalling without a complete backup loses local data.
+PNG downloads are digest-verified before references are saveable. The [local data module](../data/README.md) owns storage formats, serialized writes, draft retention, and pruning. Core's [library migration](../../../../packages/core/README.md) preserves older board appearance.
 
 The [server picture module](../../../server/src/pictures/README.md) owns protocol compatibility, catalog licenses, queue behavior, and retention. UI source controls are documented only in the [UI module](../ui/README.md#picture-controls).
 

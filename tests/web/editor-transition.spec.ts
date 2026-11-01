@@ -1,4 +1,4 @@
-/** @file Verifies Edit heading focus, grouped Accept controls, language/play handoff, unlock timing, drafts, motion, and save safeguards. */
+/** @file Verifies editor/play handoff, unlock timing and cancellation recovery, durable saves, motion, and speech safeguards. */
 
 import { mkdir } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
@@ -148,8 +148,14 @@ test('leaving the control or a second contact before completion cancels unlock',
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [first] });
   await page.clock.runFor(500);
   await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [first, { id: 2, x: 40, y: 40 }] });
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.clock.runFor(1000); await expect(page.getByTestId('board-back')).toHaveCount(0); await expect(page.getByTestId('play-board')).toBeVisible();
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [first] });
+  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
+  await page.clock.runFor(1000);
+  await expect(page.getByTestId('board-back')).toBeVisible();
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
 });
 
 test('a pending return keeps the editor visible and prevents concurrent edits until the save completes', async ({ page }) => {

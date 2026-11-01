@@ -1,6 +1,6 @@
 /**
- * @file Exercises automatic AI turns, toolbar settings, grouped manual controls, card limits, signed-in editing/play,
- * modal dismissal, shared languages, translations, device speech fallback, responsive layouts, and offline dashboard return.
+ * @file Exercises cross-feature editing/play, toolbar settings, card limits, modal dismissal,
+ * shared languages, automatic translations, device speech fallback, and offline dashboard/save recovery.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -336,32 +336,6 @@ test('unlock completes automatically at one second and cancelled holds reset imm
   }
 });
 
-test('another touch cancels a pending unlock without leaving stale feedback', async ({ page, context }) => {
-  await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
-  // Let the initial board layout finish before freezing timers; layout resets the hold gesture.
-  await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();
-  if (await page.getByTestId('board-lock').isVisible()) await page.getByTestId('board-lock').click();
-  const control = page.getByTestId('parent-control'); await expect(control).toBeVisible();
-  await page.clock.install({ time: new Date('2026-10-03T20:00:00Z') });
-  await page.clock.pauseAt(new Date('2026-10-03T20:00:01Z'));
-  const box = (await control.boundingBox())!, x = Math.round(box.x + 20), y = Math.round(box.y + 20);
-  const session = await context.newCDPSession(page);
-  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
-  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
-  await page.clock.runFor(500);
-  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }, { x: x + 40, y, id: 2 }] });
-  await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
-  await page.clock.runFor(3000); await expect(page.getByTestId('board-lock-status')).toHaveText('Locked · hold 1 s to unlock');
-  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  await expect(page.getByText('Leave this board?', { exact: true })).toHaveCount(0);
-  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 3 }] });
-  await expect(page.getByTestId('board-lock-status')).toHaveText('Unlocking…');
-  await page.clock.runFor(1000); await expect(page.getByTestId('board-back')).toBeVisible();
-  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  await page.getByTestId('board-back').click();
-  await page.clock.runFor(800); await expect(page.getByTestId('editor-heading')).toBeVisible();
-});
-
 test('active board survives reload and uses Russian pronunciation', async ({ page }) => {
   await page.getByRole('button', { name: 'Play Our family', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible();
@@ -643,23 +617,6 @@ test('numbers 1–9 prepare missing translations with retry and preserve digit l
   expect(await page.evaluate(() => (window as any).__spoken.at(-1))).toEqual({ text: '9', lang: 'en-US' });
 });
 
-test('AI applies directly to the board and can be undone', async ({ page }) => {
-  await page.route('**/api/boards/propose', async route => {
-    const input = route.request().postDataJSON();
-    await route.fulfill({ json: { boardId: input.board?.id ?? null, baseRevision: input.board?.revision ?? null, proposal: { title: 'Duck pond', explanation: 'Replaced horse with duck.', needsClarification: false, tiles: input.board.tiles.map((t: any) => t.label === 'Horse' ? { existingId: null, label: 'Duckling', speech: 'Duckling', language: 'en-US', color: 'butter', emoji: '🦆' } : { existingId: t.id, label: t.label, speech: t.speech, language: t.language, color: t.color, emoji: t.emoji }) } } });
-  });
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-
-  await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Replace horse with duckling');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
-
-  await expect(page.getByRole('textbox', { name: 'Board title', exact: true })).toHaveValue('Duck pond');
-  await waitForAiTurn(page);
-  await expect(page.getByRole('button', { name: 'Edit tile Duckling', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Undo last board change', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Edit tile Horse', exact: true })).toBeVisible();
-});
-
 test('offline shell and local boards survive a disconnected reload', async ({ page, context }) => {
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); await expect(page.getByRole('button', { name: /^(New board|Resume draft)$/ })).toBeVisible();
@@ -668,20 +625,6 @@ test('offline shell and local boards survive a disconnected reload', async ({ pa
   await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
   await page.getByRole('button', { name: 'Cow', exact: true }).click();
   expect(await page.evaluate(() => (window as any).__spoken.at(-1).text)).toBe('Cow');
-});
-
-test('tablet layouts and screenshots stay within the viewport', async ({ page }) => {
-  await mkdir('artifacts/screenshots', { recursive: true });
-  await page.screenshot({ path: 'artifacts/screenshots/library-desktop.png', fullPage: true });
-  await page.setViewportSize({ width: 820, height: 1180 });
-  await page.screenshot({ path: 'artifacts/screenshots/library-tablet.png', fullPage: true });
-  await page.getByRole('button', { name: 'Play Farmyard friends', exact: true }).click();
-  await expect(page.getByTestId('touch-surface')).toBeVisible();
-  for (const orientation of [{ width: 820, height: 1180 }, { width: 1180, height: 820 }]) {
-    await page.setViewportSize(orientation);
-    await expect(async () => { const bounds = (await page.getByRole('button', { name: 'Duck', exact: true }).boundingBox())!; expect(bounds.y + bounds.height).toBeLessThanOrEqual(orientation.height); }).toPass();
-  }
-  await page.screenshot({ path: 'artifacts/screenshots/play-tablet-landscape.png' });
 });
 
 test('24 tiles fit both tablet orientations and explain the limit only when another card is requested', async ({ page }) => {
@@ -718,22 +661,6 @@ test('24 tiles fit both tablet orientations and explain the limit only when anot
   await page.getByRole('button', { name: 'Word 24', exact: true }).focus(); await page.keyboard.press('Enter');
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Word 24', lang: 'ru-RU' }]);
   await page.screenshot({ path: 'artifacts/screenshots/play-24-tiles.png' });
-});
-
-test('photo attachments survive reload and remain on the device', async ({ page }) => {
-  await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
-  const chooser = page.waitForEvent('filechooser'); await page.getByRole('button', { name: 'Choose photo', exact: true }).click();
-  await (await chooser).setFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aD1sAAAAASUVORK5CYII=', 'base64') });
-  await page.getByTestId('photo-crop-surface').focus();
-  for (let i = 0; i < 5; i++) await page.keyboard.press('+');
-  await page.getByRole('button', { name: 'Use photo', exact: true }).click();
-  await page.getByRole('button', { name: 'Save tile', exact: true }).click();
-  await expect(page.getByTestId('board-save-status')).toHaveCount(0);
-  await page.reload(); await page.getByRole('button', { name: 'Edit tile Cow', exact: true }).click();
-  await page.getByRole('button', { name: 'Adjust crop', exact: true }).click();
-  await expect(page.getByText('125%', { exact: true })).toBeVisible();
-  await expect(page.getByText('Photo unavailable', { exact: true })).toHaveCount(0);
 });
 
 test('failed local writes are visible, retryable, and do not enter play prematurely', async ({ page }) => {

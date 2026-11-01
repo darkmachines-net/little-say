@@ -92,4 +92,4 @@ Run `npm run lint` for ESLint alone or `npm run lint -- --fix` to apply availabl
 
 Generated native projects, dependencies, caches, build/test output, and ignored evidence are excluded. Explicit `any` remains permitted in release-provider JSON handling and test fixtures; application code uses the recommended TypeScript rules. Static PNG `require` calls remain supported for Metro assets.
 
-Other languages use native header comments as required by [AGENTS.md](../AGENTS.md). Review prose accuracy when changing behavior; JSDoc lint checks comment presence, not correctness. See [validation](../tests/README.md) for CI checks and branch protection.
+Other languages use native header comments as required by [AGENTS.md](../AGENTS.md). Review prose accuracy when changing behavior; JSDoc lint checks comment presence, not correctness. See [tests](../tests/README.md) for validation commands and coverage ownership.
