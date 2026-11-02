@@ -1,4 +1,4 @@
-/** @file Verifies responsive account status, routed management, credential lifetime, and connection/retry states against isolated test services. */
+/** @file Verifies responsive account management, credential lifetime, and offline/startup-failure recovery against isolated services. */
 import { expect, test } from '@playwright/test';
 import { openSignedInApp } from './accountFixture';
 
@@ -45,7 +45,7 @@ test('connection and server failures replace old success status and recover thro
   await page.context().setOffline(false);
   await expect(page.getByRole('heading', { name: 'Up to date', exact: true })).toBeVisible();
   await page.route('**/api/account/backup', route => route.fulfill({ status: 503, json: { error: 'Backup temporarily unavailable.' } }));
-  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await page.reload(); // A fresh launch checks the server even when the previous sync was recent.
   await expect(page.getByRole('heading', { name: 'Backup needs attention', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Backup details', exact: true }).click();
   await expect(page.getByText('Backup temporarily unavailable.', { exact: true })).toBeVisible();

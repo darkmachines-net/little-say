@@ -1,8 +1,40 @@
-/** @file Verifies responsive creation placement, scroll clearance for floating actions, safe-area resizing, and resuming drafts across breakpoints. */
+/** @file Verifies stable navbar sync feedback, responsive creation, floating-action clearance, and draft resumption. */
 
 import { expect, test } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { openExistingLibrary } from './existingLibrary';
+
+test('manual refresh shows navbar progress without moving boards or header actions', async ({ page }) => {
+  await openExistingLibrary(page);
+  const header = page.getByTestId('app-header');
+  const refresh = header.getByRole('button', { name: 'Refresh content', exact: true });
+  await expect(refresh).toBeEnabled();
+  // Finish the startup backup before installing the deliberately delayed refresh response.
+  await refresh.click();
+  await expect(refresh).toBeEnabled();
+  for (const width of [320, 390, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect.poll(async () => (await page.getByTestId('app-header-bar').boundingBox())?.height).toBe(width < 600 ? 64 : 76);
+    const elements = [header, refresh, header.getByRole('button', { name: 'Account & backup', exact: true }), header.getByRole('button', { name: 'Settings', exact: true }), page.getByTestId('library-board').first(), page.getByRole('button', { name: 'New board', exact: true })];
+    let release!: () => void;
+    const ready = new Promise<void>(resolve => { release = resolve; });
+    await page.route('**/api/account/backup', async route => { await ready; await route.continue(); });
+    const before = await Promise.all(elements.map(element => element.boundingBox()));
+    try {
+      await refresh.click();
+      await expect(refresh.getByRole('progressbar')).toBeVisible();
+      await expect(refresh).toBeDisabled();
+      await expect(page.getByText('Syncing your content…', { exact: true })).toHaveCount(0);
+      await expect(page.getByTestId('dashboard-scroll').getByRole('progressbar')).toHaveCount(0);
+      expect(await Promise.all(elements.map(element => element.boundingBox()))).toEqual(before);
+      for (const action of await header.getByRole('button').all()) await expect(action).toBeInViewport({ ratio: 1 });
+      if (width === 320) await page.screenshot({ path: test.info().outputPath('sync-navbar-phone.png') });
+    } finally { release(); }
+    await expect(refresh).toBeEnabled();
+    expect(await Promise.all(elements.map(element => element.boundingBox()))).toEqual(before);
+    await page.unroute('**/api/account/backup');
+  }
+});
 
 test('phone creation scrolls with boards while wider actions stay fixed and leave the final row reachable', async ({ page, context }) => {
   await openExistingLibrary(page);

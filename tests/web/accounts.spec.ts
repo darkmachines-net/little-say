@@ -1,4 +1,4 @@
-/** @file Exercises illustrated required entry, first-sync loading/retry, verified backup, media restoration, offline conflicts, and local-preserving sign-out. */
+/** @file Exercises illustrated required entry, Home restoration/retry, verified backup, media/conflict recovery, manual cross-tab refresh, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -253,7 +253,8 @@ test('cross-tab account changes and legacy server overrides never silently redir
     await other.getByRole('button', { name: 'Account & backup', exact: true }).click();
     await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
     await page.bringToFront();
-    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await page.getByRole('button', { name: 'Back', exact: true }).click();
+    await page.getByRole('button', { name: 'Refresh content', exact: true }).click();
     await expect(page.getByText('Your session has expired. Sign in again to resume sync.', { exact: true })).toBeVisible();
     await other.bringToFront();
     const sent: string[] = [];
