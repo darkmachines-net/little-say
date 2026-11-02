@@ -28,7 +28,7 @@ The standalone entry loads root/working-directory `.env` files. Production rejec
 
 `provider.ts` sends parent prompts and necessary board text through Structured Outputs with `store:false`. Personal photos and local paths are excluded from AI requests. There is no microphone upload/transcription endpoint. Logs exclude prompts, boards, credentials and provider bodies. Provider retention follows [OpenAI data policies](https://developers.openai.com/api/docs/guides/your-data).
 
-Generated clips can contain private words. Immutable digests and existing download routes are preserved; access is owner-scoped. JSON indexes, job/batch state and generic metadata live in PostgreSQL, binary generated media in the selected object store. [Storage/deletion](src/hosting/README.md#storage-and-deletion) owns retention; private backup bytes remain in PostgreSQL.
+Generated speech is reused across accounts through the [service-wide cache](src/hosting/README.md#storage-and-deletion); authenticated requests grant access to the reused clip. Immutable digests and existing download routes are preserved. JSON indexes, job/batch state and generic metadata live in PostgreSQL, binary generated media in the selected object store. Private backup bytes remain in PostgreSQL.
 
 ## Deployment
 

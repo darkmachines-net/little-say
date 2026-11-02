@@ -31,6 +31,7 @@ The commands load the repository `.env` when present. Built equivalents are `nod
 2. `1760000000002_accounts`: private backups, browser sessions, deletion work, and indexes.
 3. `1760000000003_hosting`: durable jobs/dispatch, cancellations, sessions, media grants and shared metadata.
 4. `1760000000004_private_cache`: owner-bound JSON cache deletion.
+5. `1760000000005_shared_speech`: promotes existing speech pointers into the service-wide cache, retains speech independently of accounts, and indexes active matching speech jobs.
 
 The numeric gap is intentional; no ChatGPT-storage migration is shipped. The old combined `1760000000000_initial` history is incompatible: do not rename its ledger entry or layer this schema over it. There is no automatic downgrade, data import, or database rollback. Recreate only explicitly disposable test databases.
 

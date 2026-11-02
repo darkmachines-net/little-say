@@ -1,5 +1,5 @@
 /**
- * @file Caches speech through injected media/metadata storage with immutable clips and bounded synthesis.
+ * @file Caches speech by normalized words and synthesis profile, independent of board/tile IDs, with immutable clips and bounded synthesis.
  */
 
 import { createHash } from 'node:crypto';
@@ -37,8 +37,9 @@ export class SpeechCache {
   }
 
   /**
-   * Resolve validated speech input from cache or synthesis, sharing same-key work. Regeneration skips
-   * stored pointers; disabled or saturated synthesis raises a status-bearing error.
+   * Resolve speech by text, language, model, voice, format and instruction version. Same-instance
+   * work is coalesced here; hosted job claims serialize matching speech across workers/accounts.
+   * Explicit regeneration replaces the shared take; disabled or saturated synthesis raises an error.
    */
   get(raw: SpeechInput, regenerate = false) {
     const input = speechInputSchema.parse(raw);
