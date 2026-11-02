@@ -1,4 +1,4 @@
-/** @file Presents the illustrated account welcome with the mountain mascot, product promise, sign-up reassurance, and bottom-aligned authentication actions. */
+/** @file Presents the illustrated account welcome with bottom-aligned authentication actions and shares its decorative artwork with the public web landing page. */
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,7 +35,8 @@ export function AccountWelcome({ children }: { children: ReactNode }) {
   </ScrollView>;
 }
 
-function WelcomeArtwork({ width }: { width: number }) {
+/** Render static, decorative welcome art at the supplied logical width, hidden from assistive technology on native and web. */
+export function WelcomeArtwork({ width }: { width: number }) {
   const unit = width / 350;
   const cards = [
     { word: 'Water', picture: '💧', palette: palettes.sky, left: 30, top: 215, rotation: '-10deg' },
