@@ -1,4 +1,4 @@
-# Pins the shared toolkit with the package to build a development client and matching selected-source preview.
+# Uses the release toolkit's matching immutable pin to build a development client and selected-source preview.
 name: Development
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 permissions: { contents: read }
 jobs:
   development:
-    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@8f726274c94010aabbc759d774c2ddd26a8c6c2b
+    uses: darkmachines-net/expo-release-template/.github/workflows/development.yml@0f01668db158ca22729e45980e162fa601900da2
     permissions: { contents: read, deployments: write }
     with: { operation: '${{ inputs.operation }}', platform: '${{ inputs.platform }}', source: '${{ inputs.source }}' }
     secrets: inherit
