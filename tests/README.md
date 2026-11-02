@@ -9,7 +9,13 @@ npx playwright install chromium
 npm run test:web
 ```
 
-`check` runs [lint](../scripts/README.md#linting), [release-contract checks](../scripts/release/README.md#fresh-releases-after-failure-and-validation), TypeScript including unused code, unit/component tests, and production server/web builds. CI runs this command plus the browser and service suites defined in the [Check workflow](../.github/workflows/ci.yml).
+`check` runs [lint](../scripts/README.md#linting), [release-contract checks](../scripts/release/README.md#fresh-releases-after-failure-and-validation), TypeScript including unused code, unit/component tests, and production server/web builds. The [Check workflow](../.github/workflows/ci.yml) splits these validations into jobs and adds browser and service suites.
+
+## Pull request merge requirements
+
+**Check** runs on pull requests and manual dispatch, without a push trigger that would repeat validation after merging. `Lint` runs ESLint independently. `Build` runs type checks and production server/web builds, then passes those outputs to `Tests` through the run's `test-build` artifact. `Tests` starts only after Build succeeds and runs release-contract, unit/component, service and browser tests against those outputs without rebuilding them.
+
+GitHub branch protection for `master` must require `Lint`, `Build` and `Tests` from the GitHub Actions app, with branches up to date before merging and enforcement for administrators. Requiring Build explicitly also blocks merging when its failure causes Tests to be skipped. These are exact job check names, not the workflow name. Preserve them when editing the workflow, or update branch protection alongside any rename. Manage required checks in the repository's branch-protection settings; workflow YAML alone does not make a check required.
 
 ## Coverage ownership
 
