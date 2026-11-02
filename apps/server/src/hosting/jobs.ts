@@ -1,4 +1,4 @@
-/** @file Owns PostgreSQL job admission, global execution claims, durable dispatch, cancellation, and safe interruption. */
+/** @file Owns durable job admission and claims, serializing identical speech across workers while preserving cancellation and interruption. */
 import { createHash, randomUUID } from 'node:crypto';
 import { type Pool } from 'pg';
 import { transaction } from '../database';
@@ -52,13 +52,18 @@ export class Jobs {
     });
     return this.get(account, id);
   }
-  /** Claim at most two jobs globally; concurrent notification delivery cannot claim the same operation. */
+  /** Claim at most two jobs globally, serializing matching speech until its cache is populated; delivery cannot repeat a claim. */
   async claim(id?: string): Promise<Job | null> {
     if (!this.enabled || (id && !uuid.test(id))) return null;
     return transaction(this.pool, async db => {
       await db.query("SELECT pg_advisory_xact_lock(hashtextextended('little-say-ai-execution',0))");
       if (Number((await db.query("SELECT count(*) FROM ai_jobs WHERE state='working'")).rows[0].count) >= 2) return null;
-      const row = (await db.query<Job>("SELECT j.* FROM ai_jobs j JOIN accounts a ON a.id=j.account_id WHERE j.state='queued' AND NOT j.cancel_requested AND NOT a.deleting AND ($1::uuid IS NULL OR j.id=$1) ORDER BY j.created_at LIMIT 1 FOR UPDATE OF j SKIP LOCKED", [id ?? null])).rows[0];
+      const row = (await db.query<Job>(`SELECT j.* FROM ai_jobs j JOIN accounts a ON a.id=j.account_id
+        WHERE j.state='queued' AND NOT j.cancel_requested AND NOT a.deleting AND ($1::uuid IS NULL OR j.id=$1)
+        AND NOT (j.kind='speech' AND EXISTS (
+          SELECT 1 FROM ai_jobs running WHERE running.kind='speech' AND running.state='working'
+          AND running.input->>'text'=j.input->>'text' AND running.input->>'language'=j.input->>'language'
+        )) ORDER BY j.created_at LIMIT 1 FOR UPDATE OF j SKIP LOCKED`, [id ?? null])).rows[0];
       if (!row) return null;
       return (await db.query<Job>("UPDATE ai_jobs SET state='working',claim=$2,heartbeat=now() WHERE id=$1 RETURNING *", [row.id, randomUUID()])).rows[0];
     });

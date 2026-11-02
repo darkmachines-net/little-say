@@ -30,7 +30,7 @@ The account row is locked before revision, completeness, and quota checks. Stale
 
 ## Deletion
 
-Deleting requires fresh proof of the same Firebase UID within five minutes and Apple authorization revocation for linked Apple identities. It removes the Firebase login globally and this server's private backup; private job/batch records and cache metadata are removed too. The worker deletes unowned private media; approved public generic assets and downloaded device copies remain. GCS soft deletion retains a seven-day recovery window.
+Deleting requires fresh proof of the same Firebase UID within five minutes and Apple authorization revocation for linked Apple identities. It removes the Firebase login globally and this server's private backup; private job/batch records and cache metadata are removed too. The worker deletes unowned private media; [service-wide speech](../hosting/README.md#storage-and-deletion), approved public generic assets and downloaded device copies remain. GCS soft deletion retains a seven-day recovery window.
 
 Deletion intent commits before Apple revocation and blocks backup access immediately. Interrupted Apple confirmation must be resumed with fresh Apple authentication; short-lived grants are never stored. After confirmation, the shared worker retries Firebase/PostgreSQL/media cleanup through local polling or five-minute scheduled maintenance. A minimal project/UID tombstone with no email or media prevents a racing request from recreating the account. Signing in to resume confirmation does not restore backup access.
 

@@ -30,6 +30,8 @@ Web clips use one lazy, page-owned `AudioContext` shared by editor previews and 
 
 `hybridSpeech` selects downloaded AI clips or device TTS. `speechLibrary` prepares missing clips without blocking editing; `useSpeechLibrary` owns lifecycle and progress, resolving effective profile languages and board play subsets before planning clips. Playback finishes the current utterance and retains only the latest queued selection. Clip identity must match the current text, language, model, voice, and format; never play an old clip for changed words. Downloaded media works offline; AI failure falls back to a matching device voice. Parents should review pronunciation.
 
+Automatic preparation uses the server's [service-wide speech cache](../../../server/src/hosting/README.md#storage-and-deletion), including for account starters. A clip already generated for matching words and synthesis settings is downloaded without another model call, regardless of the original account or board. Device TTS remains available while the first uncached clip is generated or a cached clip downloads.
+
 AI speech is the default for every language, with automatic matching device speech when a downloaded clip is unavailable. AI speech preparation does not consult legacy `aiConsent`. The schemas still read retired `voiceSources`, `voices`, and `pictureDefaults` fields for compatibility.
 
 On load, `migrateDeviceSettings` clears retired speech-source/device-voice overrides and new-board picture preferences, enables automatic speech, and restores core Automatic picture defaults. It preserves boards, board/card picture choices, languages, account state, and resumed play. Device voices refresh on foreground.

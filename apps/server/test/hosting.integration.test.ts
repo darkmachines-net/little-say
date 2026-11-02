@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, registered-account ownership and anonymous rejection, private media, CSRF, cancellation, and interruption in isolated PostgreSQL. */
+/** @file Verifies durable jobs, shared speech download grants, private picture metadata, registered-account access, CSRF, and interruption. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -105,9 +105,9 @@ it('persists fixture speech through a worker restart and grants downloads only t
   expect(await canReadMedia(f.pool, 'speech', key, f.alice.id)).toBe(true);
   const cache = new DatabaseCache(f.pool, restarted, 'speech', f.bob.id);
   await cache.read(key); expect(await canReadMedia(f.pool, 'speech', key, f.bob.id)).toBe(true);
-  await cache.write('contract.json', JSON.stringify({ durable: true }));
-  expect((await new DatabaseCache(f.pool, restarted, 'speech', f.bob.id).read('contract.json')).toString()).toBe('{"durable":true}');
-  await expect(new DatabaseCache(f.pool, restarted, 'speech', f.alice.id).read('contract.json')).rejects.toMatchObject({ code: 'ENOENT' });
+  await new DatabaseCache(f.pool, restarted, 'pictures', f.bob.id).write('contract.json', JSON.stringify({ durable: true }));
+  expect((await new DatabaseCache(f.pool, restarted, 'pictures', f.bob.id).read('contract.json')).toString()).toBe('{"durable":true}');
+  await expect(new DatabaseCache(f.pool, restarted, 'pictures', f.alice.id).read('contract.json')).rejects.toMatchObject({ code: 'ENOENT' });
   await expect(restarted.read('../escape')).rejects.toThrow('Invalid storage key');
 });
 it.each([false, true])('requires registered accounts for AI (anonymous=%s) and protects CSRF, jobs, media and backups', async anonymous => {
@@ -152,6 +152,14 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s) and p
   const previous = f.identity.uid; f.identity.uid = randomUUID(); await f.accounts.provision(f.identity);
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
   expect((await app.inject({ url: media, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
+  const reusedId = randomUUID(), otherHeaders = { authorization: 'Bearer other', 'x-little-say': '1', 'x-little-say-request': reusedId };
+  expect((await app.inject({ method: 'POST', url: '/api/speech', headers: otherHeaders, payload: payload.input })).statusCode).toBe(202);
+  const reusedJob = (await f.jobs.claim(reusedId))!;
+  const reused = await executeJob({ ...hosting, env: {} }, reusedJob, new AbortController().signal);
+  await f.jobs.finish(reusedJob, reused);
+  expect(reused).toMatchObject({ id: result.id, cacheHit: true });
+  expect((await app.inject({ url: media, headers: otherHeaders })).statusCode).toBe(200);
+  expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers: otherHeaders })).statusCode).toBe(404);
   await app.inject({ method: 'POST', url: `/api/ai/jobs/${id}/cancel`, headers: { authorization: 'Bearer other', 'x-little-say': '1' } });
   f.identity.uid = previous;
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers })).json()).toMatchObject({ state: 'complete', result });

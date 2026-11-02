@@ -1,4 +1,4 @@
-/** @file Adapts immutable media and JSON cache records to local files or shared PostgreSQL/object storage. */
+/** @file Stores immutable media, service-wide speech pointers, and owner-scoped private caches with independent download grants. */
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, writeFile, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -63,17 +63,17 @@ export class FileCache implements CacheStore {
   async list() { await mkdir(this.root, { recursive: true }); return readdir(this.root); }
 }
 
-/** Stores JSON in PostgreSQL and media in the selected object store, optionally granting an executing account access. */
+/** Stores speech metadata service-wide and other private metadata per owner; media reuse grants the executing account download access. */
 export class DatabaseCache implements CacheStore {
   readonly shared = true;
   /** Inject shared resources; account is set only by trusted job execution, never by a download route. */
   constructor(private pool: Pool, private objects: ObjectStore, private namespace: string, private account?: string, private publicMedia = false) { valid(namespace); }
-  private recordNamespace() { return this.account ? this.namespace + '/owner-' + this.account : this.namespace; }
+  private recordNamespace() { return this.account && this.namespace !== 'speech' ? this.namespace + '/owner-' + this.account : this.namespace; }
   private async grant(db: PoolClient, key: string) {
-    await db.query('INSERT INTO media_objects(namespace,key,public) VALUES($1,$2,$3) ON CONFLICT(namespace,key) DO UPDATE SET public=media_objects.public OR EXCLUDED.public', [this.namespace, key, this.publicMedia]);
+    await db.query('INSERT INTO media_objects(namespace,key,public,service_owned) VALUES($1,$2,$3,$4) ON CONFLICT(namespace,key) DO UPDATE SET public=media_objects.public OR EXCLUDED.public,service_owned=media_objects.service_owned OR EXCLUDED.service_owned', [this.namespace, key, this.publicMedia, this.namespace === 'speech']);
     if (this.account) await db.query('INSERT INTO media_grants VALUES($1,$2,$3) ON CONFLICT DO NOTHING', [this.namespace, key, this.account]);
   }
-  /** Read shared records or immutable media; successful worker reads authorize reuse for its account. */
+  /** Read service-wide speech or owner-scoped records; trusted worker media reads grant reuse to the requesting account. */
   async read(key: string) {
     valid(key);
     if (key.endsWith('.json')) {
@@ -86,12 +86,12 @@ export class DatabaseCache implements CacheStore {
       return await this.objects.read(this.namespace + '/' + key) ?? absent();
     });
   }
-  /** Persist bytes before granting access, or atomically upsert a JSON record. */
+  /** Persist media with access/retention metadata, or upsert JSON; speech pointers survive deletion of their originating account. */
   async write(key: string, value: Buffer | string) {
     valid(key);
     if (key.endsWith('.json')) {
       const parsed = JSON.parse(value.toString());
-      await this.pool.query('INSERT INTO service_records(namespace,key,value,account_id) VALUES($1,$2,$3,$4) ON CONFLICT(namespace,key) DO UPDATE SET value=EXCLUDED.value', [this.recordNamespace(), key, JSON.stringify(parsed), this.account ?? null]);
+      await this.pool.query('INSERT INTO service_records(namespace,key,value,account_id) VALUES($1,$2,$3,$4) ON CONFLICT(namespace,key) DO UPDATE SET value=EXCLUDED.value,account_id=EXCLUDED.account_id', [this.recordNamespace(), key, JSON.stringify(parsed), this.namespace === 'speech' ? null : this.account ?? null]);
       // Only GenericContent's closed-vocabulary sanitizer can write this shared namespace.
       if (this.namespace === 'generic-v1') {
         const pictures = [parsed.picture, ...(parsed.pictures ?? []).map((item: { picture?: { assetId?: string } }) => item.picture)];
@@ -114,11 +114,11 @@ export async function canReadMedia(pool: Pool, namespace: string, key: string, a
   return Boolean(found.rowCount);
 }
 
-/** Delete a bounded set of private media with no surviving owner while excluding concurrent grants. */
+/** Delete unowned private media under locks, retaining service-owned speech and public catalog assets. */
 export async function pruneMedia(pool: Pool, objects: ObjectStore) {
   for (let count = 0; count < 50; count++) {
     const removed = await transaction(pool, async db => {
-      const row = (await db.query('SELECT m.* FROM media_objects m WHERE NOT public AND NOT EXISTS(SELECT 1 FROM media_grants g WHERE g.namespace=m.namespace AND g.key=m.key) LIMIT 1 FOR UPDATE OF m SKIP LOCKED')).rows[0];
+      const row = (await db.query('SELECT m.* FROM media_objects m WHERE NOT public AND NOT service_owned AND NOT EXISTS(SELECT 1 FROM media_grants g WHERE g.namespace=m.namespace AND g.key=m.key) LIMIT 1 FOR UPDATE OF m SKIP LOCKED')).rows[0];
       if (!row) return false;
       await objects.remove(row.namespace + '/' + row.key);
       await db.query('DELETE FROM media_objects WHERE namespace=$1 AND key=$2', [row.namespace, row.key]); return true;

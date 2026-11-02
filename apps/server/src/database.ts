@@ -1,11 +1,11 @@
-/** @file Owns Postgres connections, pooled transactions, SQL migration discovery, and schema readiness. */
+/** @file Owns Postgres connections, transactions, and the ordered schema contract including service-wide speech retention. */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import pg, { type PoolClient, type PoolConfig } from 'pg';
 import { runner } from 'node-pg-migrate';
 
 // Append each feature migration in application order; never edit an applied migration.
-export const SCHEMA_VERSIONS = ['1760000000000_foundation', '1760000000002_accounts', '1760000000003_hosting', '1760000000004_private_cache'] as const;
+export const SCHEMA_VERSIONS = ['1760000000000_foundation', '1760000000002_accounts', '1760000000003_hosting', '1760000000004_private_cache', '1760000000005_shared_speech'] as const;
 const migrations = fileURLToPath(new URL('../migrations/', import.meta.url));
 
 function integer(value: string | undefined, fallback: number, max: number) {

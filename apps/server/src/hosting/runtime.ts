@@ -1,4 +1,4 @@
-/** @file Wires durable local/cloud workers and publishes validated board words before picture preparation finishes. */
+/** @file Wires durable workers, service-wide speech reuse, and early board words while pictures finish. */
 import { resolve } from 'node:path';
 import { type Pool } from 'pg';
 import { type ProposalRequest, type TranslationRequest, type PictureAnalysisRequest, type PictureJobRequest, type SpeechInput, validateGeneratedBoard, validateTranslations } from '@little-say/core';
@@ -44,12 +44,13 @@ export function apiCaches(runtime: Pick<Runtime, 'pool' | 'objects' | 'env'>) {
     speechCache: new SpeechCache(new DatabaseCache(runtime.pool, runtime.objects, 'speech'), speechProfile(runtime.env), null) };
 }
 
-/** Execute a claimed operation, publishing pollable word previews while retaining the claim through picture completion. */
+/** Execute a claim using shared speech and account-authorized media; publish board words before pictures finish. */
 export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jobs' | 'env'>, job: Job, signal: AbortSignal) {
   const { pool, objects, jobs, env } = runtime;
   const fixture = env.AAC_AI_FIXTURES === 'true' ? fixtureProviders() : undefined;
   const provider = fixture?.boards ?? openAIProvider(env), pictureProvider = fixture?.pictures ?? openAIPictureProvider(env);
   const pictures = new PictureJobs(new DatabaseCache(pool, objects, 'pictures', job.account_id), pictureProvider, env.AAC_IMAGE_GENERATION !== 'false', 1);
+  // The account grants downloads; DatabaseCache keeps speech lookup identity independent of it.
   const speech = new SpeechCache(new DatabaseCache(pool, objects, 'speech', job.account_id), speechProfile(env), fixture?.speech ?? openAISynthesis(env, speechProfile(env)), 1);
   const content = new GenericContent(new DatabaseCache(pool, objects, 'generic-v1'));
   const preparation = provider?.prepare ? new BoardPreparation(new DatabaseCache(pool, objects, `batches/${job.account_id}`), provider, pictures, content, speech, 1) : undefined;

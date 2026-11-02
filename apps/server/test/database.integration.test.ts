@@ -1,4 +1,4 @@
-/** @file Exercises real PostgreSQL migration compatibility, atomic transactions, and disposable schema isolation. */
+/** @file Exercises PostgreSQL migration compatibility through shared speech, atomic transactions, and disposable schema isolation. */
 import pg from 'pg';
 import { PG_MIGRATE_LOCK_ID } from 'node-pg-migrate';
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -80,7 +80,7 @@ it('commits successful work, rolls back failed work, and releases the only conne
 });
 
 it('keeps an older rolling revision ready after a newer additive migration', async () => {
-  await database.pool.query("INSERT INTO pgmigrations (name, run_on) VALUES ('1760000000005_additive', now())");
+  await database.pool.query("INSERT INTO pgmigrations (name, run_on) VALUES ('1760000000006_additive', now())");
   await expect(checkDatabase(database.pool)).resolves.toBeUndefined();
 });
 
