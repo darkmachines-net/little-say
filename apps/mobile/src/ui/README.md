@@ -15,7 +15,7 @@ This directory owns app screens and shared controls for native and `/app` on web
 
 ## Setup, editing, and play
 
-`FirstTimeSetup` selects languages and optional starter boards. Persist completed drafts for resuming, show generated words, offer manual start when AI is unavailable, and never advance past a failed save or overwrite an existing library.
+New accounts open Home with [ready-made starter boards](../../../server/src/accounts/README.md#backup-persistence), using ordinary play/edit/delete controls. `FirstTimeSetup` remains available for older empty accounts with unfinished device setup: it selects languages and optional generated boards, persists drafts for resuming, and offers a manual start when AI is unavailable. Never advance past a failed save or overwrite an existing library.
 
 [`account/`](account/README.md) owns the headerless illustrated welcome, required sign-in, and account management pages within Settings. Its README defines welcome layout, entry/restoration gates, navigation, backup recovery, provider confirmation, and credential lifetime.
 

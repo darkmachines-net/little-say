@@ -39,7 +39,7 @@ Headless Linux speech tests require an audio output device: Firefox can decode a
 
 `App.test.ts` owns history ordering, branching, board isolation, and failed-write behavior; `BoardEditor.test.ts` checks history action availability. The [UI module](../apps/mobile/src/ui/README.md) owns the Undo/Redo behavior contract.
 
-The browser runner starts its own API on a free loopback port and creates unique verified emulator accounts. It disables provider keys and isolates libraries/media from development processes. Feature scenarios mock AI/speech; unavailable speech responses exercise device fallback. Service-worker/offline checks use the production build, not Metro. Account scenarios use real isolated PostgreSQL and Firebase Auth services.
+The browser runner starts its own API on a free loopback port and creates unique verified emulator accounts with empty existing backups for scenarios that own their board fixtures. `starterBoards.spec.ts` instead registers a new account through the UI and checks immediate play, editing, and deletion retention before verification. The runner disables provider keys and isolates libraries/media from development processes. Feature scenarios mock AI/speech; unavailable speech responses exercise device fallback. Service-worker/offline checks use the production build, not Metro. Account scenarios use real isolated PostgreSQL and Firebase Auth services.
 
 For focused browser runs after building:
 

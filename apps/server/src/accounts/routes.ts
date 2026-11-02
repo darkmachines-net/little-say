@@ -1,4 +1,4 @@
-/** @file Exchanges registered account identities for opaque sessions; backups and deletion retain explicit account verification. */
+/** @file Exchanges identities for sessions and untouched starter snapshots; private backups and deletion retain account verification. */
 import { type FastifyInstance, type FastifyRequest, type FastifyReply } from 'fastify';
 import { syncSnapshotSchema } from '@little-say/core';
 import { z } from 'zod';
@@ -12,7 +12,7 @@ function setCookie(reply: FastifyReply, value: string, secure: boolean, seconds:
 }
 function recent(authTime: number) { if (authTime > Date.now() / 1000 + 60 || Date.now() / 1000 - authTime > 300) throw new AccountError('Authenticate again to complete this action.', 401); }
 
-/** Register optional Firebase account routes; the caller owns the repositories and identity adapter. */
+/** Register Firebase sessions with initial starter delivery and verified backups; the caller owns repositories and identity adapters. */
 export async function accountRoutes(app: FastifyInstance, accounts: Accounts, auth: IdentityService, secureCookies: boolean) {
   const access = new AccountAccess(accounts, auth);
   const authenticate = (request: FastifyRequest, backup = false) => access.verify(request, backup);
@@ -40,7 +40,7 @@ export async function accountRoutes(app: FastifyInstance, accounts: Accounts, au
       recent(identity.authTime);
       const account = await accounts.provision(identity);
       if (!parsed.data.native) setCookie(reply, await accounts.issueCookie(account, await auth.cookie(parsed.data.idToken), Math.floor(Date.now() / 1000) + COOKIE_SECONDS, sessionCookie(request)), secureCookies, COOKIE_SECONDS);
-      return { account };
+      return { account, starterSnapshot: await accounts.starterSnapshot(account) };
     });
     routes.get('/api/account/session', async request => ({ account: (await authenticate(request)).account }));
     routes.post('/api/account/logout', async (request, reply) => {

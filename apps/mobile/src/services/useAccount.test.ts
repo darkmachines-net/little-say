@@ -1,9 +1,9 @@
-/** @file Verifies throttled remote refresh, prompt/raced-edit backups, manual refresh, recovery, and account gates. */
+/** @file Verifies durable starter installation, repeat-login preservation, throttled backups, recovery, and account gates. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { starterLibrary } from '../../../../tests/fixtures/library';
-import type { Library } from '@little-say/core';
+import { createStarterBoards, newLibrary, type Library } from '@little-say/core';
 import type { AccountSession } from './accountSession';
 import { useAccount, type AccountController } from './useAccount';
 import { ApiError } from './api';
@@ -37,6 +37,7 @@ const session: AccountSession = {
 let screen: ReactTestRenderer | undefined, controller: AccountController, allowed = true;
 let library: Library;
 const store = { library: undefined as Library | undefined, current: { current: undefined as Library | undefined }, flush: vi.fn(),
+  commit: vi.fn(async (update: (library: Library) => Library) => { library = update(library); store.library = store.current.current = library; }),
   mergeSync: vi.fn(async (merge: (library: Library) => Library) => { library = merge(library); store.library = store.current.current = library; }),
 };
 function Harness() { controller = useAccount(store as unknown as Parameters<typeof useAccount>[0], allowed, mocks.restored); return null; }
@@ -68,6 +69,47 @@ it('starts backup after sign-in without a separate action and stops after sign-o
   await advance(); expect(mocks.sync).toHaveBeenCalledOnce();
   await act(async () => controller.disconnect());
   await advance(30000); expect(mocks.sync).toHaveBeenCalledOnce(); expect(mocks.save).toHaveBeenLastCalledWith(null);
+});
+
+it.each(['android', 'web'])('installs starters before entering Home on %s without waiting for verification', async platform => {
+  state.OS = platform;
+  if (platform === 'web') {
+    vi.stubGlobal('navigator', { onLine: true }); vi.stubGlobal('document', { hidden: false });
+    vi.stubGlobal('window', { addEventListener: vi.fn(), removeEventListener: vi.fn() });
+  }
+  library = newLibrary('fr-FR'); store.library = store.current.current = library;
+  const signedIn = { ...session, account: { ...session.account, emailVerified: false } };
+  const starterSnapshot = { revision: 0, boards: createStarterBoards(() => crypto.randomUUID()), assets: [] };
+  mocks.authenticate.mockResolvedValue({ ...signedIn, starterSnapshot });
+  await mount(null);
+  await act(async () => controller.authenticate('register', 'parent@example.test', 'password'));
+  expect(library.boards).toEqual(starterSnapshot.boards); expect(library.setup).toBeUndefined();
+  expect(library.settings.languageProfile?.defaultLanguage).toBe('fr-FR');
+  expect(library.sync?.snapshot).toEqual(starterSnapshot);
+  expect(mocks.save).toHaveBeenCalledWith(signedIn);
+  await advance(30000); expect(mocks.sync).not.toHaveBeenCalled();
+  // Editing and deleting before verification must survive reauthentication, including deletion of all boards.
+  library = { ...library, boards: [{ ...library.boards[0], title: 'My animals', revision: 1 }] };
+  store.library = store.current.current = library;
+  await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
+  expect(library.boards.map(board => board.title)).toEqual(['My animals']);
+  library = { ...library, boards: [] }; store.library = store.current.current = library;
+  await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
+  expect(library.boards).toEqual([]); expect(library.setup).toBeUndefined();
+});
+
+it('preserves owned boards and retries a failed starter save before remembering sign-in', async () => {
+  const original = library.boards;
+  const starterSnapshot = { revision: 0, boards: createStarterBoards(() => crypto.randomUUID()), assets: [] };
+  mocks.authenticate.mockResolvedValue({ ...session, starterSnapshot });
+  store.commit.mockRejectedValueOnce(new Error('Storage full'));
+  await mount(null);
+  await act(async () => { await expect(controller.authenticate('register', '', '')).rejects.toThrow('Storage full'); });
+  expect(controller.session).toBeNull(); expect(mocks.save).not.toHaveBeenCalled();
+  expect(library.boards).toEqual(original);
+  await act(async () => controller.authenticate('login', '', ''));
+  expect(library.boards).toEqual([...original, ...starterSnapshot.boards]);
+  expect(store.commit.mock.invocationCallOrder.at(-1)).toBeLessThan(mocks.save.mock.invocationCallOrder[0]);
 });
 
 it('reports active sync until restored content is applied, independently of initial restoration', async () => {

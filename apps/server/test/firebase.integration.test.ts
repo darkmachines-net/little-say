@@ -1,4 +1,4 @@
-/** @file Verifies registered Firebase-emulator sessions and guest rejection, local test-account provisioning, CSRF, revocation, backups, and deletion. */
+/** @file Verifies Firebase sessions, immediate starter delivery before verification, guest rejection, CSRF, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -44,11 +44,16 @@ async function browser(fixture: Awaited<ReturnType<typeof setup>>) {
 it('keeps health available and gates backup on verified email with no password endpoint', async () => {
   const f = await setup(); expect((await f.app.inject('/api/health')).statusCode).toBe(200);
   expect((await f.app.inject('/api/account/backup')).statusCode).toBe(401);
-  expect((await native(f)).statusCode).toBe(200);
+  const login = await native(f);
+  expect(login.statusCode).toBe(200);
+  expect(login.json().starterSnapshot.boards.map((board: { title: string }) => board.title)).toEqual(['Farm Animals', 'Rainbow', 'Shapes']);
+  expect((await browser(f)).login.json().starterSnapshot).toEqual(login.json().starterSnapshot);
   const access = { ...headers, authorization: 'Bearer ' + f.token };
   expect((await f.app.inject({ url: '/api/account/backup', headers: access })).statusCode).toBe(403);
   await f.admin.updateUser(f.uid, { emailVerified: true });
   expect((await f.app.inject({ url: '/api/account/backup', headers: access })).statusCode).toBe(200);
+  await f.accounts.save(login.json().account, { revision: 0, boards: [], assets: [] });
+  expect((await native(f)).json().starterSnapshot).toBeUndefined();
   expect((await f.app.inject({ method: 'POST', url: '/api/account/register', headers, payload: {} })).statusCode).toBe(404);
 });
 it('rejects anonymous tokens and legacy guest cookies before granting app access', async () => {

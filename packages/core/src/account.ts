@@ -1,12 +1,12 @@
-/** @file Defines account sync and development-login contracts, retaining board edits and saved pronunciation assets across play subsets. */
+/** @file Defines account sessions with initial starter snapshots and sync contracts retaining board edits and pronunciation assets. */
 
 import { z } from 'zod';
-import { type Board, type SyncAsset } from './schema';
+import { syncSnapshotSchema, type Board, type SyncAsset } from './schema';
 import { boardAudioTiles } from './boardLanguages';
 import { speechKey } from './speech';
 
 export const accountSchema = z.object({ id: z.string().uuid(), email: z.string().nullable(), displayName: z.string().nullable(), emailVerified: z.boolean(), providers: z.array(z.string()), deletionPending: z.boolean().optional() });
-export const sessionSchema = z.object({ account: accountSchema });
+export const sessionSchema = z.object({ account: accountSchema, starterSnapshot: syncSnapshotSchema.optional() });
 export const authConfigSchema = z.object({ projectId: z.string(), apiKey: z.string(), appId: z.string(), authDomain: z.string(), providers: z.array(z.enum(['password', 'google.com', 'apple.com'])), emulatorUrl: z.string().optional(),
   // Public fixture credentials, supplied only by a development server connected to the Auth emulator.
   developmentAccount: z.object({ email: z.string().email(), password: z.string() }).optional(),

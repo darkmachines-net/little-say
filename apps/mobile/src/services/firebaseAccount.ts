@@ -1,9 +1,9 @@
-/** @file Coordinates registered account sign-in with origin-bound Firebase credentials for automatic backup and Settings account recovery. */
+/** @file Exchanges origin-bound Firebase credentials and starter snapshots for sign-in, automatic backup, and account recovery. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, GoogleAuthProvider, OAuthProvider, EmailAuthProvider, linkWithCredential, linkWithPopup, type User, type Auth } from 'firebase/auth';
-import { authConfigSchema, sessionSchema, type AuthConfig } from '@little-say/core';
+import { authConfigSchema, sessionSchema, type AuthConfig, type SyncSnapshot } from '@little-say/core';
 import { apiFetch } from './api';
 import { authDependencies } from './firebasePersistence';
 import { nativeCredential, socialAuthAvailable, type SocialProvider, type AppleGrant } from './firebaseProviders';
@@ -53,16 +53,16 @@ async function rawSignIn(context: Context, provider: Provider, email: string, pa
   return { user: result.user, ...(accessToken ? { apple: { token: accessToken, type: 'ACCESS_TOKEN' as const } } : {}) };
 }
 
-async function exchange(server: string, context: Context, user: User): Promise<AccountSession> {
+async function exchange(server: string, context: Context, user: User): Promise<AccountSession & { starterSnapshot?: SyncSnapshot }> {
   const result = sessionSchema.parse(await apiFetch(server, '/api/account/session', { credentials: 'include', method: 'POST',
     headers: { 'Content-Type': 'application/json', ...await csrfHeaders(server) },
     body: JSON.stringify({ idToken: await getIdToken(user, true), native: Platform.OS !== 'web' }) }, undefined, true));
-  const session = { account: result.account, server, firebaseUid: user.uid, authConfig: context.config };
+  const session = { ...result, server, firebaseUid: user.uid, authConfig: context.config };
   if (Platform.OS === 'web') await signOut(context.auth);
   return session;
 }
 
-/** Sign in or register explicitly; the account controller starts automatic backup once email verification is complete. */
+/** Sign in or register and return starter content for local installation; private backup waits for email verification. */
 export async function authenticateAccount(server: string, mode: 'login' | 'register', email: string, password: string, provider: Provider = 'password') {
   const context = await accountContext(server);
   try {

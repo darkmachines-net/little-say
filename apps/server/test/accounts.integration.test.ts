@@ -1,4 +1,4 @@
-/** @file Exercises real Postgres migrations, complete backups, concurrent quotas/revisions, isolation, and durable deletion retries. */
+/** @file Exercises atomic account seeding, real Postgres backups, concurrent quotas/revisions, isolation, and deletion retries. */
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
@@ -22,8 +22,30 @@ it('provisions by project and UID, never by email, even under concurrent sign-in
   const { accounts } = await fixture();
   const [a, b] = await Promise.all([accounts.provision(identity('alice')), accounts.provision(identity('alice'))]);
   expect(a.id).toBe(b.id);
+  const starters = await accounts.snapshot(a);
+  expect(starters.boards.map(board => board.title)).toEqual(['Farm Animals', 'Rainbow', 'Shapes']);
+  expect(starters.boards.every(board => board.tiles.length === 6)).toBe(true);
+  expect(await accounts.starterSnapshot(b)).toEqual(starters);
   expect((await accounts.provision({ ...identity('bob'), email: a.email })).id).not.toBe(a.id);
   expect((await accounts.provision({ ...identity('alice'), project: 'different-project' })).id).not.toBe(a.id);
+});
+it('never reseeds edited, emptied, or legacy accounts and never exposes private edits in session starters', async () => {
+  const { accounts, pool } = await fixture();
+  const account = await accounts.provision(identity('parent'));
+  const initial = await accounts.snapshot(account);
+  const edited = { ...initial, boards: [{ ...initial.boards[0], title: 'My animals', revision: 1 }] };
+  const saved = await accounts.save(account, edited);
+  await accounts.provision(identity('parent'));
+  expect(await accounts.snapshot(account)).toEqual(saved);
+  expect(await accounts.starterSnapshot(account)).toBeUndefined();
+  await accounts.save(account, { ...saved, boards: [] });
+  await accounts.provision(identity('parent'));
+  expect((await accounts.snapshot(account)).boards).toEqual([]);
+  // A revision-zero empty snapshot is the pre-starter account format.
+  await pool.query('UPDATE account_snapshots SET revision=0 WHERE account_id=$1', [account.id]);
+  await accounts.provision(identity('parent'));
+  expect((await accounts.snapshot(account)).boards).toEqual([]);
+  expect(await accounts.starterSnapshot(account)).toBeUndefined();
 });
 it('persists complete owner-scoped backups across pool recreation and rejects missing/corrupt assets', async () => {
   const db = await fixture(), alice = await db.accounts.provision(identity('alice')), bob = await db.accounts.provision(identity('bob'));

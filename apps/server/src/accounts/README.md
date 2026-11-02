@@ -20,6 +20,10 @@ Accounts have internal UUIDs and unique Firebase project/UID mappings. Emails ar
 
 ## Backup persistence
 
+New account provisioning atomically creates the three six-card examples defined in core's `starterBoards.ts`: **Farm Animals** (Horse, Pig, Goat, Chicken, Sheep, Cow), **Rainbow** (Red through Purple), and **Shapes** (Circle, Triangle, Square, Rectangle, Diamond, Heart). They are ordinary editable/deletable English boards with fresh account-owned IDs and built-in symbols; pictures require no download or AI request. Existing accounts, including intentionally emptied libraries, are never seeded again.
+
+The untouched initial snapshot uses revision zero. `POST /session` includes it as `starterSnapshot` so registration and first provider sign-in can open usable boards before email verification. Repeated exchanges return the same snapshot until the first backup write advances the revision. No user-authored backup enters this response; verified backup routes remain the only way to retrieve private edits and media. [Client installation](../../../mobile/src/services/README.md#accounts-and-sync) preserves local changes during repeated authentication.
+
 Backups include boards, personal photos, illustrations, and downloaded speech. They are visible to the server operator and are not end-to-end encrypted. The [client account service](../../../mobile/src/services/README.md#accounts-and-sync) owns automatic backup after verified sign-in. Device settings, consent, favorites, play history, drafts, and undo remain local. Account sign-out preserves downloaded data.
 
 The account row is locked before revision, completeness, and quota checks. Stale writers receive HTTP 409. Limits are 500 boards, 10 MB per asset, and 256 MB of private assets per account. Assets are owner-scoped even for identical bytes; unreferenced uploads count against quota until deletion. Snapshots have a relational revision and JSONB boards/manifest; immutable bytes currently live in `bytea`. There is no automatic eviction or history UI.

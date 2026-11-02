@@ -1,9 +1,9 @@
-/** @file Coordinates sign-in, prompt local backups, throttled remote refresh, and independent sync/account-action feedback. */
+/** @file Installs account starters at sign-in and coordinates local backups, throttled refresh, and independent account feedback. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
-import { mergeBoards, type Library, type AuthConfig } from '@little-say/core';
+import { mergeBoards, type Library, type AuthConfig, type SyncSnapshot } from '@little-say/core';
 import { type useLibrary } from '../data/useLibrary';
 import { ApiError, backendUrl } from './api';
 import { accountContext, authenticateAccount, resetAccountPassword, signOutAccount, accountDeletionProof, verifyAccountEmail, linkAccountProvider, accountError, socialAuthAvailable, type Provider } from './firebaseAccount';
@@ -14,7 +14,8 @@ import { accountBackupState, backupConnectionFailure } from './accountBackup';
 const remoteRefreshInterval = 15 * 60 * 1000;
 
 /**
- * Restore sign-in and empty libraries, promptly back up edits, and check unchanged libraries at most
+ * Durably install new-account starters before entering Home, restore sign-in and empty libraries,
+ * promptly back up edits, and check unchanged libraries at most
  * every 15 minutes after success. Manual refresh bypasses that interval; failures retry while active.
  * Defer transfers during editing/play and keep backup status separate from authentication feedback.
  */
@@ -127,7 +128,15 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     try { await action(); } catch (e) { setError(accountError(e)); throw e; }
     finally { running.current = false; setBusy(false); }
   };
-  const remember = async (value: AccountSession) => {
+  const remember = async ({ starterSnapshot, ...value }: AccountSession & { starterSnapshot?: SyncSnapshot }) => {
+    if (starterSnapshot) await store.commit(local => {
+      // This acknowledgement also remembers local deletions before email verification. A repeated
+      // login must not reinstall starters or replace newer edits with the initial server snapshot.
+      if (local.sync?.accountId === value.account.id && local.sync.server === value.server) return local;
+      return { ...local, setup: undefined,
+        boards: mergeBoards([], local.boards, starterSnapshot.boards, () => Crypto.randomUUID()),
+        sync: { accountId: value.account.id, server: value.server, snapshot: starterSnapshot, savedAt: new Date().toISOString() } };
+    });
     await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false); setSyncFailure(null);
   };
   const prepare = async () => {
