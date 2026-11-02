@@ -1,4 +1,4 @@
-# Prepares changed Dev clients and development OTA on master, gates beta promotion, then delegates GCP/Expo delivery.
+# Prepares Dev candidates, approves the full beta rollout, then delegates parallel builds and ordered GCP/Expo delivery.
 name: Release
 run-name: ${{ inputs.destination == 'public-stores' && 'Public-store release (Expo production)' || 'Continuous delivery (Development → approval → beta)' }}
 on:
@@ -17,7 +17,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@8f726274c94010aabbc759d774c2ddd26a8c6c2b
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@0f01668db158ca22729e45980e162fa601900da2
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination || 'production'] }}
       rebuild: ${{ inputs.rebuild || false }}

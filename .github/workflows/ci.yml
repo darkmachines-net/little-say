@@ -1,4 +1,4 @@
-# Checks code and isolated services/browser flows, including saved drafts; retains temporary editor and navigation captures.
+# Runs required Lint and Tests and build checks, including services/browser flows and temporary review captures.
 name: Check
 on:
   pull_request:
@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
   check:
+    name: Tests and build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
