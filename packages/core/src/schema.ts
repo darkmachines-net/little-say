@@ -1,10 +1,12 @@
-/** @file Defines durable library and AI payload schemas, device-data migration, and revision-safe proposal application. */
+/** @file Defines durable library and AI payload schemas, bounded language profiles, compatible migrations, and revision-safe proposals. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
 import { picturePolicySchema, pictureOptionsSchema, pictureConceptSchema, pictureModeSchema, pictureStyleSchema, libraryPictureSchema, generatedPictureSchema, unresolvedPictureSchema, pictureBatchSchema } from './pictures';
 
 export const MAX_TILES = 24;
+/** Maximum number of languages selectable in the shared user profile. */
+export const MAX_PROFILE_LANGUAGES = 3;
 export const colors = ['sage', 'peach', 'butter', 'sky', 'lilac', 'rose'] as const;
 export const languageSchema = z.string().min(2).max(35).refine(value => {
   try { return Intl.getCanonicalLocales(value).length === 1; } catch { return false; }
@@ -17,16 +19,18 @@ export const illustrationSchema = z.discriminatedUnion('kind', [
 export const translationSchema = z.object({ language: languageSchema, label: z.string().trim().min(1).max(80), speech: z.string().trim().min(1).max(200) });
 // Older entries have unknown provenance and are protected like manual corrections.
 export const storedTranslationSchema = translationSchema.extend({ source: z.string().max(700), origin: z.enum(['generated', 'manual']).optional() });
+// Keep historical board languages and saved translations readable independently of the profile cap.
 export const playLanguagesSchema = z.array(languageSchema).max(6).refine(tags => {
   try { return new Set(tags.map(tag => Intl.getCanonicalLocales(tag)[0])).size === tags.length; } catch { return false; }
 }, 'Choose each play language once.');
-export const languageProfileSchema = z.object({
+const storedLanguageProfileSchema = z.object({
   languages: playLanguagesSchema.refine(tags => tags.length > 0, 'Choose at least one language.'),
   defaultLanguage: languageSchema,
 }).refine(profile => {
   try { return profile.languages.some(tag => Intl.getCanonicalLocales(tag)[0] === Intl.getCanonicalLocales(profile.defaultLanguage)[0]); } catch { return false; }
 }, 'The default language must be in your language list.')
   .transform(profile => ({ languages: profile.languages.map(tag => Intl.getCanonicalLocales(tag)[0]), defaultLanguage: Intl.getCanonicalLocales(profile.defaultLanguage)[0] }));
+export const languageProfileSchema = storedLanguageProfileSchema.refine(profile => profile.languages.length <= MAX_PROFILE_LANGUAGES, `Choose up to ${MAX_PROFILE_LANGUAGES} languages.`);
 export type LanguageProfile = z.infer<typeof languageProfileSchema>;
 export const tileSchema = z.object({
   id: z.string().min(1).max(100), label: z.string().trim().min(1).max(80),
@@ -170,6 +174,14 @@ export const librarySchema = z.object({
   sync: z.object({ accountId: z.string(), server: z.string(), snapshot: syncSnapshotSchema, savedAt: z.string() }).optional(),
 });
 export type Library = z.infer<typeof librarySchema>;
+// Older profiles keep their default plus the earliest other choices. Board content is not rewritten.
+const storedLibrarySchema = librarySchema.extend({
+  settings: settingsSchema.extend({
+    languageProfile: storedLanguageProfileSchema.transform(profile => profile.languages.length <= MAX_PROFILE_LANGUAGES ? profile : {
+      ...profile, languages: [profile.defaultLanguage, ...profile.languages.filter(tag => tag !== profile.defaultLanguage)].slice(0, MAX_PROFILE_LANGUAGES),
+    }).optional(),
+  }),
+});
 export const proposalRequestSchema = z.object({
   prompt: z.string().trim().min(1).max(4000), board: boardContextSchema.nullable(), languageProfile: languageProfileSchema.optional(),
   picturePolicy: picturePolicySchema.optional(), pictureCapability: z.literal(1).optional(),
@@ -299,11 +311,11 @@ export function reviseBoard(board: Board, changes: BoardChanges): Board {
 }
 
 /**
- * Validate the supported durable library format; reject unknown or corrupt data instead of silently
- * resetting it.
+ * Validate durable libraries, capping older profiles while retaining their default and all board data.
+ * Reject unknown or corrupt data instead of silently resetting it.
  */
 export function migrateLibrary(raw: unknown): Library {
   // v2 adds image assets without rewriting the appearance of any saved board.
-  if (raw && typeof raw === 'object' && 'version' in raw && raw.version === 1) return librarySchema.parse({ ...raw, version: 2 });
-  return librarySchema.parse(raw);
+  if (raw && typeof raw === 'object' && 'version' in raw && raw.version === 1) return storedLibrarySchema.parse({ ...raw, version: 2 });
+  return storedLibrarySchema.parse(raw);
 }

@@ -62,7 +62,7 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
 | root | Overview and current language summaries |
-| `/languages` | One to six shared languages; direct search with a result dropdown, divided rows, removal under Edit, and one default selector |
+| `/languages` | Shared languages within the [core profile cap](../../../../packages/core/README.md); direct search with a result dropdown, divided rows, removal under Edit, and one default selector |
 | `/screen-guidance` | Platform-specific Guided Access/screen-pinning links or browser guidance |
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
 | `/privacy` | Storage, backup, AI processing, photos, dictation, retention disclosures, and picture credits |

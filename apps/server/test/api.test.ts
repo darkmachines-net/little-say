@@ -1,5 +1,5 @@
 /**
- * @file Exercises API validation, origins, concurrency, retired audio input, and optional static web
+ * @file Exercises API validation including the shared language cap, origins, concurrency, retired audio input, and static web
  * serving.
  */
 
@@ -47,10 +47,11 @@ describe('private generation API', () => {
   it('forwards device languages to generation and rejects invalid preferences before AI', async () => {
     const propose = vi.fn(async () => draft);
     const app = await server({ propose });
-    const payload = { prompt: 'Animals', board: null, languageProfile: { languages: ['es-MX', 'fr-FR'], defaultLanguage: 'es-MX' } };
+    const payload = { prompt: 'Animals', board: null, languageProfile: { languages: ['es-MX', 'fr-FR', 'en-US'], defaultLanguage: 'es-MX' } };
     expect((await app.inject({ method: 'POST', url: '/api/boards/propose', headers, payload })).statusCode).toBe(200);
     expect(propose).toHaveBeenCalledWith(payload);
     expect((await app.inject({ method: 'POST', url: '/api/boards/propose', headers, payload: { ...payload, languageProfile: { ...payload.languageProfile, defaultLanguage: 'not_a_tag' } } })).statusCode).toBe(400);
+    expect((await app.inject({ method: 'POST', url: '/api/boards/propose', headers, payload: { ...payload, languageProfile: { ...payload.languageProfile, languages: [...payload.languageProfile.languages, 'de-DE'] } } })).statusCode).toBe(400);
     expect(propose).toHaveBeenCalledOnce();
   });
   it('translates only requested tile-language pairs and ties results to the board revision', async () => {
