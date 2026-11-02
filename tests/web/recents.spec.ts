@@ -1,5 +1,5 @@
 /**
- * @file Verifies playable previews, responsive board actions, creation/play ordering, dashboard return,
+ * @file Verifies board previews and Play buttons, responsive actions, creation/play ordering, dashboard return,
  * persistent favorites, and duplication that records fresh use without changing the source board's history.
  */
 
@@ -41,7 +41,7 @@ test('recent use persists offline, ignores edits and undo, and puts new copies f
   await play(page, 'Our family'); await page.reload();
   await expect(page.getByTestId('play-board')).toBeVisible(); await leaveBoard(page);
   await expect(titles).toHaveText(['Our family', 'Farmyard friends', 'My little words']);
-  await expect(page.getByTestId('recent-board').getByRole('button', { name: 'Play Our family', exact: true }).getByTestId('tile-picture')).toHaveCount(6);
+  await expect(page.getByTestId('recent-board').getByTestId('board-card-preview').getByTestId('tile-picture')).toHaveCount(6);
   const before = await savedLibrary(page);
   expect(before.boards.map((board: any) => board.revision)).toEqual([0, 0, 0]);
   expect(before.boardLastPlayedAt['starter-family']).toBeGreaterThan(before.boardLastPlayedAt['starter-farm']);
