@@ -1,9 +1,11 @@
-/** @file Verifies anonymous starter playback, mutation gates, account links, responsive layout, and isolation from saved data/services. */
+/** @file Verifies anonymous cached-clip playback and device fallback, mutation gates, account links, layout, and saved-data isolation. */
 
 import { test, expect } from '@playwright/test';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import { pcmToWav } from '../../apps/server/src/synthesis';
 
 test.beforeEach(async ({ page }) => {
+  await page.route('**/api/starter-boards/audio', route => route.fulfill({ json: { clips: [] } }));
   await page.addInitScript(() => {
     const browser = window as any;
     browser.__spoken = [];
@@ -21,7 +23,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const width of [1280, 390]) {
-  test(`guests play all starter words without services or storage at ${width}px`, async ({ page }) => {
+  test(`guests play all starter words with only public reads and no storage at ${width}px`, async ({ page }) => {
     const apiRequests: string[] = [];
     page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(request.url()); });
     await page.setViewportSize({ width, height: 844 });
@@ -49,7 +51,7 @@ for (const width of [1280, 390]) {
       expect(await page.evaluate(() => (window as any).__speechStops)).toBeGreaterThan(stops);
     }
     expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
-    expect(apiRequests).toEqual([]);
+    expect(apiRequests.map(url => new URL(url).pathname)).toEqual(['/api/starter-boards/audio']);
     await page.reload();
     await expect(page.getByTestId('library-board')).toHaveCount(3);
     expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
@@ -79,7 +81,45 @@ test('every creation and board-management entry prompts for a free account and c
   await page.getByRole('button', { name: 'Close Make it yours', exact: true }).click();
   await expect(page.getByTestId('library-board')).toHaveCount(3);
   expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
-  expect(apiRequests).toEqual([]);
+  expect(apiRequests.map(url => new URL(url).pathname)).toEqual(['/api/starter-boards/audio']);
+});
+
+test('prefers prepared starter clips and uses device speech for missing or failed clips', async ({ page }) => {
+  const wave = pcmToWav(Buffer.alloc(4800, 1));
+  const id = createHash('sha256').update(wave).digest('hex');
+  const requests: string[] = [];
+  page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) requests.push(`${request.method()} ${new URL(request.url()).pathname}`); });
+  await page.addInitScript(() => {
+    (window as any).__audioPlayed = 0;
+    const start = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...args) { (window as any).__audioPlayed++; return start.apply(this, args); };
+  });
+  await page.route('**/api/starter-boards/audio', route => route.fulfill({ json: { clips: [{ text: 'Horse', language: 'en-US', id }] } }));
+  let failClip = false;
+  await page.route(`**/api/starter-boards/audio/${id}.wav`, route => route.fulfill(failClip ? { status: 404 } : { body: wave, contentType: 'audio/wav' }));
+  const loaded = page.waitForResponse('**/api/starter-boards/audio');
+  await page.goto('/app/try'); await loaded;
+  await page.getByRole('button', { name: 'Play Farm Animals', exact: true }).click();
+  await page.getByRole('button', { name: 'Horse', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed)).toBe(1);
+  expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
+  await expect(page.getByTestId('tile-playing')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Pig', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Pig', language: 'en-US' }]);
+  await expect(page.getByTestId('tile-playing')).toHaveCount(0);
+  failClip = true;
+  await page.getByRole('button', { name: 'Horse', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Pig', language: 'en-US' }, { text: 'Horse', language: 'en-US' }]);
+  expect(requests).toEqual(['GET /api/starter-boards/audio', ...Array(2).fill(`GET /api/starter-boards/audio/${id}.wav`)]);
+  expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
+});
+
+test('a failed clip index leaves all starter words playable immediately', async ({ page }) => {
+  await page.route('**/api/starter-boards/audio', route => route.abort());
+  await page.goto('/app/try');
+  await page.getByRole('button', { name: 'Play Shapes', exact: true }).click();
+  await page.getByRole('button', { name: 'Heart', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Heart', language: 'en-US' }]);
 });
 
 test('account links preserve browser Back and registration creates independent editable starters', async ({ page }) => {

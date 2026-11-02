@@ -1,5 +1,5 @@
 /**
- * @file Presents a compact web welcome with shared artwork and a real trial link supporting preloading and in-page navigation.
+ * @file Presents a compact web welcome with shared artwork, direct account links, and a preloaded trial link.
  * Store links remain inactive until listings exist. Only Entry.web.tsx imports this page and its styles;
  * visiting it must not initialize the device library or start account/AI services.
  */
@@ -8,6 +8,7 @@ import type { CSSProperties, MouseEvent } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { WelcomeArtwork, welcomeBackground } from '../ui/account/AccountWelcome';
 import colors from '../../assets/brand/colors.json';
+import { accountPath } from '../services/accountRoute';
 import './landing.css';
 
 function Arrow() {
@@ -27,7 +28,7 @@ function StoreLinks() {
   </div>;
 }
 
-/** Introduce the app in one viewport, keeping entry reachable by scrolling; the web entry owns trial preloading and navigation. */
+/** Introduce the app with trial and direct account links, allowing scrolling on short screens; web entry owns trial preloading and navigation. */
 export default function LandingPage({ onTry, onTryIntent }: {
   /** Open the trial in the current page for ordinary clicks; preserve modified link actions. */
   onTry: (event: MouseEvent<HTMLAnchorElement>) => void;
@@ -49,6 +50,10 @@ export default function LandingPage({ onTry, onTryIntent }: {
         <div className="ls-actions">
           <p className="ls-invitation">Free with no ads to support your child's learning.</p>
           <a className="ls-primary" href="/app/try" onClick={onTry} onPointerEnter={onTryIntent} onFocus={onTryIntent}>Try Little Say on the web <Arrow /></a>
+          <nav className="ls-account-links" aria-label="Your account">
+            <a href={accountPath('login')}>Log in</a>
+            <a href={accountPath('register')}>Create account</a>
+          </nav>
           <StoreLinks />
         </div>
       </div>

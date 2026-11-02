@@ -1,11 +1,12 @@
-/** @file Lazily opens offline browser library/media storage on first use, leaving public previews free of IndexedDB side effects. */
+/** @file Lazily opens browser library/media storage; focused schema imports keep public previews free of editor catalogs and IndexedDB side effects. */
 
 import { openDB } from 'idb';
-import { migrateLibrary, speechAssetIdSchema, type SpeechAsset, type Library } from '@little-say/core';
+import { migrateLibrary, syncAssetSchema } from '@little-say/core/schema';
+import { speechAssetIdSchema } from '@little-say/core/speech';
+import { type SpeechAsset, type Library, type SyncAsset } from '@little-say/core';
 import { downloadAudio } from './audioDownload';
 import { downloadPicture } from './pictureDownload';
-import { pictureAssetIdSchema } from '@little-say/core';
-import { syncAssetSchema, type SyncAsset } from '@little-say/core';
+import { pictureAssetIdSchema } from '@little-say/core/pictures';
 let database: ReturnType<typeof openDB> | undefined;
 function getDatabase() {
   return database ??= openDB('little-say', 3, { upgrade(db, oldVersion) {

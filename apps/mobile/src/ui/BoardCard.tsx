@@ -1,7 +1,10 @@
-/** @file Renders library cards with adaptive title/actions above unobstructed previews and a full-width Play button. */
+/** @file Renders shared library/trial cards with adaptive actions, unobstructed previews, and a full-width Play button. */
 
 import { Platform, Pressable, Text, View } from 'react-native';
-import { Ellipsis, Heart, Pencil, Play } from 'lucide-react-native';
+import Ellipsis from 'lucide-react-native/icons/ellipsis';
+import Heart from 'lucide-react-native/icons/heart';
+import Pencil from 'lucide-react-native/icons/pencil';
+import Play from 'lucide-react-native/icons/play';
 import { type Board } from '@little-say/core';
 import { Button } from './components';
 import { TileFace } from './TileFace';

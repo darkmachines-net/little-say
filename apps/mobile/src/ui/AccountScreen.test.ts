@@ -1,4 +1,4 @@
-/** @file Verifies illustrated required authentication and Settings account groups without routine sync status, including navigation guards and credential lifetimes. */
+/** @file Verifies illustrated authentication, Settings account groups, guarded navigation, and credential lifetimes without routine sync status. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -18,6 +18,7 @@ const native = vi.hoisted(() => ({ OS: 'android' }));
 vi.mock('react-native', () => ({ Platform: native, Modal: 'Modal', ScrollView: 'ScrollView', View: 'View', Text: 'Text', Pressable: 'Pressable', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390, height: 844 }), StyleSheet: { create: (value: unknown) => value } }));
 vi.mock('lucide-react-native', () => Object.fromEntries(['ArrowLeft', 'ChevronRight', 'CloudCheck', 'CloudOff', 'CloudAlert', 'CloudDownload', 'RefreshCw', 'Mail', 'CircleAlert', 'Clock3', 'UserRound', 'KeyRound', 'LogOut', 'LayoutGrid', 'Image', 'Volume2', 'Trash2', 'Download', 'Info', 'Languages', 'ShieldCheck', 'Smartphone'].map(name => [name, name])));
 vi.mock('./screenFocus', () => ({ useScreenFocus: () => null }));
+vi.mock('lucide-react-native/icons/arrow-left', () => ({ default: 'ArrowLeft' }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', useSafeAreaInsets: () => ({ top: 48, bottom: 34, left: 0, right: 0 }) }));
 vi.mock('./Brand', () => ({ Brand: 'Brand', MountainMark: 'MountainMark' }));
 vi.mock('./components', () => ({ Button: 'Button', Field: 'Field', Notice: 'Notice' }));

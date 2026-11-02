@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, shared speech download grants, private picture metadata, registered-account access, CSRF, and interruption. */
+/** @file Verifies durable jobs, speech grants and public starter exceptions, private metadata, registered-account access, CSRF, and interruption. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -12,6 +12,8 @@ import { FileObjects, DatabaseCache, canReadMedia, pruneMedia } from '../src/hos
 import { executeJob, apiCaches } from '../src/hosting/runtime';
 import { createServer } from '../src/app';
 import { testDatabase } from './postgres-fixture';
+import { SpeechCache } from '../src/speech-cache';
+import { pcmToWav, speechProfile } from '../src/synthesis';
 
 const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await action(); });
@@ -129,6 +131,10 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s) and p
   const hosting = { pool: f.pool, jobs: f.jobs, objects: f.objects, enabled: true, access: new AccountAccess(f.accounts, auth) };
   const caches = apiCaches({ ...hosting, env: {} });
   const app = await createServer({ provider: null, ...caches, accounts: f.accounts, auth, hosting, secureCookies: true }); cleanup.push(() => app.close());
+  const starter = await new SpeechCache(new DatabaseCache(f.pool, f.objects, 'speech', f.alice.id), speechProfile({}), async () => pcmToWav(Buffer.alloc(100, 7))).get({ text: 'Horse', language: 'en-US' });
+  expect((await app.inject('/api/starter-boards/audio')).json()).toEqual({ clips: [{ text: 'Horse', language: 'en-US', id: starter.id }] });
+  expect((await app.inject(`/api/starter-boards/audio/${starter.id}.wav`)).statusCode).toBe(200);
+  expect((await app.inject(`/api/speech/${starter.id}.wav`)).statusCode).toBe(401);
   const csrf = await app.inject('/api/account/csrf'), initialCookie = String(csrf.headers['set-cookie']).split(';')[0];
   const login = await app.inject({ method: 'POST', url: '/api/account/session', headers: { cookie: initialCookie, 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken }, payload: { idToken: 'fixture', guest: anonymous } });
   if (anonymous) {
@@ -146,6 +152,7 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s) and p
   const job = (await f.jobs.claim(id))!;
   const result = await executeJob({ ...hosting, env: { AAC_AI_FIXTURES: 'true' } }, job, new AbortController().signal) as { id: string }; await f.jobs.finish(job, result);
   const media = '/api/speech/' + result.id + '.wav';
+  expect((await app.inject(`/api/starter-boards/audio/${result.id}.wav`)).statusCode).toBe(404);
   expect((await app.inject(media)).statusCode).toBe(401);
   expect((await app.inject({ url: media, headers })).statusCode).toBe(200);
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers })).json()).toMatchObject({ state: 'complete', result });

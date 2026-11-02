@@ -1,6 +1,6 @@
 # Shared board behavior
 
-This private workspace package contains platform-independent schemas and pure board operations. Import through `@little-say/core`; keep React, storage, network calls, and provider SDKs in their owning app modules.
+This private workspace package contains platform-independent schemas and pure board operations. Use `@little-say/core/<module>` for runtime imports in public web components and their dependencies so Metro can keep editor-only catalogs out of the initial bundle. The `@little-say/core` barrel remains available for types and consumers that need the full library. Keep React, storage, network calls, and provider SDKs in their owning app modules.
 
 `schema.ts` defines persisted libraries and request/response boundaries. `migrateLibrary` reads older device data without inventing boards or resetting failures. A playable board has 1–24 uniquely identified cards; empty creation drafts use a separate schema and remain outside account snapshots. Device usage and account acknowledgments live on the library, outside board revisions.
 

@@ -1,10 +1,11 @@
-/** @file Offers public starter-board playback without account, library, sync, or generation services. */
+/** @file Offers disposable public starter boards with prepared AI audio and device fallback, without account or generation services. */
 
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { initialWindowMetrics, SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Plus } from 'lucide-react-native';
-import { createStarterBoards, type Board, type Settings } from '@little-say/core';
+import Plus from 'lucide-react-native/icons/plus';
+import { createStarterBoards } from '@little-say/core/starterBoards';
+import { type Board, type Settings } from '@little-say/core';
 import { accountPath } from '../services/accountRoute';
 import { getVoices, type Voice } from '../services/speech.web';
 import { AppHeader } from '../ui/AppHeader';
@@ -12,15 +13,16 @@ import { BoardCard } from '../ui/BoardCard';
 import { PlayBoard } from '../ui/PlayBoard';
 import { Button, Sheet } from '../ui/components';
 import { styles, theme } from '../ui/theme';
+import { useStarterAudio } from './useStarterAudio.web';
 
 const settings: Settings = {
   backendUrl: '', voices: {}, activeBoardId: null, aiConsent: false, autoSpeech: false,
-  voiceSources: { 'en-US': 'device' }, languageProfile: { languages: ['en-US'], defaultLanguage: 'en-US' },
+  voiceSources: { 'en-US': 'ai' }, languageProfile: { languages: ['en-US'], defaultLanguage: 'en-US' },
 };
-const noAudioAsset = () => undefined;
 const keepLanguage = async () => {};
 
 function StarterTrial() {
+  const audioAsset = useStarterAudio();
   const { width } = useWindowDimensions();
   const [boards] = useState(() => {
     let id = 0;
@@ -46,7 +48,7 @@ function StarterTrial() {
     window.addEventListener('keydown', dismiss);
     return () => window.removeEventListener('keydown', dismiss);
   }, [accountRequired]);
-  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={noAudioAsset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
+  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={audioAsset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
   return <View style={styles.page}>
     <AppHeader actions={<Button kind="secondary" onPress={() => window.location.assign(accountPath('login'))}>Sign in</Button>} />
     <ScrollView testID="starter-trial" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 24 }]}>

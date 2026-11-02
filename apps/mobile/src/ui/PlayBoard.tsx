@@ -1,16 +1,21 @@
 /**
  * @file Coordinates child playback, independent touch and speech feedback, board languages, and optional
- * locking with fixed header slots, safe-area lock feedback, user-language subsets, device speech
+ * locking for account and public boards with fixed header slots, safe-area feedback, user-language subsets, device speech
  * fallback, caller-labeled exit navigation, and lock-aware Android back navigation.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ViewInstance } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft } from 'lucide-react-native';
+import ArrowLeft from 'lucide-react-native/icons/arrow-left';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
-import { boardPlayLanguages, gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
+import { boardPlayLanguages } from '@little-say/core/languageProfile';
+import { gridLayout } from '@little-say/core/boardLayout';
+import { speechSource } from '@little-say/core/voicePreferences';
+import { languageName } from '@little-say/core/languages';
+import { selectedBoardLanguage, tileInLanguage } from '@little-say/core/boardLanguages';
+import { type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
 import { speechQueue, type Voice } from '../services/speech';
 import { TouchSurface } from './TouchSurface';
 import { ParentControl } from './ParentControl';

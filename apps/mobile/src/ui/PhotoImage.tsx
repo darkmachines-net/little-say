@@ -1,8 +1,9 @@
-/** @file Resolves locally stored photos and renders their crop consistently in editors and tiles. */
+/** @file Resolves local photos and applies shared crop geometry consistently across editor and playback tiles. */
 
 import { useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import { photoGeometry, type PhotoCrop, type PhotoSize } from '@little-say/core';
+import { photoGeometry } from '@little-say/core/photo';
+import { type PhotoCrop, type PhotoSize } from '@little-say/core';
 import { assetUri } from '../data/storage';
 
 export type PhotoSource = PhotoSize & { uri: string };

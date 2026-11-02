@@ -1,7 +1,7 @@
 /**
  * @file Routes the public homepage and starter trial without reloading, preloads the trial on intent,
  * and centers a full-screen spinner while web code loads. Native Entry.tsx must import only App.
- * Public pages must not initialize the device library or call app APIs. PWA installs start at /app;
+ * Public pages never initialize the device library; the trial reads only public cached audio. PWA installs start at /app;
  * older standalone root launches still enter App.
  */
 

@@ -1,8 +1,9 @@
-/** @file Shares a cancellable one-second automatic unlock and visible progress across all input methods. */
+/** @file Connects shared hold gestures to cancellable one-second unlock state and visible progress across input methods. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
-import { ParentExitGesture, PARENT_HOLD_MS, type ParentHoldState, type Point } from '@little-say/core';
+import { ParentExitGesture, PARENT_HOLD_MS } from '@little-say/core/interaction';
+import { type ParentHoldState, type Point } from '@little-say/core';
 
 /** Unlock once at the monotonic threshold without waiting for release; cancel early releases and interruptions. */
 export function useParentHold(cancelToken: number, onUnlock: () => void) {
