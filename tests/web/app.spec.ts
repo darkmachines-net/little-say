@@ -1,6 +1,6 @@
 /**
  * @file Exercises cross-feature editing/play, toolbar settings, card limits, modal dismissal,
- * shared languages, automatic translations, device speech fallback, and offline dashboard/save recovery.
+ * shared languages, automatic translations, Web Audio/device speech, and offline dashboard/save recovery.
  */
 
 import { test, expect, type Page } from '@playwright/test';
@@ -14,8 +14,8 @@ async function setupSpeech(page: Page) {
   await page.addInitScript(() => {
     const w = window as any;
     w.__spoken = []; w.__utterances = []; w.__clips = [];
-    const play = HTMLMediaElement.prototype.play;
-    HTMLMediaElement.prototype.play = function () { w.__clips.push(this.src); return play.call(this); };
+    const play = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...args) { w.__clips.push(this.buffer?.duration); return play.apply(this, args); };
     w.SpeechSynthesisUtterance = class {
       text = ''; lang = ''; voice = null; onend: any; onerror: any; onstart: any;
       /** Retain the requested words for deterministic browser speech assertions. */
@@ -441,9 +441,9 @@ test('board languages translate switchable cards, preserve fixed cards, and save
   await page.evaluate(() => navigator.serviceWorker.ready);
   await context.setOffline(true); await page.reload();
   await expect(page.getByRole('button', { name: 'Корова', exact: true })).toBeVisible();
-  await page.evaluate(() => { const original = HTMLMediaElement.prototype.play; (window as any).__played = []; HTMLMediaElement.prototype.play = function () { (window as any).__played.push(this.src); return original.call(this); }; });
+  await page.evaluate(() => { (window as any).__clips = []; });
   await page.getByRole('button', { name: 'Корова', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => (window as any).__played.length)).toBe(1);
+  await expect.poll(() => page.evaluate(() => (window as any).__clips.length)).toBe(1);
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
   await page.getByRole('button', { name: 'Play in English', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Cow', exact: true })).toBeVisible();

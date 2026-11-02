@@ -5,7 +5,7 @@ Run from the repository root with Node 24 (`npm.cmd` / `npx.cmd` on Windows):
 ```sh
 npm ci
 npm run check
-npx playwright install chromium
+npx playwright install chromium firefox
 npm run test:web
 ```
 
@@ -32,6 +32,10 @@ Prefer assertions about observable behavior and failure recovery. Keep pure edge
 ## Browser scenarios and evidence
 
 Browser feature suites own their named behavior: `conversation` and `creation-drafts` cover AI turns, shared Undo/Redo, and explicit draft saves; `pictures` and `preparation` cover image previews and cancellation; `photos`, `grid`, `speech`, and `translationEditing` cover those flows. `editor-transition` owns play/editor handoff and unlock cancellation. `headers` owns shared navigation geometry, including the unified Settings action. `dashboard` owns responsive creation actions, draft resumption, and final-row clearance. `safe-area` checks inset and keyboard-sized viewport changes. `app.spec.ts` retains cross-feature editing, language, playback, and persistence scenarios. File headers and test names describe the individual contracts.
+
+Speech scenarios run in Chromium and Firefox, including in CI. They use real WAV decoding and Web Audio completion events, checking the clip's opening samples, playback from offset zero, output reuse, offline repeats, and device-speech fallback. Chromium also reloads offline; Firefox reloads before disconnecting because [Playwright service-worker support is Chromium-only](https://playwright.dev/docs/service-workers). Colocated web-adapter unit tests cover asynchronous preparation/cancellation races and errors. Browser assertions cannot measure a physical speaker's onset; listen to short words such as “Mama” on Windows Firefox after a reload and on repeated taps when validating audio output changes.
+
+Headless Linux speech tests require an audio output device: Firefox can decode a WAV while `AudioContext.resume()` remains suspended without one. The Check workflow installs PulseAudio and its utilities, starts a user daemon with idle exit disabled, and selects a virtual null sink before browser tests. This exercises real browser decoding, scheduling, and completion without physical speakers or mocked Web Audio. Local Linux runs need a working desktop audio service or the same virtual-output setup.
 
 `App.test.ts` owns history ordering, branching, board isolation, and failed-write behavior; `BoardEditor.test.ts` checks history action availability. The [UI module](../apps/mobile/src/ui/README.md) owns the Undo/Redo behavior contract.
 

@@ -1,4 +1,4 @@
-/** @file Verifies automatically saved AI boards, generated-audio controls, language-specific clips, fallback speech, and Accept/play handoff. */
+/** @file Verifies complete Web Audio clip starts and output reuse, offline speech, generated-audio controls, fallback, and Accept/play handoff. */
 
 import { test, expect } from '@playwright/test';
 import { waitForAiTurn } from './boardEditor';
@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { pcmToWav } from '../../apps/server/src/synthesis';
 import { openExistingLibrary } from './existingLibrary';
 
-test('generates from draft text and language, regenerates, persists offline, and falls back on playback failure', async ({ page, context }) => {
+test('generates from draft text and language, regenerates, persists offline, and falls back on playback failure', async ({ page, context, browserName }) => {
   const pcm = Buffer.alloc(24000);
   for (let i = 0; i < pcm.length / 2; i++) pcm.writeInt16LE(Math.round(Math.sin(i / 24000 * 440 * 2 * Math.PI) * 400), i * 2);
   const wave = pcmToWav(pcm);
@@ -14,12 +14,22 @@ test('generates from draft text and language, regenerates, persists offline, and
   const requests: { text: string; language: string; regenerate: boolean }[] = [];
   await page.addInitScript(() => {
     const w = window as any;
-    w.__audioPlayed = []; w.__audioEnded = 0; w.__spoken = []; w.__failAudio = false;
-    const original = HTMLMediaElement.prototype.play;
-    HTMLMediaElement.prototype.play = function () {
-      w.__audioPlayed.push(this.src);
+    w.__audioPlayed = []; w.__audioLoaded = []; w.__audioContexts = new Set(); w.__audioEnded = 0; w.__spoken = []; w.__failAudio = false;
+    const fetchClip = window.fetch;
+    window.fetch = function (input, init) {
+      if (typeof input === 'string' && input.startsWith('blob:')) w.__audioLoaded.push(input);
+      return fetchClip.call(this, input, init);
+    };
+    const original = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (when = 0, offset = 0, duration) {
+      if (w.__failAudio) throw new Error('Audio unavailable');
+      w.__audioContexts.add(this.context);
+      const samples = this.buffer!.getChannelData(0);
+      const prefix = samples.slice(0, Math.round(this.buffer!.sampleRate * 0.05));
+      w.__audioPlayed.push({ offset, duration: this.buffer!.duration, lead: when - this.context.currentTime,
+        prefixEnergy: prefix.reduce((sum, sample) => sum + sample * sample, 0) / prefix.length });
       this.addEventListener('ended', () => { w.__audioEnded++; }, { once: true });
-      return w.__failAudio ? Promise.reject(new Error('Audio unavailable')) : original.call(this);
+      return original.call(this, when, offset, duration);
     };
     w.SpeechSynthesisUtterance = class {
       /** Retain the requested words for deterministic browser speech assertions. */
@@ -67,9 +77,13 @@ test('generates from draft text and language, regenerates, persists offline, and
   await page.getByRole('button', { name: 'Accept', exact: true }).click();
   await expect(page.getByTestId('play-board')).toBeVisible(); // Session save is async.
   await page.evaluate(() => navigator.serviceWorker.ready);
-  await context.setOffline(true); await page.reload();
+  // Playwright's service-worker offline navigation support is Chromium-only. Firefox still
+  // restores the saved library and plays its real blob clips with networking disabled below.
+  if (browserName === 'chromium') await context.setOffline(true);
+  await page.reload();
   await expect(page.getByTestId('play-board')).toBeVisible();
-  // Wait for the independent audio index to restore, then use real HTML audio.
+  await context.setOffline(true);
+  // Wait for the independent audio index to restore, then use the real browser decoder/output.
   await expect.poll(() => page.evaluate(async () => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open('little-say'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
@@ -81,13 +95,19 @@ test('generates from draft text and language, regenerates, persists offline, and
   })).toBe(true);
   await page.getByRole('button', { name: 'Babushka', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed.length)).toBe(1);
-  expect(await page.evaluate(() => (window as any).__audioPlayed[0])).toMatch(/^blob:/);
+  expect(await page.evaluate(() => (window as any).__audioLoaded[0])).toMatch(/^blob:/);
+  const played = await page.evaluate(() => (window as any).__audioPlayed[0]);
+  expect(played.offset).toBe(0);
+  expect(played.duration).toBeCloseTo(0.5, 2);
+  expect(played.lead).toBeGreaterThanOrEqual(0.02); // Firefox may round currentTime for privacy.
+  expect(played.prefixEnergy).toBeGreaterThan(0.00005); // The first 50 ms of the WAV survived decoding.
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
   // Wait for the real media terminal event and idle UI, not an assumed clip duration.
   await expect.poll(() => page.evaluate(() => (window as any).__audioEnded)).toBe(1);
   await expect(page.getByTestId('tile-playing')).toHaveCount(0);
   await page.getByRole('button', { name: 'Babushka', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__audioEnded)).toBe(2);
+  expect(await page.evaluate(() => (window as any).__audioContexts.size)).toBe(1);
   await expect(page.getByTestId('tile-playing')).toHaveCount(0);
   await page.getByRole('button', { name: 'Mama', exact: true }).click();
   // Background preparation may already have cached this other card too.
