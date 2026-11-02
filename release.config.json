@@ -109,7 +109,7 @@
       "port": 8787,
       "healthPath": "/api/ready",
       "environment": {
-        "NODE_ENV": "development",
+        "NODE_ENV": "test",
         "PGHOST": "postgres",
         "PGDATABASE": "little_say",
         "PGUSER": "little_say",
