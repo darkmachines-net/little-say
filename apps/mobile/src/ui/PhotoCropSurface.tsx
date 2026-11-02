@@ -1,4 +1,4 @@
-/** @file Adapts native pan and pinch responders to shared photo crop geometry. */
+/** @file Owns native crop gestures and prevents Android scroll interception while applying shared crop geometry. */
 
 import { useMemo, useRef } from 'react';
 import { View, type GestureResponderEvent } from 'react-native';
@@ -10,7 +10,10 @@ export type PhotoCropSurfaceProps = {
   /** Update the unsaved crop preview after bounded pan, pinch, or accessibility adjustments. */
   onChange: (crop: PhotoCrop) => void;
 };
-/** Render the square crop surface and translate native touch positions into bounded crop updates. */
+/**
+ * Translate native touches into bounded crop updates, keeping Android's parent scroll view from
+ * intercepting contacts until the crop responder releases or terminates.
+ */
 export function PhotoCropSurface({ source, size, crop, onChange }: PhotoCropSurfaceProps) {
   const frame = { width: size, height: size };
   const gesture = useMemo(() => new PhotoGesture(source, { width: size, height: size }), [source, size]);
@@ -24,7 +27,12 @@ export function PhotoCropSurface({ source, size, crop, onChange }: PhotoCropSurf
     accessibilityActions={[{ name: 'left', label: 'Move photo left' }, { name: 'right', label: 'Move photo right' }, { name: 'up', label: 'Move photo up' }, { name: 'down', label: 'Move photo down' }, { name: 'increment', label: 'Zoom in' }, { name: 'decrement', label: 'Zoom out' }]}
     onAccessibilityAction={event => { const action = event.nativeEvent.actionName; gesture.reset(); onChange(action === 'increment' || action === 'decrement' ? zoomPhoto(source, frame, crop, crop.zoom + (action === 'increment' ? 0.05 : -0.05)) : panPhoto(source, frame, crop, action === 'left' ? -4 : action === 'right' ? 4 : 0, action === 'up' ? -4 : action === 'down' ? 4 : 0)); }}
     onStartShouldSetResponder={() => true} onMoveShouldSetResponder={() => true}
-    onResponderGrant={event => { origin.current = { x: event.nativeEvent.pageX - event.nativeEvent.locationX, y: event.nativeEvent.pageY - event.nativeEvent.locationY }; gesture.reset(); move(event); }}
+    onResponderGrant={event => {
+      origin.current = { x: event.nativeEvent.pageX - event.nativeEvent.locationX, y: event.nativeEvent.pageY - event.nativeEvent.locationY };
+      gesture.reset(); move(event);
+      // Android uses this return value to block native scroll interception; refusing JS termination alone is insufficient.
+      return true;
+    }}
     onResponderStart={move} onResponderMove={move} onResponderEnd={move}
     onResponderRelease={() => gesture.reset()} onResponderTerminate={() => gesture.reset()} onResponderTerminationRequest={() => false}
     style={{ width: size, height: size, overflow: 'hidden', borderRadius: 8 }}>
