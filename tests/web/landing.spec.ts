@@ -1,6 +1,44 @@
-/** @file Verifies the web welcome links to a public starter trial, stays reachable on short screens, and preserves installed-app entry. */
+/** @file Verifies public trial navigation, intent preloading and centered loading feedback, responsive welcome layout, and installed-app entry. */
 
 import { test, expect } from '@playwright/test';
+
+test('trial code preloads on focus and opens with a centered spinner without reloading the page', async ({ page }) => {
+  let release!: () => void;
+  let requested = false;
+  const pending = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/TryBoards-*.js', async route => { requested = true; await pending; await route.continue(); });
+  try {
+    await page.goto('/');
+    const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+    const link = page.getByRole('link', { name: 'Try Little Say on the web', exact: true });
+    await link.focus();
+    await expect.poll(() => requested).toBe(true);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await link.press('Enter');
+    await expect(page).toHaveURL(/\/app\/try$/);
+    const loading = page.getByTestId('web-loading');
+    await expect(loading).toBeVisible();
+    await expect(loading).toHaveText('');
+    await expect(loading).toHaveAttribute('aria-busy', 'true');
+    const spinner = page.getByRole('progressbar', { name: 'Loading Little Say', exact: true });
+    await expect(spinner).toBeVisible();
+    const viewport = page.viewportSize()!;
+    const bounds = (await spinner.boundingBox())!;
+    expect(bounds.x + bounds.width / 2).toBeCloseTo(viewport.width / 2, 0);
+    expect(bounds.y + bounds.height / 2).toBeCloseTo(viewport.height / 2, 0);
+    await page.screenshot({ path: 'artifacts/screenshots/trial/loading.png' });
+    release();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
+    await expect(loading).toHaveCount(0);
+    expect(await page.evaluate(() => performance.timeOrigin)).toBe(timeOrigin);
+    await page.goBack();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await page.goForward();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
+    expect(await page.evaluate(() => performance.timeOrigin)).toBe(timeOrigin);
+    expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
+  } finally { release(); }
+});
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
   test(`homepage describes the app without starting it at ${viewport.width}px`, async ({ page }) => {
