@@ -1,4 +1,4 @@
-/** @file Verifies the single-screen web welcome, reachable entry on short screens, inactive store links, and installed-web-app compatibility. */
+/** @file Verifies the web welcome links to a public starter trial, stays reachable on short screens, and preserves installed-app entry. */
 
 import { test, expect } from '@playwright/test';
 
@@ -28,11 +28,11 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     expect(apiRequests).toEqual([]);
     await page.screenshot({ path: `artifacts/screenshots/landing/home-${viewport.width}.png` });
     await page.getByRole('link', { name: 'Try Little Say on the web', exact: true }).click();
-    await expect(page).toHaveURL(/\/app$/);
-    await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/try$/);
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
     await expect(page.locator('.ls-site')).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
     await page.goBack();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Little SayLearn to Talk!');
   });
@@ -49,7 +49,7 @@ test('homepage navigation works with a keyboard and installed web apps launch in
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Try Little Say on the web', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/app\/try$/);
   await page.goto('/app/');
   await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
 });
@@ -67,7 +67,7 @@ test('short windows and enlarged text keep the web entry reachable by scrolling'
   await store.scrollIntoViewIfNeeded();
   await expect(store).toBeInViewport({ ratio: 1 });
   await entry.click();
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/app\/try$/);
 });
 
 test('older iOS home-screen installs bypass the homepage at their original root URL', async ({ page }) => {

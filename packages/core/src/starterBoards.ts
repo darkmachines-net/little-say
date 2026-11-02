@@ -1,4 +1,4 @@
-/** @file Defines ready-to-play English sample boards with built-in symbols and no generated-media dependencies. */
+/** @file Defines English starter boards for accounts and public trials, using built-in symbols without generated-media dependencies. */
 
 import { colors, type Board } from './schema';
 
@@ -9,7 +9,7 @@ const templates = [
 ] as const;
 
 /**
- * Create independent, editable copies for a newly provisioned account. The caller supplies unique
+ * Create independent copies for a new account or a disposable public trial. The caller supplies unique
  * IDs; English words retain English pronunciation until board-language translations are added.
  * Pictures need no downloads, and normal device speech can play before AI audio is available.
  */

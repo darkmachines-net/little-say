@@ -1,6 +1,6 @@
 # Little Say
 
-A local-first AAC soundboard for parents and toddlers, built with Expo, React Native, TypeScript, and Fastify. Families create boards with emoji, licensed illustrations, generated pictures, or their own photos, then play words in their preferred languages. Sign-in is required on web and mobile. Boards back up automatically, and cached boards and media work offline.
+A local-first AAC soundboard for parents and toddlers, built with Expo, React Native, TypeScript, and Fastify. Families create boards with emoji, licensed illustrations, generated pictures, or their own photos, then play words in their preferred languages. A [public web trial](apps/mobile/src/website/README.md) lets visitors play starter boards; creating and saving personal boards requires sign-in. Boards back up automatically, and cached boards and media work offline.
 
 ## License
 
@@ -30,6 +30,7 @@ Use `npm run dev:native` with an installed Little Say Dev client. Multiple workt
 | Module | Maintained guidance |
 | --- | --- |
 | [Parent and child UI](apps/mobile/src/ui/README.md) | Interaction, layout, Settings, pictures, and accessibility conventions |
+| [Public web experience](apps/mobile/src/website/README.md) | Welcome, read-only starter trial, and account entry |
 | [Client services](apps/mobile/src/services/README.md) | Account sync, media preparation, speech, and platform boundaries |
 | [Local data](apps/mobile/src/data/README.md) | Serialized saves, platform storage, and media retention |
 | [Shared core](packages/core/README.md) | Schemas, migrations of device data, and pure board behavior |

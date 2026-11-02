@@ -1,5 +1,5 @@
 /**
- * @file Presents a compact web welcome with the mobile artwork and product promise, plus one /app entry.
+ * @file Presents a compact web welcome with the mobile artwork and a public starter-board trial entry.
  * Store links remain inactive until listings exist. Only Entry.web.tsx imports this page and its styles;
  * visiting it must not initialize the device library or start account/AI services.
  */
@@ -43,7 +43,7 @@ export default function LandingPage() {
         <p className="ls-intro">Make your own custom speaking soundboards for learning new words in seconds.</p>
         <div className="ls-actions">
           <p className="ls-invitation">Free with no ads to support your child's learning.</p>
-          <a className="ls-primary" href="/app">Try Little Say on the web <Arrow /></a>
+          <a className="ls-primary" href="/app/try">Try Little Say on the web <Arrow /></a>
           <StoreLinks />
         </div>
       </div>

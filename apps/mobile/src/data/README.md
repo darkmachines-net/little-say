@@ -11,6 +11,6 @@
 
 Only the newest queued write changes the visible saving/error status. Board revisions belong to core and callers, not the storage queue. Account snapshots use the optimistic path so edits arriving while a sync write is pending remain newer in memory. The [client services](../services/README.md#accounts-and-sync) own network synchronization and asset verification.
 
-`storage.ts` uses SQLite for the native library and speech index, plus document files for JPEG photos, PNG pictures, and WAV clips. `storage.web.ts` uses IndexedDB and caches blob URLs for playback/rendering; pruning or replacing an asset revokes its old URL. Media must be saved before publishing a board reference.
+`storage.ts` uses SQLite for the native library and speech index, plus document files for JPEG photos, PNG pictures, and WAV clips. `storage.web.ts` opens IndexedDB only on the first storage operation, so importing shared tile visuals does not create a database. It caches blob URLs for playback/rendering; pruning or replacing an asset revokes its old URL. Media must be saved before publishing a board reference.
 
 Pruning runs only when the library loads, before transient drafts and undo history exist. Retained assets include saved boards, starter drafts, and both current and legacy saved creation drafts. Do not prune during editing without also retaining transient and undo references. Creation drafts remain device-local and are excluded from account snapshots. Deleting browser storage or uninstalling without a complete backup loses local data.
