@@ -1,4 +1,4 @@
-# Lints pull requests and manual runs, builds production outputs, and tests browser speech in Chromium/Firefox; retains review captures.
+# Lints and builds pull requests/manual runs, tests Chromium/Firefox with virtual audio output, and retains review captures.
 name: Check
 on:
   pull_request:
@@ -62,6 +62,13 @@ jobs:
       - run: npm test
       - run: npm run test:services
       - run: npx playwright install --with-deps chromium firefox
+      - name: Provide audio output for headless browsers
+        # Firefox needs an output device to resume Web Audio even when decoding succeeds.
+        run: |
+          sudo apt-get install --yes --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=little_say_test_audio
+          pactl set-default-sink little_say_test_audio
       - name: Validate speech in Chromium and Firefox
         run: npm run test:web -- tests/web/speech.spec.ts
       - run: npm run test:web -- tests/web/safe-area.spec.ts
