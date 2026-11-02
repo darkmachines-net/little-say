@@ -1,4 +1,4 @@
-# Lints pull requests and manual runs, builds typed production outputs, then tests them; retains temporary review captures.
+# Lints pull requests and manual runs, builds production outputs, and tests browser speech in Chromium/Firefox; retains review captures.
 name: Check
 on:
   pull_request:
@@ -61,7 +61,9 @@ jobs:
       - run: npm run test:release
       - run: npm test
       - run: npm run test:services
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox
+      - name: Validate speech in Chromium and Firefox
+        run: npm run test:web -- tests/web/speech.spec.ts
       - run: npm run test:web -- tests/web/safe-area.spec.ts
       - name: Validate board navigation in Chromium
         id: board_navigation

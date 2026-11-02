@@ -1,4 +1,4 @@
-/** @file Exercises grouped preferences/account Settings without routine sync status, the three-language cap and replacements, About, media migration, offline links, and dashboard/account-entry navigation. */
+/** @file Exercises grouped Settings, language limits, About, Web Audio after media migration, offline links, and account-entry navigation. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
@@ -21,8 +21,8 @@ async function mockVoices(page: Page) {
       speak: (utterance: any) => { w.__spoken.push({ text: utterance.text, language: utterance.lang, voice: utterance.voice?.voiceURI }); setTimeout(() => utterance.onend?.(), 10); },
       cancel() {}, addEventListener() {}, removeEventListener() {},
     } });
-    const original = HTMLMediaElement.prototype.play;
-    HTMLMediaElement.prototype.play = function () { w.__clips.push(this.src); return original.call(this); };
+    const original = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...args) { w.__clips.push(this.buffer?.duration); return original.apply(this, args); };
     Element.prototype.requestFullscreen = async () => {};
   });
 }

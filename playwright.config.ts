@@ -1,6 +1,6 @@
 /**
  * @file Runs browser scenarios against an isolated local server with AI credentials disabled and
- * failure artifacts retained.
+ * failure artifacts retained; speech scenarios also run in Firefox to cover desktop audio.
  */
 
 import { defineConfig } from '@playwright/test';
@@ -11,6 +11,9 @@ export default defineConfig({
   testIgnore: 'accounts.spec.ts',
   expect: { timeout: 7000 },
   use: { baseURL: origin, viewport: { width: 1180, height: 900 }, screenshot: 'only-on-failure', trace: 'retain-on-failure', serviceWorkers: 'allow' },
-  projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'firefox', testMatch: 'speech.spec.ts', use: { browserName: 'firefox' } },
+  ],
   webServer: { command: 'node --import tsx scripts/test-server.ts', url: origin + '/api/ready', timeout: 30000, reuseExistingServer: false },
 });
