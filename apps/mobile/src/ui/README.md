@@ -17,7 +17,7 @@ This directory owns app screens and shared controls for native and `/app` on web
 
 `FirstTimeSetup` selects languages and optional starter boards. Persist completed drafts for resuming, show generated words, offer manual start when AI is unavailable, and never advance past a failed save or overwrite an existing library.
 
-[`account/`](account/README.md) owns the headerless illustrated welcome, required sign-in, the status-first backup overview, and separate account management routes. Its README defines welcome layout, entry/restoration gates, navigation, provider confirmation, and credential lifetime.
+[`account/`](account/README.md) owns the headerless illustrated welcome, required sign-in, and account management pages within Settings. Its README defines welcome layout, entry/restoration gates, navigation, backup recovery, provider confirmation, and credential lifetime.
 
 **New board** opens an empty `BoardEditor` with direct **Add Card** and a compact `BoardAssistant`. Existing boards use the same editor. Its page heading is **Create** for unfinished drafts and **Edit** for saved boards, keeping the toolbar compact. **Add Card** and **Accept** share a manual-edit section immediately above the AI composer; Accept finishes editing and opens play after pending writes succeed. Saved boards have no idle status line; saving progress, write failures, and unsaved AI previews remain visible when relevant. There is no separate AI mode or conversation history UI. Clarification shows only the current question. Routes use `#boards/new` and `#boards/<id>/edit`; legacy `/ai` links remain readable. Back cancels remaining work, saves any usable preview, and flushes edits; failed saves/conflicts keep the editor open. Navigation is guarded during AI commits. Leaving an unfinished creation asks **Save draft**, **Discard**, or **Keep editing**, including an untouched workspace (Save is disabled without progress). Only Save writes the title, prompt, completed clarification history, and picture choices locally as `creationDraft`, outside playable/synced boards; reload restores that saved snapshot rather than unsaved edits. Discard clears it. Save/Discard failures keep the dialog open for retry, and page, browser, and Android Back are blocked during the write. The first saved manual card or completed AI turn consumes the saved draft atomically. Older saved creation sessions remain readable.
 
@@ -57,11 +57,13 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 
 ## Settings
 
-`SettingsScreen` is a grouped navigation page with **Preferences** and **Help**. `SettingsPage` owns the surrounding page chrome; route parsing and history live in `services/settingsRoute.ts` and `useSettingsRoute.ts`.
+`SettingsScreen` contains **Preferences**, **Account**, and **Help**, without a routine backup status card or timestamp. Dashboard and setup expose one Settings action. The Account group contains identity, sign-in methods, sign out, and delete account; its action and confirmation pages are described in the [account UI contract](account/README.md). `SettingsPage` owns the surrounding page chrome; route parsing and history live in `services/settingsRoute.ts` and `useSettingsRoute.ts`.
 
 | Route under `/app/settings` | Responsibility |
 | --- | --- |
-| root | Overview and current language summaries |
+| root | Preferences, account actions, and help |
+| `/backup` | Backup error recovery and retained direct links |
+| `/account/:action` | Verification, linked methods, sign-out, and deletion; see the [account UI contract](account/README.md) |
 | `/languages` | Shared languages within the [core profile cap](../../../../packages/core/README.md); direct search with a result dropdown, divided rows, removal under Edit, and one default selector |
 | `/screen-guidance` | Platform-specific Guided Access/screen-pinning links or browser guidance |
 | `/updates` | Installed native update check/download/restart; disabled in development or when updates are unavailable |
@@ -72,7 +74,7 @@ Show queued, active, ready, and fallback cards distinctly; animate only active w
 
 Voices and Pictures have no app-wide settings pages. Speech and new pictures use the defaults described in [client services](../services/README.md#speech); existing board/card picture choices remain editable. Retired `/voices`, `/voices/:language`, and `/pictures` links open the Settings overview.
 
-Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; App routes require sign-in, including Settings. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and cached account data; there is no overview-level save action.
+Browser pages support direct links, refresh, history, and offline fallback. Native uses a stack and Android Back. Direct links without app-owned history return to their logical parent. Play keeps its exit protection; App routes require sign-in, including Settings. Legacy `/app/account` and `/app/settings/account` overview links open Settings; management links resolve to the matching Settings child. Preferences save individually through durable library commits. Controls/navigation wait for a write; failure preserves the previous value and offers Retry saving. Preference patches preserve boards, playback, and cached account data; there is no overview-level save action.
 
 Native manual updates wait for pending local writes before restart. Leaving the page cancels further actions, though an active download may finish for a later launch. Web retains its service-worker update banner. Settings never edits the service origin. Use OS Guided Access or Android screen pinning for system containment; app controls cannot suppress system navigation.
 

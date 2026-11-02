@@ -1,4 +1,4 @@
-/** @file Verifies stable navbar sync feedback, responsive creation, floating-action clearance, and draft resumption. */
+/** @file Verifies stable refresh and Settings controls, responsive creation, floating-action clearance, and draft resumption. */
 
 import { expect, test } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -15,7 +15,7 @@ test('manual refresh shows navbar progress without moving boards or header actio
   for (const width of [320, 390, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await expect.poll(async () => (await page.getByTestId('app-header-bar').boundingBox())?.height).toBe(width < 600 ? 64 : 76);
-    const elements = [header, refresh, header.getByRole('button', { name: 'Account & backup', exact: true }), header.getByRole('button', { name: 'Settings', exact: true }), page.getByTestId('library-board').first(), page.getByRole('button', { name: 'New board', exact: true })];
+    const elements = [header, refresh, header.getByRole('button', { name: 'Settings', exact: true }), page.getByTestId('library-board').first(), page.getByRole('button', { name: 'New board', exact: true })];
     let release!: () => void;
     const ready = new Promise<void>(resolve => { release = resolve; });
     await page.route('**/api/account/backup', async route => { await ready; await route.continue(); });

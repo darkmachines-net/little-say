@@ -1,5 +1,5 @@
 /**
- * @file Composes signed-in library routes, persistence, playback, creation drafts, and shared edit/AI/translation history.
+ * @file Composes required sign-in, unified Settings, library persistence, playback, and shared edit/AI/translation history.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -34,8 +34,6 @@ import { isAccountEntryMode } from './services/accountRoute';
 function Application() {
   const store = useLibrary();
   const draftRoute = useBoardDraftRoute();
-  const settingsRoute = useSettingsRoute();
-  const accountRoute = useAccountRoute();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [workingDraft, setWorkingDraft] = useState<CreationDraft | null>(null);
   const workingDraftRef = useRef(workingDraft);
@@ -43,9 +41,6 @@ function Application() {
     if (JSON.stringify(workingDraftRef.current) === JSON.stringify(next)) return;
     workingDraftRef.current = next; setWorkingDraft(next);
   };
-  // Settings has its own URL without the board hash. Keep the caller until its history restores the
-  // editor route; ordinary browser Back/Forward still updates selection outside Settings.
-  useEffect(() => { if (!settingsRoute.route) setSelectedId(draftRoute.route?.boardId ?? null); }, [draftRoute.route?.boardId, settingsRoute.route]);
   useEffect(() => {
     if (!store.library || !draftRoute.route || draftRoute.route.boardId || workingDraftRef.current) return;
     if (store.library.creationDraft) { updateDraft(store.library.creationDraft); return; }
@@ -68,14 +63,20 @@ function Application() {
   const history = useBoardHistory();
   const account = useAccount(store, !draftRoute.route && !selectedId && !store.library?.settings.activeBoardId, () => audio.reload());
   const requiresAccount = !account.session || account.needsLogin;
+  const settingsRoute = useSettingsRoute(account.busy && !account.syncing && !requiresAccount);
+  const accountRoute = useAccountRoute();
+  // Settings omits the board hash, so retain its caller until history restores the editor route.
+  useEffect(() => { if (!settingsRoute.route) setSelectedId(draftRoute.route?.boardId ?? null); }, [draftRoute.route?.boardId, settingsRoute.route]);
   const signedInPreviously = useRef<boolean | null>(null);
   useEffect(() => {
     if (!account.ready) return;
     const signedIn = !requiresAccount;
     // Authentication returns to Home immediately; explicitly opened account settings stay open.
-    if (signedIn && (signedInPreviously.current === false || (accountRoute.route?.mode && isAccountEntryMode(accountRoute.route.mode)))) accountRoute.close();
+    if (signedIn && (signedInPreviously.current === false || (accountRoute.route?.mode && isAccountEntryMode(accountRoute.route.mode)))) {
+      settingsRoute.reset(); accountRoute.close();
+    }
     signedInPreviously.current = signedIn;
-  }, [account.ready, requiresAccount, accountRoute]);
+  }, [account.ready, requiresAccount, accountRoute, settingsRoute]);
   const audio = useSpeechLibrary(account.ready && !requiresAccount ? store.library : null);
   const openAccount = accountRoute.open;
   const previewSettings = store.library?.settings;
@@ -133,14 +134,11 @@ function Application() {
   if (store.loadError) return <View style={[styles.page, { justifyContent: 'center', padding: 30, gap: 20 }]}><Notice>{store.loadError}</Notice><Button onPress={() => void store.reload()}>Try opening again</Button></View>;
   if (!store.library || !account.ready) return <View style={[styles.page, { justifyContent: 'center', alignItems: 'center', gap: 24 }]}><Brand stacked /><View style={styles.row}><ActivityIndicator color={theme.accent} /><Text style={styles.body}>Loading boards…</Text></View></View>;
   const library = store.library;
-  const accountScreen = (accountRoute.route || requiresAccount) && <AccountScreen account={account} mode={accountRoute.route?.mode ?? null} onMode={mode => openAccount(mode, mode === null)} onBack={accountRoute.back} onClose={() => {
-    if (requiresAccount) return;
-    accountRoute.close();
-  }} />;
+  const entryMode = accountRoute.route?.mode ?? null;
+  const accountScreen = (accountRoute.route || requiresAccount) && <AccountScreen account={account} mode={isAccountEntryMode(entryMode) ? entryMode : null} onMode={mode => openAccount(mode, mode === null)} onBack={accountRoute.back} />;
   if (requiresAccount) return accountScreen;
-  const accountLabel = 'Account & backup';
-  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} returnLabel={selectedId ? 'Back to board' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
-  if (library.setup && !account.restoring) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onAccount={() => openAccount()} accountLabel={accountLabel} />{accountScreen}</>;
+  if (settingsRoute.route && !library.settings.activeBoardId) return <SettingsScreen route={settingsRoute.route} library={library} account={account} returnLabel={selectedId ? 'Back to board' : library.setup ? 'Back to setup' : 'Boards'} onNavigate={settingsRoute.open} onBack={settingsRoute.back} onSave={setSettings} onBeforeRestart={store.flush} />;
+  if (library.setup && !account.restoring) return <><FirstTimeSetup library={library} onCommit={store.commitSetup} onSettings={() => settingsRoute.open()} />{accountScreen}</>;
   const boards = library.boards.map(board => boardWithProfileLanguages(board, library.settings));
   const activeBoard = boards.find(board => board.id === library.settings.activeBoardId);
   const selected = account.restoring ? undefined : boards.find(board => board.id === (draftRoute.route?.boardId ?? selectedId)) ?? (draftRoute.route && !draftRoute.route.boardId && workingDraft ? boardWithProfileLanguages(workingDraft.board, library.settings) : undefined);
@@ -219,7 +217,7 @@ function Application() {
       if (!selected.tiles.length) return;
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
       void store.change(lib => ({ ...lib, boards: [...lib.boards, copy], boardLastPlayedAt: { ...lib.boardLastPlayedAt, [copy.id]: Date.now() } })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
-    }} onConsent={consent} onPreview={preview} canUndo={Boolean(history.entries[selected.id]?.undo.length)} canRedo={Boolean(history.entries[selected.id]?.redo.length)} onRedo={() => restore('redo')} onUndo={() => restore('undo')} /> : <Dashboard library={library} audio={audio} sync={account} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onAccount={() => openAccount()} accountLabel={accountLabel} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
+    }} onConsent={consent} onPreview={preview} canUndo={Boolean(history.entries[selected.id]?.undo.length)} canRedo={Boolean(history.entries[selected.id]?.redo.length)} onRedo={() => restore('redo')} onUndo={() => restore('undo')} /> : <Dashboard library={library} audio={audio} sync={account} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);

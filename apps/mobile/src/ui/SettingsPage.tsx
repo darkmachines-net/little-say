@@ -1,4 +1,4 @@
-/** @file Supplies Settings pages with one route header, optional description and surface, and grouped rows. */
+/** @file Supplies Settings pages with one route header, optional description and surface, and accessible grouped rows. */
 
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -17,9 +17,9 @@ export function SettingsPage({ title, description, backgroundColor = theme.backg
   </View>;
 }
 
-/** Keep related settings links together beneath one short label. */
+/** Keep related settings links together beneath an accessible group heading. */
 export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
-  return <View style={{ gap: 10 }}><Text style={{ color: theme.muted, fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' }}>{title}</Text><View style={{ backgroundColor: theme.surface, borderRadius: 18, overflow: 'hidden' }}>{children}</View></View>;
+  return <View style={{ gap: 10 }}><Text accessibilityRole="header" style={{ color: theme.muted, fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' }}>{title}</Text><View style={{ backgroundColor: theme.surface, borderRadius: 18, overflow: 'hidden' }}>{children}</View></View>;
 }
 
 /** Show one touch-sized destination with its current summary and a decorative chevron. */

@@ -1,4 +1,4 @@
-/** @file Verifies account-header return, a primary-language canvas, per-card drafts, shared languages, background translations, protected corrections, and Accept/play handoff. */
+/** @file Verifies account-header return, a primary-language canvas, per-card drafts, shared languages, background translations, protected corrections, and Accept/play handoff. Includes unified Settings navigation. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardLanguages } from './boardEditor';
@@ -85,8 +85,8 @@ test('account navigation preserves corrected translations and the signed-in libr
   await expect.poll(async () => (await savedBoard(page)).tiles[0].translations.find((t: any) => t.language === 'ru-RU').speech).toBe('Saved Russian correction');
   const corrected = await savedBoard(page);
   await page.getByRole('button', { name: 'Boards', exact: true }).click();
-  await page.getByRole('button', { name: 'Account & backup', exact: true }).click();
-  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Boards', exact: true }).click();
   await page.reload();
   if (!page.url().includes('/edit')) await page.getByRole('button', { name: 'Edit Farmyard friends', exact: true }).click();
   await openRussianTile(page);

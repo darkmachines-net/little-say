@@ -1,4 +1,4 @@
-/** @file Provides separate verification, linked-method, provider-linking, sign-out, and deletion pages with fresh identity checks. */
+/** @file Provides Settings pages for verification, linked-method, provider-linking, sign-out, and deletion pages with fresh identity checks. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Mail, KeyRound, UserRound } from 'lucide-react-native';
@@ -12,8 +12,8 @@ import { AccountFeedback, AccountGroup, AccountRow, linkedProviders, providerNam
 const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-email', 'google.com': 'link-google', 'apple.com': 'link-apple' };
 
 /**
- * Render one signed-in action at a time. Route remounts discard credentials; reauthentication stays
- * bound to an existing provider, and deletion always uses Apple when Apple is linked.
+ * Render one signed-in Settings action at a time. Route remounts discard credentials; reauthentication stays
+ * bound to an existing provider, and deletion always uses Apple when Apple is linked. Verification returns to its caller.
  */
 export function AccountManagement({ account, mode, onNavigate, onBack }: {
   account: AccountController; mode: Exclude<AccountManagementMode, 'backup'>; onNavigate: (mode: AccountMode) => void; onBack: () => void;
@@ -62,10 +62,10 @@ export function AccountManagement({ account, mode, onNavigate, onBack }: {
     <View style={{ gap: 10 }}><Text accessibilityRole="header" style={[styles.title, { color: theme.red }]}>{identity.deletionPending ? 'Finish deleting your account' : 'Delete your account?'}</Text><Text style={styles.body}>This removes your sign-in and cloud backup. Downloaded copies remain on your devices.</Text></View>
     {confirmation}<AccountFeedback account={account} />
     <Button kind="danger" busy={account.busy} disabled={!canConfirm} onPress={() => perform(() => account.disconnect(true, password, current!))}>Permanently delete account</Button>
-    <Button kind="secondary" disabled={account.busy && !account.syncing} onPress={onBack}>{identity.deletionPending ? 'Back to account' : 'Cancel deletion'}</Button>
+    <Button kind="secondary" disabled={account.busy && !account.syncing} onPress={onBack}>{identity.deletionPending ? 'Back to Settings' : 'Cancel deletion'}</Button>
   </View>;
   if (mode === 'verify-email') return <View style={{ gap: 24 }}>
-    {identity.emailVerified ? <><Text style={styles.body}>Your email is verified. Backup starts automatically.</Text><Button onPress={() => onNavigate(null)}>Back to account</Button></> : <>
+    {identity.emailVerified ? <><Text style={styles.body}>Your email is verified. Backup starts automatically.</Text><Button onPress={onBack}>Done</Button></> : <>
       <View style={{ gap: 10 }}><Text accessibilityRole="header" style={styles.title}>Start automatic backup</Text><Text style={styles.body}>Open the verification link sent to {identity.email || 'your email address'}.</Text></View>
       <Notice>Your boards work on this device while you verify.</Notice>
       {confirmation}<AccountFeedback account={account} />

@@ -1,12 +1,13 @@
-/** @file Presents the status-first account overview and detailed automatic backup coverage and recovery. */
+/** @file Supplies the Settings account group with conditional recovery actions and retains backup details for recovery and older links. */
 import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
-import { CloudCheck, CloudOff, CloudAlert, CloudDownload, RefreshCw, Mail, CircleAlert, Clock3, UserRound, KeyRound, LogOut, ChevronRight, LayoutGrid, Image, Volume2 } from 'lucide-react-native';
+import { CloudCheck, CloudOff, CloudAlert, CloudDownload, RefreshCw, Mail, CircleAlert, Clock3, UserRound, KeyRound, LogOut, Trash2, LayoutGrid, Image, Volume2 } from 'lucide-react-native';
 import type { AccountMode } from '../../services/accountRoute';
 import type { AccountController } from '../../services/useAccount';
 import type { BackupState } from '../../services/accountBackup';
 import { Button, Notice } from '../components';
 import { styles, theme } from '../theme';
+import { SettingsGroup } from '../SettingsPage';
 import { AccountGroup, AccountRow, linkedProviders, providerNames } from './components';
 
 const presentations = {
@@ -23,8 +24,8 @@ const presentations = {
 
 type AccountPageProps = { account: AccountController; onNavigate: (mode: AccountMode) => void };
 
-/** Summarize current backup state and only its relevant action; routine sync never produces stacked notices. */
-export function BackupStatusCard({ account, onNavigate, details = true }: AccountPageProps & { details?: boolean }) {
+/** Summarize backup state within the details page, with recovery actions when needed. */
+function BackupStatusCard({ account, onNavigate }: AccountPageProps) {
   const { state, savedAt, pending } = account.backup;
   const presentation = presentations[state];
   const Icon = presentation.icon;
@@ -45,29 +46,27 @@ export function BackupStatusCard({ account, onNavigate, details = true }: Accoun
     {state === 'deletion-pending' && <Button onPress={() => onNavigate('delete')}>Finish deletion</Button>}
     {state === 'sign-in-required' && <Button onPress={() => onNavigate('login')}>Sign in</Button>}
     {(state === 'error' || state === 'offline') && <Button kind="secondary" disabled={account.busy} onPress={() => void account.retrySync()}>{account.restoring ? 'Retry loading boards' : 'Try again'}</Button>}
-    {details && <View style={{ alignItems: 'flex-start', marginLeft: -12, marginBottom: -10 }}><Button kind="ghost" compact icon={ChevronRight} onPress={() => onNavigate('backup')}>Backup details</Button></View>}
   </View>;
 }
 
-/** Lead with backup health, group identity and sign-in methods, and put consequential actions on separate routes. */
-export function AccountOverview({ account, onNavigate }: AccountPageProps) {
+/** Group account actions in Settings; show verification or backup recovery only when attention is required. */
+export function AccountSettingsGroup({ account, onNavigate }: AccountPageProps) {
   const identity = account.session!.account;
-  return <View style={{ gap: 24 }}>
-    <BackupStatusCard account={account} onNavigate={onNavigate} />
-    <AccountGroup title="Account">
+  return <SettingsGroup title="Account">
       <AccountRow label={identity.displayName || identity.email || 'Your account'} summary={identity.displayName ? identity.email ?? undefined : undefined} icon={UserRound} />
-      <AccountRow label="Sign-in methods" summary={linkedProviders(account).map(provider => providerNames[provider]).join(' · ')} icon={KeyRound} disabled={identity.deletionPending} onPress={() => onNavigate('sign-in-methods')} last />
-    </AccountGroup>
-    <AccountGroup><AccountRow label="Sign out" summary="Boards stay on this device" icon={LogOut} onPress={() => onNavigate('sign-out')} last /></AccountGroup>
-    <Button kind="ghost" onPress={() => onNavigate('delete')}>Delete account…</Button>
-  </View>;
+      {!identity.emailVerified && !identity.deletionPending && <AccountRow label="Verify email" summary="Confirm your email to enable automatic backup" icon={Mail} onPress={() => onNavigate('verify-email')} />}
+      {account.backup.state === 'error' && <AccountRow label="Backup needs attention" summary="Review the problem and retry" icon={CloudAlert} onPress={() => onNavigate('backup')} />}
+      <AccountRow label="Sign-in methods" summary={linkedProviders(account).map(provider => providerNames[provider]).join(' · ')} icon={KeyRound} disabled={identity.deletionPending} onPress={() => onNavigate('sign-in-methods')} />
+      <AccountRow label="Sign out" summary="Boards stay on this device" icon={LogOut} onPress={() => onNavigate('sign-out')} />
+      <AccountRow label="Delete account" icon={Trash2} onPress={() => onNavigate('delete')} last />
+    </SettingsGroup>;
 }
 
 /** Explain acknowledged backup time, included data, local-only data, and actionable recovery without adding a backup preference. */
 export function BackupDetails({ account, onNavigate }: AccountPageProps) {
   const [explain, setExplain] = useState(false);
   return <View style={{ gap: 24 }}>
-    <BackupStatusCard account={account} onNavigate={onNavigate} details={false} />
+    <BackupStatusCard account={account} onNavigate={onNavigate} />
     {Boolean(account.backup.error) && <Notice>{account.backup.error}</Notice>}
     <View style={[styles.card, { gap: 12 }]}><Text style={styles.small}>Last successful sync</Text><Text selectable style={{ color: theme.ink, fontSize: 15, fontWeight: '600' }}>{account.savedAt ? new Date(account.savedAt).toLocaleString() : 'Not yet'}</Text></View>
     <AccountGroup title="Included in your backup"><AccountRow label="Boards" icon={LayoutGrid} /><AccountRow label="Photos & illustrations" icon={Image} /><AccountRow label="Downloaded voices" icon={Volume2} last /></AccountGroup>

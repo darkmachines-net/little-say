@@ -1,4 +1,4 @@
-/** @file Verifies sign-in and Home restoration, account routes, cached play, and shared Undo/Redo across edits, AI, translations, drafts, and navigation. */
+/** @file Verifies sign-in and Home restoration, unified Settings routes, cached play, and shared Undo/Redo across edits, AI, translations, drafts, and navigation. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -20,7 +20,6 @@ vi.mock('./services/speech', () => ({ getVoices: async () => [], speechQueue: ()
 vi.mock('./services/updates', () => ({ initializeUpdates: async () => () => {}, applyUpdate: vi.fn() }));
 vi.mock('./ui/AccountScreen', () => ({ AccountScreen: 'AccountScreen' }));
 vi.mock('./ui/Brand', () => ({ Brand: 'Brand' }));
-vi.mock('./services/useSettingsRoute', () => ({ useSettingsRoute: () => ({ route: null }) }));
 vi.mock('./services/useBoardDraftRoute', () => ({ useBoardDraftRoute: () => ({ route: state.route,
   open: (boardId: string | null) => { state.route = { boardId }; },
   replace: (boardId: string | null) => { state.route = { boardId }; },
@@ -53,7 +52,7 @@ it.each(['android', 'ios', 'web'])('blocks former guests on %s even with an acti
   await render();
   expect(nodes('AccountScreen')).toHaveLength(1); expect(nodes('PlayBoard')).toHaveLength(0);
   expect(state.audio).toHaveBeenLastCalledWith(null);
-  await act(async () => nodes('AccountScreen')[0].props.onClose());
+  expect(nodes('AccountScreen')[0].props.onClose).toBeUndefined();
   expect(nodes('AccountScreen')).toHaveLength(1); expect(state.commit).not.toHaveBeenCalled();
   state.account.session = { account: { id: 'family' } }; await render();
   expect(nodes('PlayBoard')).toHaveLength(1);
@@ -78,11 +77,12 @@ it('waits for session restoration before showing entry or preparing speech', asy
   expect(nodes('AccountScreen')).toHaveLength(1);
 });
 
-it('requires an account before first-time setup and reflects sign-in in its header', async () => {
+it('requires an account before setup and opens Settings from its header', async () => {
   state.library = newLibrary('en-US'); await render();
   expect(nodes('FirstTimeSetup')).toHaveLength(0);
   state.account.session = { account: { id: 'family' } }; await render();
-  expect(nodes('FirstTimeSetup')[0].props.accountLabel).toBe('Account & backup');
+  await act(async () => nodes('FirstTimeSetup')[0].props.onSettings());
+  expect(nodes('SettingsScreen')[0].props.returnLabel).toBe('Back to setup');
 });
 
 const editor = () => nodes('BoardEditor')[0].props;
@@ -216,10 +216,10 @@ it.each([null, 'register'] as const)('closes %s entry after authentication but k
   await act(async () => nodes('AccountScreen')[0].props.onMode(mode));
   state.account.session = { account: { id: 'family' } }; state.account.syncing = true; await render();
   expect(nodes('AccountScreen')).toHaveLength(0);
-  await act(async () => nodes('Dashboard')[0].props.onAccount());
-  expect(nodes('AccountScreen')).toHaveLength(1);
-  await act(async () => nodes('AccountScreen')[0].props.onClose());
-  expect(nodes('AccountScreen')).toHaveLength(0);
+  await act(async () => nodes('Dashboard')[0].props.onSettings());
+  expect(nodes('SettingsScreen')).toHaveLength(1);
+  await act(async () => nodes('SettingsScreen')[0].props.onBack());
+  expect(nodes('SettingsScreen')).toHaveLength(0);
 });
 
 it('restores an existing session on Home and opens setup only after confirming the cloud library is empty', async () => {
@@ -231,17 +231,28 @@ it('restores an existing session on Home and opens setup only after confirming t
   expect(nodes('FirstTimeSetup')).toHaveLength(1); expect(nodes('Dashboard')).toHaveLength(0);
 });
 
+it('returns Home after signing back in from a Settings confirmation page', async () => {
+  state.account.session = { account: { id: 'family' } }; await render();
+  await act(async () => nodes('Dashboard')[0].props.onSettings());
+  await act(async () => nodes('SettingsScreen')[0].props.onNavigate({ page: 'account', mode: 'sign-out' }));
+  state.account.session = null; await render();
+  expect(nodes('AccountScreen')).toHaveLength(1);
+  state.account.session = { account: { id: 'family' } }; await render();
+  expect(nodes('SettingsScreen')).toHaveLength(0);
+  expect(nodes('Dashboard')).toHaveLength(1);
+});
+
 it.each(['android', 'ios', 'web'])('keeps explicitly opened account child pages available on %s during restoration', async platform => {
   state.OS = platform; state.library = newLibrary('en-US');
   state.account.session = { account: { id: 'family' } }; state.account.restoring = true;
   await render();
-  await act(async () => nodes('Dashboard')[0].props.onAccount());
-  await act(async () => nodes('AccountScreen')[0].props.onMode('backup'));
-  expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
-  await act(async () => nodes('AccountScreen')[0].props.onMode('verify-email'));
-  expect(nodes('AccountScreen')[0].props.mode).toBe('verify-email');
+  await act(async () => nodes('Dashboard')[0].props.onSettings());
+  await act(async () => nodes('SettingsScreen')[0].props.onNavigate({ page: 'account', mode: 'backup' }));
+  expect(nodes('SettingsScreen')[0].props.route.mode).toBe('backup');
+  await act(async () => nodes('SettingsScreen')[0].props.onNavigate({ page: 'account', mode: 'verify-email' }));
+  expect(nodes('SettingsScreen')[0].props.route.mode).toBe('verify-email');
   if (platform !== 'web') {
-    await act(async () => nodes('AccountScreen')[0].props.onBack());
-    expect(nodes('AccountScreen')[0].props.mode).toBe('backup');
+    await act(async () => nodes('SettingsScreen')[0].props.onBack());
+    expect(nodes('SettingsScreen')[0].props.route.mode).toBe('backup');
   }
 });

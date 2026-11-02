@@ -1,4 +1,4 @@
-/** @file Verifies first-restore recovery and navbar refresh/progress without altering the usable cached board list. */
+/** @file Verifies first-restore recovery, the Settings entry, and navbar refresh/progress without altering the usable cached board list. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
@@ -6,7 +6,7 @@ import { starterLibrary } from '../../../../tests/fixtures/library';
 import { Dashboard } from './Dashboard';
 
 vi.mock('react-native', () => ({ View: 'View', Text: 'Text', ScrollView: 'ScrollView', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
-vi.mock('lucide-react-native', () => ({ Plus: 'Plus', RefreshCw: 'RefreshCw', UserRound: 'UserRound', Settings: 'Settings' }));
+vi.mock('lucide-react-native', () => ({ Plus: 'Plus', RefreshCw: 'RefreshCw', Settings: 'Settings' }));
 vi.mock('./AppHeader', () => ({
   /** Expose header actions to assertions while leaving header layout to browser coverage. */
   AppHeader: ({ actions }: { actions: React.ReactNode }) => React.createElement('AppHeader', null, actions),
@@ -21,7 +21,7 @@ const retrySync = vi.fn(async () => {}), onPlay = vi.fn(), onCompose = vi.fn();
 function nodes(name: string) { return screen!.root.findAllByType(name as any); }
 async function render(restoring: boolean, syncing = false, error = '', empty = true, offline = false) {
   const library = starterLibrary(); if (empty) library.boards = [];
-  const props = { library, audio: {} as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, backup: { error, state: offline ? 'offline' as const : 'synced' as const }, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onAccount: vi.fn(), accountLabel: 'Account & backup', onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
+  const props = { library, audio: {} as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, backup: { error, state: offline ? 'offline' as const : 'synced' as const }, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
   await act(async () => { if (screen) screen.update(React.createElement(Dashboard, props)); else screen = create(React.createElement(Dashboard, props)); });
 }
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks(); });
