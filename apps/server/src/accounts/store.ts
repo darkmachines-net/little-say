@@ -1,7 +1,7 @@
-/** @file Stores registered Firebase account owners, sessions, and private backups with atomic quota and deletion boundaries. */
+/** @file Provisions account starter boards and stores Firebase owners, sessions, and backups with atomic quota and deletion boundaries. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
-import { type Account, type SyncSnapshot, mergeAssets, syncSnapshotSchema } from '@little-say/core';
+import { type Account, type SyncSnapshot, createStarterBoards, mergeAssets, syncSnapshotSchema } from '@little-say/core';
 import { transaction } from '../database';
 
 export const MAX_ASSET_BYTES = 10 * 1024 * 1024;
@@ -22,7 +22,7 @@ export class Accounts {
   /** Inject the server-owned pool and an optional smaller quota for integration fixtures. */
   constructor(private pool: Pool, private quota = MAX_ACCOUNT_BYTES) {}
 
-  /** Provision a registered Firebase account; project/UID is the sole identity key, never email. */
+  /** Provision an account and its starter snapshot atomically, once per project/UID; never reseed existing accounts. */
   async provision(identity: Identity): Promise<Account> {
     return transaction(this.pool, async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [identity.project + ':' + identity.uid]);
@@ -34,14 +34,26 @@ export class Accounts {
         }
         throw new AccountError('This account is being deleted or has been deleted.', 410);
       }
+      const id = randomUUID();
       const result = await db.query<Row>(`INSERT INTO accounts(id,firebase_project,firebase_uid,email,display_name,email_verified,providers)
         VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(firebase_project,firebase_uid) DO UPDATE SET
         email=EXCLUDED.email,display_name=EXCLUDED.display_name,email_verified=EXCLUDED.email_verified,providers=EXCLUDED.providers RETURNING *`,
-      [randomUUID(), identity.project, identity.uid, identity.email, identity.displayName, identity.emailVerified, JSON.stringify(identity.providers)]);
+      [id, identity.project, identity.uid, identity.email, identity.displayName, identity.emailVerified, JSON.stringify(identity.providers)]);
       const account = publicAccount(result.rows[0]);
-      await db.query('INSERT INTO account_snapshots(account_id) VALUES($1) ON CONFLICT DO NOTHING', [account.id]);
+      await db.query('INSERT INTO account_snapshots(account_id,boards) VALUES($1,$2) ON CONFLICT DO NOTHING',
+        [account.id, JSON.stringify(account.id === id ? createStarterBoards(randomUUID) : [])]);
       return account;
     });
+  }
+
+  /**
+   * Return only the untouched, server-authored starter snapshot for immediate session setup, even
+   * before email verification. Every user backup advances the revision, so private edits never enter
+   * this response. Repeated exchanges return the same IDs to recover a lost registration response.
+   */
+  async starterSnapshot(account: Account): Promise<SyncSnapshot | undefined> {
+    const result = await this.pool.query('SELECT revision,boards,assets FROM account_snapshots JOIN accounts ON accounts.id=account_id WHERE account_id=$1 AND NOT deleting AND revision=0 AND jsonb_array_length(boards)>0', [account.id]);
+    return result.rows[0] ? syncSnapshotSchema.parse(result.rows[0]) : undefined;
   }
 
   /** Resolve an enrolled identity; allowDeleting is reserved for fresh proof resuming a deletion request. */

@@ -1,4 +1,4 @@
-/** @file Exercises illustrated required entry, Home restoration/retry, verified backup, media/conflict recovery, manual cross-tab refresh, and local-preserving sign-out. Verifies conditional email verification in Settings and retained backup detail links. */
+/** @file Exercises required entry, starter deletion before verification, Home restoration, private media/conflict recovery, cross-tab refresh, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -138,9 +138,15 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Create account', exact: true }).click();
     await expect(page).toHaveURL(/\/app$/);
+    for (const title of ['Farm Animals', 'Rainbow', 'Shapes']) {
+      await page.getByRole('button', { name: `More options for ${title}`, exact: true }).click();
+      await page.getByRole('button', { name: 'Delete board', exact: true }).click();
+      await page.getByRole('button', { name: 'Delete board', exact: true }).click();
+    }
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Verify email', exact: true })).toBeVisible();
-    expect((await readLibrary(page)).sync).toBeUndefined();
+    expect((await readLibrary(page)).sync.snapshot.revision).toBe(0);
+    expect((await page.request.get('/api/account/backup')).status()).toBe(403);
     const codes = await (await page.request.get('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/emulator/v1/projects/demo-little-say/oobCodes')).json();
     const verification = codes.oobCodes.find((value: { email: string; requestType: string }) => value.email === username && value.requestType === 'VERIFY_EMAIL');
     expect(verification).toBeTruthy();
@@ -245,9 +251,10 @@ test('cross-tab account changes and legacy server overrides never silently redir
     expect((await page.request.post('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/accounts:update?key=demo-key', { data: { oobCode: code.oobCode } })).ok()).toBe(true);
   }
   await page.goto('/app'); await signIn(page, emails[0]);
-  await expect(page.getByRole('heading', { name: 'Choose your languages', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Continue', exact: true }).click();
-  await page.getByRole('button', { name: 'Start without starter boards', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Play Farm Animals', exact: true })).toBeVisible();
+  // Starters appear before the background refresh; settle it before changing the shared cookie.
+  const refresh = page.getByRole('button', { name: 'Refresh content', exact: true });
+  await refresh.click(); await expect(refresh).toBeEnabled();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   const other = await context.newPage();
   try {
