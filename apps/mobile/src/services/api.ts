@@ -1,4 +1,4 @@
-/** @file Authenticates cancellable requests and reports durable AI queue/drafting progress while polling results. */
+/** @file Authenticates cancellable requests, tolerates transient polling failures, and reports durable AI progress. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -6,6 +6,7 @@ import * as Crypto from 'expo-crypto';
 import { proposalSchema, translationEnvelopeSchema, type TranslationRequest, type BoardProposal, type ProposalRequest } from '@little-say/core';
 import { resolveBackendUrl } from './backendConfig';
 import { applicationHeaders } from './requestAuth';
+import { requestJson } from './requestJson';
 
 // Expo inlines these exact property accesses. Remote web uses Metro's same-origin proxy; native goes directly.
 export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
@@ -23,8 +24,9 @@ export class ApiError extends Error {
 }
 
 /**
- * Request backend JSON with a 60-second HTTP timeout and independently polled asynchronous AI results;
- * surface network and HTTP failures as errors. Account requests pin the exact consented server
+ * Request backend JSON with a 60-second deadline including bounded GET transport retries, and
+ * independently poll asynchronous AI results. POSTs are never automatically replayed. Surface
+ * exhausted network and HTTP failures as errors. Account requests pin the exact consented server
  * to prevent credentials following a development override or changed backend.
  * onJobState reports observed queue/execution states until a usable result is available.
  */
@@ -39,8 +41,7 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
   try {
     const protectedRequest = !path.startsWith('/api/account/') && !['/api/health', '/api/ready'].includes(path) && !path.startsWith('/api/pictures/search') && !path.startsWith('/api/pictures/library/');
     const authentication = protectedRequest ? await applicationHeaders(server, init.method === 'POST') : {};
-    const response = await fetch(`${server}${path}`, { ...init, redirect: 'error', credentials: 'include', signal: abort.signal, headers: { 'X-Little-Say': '1', ...(init.method === 'POST' ? { 'X-Little-Say-Request': Crypto.randomUUID() } : {}), ...authentication, ...init.headers } });
-    const data = await response.json().catch(() => { throw new Error('Little Say’s service returned an unexpected response. Please try again.'); });
+    const { response, data } = await requestJson(`${server}${path}`, { ...init, redirect: 'error', credentials: 'include', signal: abort.signal, headers: { 'X-Little-Say': '1', ...(init.method === 'POST' ? { 'X-Little-Say-Request': Crypto.randomUUID() } : {}), ...authentication, ...init.headers } });
     if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
     if (response.status === 202 && typeof data.kind === 'string' && typeof data.id === 'string') {
       clearTimeout(timeout); accepted = data.id;
