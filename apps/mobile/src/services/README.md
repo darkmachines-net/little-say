@@ -22,6 +22,8 @@ Core merges compare the last acknowledged snapshot, propagate deletions, preserv
 
 `backendConfig` resolves the compiled native origin, same-origin production web, or a launcher-supplied development origin. Legacy saved `backendUrl` values are cleared on load and ignored even before migration. Credentials remain pinned to the issuing origin; an old session cannot silently sync to another service. The origin change requires explicit sign-in before automatic backup resumes; local boards remain untouched. `requestAuth` requires origin-bound registered account credentials for AI and media requests; `apiFetch` polls durable `202` job responses and forwards cancellation.
 
+JSON GET requests retry transport failures twice, after 500 ms and 1 second, within the original 60-second request deadline. This includes capability discovery and AI/picture status reads, so a brief connection loss does not immediately cancel accepted work. Cancellation stops both requests and retry delays. Native socket failures and browser network errors share the readable connection message after retries are exhausted. HTTP errors and malformed JSON are not retried. POSTs are never automatically replayed because a lost response may follow successful submission; retrying generation remains an explicit action.
+
 ## Speech
 
 Android clips use the [local tile-audio module](../../modules/tile-audio/README.md); that module owns native playback behavior, build requirements, and device validation.
