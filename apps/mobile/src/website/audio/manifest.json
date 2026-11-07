@@ -1,0 +1,119 @@
+{
+  "profile": {
+    "model": "gpt-realtime-2.1-mini",
+    "voice": "marin",
+    "version": 1,
+    "format": "wav-24000-mono"
+  },
+  "instructionsDigest": "cb37b92b5212a02a5ec13865e390e2d56a936a067b5538b98bd09dea736466c1",
+  "clips": [
+    {
+      "text": "Horse",
+      "language": "en-US",
+      "id": "5be45c44c4516cfec05a3cf61c4a36e989107d125c5ac584b95dc15dadba21cc",
+      "bytes": 38444
+    },
+    {
+      "text": "Pig",
+      "language": "en-US",
+      "id": "8e1fd39cb608994cd85f63fac203ac43001f521d0f558bb3194c78c566171e29",
+      "bytes": 33644
+    },
+    {
+      "text": "Goat",
+      "language": "en-US",
+      "id": "d8abe9c5b1a8abde1d813e2fc1f4c3ea178f36bdc1fc9633eada569c3553cecd",
+      "bytes": 38444
+    },
+    {
+      "text": "Chicken",
+      "language": "en-US",
+      "id": "f02d4bf4040470f51f06691da7539a4712d0f2f253100833e9537ccbebc924dc",
+      "bytes": 45644
+    },
+    {
+      "text": "Sheep",
+      "language": "en-US",
+      "id": "3d85aaa869984258aad6fdf10f74b2ff277efcd34ff998d35f9e80c7367c0d7d",
+      "bytes": 31244
+    },
+    {
+      "text": "Cow",
+      "language": "en-US",
+      "id": "2950b9a66982cf5dca5ff8f4e4946fe05d3f098c798cb157d8b2db67f5e136f8",
+      "bytes": 36044
+    },
+    {
+      "text": "Red",
+      "language": "en-US",
+      "id": "5a10cbde0a8fa7ad8035070bc519c04fd09c28dfc112682d392210b134bc5c5b",
+      "bytes": 36044
+    },
+    {
+      "text": "Orange",
+      "language": "en-US",
+      "id": "0170aff66e42e58ab787c5ec82147680178025daa04c9ed095ef581a9d4aea5f",
+      "bytes": 38444
+    },
+    {
+      "text": "Yellow",
+      "language": "en-US",
+      "id": "262dc10ee68746f5c886ed8e927e6d3c9a91675ac01120d3390ab06107c29625",
+      "bytes": 38444
+    },
+    {
+      "text": "Green",
+      "language": "en-US",
+      "id": "87ae4698d6c0ea87db58061fc437de5f2cc2664581cbee39fdae54dd3c95c6ca",
+      "bytes": 45644
+    },
+    {
+      "text": "Blue",
+      "language": "en-US",
+      "id": "b4dfce18454993ca007b36b98c570db6fcd859329fb222d4c67c817b6296f2ff",
+      "bytes": 40844
+    },
+    {
+      "text": "Purple",
+      "language": "en-US",
+      "id": "5389ef7597cb6a17e3be756c6434b00125f5b8eb00bf4e19ba873df111dc588c",
+      "bytes": 31244
+    },
+    {
+      "text": "Circle",
+      "language": "en-US",
+      "id": "984f4b123ebaf746210ebd6757dbfa6c5a2682d24f2712404f1f77c0fd19ee40",
+      "bytes": 48044
+    },
+    {
+      "text": "Triangle",
+      "language": "en-US",
+      "id": "1d8ceb7dbad005c60ee17349e4bca213281742665ace120529e76434b0051560",
+      "bytes": 55244
+    },
+    {
+      "text": "Square",
+      "language": "en-US",
+      "id": "1e2679cf563d971acc4c40ae0813185a33e179da1e62963062985d245b6c9338",
+      "bytes": 40844
+    },
+    {
+      "text": "Rectangle",
+      "language": "en-US",
+      "id": "30f42f1b2714e732612d30e0e2e530b913ddb70b2ddc1472aaf442feb446cabd",
+      "bytes": 52844
+    },
+    {
+      "text": "Diamond",
+      "language": "en-US",
+      "id": "b979ab53d24b3c655ae81629c66d92b798f94b430c46c0112919a793cabcff39",
+      "bytes": 45644
+    },
+    {
+      "text": "Heart",
+      "language": "en-US",
+      "id": "ae37a86e7596a14d77a40e28798c60b0748b4b7ef617aab62d71cbba66ee1503",
+      "bytes": 50444
+    }
+  ]
+}

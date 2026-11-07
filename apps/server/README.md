@@ -4,12 +4,6 @@
 
 Registered account identities own server-funded AI requests. Owner checks protect jobs, cancellation and personal generated-media downloads, including direct Cloud Run URLs. Downloaded content remains available offline. [Account sessions](src/accounts/README.md) and the [shared hosting runtime](src/hosting/README.md) own these contracts; [client services](../mobile/src/services/README.md#accounts-and-sync) own sign-in and automatic backup behavior.
 
-## Public starter audio
-
-`src/starter-audio.ts` exposes `GET /api/starter-boards/audio` as `{ clips: [{ text, language, id }] }` and `GET /api/starter-boards/audio/:id.wav` for the [public trial](../mobile/src/website/README.md). Only the fixed English starter vocabulary can resolve to public clips under the active synthesis profile. Neither route accepts generation inputs or starts synthesis. The manifest lookup is coalesced and cached for 30 seconds; WAVs are immutable and publicly cacheable. Other speech URLs retain account authorization, and unrelated clips cannot be downloaded through the public route.
-
-Prepared clips use the [shared speech cache](src/hosting/README.md#storage-and-deletion), so normal signed-in starter preparation populates them once. An OpenAI key is needed to generate missing clips, but reading already prepared clips works with generation disabled. Empty/missing caches produce an empty index; the trial uses device speech. Changing the speech profile requires clips prepared for that profile.
-
 ## Configuration
 
 Use the [development launcher](../../scripts/README.md) for the complete local stack. It needs Node and Docker, with no cloud account. `docker compose up --build` starts PostgreSQL, Auth, migrations, API, worker and the built web app at localhost:8787. Development accounts/media persist in checkout-owned volumes; ordinary shutdown never deletes them. PostgreSQL is loopback-only.

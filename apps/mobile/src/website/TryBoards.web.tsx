@@ -1,4 +1,4 @@
-/** @file Offers disposable public starter boards with prepared AI audio and device fallback, without account or generation services. */
+/** @file Offers disposable public starter boards with bundled AI audio and device fallback, independent of account and server services. */
 
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -13,7 +13,7 @@ import { BoardCard } from '../ui/BoardCard';
 import { PlayBoard } from '../ui/PlayBoard';
 import { Button, Sheet } from '../ui/components';
 import { styles, theme } from '../ui/theme';
-import { useStarterAudio } from './useStarterAudio.web';
+import { starterAudioAsset } from './audio/starterAudio';
 
 const settings: Settings = {
   backendUrl: '', voices: {}, activeBoardId: null, aiConsent: false, autoSpeech: false,
@@ -22,7 +22,6 @@ const settings: Settings = {
 const keepLanguage = async () => {};
 
 function StarterTrial() {
-  const audioAsset = useStarterAudio();
   const { width } = useWindowDimensions();
   const [boards] = useState(() => {
     let id = 0;
@@ -48,7 +47,7 @@ function StarterTrial() {
     window.addEventListener('keydown', dismiss);
     return () => window.removeEventListener('keydown', dismiss);
   }, [accountRequired]);
-  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={audioAsset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
+  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={starterAudioAsset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
   return <View style={styles.page}>
     <AppHeader actions={<Button kind="secondary" onPress={() => window.location.assign(accountPath('login'))}>Sign in</Button>} />
     <ScrollView testID="starter-trial" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 24 }]}>

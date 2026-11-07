@@ -1,11 +1,12 @@
-/** @file Fetches browser session CSRF proof without loading the identity SDK or application API client. */
+/** @file Fetches browser CSRF proof through the shared transient-read retry policy without loading the identity SDK. */
 
-/** Read the opaque cookie's CSRF token from the exact server; reject redirects and time out after 60 seconds. */
+import { requestJson } from './requestJson';
+
+/** Read the cookie's CSRF token from the exact server; retry transient reads within 60 seconds and reject redirects. */
 export async function browserCsrfHeaders(server: string): Promise<Record<string, string>> {
-  const response = await fetch(`${server}/api/account/csrf`, {
+  const { response, data } = await requestJson(`${server}/api/account/csrf`, {
     credentials: 'include', redirect: 'error', headers: { 'X-Little-Say': '1' }, signal: AbortSignal.timeout(60000),
   });
-  const data = await response.json();
   if (!response.ok || typeof data.csrfToken !== 'string' || !data.csrfToken) throw new Error('Could not verify your session. Please sign in again.');
   return { 'X-Little-Say-CSRF': data.csrfToken };
 }

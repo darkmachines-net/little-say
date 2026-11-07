@@ -1,6 +1,6 @@
 /**
  * @file Builds the Fastify API with input validation, origin checks, request limits, speech/picture
- * services, cache-only public starter audio, fixed per-IP rate limits, and optional web hosting.
+ * services, fixed per-IP rate limits, and optional web hosting.
  */
 
 import Fastify from 'fastify';
@@ -24,7 +24,6 @@ import { accountRoutes } from './accounts/routes';
 import { type BoardPreparation } from './board-preparation';
 import { AccountError } from './accounts/store';
 import { hostingRoutes, type HostedServices } from './hosting/api';
-import { starterAudioRoutes } from './starter-audio';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
   hosting?: HostedServices;
@@ -56,7 +55,6 @@ export async function createServer(options: ServerOptions) {
   });
 
   if (options.hosting) await hostingRoutes(app, options.hosting);
-  starterAudioRoutes(app, options.speechCache);
   app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.hosting?.enabled ?? options.provider !== null, version: release.version, ...(options.hosting ? { aiJobs: { version: 1 }, authenticationRequired: true } : {}), ...(options.preparation || options.hosting?.enabled ? { preparation: { version: 1 } } : {}), pictures: { version: 1, catalog: Boolean(options.pictures), analysis: options.hosting?.enabled ?? Boolean(options.pictures?.provider), generation: options.hosting?.enabled ? options.pictures?.generationEnabled : Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
   app.get('/api/ready', async (_request, reply) => {
     try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version, ...(process.env.K_REVISION ? { revision: process.env.K_REVISION } : {}) }; }

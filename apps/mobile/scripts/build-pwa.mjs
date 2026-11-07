@@ -1,4 +1,4 @@
-/** @file Adds install metadata, brand assets, and an offline service worker to the exported web app. */
+/** @file Adds install metadata, brand assets, and an offline shell including packaged starter audio to the exported web app. */
 
 import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { generateSW } from 'workbox-build';
@@ -19,6 +19,6 @@ let html = await readFile('dist/index.html', 'utf8');
 html = html.replace(/<link\b[^>]*\brel=["'](?:shortcut )?icon["'][^>]*>/gi, '');
 html = html.replace('</head>', `<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/png" sizes="48x48" href="/favicon.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="theme-color" content="${colors.background}"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Little Say"><meta name="description" content="${description}"><style>html,body,#root{height:100%;margin:0;background:${colors.background}}button:focus-visible,[role=button]:focus-visible{outline:3px solid ${colors.accent};outline-offset:3px}body{overscroll-behavior:none}</style></head>`);
 await writeFile('dist/index.html', html);
-const result = await generateSW({ globDirectory: 'dist', globPatterns: ['**/*.{html,js,css,svg,png,ico,ttf,woff2,webmanifest}'], swDest: 'dist/sw.js', maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, skipWaiting: false, clientsClaim: true, cleanupOutdatedCaches: true, navigateFallback: '/index.html', navigateFallbackDenylist: [/^\/api\//], runtimeCaching: [] });
+const result = await generateSW({ globDirectory: 'dist', globPatterns: ['**/*.{html,js,css,svg,png,ico,ttf,woff2,webmanifest,wav}'], swDest: 'dist/sw.js', maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, skipWaiting: false, clientsClaim: true, cleanupOutdatedCaches: true, navigateFallback: '/index.html', navigateFallbackDenylist: [/^\/api\//], runtimeCaching: [] });
 console.log(`Offline shell: ${result.count} assets (${Math.round(result.size / 1024)} KiB). Updates wait for parent action.`);
 for (const warning of result.warnings) console.warn(warning);
