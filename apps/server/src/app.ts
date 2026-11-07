@@ -1,6 +1,6 @@
 /**
  * @file Builds the Fastify API with input validation, origin checks, request limits, speech/picture
- * services, fixed per-IP rate limits, and optional web hosting.
+ * services, shared-cache starter playback, fixed per-IP rate limits, and optional web hosting.
  */
 
 import Fastify from 'fastify';
@@ -54,7 +54,7 @@ export async function createServer(options: ServerOptions) {
     reply.code(status >= 400 && status < 500 ? status : 500).send({ error: status === 413 ? 'This request is too large. Try sending less content.' : status === 429 ? 'Too many requests. Please try again shortly.' : status === 400 ? 'The request could not be read. Please try again.' : 'The server could not complete this request.' });
   });
 
-  if (options.hosting) await hostingRoutes(app, options.hosting);
+  if (options.hosting) await hostingRoutes(app, options.hosting, options.speechCache);
   app.get('/api/health', async () => ({ status: 'ok', aiConfigured: options.hosting?.enabled ?? options.provider !== null, version: release.version, ...(options.hosting ? { aiJobs: { version: 1 }, authenticationRequired: true } : {}), ...(options.preparation || options.hosting?.enabled ? { preparation: { version: 1 } } : {}), pictures: { version: 1, catalog: Boolean(options.pictures), analysis: options.hosting?.enabled ?? Boolean(options.pictures?.provider), generation: options.hosting?.enabled ? options.pictures?.generationEnabled : Boolean(options.pictures?.provider && options.pictures.generationEnabled) } }));
   app.get('/api/ready', async (_request, reply) => {
     try { if (options.database) await checkDatabase(options.database); return { status: 'ok', version: release.version, ...(process.env.K_REVISION ? { revision: process.env.K_REVISION } : {}) }; }

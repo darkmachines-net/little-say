@@ -1,6 +1,7 @@
-/** @file Tracks local speech assets and bounded background synthesis independently of board revisions. */
+/** @file Tracks speech assets and bounded preparation through caller-owned storage/network adapters, independently of board revisions. */
 
-import { speechKey, type SpeechInput, type SpeechAsset, type Tile } from '@little-say/core';
+import { speechKey } from '@little-say/core/speech';
+import type { SpeechInput, SpeechAsset, Tile } from '@little-say/core';
 
 /** Extract the spoken text and language used to identify a tile pronunciation. */
 export const tileSpeech = (tile: Pick<Tile, 'speech' | 'language'>): SpeechInput => ({ text: tile.speech, language: tile.language });

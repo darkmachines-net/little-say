@@ -34,7 +34,7 @@ it('retains master’s transient-read retry behavior for browser CSRF', async ()
   expect(await pending).toEqual({ 'X-Little-Say-Account': 'family', 'X-Little-Say-CSRF': 'retried' });
   expect(fetch).toHaveBeenCalledTimes(2);
 });
-it('does not consult account state or attach credentials to public starter audio', async () => {
-  expect(await mediaRequest('https://app.example/starter-audio/clip.wav')).toEqual({});
+it('does not consult account state or attach credentials to public catalog media', async () => {
+  expect(await mediaRequest('https://app.example/catalog/picture.png')).toEqual({});
   expect(load).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
 });

@@ -1,6 +1,11 @@
-/** @file Verifies lean public trial loading, centered feedback, direct account links, responsive welcome layout, and installed-app entry. */
+/** @file Verifies lean public navigation and centered loading without available audio, account links, responsive layout, and installed-app entry. */
 
 import { test, expect } from '@playwright/test';
+
+test.beforeEach(async ({ page }) => {
+  // Navigation must work without audio; real shared-cache playback belongs to trial.spec.ts.
+  await page.route('**/api/speech', route => route.fulfill({ status: 401, json: { error: 'Sign in required.' } }));
+});
 
 test('trial code preloads on focus and opens with a centered spinner without reloading the page', async ({ page }) => {
   let release!: () => void;

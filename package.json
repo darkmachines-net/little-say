@@ -36,6 +36,7 @@
     "brand:assets": "node scripts/brand-assets.mjs",
     "db:migrate": "npm run db:migrate -w @little-say/server",
     "db:status": "npm run db:status -w @little-say/server",
+    "db:seed": "npm run db:seed -w @little-say/server",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:services": "tsx scripts/test-services.ts",
     "test:accounts:web": "tsx scripts/test-services.ts --browser",

@@ -1,4 +1,4 @@
-/** @file Offers disposable public starter boards with bundled AI audio and device fallback, independent of account and server services. */
+/** @file Offers disposable starter boards using ordinary cached speech and device fallback without account or generation services. */
 
 import { useEffect, useState } from 'react';
 import { ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -13,7 +13,7 @@ import { BoardCard } from '../ui/BoardCard';
 import { PlayBoard } from '../ui/PlayBoard';
 import { Button, Sheet } from '../ui/components';
 import { styles, theme } from '../ui/theme';
-import { starterAudioAsset } from './audio/starterAudio';
+import { useTrialSpeech } from './useTrialSpeech.web';
 
 const settings: Settings = {
   backendUrl: '', voices: {}, activeBoardId: null, aiConsent: false, autoSpeech: false,
@@ -27,6 +27,7 @@ function StarterTrial() {
     let id = 0;
     return createStarterBoards(() => `trial-${id++}`);
   });
+  const speech = useTrialSpeech(boards);
   const [playing, setPlaying] = useState<Board | null>(null);
   const [accountRequired, setAccountRequired] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
@@ -47,7 +48,7 @@ function StarterTrial() {
     window.addEventListener('keydown', dismiss);
     return () => window.removeEventListener('keydown', dismiss);
   }, [accountRequired]);
-  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={starterAudioAsset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
+  if (playing) return <PlayBoard board={playing} settings={settings} voices={voices} audioAsset={speech.asset} onLanguageChange={keepLanguage} backLabel="Back to starter boards" onEdit={() => setPlaying(null)} />;
   return <View style={styles.page}>
     <AppHeader actions={<Button kind="secondary" onPress={() => window.location.assign(accountPath('login'))}>Sign in</Button>} />
     <ScrollView testID="starter-trial" style={{ flex: 1 }} contentContainerStyle={[styles.container, { paddingTop: 24, paddingBottom: 32, gap: 24 }]}>

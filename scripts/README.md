@@ -82,7 +82,7 @@ After connecting, create/refine a board, check undo, save audio, then disconnect
 - `update-emoji-catalog.ts` (`npm run emoji:update`) regenerates offline Unicode/CLDR metadata; retain `packages/core/src/data/UNICODE-LICENSE.txt`.
 - `update-picture-catalog.ts` (`npm run pictures:update`) owns the [licensed catalog's pinned inputs and output](../apps/server/src/pictures/README.md).
 - `brand-assets.mjs` (`npm run brand:assets`) regenerates variants from the committed [mountain master](../apps/mobile/assets/brand/README.md); normal builds use committed assets.
-- `prepare-starter-audio.ts` (`npm run speech:starters`) prepares or verifies the [bundled starter recordings](../apps/mobile/src/website/audio/README.md); ordinary builds need no provider key.
+- `prepare-starter-audio.ts` (`npm run speech:starters`) maintains the [server speech seeds](../apps/server/seeds/speech/README.md); local/test initialization imports them into normal shared storage without a provider key.
 - `evaluate-ai.ts` and `evaluate-pictures.ts` are opt-in billable [evaluation tools](../tests/README.md#live-ai-and-device-validation).
 - `test-services.ts` owns disposable Compose dependencies/ports/media for service and browser suites; `test-server.ts` owns their API and schema. See [service tests](../tests/README.md#service-tests).
 - [Release tooling](release/README.md) owns versioning, provider publication, and recovery.

@@ -1,8 +1,16 @@
-/** @file Verifies shipped AI audio with APIs unavailable, on-demand loading, device fallback, mutation gates, account links, and data isolation. */
+/** @file Verifies seeded speech through ordinary API routes, on-demand playback, fallback, mutation gates, account links, and data isolation. */
 
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
-import audio from '../../apps/mobile/src/website/audio/manifest.json' with { type: 'json' };
+import audio from '../../apps/server/seeds/speech/manifest.json' with { type: 'json' };
+
+/** Wait for the normal cache lookups so playback assertions cannot race background preparation. */
+async function prepared(page: import('@playwright/test').Page) {
+  let hits = 0;
+  page.on('response', response => { if (new URL(response.url()).pathname === '/api/speech' && response.status() === 200) hits++; });
+  await page.goto('/app/try');
+  await expect.poll(() => hits).toBe(audio.clips.length);
+}
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -28,14 +36,13 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const width of [1280, 390]) {
-  test(`guests play all bundled AI words with APIs unavailable and no storage at ${width}px`, async ({ page }) => {
+  test(`guests play all seeded AI words through the shared cache with no device storage at ${width}px`, async ({ page }) => {
     const apiRequests: string[] = [];
     const audioRequests: string[] = [];
-    page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(request.url()); });
-    page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/starter-audio/')) audioRequests.push(new URL(request.url()).pathname); });
-    await page.route('**/api/**', route => route.abort());
+    page.on('request', request => { if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(new URL(request.url()).pathname); });
+    page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/speech/')) audioRequests.push(new URL(request.url()).pathname); });
     await page.setViewportSize({ width, height: 844 });
-    await page.goto('/app/try/');
+    await prepared(page);
     await expect(page.getByRole('heading', { name: 'Try a starter board' })).toBeVisible();
     await expect(page.getByTestId('library-board')).toHaveCount(3);
     expect(await page.getByTestId('starter-trial').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
@@ -51,7 +58,7 @@ for (const width of [1280, 390]) {
       await expect(page.getByTestId('play-board')).toBeVisible();
       for (const word of words) {
         await page.getByRole('button', { name: word, exact: true }).click();
-        played.push(`/starter-audio/${audio.clips.find(clip => clip.text === word && clip.language === 'en-US')!.id}.wav`);
+        played.push(`/api/speech/${audio.clips.find(clip => clip.text === word && clip.language === 'en-US')!.id}.wav`);
         await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed.length)).toBe(played.length);
         await expect(page.getByTestId('tile-playing')).toHaveCount(0);
       }
@@ -61,10 +68,12 @@ for (const width of [1280, 390]) {
       expect(await page.evaluate(() => (window as any).__speechStops)).toBeGreaterThan(stops);
     }
     expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
-    expect(apiRequests).toEqual([]);
+    expect(apiRequests).toEqual(audio.clips.map(() => '/api/speech'));
     expect(audioRequests).toEqual(played);
     expect(await page.evaluate(() => (window as any).__spoken)).toEqual([]);
     expect(await page.evaluate(() => (window as any).__audioPlayed.every((clip: any) => clip.duration > 0.1 && clip.offset === 0))).toBe(true);
+    // Reload checks disposable board state, so avoid spending the shared API quota on another audio preparation.
+    await page.route('**/api/speech', route => route.fulfill({ status: 401, json: { error: 'Sign in required.' } }));
     await page.reload();
     await expect(page.getByTestId('library-board')).toHaveCount(3);
     expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
@@ -94,15 +103,13 @@ test('every creation and board-management entry prompts for a free account and c
   await page.getByRole('button', { name: 'Close Make it yours', exact: true }).click();
   await expect(page.getByTestId('library-board')).toHaveCount(3);
   expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
-  expect(apiRequests).toEqual([]);
+  expect(apiRequests.every(url => new URL(url).pathname === '/api/speech')).toBe(true);
 });
 
-test('falls back to device speech when a bundled clip fails, while other bundled words still play', async ({ page }) => {
+test('falls back to device speech when a cached clip fails, while other cached words still play', async ({ page }) => {
   const id = audio.clips.find(clip => clip.text === 'Horse')!.id;
-  const requests: string[] = [];
-  page.on('request', request => { if (new URL(request.url()).pathname.startsWith('/api/')) requests.push(`${request.method()} ${new URL(request.url()).pathname}`); });
-  await page.route(`**/starter-audio/${id}.wav`, route => route.fulfill({ status: 404 }));
-  await page.goto('/app/try');
+  await page.route(`**/api/speech/${id}.wav`, route => route.fulfill({ status: 404 }));
+  await prepared(page);
   await page.getByRole('button', { name: 'Play Farm Animals', exact: true }).click();
   await page.getByRole('button', { name: 'Horse', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Horse', language: 'en-US' }]);
@@ -111,16 +118,23 @@ test('falls back to device speech when a bundled clip fails, while other bundled
   await expect.poll(() => page.evaluate(() => (window as any).__audioPlayed.length)).toBe(1);
   await expect(page.getByTestId('tile-playing')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Horse', language: 'en-US' }]);
-  expect(requests).toEqual([]);
   expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
 });
 
 test('invalid audio bytes also fall back to device speech', async ({ page }) => {
-  await page.route('**/starter-audio/*.wav', route => route.fulfill({ body: 'invalid audio', contentType: 'audio/wav' }));
-  await page.goto('/app/try');
+  await page.route('**/api/speech/*.wav', route => route.fulfill({ body: 'invalid audio', contentType: 'audio/wav' }));
+  await prepared(page);
   await page.getByRole('button', { name: 'Play Shapes', exact: true }).click();
   await page.getByRole('button', { name: 'Heart', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Heart', language: 'en-US' }]);
+});
+
+test('missing cache entries leave the trial usable with device speech', async ({ page }) => {
+  await page.route('**/api/speech', route => route.fulfill({ status: 401, json: { error: 'Sign in required.' } }));
+  await page.goto('/app/try');
+  await page.getByRole('button', { name: 'Play Farm Animals', exact: true }).click();
+  await page.getByRole('button', { name: 'Horse', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => (window as any).__spoken)).toEqual([{ text: 'Horse', language: 'en-US' }]);
 });
 
 test('account links preserve browser Back and registration creates independent editable starters', async ({ page }) => {
