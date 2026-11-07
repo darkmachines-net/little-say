@@ -1,7 +1,8 @@
-/** @file Keeps a fixed browser lock button mounted and separates fresh lock clicks from completing holds. */
+/** @file Keeps the browser player's lock control mounted, distinguishing fresh clicks from completed unlock holds. */
 
 import { useEffect, useRef } from 'react';
-import { LockKeyhole, LockKeyholeOpen } from 'lucide-react-native';
+import LockKeyhole from 'lucide-react-native/icons/lock-keyhole';
+import LockKeyholeOpen from 'lucide-react-native/icons/lock-keyhole-open';
 import { theme } from './theme';
 import type { ParentControlProps } from './ParentControl';
 

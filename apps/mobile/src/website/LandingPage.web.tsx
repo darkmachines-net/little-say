@@ -1,13 +1,14 @@
 /**
- * @file Presents a compact web welcome with the mobile artwork and product promise, plus one /app entry.
+ * @file Presents a compact web welcome with shared artwork, direct account links, and a preloaded trial link.
  * Store links remain inactive until listings exist. Only Entry.web.tsx imports this page and its styles;
  * visiting it must not initialize the device library or start account/AI services.
  */
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { WelcomeArtwork, welcomeBackground } from '../ui/account/AccountWelcome';
 import colors from '../../assets/brand/colors.json';
+import { accountPath } from '../services/accountRoute';
 import './landing.css';
 
 function Arrow() {
@@ -27,8 +28,13 @@ function StoreLinks() {
   </div>;
 }
 
-/** Introduce the app in one viewport, allowing scrolling on short screens or with enlarged text so entry stays reachable. */
-export default function LandingPage() {
+/** Introduce the app with trial and direct account links, allowing scrolling on short screens; web entry owns trial preloading and navigation. */
+export default function LandingPage({ onTry, onTryIntent }: {
+  /** Open the trial in the current page for ordinary clicks; preserve modified link actions. */
+  onTry: (event: MouseEvent<HTMLAnchorElement>) => void;
+  /** Warm the trial code when a pointer or keyboard user approaches the link. */
+  onTryIntent: () => void;
+}) {
   const { width, height } = useWindowDimensions();
   const artWidth = width <= 760
     ? Math.max(140, Math.min(width - 48, height * 0.32, 300))
@@ -43,7 +49,11 @@ export default function LandingPage() {
         <p className="ls-intro">Make your own custom speaking soundboards for learning new words in seconds.</p>
         <div className="ls-actions">
           <p className="ls-invitation">Free with no ads to support your child's learning.</p>
-          <a className="ls-primary" href="/app">Try Little Say on the web <Arrow /></a>
+          <a className="ls-primary" href="/app/try" onClick={onTry} onPointerEnter={onTryIntent} onFocus={onTryIntent}>Try Little Say on the web <Arrow /></a>
+          <nav className="ls-account-links" aria-label="Your account">
+            <a href={accountPath('login')}>Log in</a>
+            <a href={accountPath('register')}>Create account</a>
+          </nav>
           <StoreLinks />
         </div>
       </div>

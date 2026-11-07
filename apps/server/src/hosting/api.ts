@@ -1,13 +1,14 @@
-/** @file Protects asynchronous AI jobs and private media with registered account ownership. */
+/** @file Serves public starter cache hits on normal speech routes while protecting synthesis, jobs, and private media with account ownership. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
-import { proposalRequestSchema, translationRequestSchema, pictureAnalysisRequestSchema, pictureJobRequestSchema, pictureConceptSchema, speechRequestSchema } from '@little-say/core';
+import { proposalRequestSchema, translationRequestSchema, pictureAnalysisRequestSchema, pictureJobRequestSchema, pictureConceptSchema, speechRequestSchema, speechKey, createStarterBoards } from '@little-say/core';
 import { AccountError } from '../accounts/store';
 import { AccountAccess } from '../accounts/access';
 import { PictureJobs } from '../pictures/jobs';
 import { Jobs, type JobKind, type JobView } from './jobs';
 import { DatabaseCache, canReadMedia, type ObjectStore } from './storage';
+import type { SpeechCache } from '../speech-cache';
 
 export interface HostedServices { pool: Pool; jobs: Jobs; access: AccountAccess; objects: ObjectStore; enabled: boolean;
   /** Attempt prompt delivery after the durable commit; scheduled reconciliation covers failures. */
@@ -18,6 +19,7 @@ const schemas = { proposal: proposalRequestSchema, translation: translationReque
 const aliases: Record<string, JobKind> = { '/api/boards/propose': 'proposal', '/api/boards/translate': 'translation', '/api/pictures/analyze': 'analysis', '/api/pictures/review': 'review', '/api/speech': 'speech', '/api/pictures/jobs': 'picture' };
 const submission = z.object({ id: z.uuid(), kind: z.enum(['proposal', 'translation', 'analysis', 'review', 'speech', 'picture']), input: z.unknown() });
 const pictureState = (job: JobView) => ({ id: job.id, draftId: job.draftId ?? '', tileId: job.tileId ?? '', state: job.state === 'interrupted' ? 'error' : job.state, ...(job.result ? { result: job.result } : {}), ...(job.error ? { error: job.error } : {}) });
+const starterWords = new Set(createStarterBoards(() => 'public').flatMap(board => board.tiles.map(tile => speechKey({ text: tile.speech, language: tile.language }))));
 
 /** Validate the complete operation before storing a durable request or calling a provider. */
 export function validateJobInput(kind: JobKind, input: unknown): unknown {
@@ -26,8 +28,8 @@ export function validateJobInput(kind: JobKind, input: unknown): unknown {
   return parsed.data;
 }
 
-/** Register durable AI endpoints and intercept legacy routes so direct service URLs cannot bypass access controls. */
-export async function hostingRoutes(app: FastifyInstance, services: HostedServices) {
+/** Serve only existing starter speech to guests; all generation, regeneration, and other legacy operations retain account checks. */
+export async function hostingRoutes(app: FastifyInstance, services: HostedServices, speechCache?: SpeechCache) {
   const { pool, jobs, access, objects } = services;
   const catalog = new PictureJobs(new DatabaseCache(pool, objects, 'pictures', undefined, true));
   app.addHook('onClose', async () => { catalog.close(); });
@@ -50,6 +52,18 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     if (library && request.method === 'GET') return reply.send({ picture: (await catalog.library(decodeURIComponent(library[1]))).picture });
     const legacyKind = aliases[path];
     if (legacyKind && request.method === 'POST') {
+      if (legacyKind === 'speech' && speechCache) {
+        const input = speechRequestSchema.safeParse(request.body);
+        if (input.success && !input.data.regenerate && starterWords.has(speechKey(input.data))) {
+          const [clip] = await speechCache.lookup([input.data]);
+          if (clip) {
+            // Same shared cache and media grants as ordinary playback. A new take of this public
+            // vocabulary stays playable after regeneration; guests never reach generation below.
+            await new DatabaseCache(pool, objects, 'speech', undefined, true).read(`${clip.id}.wav`);
+            return reply.send({ ...clip, cacheHit: true });
+          }
+        }
+      }
       const { account } = await access.verify(request);
       const input = validateJobInput(legacyKind, request.body);
       if (legacyKind === 'review') for (const card of (input as z.infer<typeof reviewSchema>).cards) {

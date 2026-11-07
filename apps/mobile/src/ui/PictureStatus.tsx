@@ -1,7 +1,7 @@
-/** @file Centers picture-work indicators in the artwork area, with replacement overlays and reduced-motion-aware activity. */
+/** @file Centers picture preparation feedback over artwork, including replacement overlays and reduced-motion support. */
 import { useEffect, useRef } from 'react';
 import { AccessibilityInfo, Animated, Platform, Text, View } from 'react-native';
-import { Sparkles } from 'lucide-react-native';
+import Sparkles from 'lucide-react-native/icons/sparkles';
 import { type PictureTileState } from '../services/pictures';
 import { theme } from './theme';
 function ActivePicture() {

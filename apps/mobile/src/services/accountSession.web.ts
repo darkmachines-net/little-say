@@ -1,5 +1,6 @@
-/** @file Persists registered browser sign-in metadata without backup preferences; credentials remain in HttpOnly cookies. */
-import { accountSchema, authConfigSchema, type Account, type AuthConfig } from '@little-say/core';
+/** @file Persists registered browser metadata using account-only schemas; credentials stay in HttpOnly cookies and retired backup preferences are discarded. */
+import { accountSchema, authConfigSchema } from '@little-say/core/account';
+import { type Account, type AuthConfig } from '@little-say/core';
 
 export type AccountSession = { account: Account; server: string; firebaseUid: string; authConfig: AuthConfig };
 const key = 'little-say-firebase-account';

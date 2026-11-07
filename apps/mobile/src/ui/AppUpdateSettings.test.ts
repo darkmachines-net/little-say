@@ -1,4 +1,4 @@
-/** @file Verifies manual native OTA progress, persistence before reload, failure recovery, and cancellation. */
+/** @file Verifies manual OTA progress and recovery, including persistence before reload and cancellation. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -19,6 +19,8 @@ vi.mock('react-native', () => ({
   StyleSheet: { create: (styles: unknown) => styles },
 }));
 vi.mock('lucide-react-native', () => ({ AlertCircle: 'AlertCircle' }));
+vi.mock('lucide-react-native/icons/circle-alert', () => ({ default: 'AlertCircle' }));
+vi.mock('lucide-react-native/icons/x', () => ({ default: 'X' }));
 // Shared UI also exports native dialogs; this OTA test does not exercise their window measurement.
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView' }));
 

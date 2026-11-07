@@ -1,7 +1,7 @@
-/** @file Maps browser board pointer and keyboard input to accessible tile activation. */
+/** @file Connects browser pointer and keyboard gestures to accessible card activation using the shared touch controller. */
 
 import React, { useEffect, useRef } from 'react';
-import { BoardTouchController } from '@little-say/core';
+import { BoardTouchController } from '@little-say/core/interaction';
 import type { TouchSurfaceProps } from './TouchSurface';
 import { TileFace } from './TileFace';
 /**

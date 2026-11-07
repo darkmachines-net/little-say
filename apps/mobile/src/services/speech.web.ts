@@ -1,6 +1,7 @@
-/** @file Supplies browser voices and cached-audio-first playback through Web Speech. */
+/** @file Supplies browser voices and queued cached-audio playback with Web Speech fallback, without editor dependencies. */
 
-import { type Tile, type Settings, type SpeechAsset, LatestSpeechQueue } from '@little-say/core';
+import { type Tile, type Settings, type SpeechAsset } from '@little-say/core';
+import { LatestSpeechQueue } from '@little-say/core/interaction';
 import { hybridSpeech } from './hybridSpeech';
 import { audioPlayback } from './audioPlayback';
 export type Voice = { identifier: string; name: string; language: string; localService?: boolean };

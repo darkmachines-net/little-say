@@ -1,8 +1,8 @@
-/** @file Renders a locally saved illustration without cropping and reports missing offline assets honestly. */
+/** @file Displays saved illustrations without cropping, with an explicit fallback for missing offline assets. */
 
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Text, View } from 'react-native';
-import { ImageOff } from 'lucide-react-native';
+import ImageOff from 'lucide-react-native/icons/image-off';
 import { pictureUri } from '../data/storage';
 import { theme } from './theme';
 
