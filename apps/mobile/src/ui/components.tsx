@@ -1,9 +1,11 @@
-/** @file Defines shared parent-facing buttons, fields, notices, dialogs, and confirmations. */
+/** @file Defines parent-facing buttons, fields, notices, and dialogs shared by the account app and public trial. */
 
 import { useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { X, AlertCircle, type LucideIcon } from 'lucide-react-native';
+import X from 'lucide-react-native/icons/x';
+import AlertCircle from 'lucide-react-native/icons/circle-alert';
+import { type LucideIcon } from 'lucide-react-native';
 import { theme, styles } from './theme';
 
 /**

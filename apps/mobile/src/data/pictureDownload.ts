@@ -1,7 +1,7 @@
-/** @file Downloads bounded PNG assets from the configured backend and verifies their content-addressed identity. */
+/** @file Downloads bounded backend PNGs and verifies their digest using the focused picture contract. */
 
 import * as Crypto from 'expo-crypto';
-import { pictureAssetIdSchema } from '@little-say/core';
+import { pictureAssetIdSchema } from '@little-say/core/pictures';
 import { mediaRequest } from '../services/requestAuth';
 
 /** Download and hash a PNG before it becomes a durable local board asset; abort leaves existing assets intact. */

@@ -1,16 +1,21 @@
 /**
  * @file Coordinates child playback, independent touch and speech feedback, board languages, and optional
- * locking with fixed header slots, safe-area lock feedback, user-language subsets, device speech
- * fallback, and lock-aware Android back navigation.
+ * locking for account and public boards with fixed header slots, safe-area feedback, user-language subsets, device speech
+ * fallback, caller-labeled exit navigation, and lock-aware Android back navigation.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, BackHandler, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ViewInstance } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowLeft } from 'lucide-react-native';
+import ArrowLeft from 'lucide-react-native/icons/arrow-left';
 import { useKeepAwake } from 'expo-keep-awake';
 import { StatusBar } from 'expo-status-bar';
-import { boardPlayLanguages, gridLayout, speechSource, languageName, selectedBoardLanguage, tileInLanguage, type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
+import { boardPlayLanguages } from '@little-say/core/languageProfile';
+import { gridLayout } from '@little-say/core/boardLayout';
+import { speechSource } from '@little-say/core/voicePreferences';
+import { languageName } from '@little-say/core/languages';
+import { selectedBoardLanguage, tileInLanguage } from '@little-say/core/boardLanguages';
+import { type Board, type Settings, type Tile, type TileRect, type SpeechAsset } from '@little-say/core';
 import { speechQueue, type Voice } from '../services/speech';
 import { TouchSurface } from './TouchSurface';
 import { ParentControl } from './ParentControl';
@@ -28,8 +33,9 @@ import { styles, theme } from './theme';
  * Open unlocked; a tap locks navigation and a one-second hold automatically reveals back.
  * Android Back returns to the editor while unlocked and is consumed without leaving while locked.
  * Stop playback when the app backgrounds, the web page hides, or the screen unmounts.
+ * The exit callback normally opens the editor; read-only callers supply a back label and return to their board list.
  */
-export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChange, onEdit }: { board: Board; settings: Settings; voices: Voice[]; audioAsset: (tile: Tile) => SpeechAsset | undefined; onLanguageChange: (language: string) => Promise<void>; onEdit: (snapshot: BoardSnapshot | null) => void }) {
+export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChange, onEdit, backLabel = 'Back to editor' }: { board: Board; settings: Settings; voices: Voice[]; audioAsset: (tile: Tile) => SpeechAsset | undefined; onLanguageChange: (language: string) => Promise<void>; onEdit: (snapshot: BoardSnapshot | null) => void; backLabel?: string }) {
   useKeepAwake('soundboard', { suppressDeactivateWarnings: true });
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -111,7 +117,7 @@ export function PlayBoard({ board, settings, voices, audioAsset, onLanguageChang
       </View>
     </View>
     <View testID="board-header" style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-      <View style={{ width: 48, height: 48 }}>{!locked && <Pressable testID="board-back" accessibilityRole="button" accessibilityLabel="Back to editor" onPress={edit} style={({ pressed }) => ({ width: 48, height: 48, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.accentSoft, opacity: pressed ? 0.75 : 1 })}><ArrowLeft size={24} color={theme.accent} /></Pressable>}</View>
+      <View style={{ width: 48, height: 48 }}>{!locked && <Pressable testID="board-back" accessibilityRole="button" accessibilityLabel={backLabel} onPress={edit} style={({ pressed }) => ({ width: 48, height: 48, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.accentSoft, opacity: pressed ? 0.75 : 1 })}><ArrowLeft size={24} color={theme.accent} /></Pressable>}</View>
       <View style={{ flex: 1, minWidth: 0 }}>
         {!feedbackInInset && status}
         <View ref={heading} testID="board-title" accessible accessibilityRole="header" tabIndex={-1}><Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ minWidth: 0, color: theme.ink, fontSize: 24, fontWeight: '800', letterSpacing: -0.6 }}>{board.title}</Text></View>

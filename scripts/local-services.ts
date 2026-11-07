@@ -1,4 +1,4 @@
-/** @file Inspects and starts checkout-owned PostgreSQL/Auth dependencies with resolved ports and persistent data. */
+/** @file Starts checkout-owned PostgreSQL/Auth, applies migrations, and seeds ordinary shared speech storage for local playback. */
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { resolve } from 'node:path';
@@ -64,10 +64,11 @@ export async function localCompose(root: string, env: NodeJS.ProcessEnv, args: s
   }
 }
 
-/** Start persistent dependencies and migrate the selected database; cancellation stops pending commands without deleting data. */
+/** Start dependencies, migrate, and seed shared starter speech before workers start; retain existing data and cached takes. */
 export async function startLocalServices(root: string, env: NodeJS.ProcessEnv, signal?: AbortSignal) {
   await localCompose(root, env, ['up', '--detach', '--wait', '--wait-timeout', '120', 'postgres', 'auth'], signal);
   await execute(process.execPath, [require.resolve('tsx/cli'), resolve(root, 'apps/server/src/database-cli.ts'), 'migrate'], { cwd: root, env, signal, windowsHide: true, maxBuffer: 1024 * 1024 });
+  await execute(process.execPath, [require.resolve('tsx/cli'), resolve(root, 'apps/server/src/database-cli.ts'), 'seed-speech'], { cwd: root, env, signal, windowsHide: true, maxBuffer: 1024 * 1024 });
 }
 
 /** Inspect local migration state and Auth availability without starting dependencies or calling AI. */

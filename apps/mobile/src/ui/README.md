@@ -1,6 +1,6 @@
 # Parent and child interface
 
-This directory owns app screens and shared controls for native and `/app` on web. `App.tsx` composes these flows with the library and service hooks. Platform-suffixed files adapt touch, photos, speech previews, and updates without changing the shared contracts. Use the [client services](../services/README.md) for persistence and network work.
+This directory owns app screens and shared controls for native and `/app` on web. `App.tsx` composes these flows with the library and service hooks; the [public web trial](../website/README.md) reuses board cards and playback with its own read-only navigation. Platform-suffixed files adapt touch, photos, speech previews, and updates without changing the shared contracts. Use the [client services](../services/README.md) for persistence and network work.
 
 ## Visual and interaction conventions
 

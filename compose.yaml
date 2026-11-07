@@ -1,4 +1,4 @@
-# Runs the complete local application, worker, PostgreSQL, and Firebase Auth emulator with durable development data.
+# Runs the local stack with durable data and seeds the shared speech cache before API/worker startup.
 x-runtime: &runtime
   NODE_ENV: development
   HOST: 0.0.0.0
@@ -54,6 +54,14 @@ services:
     healthcheck: { disable: true }
     depends_on:
       postgres: { condition: service_healthy }
+  seed:
+    build: .
+    environment: *runtime
+    command: ['node', 'server/database-cli.js', 'seed-speech']
+    healthcheck: { disable: true }
+    volumes: ['media:/app/data']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
   little-say:
     build: .
     init: true
@@ -61,7 +69,7 @@ services:
     ports: ['${BIND_ADDRESS:-127.0.0.1}:8787:8787']
     volumes: ['media:/app/data']
     depends_on:
-      migrate: { condition: service_completed_successfully }
+      seed: { condition: service_completed_successfully }
       auth: { condition: service_healthy }
   worker:
     build: .
@@ -75,7 +83,7 @@ services:
       retries: 12
     volumes: ['media:/app/data']
     depends_on:
-      migrate: { condition: service_completed_successfully }
+      seed: { condition: service_completed_successfully }
       auth: { condition: service_healthy }
 volumes:
   postgres-data:

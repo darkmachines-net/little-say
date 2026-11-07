@@ -1,8 +1,9 @@
-/** @file Shares tile visuals, centered picture-work placeholders, faded replacement overlays, and speech feedback. */
+/** @file Shares card artwork and speech feedback across app and trial, including preparation placeholders and replacement overlays. */
 
 import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
-import { ImageOff, Volume2 } from 'lucide-react-native';
+import ImageOff from 'lucide-react-native/icons/image-off';
+import Volume2 from 'lucide-react-native/icons/volume-2';
 import { type Tile } from '@little-say/core';
 import { PhotoImage, usePhotoSource } from './PhotoImage';
 import { PictureImage } from './PictureImage';

@@ -1,8 +1,8 @@
-/** @file Provides one responsive navigation row, tightening spacing on small phones to fit short route titles and full-size actions. */
+/** @file Provides responsive brand navigation for app and trial, tightening phone spacing while preserving full-size actions. */
 
 import type { ReactNode } from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import ArrowLeft from 'lucide-react-native/icons/arrow-left';
 import { Brand } from './Brand';
 import { Button } from './components';
 import { useScreenFocus } from './screenFocus';

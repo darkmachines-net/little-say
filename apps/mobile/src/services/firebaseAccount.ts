@@ -1,4 +1,4 @@
-/** @file Exchanges origin-bound Firebase credentials and starter snapshots for sign-in, automatic backup, and account recovery. */
+/** @file Exchanges origin-bound Firebase credentials and starter snapshots; delegates browser CSRF to the SDK-independent session helper. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
@@ -8,6 +8,7 @@ import { apiFetch } from './api';
 import { authDependencies } from './firebasePersistence';
 import { nativeCredential, socialAuthAvailable, type SocialProvider, type AppleGrant } from './firebaseProviders';
 import { type AccountSession } from './accountSession';
+import { browserCsrfHeaders } from './browserCsrf';
 export type Provider = 'password' | SocialProvider;
 type Context = { auth: Auth; config: AuthConfig };
 const contexts = new Map<string, Promise<Context>>();
@@ -37,8 +38,7 @@ export async function accountContext(server: string, savedConfig?: AuthConfig): 
 /** Fetch the server-side CSRF token bound to the sole opaque browser session cookie. */
 export async function csrfHeaders(server: string): Promise<Record<string, string>> {
   if (Platform.OS !== 'web') return {};
-  const result = await apiFetch(server, '/api/account/csrf', { credentials: 'include' }, undefined, true);
-  return { 'X-Little-Say-CSRF': result.csrfToken };
+  return browserCsrfHeaders(server);
 }
 
 async function rawSignIn(context: Context, provider: Provider, email: string, password: string): Promise<{ user: User; apple?: AppleGrant }> {

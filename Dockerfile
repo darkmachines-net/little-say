@@ -1,4 +1,4 @@
-# Builds the web app and API into a non-root server image with durable caches and database readiness checks.
+# Builds the web/API image with ordinary shared storage, explicit server speech seeds, and database readiness checks.
 # Compile portable JavaScript/web assets once, without emulating the target CPU.
 FROM --platform=$BUILDPLATFORM node:24-bookworm-slim AS build
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
@@ -26,6 +26,7 @@ ENV NODE_ENV=production HOST=0.0.0.0 PORT=8787 WEB_ROOT=/app/web
 WORKDIR /app
 COPY --from=build /app/apps/server/dist ./server
 COPY --from=build /app/apps/server/migrations ./migrations
+COPY --from=build /app/apps/server/seeds ./seeds
 COPY --from=build /app/apps/mobile/dist ./web
 COPY --from=server-deps /app/node_modules ./node_modules
 COPY --from=build /app/apps/server/package.json ./package.json

@@ -1,0 +1,11 @@
+# Starter speech seeds
+
+These 18 transcript-checked Marin WAVs are initialization inputs for the ordinary shared speech cache. They are not web assets and have no separate playback route or runtime cache. `manifest.json` records their SHA-256 IDs, sizes, synthesis profile, and speech-prompt digest. The source vocabulary is the [starter catalog](../../../../packages/core/README.md).
+
+`src/seed-speech.ts` uses `SpeechCache` and `DatabaseCache` to insert missing pointers into PostgreSQL's service-wide `speech` namespace and WAVs into the configured media object store. Existing valid takes are retained, including newer regenerated recordings. Only starter vocabulary receives public download grants. Profile identity is preserved: changing the server voice or model requires recordings for that profile rather than relabeling these files.
+
+Local development setup, Docker Compose, and the isolated browser-test server seed after migrations and before API/worker startup. For another migrated environment, run `npm run db:seed` with its normal `PG*` and `MEDIA_DIRECTORY` or `MEDIA_BUCKET` settings. Run before serving traffic. Initialization needs no OpenAI key and is safe to repeat; it does not reset other data. The Docker image includes the seed inputs for this command.
+
+The trial uses ordinary `POST /api/speech` cache lookups and `/api/speech/:id.wav` downloads. Only cached, non-regenerating requests for the closed starter vocabulary are accessible without an account. Missing recordings, other phrases, and regeneration retain account authorization; guest requests never start provider work. Signed-in boards reuse the same cache and updated takes. Unavailable audio falls back to device speech.
+
+`npm run speech:starters -- --check` verifies the committed input files offline. To update the recordings when vocabulary, product voice, or prompt changes, use `npm run speech:starters -- --generate` with a server OpenAI key. This explicitly permits paid synthesis for missing or outdated inputs through the existing transcript-verifying generator. Current matching files are reused directly, with no separate preparation cache. Review the generated audio and commit the manifest with its WAV files, then seed the target database.

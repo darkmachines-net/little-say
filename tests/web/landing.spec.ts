@@ -1,6 +1,53 @@
-/** @file Verifies the single-screen web welcome, reachable entry on short screens, inactive store links, and installed-web-app compatibility. */
+/** @file Verifies lean public navigation and centered loading without available audio, account links, responsive layout, and installed-app entry. */
 
 import { test, expect } from '@playwright/test';
+
+test.beforeEach(async ({ page }) => {
+  // Navigation must work without audio; real shared-cache playback belongs to trial.spec.ts.
+  await page.route('**/api/speech', route => route.fulfill({ status: 401, json: { error: 'Sign in required.' } }));
+});
+
+test('trial code preloads on focus and opens with a centered spinner without reloading the page', async ({ page }) => {
+  let release!: () => void;
+  let requested = false;
+  const pending = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/TryBoards-*.js', async route => { requested = true; await pending; await route.continue(); });
+  try {
+    await page.goto('/');
+    const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+    const link = page.getByRole('link', { name: 'Try Little Say on the web', exact: true });
+    await link.focus();
+    await expect.poll(() => requested).toBe(true);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await link.press('Enter');
+    await expect(page).toHaveURL(/\/app\/try$/);
+    const loading = page.getByTestId('web-loading');
+    await expect(loading).toBeVisible();
+    await expect(loading).toHaveText('');
+    await expect(loading).toHaveAttribute('aria-busy', 'true');
+    const spinner = page.getByRole('progressbar', { name: 'Loading Little Say', exact: true });
+    await expect(spinner).toBeVisible();
+    const viewport = page.viewportSize()!;
+    const bounds = (await spinner.boundingBox())!;
+    expect(bounds.x + bounds.width / 2).toBeCloseTo(viewport.width / 2, 0);
+    expect(bounds.y + bounds.height / 2).toBeCloseTo(viewport.height / 2, 0);
+    await page.screenshot({ path: 'artifacts/screenshots/trial/loading.png' });
+    release();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
+    await expect(loading).toHaveCount(0);
+    expect(await page.evaluate(() => performance.timeOrigin)).toBe(timeOrigin);
+    await page.goBack();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await page.goForward();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
+    expect(await page.evaluate(() => performance.timeOrigin)).toBe(timeOrigin);
+    expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
+    const scripts = await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => /\/web\/.*\.js$/.test(entry.name)).map(entry => ({ url: entry.name, bytes: (entry as PerformanceResourceTiming).decodedBodySize })));
+    expect(scripts.some(script => /\/App-/.test(script.url))).toBe(false);
+    // Keep cold public entry under 1.5 MB before compression; editor/catalog/identity code belongs to App.
+    expect(scripts.reduce((total, script) => total + script.bytes, 0)).toBeLessThan(1_500_000);
+  } finally { release(); }
+});
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
   test(`homepage describes the app without starting it at ${viewport.width}px`, async ({ page }) => {
@@ -23,16 +70,18 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 1280, height: 720
     await expect(page.locator('.ls-site')).toBeVisible();
     expect(await page.locator('.ls-site').evaluate(element => element.scrollWidth <= element.clientWidth && element.scrollHeight <= element.clientHeight)).toBe(true);
     await expect(page.getByRole('link', { name: 'Try Little Say on the web', exact: true })).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole('link', { name: 'Log in', exact: true })).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole('link', { name: 'Create account', exact: true })).toBeInViewport({ ratio: 1 });
     await expect(page.getByRole('link', { name: 'Google Play — Coming soon', exact: true })).toBeInViewport({ ratio: 1 });
     expect(await page.evaluate(() => indexedDB.databases())).toEqual([]);
     expect(apiRequests).toEqual([]);
     await page.screenshot({ path: `artifacts/screenshots/landing/home-${viewport.width}.png` });
     await page.getByRole('link', { name: 'Try Little Say on the web', exact: true }).click();
-    await expect(page).toHaveURL(/\/app$/);
-    await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/try$/);
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
     await expect(page.locator('.ls-site')).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Try a starter board', exact: true })).toBeVisible();
     await page.goBack();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Little SayLearn to Talk!');
   });
@@ -49,9 +98,22 @@ test('homepage navigation works with a keyboard and installed web apps launch in
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Try Little Say on the web', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/app\/try$/);
   await page.goto('/app/');
   await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
+});
+
+test('landing account links open the requested form directly and preserve Back', async ({ page }) => {
+  for (const [label, path, heading] of [['Log in', 'login', 'Sign in'], ['Create account', 'register', 'Create an account']]) {
+    await page.goto('/');
+    const link = page.getByRole('link', { name: label, exact: true });
+    await expect(link).toHaveAttribute('href', `/app/account/${path}`);
+    await link.focus(); await link.press('Enter');
+    await expect(page).toHaveURL(new RegExp(`/app/account/${path}$`));
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+    await page.goBack();
+    await expect(page.getByRole('link', { name: 'Try Little Say on the web', exact: true })).toBeVisible();
+  }
 });
 
 test('short windows and enlarged text keep the web entry reachable by scrolling', async ({ page }) => {
@@ -67,7 +129,7 @@ test('short windows and enlarged text keep the web entry reachable by scrolling'
   await store.scrollIntoViewIfNeeded();
   await expect(store).toBeInViewport({ ratio: 1 });
   await entry.click();
-  await expect(page).toHaveURL(/\/app$/);
+  await expect(page).toHaveURL(/\/app\/try$/);
 });
 
 test('older iOS home-screen installs bypass the homepage at their original root URL', async ({ page }) => {
