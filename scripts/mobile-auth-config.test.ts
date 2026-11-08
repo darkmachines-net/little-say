@@ -1,11 +1,16 @@
-/** @file Verifies store/development Google callback selection and Apple entitlements match the native application identity. */
+/** @file Verifies release delivery of store/development Google callbacks and Apple entitlements matching each native identity. */
 import { createRequire } from 'node:module';
 import { afterEach, expect, it, vi } from 'vitest';
 
 const require = createRequire(import.meta.url);
 const configure = require('../apps/mobile/app.config.js');
 const base = require('../apps/mobile/app.json').expo;
+const release = require('../release.config.json');
 afterEach(() => { vi.unstubAllEnvs(); });
+
+it('declares both Google callback settings for hosted build and preview delivery', () => {
+  expect(release.mobile.publicVariables).toEqual(expect.arrayContaining(['LITTLE_SAY_GOOGLE_IOS_URL_SCHEME', 'LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME']));
+});
 
 it.each(['development', 'release'])('selects the %s Google iOS callback while preserving Apple capability', variant => {
   vi.stubEnv('EXPO_RELEASE_VARIANT', variant); vi.stubEnv('LITTLE_SAY_CHANNEL', 'beta');
