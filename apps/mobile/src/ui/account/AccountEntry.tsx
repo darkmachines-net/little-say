@@ -1,4 +1,4 @@
-/** @file Wires the illustrated welcome and authentication forms to account actions, leaving successful Home navigation to the session boundary. */
+/** @file Offers configured Google, Apple, and email entry on mobile and web, leaving successful Home navigation to the saved session boundary. */
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import type { AccountController } from '../../services/useAccount';
@@ -6,10 +6,10 @@ import type { Provider } from '../../services/firebaseAccount';
 import type { AccountEntryMode } from '../../services/accountRoute';
 import { Button, Field, Notice } from '../components';
 import { styles } from '../theme';
-import { providerNames } from './components';
+import { providerNames, supportsProvider } from './components';
 import { AccountWelcome } from './AccountWelcome';
 
-/** Render bottom-aligned welcome actions or credential forms; clear credentials on success while the saved session returns the app Home. */
+/** Render welcome actions or credential forms; social entry needs no email/password and supports both new and returning accounts. */
 export function AccountEntry({ account, mode, setMode }: { account: AccountController; mode: AccountEntryMode; setMode: (mode: AccountEntryMode) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,9 +20,11 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
   useEffect(() => { void prepare.current().catch(() => {}); }, [mode]);
   const providers = account.config?.providers ?? ['password'];
   const developmentAccount = __DEV__ && account.config?.emulatorUrl && account.config.projectId.startsWith('demo-') && providers.includes('password') ? account.config.developmentAccount : undefined;
-  const socialProviders = (['apple.com', 'google.com'] as const).filter(provider => providers.includes(provider) && (Platform.OS === 'web' || provider === (Platform.OS === 'ios' ? 'apple.com' : 'google.com')));
+  const providerOrder = Platform.OS === 'android' ? ['google.com', 'apple.com'] as const : ['apple.com', 'google.com'] as const;
+  const socialProviders = providerOrder.filter(provider => providers.includes(provider) && supportsProvider(provider));
   const clear = () => { setPassword(''); setConfirmation(''); };
   const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) clear(); }).catch(() => {});
+  const socialButtons = socialProviders.map(provider => <Button key={provider} kind="secondary" disabled={!account.ready || account.busy || !account.socialAvailable} onPress={() => signIn(provider, { email: '', password: '' })}>Continue with {providerNames[provider]}</Button>);
   const feedback = <>
     {Boolean(account.error) && <Notice>{account.error}</Notice>}
     {Boolean(account.message) && <Text accessibilityLiveRegion="polite" style={styles.body}>{account.message}</Text>}
@@ -36,7 +38,7 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
     {feedback}
     <Button disabled={!account.ready || account.busy} onPress={() => setMode('register')}>Register</Button>
     <Button kind="secondary" disabled={!account.ready || account.busy} onPress={() => setMode('login')}>Log in</Button>
-    {Platform.OS !== 'web' && socialProviders.map(provider => <Button key={provider} kind="secondary" disabled={account.busy || !account.socialAvailable} onPress={() => signIn(provider)}>Continue with {providerNames[provider]}</Button>)}
+    {Platform.OS !== 'web' && socialButtons}
     {recovery}
   </AccountWelcome>;
   return <View style={{ gap: 12 }}>
@@ -51,7 +53,7 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
     {mode === 'register' && <><Text style={styles.small}>Use at least 12 characters.</Text><Field label="Confirm password" value={confirmation} onChangeText={setConfirmation} secureTextEntry autoCapitalize="none" maxLength={128} /></>}
     {mode === 'reset' ? <Button busy={account.busy} disabled={!email.trim()} onPress={() => void account.resetPassword(email).then(() => { if (mounted.current) { setMode('login'); clear(); } }).catch(() => {})}>Send password reset email</Button> : <>
       <Button busy={account.busy} disabled={!account.ready || !account.config || !email.trim() || !password || (mode === 'register' && (password.length < 12 || password !== confirmation))} onPress={() => signIn('password')}>{mode === 'register' ? 'Create account' : 'Sign in'}</Button>
-      {socialProviders.map(provider => <Button key={provider} kind="secondary" disabled={account.busy || !account.socialAvailable} onPress={() => signIn(provider)}>Continue with {providerNames[provider]}</Button>)}
+      {socialButtons}
       {mode === 'login' && <Button kind="ghost" disabled={account.busy} onPress={() => { setMode('reset'); clear(); }}>Forgot password?</Button>}
     </>}
     <Button kind="ghost" disabled={account.busy} onPress={() => { setMode(null); clear(); }}>Cancel</Button>

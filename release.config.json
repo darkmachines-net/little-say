@@ -73,7 +73,8 @@
     "owner": "matthewchartier",
     "slug": "little-say",
     "publicVariables": [
-      "LITTLE_SAY_GOOGLE_IOS_URL_SCHEME"
+      "LITTLE_SAY_GOOGLE_IOS_URL_SCHEME",
+      "LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME"
     ],
     "targets": [
       {

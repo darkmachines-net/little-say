@@ -1,4 +1,4 @@
-/** @file Verifies illustrated authentication, Settings account groups, guarded navigation, and credential lifetimes without routine sync status. */
+/** @file Verifies illustrated account entry, native Google/Apple registration and login choices, and Settings identity/navigation guards. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -42,7 +42,7 @@ async function mount(mode: AccountMode = null, controller = account) {
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
-it.each(['ios', 'android'])('requires sign-in on %s and offers the device provider', async platform => {
+it.each(['ios', 'android'])('requires sign-in on %s and offers its native providers', async platform => {
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
@@ -51,12 +51,51 @@ it.each(['ios', 'android'])('requires sign-in on %s and offers the device provid
   expect(screen!.root.findByProps({ accessibilityLabel: 'Little Say: Learn to Talk!' }).props.accessibilityRole).toBe('header');
   const provider = platform === 'ios' ? 'Apple' : 'Google';
   expect(button(`Continue with ${provider}`)).toBeDefined();
-  expect(button(`Continue with ${platform === 'ios' ? 'Google' : 'Apple'}`)).toBeUndefined();
+  expect(button('Continue with Google')).toBeDefined();
+  if (platform === 'android') expect(button('Continue with Apple')).toBeUndefined();
   expect(prepare).toHaveBeenCalledOnce();
   await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose());
   expect(close).not.toHaveBeenCalled();
   await act(async () => button(`Continue with ${provider}`).props.onPress());
   expect(authenticate).toHaveBeenCalledWith('login', '', '', platform === 'ios' ? 'apple.com' : 'google.com');
+});
+
+it.each([
+  { platform: 'ios', provider: 'google.com', name: 'Google' },
+  { platform: 'ios', provider: 'apple.com', name: 'Apple' },
+  { platform: 'android', provider: 'google.com', name: 'Google' },
+])('supports $name registration and login on $platform without email credentials', async ({ platform, provider, name }) => {
+  native.OS = platform;
+  await mount('register');
+  expect(button('Create account').props.disabled).toBe(true);
+  expect(button(`Continue with ${name}`).props.disabled).toBe(false);
+  await act(async () => button(`Continue with ${name}`).props.onPress());
+  expect(authenticate).toHaveBeenLastCalledWith('register', '', '', provider);
+  await act(async () => screen!.update(view('login', account)));
+  await act(async () => screen!.root.findAllByType('Field' as any).find(node => node.props.label === 'Password')!.props.onChangeText('email-only-password'));
+  await act(async () => button(`Continue with ${name}`).props.onPress());
+  expect(authenticate).toHaveBeenLastCalledWith('login', '', '', provider);
+  expect(modeChange).not.toHaveBeenCalled();
+});
+
+it.each([null, 'login', 'register'] as const)('gates social entry on %s by configured providers, readiness, busy state, and Expo Go support', async mode => {
+  native.OS = 'ios'; await mount(mode);
+  for (const change of [{ busy: true }, { ready: false }, { socialAvailable: false }]) {
+    await act(async () => screen!.update(view(mode, { ...account, ...change })));
+    expect(button('Continue with Google').props.disabled).toBe(true);
+    expect(button('Continue with Apple').props.disabled).toBe(true);
+  }
+  await act(async () => screen!.update(view(mode, { ...account, config: { ...account.config!, providers: ['password'] } })));
+  expect(button('Continue with Google')).toBeUndefined(); expect(button('Continue with Apple')).toBeUndefined();
+});
+
+it('does not offer Apple linking or confirmation on Android', async () => {
+  const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
+  await mount('delete', { ...account, session });
+  expect(button('Permanently delete account').props.disabled).toBe(true);
+  expect(JSON.stringify(screen!.toJSON())).toContain('Use the iOS app or website');
+  await act(async () => screen!.update(view('link-apple', { ...account, session: { ...session!, account: { ...session!.account, providers: ['password'] } } })));
+  expect(button('Link Apple')).toBeUndefined();
 });
 
 it('returns from native forms to welcome without allowing dismissal', async () => {
@@ -159,6 +198,7 @@ it('requires verification credentials on the separate page and discards them whe
 });
 
 it('requires Apple confirmation for deletion even when a password is also linked', async () => {
+  native.OS = 'ios';
   const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
   const disconnect = vi.fn(async () => {});
   await mount('delete', { ...account, session, disconnect });
