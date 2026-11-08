@@ -1,4 +1,4 @@
-/** @file Lints authored JavaScript/TypeScript, React Hooks, file overviews, and public API documentation. */
+/** @file Lints authored JavaScript/TypeScript, React Hooks, file overviews, and public API documentation while permitting Metro's static image/font assets. */
 
 import js from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
@@ -59,8 +59,8 @@ export default defineConfig(
     files: ['apps/mobile/src/**/*.{ts,tsx}'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
-      // Metro resolves bundled image assets through static require calls.
-      '@typescript-eslint/no-require-imports': ['error', { allow: ['\\.png$'] }],
+      // Metro resolves bundled image and font assets through static require calls.
+      '@typescript-eslint/no-require-imports': ['error', { allow: ['\\.(png|ttf)$'] }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
     },

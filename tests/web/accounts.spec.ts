@@ -1,4 +1,4 @@
-/** @file Exercises required entry, starter deletion before verification, Home restoration, private media/conflict recovery, cross-tab refresh, and local-preserving sign-out. */
+/** @file Exercises illustrated email entry, starter deletion before verification, Home restoration, private media/conflict recovery, cross-tab refresh, and local-preserving sign-out. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { createHash, randomUUID } from 'node:crypto';
@@ -45,10 +45,10 @@ test('web sign-in gates legacy local boards, cancelled forms, settings links, an
   await expect(page.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Continue without an account', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Back', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in with Email', exact: true }).click();
   await page.getByLabel('Email', { exact: true }).fill('cancelled@example.test');
   await page.getByRole('button', { name: 'Back', exact: true }).click();
-  await page.getByRole('button', { name: 'Register', exact: true }).click();
+  await page.getByRole('button', { name: 'Create Little Say account', exact: true }).click();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   const library = starterLibrary(); library.settings.autoSpeech = false;
   await page.evaluate(async library => {
@@ -80,7 +80,7 @@ async function readLibrary(page: Page) {
   });
 }
 async function signIn(page: Page, username: string) {
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in with Email', exact: true }).click();
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -132,7 +132,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
       }); db.close();
     }, { library, png, pictureId, audio: [...audio], audioId, speechKey });
     await page.reload();
-    await page.getByRole('button', { name: 'Register', exact: true }).click();
+    await page.getByRole('button', { name: 'Create Little Say account', exact: true }).click();
     await page.getByRole('textbox', { name: 'Email', exact: true }).fill(username);
     await page.getByLabel('Password', { exact: true }).fill(password);
     await page.getByLabel('Confirm password', { exact: true }).fill(password);
@@ -198,7 +198,7 @@ test('accounts restore all asset types to a fresh device and merge offline confl
     await expect.poll(async () => (await readLibrary(other)).boards.map((board: any) => board.title)).toEqual(['Edited on tablet', 'Edited on phone (conflict copy)']);
     await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await signOut(other);
-    await expect(other.getByRole('button', { name: 'Log in', exact: true })).toBeVisible();
+    await expect(other.getByRole('button', { name: 'Sign in with Email', exact: true })).toBeVisible();
     expect((await readLibrary(other)).boards).toHaveLength(2);
     await second.setOffline(true); await other.reload();
     await expect(other.getByRole('heading', { name: 'Little Say: Learn to Talk!', exact: true })).toBeVisible();

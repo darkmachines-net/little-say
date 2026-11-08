@@ -1,4 +1,4 @@
-/** @file Exercises grouped Settings, language limits, About, Web Audio after media migration, offline links, and account-entry navigation. */
+/** @file Exercises grouped Settings, language limits, About, Web Audio after media migration, offline links, and email-account entry navigation. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { openBoardLanguages } from './boardEditor';
@@ -281,7 +281,7 @@ test('legacy account links open standalone forms with refresh and browser histor
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Sign in', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await page.getByRole('button', { name: 'Register', exact: true }).click();
+  await page.getByRole('button', { name: 'Create Little Say account', exact: true }).click();
   await expect(page).toHaveURL(/\/app\/account\/register$/);
   await page.reload();
   await expect(page.getByLabel('Confirm password', { exact: true })).toBeVisible();

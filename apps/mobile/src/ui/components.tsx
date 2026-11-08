@@ -1,4 +1,4 @@
-/** @file Defines parent-facing buttons, fields, notices, and dialogs shared by the account app and public trial. */
+/** @file Defines parent-facing filled, outlined, and text actions, fields, notices, and dialogs shared by the account app and public trial. */
 
 import { useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
@@ -10,11 +10,11 @@ import { theme, styles } from './theme';
 
 /**
  * Render a touch-sized action with optional icon and busy feedback; busy or disabled actions cannot be
- * pressed.
+ * pressed. Outline actions use a white surface and neutral border for secondary welcome choices.
  */
-export function Button({ children, onPress, icon: Icon, kind = 'primary', disabled = false, busy = false, compact = false, accessibilityLabel, testID }: { children?: ReactNode; onPress: () => void; icon?: LucideIcon; kind?: 'primary' | 'secondary' | 'ghost' | 'danger'; disabled?: boolean; busy?: boolean; compact?: boolean; accessibilityLabel?: string; testID?: string }) {
-  const color = kind === 'primary' ? 'white' : kind === 'danger' ? theme.red : theme.accent;
-  return <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={accessibilityLabel ?? (typeof children === 'string' ? children : undefined)} accessibilityState={{ disabled: disabled || busy, busy }} disabled={disabled || busy} onPress={onPress} style={({ pressed }) => [{ minHeight: 50, paddingHorizontal: compact ? 12 : 20, paddingVertical: 11, borderRadius: 15, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, backgroundColor: kind === 'primary' ? theme.accent : kind === 'secondary' ? theme.accentSoft : kind === 'danger' ? '#FAEBE8' : 'transparent', borderWidth: kind === 'secondary' ? 1 : 0, borderColor: theme.accentSoft, opacity: disabled || busy ? 0.5 : pressed ? 0.75 : 1 }, compact && { minWidth: 44 }]}>
+export function Button({ children, onPress, icon: Icon, kind = 'primary', disabled = false, busy = false, compact = false, accessibilityLabel, testID }: { children?: ReactNode; onPress: () => void; icon?: LucideIcon; kind?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'; disabled?: boolean; busy?: boolean; compact?: boolean; accessibilityLabel?: string; testID?: string }) {
+  const color = kind === 'primary' ? 'white' : kind === 'danger' ? theme.red : kind === 'outline' ? theme.ink : theme.accent;
+  return <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={accessibilityLabel ?? (typeof children === 'string' ? children : undefined)} accessibilityState={{ disabled: disabled || busy, busy }} disabled={disabled || busy} onPress={onPress} style={({ pressed }) => [{ minHeight: 50, paddingHorizontal: compact ? 12 : 20, paddingVertical: 11, borderRadius: 15, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, backgroundColor: kind === 'primary' ? theme.accent : kind === 'secondary' ? theme.accentSoft : kind === 'outline' ? theme.surface : kind === 'danger' ? '#FAEBE8' : 'transparent', borderWidth: kind === 'secondary' || kind === 'outline' ? 1 : 0, borderColor: kind === 'outline' ? theme.line : theme.accentSoft, opacity: disabled || busy ? 0.5 : pressed ? 0.75 : 1 }, compact && { minWidth: 44 }]}>
     {busy ? <ActivityIndicator size="small" color={color} /> : Icon ? <Icon size={18} color={color} strokeWidth={1.8} /> : null}
     {children ? <Text style={{ fontSize: 15, color, fontWeight: '700' }}>{children}</Text> : null}
   </Pressable>;

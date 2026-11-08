@@ -1,4 +1,4 @@
-/** @file Verifies illustrated account entry, native Google/Apple registration and login choices, and Settings identity/navigation guards. */
+/** @file Verifies the three-action native welcome, shared provider entry, email-only forms, and Settings identity/navigation guards. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -22,6 +22,7 @@ vi.mock('lucide-react-native/icons/arrow-left', () => ({ default: 'ArrowLeft' })
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', useSafeAreaInsets: () => ({ top: 48, bottom: 34, left: 0, right: 0 }) }));
 vi.mock('./Brand', () => ({ Brand: 'Brand', MountainMark: 'MountainMark' }));
 vi.mock('./components', () => ({ Button: 'Button', Field: 'Field', Notice: 'Notice' }));
+vi.mock('./account/ProviderSignInButton', () => ({ ProviderSignInButton: 'ProviderSignInButton' }));
 
 let screen: ReactTestRenderer | undefined;
 const close = vi.fn(), back = vi.fn(), modeChange = vi.fn();
@@ -29,8 +30,9 @@ const prepare = vi.fn(async () => {}), authenticate = vi.fn(async () => {});
 const account = { ready: true, session: null, needsLogin: false, busy: false, error: '', message: '', socialAvailable: true, prepare, authenticate,
   syncing: false, backup: { state: 'synced', pending: false, error: '', conflicts: false }, clearFeedback: vi.fn(),
   config: { providers: ['password', 'google.com', 'apple.com'] } } as unknown as AccountController;
-function buttons() { return screen!.root.findAllByType('Button' as any); }
-function button(label: string) { return buttons().find(node => (node.props.accessibilityLabel || React.Children.toArray(node.props.children).join('')) === label)!; }
+function buttons() { return screen!.root.findAll(node => node.type === ('Button' as any) || node.type === ('ProviderSignInButton' as any)); }
+function buttonLabel(node: ReturnType<typeof buttons>[number]) { return node.props.provider ? `Sign in with ${node.props.provider === 'apple.com' ? 'Apple' : 'Google'}` : node.props.accessibilityLabel || React.Children.toArray(node.props.children).join(''); }
+function button(label: string) { return buttons().find(node => buttonLabel(node) === label)!; }
 function view(mode: AccountMode, controller: AccountController) {
   return controller.session && !controller.needsLogin
     ? React.createElement(SettingsScreen, { account: controller, library: starterLibrary(), route: isAccountEntryMode(mode) ? { page: 'overview' } : { page: 'account', mode }, onNavigate: route => modeChange(route.page === 'account' ? route.mode : null), onBack: mode ? back : close, onSave: async () => {}, onBeforeRestart: async () => {} })
@@ -42,51 +44,54 @@ async function mount(mode: AccountMode = null, controller = account) {
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
-it.each(['ios', 'android'])('requires sign-in on %s and offers its native providers', async platform => {
+it.each(['ios', 'android'])('offers exactly three bottom actions on %s with one provider entry for new and returning users', async platform => {
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
-  expect(button('Log in')).toBeDefined(); expect(button('Register')).toBeDefined();
+  const provider = platform === 'ios' ? 'Apple' : 'Google';
+  expect(buttons().map(buttonLabel)).toEqual([`Sign in with ${provider}`, 'Create Little Say account', 'Sign in with Email']);
   expect(screen!.root.findAllByProps({ testID: 'app-header' })).toHaveLength(0);
   expect(screen!.root.findByProps({ accessibilityLabel: 'Little Say: Learn to Talk!' }).props.accessibilityRole).toBe('header');
-  const provider = platform === 'ios' ? 'Apple' : 'Google';
-  expect(button(`Continue with ${provider}`)).toBeDefined();
-  expect(button('Continue with Google')).toBeDefined();
-  if (platform === 'android') expect(button('Continue with Apple')).toBeUndefined();
   expect(prepare).toHaveBeenCalledOnce();
   await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose());
   expect(close).not.toHaveBeenCalled();
-  await act(async () => button(`Continue with ${provider}`).props.onPress());
+  await act(async () => button(`Sign in with ${provider}`).props.onPress());
   expect(authenticate).toHaveBeenCalledWith('login', '', '', platform === 'ios' ? 'apple.com' : 'google.com');
+  await act(async () => button('Create Little Say account').props.onPress());
+  expect(modeChange).toHaveBeenLastCalledWith('register');
+  await act(async () => button('Sign in with Email').props.onPress());
+  expect(modeChange).toHaveBeenLastCalledWith('login');
 });
 
-it.each([
-  { platform: 'ios', provider: 'google.com', name: 'Google' },
-  { platform: 'ios', provider: 'apple.com', name: 'Apple' },
-  { platform: 'android', provider: 'google.com', name: 'Google' },
-])('supports $name registration and login on $platform without email credentials', async ({ platform, provider, name }) => {
+it.each(['ios', 'android', 'web'])('keeps provider entry out of all email forms on %s', async platform => {
   native.OS = platform;
   await mount('register');
   expect(button('Create account').props.disabled).toBe(true);
-  expect(button(`Continue with ${name}`).props.disabled).toBe(false);
-  await act(async () => button(`Continue with ${name}`).props.onPress());
-  expect(authenticate).toHaveBeenLastCalledWith('register', '', '', provider);
-  await act(async () => screen!.update(view('login', account)));
-  await act(async () => screen!.root.findAllByType('Field' as any).find(node => node.props.label === 'Password')!.props.onChangeText('email-only-password'));
-  await act(async () => button(`Continue with ${name}`).props.onPress());
-  expect(authenticate).toHaveBeenLastCalledWith('login', '', '', provider);
-  expect(modeChange).not.toHaveBeenCalled();
+  for (const mode of ['register', 'login', 'reset'] as const) {
+    await act(async () => screen!.update(view(mode, account)));
+    expect(button('Sign in with Google')).toBeUndefined();
+    expect(button('Sign in with Apple')).toBeUndefined();
+  }
+  expect(authenticate).not.toHaveBeenCalled();
 });
 
-it.each([null, 'login', 'register'] as const)('gates social entry on %s by configured providers, readiness, busy state, and Expo Go support', async mode => {
-  native.OS = 'ios'; await mount(mode);
+it.each(['ios', 'android', 'web'])('gates welcome providers on %s by configuration, readiness, busy state, and Expo Go support', async platform => {
+  native.OS = platform; await mount();
   for (const change of [{ busy: true }, { ready: false }, { socialAvailable: false }]) {
-    await act(async () => screen!.update(view(mode, { ...account, ...change })));
-    expect(button('Continue with Google').props.disabled).toBe(true);
-    expect(button('Continue with Apple').props.disabled).toBe(true);
+    await act(async () => screen!.update(view(null, { ...account, ...change })));
+    const providers = screen!.root.findAllByType('ProviderSignInButton' as any);
+    expect(providers.length).toBeGreaterThan(0);
+    for (const provider of providers) expect(provider.props.disabled || provider.props.busy).toBe(true);
   }
-  await act(async () => screen!.update(view(mode, { ...account, config: { ...account.config!, providers: ['password'] } })));
-  expect(button('Continue with Google')).toBeUndefined(); expect(button('Continue with Apple')).toBeUndefined();
+  await act(async () => screen!.update(view(null, { ...account, config: { ...account.config!, providers: ['password'] } })));
+  expect(buttons().map(buttonLabel)).toEqual(['Create Little Say account', 'Sign in with Email']);
+});
+
+it('keeps Google available on iOS while Apple is not configured', async () => {
+  native.OS = 'ios'; await mount(null, { ...account, config: { ...account.config!, providers: ['password', 'google.com'] } });
+  expect(buttons().map(buttonLabel)).toEqual(['Sign in with Google', 'Create Little Say account', 'Sign in with Email']);
+  await act(async () => button('Sign in with Google').props.onPress());
+  expect(authenticate).toHaveBeenCalledWith('login', '', '', 'google.com');
 });
 
 it('does not offer Apple linking or confirmation on Android', async () => {
@@ -122,10 +127,10 @@ it('allows returning Home from account settings while cloud restoration is runni
   await act(async () => button('Boards').props.onPress()); expect(close).toHaveBeenCalledOnce();
 });
 
-it('offers both configured web providers and retries unavailable sign-in options', async () => {
-  native.OS = 'web'; await mount('login');
-  expect(button('Continue with Apple')).toBeDefined(); expect(button('Continue with Google')).toBeDefined();
-  await act(async () => screen!.update(view('login', { ...account, config: undefined, error: 'Offline' })));
+it('offers both configured providers on web welcome and retries unavailable sign-in options', async () => {
+  native.OS = 'web'; await mount();
+  expect(button('Sign in with Apple')).toBeDefined(); expect(button('Sign in with Google')).toBeDefined();
+  await act(async () => screen!.update(view(null, { ...account, config: undefined, error: 'Offline' })));
   await act(async () => button('Retry sign-in options').props.onPress());
   expect(prepare).toHaveBeenCalledTimes(2);
 });
@@ -136,7 +141,7 @@ it('shows signed-in management and restores welcome after sign-out', async () =>
   await act(async () => button('Boards').props.onPress());
   expect(close).toHaveBeenCalledOnce();
   await act(async () => screen!.update(view(null, account)));
-  expect(button('Register')).toBeDefined(); expect(button('Continue to boards')).toBeUndefined();
+  expect(button('Create Little Say account')).toBeDefined(); expect(button('Continue to boards')).toBeUndefined();
   expect(button('Continue without an account')).toBeUndefined();
 });
 
@@ -226,7 +231,7 @@ it('confirms sign-out on its own screen and does not disconnect merely by naviga
 });
 
 it('blocks Settings navigation during account mutations', async () => {
-  await mount(); expect(button('Register')).toBeDefined();
+  await mount(); expect(button('Create Little Say account')).toBeDefined();
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
   await act(async () => screen!.update(view('delete', { ...account, session, busy: true })));
   await act(async () => button('Settings').props.onPress());
