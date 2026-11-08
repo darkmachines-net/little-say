@@ -1,6 +1,6 @@
-/** @file Shares accessible account groups, navigation rows, provider labels, and action feedback. */
+/** @file Shares accessible account groups, navigation rows, provider labels/platform support, and action feedback. */
 import type { ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import { ChevronRight, type LucideIcon } from 'lucide-react-native';
 import type { Provider } from '../../services/firebaseAccount';
 import type { AccountController } from '../../services/useAccount';
@@ -8,6 +8,11 @@ import { Notice } from '../components';
 import { styles, theme } from '../theme';
 
 export const providerNames: Record<Provider, string> = { password: 'Email & password', 'google.com': 'Google', 'apple.com': 'Apple' };
+
+/** Offer native Google on Android/iOS and native Apple on iOS; browser Firebase supports both providers. */
+export function supportsProvider(provider: Provider): boolean {
+  return provider !== 'apple.com' || Platform.OS === 'ios' || Platform.OS === 'web';
+}
 
 /** Filter server provider identifiers to supported sign-in methods without inventing a fallback credential. */
 export function linkedProviders(account: AccountController): Provider[] {

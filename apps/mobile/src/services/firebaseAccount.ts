@@ -1,4 +1,4 @@
-/** @file Exchanges origin-bound Firebase credentials and starter snapshots; delegates browser CSRF to the SDK-independent session helper. */
+/** @file Exchanges email or Google/Apple credentials for origin-bound Firebase sessions and starter snapshots, delegating browser CSRF to the shared helper. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
@@ -62,7 +62,10 @@ async function exchange(server: string, context: Context, user: User): Promise<A
   return session;
 }
 
-/** Sign in or register and return starter content for local installation; private backup waits for email verification. */
+/**
+ * Sign in or register and return starter content for local installation; private backup waits for email verification.
+ * Google/Apple use the same Firebase credential exchange in either mode, creating the identity on its first sign-in.
+ */
 export async function authenticateAccount(server: string, mode: 'login' | 'register', email: string, password: string, provider: Provider = 'password') {
   const context = await accountContext(server);
   try {
@@ -132,7 +135,7 @@ export function accountError(error: unknown): string {
   const code = (error as { code?: string }).code;
   if (['auth/account-exists-with-different-credential', 'auth/credential-already-in-use', 'auth/email-already-in-use'].includes(code ?? '')) return 'Sign in with the method already associated with this account, then link the additional method in Settings under Account.';
   if (['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'].includes(code ?? '')) return 'Check your email and sign-in details, then try again.';
-  if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return 'Sign-in was cancelled. Your local boards are unchanged.';
+  if (['auth/user-cancelled', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(code ?? '')) return 'Sign-in was cancelled. Your local boards are unchanged.';
   if (code === 'auth/too-many-requests') return 'Too many attempts. Try again shortly.';
   if (code?.startsWith('auth/')) return 'Sign-in could not complete. Check your connection and try again.';
   return error instanceof Error ? error.message : 'Account service is unavailable. Your local boards are unchanged.';

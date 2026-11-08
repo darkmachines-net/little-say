@@ -1,5 +1,5 @@
 /**
- * @file Resolves Expo branding, native versions, iOS export compliance, server origin, and OTA
+ * @file Resolves Expo branding, native versions, iOS sign-in/export compliance, server origin, and OTA
  * settings from the release contract.
  */
 
@@ -8,17 +8,20 @@ const release = require('../../native-release.json');
 const colors = require('./assets/brand/colors.json');
 
 /**
- * Merge the base Expo config with release metadata, exempt iOS encryption usage, and the selected
+ * Merge the base Expo config with release metadata, native sign-in setup, exempt iOS encryption usage, and the selected
  * update channel; reject unknown channels. Export compliance applies to every iOS build variant.
  */
 module.exports = ({ config }) => {
   const channel = process.env.LITTLE_SAY_CHANNEL || 'beta';
   if (!['beta', 'production'].includes(channel)) throw new Error('Unknown update channel.');
   const projectId = release.expoProjectId;
+  const googleIosUrlScheme = (process.env.EXPO_RELEASE_VARIANT === 'development'
+    ? process.env.LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME
+    : process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME) || '';
   // The native Google SDK autolinks even without an OAuth scheme. In that case the Nitro
   // plugin is absent, so supply only the module maps required by its Swift AppCheck dependency.
-  const googleIosPlugin = process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME
-    ? ['react-native-nitro-google-signin', { iosUrlScheme: process.env.LITTLE_SAY_GOOGLE_IOS_URL_SCHEME }]
+  const googleIosPlugin = googleIosUrlScheme
+    ? ['react-native-nitro-google-signin', { iosUrlScheme: googleIosUrlScheme }]
     : ['expo-build-properties', { ios: { extraPods: [
       { name: 'GoogleUtilities', modular_headers: true },
       { name: 'RecaptchaInterop', modular_headers: true },
@@ -55,6 +58,7 @@ module.exports = ({ config }) => {
       ...config.extra,
       releaseVersion: release.version,
       serverUrl: release.serverUrl || '',
+      googleIosUrlScheme,
       ...(projectId ? { eas: { projectId } } : {}),
     },
   });
