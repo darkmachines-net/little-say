@@ -1,4 +1,4 @@
-/** @file Provides Settings account actions with platform-supported fresh identity checks and Apple deletion recovery. */
+/** @file Provides Settings account actions with fresh native or Android web identity checks and Apple deletion recovery. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Mail, KeyRound, UserRound } from 'lucide-react-native';
@@ -13,7 +13,7 @@ const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-em
 
 /**
  * Render one signed-in Settings action at a time. Route remounts discard credentials; reauthentication stays
- * bound to a supported existing provider, and deletion always uses Apple when linked (iOS/web). Verification returns to its caller.
+ * bound to a supported existing provider, and deletion always uses Apple when linked, including Android's web flow. Verification returns to its caller.
  */
 export function AccountManagement({ account, mode, onNavigate, onBack }: {
   account: AccountController; mode: Exclude<AccountManagementMode, 'backup'>; onNavigate: (mode: AccountMode) => void; onBack: () => void;
@@ -38,7 +38,7 @@ export function AccountManagement({ account, mode, onNavigate, onBack }: {
     {providers.length > 1 && !appleDeletion && <><Text style={styles.small}>Confirm your identity with a linked sign-in method.</Text>{providers.map(provider => <Button key={provider} kind={current === provider ? 'primary' : 'secondary'} disabled={account.busy || !supportsProvider(provider) || (provider !== 'password' && !account.socialAvailable)} onPress={() => { setChosen(provider); setPassword(''); }}>Use {providerNames[provider]}</Button>)}</>}
     {current === 'password' && <Field label="Current password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="current-password" editable={!account.busy} />}
     {current && current !== 'password' && <Text style={styles.small}>Continue with {providerNames[current]} to confirm your identity{appleDeletion ? ' and revoke its authorization' : ''}.</Text>}
-    {current && !supportsProvider(current) && <Notice>Use the iOS app or website to confirm with Apple{appleDeletion ? ' and delete this account' : ''}.</Notice>}
+    {current && !supportsProvider(current) && <Notice>Use the Little Say website to confirm with Apple{appleDeletion ? ' and delete this account' : ''}.</Notice>}
     {!account.socialAvailable && (current !== 'password' || target && target !== 'password') && <Notice>Google and Apple account actions require a development or installed app build. Email works in Expo Go.</Notice>}
   </View>;
   if (identity.deletionPending && mode !== 'delete' && mode !== 'sign-out') return <View style={{ gap: 16 }}><Notice>Account deletion is pending. Backup and sign-in changes are blocked.</Notice><Button onPress={() => onNavigate('delete')}>Finish deletion</Button></View>;

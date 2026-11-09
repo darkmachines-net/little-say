@@ -1,4 +1,4 @@
-/** @file Verifies the three-action native welcome, shared provider entry, email-only forms, and Settings identity/navigation guards. */
+/** @file Verifies both providers on the illustrated welcome, email-only forms, and cross-platform Settings identity/navigation guards. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -44,19 +44,21 @@ async function mount(mode: AccountMode = null, controller = account) {
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
-it.each(['ios', 'android'])('offers exactly three bottom actions on %s with one provider entry for new and returning users', async platform => {
+it.each(['ios', 'android'])('keeps both providers on the %s welcome for new and returning users, ordered by platform preference', async platform => {
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
-  const provider = platform === 'ios' ? 'Apple' : 'Google';
-  expect(buttons().map(buttonLabel)).toEqual([`Sign in with ${provider}`, 'Create Little Say account', 'Sign in with Email']);
+  const providers = platform === 'ios' ? ['Apple', 'Google'] : ['Google', 'Apple'];
+  expect(buttons().map(buttonLabel)).toEqual([...providers.map(provider => `Sign in with ${provider}`), 'Create Little Say account', 'Sign in with Email']);
   expect(screen!.root.findAllByProps({ testID: 'app-header' })).toHaveLength(0);
   expect(screen!.root.findByProps({ accessibilityLabel: 'Little Say: Learn to Talk!' }).props.accessibilityRole).toBe('header');
   expect(prepare).toHaveBeenCalledOnce();
   await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose());
   expect(close).not.toHaveBeenCalled();
-  await act(async () => button(`Sign in with ${provider}`).props.onPress());
-  expect(authenticate).toHaveBeenCalledWith('login', '', '', platform === 'ios' ? 'apple.com' : 'google.com');
+  for (const provider of providers) {
+    await act(async () => button(`Sign in with ${provider}`).props.onPress());
+    expect(authenticate).toHaveBeenLastCalledWith('login', '', '', provider === 'Apple' ? 'apple.com' : 'google.com');
+  }
   await act(async () => button('Create Little Say account').props.onPress());
   expect(modeChange).toHaveBeenLastCalledWith('register');
   await act(async () => button('Sign in with Email').props.onPress());
@@ -94,13 +96,18 @@ it('keeps Google available on iOS while Apple is not configured', async () => {
   expect(authenticate).toHaveBeenCalledWith('login', '', '', 'google.com');
 });
 
-it('does not offer Apple linking or confirmation on Android', async () => {
+it('allows Android Apple confirmation for deletion and linking', async () => {
   const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
-  await mount('delete', { ...account, session });
-  expect(button('Permanently delete account').props.disabled).toBe(true);
-  expect(JSON.stringify(screen!.toJSON())).toContain('Use the iOS app or website');
+  const disconnect = vi.fn(async () => {});
+  await mount('delete', { ...account, session, disconnect });
+  expect(button('Permanently delete account').props.disabled).toBe(false);
+  await act(async () => button('Permanently delete account').props.onPress());
+  expect(disconnect).toHaveBeenCalledWith(true, '', 'apple.com');
   await act(async () => screen!.update(view('link-apple', { ...account, session: { ...session!, account: { ...session!.account, providers: ['password'] } } })));
-  expect(button('Link Apple')).toBeUndefined();
+  expect(button('Link Apple')).toBeDefined();
+  expect(button('Link Apple').props.disabled).toBe(true);
+  await act(async () => screen!.root.findByType('Field' as any).props.onChangeText('current password'));
+  expect(button('Link Apple').props.disabled).toBe(false);
 });
 
 it('returns from native forms to welcome without allowing dismissal', async () => {

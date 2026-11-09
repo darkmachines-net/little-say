@@ -1,4 +1,4 @@
-/** @file Keeps provider sign-in on the illustrated welcome and email registration, sign-in, and reset on separate forms. */
+/** @file Keeps both configured providers on the illustrated welcome and email registration, sign-in, and reset on separate forms. */
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import { Mail } from 'lucide-react-native';
@@ -11,7 +11,7 @@ import { supportsProvider } from './components';
 import { AccountWelcome } from './AccountWelcome';
 import { ProviderSignInButton } from './ProviderSignInButton';
 
-/** Render three native welcome choices, preferring Apple on iOS and Google on Android; browser welcome retains both configured providers. Email forms never repeat provider entry. */
+/** Keep both providers reachable on welcome, ordering Google first on Android and Apple first elsewhere. Email forms never repeat provider entry. */
 export function AccountEntry({ account, mode, setMode }: { account: AccountController; mode: AccountEntryMode; setMode: (mode: AccountEntryMode) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,8 +23,7 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
   const providers = account.config?.providers ?? ['password'];
   const developmentAccount = __DEV__ && account.config?.emulatorUrl && account.config.projectId.startsWith('demo-') && providers.includes('password') ? account.config.developmentAccount : undefined;
   const providerOrder = Platform.OS === 'android' ? ['google.com', 'apple.com'] as const : ['apple.com', 'google.com'] as const;
-  const availableProviders = providerOrder.filter(provider => providers.includes(provider) && supportsProvider(provider));
-  const socialProviders = Platform.OS === 'web' ? availableProviders : availableProviders.slice(0, 1);
+  const socialProviders = providerOrder.filter(provider => providers.includes(provider) && supportsProvider(provider));
   const clear = () => { setPassword(''); setConfirmation(''); };
   const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) clear(); }).catch(() => {});
   const feedback = <>

@@ -1,4 +1,4 @@
-/** @file Verifies interactive native Google selection, ephemeral provider state, Apple nonce/state integrity, cancellation, and configuration guards. */
+/** @file Verifies Google selection and iOS/Android Apple nonce/state integrity, cancellation, callback configuration, and deletion grants. */
 import { beforeEach, expect, it, vi } from 'vitest';
 import { GoogleAuthProvider, OAuthProvider } from 'firebase/auth';
 import type { AuthConfig } from '@little-say/core';
@@ -7,6 +7,7 @@ import { nativeCredential } from './firebaseProviders';
 const native = vi.hoisted(() => ({ OS: 'ios' }));
 const google = vi.hoisted(() => ({ configure: vi.fn(), checkPlayServices: vi.fn(), signOut: vi.fn(), presentExplicitSignIn: vi.fn() }));
 const apple = vi.hoisted(() => ({ isSupported: true, performRequest: vi.fn(), Error: { CANCELED: '1001' }, Operation: { LOGIN: 1 }, Scope: { FULL_NAME: 1, EMAIL: 0 } }));
+const androidApple = vi.hoisted(() => ({ isSupported: true, configure: vi.fn(), signIn: vi.fn(), Error: { SIGNIN_CANCELLED: 'E_SIGNIN_CANCELLED_ERROR' }, ResponseType: { ALL: 'ALL' }, Scope: { ALL: 'ALL' } }));
 const randomUUID = vi.hoisted(() => vi.fn());
 const extra = vi.hoisted(() => ({ googleIosUrlScheme: 'com.googleusercontent.apps.ios-client' }));
 vi.mock('react-native', () => ({ Platform: native }));
@@ -19,16 +20,17 @@ vi.mock('react-native-nitro-google-signin', () => ({
   isErrorWithCode: (error: any) => typeof error?.code === 'string',
   statusCodes: { SIGN_IN_CANCELLED: 'SIGN_IN_CANCELLED' },
 }));
-vi.mock('@invertase/react-native-apple-authentication', () => ({ appleAuth: apple }));
+vi.mock('@invertase/react-native-apple-authentication', () => ({ appleAuth: apple, appleAuthAndroid: androidApple }));
 
-const config: AuthConfig = { projectId: 'test', apiKey: 'key', appId: 'app', authDomain: 'test.firebaseapp.com', providers: ['google.com', 'apple.com'], googleWebClientId: 'web-client', googleIosClientId: 'ios-client.apps.googleusercontent.com' };
+const config: AuthConfig = { projectId: 'test', apiKey: 'key', appId: 'app', authDomain: 'test.firebaseapp.com', providers: ['google.com', 'apple.com'], googleWebClientId: 'web-client', googleIosClientId: 'ios-client.apps.googleusercontent.com', appleServiceId: 'test.app.auth', appleRedirectUri: 'https://test.firebaseapp.com/__/auth/handler' };
 const success = { type: 'success', data: { idToken: 'google-token' } };
 beforeEach(() => {
-  vi.resetAllMocks(); native.OS = 'ios'; apple.isSupported = true;
+  vi.resetAllMocks(); native.OS = 'ios'; apple.isSupported = true; androidApple.isSupported = true;
   extra.googleIosUrlScheme = 'com.googleusercontent.apps.ios-client';
   google.signOut.mockResolvedValue(undefined); google.presentExplicitSignIn.mockResolvedValue(success);
   randomUUID.mockReturnValueOnce('raw-nonce').mockReturnValueOnce('request-state');
   apple.performRequest.mockResolvedValue({ identityToken: 'apple-token', authorizationCode: 'revocation-code', state: 'request-state' });
+  androidApple.signIn.mockResolvedValue({ id_token: 'android-apple-token', code: 'android-revocation-code', state: 'request-state' });
 });
 
 it.each(['ios', 'android'])('prompts for a Google identity on %s and clears native state before/after the attempt', async platform => {
@@ -98,10 +100,52 @@ it('normalizes native Apple cancellation', async () => {
   await expect(nativeCredential('apple.com', config)).rejects.toMatchObject({ code: 'auth/user-cancelled' });
 });
 
-it('rejects unsupported Apple devices and never opens an Android browser flow', async () => {
+it('rejects unsupported native Apple devices', async () => {
   apple.isSupported = false;
   await expect(nativeCredential('apple.com', config)).rejects.toThrow('unavailable on this device');
-  native.OS = 'android';
-  await expect(nativeCredential('apple.com', config)).rejects.toThrow('iOS app or website');
   expect(apple.performRequest).not.toHaveBeenCalled();
+});
+
+it('uses Android web sign-in with the Services ID, raw nonce, and registered callback, retaining the callback-bound deletion code', async () => {
+  native.OS = 'android';
+  const result = await nativeCredential('apple.com', config);
+  expect(androidApple.configure).toHaveBeenCalledWith({ clientId: config.appleServiceId, redirectUri: config.appleRedirectUri,
+    responseType: 'ALL', scope: 'ALL', nonce: 'raw-nonce', state: 'request-state' });
+  expect(result.credential.toJSON()).toEqual(new OAuthProvider('apple.com').credential({ idToken: 'android-apple-token', rawNonce: 'raw-nonce' }).toJSON());
+  expect(result.apple).toEqual({ token: 'android-revocation-code', type: 'CODE', redirectUri: config.appleRedirectUri });
+  expect(apple.performRequest).not.toHaveBeenCalled();
+});
+
+it.each([{ id_token: '', state: 'request-state' }, { id_token: 'token', state: 'other-state' }, { id_token: 'token' }])('rejects unverifiable Android Apple responses: %j', async response => {
+  native.OS = 'android'; androidApple.signIn.mockResolvedValue(response);
+  await expect(nativeCredential('apple.com', config)).rejects.toThrow('could not be verified');
+});
+
+it.each([
+  { appleServiceId: '' }, { appleRedirectUri: '' }, { appleRedirectUri: 'http://test.firebaseapp.com/__/auth/handler' },
+  { appleRedirectUri: 'https://user:password@test.firebaseapp.com/__/auth/handler' }, { appleRedirectUri: 'https://test.firebaseapp.com/__/auth/handler#fragment' },
+])('rejects missing or invalid Android web configuration before opening Apple: %j', async change => {
+  native.OS = 'android';
+  await expect(nativeCredential('apple.com', { ...config, ...change })).rejects.toThrow(/configured|HTTPS/);
+  expect(androidApple.configure).not.toHaveBeenCalled(); expect(androidApple.signIn).not.toHaveBeenCalled();
+});
+
+it('normalizes Android cancellation and generates fresh nonce/state on retry', async () => {
+  native.OS = 'android'; androidApple.signIn.mockRejectedValueOnce({ code: 'E_SIGNIN_CANCELLED_ERROR' });
+  await expect(nativeCredential('apple.com', config)).rejects.toMatchObject({ code: 'auth/user-cancelled' });
+  randomUUID.mockReturnValueOnce('retry-nonce').mockReturnValueOnce('retry-state');
+  androidApple.signIn.mockResolvedValueOnce({ id_token: 'retry-token', state: 'retry-state', code: '' });
+  const result = await nativeCredential('apple.com', config);
+  expect(androidApple.configure).toHaveBeenLastCalledWith(expect.objectContaining({ nonce: 'retry-nonce', state: 'retry-state' }));
+  expect(result.credential.toJSON()).toEqual(new OAuthProvider('apple.com').credential({ idToken: 'retry-token', rawNonce: 'retry-nonce' }).toJSON());
+  expect(result.apple).toBeUndefined();
+});
+
+it('preserves Android provider failures and rejects unsupported devices', async () => {
+  native.OS = 'android';
+  const failure = new Error('Apple unavailable'); androidApple.signIn.mockRejectedValue(failure);
+  await expect(nativeCredential('apple.com', config)).rejects.toBe(failure);
+  androidApple.isSupported = false;
+  await expect(nativeCredential('apple.com', config)).rejects.toThrow('unavailable on this device');
+  expect(androidApple.signIn).toHaveBeenCalledOnce();
 });
