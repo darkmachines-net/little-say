@@ -1,7 +1,8 @@
-/** @file Performs concept analysis, pixel-based picture selection, and bounded OpenAI illustration generation. */
+/** @file Uses backend OpenAI credentials for concept analysis, pixel-based matching, and bounded illustration generation. */
 
 import { picturePrompts, pictureSelectionInstructions, pictureReviewInstructions, pictureGenerationPrompt, preparationPrompts } from '../prompts';
 import OpenAI from 'openai';
+import { openAICredential } from '../openai-auth';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { pictureAnalysisSchema, type PictureAnalysisRequest, type PictureConcept, type PicturePolicy } from '@little-say/core';
@@ -29,12 +30,13 @@ const batchSchema = z.object({ selections: z.array(z.object({ id: z.string(), ca
 const image = (bytes: Buffer): OpenAI.Responses.ResponseInputImage => ({ type: 'input_image', image_url: `data:image/png;base64,${bytes.toString('base64')}`, detail: 'auto' });
 
 /**
- * Build the image provider when a backend key is present; disable generation separately through server
+ * Build the image provider when backend credentials are configured; disable generation separately through server
  * configuration. Preparation matching uses OPENAI_PICTURE_MATCH_MODEL (gpt-6-luna) with no reasoning.
  * OPENAI_IMAGE_QUALITY defaults to medium; low is an explicit option for comparative evaluation.
  */
 export function openAIPictureProvider(env: NodeJS.ProcessEnv, metric?: (event: PictureMetric) => void): PictureProvider | undefined {
-  const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim(); if (!apiKey) return undefined;
+  const apiKey = openAICredential(env);
+  if (!apiKey) return undefined;
   const client = new OpenAI({ apiKey, timeout: 180000, maxRetries: 0 });
   // Synchronous endpoints must return before the app's 60-second request deadline.
   const synchronousTimeout = 50000;

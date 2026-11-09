@@ -10,7 +10,8 @@ Use the [development launcher](../../scripts/README.md) for the complete local s
 
 | Variable | Contract |
 | --- | --- |
-| `AAC_OPENAI_KEY` / `OPENAI_API_KEY` | Worker key / fallback; missing keys disable paid AI |
+| `OPENAI_IDENTITY_PROVIDER_ID` / `OPENAI_SERVICE_ACCOUNT_ID` | [Cloud Run worker federation](../../deploy/gcp/README.md#openai-workload-identity). Both values are required. |
+| `AAC_OPENAI_KEY` / `OPENAI_API_KEY` | Local and self-hosted key settings, in priority order. Used when federation settings are absent. |
 | `AAC_AI_FIXTURES=true` | Explicit local synthetic responses; forbidden in production |
 | `AAC_AI_ENABLED=false` | Operator kill switch for API admission and worker claims |
 | `OPENAI_BOARD_MODEL` / `OPENAI_REASONING_EFFORT` | `gpt-6.1-sol` / `low` |
@@ -22,7 +23,7 @@ Use the [development launcher](../../scripts/README.md) for the complete local s
 | `WEB_ROOT` | Optional browser export; image uses `/app/web` |
 | `FIREBASE_*`, `PG*` | Required [identity](src/accounts/README.md) and [database](migrations/README.md) settings |
 
-The standalone entry loads root/working-directory `.env` files. Production rejects emulator and fixture settings. Server secrets never belong in `EXPO_PUBLIC_*`, bundles, responses or logs. Cloud workers use attached service accounts; local Firebase emulation needs no credentials.
+The standalone entry loads root/working-directory `.env` files. Production rejects emulator and fixture settings. Server secrets never belong in `EXPO_PUBLIC_*`, bundles, responses or logs. `src/openai-auth.ts` shares an in-memory token source across board, picture, and Realtime speech requests. Local Firebase emulation needs no credentials.
 
 ## Processing and retention
 

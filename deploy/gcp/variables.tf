@@ -1,4 +1,4 @@
-# Defines deployment identities, a pinned provider-key version, and independent AI activation; key values stay in Secret Manager.
+# Defines deployment identities, OpenAI federation mapping IDs, and independent AI activation.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -28,16 +28,22 @@ variable "alert_email" {
 variable "ai_enabled" {
   type        = bool
   default     = false
-  description = "Enable admission and execution only after configuring ai_provider_key_version and completing hosted acceptance."
+  description = "Enable admission and execution after configuring the OpenAI workload identity mapping."
 }
-variable "ai_provider_key_version" {
+variable "openai_identity_provider_id" {
   type        = string
   default     = ""
-  description = "Numeric ai-provider-key Secret Manager version to attach only to the worker; empty leaves it unconfigured. This is not the API key."
-  validation {
-    condition     = var.ai_provider_key_version == "" || can(regex("^[1-9][0-9]*$", var.ai_provider_key_version))
-    error_message = "Use an explicit numeric Secret Manager version, or an empty string before provisioning."
-  }
+  description = "ID of the OpenAI workload identity provider that trusts Google-issued worker tokens."
+}
+variable "openai_service_account_id" {
+  type        = string
+  default     = ""
+  description = "OpenAI service account ID targeted by the worker's identity mapping."
+}
+variable "retain_legacy_ai_key_access" {
+  type        = bool
+  default     = false
+  description = "Preserve secret access for the serving pre-federation worker revision during cutover."
 }
 variable "google_web_client_id" {
   type    = string

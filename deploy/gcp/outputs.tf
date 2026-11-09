@@ -20,6 +20,10 @@ output "media_bucket" {
 output "worker_url" {
   value = local.worker_url
 }
+output "openai_worker_subject" {
+  description = "Numeric Google service account subject to match as sub in OpenAI."
+  value       = google_service_account.service["worker"].unique_id
+}
 output "api_url" {
   value = try(google_cloud_run_v2_service.service["api"].uri, "")
 }

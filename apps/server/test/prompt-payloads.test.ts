@@ -1,4 +1,4 @@
-/** @file Verifies provider request data, model overrides, picture normalization, and cancellation with mocked transports. */
+/** @file Verifies provider payloads, model overrides, and credential wiring with mocked transports. */
 
 import { EventEmitter } from 'node:events';
 import { beforeEach, expect, it, vi } from 'vitest';
@@ -21,8 +21,13 @@ vi.mock('openai', async importOriginal => ({
 vi.mock('openai/realtime/ws', () => ({
   OpenAIRealtimeWS: class extends EventEmitter {
     socket = new EventEmitter();
-    /** Announce a synthetic session after the caller attaches listeners. */
-    constructor(options: unknown) { super(); calls.connect(options); queueMicrotask(() => this.emit('session.created')); }
+    /** Open a synthetic connection and announce its session after the caller attaches listeners. */
+    static async create(client: unknown, options: unknown) {
+      calls.connect(options, client);
+      const connection = new this();
+      setImmediate(() => connection.emit('session.created'));
+      return connection;
+    }
     /** Return matching speech without network or model calls. */
     send(payload: unknown) {
       calls.send(payload);
@@ -131,7 +136,19 @@ it.each(environments)('uses $name speech settings with literal language and text
       input: [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: JSON.stringify(input) }] }],
     } });
   }
-  expect(calls.connect).toHaveBeenCalledWith({ model: speech, options: { handshakeTimeout: 10000 } });
+  expect(calls.connect).toHaveBeenCalledWith({ model: speech, options: { handshakeTimeout: 10000 } }, expect.anything());
+});
+
+it('shares the federated token source across board, picture and Realtime clients', async () => {
+  const env = { OPENAI_IDENTITY_PROVIDER_ID: 'idp-test', OPENAI_SERVICE_ACCOUNT_ID: 'sa-test', OPENAI_API_KEY: 'legacy-key' };
+  expect(openAIProvider(env)).not.toBeNull();
+  expect(openAIPictureProvider(env)).toBeDefined();
+  await openAISynthesis(env, speechProfile(env))!({ text: 'Bonjour', language: 'fr-FR' });
+  const credentials = calls.client.mock.calls.map(([options]) => options.apiKey);
+  expect(credentials).toHaveLength(3);
+  expect(credentials[0]).toBeTypeOf('function');
+  expect(credentials).toEqual(Array(3).fill(credentials[0]));
+  expect(calls.connect).toHaveBeenCalledOnce();
 });
 
 it('makes no provider calls without a key or when there are no pictures to inspect', async () => {
