@@ -1,11 +1,12 @@
 /**
- * @file Generates bounded WAV speech through OpenAI Realtime and checks the spoken transcript before
+ * @file Authenticates to OpenAI Realtime, generates bounded WAV speech, and checks the spoken transcript before
  * caching.
  */
 
 import { speechInstructions } from './prompts';
 import OpenAI from 'openai';
 import { OpenAIRealtimeWS } from 'openai/realtime/ws';
+import { openAICredential } from './openai-auth';
 import { type SpeechInput } from '@little-say/core';
 
 export const MAX_SPEECH_BYTES = 960044; // At most 20 seconds of 24 kHz mono PCM.
@@ -34,15 +35,16 @@ export function pcmToWav(pcm: Buffer): Buffer {
 }
 
 /**
- * Return a speech generator or null without an API key. Each request owns and closes its connection,
- * rejecting timeout, oversized output, or a mismatched transcript.
+ * Return a speech generator or null without configured credentials. Each request resolves its credential
+ * before opening a connection it owns and closes, rejecting timeout, oversized output, or a mismatched transcript.
  */
 export function openAISynthesis(env: NodeJS.ProcessEnv, profile: SpeechProfile) {
-  const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim();
+  const apiKey = openAICredential(env);
   if (!apiKey) return null;
   const client = new OpenAI({ apiKey });
-  return (input: SpeechInput): Promise<Buffer> => new Promise((resolve, reject) => {
-    const connection = new OpenAIRealtimeWS({ model: profile.model, options: { handshakeTimeout: 10000 } }, client);
+  return (input: SpeechInput): Promise<Buffer> => OpenAIRealtimeWS.create(client, {
+    model: profile.model, options: { handshakeTimeout: 10000 },
+  }).then(connection => new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
     let bytes = 0;
     let transcript = '';
@@ -77,5 +79,5 @@ export function openAISynthesis(env: NodeJS.ProcessEnv, profile: SpeechProfile) 
       }
       try { finish(undefined, pcmToWav(Buffer.concat(chunks))); } catch { finish(new Error('Speech audio was invalid.')); }
     });
-  });
+  }));
 }

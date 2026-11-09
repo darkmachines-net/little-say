@@ -1,4 +1,4 @@
-# Restricts runtime credentials to attached identities and releases to immutable GitHub repository/environment identity.
+# Restricts runtime grants to attached identities and releases to immutable GitHub identity claims.
 resource "google_service_account" "service" {
   for_each     = toset(["api", "worker", "migrator", "tasks", "scheduler", "release"])
   account_id   = "little-say-${each.key}"
@@ -38,9 +38,9 @@ resource "google_artifact_registry_repository_iam_member" "release" {
   member     = "serviceAccount:${google_service_account.service["release"].email}"
 }
 resource "google_secret_manager_secret_iam_member" "runtime" {
-  for_each = {
-    api = "database-runtime", worker = "database-runtime", migrator = "database-migrator", provider = "ai-provider-key"
-  }
+  for_each = merge({
+    api = "database-runtime", worker = "database-runtime", migrator = "database-migrator"
+  }, var.retain_legacy_ai_key_access ? { provider = "ai-provider-key" } : {})
   secret_id = google_secret_manager_secret.secret[each.value].id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.service[each.key == "provider" ? "worker" : each.key].email}"

@@ -1,5 +1,5 @@
 /**
- * @file Requests structured OpenAI boards and translations, normalizing picture choices for both
+ * @file Requests authenticated OpenAI boards and translations, normalizing picture choices for both
  * synchronous proposals and prepared drafts.
  */
 
@@ -7,6 +7,7 @@ import { boardPrompts, picturePrompts, preparationPrompts } from './prompts';
 import { genericConceptInstructions } from './generic-concepts';
 import { draftFailure, draftRequestId, DraftResponseError, type DraftMetric } from './draft-diagnostics';
 import OpenAI from 'openai';
+import { openAICredential } from './openai-auth';
 import { type z } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { aiGeneratedBoardSchema, aiPictureGeneratedBoardSchema, aiPreparedBoardSchema, generatedTranslationsSchema, type GeneratedBoard, type ProposalRequest, type TranslationRequest, type GeneratedTranslations } from '@little-say/core';
@@ -45,14 +46,14 @@ function normalizePictureDraft(draft: z.infer<typeof aiPictureGeneratedBoardSche
 }
 
 /**
- * Create the OpenAI-backed provider from server environment settings, or return null when no API key is
- * configured. Preparation metrics report bounded failure stages and token usage without request or
+ * Create the OpenAI-backed provider from server environment settings, or return null without usable
+ * credential settings. Preparation metrics report bounded failure stages and token usage without request or
  * response content; transport and structured-output parsing are measured separately without retries.
  * Initial preparation uses OPENAI_DRAFT_MODEL (gpt-6-luna) and OPENAI_DRAFT_REASONING_EFFORT (none).
  * Refinements and translations retain OPENAI_BOARD_MODEL and OPENAI_REASONING_EFFORT.
  */
 export function openAIProvider(env: NodeJS.ProcessEnv, metric?: (event: DraftMetric) => void): AiProvider | null {
-  const apiKey = env.AAC_OPENAI_KEY?.trim() || env.OPENAI_API_KEY?.trim();
+  const apiKey = openAICredential(env);
   if (!apiKey) return null;
   const client = new OpenAI({ apiKey, timeout: 45000, maxRetries: 0 });
   return {

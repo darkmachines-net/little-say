@@ -1,4 +1,4 @@
-# Runs immutable API/worker revisions with bounded cold-start probes, a pinned worker secret and a privileged migration job.
+# Runs immutable API/worker revisions with bounded cold-start probes, federated worker AI and a privileged migration job.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
@@ -11,6 +11,10 @@ locals {
     ALLOWED_ORIGINS               = "https://littlesay.app,https://little-say.web.app,https://little-say.firebaseapp.com", AAC_AI_ENABLED = tostring(var.ai_enabled),
     TASKS_QUEUE                   = google_cloud_tasks_queue.ai.id, TASKS_INVOKER = google_service_account.service["tasks"].email
 
+  }
+  openai_worker_env = {
+    OPENAI_IDENTITY_PROVIDER_ID = trimspace(var.openai_identity_provider_id)
+    OPENAI_SERVICE_ACCOUNT_ID   = trimspace(var.openai_service_account_id)
   }
   # Deterministic Cloud Run URL avoids a dependency cycle between the API and worker settings.
   worker_url = "https://little-say-worker-${data.google_project.app.number}.${var.region}.run.app"
@@ -61,7 +65,7 @@ resource "google_cloud_run_v2_service" "service" {
       dynamic "env" {
         for_each = merge(local.runtime_env, {
           WORKER_URL = local.worker_url, WORKER_MODE = each.key == "worker" ? "cloud" : "api", AAC_AI_WORKER_CONFIGURED = tostring(var.ai_enabled)
-        })
+        }, each.key == "worker" ? local.openai_worker_env : {})
         content {
           name  = env.key
           value = env.value
@@ -75,22 +79,6 @@ resource "google_cloud_run_v2_service" "service" {
           secret_key_ref {
             secret  = google_secret_manager_secret.secret["database-runtime"].secret_id
             version = google_secret_manager_secret_version.database["runtime"].version
-
-          }
-
-        }
-
-      }
-      dynamic "env" {
-        for_each = each.key == "worker" && var.ai_provider_key_version != "" ? [1] : []
-        content {
-          name = "AAC_OPENAI_KEY"
-          value_source {
-            secret_key_ref {
-              secret  = google_secret_manager_secret.secret["ai-provider-key"].secret_id
-              version = var.ai_provider_key_version
-
-            }
 
           }
 
@@ -124,8 +112,8 @@ resource "google_cloud_run_v2_service" "service" {
     # Leave revision unset: retaining a release-created name prevents changing its immutable configuration.
     ignore_changes = [template[0].containers[0].image, client, client_version, traffic]
     precondition {
-      condition     = !var.ai_enabled || var.ai_provider_key_version != ""
-      error_message = "Provision and select an ai-provider-key secret version before enabling AI."
+      condition     = !var.ai_enabled || alltrue([for value in values(local.openai_worker_env) : value != ""])
+      error_message = "Set openai_identity_provider_id and openai_service_account_id before enabling AI."
     }
   }
   depends_on = [google_project_iam_member.runtime, google_secret_manager_secret_iam_member.runtime]

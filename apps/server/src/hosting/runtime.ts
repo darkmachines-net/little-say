@@ -1,4 +1,4 @@
-/** @file Wires durable workers, service-wide speech reuse, and early board words while pictures finish. */
+/** @file Wires hosted AI admission, durable workers, shared speech, and early board words while pictures finish. */
 import { resolve } from 'node:path';
 import { type Pool } from 'pg';
 import { type ProposalRequest, type TranslationRequest, type PictureAnalysisRequest, type PictureJobRequest, type SpeechInput, validateGeneratedBoard, validateTranslations } from '@little-say/core';
@@ -7,6 +7,7 @@ import { Accounts } from '../accounts/store';
 import { FirebaseIdentity } from '../accounts/firebase';
 import { AccountAccess } from '../accounts/access';
 import { openAIProvider } from '../provider';
+import { openAICredential } from '../openai-auth';
 import { openAIPictureProvider } from '../pictures/provider';
 import { PictureJobs } from '../pictures/jobs';
 import { SpeechCache } from '../speech-cache';
@@ -27,7 +28,7 @@ export async function hostedRuntime(env: NodeJS.ProcessEnv = process.env) {
     await checkDatabase(pool);
     const auth = new FirebaseIdentity(env), accounts = new Accounts(pool);
     const objects: ObjectStore = env.MEDIA_BUCKET ? new GoogleObjects(env.MEDIA_BUCKET) : new FileObjects(resolve(env.MEDIA_DIRECTORY || '../../.cache/media'));
-    const enabled = env.AAC_AI_ENABLED !== 'false' && Boolean(env.AAC_AI_FIXTURES === 'true' || env.AAC_OPENAI_KEY || env.OPENAI_API_KEY || (env.K_SERVICE && env.WORKER_MODE !== 'cloud' && env.AAC_AI_WORKER_CONFIGURED === 'true'));
+    const enabled = env.AAC_AI_ENABLED !== 'false' && Boolean(env.AAC_AI_FIXTURES === 'true' || openAICredential(env) || (env.K_SERVICE && env.WORKER_MODE !== 'cloud' && env.AAC_AI_WORKER_CONFIGURED === 'true'));
     const jobs = new Jobs(pool, enabled), access = new AccountAccess(accounts, auth);
     const dispatcher = env.TASKS_QUEUE ? new GoogleDispatch(env.TASKS_QUEUE, env.WORKER_URL || '', env.TASKS_INVOKER || '') : undefined;
     return { pool, auth, accounts, objects, enabled, jobs, access, dispatcher, env,
