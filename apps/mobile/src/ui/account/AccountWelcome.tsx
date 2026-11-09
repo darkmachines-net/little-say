@@ -1,4 +1,4 @@
-/** @file Presents the illustrated account welcome with bottom-aligned authentication actions and shares its decorative artwork with the public web landing page. */
+/** @file Presents the open-canvas welcome, reserving room for bottom authentication choices while sharing its artwork with the public web landing page. */
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,13 +12,16 @@ export const welcomeBackground = '#FFF9ED';
 /**
  * Fill the safe viewport with decorative artwork and a focused heading, keeping account actions at
  * the bottom. The whole page can scroll on short screens or with large text, without clipping actions.
- * Artwork stays static and outside the accessibility tree; the heading and copy explain the product.
+ * actionCount reserves room for the configured choices before sizing the artwork. Larger text or
+ * feedback can still scroll the whole page. Artwork stays static and outside the accessibility tree.
  */
-export function AccountWelcome({ children }: { children: ReactNode }) {
+export function AccountWelcome({ children, actionCount }: { children: ReactNode; actionCount: number }) {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const heading = useScreenFocus();
-  const artWidth = Math.max(160, Math.min(width - insets.left - insets.right - 48, (height - insets.top - insets.bottom) * 0.38, 350));
+  // Reserve copy/padding plus a 50-unit button and 12-unit gap for each welcome action.
+  const artHeight = height - insets.top - insets.bottom - 312 - actionCount * 62;
+  const artWidth = Math.max(160, Math.min(width - insets.left - insets.right - 48, artHeight * 350 / 334, 350));
   return <ScrollView testID="account-welcome" style={welcomeStyles.page} contentContainerStyle={welcomeStyles.content} keyboardShouldPersistTaps="handled">
     <View style={welcomeStyles.hero}>
       <WelcomeArtwork width={artWidth} />

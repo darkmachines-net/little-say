@@ -1,4 +1,4 @@
-/** @file Verifies illustrated welcome actions and settled responsive headers, Settings account actions, accessible touch targets, and separate full-screen play. Includes unified Settings navigation. */
+/** @file Verifies open-canvas welcome actions and responsive route headers, Settings navigation, accessible touch targets, and separate full-screen play. */
 
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -119,11 +119,11 @@ test('welcome anchors account actions below its artwork while forms and setup ke
       const box = (await actions.boundingBox())!;
       return Math.abs(viewport.height - box.y - box.height - 20);
     }).toBeLessThan(2);
-    await expect(actions.getByRole('button', { name: 'Register', exact: true })).toBeInViewport();
-    await expect(actions.getByRole('button', { name: 'Log in', exact: true })).toBeInViewport();
+    await expect(actions.getByRole('button', { name: 'Create Little Say account', exact: true })).toBeInViewport();
+    await expect(actions.getByRole('button', { name: 'Sign in with Email', exact: true })).toBeInViewport();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.getByRole('button', { name: 'Log in', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign in with Email', exact: true }).click();
   await page.setViewportSize({ width: 1280, height: 900 });
   const desktop = await headerGeometry(page, 'Sign in', 'Back');
   await page.setViewportSize({ width: 320, height: 740 });
