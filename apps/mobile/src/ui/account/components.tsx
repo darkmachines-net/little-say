@@ -1,4 +1,4 @@
-/** @file Shares accessible account groups, navigation rows, provider labels/platform support, and action feedback. */
+/** @file Shares accessible account rows, provider labels, native/web platform support, and action feedback. */
 import type { ReactNode } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 import { ChevronRight, type LucideIcon } from 'lucide-react-native';
@@ -9,9 +9,9 @@ import { styles, theme } from '../theme';
 
 export const providerNames: Record<Provider, string> = { password: 'Email & password', 'google.com': 'Google', 'apple.com': 'Apple' };
 
-/** Offer native Google on Android/iOS and native Apple on iOS; browser Firebase supports both providers. */
+/** Offer both providers on mobile and web; Apple uses the SDK's web sign-in dialog on Android. */
 export function supportsProvider(provider: Provider): boolean {
-  return provider !== 'apple.com' || Platform.OS === 'ios' || Platform.OS === 'web';
+  return provider !== 'apple.com' || ['ios', 'android', 'web'].includes(Platform.OS);
 }
 
 /** Filter server provider identifiers to supported sign-in methods without inventing a fallback credential. */

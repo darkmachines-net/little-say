@@ -1,4 +1,4 @@
-/** @file Obtains native Google/Apple Firebase credentials with interactive account selection, nonce/state checks, and Expo Go isolation. */
+/** @file Obtains Google and Apple Firebase credentials through native dialogs or Android Apple web sign-in, with nonce/state checks and Expo Go isolation. */
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
@@ -11,12 +11,34 @@ export type ProviderCredential = { credential: AuthCredential; apple?: AppleGran
 export function socialAuthAvailable() { return Constants.executionEnvironment !== ExecutionEnvironment.StoreClient; }
 /**
  * Obtain a credential for sign-in, registration, linking, or fresh identity confirmation without changing Firebase accounts.
- * Native SDKs load only in custom builds. Apple hashes the raw nonce before authorization; Firebase verifies it on exchange.
+ * Native SDKs load only in custom builds. Apple uses its native iOS dialog or the SDK's Android web dialog.
+ * Both Apple SDK paths hash the raw nonce before authorization; Firebase verifies it on exchange.
  * Cancellation rejects with auth/user-cancelled; Apple authorization codes are returned only for immediate revocation use.
  */
 export async function nativeCredential(provider: SocialProvider, config: AuthConfig): Promise<ProviderCredential> {
   if (!socialAuthAvailable()) throw new Error('Google and Apple sign-in require a development build. Email sign-in works in Expo Go.');
-  return provider === 'google.com' ? googleCredential(config) : appleCredential();
+  return provider === 'google.com' ? googleCredential(config) : Platform.OS === 'android' ? androidAppleCredential(config) : appleCredential();
+}
+
+async function androidAppleCredential(config: AuthConfig): Promise<ProviderCredential> {
+  const clientId = config.appleServiceId?.trim(), redirectUri = config.appleRedirectUri;
+  if (!clientId || !redirectUri) throw new Error('Apple sign-in is not configured on this server. Please use another sign-in method.');
+  const callback = new URL(redirectUri);
+  if (callback.protocol !== 'https:' || callback.username || callback.password || callback.hash) throw new Error('Apple sign-in needs a valid HTTPS callback.');
+  const { appleAuthAndroid } = await import('@invertase/react-native-apple-authentication');
+  if (!appleAuthAndroid.isSupported) throw new Error('Apple sign-in is unavailable on this device.');
+  const nonce = Crypto.randomUUID(), state = Crypto.randomUUID();
+  try {
+    appleAuthAndroid.configure({ clientId, redirectUri, responseType: appleAuthAndroid.ResponseType.ALL,
+      scope: appleAuthAndroid.Scope.ALL, nonce, state });
+    const result = await appleAuthAndroid.signIn();
+    if (!result.id_token || result.state !== state) throw new Error('Apple sign-in could not be verified. Please try again.');
+    return { credential: new OAuthProvider('apple.com').credential({ idToken: result.id_token, rawNonce: nonce }),
+      ...(result.code ? { apple: { token: result.code, type: 'CODE' as const, redirectUri } } : {}) };
+  } catch (error) {
+    if ((error as { code?: string }).code === appleAuthAndroid.Error.SIGNIN_CANCELLED) throw cancelled();
+    throw error;
+  }
 }
 
 function cancelled() { return Object.assign(new Error('Sign-in was cancelled. Your local boards are unchanged.'), { code: 'auth/user-cancelled' }); }
