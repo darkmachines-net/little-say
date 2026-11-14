@@ -1,4 +1,4 @@
-/** @file Runs the same claimed-job executor through local PostgreSQL polling or private Cloud Run delivery. */
+/** @file Runs claimed jobs through private Cloud Run delivery or polling with the configured worker capacity. */
 import { config } from 'dotenv';
 import { resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -10,6 +10,7 @@ import release from '../../../release.json';
 config({ path: resolve(process.cwd(), '../../.env'), quiet: true }); config({ quiet: true });
 const runtime = await hostedRuntime(), shutdown = new AbortController(), workerId = process.env.HOSTNAME || randomUUID();
 const active = new Set<Promise<void>>();
+const capacity = runtime.jobs.limits.serviceForegroundConcurrency + runtime.jobs.limits.serviceSpeechConcurrency;
 const app = Fastify({ logger: false });
 app.setErrorHandler((_error, _request, reply) => {
   console.error(JSON.stringify({ severity: 'ERROR', message: 'Worker request failed; durable work remains recoverable.' }));
@@ -40,7 +41,7 @@ if (process.env.WORKER_MODE === 'cloud') {
       try {
         await runtime.jobs.workerSeen(workerId);
         if (Date.now() - maintenance > 15000) { await maintain(runtime); maintenance = Date.now(); }
-        while (active.size < 2) {
+        while (!shutdown.signal.aborted && active.size < capacity) {
           const job = await runtime.jobs.claim(); if (!job) break;
           const work = runJob(runtime, job, shutdown.signal)
             .catch(() => { console.error(JSON.stringify({ severity: 'ERROR', message: 'Job settlement failed; interrupted work will not be replayed.' })); })

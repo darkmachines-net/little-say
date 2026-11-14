@@ -1,10 +1,11 @@
-/** @file Exercises worker failure reporting, redaction, and terminal settlement without network calls. */
+/** @file Exercises worker failure reporting and terminal settlement under the default capacity policy. */
 
 import { afterEach, expect, test, vi } from 'vitest';
 import { APIError, APIUserAbortError } from 'openai';
 import { DatabaseError } from 'pg';
 import { runJob, type Runtime } from '../src/hosting/runtime';
 import { type Job } from '../src/hosting/jobs';
+import { readAiLimits } from '../src/hosting/limits';
 
 const translate = vi.hoisted(() => vi.fn());
 vi.mock('../src/provider', () => ({ openAIProvider: () => ({ translate }) }));
@@ -16,7 +17,7 @@ const job: Job = {
 };
 
 function fixture() {
-  const jobs = { finish: vi.fn().mockResolvedValue(undefined), heartbeat: vi.fn().mockResolvedValue('active') };
+  const jobs = { limits: readAiLimits({}), finish: vi.fn().mockResolvedValue(undefined), heartbeat: vi.fn().mockResolvedValue('active') };
   const pool = { query: vi.fn().mockResolvedValue({ rows: [] }) };
   const runtime = { jobs, pool, env: {}, objects: {} } as unknown as Runtime;
   const errorLog = vi.spyOn(console, 'error').mockImplementation(() => {});

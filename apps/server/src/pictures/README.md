@@ -28,7 +28,7 @@ A request UUID is bound to its payload, draft, and card identity; reusing it for
 
 ## Configuration and retention
 
-`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. The [shared runtime](../hosting/README.md#durable-operations) owns admission and execution limits. A prepared board performs picture work sequentially within its claim. Backend keys never reach the client.
+`OPENAI_IMAGE_MODEL` defaults to `gpt-image-2.5-flare` with medium-quality, transparent, 1024-square PNG output. `AAC_IMAGE_GENERATION=false` disables new generation independently of catalog/analysis availability. The [shared runtime](../hosting/README.md#durable-operations) owns the account and service limits for parallel image generation. Backend keys never reach the client.
 
 Runtime storage uses `MEDIA_DIRECTORY` or `MEDIA_BUCKET` for PNGs and PostgreSQL for private owner-bound descriptions/job state and shared approved generic metadata. [Storage/deletion](../hosting/README.md#storage-and-deletion) defines ownership and cleanup. Personal photos and their paths are excluded from picture requests; automatic account backups are a separate contract. Requests and provider bodies are not logged. AI routes require a registered account. Private assets and jobs require their owner; catalog access remains public.
 

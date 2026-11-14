@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation mapping IDs, and independent AI activation.
+# Defines deployment identities, OpenAI federation, and shared AI admission and concurrency controls.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -29,6 +29,39 @@ variable "ai_enabled" {
   type        = bool
   default     = false
   description = "Enable admission and execution after configuring the OpenAI workload identity mapping."
+}
+variable "ai_limits" {
+  description = "Hosted AI limits shared by the API, worker, and Cloud Tasks queues. See apps/server/src/hosting/README.md."
+  type = object({
+    account_board_starts_per_minute = optional(number, 6)
+    account_board_outstanding       = optional(number, 2)
+    account_board_concurrency       = optional(number, 1)
+    account_job_starts_per_minute   = optional(number, 30)
+    account_job_outstanding         = optional(number, 2)
+    service_foreground_concurrency  = optional(number, 2)
+    service_speech_concurrency      = optional(number, 1)
+    account_image_concurrency       = optional(number, 9)
+    service_image_concurrency       = optional(number, 12)
+  })
+  default  = {}
+  nullable = false
+  validation {
+    condition = alltrue([
+      var.ai_limits.account_board_concurrency <= var.ai_limits.account_board_outstanding,
+      alltrue([for name, maximum in {
+        account_board_starts_per_minute = 120
+        account_board_outstanding       = 24
+        account_board_concurrency       = 8
+        account_job_starts_per_minute   = 240
+        account_job_outstanding         = 24
+        service_foreground_concurrency  = 8
+        service_speech_concurrency      = 8
+        account_image_concurrency       = 24
+        service_image_concurrency       = 48
+      } : var.ai_limits[name] >= 1 && var.ai_limits[name] <= maximum && floor(var.ai_limits[name]) == var.ai_limits[name]])
+    ])
+    error_message = "AI limits must be whole numbers within their documented ranges. Board concurrency cannot exceed outstanding board work."
+  }
 }
 variable "openai_identity_provider_id" {
   type        = string

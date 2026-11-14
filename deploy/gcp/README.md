@@ -34,6 +34,12 @@ Changing `ai_enabled` updates both API and worker revisions. Route verified revi
 
 Startup probes allow 40 attempts five seconds apart for first-image cold starts, with a three-second timeout per health request. A failed new revision never replaces serving traffic. This startup allowance does not extend Firebase Hosting's 60-second request limit; slow AI remains asynchronous.
 
+## AI capacity
+
+Set `ai_limits` in the deployment's Terraform inputs to override the [server defaults and ranges](../../apps/server/src/hosting/README.md#configuration). The fields match the environment settings without `AAC_AI_`, in lowercase. For example, `ai_limits = { account_image_concurrency = 9, service_image_concurrency = 12 }` permits a single nine-image board to generate all nine at once when capacity is available. The same values configure the API, worker, and queue dispatch limits. Worker scaling reserves room for the two job categories and maintenance. When raising worker concurrency, include all API and worker pools and revision overlap in the Cloud SQL connection budget and check provider capacity.
+
+Apply the infrastructure through the normal Terraform workflow to provision the dedicated `little-say-speech` queue and update the environment on both services. The existing `little-say-ai` queue remains the foreground queue. The protected Release workflow applies the additive schema migration before deploying the new application image. Outstanding deliveries on the original queue remain valid and are still bounded by the database claim checks. An installation that configures only `TASKS_QUEUE` shares task delivery until the speech queue is configured.
+
 ## Release protection
 
 Approval authorizes the entire selected release, including this shared production backend. Beta delivery uses the `beta` promotion gate described in [release integration](../../scripts/release/README.md#development-preparation-and-beta-approval); public-store delivery uses the `production` approval environment. Both approval environments require reviewers and restrict deployments to `master`. Configure these settings in GitHub; Terraform does not manage GitHub environment protection rules.

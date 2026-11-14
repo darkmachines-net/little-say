@@ -1,4 +1,4 @@
-/** @file Verifies isolated job quotas and retry timing, stale-claim recovery, media grants, account access, and CSRF. */
+/** @file Verifies configurable account and worker limits, durable claim recovery, and authorized media access. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -8,6 +8,7 @@ import { Accounts, type Identity } from '../src/accounts/store';
 import { type IdentityService } from '../src/accounts/firebase';
 import { AccountAccess } from '../src/accounts/access';
 import { Jobs } from '../src/hosting/jobs';
+import { readAiLimits } from '../src/hosting/limits';
 import { FileObjects, DatabaseCache, canReadMedia, pruneMedia } from '../src/hosting/storage';
 import { executeJob, apiCaches } from '../src/hosting/runtime';
 import { createServer } from '../src/app';
@@ -15,10 +16,10 @@ import { testDatabase } from './postgres-fixture';
 
 const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await action(); });
-async function setup() {
+async function setup(env: NodeJS.ProcessEnv = {}) {
   const db = await testDatabase(); cleanup.push(() => db.close());
   const root = await mkdtemp(join(tmpdir(), 'little-say-hosting-')); cleanup.push(() => rm(root, { recursive: true, force: true }));
-  const accounts = new Accounts(db.pool), jobs = new Jobs(db.pool), objects = new FileObjects(root);
+  const accounts = new Accounts(db.pool), jobs = new Jobs(db.pool, true, readAiLimits(env)), objects = new FileObjects(root);
   const identity: Identity = { project: 'demo-little-say', uid: randomUUID(), email: 'parent@example.test', emailVerified: true, displayName: null, providers: ['password'], authTime: Date.now() / 1000, expires: Date.now() / 1000 + 3600 };
   const alice = await accounts.provision(identity), bob = await accounts.provision({ ...identity, uid: randomUUID() });
   return { ...db, root, accounts, jobs, objects, identity, alice, bob };
@@ -40,7 +41,7 @@ it('removes deleted account records and unowned media while retaining another ow
   expect((await f.objects.read('pictures/shared.png'))?.toString()).toBe('shared');
 });
 it('serializes admission, immutable identifiers, owner reads, and the global execution limit across repositories', async () => {
-  const f = await setup(), id = randomUUID(), other = new Jobs(f.pool);
+  const f = await setup({ AAC_AI_SERVICE_SPEECH_CONCURRENCY: '2' }), id = randomUUID(), other = new Jobs(f.pool, true, f.jobs.limits);
   const admitted = await Promise.all(Array.from({ length: 6 }, () => other.submit(f.alice.id, id, 'speech', { text: 'Hello' })));
   expect(new Set(admitted.map(job => job.id)).size).toBe(1);
   await expect(f.jobs.submit(f.alice.id, id, 'speech', { text: 'Changed' })).rejects.toMatchObject({ statusCode: 409 });
@@ -55,43 +56,46 @@ it('serializes admission, immutable identifiers, owner reads, and the global exe
   await other.finish(claims[0], { completed: true });
   expect(await f.jobs.claim()).not.toBeNull();
 });
-it('admits concurrent board work while automatic speech fills its allowance, retaining both quotas and the global execution cap', async () => {
+it('reserves service capacity for boards, limits simultaneous builds per account, and isolates all three quotas', async () => {
   const f = await setup(), other = new Jobs(f.pool);
   const speech = [randomUUID(), randomUUID()];
   for (const [index, id] of speech.entries()) await f.jobs.submit(f.alice.id, id, 'speech', { text: String(index), language: 'en' });
-  const active = await Promise.all(speech.map(id => f.jobs.claim(id)));
-  expect(active.every(Boolean)).toBe(true);
+  expect(await f.jobs.claim(speech[0])).toMatchObject({ kind: 'speech', state: 'working' });
+  expect(await f.jobs.claim(speech[1])).toBeNull();
   const attempts = await Promise.allSettled(Array.from({ length: 4 }, () => other.submit(f.alice.id, randomUUID(), 'proposal', {})));
   const admitted = attempts.filter(result => result.status === 'fulfilled').map(result => result.value);
   expect(admitted).toHaveLength(2);
   expect(attempts.filter(result => result.status === 'rejected').map(result => result.reason.statusCode)).toEqual([429, 429]);
   await expect(f.jobs.submit(f.alice.id, randomUUID(), 'speech', {})).rejects.toMatchObject({ statusCode: 429, retryAfterSeconds: 2, message: 'Audio is still being prepared. Please try again shortly.' });
-  await expect(f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).rejects.toMatchObject({ statusCode: 429, message: 'AI work is busy. Wait for your current work to finish.' });
-  expect(await f.jobs.claim(admitted[0].id)).toBeNull();
-  await other.finish(active[0]!, { clip: true });
+  expect(await f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).toMatchObject({ state: 'queued' });
   const board = (await other.claim(admitted[0].id))!;
   expect(board).toMatchObject({ kind: 'proposal', state: 'working' });
+  expect(await other.claim(admitted[1].id)).toBeNull();
+  const secondAccount = await f.jobs.submit(f.bob.id, randomUUID(), 'proposal', {});
+  expect(await f.jobs.claim()).toMatchObject({ id: secondAccount.id, state: 'working' });
+  expect(await f.jobs.claim()).toBeNull();
   await other.finish(board, { board: true });
+  expect(await f.jobs.claim(admitted[1].id)).toMatchObject({ state: 'working' });
   expect(await f.jobs.get(f.alice.id, board.id)).toMatchObject({ state: 'complete', result: { board: true } });
 });
 it.each(['speech', 'proposal'] as const)('keeps the %s rate allowance separate and reports rate exhaustion without claiming work is active', async kind => {
-  const f = await setup();
+  const f = await setup({ AAC_AI_ACCOUNT_BOARD_STARTS_PER_MINUTE: '3' });
   let last = '';
-  for (let count = 0; count < 30; count++) {
+  for (let count = 0; count < (kind === 'proposal' ? 3 : 30); count++) {
     last = randomUUID();
     await f.jobs.submit(f.alice.id, last, kind, {});
     await f.jobs.finish((await f.jobs.claim(last))!, {});
   }
   await f.pool.query("UPDATE ai_jobs SET created_at=now()-interval '25 seconds' WHERE id=$1", [last]);
-  await expect(f.jobs.submit(f.alice.id, randomUUID(), kind, {})).rejects.toMatchObject({ statusCode: 429, retryAfterSeconds: 35, message: 'Too many AI requests in the last minute. Please try again shortly.' });
+  await expect(f.jobs.submit(f.alice.id, randomUUID(), kind, {})).rejects.toMatchObject({ statusCode: 429, retryAfterSeconds: 35, message: `Too many ${kind === 'proposal' ? 'board' : 'AI'} requests in the last minute. Please try again shortly.` });
   expect(await f.jobs.submit(f.alice.id, last, kind, {})).toMatchObject({ state: 'complete' });
   expect(await f.jobs.submit(f.alice.id, randomUUID(), kind === 'speech' ? 'proposal' : 'speech', {})).toMatchObject({ state: 'queued' });
-  if (kind === 'proposal') await expect(f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).rejects.toMatchObject({ statusCode: 429 });
+  if (kind === 'proposal') expect(await f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).toMatchObject({ state: 'queued' });
   await f.pool.query("UPDATE ai_jobs SET created_at=now()-interval '2 minutes' WHERE account_id=$1", [f.alice.id]);
   expect(await f.jobs.submit(f.alice.id, randomUUID(), kind, {})).toMatchObject({ state: 'queued' });
 });
 it('releases expired account capacity on admission without maintenance and preserves healthy claims and request identity', async () => {
-  const f = await setup(), stale = randomUUID(), healthy = randomUUID(), next = randomUUID();
+  const f = await setup({ AAC_AI_ACCOUNT_BOARD_CONCURRENCY: '2' }), stale = randomUUID(), healthy = randomUUID(), next = randomUUID();
   await f.jobs.submit(f.alice.id, stale, 'proposal', {}); await f.jobs.submit(f.alice.id, healthy, 'proposal', {});
   const lost = (await f.jobs.claim(stale))!, current = (await f.jobs.claim(healthy))!;
   await f.jobs.progress(lost, { partial: true });
@@ -106,7 +110,7 @@ it('releases expired account capacity on admission without maintenance and prese
   await expect(f.jobs.submit(f.alice.id, randomUUID(), 'proposal', {})).rejects.toMatchObject({ statusCode: 429 });
 });
 it('recovers expired global execution slots on claim without replaying abandoned work', async () => {
-  const f = await setup(), ids = [randomUUID(), randomUUID()], next = randomUUID();
+  const f = await setup({ AAC_AI_ACCOUNT_BOARD_CONCURRENCY: '2' }), ids = [randomUUID(), randomUUID()], next = randomUUID();
   for (const id of ids) { await f.jobs.submit(f.alice.id, id, 'proposal', {}); await f.jobs.claim(id); }
   await f.jobs.submit(f.bob.id, next, 'proposal', {});
   await f.pool.query("UPDATE ai_jobs SET heartbeat=now()-interval '2 minutes' WHERE account_id=$1", [f.alice.id]);

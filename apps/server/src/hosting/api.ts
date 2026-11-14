@@ -1,4 +1,4 @@
-/** @file Serves public starter speech and account-owned jobs and media, with retry guidance for admission limits. */
+/** @file Serves cached starter speech and authenticated jobs, dispatches by job kind, and returns quota retry timing. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
@@ -11,8 +11,8 @@ import { DatabaseCache, canReadMedia, type ObjectStore } from './storage';
 import type { SpeechCache } from '../speech-cache';
 
 export interface HostedServices { pool: Pool; jobs: Jobs; access: AccountAccess; objects: ObjectStore; enabled: boolean;
-  /** Attempt prompt delivery after the durable commit; scheduled reconciliation covers failures. */
-  dispatch?(id: string): Promise<void>;
+  /** Deliver a committed job to the queue for its kind; scheduled reconciliation covers failures. */
+  dispatch?(id: string, kind: JobKind): Promise<void>;
 }
 const reviewSchema = z.object({ cards: z.array(z.object({ id: z.string().max(100), assetId: z.string().regex(/^[a-f0-9]{64}$/), concept: pictureConceptSchema })).min(1).max(24) });
 const schemas = { proposal: proposalRequestSchema, translation: translationRequestSchema, analysis: pictureAnalysisRequestSchema, review: reviewSchema, speech: speechRequestSchema, picture: pictureJobRequestSchema };
@@ -76,7 +76,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
       const id = raw.requestId ?? raw.preparationId ?? request.headers['x-little-say-request'];
       if (typeof id !== 'string') throw new AccountError('Update Little Say to submit asynchronous AI requests.', 400);
       const job = await jobs.submit(account.id, id, legacyKind, input);
-      if (job.state === 'queued') await services.dispatch?.(job.id).catch(() => {});
+      if (job.state === 'queued') await services.dispatch?.(job.id, job.kind).catch(() => {});
       const original = input as { draftId: string; tileId: string };
       return reply.code(202).send(legacyKind === 'picture' ? { ...pictureState(job), draftId: original.draftId, tileId: original.tileId } : job);
     }
@@ -106,7 +106,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     }
     if (kind === 'proposal') (input as { preparationId?: string }).preparationId = id;
     const job = await jobs.submit(account.id, id, kind, input);
-    if (job.state === 'queued') await services.dispatch?.(job.id).catch(() => {});
+    if (job.state === 'queued') await services.dispatch?.(job.id, job.kind).catch(() => {});
     return reply.code(202).send(job);
   });
   app.get<{ Params: { id: string } }>('/api/ai/jobs/:id', async (request, reply) => {
