@@ -1,6 +1,7 @@
-/** @file Wires hosted AI admission, durable workers, shared speech, and early board words while pictures finish. */
+/** @file Wires hosted AI execution, durable worker claims, and content-free job diagnostics. */
 import { resolve } from 'node:path';
-import { type Pool } from 'pg';
+import { DatabaseError, type Pool } from 'pg';
+import { OAuthError, OpenAIError, SubjectTokenProviderError } from 'openai';
 import { type ProposalRequest, type TranslationRequest, type PictureAnalysisRequest, type PictureJobRequest, type SpeechInput, validateGeneratedBoard, validateTranslations } from '@little-say/core';
 import { createDatabase, checkDatabase } from '../database';
 import { Accounts } from '../accounts/store';
@@ -11,13 +12,37 @@ import { openAICredential } from '../openai-auth';
 import { openAIPictureProvider } from '../pictures/provider';
 import { PictureJobs } from '../pictures/jobs';
 import { SpeechCache } from '../speech-cache';
-import { openAISynthesis, speechProfile } from '../synthesis';
+import { openAISynthesis, speechProfile, SpeechSynthesisError } from '../synthesis';
 import { BoardPreparation } from '../board-preparation';
 import { GenericContent } from '../generic-content';
 import { DatabaseCache, FileObjects, pruneMedia, type ObjectStore } from './storage';
 import { GoogleObjects, GoogleDispatch } from './google';
 import { Jobs, type Job } from './jobs';
 import { fixtureProviders } from './fixtures';
+import { draftFailure } from '../draft-diagnostics';
+
+class ProviderUnavailable extends Error {}
+
+type JobInterruption =
+  | { category: 'shutdown' | 'cancelled' | 'claim-lost' }
+  | { category: 'heartbeat-failed'; cause: unknown };
+
+function workerFailure(error: unknown) {
+  if (error instanceof ProviderUnavailable) return { category: 'provider-unconfigured' };
+  if (error instanceof SubjectTokenProviderError) return { category: 'subject-token' };
+  if (error instanceof OAuthError) return { category: 'token-exchange', status: error.status };
+  if (error instanceof SpeechSynthesisError) return { category: error.category };
+  if (error instanceof DatabaseError) return { category: 'database', code: /^[0-9A-Z]{5}$/.test(error.code ?? '') ? error.code : undefined };
+  const { category, status } = draftFailure(error);
+  if (category === 'unknown' && error instanceof OpenAIError) return { category: 'provider' };
+  return { category, status: typeof status === 'number' && Number.isInteger(status) && status >= 400 && status <= 599 ? status : undefined };
+}
+
+function reportInterruption(job: Job, stage: 'execute' | 'heartbeat' | 'finalize', failure: ReturnType<typeof workerFailure>, expected = false) {
+  const message = expected ? 'AI operation stopped.' : 'AI operation interrupted; automatic provider retry disabled.';
+  const write = expected ? console.warn : console.error;
+  write(JSON.stringify({ severity: expected ? 'WARNING' : 'ERROR', message, jobId: job.id, kind: job.kind, stage, ...failure }));
+}
 
 /** Construct owned resources after checking account, storage, and execution configuration. */
 export async function hostedRuntime(env: NodeJS.ProcessEnv = process.env) {
@@ -60,7 +85,7 @@ export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jo
     signal.throwIfAborted();
     switch (job.kind) {
       case 'proposal': {
-        if (!provider) throw new Error('AI unavailable.');
+        if (!provider) throw new ProviderUnavailable('AI unavailable.');
         const input = { ...job.input as ProposalRequest, preparationId: job.id };
         if (!preparation) return { boardId: input.board?.id ?? null, baseRevision: input.board?.revision ?? null, proposal: validateGeneratedBoard(await provider.propose(input), input.board) };
         const result = await preparation.propose(input, async draft => { signal.throwIfAborted(); await jobs.progress(job, draft); }); signal.throwIfAborted();
@@ -68,12 +93,12 @@ export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jo
         return { ...result, preparation: await preparation.status(job.id) };
       }
       case 'translation': {
-        if (!provider?.translate) throw new Error('AI unavailable.');
+        if (!provider?.translate) throw new ProviderUnavailable('AI unavailable.');
         const input = job.input as TranslationRequest;
         return validateTranslations(input, await provider.translate(input));
       }
       case 'analysis': {
-        if (!pictureProvider) throw new Error('AI unavailable.');
+        if (!pictureProvider) throw new ProviderUnavailable('AI unavailable.');
         return pictureProvider.analyze(job.input as PictureAnalysisRequest);
       }
       case 'review': return { rejected: await pictures.review((job.input as { cards: Parameters<PictureJobs['review']>[0] }).cards) };
@@ -86,24 +111,50 @@ export async function executeJob(runtime: Pick<Runtime, 'pool' | 'objects' | 'jo
   } finally { signal.removeEventListener('abort', cancel); preparation?.close(); pictures.close(); }
 }
 
-/** Heartbeat and finalize a claim; exceptions never automatically repeat provider work. */
+/** Heartbeat and settle a claim once, logging only bounded diagnostic fields when work halts. */
 export async function runJob(runtime: Runtime, job: Job, shutdown: AbortSignal) {
   const controller = new AbortController();
-  const abort = () => controller.abort(); shutdown.addEventListener('abort', abort, { once: true });
-  if (shutdown.aborted) abort();
+  const interrupt = (reason: JobInterruption) => controller.abort(reason);
+  const stop = () => interrupt({ category: 'shutdown' });
+  shutdown.addEventListener('abort', stop, { once: true });
+  if (shutdown.aborted) stop();
   let updating = false;
   const timer = setInterval(() => {
-    if (updating) return; updating = true;
-    void runtime.jobs.heartbeat(job).then(active => { if (!active) abort(); }, abort).finally(() => { updating = false; });
+    if (updating || controller.signal.aborted) return;
+    updating = true;
+    void runtime.jobs.heartbeat(job).then(state => {
+      if (state === 'cancelled') interrupt({ category: 'cancelled' });
+      if (state === 'lost') interrupt({ category: 'claim-lost' });
+    }, cause => interrupt({ category: 'heartbeat-failed', cause })).finally(() => { updating = false; });
   }, 2000);
+  let stage: 'execute' | 'finalize' = 'execute';
   try {
-    const result = await executeJob(runtime, job, controller.signal); controller.signal.throwIfAborted();
+    controller.signal.throwIfAborted();
+    const result = await executeJob(runtime, job, controller.signal);
+    controller.signal.throwIfAborted();
+    stage = 'finalize';
     await runtime.jobs.finish(job, result);
-  } catch {
-    console.error(JSON.stringify({ severity: 'ERROR', message: 'AI operation interrupted; automatic provider retry disabled.', jobId: job.id }));
-    await runtime.jobs.finish(job, null, true);
+  } catch (error) {
+    const failure = workerFailure(error);
+    const aborted = controller.signal.aborted && (error === controller.signal.reason ||
+      failure.category === 'cancelled' || (error instanceof DOMException && error.name === 'AbortError'));
+    const interruption = aborted ? controller.signal.reason as JobInterruption : undefined;
+    if (interruption?.category === 'heartbeat-failed') {
+      reportInterruption(job, 'heartbeat', workerFailure(interruption.cause));
+    } else if (interruption) {
+      const expected = interruption.category === 'cancelled' || interruption.category === 'shutdown';
+      reportInterruption(job, expected ? stage : 'heartbeat', interruption, expected);
+    } else {
+      reportInterruption(job, stage, failure);
+    }
+    try {
+      await runtime.jobs.finish(job, null, true);
+    } catch (settlementError) {
+      reportInterruption(job, 'finalize', workerFailure(settlementError));
+      throw settlementError;
+    }
   }
-  finally { clearInterval(timer); shutdown.removeEventListener('abort', abort); }
+  finally { clearInterval(timer); shutdown.removeEventListener('abort', stop); }
 }
 
 /** Reconcile lost workers, publish pending notifications, and retry identity deletion. */

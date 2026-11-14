@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, shared speech download grants, private picture metadata, registered-account access, CSRF, and interruption. */
+/** @file Verifies isolated job quotas and retry timing, stale-claim recovery, media grants, account access, and CSRF. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -55,6 +55,78 @@ it('serializes admission, immutable identifiers, owner reads, and the global exe
   await other.finish(claims[0], { completed: true });
   expect(await f.jobs.claim()).not.toBeNull();
 });
+it('admits concurrent board work while automatic speech fills its allowance, retaining both quotas and the global execution cap', async () => {
+  const f = await setup(), other = new Jobs(f.pool);
+  const speech = [randomUUID(), randomUUID()];
+  for (const [index, id] of speech.entries()) await f.jobs.submit(f.alice.id, id, 'speech', { text: String(index), language: 'en' });
+  const active = await Promise.all(speech.map(id => f.jobs.claim(id)));
+  expect(active.every(Boolean)).toBe(true);
+  const attempts = await Promise.allSettled(Array.from({ length: 4 }, () => other.submit(f.alice.id, randomUUID(), 'proposal', {})));
+  const admitted = attempts.filter(result => result.status === 'fulfilled').map(result => result.value);
+  expect(admitted).toHaveLength(2);
+  expect(attempts.filter(result => result.status === 'rejected').map(result => result.reason.statusCode)).toEqual([429, 429]);
+  await expect(f.jobs.submit(f.alice.id, randomUUID(), 'speech', {})).rejects.toMatchObject({ statusCode: 429, retryAfterSeconds: 2, message: 'Audio is still being prepared. Please try again shortly.' });
+  await expect(f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).rejects.toMatchObject({ statusCode: 429, message: 'AI work is busy. Wait for your current work to finish.' });
+  expect(await f.jobs.claim(admitted[0].id)).toBeNull();
+  await other.finish(active[0]!, { clip: true });
+  const board = (await other.claim(admitted[0].id))!;
+  expect(board).toMatchObject({ kind: 'proposal', state: 'working' });
+  await other.finish(board, { board: true });
+  expect(await f.jobs.get(f.alice.id, board.id)).toMatchObject({ state: 'complete', result: { board: true } });
+});
+it.each(['speech', 'proposal'] as const)('keeps the %s rate allowance separate and reports rate exhaustion without claiming work is active', async kind => {
+  const f = await setup();
+  let last = '';
+  for (let count = 0; count < 30; count++) {
+    last = randomUUID();
+    await f.jobs.submit(f.alice.id, last, kind, {});
+    await f.jobs.finish((await f.jobs.claim(last))!, {});
+  }
+  await f.pool.query("UPDATE ai_jobs SET created_at=now()-interval '25 seconds' WHERE id=$1", [last]);
+  await expect(f.jobs.submit(f.alice.id, randomUUID(), kind, {})).rejects.toMatchObject({ statusCode: 429, retryAfterSeconds: 35, message: 'Too many AI requests in the last minute. Please try again shortly.' });
+  expect(await f.jobs.submit(f.alice.id, last, kind, {})).toMatchObject({ state: 'complete' });
+  expect(await f.jobs.submit(f.alice.id, randomUUID(), kind === 'speech' ? 'proposal' : 'speech', {})).toMatchObject({ state: 'queued' });
+  if (kind === 'proposal') await expect(f.jobs.submit(f.alice.id, randomUUID(), 'translation', {})).rejects.toMatchObject({ statusCode: 429 });
+  await f.pool.query("UPDATE ai_jobs SET created_at=now()-interval '2 minutes' WHERE account_id=$1", [f.alice.id]);
+  expect(await f.jobs.submit(f.alice.id, randomUUID(), kind, {})).toMatchObject({ state: 'queued' });
+});
+it('releases expired account capacity on admission without maintenance and preserves healthy claims and request identity', async () => {
+  const f = await setup(), stale = randomUUID(), healthy = randomUUID(), next = randomUUID();
+  await f.jobs.submit(f.alice.id, stale, 'proposal', {}); await f.jobs.submit(f.alice.id, healthy, 'proposal', {});
+  const lost = (await f.jobs.claim(stale))!, current = (await f.jobs.claim(healthy))!;
+  await f.jobs.progress(lost, { partial: true });
+  await f.pool.query("UPDATE ai_jobs SET heartbeat=now()-interval '2 minutes' WHERE id=$1", [stale]);
+  expect(await new Jobs(f.pool).submit(f.alice.id, next, 'proposal', {})).toMatchObject({ state: 'queued' });
+  expect(await f.jobs.heartbeat(lost)).toBe('lost');
+  expect(await f.jobs.heartbeat(current)).toBe('active');
+  await f.jobs.progress(lost, { late: true }); await f.jobs.finish(lost, { late: true });
+  expect(await f.jobs.get(f.alice.id, stale)).toMatchObject({ state: 'interrupted', result: null });
+  expect(await f.jobs.submit(f.alice.id, stale, 'proposal', {})).toMatchObject({ state: 'interrupted' });
+  expect(await f.jobs.claim(stale)).toBeNull();
+  await expect(f.jobs.submit(f.alice.id, randomUUID(), 'proposal', {})).rejects.toMatchObject({ statusCode: 429 });
+});
+it('recovers expired global execution slots on claim without replaying abandoned work', async () => {
+  const f = await setup(), ids = [randomUUID(), randomUUID()], next = randomUUID();
+  for (const id of ids) { await f.jobs.submit(f.alice.id, id, 'proposal', {}); await f.jobs.claim(id); }
+  await f.jobs.submit(f.bob.id, next, 'proposal', {});
+  await f.pool.query("UPDATE ai_jobs SET heartbeat=now()-interval '2 minutes' WHERE account_id=$1", [f.alice.id]);
+  expect(await new Jobs(f.pool).claim(next)).toMatchObject({ id: next, state: 'working' });
+  for (const id of ids) {
+    expect(await f.jobs.get(f.alice.id, id)).toMatchObject({ state: 'interrupted' });
+    expect(await f.jobs.claim(id)).toBeNull();
+  }
+});
+it.each([false, true])('settles a lost claim on owner polling without maintenance (cancel requested=%s)', async cancelled => {
+  const f = await setup(), id = randomUUID();
+  await f.jobs.submit(f.alice.id, id, 'proposal', {});
+  const job = (await f.jobs.claim(id))!;
+  if (cancelled) await f.jobs.cancel(f.alice.id, id);
+  await f.pool.query("UPDATE ai_jobs SET heartbeat=now()-interval '2 minutes' WHERE id=$1", [id]);
+  expect(await new Jobs(f.pool).get(f.alice.id, id)).toMatchObject({ state: cancelled ? 'cancelled' : 'interrupted', result: null });
+  expect(await f.jobs.heartbeat(job)).toBe('lost');
+  await f.jobs.finish(job, { late: true });
+  expect(await f.jobs.get(f.alice.id, id)).toMatchObject({ state: cancelled ? 'cancelled' : 'interrupted', result: null });
+});
 it('enforces the durable per-minute limit and operator kill switch without hiding existing job state', async () => {
   const f = await setup();
   for (let count = 0; count < 30; count++) {
@@ -87,8 +159,8 @@ it('honors cancellation before admission and during execution without publishing
   expect(await f.jobs.submit(f.alice.id, early, 'speech', {})).toMatchObject({ state: 'cancelled' });
   const running = randomUUID(); await f.jobs.submit(f.alice.id, running, 'speech', {});
   const job = (await f.jobs.claim(running))!;
-  await f.jobs.cancel(f.bob.id, running); expect(await f.jobs.heartbeat(job)).toBe(true);
-  await f.jobs.cancel(f.alice.id, running); expect(await f.jobs.heartbeat(job)).toBe(false);
+  await f.jobs.cancel(f.bob.id, running); expect(await f.jobs.heartbeat(job)).toBe('active');
+  await f.jobs.cancel(f.alice.id, running); expect(await f.jobs.heartbeat(job)).toBe('cancelled');
   await f.jobs.progress(job, { tooLate: true }); await f.jobs.finish(job, { tooLate: true });
   expect(await f.jobs.get(f.alice.id, running)).toMatchObject({ state: 'cancelled', result: null });
 });
@@ -110,7 +182,7 @@ it('persists fixture speech through a worker restart and grants downloads only t
   await expect(new DatabaseCache(f.pool, restarted, 'pictures', f.alice.id).read('contract.json')).rejects.toMatchObject({ code: 'ENOENT' });
   await expect(restarted.read('../escape')).rejects.toThrow('Invalid storage key');
 });
-it.each([false, true])('requires registered accounts for AI (anonymous=%s) and protects CSRF, jobs, media and backups', async anonymous => {
+it.each([false, true])('requires registered accounts for AI (anonymous=%s), exposes admission retry timing, and protects CSRF, media and backups', async anonymous => {
   const f = await setup();
   Object.assign(f.identity, { emailVerified: false, ...(anonymous ? { email: null, providers: [] } : {}) });
   const auth: IdentityService = {
@@ -142,6 +214,19 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s) and p
   expect((await app.inject({ method: 'POST', url: '/api/ai/jobs', headers: { ...headers, 'x-little-say-csrf': 'wrong' }, payload })).statusCode).toBe(403);
   expect((await app.inject({ url: '/api/account/backup', headers })).statusCode).toBe(403);
   const accepted = await app.inject({ method: 'POST', url: '/api/ai/jobs', headers, payload }); expect(accepted.statusCode).toBe(202);
+  const queued = randomUUID(), rejected = randomUUID();
+  await f.jobs.submit(f.alice.id, queued, 'speech', { text: 'Another clip', language: 'en' });
+  const origin = 'http://localhost:8081';
+  const directThrottle = await app.inject({ method: 'POST', url: '/api/ai/jobs', headers: { ...headers, origin }, payload: { ...payload, id: rejected } });
+  const legacyThrottle = await app.inject({ method: 'POST', url: '/api/speech', headers: { ...headers, origin, 'x-little-say-request': rejected }, payload: payload.input });
+  for (const response of [directThrottle, legacyThrottle]) {
+    expect(response.statusCode).toBe(429);
+    expect(response.headers['retry-after']).toBe('2');
+    expect(response.headers['access-control-expose-headers']).toBe('Retry-After');
+    expect(response.json()).toMatchObject({ error: 'Audio is still being prepared. Please try again shortly.' });
+  }
+  expect(await f.jobs.get(f.alice.id, rejected)).toBeNull();
+  await f.jobs.cancel(f.alice.id, queued);
   expect((await app.inject(`/api/ai/jobs/${id}`)).statusCode).toBe(401);
   const job = (await f.jobs.claim(id))!;
   const result = await executeJob({ ...hosting, env: { AAC_AI_FIXTURES: 'true' } }, job, new AbortController().signal) as { id: string }; await f.jobs.finish(job, result);

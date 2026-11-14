@@ -1,4 +1,4 @@
-/** @file Resolves and caches pictures through injectable storage; standalone fixtures retain bounded in-process jobs. */
+/** @file Resolves and caches pictures, propagating claim cancellation through shared downloads and provider work. */
 
 import { createHash } from 'node:crypto';
 import { cacheStore, type CacheStore } from '../hosting/storage';
@@ -16,7 +16,7 @@ type StoredJob = { fingerprint: string; job: PictureJob };
 /** Release one cancelled subscriber without aborting catalog loads shared by other jobs. */
 function waitForShared<T>(work: Promise<T>, signal: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
-    const cancel = () => reject(new Error('Cancelled'));
+    const cancel = () => reject(signal.reason);
     const clean = () => signal.removeEventListener('abort', cancel);
     signal.addEventListener('abort', cancel, { once: true });
     work.then(value => { clean(); resolve(value); }, error => { clean(); reject(error); });
@@ -182,7 +182,7 @@ export class PictureJobs {
       await this.persist(stored).catch(() => {});
     }
   }
-  /** Execute a picture operation inside an externally claimed durable job without starting another queue. */
+  /** Execute a claimed picture operation without another queue; propagate its abort reason to the worker. */
   async resolve(input: PictureJobRequest, signal: AbortSignal, progress: (phase: 'finding' | 'generating') => Promise<void>): Promise<ResolvedPicture> {
     const unresolved = (reason: string): ResolvedPicture => ({ kind: 'unresolved', reason });
     if (!this.provider) return unresolved('Automatic matching needs AI. Search the library or choose an emoji or photo.');
@@ -195,24 +195,24 @@ export class PictureJobs {
     }
     if (input.mode !== 'generated' && !input.regenerate) {
       await progress('finding');
-      if (signal.aborted) throw new Error('Cancelled');
+      signal.throwIfAborted();
       const entries = [...new Map(input.concept.searchTerms.flatMap(term => searchPictures(term, input.style, 4)).map(entry => [entry.id, entry])).values()].slice(0, 6);
       const loaded = await waitForShared(Promise.allSettled(entries.map(entry => this.library(entry.id))), signal);
-      if (signal.aborted) throw new Error('Cancelled');
+      signal.throwIfAborted();
       const sources = loaded.flatMap(result => result.status === 'fulfilled' ? [result.value] : []);
       const selected = await this.provider.select(input.concept, sources.map(source => ({ id: source.entry.id, name: source.entry.name, bytes: source.bytes })), input.neighbors, signal);
-      if (signal.aborted) throw new Error('Cancelled');
+      signal.throwIfAborted();
       const picture = sources.find(source => source.entry.id === selected)?.picture;
       if (picture) { await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture; }
     }
-    if (signal.aborted) throw new Error('Cancelled');
+    signal.throwIfAborted();
     if (input.mode === 'library' || !input.allowGeneration || !this.generationEnabled) return unresolved('No clear library match. Choose another picture or enable AI pictures.');
     await progress('generating');
-    if (signal.aborted) throw new Error('Cancelled');
+    signal.throwIfAborted();
     const bytes = await normalizePicture(await this.provider.generate(input.concept, input.style, signal));
-    if (signal.aborted) throw new Error('Cancelled');
+    signal.throwIfAborted();
     const chosen = await this.provider.select(input.concept, [{ id: 'generated', name: input.concept.description, bytes }], input.neighbors, signal);
-    if (signal.aborted) throw new Error('Cancelled');
+    signal.throwIfAborted();
     if (!chosen) return unresolved('The generated picture did not clearly represent this card. Try a more specific description.');
     const picture: ResolvedPicture = { kind: 'generated', assetId: await this.put(bytes), description: input.concept.description, style: input.style, model: this.provider.model };
     await this.atomic(`match-${key}.json`, JSON.stringify(picture)); return picture;

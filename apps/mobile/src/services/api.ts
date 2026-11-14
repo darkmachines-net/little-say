@@ -1,4 +1,4 @@
-/** @file Authenticates cancellable requests, tolerates transient polling failures, and reports durable AI progress. */
+/** @file Authenticates cancellable requests and reports admission throttling and durable AI progress. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -23,6 +23,18 @@ export class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
 }
 
+/** A speech submission rejected before admission, distinct from errors for accepted work. */
+export class SpeechAdmissionError extends ApiError {
+  /** Preserve the server's requested delay in milliseconds when present and valid. */
+  constructor(message: string, readonly retryAfterMs?: number) { super(message, 429); }
+}
+
+function retryAfterMilliseconds(value: string | null) {
+  if (!value) return undefined;
+  const delay = /^\d+$/.test(value) ? Number(value) * 1000 : Date.parse(value) - Date.now();
+  return Number.isFinite(delay) ? Math.max(0, delay) : undefined;
+}
+
 /**
  * Request backend JSON with a 60-second deadline including bounded GET transport retries, and
  * independently poll asynchronous AI results. POSTs are never automatically replayed. Surface
@@ -42,7 +54,13 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     const protectedRequest = !path.startsWith('/api/account/') && !['/api/health', '/api/ready'].includes(path) && !path.startsWith('/api/pictures/search') && !path.startsWith('/api/pictures/library/');
     const authentication = protectedRequest ? await applicationHeaders(server, init.method === 'POST') : {};
     const { response, data } = await requestJson(`${server}${path}`, { ...init, redirect: 'error', credentials: 'include', signal: abort.signal, headers: { 'X-Little-Say': '1', ...(init.method === 'POST' ? { 'X-Little-Say-Request': Crypto.randomUUID() } : {}), ...authentication, ...init.headers } });
-    if (!response.ok) throw new ApiError(data.error || 'The server could not complete this request.', response.status);
+    if (!response.ok) {
+      const message = data.error || 'The server could not complete this request.';
+      if (path === '/api/speech' && response.status === 429 && init.method?.toUpperCase() === 'POST') {
+        throw new SpeechAdmissionError(message, retryAfterMilliseconds(response.headers.get('Retry-After')));
+      }
+      throw new ApiError(message, response.status);
+    }
     if (response.status === 202 && typeof data.kind === 'string' && typeof data.id === 'string') {
       clearTimeout(timeout); accepted = data.id;
       const deadline = Date.now() + 30 * 60 * 1000;

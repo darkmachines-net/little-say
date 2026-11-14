@@ -1,4 +1,4 @@
-/** @file Serves public starter cache hits on normal speech routes while protecting synthesis, jobs, and private media with account ownership. */
+/** @file Serves public starter speech and account-owned jobs and media, with retry guidance for admission limits. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
@@ -6,7 +6,7 @@ import { proposalRequestSchema, translationRequestSchema, pictureAnalysisRequest
 import { AccountError } from '../accounts/store';
 import { AccountAccess } from '../accounts/access';
 import { PictureJobs } from '../pictures/jobs';
-import { Jobs, type JobKind, type JobView } from './jobs';
+import { JobAdmissionError, Jobs, type JobKind, type JobView } from './jobs';
 import { DatabaseCache, canReadMedia, type ObjectStore } from './storage';
 import type { SpeechCache } from '../speech-cache';
 
@@ -28,11 +28,14 @@ export function validateJobInput(kind: JobKind, input: unknown): unknown {
   return parsed.data;
 }
 
-/** Serve only existing starter speech to guests; all generation, regeneration, and other legacy operations retain account checks. */
+/** Serve cached starter speech to guests and protect job admission, retry guidance, and private media with account checks. */
 export async function hostingRoutes(app: FastifyInstance, services: HostedServices, speechCache?: SpeechCache) {
   const { pool, jobs, access, objects } = services;
   const catalog = new PictureJobs(new DatabaseCache(pool, objects, 'pictures', undefined, true));
   app.addHook('onClose', async () => { catalog.close(); });
+  app.addHook('onError', async (_request, reply, error) => {
+    if (error instanceof JobAdmissionError) reply.header('Retry-After', error.retryAfterSeconds);
+  });
   app.addHook('onSend', async (request, reply, payload) => {
     if (/^\/api\/(pictures\/assets|speech)\/[a-f0-9]{64}\.(png|wav)(\?|$)/.test(request.url)) reply.header('Cache-Control', 'private, max-age=31536000, immutable');
     return payload;
