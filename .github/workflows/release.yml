@@ -1,4 +1,4 @@
-# Prepare Dev candidates and approve beta; the pinned toolkit checks signing and orders GCP/Expo delivery.
+# Prepares Dev candidates, approves the full beta rollout, then delegates parallel builds and ordered GCP/Expo delivery.
 name: Release
 run-name: ${{ inputs.destination == 'public-stores' && 'Public-store release (Expo production)' || 'Continuous delivery (Development → approval → beta)' }}
 on:
@@ -17,7 +17,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@ed621e6fbe1a35fd18e43391409d3673344a23c5
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@f5fcfcbcc202e27519dd553648b383957d0dac41
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination || 'production'] }}
       rebuild: ${{ inputs.rebuild || false }}
