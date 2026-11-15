@@ -40,7 +40,7 @@ export function stamp(root, plan) {
   });
 }
 
-/** Dispatch application operations only; no provider calls or lifecycle state live in this repository. */
+/** Return tracked input identities for inspection and an empty result after successful metadata stamping or validation. */
 export async function applicationHook({ root, action, config, source, plan, target, baseUrl }) {
   if (action === 'inspect') return { server: identity(root, source, config.server.inputs),
     js: Object.fromEntries(['android', 'ios'].map(p => [p, identity(root, source, config.mobile.inputs, p)])) };
