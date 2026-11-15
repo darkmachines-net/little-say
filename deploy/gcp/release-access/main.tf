@@ -1,4 +1,4 @@
-# Manages project-scoped release federation and application state access in a separate operator-owned state.
+# Manages release federation, application state access, and the applier's production image access.
 terraform {
   required_version = "= 1.13.5"
   backend "gcs" {
@@ -10,9 +10,7 @@ terraform {
   }
 }
 
-provider "google" {
-  project = "little-say"
-}
+provider "google" { project = "little-say" }
 
 locals {
   environments   = { plan = "gcp-terraform-plan", apply = "gcp-terraform-apply" }
@@ -131,10 +129,12 @@ resource "google_service_account_iam_member" "act_as" {
   member             = google_service_account.terraform["apply"].member
 }
 
-output "provider" {
-  value = { for mode, provider in google_iam_workload_identity_pool_provider.terraform : mode => provider.name }
+resource "google_artifact_registry_repository_iam_member" "applier" {
+  location   = "us-central1"
+  repository = "application"
+  role       = "roles/artifactregistry.reader"
+  member     = google_service_account.terraform["apply"].member
 }
 
-output "service_account" {
-  value = { for mode, account in google_service_account.terraform : mode => account.email }
-}
+output "provider" { value = { for mode, provider in google_iam_workload_identity_pool_provider.terraform : mode => provider.name } }
+output "service_account" { value = { for mode, account in google_service_account.terraform : mode => account.email } }
