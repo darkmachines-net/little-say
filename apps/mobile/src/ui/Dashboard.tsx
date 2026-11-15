@@ -1,4 +1,4 @@
-/** @file Shows playable boards, first-restore recovery, fixed-size refresh/progress, and one Settings entry point. */
+/** @file Shows playable boards, background AI status, first-restore recovery, and the Settings entry point. */
 
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, useWindowDimensions } from 'react-native';
@@ -12,6 +12,8 @@ import { Button, Notice } from './components';
 import { styles, theme } from './theme';
 import { MountainMark } from './Brand';
 import { AppHeader } from './AppHeader';
+import { AiActivityStatus } from './AiActivityStatus';
+import type { AiActivity } from '../services/aiActivity';
 
 const floatingInset = 24;
 const floatingClearance = 16;
@@ -19,11 +21,12 @@ const floatingClearance = 16;
 /**
  * Keep cached boards usable during sync; first restoration replaces creation and previews with progress/recovery.
  * Refresh manually from the navbar; its fixed-size busy control keeps background sync out of the list layout.
+ * Show pending AI activity above boards without blocking board actions.
  * One Settings action opens preferences, backup, and account controls.
  * Resolve profile languages for previews and audio actions, with recent boards before favorites.
  * Reserve the measured floating action height below the list; the app root owns native/web safe-area insets.
  */
-export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
+export function Dashboard({ library, audio, aiActivity, sync, onOpen, onPlay, onSettings, onCompose, onDelete, onFavorite, saving }: { library: Library; audio: SpeechLibrary; aiActivity?: AiActivity; sync: Pick<AccountController, 'restoring' | 'syncing' | 'retrySync'> & { backup: Pick<AccountController['backup'], 'error' | 'state'> }; onOpen: (id: string) => void; onPlay: (board: Board) => void; onSettings: () => void; onCompose: () => void; onDelete: (id: string) => void; onFavorite: (id: string) => void; saving: boolean }) {
   const syncError = sync.backup.error || (sync.backup.state === 'offline' ? 'Waiting for a connection. Your content will sync when you’re back online.' : '');
   const { width } = useWindowDimensions();
   const [menuId, setMenuId] = useState<string | null>(null);
@@ -54,6 +57,7 @@ export function Dashboard({ library, audio, sync, onOpen, onPlay, onSettings, on
         </>}
       </View> : <>
       {!wide && <Button icon={Plus} onPress={onCompose}>{createLabel}</Button>}
+      <AiActivityStatus activity={aiActivity} audio={audio} />
       <View style={{ gap: 28 }}>
         {recent && card(recent, true)}
         {remaining.length > 0 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8, rowGap: 16 }}>

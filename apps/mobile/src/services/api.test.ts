@@ -1,4 +1,4 @@
-/** @file Verifies authenticated routing, AI progress, Android release/Dev socket failures, deadlines, and cancellation. */
+/** @file Verifies authenticated routing, AI progress, structured admission feedback, and transport recovery. */
 import { afterEach, expect, it, vi } from 'vitest';
 
 const platform = vi.hoisted(() => ({ OS: 'web' }));
@@ -22,7 +22,7 @@ it('reports queue and drafting states until a usable partial board is available'
   const { proposeBoard } = await import('./api'); const progress = vi.fn();
   const work = proposeBoard('https://app.example', { prompt: 'Animals', board: null }, undefined, progress);
   await vi.advanceTimersByTimeAsync(0);
-  expect(progress).toHaveBeenLastCalledWith('Waiting for AI to start…');
+  expect(progress).toHaveBeenLastCalledWith('Board request queued. It will start automatically.');
   await vi.advanceTimersByTimeAsync(500);
   expect(progress).toHaveBeenLastCalledWith('Choosing words and translations…');
   await vi.advanceTimersByTimeAsync(500);
@@ -49,6 +49,54 @@ it('continues the accepted board job after a socket failure without resubmitting
     [`https://app.example/api/ai/jobs/${job.id}`, 'GET'],
   ]);
   expect(vi.getTimerCount()).toBe(0);
+});
+
+it.each<[string | undefined, number | undefined]>([
+  ['45', 45_000],
+  ['Sat, 14 Nov 2026 18:00:45 GMT', 45_000],
+  [undefined, undefined],
+  ['invalid', undefined],
+])('surfaces a rejected submission with Retry-After %s without replaying it', async (retryAfter, delay) => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-11-14T18:00:00Z'));
+  vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const headers = retryAfter ? { 'Retry-After': retryAfter } : undefined;
+  const fetch = vi.fn().mockResolvedValue(new Response('{"error":"Speech is busy."}', { status: 429, headers }));
+  vi.stubGlobal('fetch', fetch);
+  const { apiFetch, SpeechAdmissionError } = await import('./api');
+  const error = await apiFetch('', '/api/speech', { method: 'POST' }).catch(reason => reason);
+  expect(error).toBeInstanceOf(SpeechAdmissionError);
+  expect(error).toMatchObject({ status: 429, retryAfterMs: delay });
+  expect(fetch).toHaveBeenCalledOnce();
+});
+
+it('does not classify a throttled status poll as rejection of the original submission', async () => {
+  vi.useFakeTimers();
+  vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const job = { id: '10000000-0000-4000-8000-000000000001', kind: 'speech', state: 'working', result: null };
+  const fetch = vi.fn().mockResolvedValueOnce(new Response(JSON.stringify(job), { status: 202 }))
+    .mockResolvedValueOnce(new Response('{}', { status: 429, headers: { 'Retry-After': '45' } }))
+    .mockResolvedValueOnce(new Response('{}'));
+  vi.stubGlobal('fetch', fetch);
+  const { apiFetch, ApiError, SpeechAdmissionError } = await import('./api');
+  const work = apiFetch('', '/api/speech', { method: 'POST' }).catch(error => error);
+  await vi.advanceTimersByTimeAsync(500);
+  const error = await work;
+  expect(error).toBeInstanceOf(ApiError);
+  expect(error).not.toBeInstanceOf(SpeechAdmissionError);
+  expect(fetch.mock.calls.filter(([url]) => String(url).endsWith('/api/speech'))).toHaveLength(1);
+});
+
+it.each(['rate-limit', 'queue-full'] as const)('preserves %s board feedback when Retry-After is supplied in the body', async reason => {
+  vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: 'Wait', reason, retryAfterSeconds: 7 }), { status: 429 }));
+  vi.stubGlobal('fetch', fetch);
+  const { AiAdmissionError, proposeBoard } = await import('./api');
+  const error = await proposeBoard('', { prompt: 'Animals', board: null, preparationId: '10000000-0000-4000-8000-000000000001' }).catch(cause => cause);
+  expect(error).toBeInstanceOf(AiAdmissionError);
+  expect(error).toMatchObject({ reason, retryAfterMs: 7000 });
+  if (reason === 'rate-limit') expect(error.message).toContain('Try again in 7 seconds.');
+  expect(fetch).toHaveBeenCalledOnce();
 });
 
 it.each([false, true])('shows a readable Android connection error without replaying a submission (__DEV__=%s)', async development => {

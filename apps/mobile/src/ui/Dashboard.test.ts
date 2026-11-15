@@ -1,8 +1,9 @@
-/** @file Verifies first-restore recovery, the Settings entry, and navbar refresh/progress without altering the usable cached board list. */
+/** @file Verifies Home recovery, refresh, and background work feedback while cached boards stay usable. */
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { starterLibrary } from '../../../../tests/fixtures/library';
+import type { SpeechActivity } from '../services/speechLibrary';
 import { Dashboard } from './Dashboard';
 
 vi.mock('react-native', () => ({ View: 'View', Text: 'Text', ScrollView: 'ScrollView', ActivityIndicator: 'ActivityIndicator', useWindowDimensions: () => ({ width: 390 }), StyleSheet: { create: (value: unknown) => value } }));
@@ -18,13 +19,14 @@ vi.mock('./components', () => ({ Button: 'Button', Notice: 'Notice' }));
 
 let screen: ReactTestRenderer | undefined;
 const retrySync = vi.fn(async () => {}), onPlay = vi.fn(), onCompose = vi.fn();
+const backgroundWork = vi.fn<() => SpeechActivity>();
 function nodes(name: string) { return screen!.root.findAllByType(name as any); }
 async function render(restoring: boolean, syncing = false, error = '', empty = true, offline = false) {
   const library = starterLibrary(); if (empty) library.boards = [];
-  const props = { library, audio: {} as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, backup: { error, state: offline ? 'offline' as const : 'synced' as const }, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
+  const props = { library, audio: { backgroundWork } as unknown as React.ComponentProps<typeof Dashboard>['audio'], sync: { restoring, syncing, backup: { error, state: offline ? 'offline' as const : 'synced' as const }, retrySync }, onPlay, onCompose, onOpen: vi.fn(), onSettings: vi.fn(), onDelete: vi.fn(), onFavorite: vi.fn(), saving: false };
   await act(async () => { if (screen) screen.update(React.createElement(Dashboard, props)); else screen = create(React.createElement(Dashboard, props)); });
 }
-beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks(); });
+beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.clearAllMocks(); backgroundWork.mockReturnValue({ pending: 0, state: 'waiting' }); });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
 it('shows progress before the first request starts and avoids an empty library or creation until restoration completes', async () => {
@@ -51,7 +53,9 @@ it('offers first-restore retry on Home and replaces failure with progress on ret
 });
 
 it('refreshes from the navbar and keeps cached boards and creation usable without inline sync progress', async () => {
+  backgroundWork.mockReturnValue({ pending: 2, state: 'waiting' });
   await render(false, false, '', false);
+  expect(screen!.root.findByProps({ testID: 'background-ai-status' }).props.children).toBe('Audio preparation is queued and will resume automatically.');
   const refresh = () => nodes('Button').find(node => node.props.accessibilityLabel === 'Refresh content')!;
   expect(refresh().props.busy).toBe(false);
   await act(async () => refresh().props.onPress()); expect(retrySync).toHaveBeenCalledOnce();
@@ -63,7 +67,9 @@ it('refreshes from the navbar and keeps cached boards and creation usable withou
   const createButton = nodes('Button').find(node => node.props.children === 'New board')!;
   expect(createButton.props.disabled).toBeFalsy();
   await act(async () => createButton.props.onPress()); expect(onCompose).toHaveBeenCalledOnce();
+  backgroundWork.mockReturnValue({ pending: 0, state: 'waiting' });
   await render(false, false, '', false);
+  expect(screen!.root.findAllByProps({ testID: 'background-ai-status' })).toHaveLength(0);
   expect(refresh().props.busy).toBe(false); expect(nodes('BoardCard').length).toBeGreaterThan(0);
 });
 

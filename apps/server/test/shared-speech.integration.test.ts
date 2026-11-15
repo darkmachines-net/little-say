@@ -1,4 +1,4 @@
-/** @file Verifies cross-account speech reuse, claim serialization, regeneration, deletion retention, and migration of existing clips. */
+/** @file Verifies speech reuse, matching-claim exclusion, configured parallelism, regeneration, and retention. */
 
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash, randomUUID } from 'node:crypto';
@@ -9,6 +9,7 @@ import { createStarterBoards } from '@little-say/core';
 import { Accounts, type Identity } from '../src/accounts/store';
 import { migrateDatabase } from '../src/database';
 import { Jobs } from '../src/hosting/jobs';
+import { readAiLimits } from '../src/hosting/limits';
 import { executeJob } from '../src/hosting/runtime';
 import { validateJobInput } from '../src/hosting/api';
 import { DatabaseCache, FileObjects, canReadMedia, pruneMedia } from '../src/hosting/storage';
@@ -21,10 +22,10 @@ afterEach(async () => { for (const close of cleanup.splice(0).reverse()) await c
 const profile = speechProfile({});
 const input = { text: 'Horse', language: 'en-US' };
 const wav = (sample = 0) => pcmToWav(Buffer.alloc(100, sample));
-async function setup() {
+async function setup(env: NodeJS.ProcessEnv = {}) {
   const db = await testDatabase(); cleanup.push(() => db.close());
   const root = await mkdtemp(join(tmpdir(), 'little-say-shared-speech-')); cleanup.push(() => rm(root, { recursive: true, force: true }));
-  const accounts = new Accounts(db.pool), jobs = new Jobs(db.pool), objects = new FileObjects(root);
+  const accounts = new Accounts(db.pool), jobs = new Jobs(db.pool, true, readAiLimits(env)), objects = new FileObjects(root);
   const identity: Identity = { project: 'demo-little-say', uid: randomUUID(), email: 'parent@example.test', emailVerified: true, displayName: null, providers: ['password'], authTime: Date.now() / 1000, expires: Date.now() / 1000 + 3600 };
   const alice = await accounts.provision(identity), bob = await accounts.provision({ ...identity, uid: randomUUID() });
   return { ...db, root, accounts, jobs, objects, identity, alice, bob };
@@ -50,7 +51,7 @@ it('reuses every starter word across accounts and worker restarts with no synthe
 });
 
 it('serializes equivalent speech across worker claims while allowing unrelated words to run', async () => {
-  const f = await setup(), other = new Jobs(f.pool);
+  const f = await setup({ AAC_AI_SERVICE_SPEECH_CONCURRENCY: '2' }), other = new Jobs(f.pool, true, f.jobs.limits);
   const first = randomUUID(), duplicate = randomUUID(), unrelated = randomUUID();
   await f.jobs.submit(f.alice.id, first, 'speech', validateJobInput('speech', input));
   await f.jobs.submit(f.bob.id, duplicate, 'speech', validateJobInput('speech', { text: ' Horse ', language: 'en-us' }));
@@ -114,7 +115,9 @@ it('promotes existing owner pointers without losing clips, download grants, or a
   // Recreate only this disposable schema's pre-feature state, then exercise the real migration.
   await f.pool.query('ALTER TABLE media_objects DROP COLUMN service_owned');
   await f.pool.query('DROP INDEX ai_jobs_working_speech');
-  await f.pool.query("DELETE FROM pgmigrations WHERE name='1760000000005_shared_speech'");
+  await f.pool.query('DROP TABLE ai_image_work');
+  await f.pool.query('DROP INDEX ai_jobs_working_account_kind');
+  await f.pool.query("DELETE FROM pgmigrations WHERE name>='1760000000005_shared_speech'");
   await migrateDatabase(f.config, f.schema);
   expect(JSON.parse((await storage.read(pointer.key)).toString())).toEqual({ id: saved.id });
   expect(JSON.parse((await storage.read(secondKey)).toString())).toEqual({ id: alternate });

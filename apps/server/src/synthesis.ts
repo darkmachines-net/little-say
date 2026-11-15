@@ -1,6 +1,5 @@
 /**
- * @file Authenticates to OpenAI Realtime, generates bounded WAV speech, and checks the spoken transcript before
- * caching.
+ * @file Generates bounded WAV speech through OpenAI Realtime and classifies media failures without response content.
  */
 
 import { speechInstructions } from './prompts';
@@ -15,6 +14,14 @@ export function speechProfile(env: NodeJS.ProcessEnv) {
   return { model: env.OPENAI_SPEECH_MODEL || 'gpt-realtime-2.1-mini', voice: env.OPENAI_SPEECH_VOICE || 'marin', version: 1, format: 'wav-24000-mono' };
 }
 export type SpeechProfile = ReturnType<typeof speechProfile>;
+
+type SpeechFailure = 'timeout' | 'realtime-connection' | 'realtime-provider' | 'audio-limit' | 'audio-invalid' | 'incomplete' | 'transcript-mismatch';
+
+/** A bounded speech failure that can be reported without retaining a provider event or spoken text. */
+export class SpeechSynthesisError extends Error {
+  /** Store the failure category alongside the existing safe error message. */
+  constructor(readonly category: SpeechFailure, message: string) { super(message); }
+}
 /**
  * Compare nonempty requested text and transcript after Unicode, case, punctuation, symbol, and
  * whitespace normalization.
@@ -54,9 +61,9 @@ export function openAISynthesis(env: NodeJS.ProcessEnv, profile: SpeechProfile) 
       settled = true; clearTimeout(timeout); connection.close();
       if (error) reject(error); else resolve(audio!);
     };
-    const timeout = setTimeout(() => finish(new Error('Speech generation timed out.')), 45000);
-    connection.on('error', () => finish(new Error('Speech generation failed.')));
-    connection.socket.on('close', () => finish(new Error('Speech connection closed before completion.')));
+    const timeout = setTimeout(() => finish(new SpeechSynthesisError('timeout', 'Speech generation timed out.')), 45000);
+    connection.on('error', error => finish(new SpeechSynthesisError(error.error ? 'realtime-provider' : 'realtime-connection', 'Speech generation failed.')));
+    connection.socket.on('close', () => finish(new SpeechSynthesisError('realtime-connection', 'Speech connection closed before completion.')));
     connection.on('session.created', () => {
       connection.send({ type: 'response.create', response: {
         conversation: 'none', output_modalities: ['audio'], max_output_tokens: 1024,
@@ -68,16 +75,16 @@ export function openAISynthesis(env: NodeJS.ProcessEnv, profile: SpeechProfile) 
     connection.on('response.output_audio.delta', event => {
       if (settled) return;
       const chunk = Buffer.from(event.delta, 'base64'); bytes += chunk.length;
-      if (bytes + 44 > MAX_SPEECH_BYTES) finish(new Error('Speech audio exceeded its limit.'));
+      if (bytes + 44 > MAX_SPEECH_BYTES) finish(new SpeechSynthesisError('audio-limit', 'Speech audio exceeded its limit.'));
       else chunks.push(chunk);
     });
     connection.on('response.output_audio_transcript.done', event => { transcript += event.transcript; });
     connection.on('response.done', event => {
       if (settled) return;
       if (event.response.status !== 'completed' || !transcriptMatches(input.text, transcript)) {
-        finish(new Error('Speech did not match the requested words.')); return;
+        finish(new SpeechSynthesisError(event.response.status === 'completed' ? 'transcript-mismatch' : 'incomplete', 'Speech did not match the requested words.')); return;
       }
-      try { finish(undefined, pcmToWav(Buffer.concat(chunks))); } catch { finish(new Error('Speech audio was invalid.')); }
+      try { finish(undefined, pcmToWav(Buffer.concat(chunks))); } catch { finish(new SpeechSynthesisError('audio-invalid', 'Speech audio was invalid.')); }
     });
   }));
 }

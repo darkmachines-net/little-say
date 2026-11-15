@@ -1,4 +1,4 @@
-/** @file Serves public starter cache hits on normal speech routes while protecting synthesis, jobs, and private media with account ownership. */
+/** @file Serves cached starter speech, dispatches authenticated jobs, and exposes owner-only activity counts. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
@@ -6,13 +6,13 @@ import { proposalRequestSchema, translationRequestSchema, pictureAnalysisRequest
 import { AccountError } from '../accounts/store';
 import { AccountAccess } from '../accounts/access';
 import { PictureJobs } from '../pictures/jobs';
-import { Jobs, type JobKind, type JobView } from './jobs';
+import { JobAdmissionError, Jobs, type JobKind, type JobView } from './jobs';
 import { DatabaseCache, canReadMedia, type ObjectStore } from './storage';
 import type { SpeechCache } from '../speech-cache';
 
 export interface HostedServices { pool: Pool; jobs: Jobs; access: AccountAccess; objects: ObjectStore; enabled: boolean;
-  /** Attempt prompt delivery after the durable commit; scheduled reconciliation covers failures. */
-  dispatch?(id: string): Promise<void>;
+  /** Deliver a committed job to the queue for its kind; scheduled reconciliation covers failures. */
+  dispatch?(id: string, kind: JobKind): Promise<void>;
 }
 const reviewSchema = z.object({ cards: z.array(z.object({ id: z.string().max(100), assetId: z.string().regex(/^[a-f0-9]{64}$/), concept: pictureConceptSchema })).min(1).max(24) });
 const schemas = { proposal: proposalRequestSchema, translation: translationRequestSchema, analysis: pictureAnalysisRequestSchema, review: reviewSchema, speech: speechRequestSchema, picture: pictureJobRequestSchema };
@@ -28,11 +28,14 @@ export function validateJobInput(kind: JobKind, input: unknown): unknown {
   return parsed.data;
 }
 
-/** Serve only existing starter speech to guests; all generation, regeneration, and other legacy operations retain account checks. */
+/** Serve cached starter speech to guests and protect job admission, activity and private media with account checks. */
 export async function hostingRoutes(app: FastifyInstance, services: HostedServices, speechCache?: SpeechCache) {
   const { pool, jobs, access, objects } = services;
   const catalog = new PictureJobs(new DatabaseCache(pool, objects, 'pictures', undefined, true));
   app.addHook('onClose', async () => { catalog.close(); });
+  app.addHook('onError', async (_request, reply, error) => {
+    if (error instanceof JobAdmissionError) reply.header('Retry-After', error.retryAfterSeconds);
+  });
   app.addHook('onSend', async (request, reply, payload) => {
     if (/^\/api\/(pictures\/assets|speech)\/[a-f0-9]{64}\.(png|wav)(\?|$)/.test(request.url)) reply.header('Cache-Control', 'private, max-age=31536000, immutable');
     return payload;
@@ -73,7 +76,7 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
       const id = raw.requestId ?? raw.preparationId ?? request.headers['x-little-say-request'];
       if (typeof id !== 'string') throw new AccountError('Update Little Say to submit asynchronous AI requests.', 400);
       const job = await jobs.submit(account.id, id, legacyKind, input);
-      if (job.state === 'queued') await services.dispatch?.(job.id).catch(() => {});
+      if (job.state === 'queued') await services.dispatch?.(job.id, job.kind).catch(() => {});
       const original = input as { draftId: string; tileId: string };
       return reply.code(202).send(legacyKind === 'picture' ? { ...pictureState(job), draftId: original.draftId, tileId: original.tileId } : job);
     }
@@ -103,8 +106,12 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     }
     if (kind === 'proposal') (input as { preparationId?: string }).preparationId = id;
     const job = await jobs.submit(account.id, id, kind, input);
-    if (job.state === 'queued') await services.dispatch?.(job.id).catch(() => {});
+    if (job.state === 'queued') await services.dispatch?.(job.id, job.kind).catch(() => {});
     return reply.code(202).send(job);
+  });
+  app.get('/api/ai/activity', async request => {
+    const { account } = await access.verify(request);
+    return jobs.activity(account.id);
   });
   app.get<{ Params: { id: string } }>('/api/ai/jobs/:id', async (request, reply) => {
     const { account } = await access.verify(request);

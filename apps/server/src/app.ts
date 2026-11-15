@@ -1,9 +1,8 @@
 /**
- * @file Builds the Fastify API with input validation, origin checks, request limits, speech/picture
- * services, shared-cache starter playback, fixed per-IP rate limits, and optional web hosting.
+ * @file Configures Fastify request guards and structured admission feedback, then mounts AI, account, media, and web routes.
  */
 
-import Fastify from 'fastify';
+import Fastify, { LogController } from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import staticFiles from '@fastify/static';
@@ -24,6 +23,7 @@ import { accountRoutes } from './accounts/routes';
 import { type BoardPreparation } from './board-preparation';
 import { AccountError } from './accounts/store';
 import { hostingRoutes, type HostedServices } from './hosting/api';
+import { JobAdmissionError } from './hosting/jobs';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
   hosting?: HostedServices;
@@ -31,12 +31,17 @@ export interface ServerOptions { provider: AiProvider | null; preparation?: Boar
 
 /**
  * Register validated, rate-limited routes with injected AI, speech, and picture services.
+ * When logging is enabled, retain application diagnostics and redact credentials without logging every request.
  * The caller owns listen and close; construction does not open a listening socket.
  */
 export async function createServer(options: ServerOptions) {
-  const app = Fastify({ bodyLimit: 128 * 1024, logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false, disableRequestLogging: true });
+  const app = Fastify({
+    bodyLimit: 128 * 1024,
+    logger: options.logger ? { level: 'info', redact: ['req.headers.authorization', 'req.headers.cookie'] } : false,
+    logController: new LogController({ disableRequestLogging: true }),
+  });
   const origins = options.origins ?? ['http://localhost:8081', 'http://localhost:8787', 'http://127.0.0.1:8787'];
-  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'X-Little-Say-Request', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], credentials: true });
+  await app.register(cors, { origin: origins, methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'X-Little-Say', 'X-Little-Say-Request', 'Authorization', 'X-Little-Say-Account', 'X-Little-Say-CSRF'], exposedHeaders: ['Retry-After'], credentials: true });
   await app.register(rateLimit, { global: false });
   const aiLimits = { config: { rateLimit: { max: 30, timeWindow: '1 minute' } } };
   let active = 0;
@@ -47,6 +52,7 @@ export async function createServer(options: ServerOptions) {
     if (request.method === 'POST' && request.headers['x-little-say'] !== '1') return reply.code(403).send({ error: 'Use the Little Say app to make this request.' });
   });
   app.setErrorHandler((error, request, reply) => {
+    if (error instanceof JobAdmissionError) return reply.code(429).send({ error: error.message, reason: error.reason, retryAfterSeconds: error.retryAfterSeconds });
     if (error instanceof AccountError) return reply.code(error.statusCode).send({ error: error.message });
     const status = (error as { statusCode?: number }).statusCode ?? 500;
     // Only log metadata, never prompt, board, or provider error bodies.

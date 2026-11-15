@@ -1,5 +1,5 @@
 /**
- * @file Composes required sign-in, unified Settings, library persistence, playback, and shared edit/AI/translation history.
+ * @file Composes signed-in library, playback, editing, and parent-facing background activity.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,6 +11,7 @@ import { applyProposal, mergeBoardSuggestion, draftBoardSchema, speechSource, bo
 import { useLibrary } from './data/useLibrary';
 import { getVoices, matchingVoice, speechQueue, type Voice } from './services/speech';
 import { useSpeechLibrary } from './services/useSpeechLibrary';
+import { useAiActivity } from './services/aiActivity';
 import { useBoardTranslations } from './services/useBoardTranslations';
 import { initializeUpdates, applyUpdate } from './services/updates';
 import { Dashboard } from './ui/Dashboard';
@@ -78,6 +79,9 @@ function Application() {
     signedInPreviously.current = signedIn;
   }, [account.ready, requiresAccount, accountRoute, settingsRoute]);
   const audio = useSpeechLibrary(account.ready && !requiresAccount ? store.library : null);
+  const showAiActivity = Boolean(store.library && account.ready && !requiresAccount && !account.restoring &&
+    !accountRoute.route && !settingsRoute.route && !store.library.setup && !store.library.settings.activeBoardId);
+  const aiActivity = useAiActivity(store.library?.settings.backendUrl ?? '', account.session?.account.id, showAiActivity);
   const openAccount = accountRoute.open;
   const previewSettings = store.library?.settings;
   const previewQueue = useMemo(() => speechQueue(voices, previewSettings?.voices ?? {}, () => {}, () => setError('This audio could not play. Check your device’s volume and voice settings.'), audio.asset, tag => previewSettings ? speechSource(previewSettings, tag) : 'ai'), [voices, previewSettings, audio]);
@@ -190,7 +194,7 @@ function Application() {
     {Boolean(store.error) && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => void store.retry().catch(() => {})}>Retry saving</Button>}>{store.error}</Notice></View>}
     {updateReady && <View style={{ padding: 10 }}><Notice action={<Button kind="secondary" onPress={() => { void store.flush().then(applyUpdate).catch(() => setError('Save your changes before updating.')); }}>Update now</Button>}>A new version is ready. Your locally saved boards will stay here.</Notice></View>}
     {Boolean(error) && <View style={{ padding: 10 }}><Notice action={<Button kind="ghost" onPress={() => setError('')}>Dismiss</Button>}>{error}</Notice></View>}
-    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} translationStatus={translations.status[selected.id]} onPrepareTranslations={() => void translations.prepare(selected.id)} onCancelTranslations={() => translations.cancel(selected.id)} onManageLanguages={() => settingsRoute.open({ page: 'languages' })} draft={workingDraft?.board.id === selected.id ? workingDraft : undefined} onAccept={accept} onDraft={state => {
+    {selected ? <BoardEditor key={selected.id} board={selected} settings={library.settings} audio={audio} aiActivity={aiActivity} translationStatus={translations.status[selected.id]} onPrepareTranslations={() => void translations.prepare(selected.id)} onCancelTranslations={() => translations.cancel(selected.id)} onManageLanguages={() => settingsRoute.open({ page: 'languages' })} draft={workingDraft?.board.id === selected.id ? workingDraft : undefined} onAccept={accept} onDraft={state => {
       const current = workingDraftRef.current;
       if (current?.board.id === selected.id) updateDraft({ ...current, ...state });
     }} onBeforeClose={draftRoute.beforeClose} onSaveDraft={snapshot => draftRoute.save(() => store.commit(lib => ({ ...lib, creationDraft: snapshot, boardCreationDraft: undefined })))} onDiscardDraft={() => draftRoute.save(async () => {
@@ -217,7 +221,7 @@ function Application() {
       if (!selected.tiles.length) return;
       const copy = { ...selected, id: Crypto.randomUUID(), title: `${selected.title.slice(0, 90)} (copy)`, revision: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), tiles: selected.tiles.map(t => ({ ...t, id: Crypto.randomUUID() })) };
       void store.change(lib => ({ ...lib, boards: [...lib.boards, copy], boardLastPlayedAt: { ...lib.boardLastPlayedAt, [copy.id]: Date.now() } })).catch(() => {}); setSelectedId(copy.id); draftRoute.open(copy.id);
-    }} onConsent={consent} onPreview={preview} canUndo={Boolean(history.entries[selected.id]?.undo.length)} canRedo={Boolean(history.entries[selected.id]?.redo.length)} onRedo={() => restore('redo')} onUndo={() => restore('undo')} /> : <Dashboard library={library} audio={audio} sync={account} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
+    }} onConsent={consent} onPreview={preview} canUndo={Boolean(history.entries[selected.id]?.undo.length)} canRedo={Boolean(history.entries[selected.id]?.redo.length)} onRedo={() => restore('redo')} onUndo={() => restore('undo')} /> : <Dashboard library={library} audio={audio} aiActivity={aiActivity} sync={account} saving={store.saving} onOpen={id => { setSelectedId(id); draftRoute.open(id); }} onPlay={preparePlay} onSettings={() => settingsRoute.open()} onCompose={() => draftRoute.open()} onDelete={deleteBoard} onFavorite={id => {
       void store.change(current => {
         const favorites = new Set(current.favoriteBoardIds);
         if (favorites.has(id)) favorites.delete(id); else favorites.add(id);

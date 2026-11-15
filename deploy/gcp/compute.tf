@@ -1,4 +1,4 @@
-# Runs immutable API/worker revisions with bounded cold-start probes, federated worker AI and a privileged migration job.
+# Runs immutable API/worker revisions and reserves separate Cloud Tasks dispatch capacity for foreground and speech jobs.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
@@ -9,13 +9,14 @@ locals {
     FIREBASE_GOOGLE_WEB_CLIENT_ID = var.google_web_client_id, FIREBASE_GOOGLE_IOS_CLIENT_ID = var.google_ios_client_id,
     FIREBASE_APPLE_SERVICE_ID     = var.apple_service_id, FIREBASE_APPLE_REDIRECT_URI = "https://${var.project_id}.firebaseapp.com/__/auth/handler",
     ALLOWED_ORIGINS               = "https://littlesay.app,https://little-say.web.app,https://little-say.firebaseapp.com", AAC_AI_ENABLED = tostring(var.ai_enabled),
-    TASKS_QUEUE                   = google_cloud_tasks_queue.ai.id, TASKS_INVOKER = google_service_account.service["tasks"].email
+    TASKS_QUEUE                   = google_cloud_tasks_queue.ai.id, TASKS_SPEECH_QUEUE = google_cloud_tasks_queue.speech.id, TASKS_INVOKER = google_service_account.service["tasks"].email
 
   }
   openai_worker_env = {
     OPENAI_IDENTITY_PROVIDER_ID = trimspace(var.openai_identity_provider_id)
     OPENAI_SERVICE_ACCOUNT_ID   = trimspace(var.openai_service_account_id)
   }
+  ai_limits_env = { for name, value in var.ai_limits : "AAC_AI_${upper(name)}" => tostring(value) }
   # Deterministic Cloud Run URL avoids a dependency cycle between the API and worker settings.
   worker_url = "https://little-say-worker-${data.google_project.app.number}.${var.region}.run.app"
 }
@@ -32,7 +33,7 @@ resource "google_cloud_run_v2_service" "service" {
     max_instance_request_concurrency = each.key == "worker" ? 1 : 40
     scaling {
       min_instance_count = 0
-      max_instance_count = each.key == "worker" ? 2 : 3
+      max_instance_count = each.key == "worker" ? var.ai_limits.service_foreground_concurrency + var.ai_limits.service_speech_concurrency + 1 : 3
 
     }
     volumes {
@@ -63,7 +64,7 @@ resource "google_cloud_run_v2_service" "service" {
 
       }
       dynamic "env" {
-        for_each = merge(local.runtime_env, {
+        for_each = merge(local.runtime_env, local.ai_limits_env, {
           WORKER_URL = local.worker_url, WORKER_MODE = each.key == "worker" ? "cloud" : "api", AAC_AI_WORKER_CONFIGURED = tostring(var.ai_enabled)
         }, each.key == "worker" ? local.openai_worker_env : {})
         content {
@@ -200,8 +201,8 @@ resource "google_cloud_tasks_queue" "ai" {
   name     = "little-say-ai"
   location = var.region
   rate_limits {
-    max_concurrent_dispatches = 2
-    max_dispatches_per_second = 2
+    max_concurrent_dispatches = var.ai_limits.service_foreground_concurrency
+    max_dispatches_per_second = var.ai_limits.service_foreground_concurrency
 
   }
   retry_config {
@@ -211,6 +212,21 @@ resource "google_cloud_tasks_queue" "ai" {
     max_backoff        = "300s"
     max_doublings      = 5
 
+  }
+}
+resource "google_cloud_tasks_queue" "speech" {
+  name     = "little-say-speech"
+  location = var.region
+  rate_limits {
+    max_concurrent_dispatches = var.ai_limits.service_speech_concurrency
+    max_dispatches_per_second = var.ai_limits.service_speech_concurrency
+  }
+  retry_config {
+    max_attempts       = 100
+    max_retry_duration = "86400s"
+    min_backoff        = "5s"
+    max_backoff        = "300s"
+    max_doublings      = 5
   }
 }
 resource "google_cloud_scheduler_job" "maintenance" {

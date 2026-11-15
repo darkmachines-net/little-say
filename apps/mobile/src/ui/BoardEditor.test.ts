@@ -1,17 +1,18 @@
-/** @file Verifies grouped manual actions, quiet save status, native keyboard/input stability, Undo/Redo, picture progress, and draft recovery. */
+/** @file Verifies editor layout, admission and activity feedback, Undo/Redo, and interrupted draft recovery. */
 
 import React, { act } from 'react';
 import { create, type ReactTestInstance, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { Board, Settings } from '@little-say/core';
 import type { PictureTileState } from '../services/pictures';
+import type { SpeechActivity } from '../services/speechLibrary';
 import { BoardEditor } from './BoardEditor';
 
 const native = vi.hoisted(() => ({
   platform: 'android', width: 390, height: 844, top: 48, visible: false,
   listeners: new Map<string, () => void>(),
 }));
-const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words', busy: null as string | null, suggestion: null as object | null, clear: vi.fn(), stop: vi.fn(), preview: undefined as Board | undefined, states: {} as Record<string, PictureTileState> }));
+const state = vi.hoisted(() => ({ reply: '', prompt: 'Keep my words', busy: null as string | null, suggestion: null as object | null, clear: vi.fn(), stop: vi.fn(), preview: undefined as Board | undefined, states: {} as Record<string, PictureTileState>, speech: { pending: 0, state: 'waiting' } as SpeechActivity, admission: null as { message: string; retryAt: number; queueFull: boolean } | null, retrySeconds: 0 }));
 vi.mock('react-native', () => ({
   Platform: { get OS() { return native.platform; } },
   View: 'View', Text: 'Text', TextInput: 'TextInput', ScrollView: 'ScrollView', Pressable: 'Pressable',
@@ -42,7 +43,7 @@ vi.mock('../services/useBoardAssistant', () => ({
   /** Supply controlled previews and picture states while retaining the real editor/composer layout. */
   useBoardAssistant: ({ board }: { board: Board }) => ({
     preview: state.preview ?? board, prompt: state.prompt, reply: state.reply, history: [], scope: null, busy: state.busy,
-    suggestion: state.suggestion, error: '', mergeError: '', progress: '', states: state.states, translations: [], conflicts: [],
+    suggestion: state.suggestion, error: '', admission: state.admission, retrySeconds: state.retrySeconds, mergeError: '', progress: '', states: state.states, translations: [], conflicts: [],
     setPrompt: vi.fn(), clear: state.clear, stop: state.stop, generate: vi.fn(),
   }),
 }));
@@ -52,7 +53,7 @@ const board: Board = { id: 'farm', title: 'Farm', revision: 1, createdAt: '', up
 ] };
 const settings: Settings = { backendUrl: '', voices: {}, activeBoardId: board.id, aiConsent: false, autoSpeech: true, voiceSources: { 'en-US': 'device' } };
 const props: React.ComponentProps<typeof BoardEditor> = {
-  board, settings, audio: {} as React.ComponentProps<typeof BoardEditor>['audio'],
+  board, settings, audio: { backgroundWork: vi.fn(() => state.speech) } as unknown as React.ComponentProps<typeof BoardEditor>['audio'],
   onPrepareTranslations: vi.fn(), onCancelTranslations: vi.fn(), onManageLanguages: vi.fn(),
   onDraft: vi.fn(), onSaveDraft: vi.fn(), onDiscardDraft: vi.fn(), onBeforeClose: vi.fn(), onAccept: vi.fn(), onStopPreview: vi.fn(), onBack: vi.fn(),
   /** Return the unchanged fixture; these scenarios exercise layout rather than persistence. */
@@ -79,6 +80,7 @@ beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   Object.assign(native, { width: 390, height: 844, top: 48, visible: false });
   native.listeners.clear(); state.reply = ''; state.prompt = 'Keep my words'; state.busy = null; state.suggestion = null; state.preview = undefined; state.states = {};
+  state.speech = { pending: 0, state: 'waiting' }; state.admission = null; state.retrySeconds = 0;
   vi.clearAllMocks(); vi.mocked(props.onSaveDraft).mockResolvedValue(undefined); vi.mocked(props.onDiscardDraft).mockResolvedValue(undefined);
   state.stop.mockReset().mockResolvedValue(true);
 });
@@ -145,6 +147,24 @@ it('groups Add Card and Accept outside navigation and keeps saved boards quiet',
   expect(screen.root.findByProps({ testID: 'board-save-status' }).props.children).toBe('Saving…');
   await act(async () => { screen.update(React.createElement(BoardEditor, { ...props, saveError: 'Storage full' })); });
   expect(screen.root.findByProps({ testID: 'board-save-status' }).props.children).toBe('Not saved — retry saving');
+});
+
+it('keeps the prompt editable during a cooldown and keeps background activity separate', async () => {
+  state.admission = { message: 'You’ve reached the board request limit.', retryAt: 3000, queueFull: false };
+  state.retrySeconds = 3;
+  state.speech = { pending: 4, state: 'preparing' };
+  const activity = { boards: { queued: 1, working: 0 }, speech: { queued: 0, working: 2 }, other: { queued: 0, working: 0 } };
+  const editor = () => React.createElement(BoardEditor, { ...props, aiActivity: activity });
+  await act(async () => { screen = create(editor()); });
+  expect(input().props).toMatchObject({ value: 'Keep my words', editable: true });
+  expect(screen.root.findByProps({ accessibilityLabel: 'Send message' }).props.disabled).toBe(true);
+  expect(screen.root.findByProps({ testID: 'board-ai-retry' }).props.children).toBe('Try again in 3 seconds.');
+  expect(screen.root.findByProps({ testID: 'background-ai-status' }).props.children).toBe('1 board request waiting to start. Preparing 4 audio clips in the background.');
+  state.retrySeconds = 0;
+  await act(async () => { screen.update(editor()); });
+  expect(screen.root.findByProps({ accessibilityLabel: 'Send message' }).props.disabled).toBe(false);
+  expect(screen.root.findByProps({ testID: 'board-ai-retry' }).props.children).toBe('You can try sending again.');
+  expectFixedPrompt();
 });
 
 it.each([true, false])('Accept waits for pending work and opens play only after successful completion (%s)', async saved => {
