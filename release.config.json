@@ -4,183 +4,62 @@
   "defaultBranch": "master",
   "profiles": {
     "beta": {
-      "environment": "preview",
-      "channel": "beta",
-      "easProfile": "beta",
-      "submit": true,
-      "approvalEnvironment": "internal",
-      "deployEnvironment": "gcp-production",
-      "terraform": {
-        "directory": "deploy/gcp",
-        "version": "1.13.5",
-        "planEnvironment": "gcp-terraform-plan",
-        "applyEnvironment": "gcp-terraform-apply"
-      },
-      "publicEnvironment": {
-        "LITTLE_SAY_CHANNEL": "beta"
-      }
+      "environment": "preview", "channel": "beta", "easProfile": "beta", "submit": true,
+      "approvalEnvironment": "internal", "deployEnvironment": "gcp-production",
+      "terraform": { "directory": "deploy/gcp", "version": "1.13.5",
+        "planEnvironment": "gcp-terraform-plan", "applyEnvironment": "gcp-terraform-apply" },
+      "publicEnvironment": { "LITTLE_SAY_CHANNEL": "beta" }
     },
     "production": {
-      "environment": "production",
-      "channel": "production",
-      "easProfile": "production",
-      "submit": true,
-      "approvalEnvironment": "production",
-      "deployEnvironment": "gcp-production",
-      "terraform": {
-        "directory": "deploy/gcp",
-        "version": "1.13.5",
-        "planEnvironment": "gcp-terraform-plan",
-        "applyEnvironment": "gcp-terraform-apply"
-      },
-      "publicEnvironment": {
-        "LITTLE_SAY_CHANNEL": "production"
-      }
+      "environment": "production", "channel": "production", "easProfile": "production", "submit": true,
+      "approvalEnvironment": "production", "deployEnvironment": "gcp-production",
+      "terraform": { "directory": "deploy/gcp", "version": "1.13.5",
+        "planEnvironment": "gcp-terraform-plan", "applyEnvironment": "gcp-terraform-apply" },
+      "publicEnvironment": { "LITTLE_SAY_CHANNEL": "production" }
     }
   },
-  "install": [
-    [
-      "npm",
-      "ci"
-    ]
-  ],
-  "metadataFiles": [
-    "release.json",
-    "native-release.json",
-    "package.json",
-    "package-lock.json",
-    "apps/server/package.json",
-    "apps/mobile/package.json",
-    "apps/mobile/app.json"
-  ],
+  "install": [["npm", "ci"]],
+  "metadataFiles": ["release.json", "native-release.json", "package.json", "package-lock.json",
+    "apps/server/package.json", "apps/mobile/package.json", "apps/mobile/app.json"],
   "hooks": {
-    "inspect": [
-      "node",
-      "scripts/release/hooks.mjs"
-    ],
-    "prepare": [
-      "node",
-      "scripts/release/hooks.mjs"
-    ],
-    "validate": [
-      "node",
-      "scripts/release/hooks.mjs"
-    ],
-    "verify": [
-      "node",
-      "scripts/release/hooks.mjs"
-    ]
+    "inspect": ["node", "scripts/release/hooks.mjs"], "prepare": ["node", "scripts/release/hooks.mjs"],
+    "validate": ["node", "scripts/release/hooks.mjs"], "verify": ["node", "scripts/release/hooks.mjs"]
   },
   "mobile": {
-    "directory": "apps/mobile",
-    "versionFloor": "0.1.4",
-    "inputs": [
-      "apps/mobile",
-      "packages",
-      "native-release.json",
-      "package-lock.json"
-    ],
-    "builder": "eas",
-    "projectId": "a0336055-a9d6-46b1-8eb4-120944304685",
-    "owner": "matthewchartier",
-    "slug": "little-say",
-    "publicVariables": [
-      "LITTLE_SAY_GOOGLE_IOS_URL_SCHEME",
-      "LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME"
-    ],
+    "directory": "apps/mobile", "versionFloor": "0.1.4",
+    "inputs": ["apps/mobile", "packages", "native-release.json", "package-lock.json"],
+    "builder": "eas", "projectId": "a0336055-a9d6-46b1-8eb4-120944304685", "owner": "matthewchartier", "slug": "little-say",
+    "publicVariables": ["LITTLE_SAY_GOOGLE_IOS_URL_SCHEME", "LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME"],
     "targets": [
-      {
-        "id": "android",
-        "platform": "android",
-        "applicationId": "net.darkmachines.littlesay",
-        "buildNumberFloor": 5
-      },
-      {
-        "id": "ios",
-        "platform": "ios",
-        "applicationId": "net.darkmachines.littlesay",
-        "buildNumberFloor": 5
-      }
+      { "id": "android", "platform": "android", "applicationId": "net.darkmachines.littlesay", "buildNumberFloor": 5 },
+      { "id": "ios", "platform": "ios", "applicationId": "net.darkmachines.littlesay", "buildNumberFloor": 5 }
     ]
   },
   "server": {
-    "versionFloor": "0.3.3",
-    "inputs": [
-      "apps/server",
-      "apps/mobile",
-      "packages",
-      "package-lock.json",
-      "Dockerfile",
-      "deploy/gcp/firebase.json"
-    ],
-    "image": "ghcr.io/darkmachines-net/little-say",
-    "dockerfile": "Dockerfile",
-    "platforms": [
-      "linux/amd64"
-    ],
+    "versionFloor": "0.3.3", "inputs": ["apps/server", "apps/mobile", "packages", "package-lock.json", "Dockerfile", "deploy/gcp/firebase.json"],
+    "image": "ghcr.io/darkmachines-net/little-say", "dockerfile": "Dockerfile", "platforms": ["linux/amd64"],
     "smoke": {
-      "port": 8787,
-      "healthPath": "/api/ready",
+      "port": 8787, "healthPath": "/api/ready",
       "environment": {
-        "NODE_ENV": "test",
-        "PGHOST": "postgres",
-        "PGDATABASE": "little_say",
-        "PGUSER": "little_say",
-        "PGPASSWORD": "disposable-smoke-only",
-        "PGSSLMODE": "disable",
-        "FIREBASE_PROJECT_ID": "demo-little-say",
-        "FIREBASE_AUTH_EMULATOR_HOST": "127.0.0.1:9099",
-        "FIREBASE_API_KEY": "demo-key",
-        "FIREBASE_APP_ID": "demo-app"
+        "NODE_ENV": "test", "PGHOST": "postgres", "PGDATABASE": "little_say", "PGUSER": "little_say",
+        "PGPASSWORD": "disposable-smoke-only", "PGSSLMODE": "disable",
+        "FIREBASE_PROJECT_ID": "demo-little-say", "FIREBASE_AUTH_EMULATOR_HOST": "127.0.0.1:9099",
+        "FIREBASE_API_KEY": "demo-key", "FIREBASE_APP_ID": "demo-app"
       },
-      "initialize": [
-        "node",
-        "server/database-cli.js",
-        "migrate"
-      ],
-      "services": {
-        "postgres": {
-          "environment": {
-            "POSTGRES_PASSWORD": "disposable-smoke-only",
-            "POSTGRES_USER": "little_say",
-            "POSTGRES_DB": "little_say"
-          },
-          "ready": [
-            "pg_isready",
-            "-U",
-            "little_say",
-            "-d",
-            "little_say"
-          ],
-          "image": "postgres:17-bookworm"
-        }
-      }
+      "initialize": ["node", "server/database-cli.js", "migrate"],
+      "services": { "postgres": {
+        "environment": { "POSTGRES_PASSWORD": "disposable-smoke-only", "POSTGRES_USER": "little_say", "POSTGRES_DB": "little_say" },
+        "ready": ["pg_isready", "-U", "little_say", "-d", "little_say"], "image": "postgres:17-bookworm" } }
     },
     "deployment": {
-      "provider": "gcp",
-      "project": "little-say",
-      "region": "us-central1",
-      "api": "little-say-api",
-      "worker": "little-say-worker",
-      "migrationJob": "little-say-migrate",
-      "hostingSite": "little-say",
-      "registry": "us-central1-docker.pkg.dev/little-say/application/server",
-      "origin": "https://littlesay.app"
+      "provider": "gcp", "project": "little-say", "region": "us-central1",
+      "api": "little-say-api", "worker": "little-say-worker", "migrationJob": "little-say-migrate", "hostingSite": "little-say",
+      "registry": "us-central1-docker.pkg.dev/little-say/application/server", "origin": "https://littlesay.app"
     }
   },
   "development": {
-    "channel": "development",
-    "promotionEnvironment": "beta",
-    "easProfile": "development",
-    "environment": "preview",
-    "approvalEnvironment": "internal",
-    "platforms": [
-      "android",
-      "ios"
-    ],
-    "publicEnvironment": {
-      "LITTLE_SAY_CHANNEL": "beta",
-      "EXPO_RELEASE_VARIANT": "development"
-    }
+    "channel": "development", "promotionEnvironment": "beta", "easProfile": "development",
+    "environment": "preview", "approvalEnvironment": "internal", "platforms": ["android", "ios"],
+    "publicEnvironment": { "LITTLE_SAY_CHANNEL": "beta", "EXPO_RELEASE_VARIANT": "development" }
   }
 }
