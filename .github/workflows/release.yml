@@ -1,4 +1,4 @@
-# Prepares Dev candidates and delegates Terraform review, parallel builds, and ordered GCP/Expo delivery.
+# Prepares Dev candidates and delegates Terraform review, encrypted diagnostics, and ordered GCP/Expo delivery.
 name: Release
 run-name: ${{ inputs.destination == 'public-stores' && 'Public-store release (Expo production)' || 'Continuous delivery (Development → approval → beta)' }}
 on:

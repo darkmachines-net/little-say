@@ -1,4 +1,4 @@
-# Uses the release toolkit's matching immutable pin to build a development client and selected-source preview.
+# Dispatches manual development clients and previews through the same pinned toolkit as Release.
 name: Development
 on:
   workflow_dispatch:
