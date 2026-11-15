@@ -1,4 +1,4 @@
-/** @file Provides Settings account actions with platform-supported fresh identity checks and Apple deletion recovery. */
+/** @file Provides Settings account actions with fresh Google/email identity checks and read-only status for queued deletion. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Mail, KeyRound, UserRound } from 'lucide-react-native';
@@ -9,11 +9,11 @@ import { Button, Field, Notice } from '../components';
 import { styles, theme } from '../theme';
 import { AccountFeedback, AccountGroup, AccountRow, linkedProviders, providerNames, supportsProvider } from './components';
 
-const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-email', 'google.com': 'link-google', 'apple.com': 'link-apple' };
+const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-email', 'google.com': 'link-google' };
 
 /**
  * Render one signed-in Settings action at a time. Route remounts discard credentials; reauthentication stays
- * bound to a supported existing provider, and deletion always uses Apple when linked (iOS/web). Verification returns to its caller.
+ * bound to a supported existing provider. Queued deletion needs no further confirmation; verification returns to its caller.
  */
 export function AccountManagement({ account, mode, onNavigate, onBack }: {
   account: AccountController; mode: Exclude<AccountManagementMode, 'backup'>; onNavigate: (mode: AccountMode) => void; onBack: () => void;
@@ -27,21 +27,19 @@ export function AccountManagement({ account, mode, onNavigate, onBack }: {
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const identity = account.session!.account;
-  const appleDeletion = mode === 'delete' && providers.includes('apple.com');
-  const current = appleDeletion ? 'apple.com' : chosen && providers.includes(chosen) ? chosen : providers.find(provider => supportsProvider(provider) && (provider === 'password' || account.socialAvailable)) ?? providers[0];
+  const current = chosen && providers.includes(chosen) ? chosen : providers.find(provider => supportsProvider(provider) && (provider === 'password' || account.socialAvailable)) ?? providers[0];
   const canConfirm = Boolean(current && supportsProvider(current) && (current === 'password' ? password : account.socialAvailable));
   const target = (Object.keys(linkRoutes) as Provider[]).find(provider => linkRoutes[provider] === mode);
   const perform = (action: () => Promise<void>, complete?: () => void) => {
     void action().then(() => { if (mounted.current) { setPassword(''); setNewPassword(''); complete?.(); } }).catch(() => {});
   };
   const confirmation = <View style={{ gap: 12 }}>
-    {providers.length > 1 && !appleDeletion && <><Text style={styles.small}>Confirm your identity with a linked sign-in method.</Text>{providers.map(provider => <Button key={provider} kind={current === provider ? 'primary' : 'secondary'} disabled={account.busy || !supportsProvider(provider) || (provider !== 'password' && !account.socialAvailable)} onPress={() => { setChosen(provider); setPassword(''); }}>Use {providerNames[provider]}</Button>)}</>}
+    {providers.length > 1 && <><Text style={styles.small}>Confirm your identity with a linked sign-in method.</Text>{providers.map(provider => <Button key={provider} kind={current === provider ? 'primary' : 'secondary'} disabled={account.busy || !supportsProvider(provider) || (provider !== 'password' && !account.socialAvailable)} onPress={() => { setChosen(provider); setPassword(''); }}>Use {providerNames[provider]}</Button>)}</>}
     {current === 'password' && <Field label="Current password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="current-password" editable={!account.busy} />}
-    {current && current !== 'password' && <Text style={styles.small}>Continue with {providerNames[current]} to confirm your identity{appleDeletion ? ' and revoke its authorization' : ''}.</Text>}
-    {current && !supportsProvider(current) && <Notice>Use the iOS app or website to confirm with Apple{appleDeletion ? ' and delete this account' : ''}.</Notice>}
-    {!account.socialAvailable && (current !== 'password' || target && target !== 'password') && <Notice>Google and Apple account actions require a development or installed app build. Email works in Expo Go.</Notice>}
+    {current && current !== 'password' && <Text style={styles.small}>Continue with {providerNames[current]} to confirm your identity.</Text>}
+    {!account.socialAvailable && (current !== 'password' || target && target !== 'password') && <Notice>Google account actions require a development or installed app build. Email works in Expo Go.</Notice>}
   </View>;
-  if (identity.deletionPending && mode !== 'delete' && mode !== 'sign-out') return <View style={{ gap: 16 }}><Notice>Account deletion is pending. Backup and sign-in changes are blocked.</Notice><Button onPress={() => onNavigate('delete')}>Finish deletion</Button></View>;
+  if (identity.deletionPending && mode !== 'sign-out') return <View style={{ gap: 16 }}><Notice>Your account is being deleted. Backup and sign-in changes are blocked.</Notice><Button onPress={() => onNavigate('sign-out')}>Sign out</Button></View>;
   if (mode === 'sign-in-methods') {
     const additions = available.filter(provider => !providers.includes(provider));
     return <View style={{ gap: 24 }}>
@@ -60,10 +58,10 @@ export function AccountManagement({ account, mode, onNavigate, onBack }: {
     <Button kind="secondary" disabled={account.busy && !account.syncing} onPress={onBack}>Stay signed in</Button>
   </View>;
   if (mode === 'delete') return <View style={{ gap: 24 }}>
-    <View style={{ gap: 10 }}><Text accessibilityRole="header" style={[styles.title, { color: theme.red }]}>{identity.deletionPending ? 'Finish deleting your account' : 'Delete your account?'}</Text><Text style={styles.body}>This removes your sign-in and cloud backup. Downloaded copies remain on your devices.</Text></View>
+    <View style={{ gap: 10 }}><Text accessibilityRole="header" style={[styles.title, { color: theme.red }]}>Delete your account?</Text><Text style={styles.body}>This removes your sign-in and cloud backup. Downloaded copies remain on your devices.</Text></View>
     {confirmation}<AccountFeedback account={account} />
     <Button kind="danger" busy={account.busy} disabled={!canConfirm} onPress={() => perform(() => account.disconnect(true, password, current!))}>Permanently delete account</Button>
-    <Button kind="secondary" disabled={account.busy && !account.syncing} onPress={onBack}>{identity.deletionPending ? 'Back to Settings' : 'Cancel deletion'}</Button>
+    <Button kind="secondary" disabled={account.busy && !account.syncing} onPress={onBack}>Cancel deletion</Button>
   </View>;
   if (mode === 'verify-email') return <View style={{ gap: 24 }}>
     {identity.emailVerified ? <><Text style={styles.body}>Your email is verified. Backup starts automatically.</Text><Button onPress={onBack}>Done</Button></> : <>

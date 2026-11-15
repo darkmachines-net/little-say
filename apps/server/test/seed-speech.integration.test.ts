@@ -1,4 +1,4 @@
-/** @file Verifies real starter seeds, shared-account reuse, repeatable initialization, public playback, and guest generation boundaries in Postgres. */
+/** @file Verifies real starter seeds, shared-account reuse, repeatable initialization, public playback, and Google/email and guest generation boundaries in Postgres. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -34,7 +34,6 @@ async function setup() {
     /** This fixture owns no external user. */
     async deleteUser() {},
     /** This fixture owns no Apple grant. */
-    async revokeApple() {},
     /** This fixture owns no resources. */
     async close() {},
   };

@@ -1,4 +1,4 @@
-/** @file Hosts one account or backup action inside Settings and clears credentials and feedback between routes. */
+/** @file Hosts one Google/email account or backup action inside Settings and clears credentials and feedback between routes. */
 import { useEffect } from 'react';
 import type { AccountManagementMode, AccountMode } from '../../services/accountRoute';
 import type { AccountController } from '../../services/useAccount';
@@ -6,7 +6,7 @@ import { SettingsPage } from '../SettingsPage';
 import { AccountManagement } from './AccountManagement';
 import { BackupDetails } from './AccountOverview';
 
-const titles = { backup: 'Backup & sync', 'sign-in-methods': 'Sign-in methods', 'verify-email': 'Verify email', 'sign-out': 'Sign out', delete: 'Delete account', 'link-email': 'Link email & password', 'link-google': 'Link Google', 'link-apple': 'Link Apple' };
+const titles = { backup: 'Backup & sync', 'sign-in-methods': 'Sign-in methods', 'verify-email': 'Verify email', 'sign-out': 'Sign out', delete: 'Delete account', 'link-email': 'Link email & password', 'link-google': 'Link Google' };
 
 /** Keep background sync navigable while account mutations guard Back; remount action content to discard credentials. */
 export function AccountSettingsPage({ account, mode, onNavigate, onBack }: {

@@ -1,4 +1,4 @@
-/** @file Supplies the Settings account group with conditional recovery actions and retains backup details for recovery and older links. */
+/** @file Supplies Settings account actions and backup details, including passive status while account deletion is queued. */
 import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { CloudCheck, CloudOff, CloudAlert, CloudDownload, RefreshCw, Mail, CircleAlert, Clock3, UserRound, KeyRound, LogOut, Trash2, LayoutGrid, Image, Volume2 } from 'lucide-react-native';
@@ -18,7 +18,7 @@ const presentations = {
   error: { title: 'Backup needs attention', badge: 'Will retry', icon: CloudAlert, tone: 'warning' },
   unverified: { title: 'Verify email to back up', badge: 'Action needed', icon: Mail, tone: 'warning' },
   restoring: { title: 'Restoring your boards…', badge: 'First sync', icon: CloudDownload, tone: 'neutral' },
-  'deletion-pending': { title: 'Deletion needs confirmation', badge: 'Paused', icon: CircleAlert, tone: 'warning' },
+  'deletion-pending': { title: 'Account deletion is pending', badge: 'Paused', icon: CircleAlert, tone: 'warning' },
   'sign-in-required': { title: 'Sign in to resume backup', badge: 'Paused', icon: KeyRound, tone: 'warning' },
 } satisfies Record<BackupState, { title: string; badge: string; icon: typeof CloudCheck; tone: string }>;
 
@@ -32,7 +32,7 @@ function BackupStatusCard({ account, onNavigate }: AccountPageProps) {
   const description = state === 'synced' ? (savedAt ? `Last synced ${new Date(savedAt).toLocaleString()}` : 'Your boards are backed up.')
     : state === 'syncing' ? 'Saving your latest changes.'
     : state === 'restoring' ? 'Getting your backup ready on this device.'
-    : state === 'deletion-pending' ? 'Backup is blocked until deletion is confirmed.'
+    : state === 'deletion-pending' ? 'Backup is blocked while your account is being deleted.'
     : state === 'unverified' ? 'Your boards are only saved on this device.'
     : account.restoring ? 'Connect to finish loading your saved boards.'
     : pending ? 'Your latest changes are saved on this device.' : 'Your downloaded boards are available on this device.';
@@ -43,7 +43,6 @@ function BackupStatusCard({ account, onNavigate }: AccountPageProps) {
     </View>
     <View accessibilityLiveRegion="polite" style={{ gap: 8 }}><View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}><Text accessibilityRole="header" style={{ color: theme.ink, fontSize: 25, fontWeight: '800', letterSpacing: -0.5, flex: 1 }}>{presentation.title}</Text>{account.syncing && <ActivityIndicator color={theme.accent} />}</View><Text style={styles.body}>{description}</Text></View>
     {state === 'unverified' && <Button onPress={() => onNavigate('verify-email')}>Verify email</Button>}
-    {state === 'deletion-pending' && <Button onPress={() => onNavigate('delete')}>Finish deletion</Button>}
     {state === 'sign-in-required' && <Button onPress={() => onNavigate('login')}>Sign in</Button>}
     {(state === 'error' || state === 'offline') && <Button kind="secondary" disabled={account.busy} onPress={() => void account.retrySync()}>{account.restoring ? 'Retry loading boards' : 'Try again'}</Button>}
   </View>;

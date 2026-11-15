@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation mapping IDs, and independent AI activation.
+# Defines deployment identities, OpenAI federation mapping IDs, Google sign-in, and independent AI activation.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -50,18 +50,6 @@ variable "google_web_client_id" {
   default = ""
 }
 variable "google_ios_client_id" {
-  type    = string
-  default = ""
-}
-variable "apple_service_id" {
-  type    = string
-  default = ""
-}
-variable "apple_team_id" {
-  type    = string
-  default = ""
-}
-variable "apple_key_id" {
   type    = string
   default = ""
 }

@@ -1,4 +1,4 @@
-/** @file Provisions account starter boards and stores Firebase owners, sessions, and backups with atomic quota and deletion boundaries. */
+/** @file Provisions Google/email account starter boards and stores owners, sessions, backups, and atomic deletion work. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, createStarterBoards, mergeAssets, syncSnapshotSchema } from '@little-say/core';
@@ -22,18 +22,12 @@ export class Accounts {
   /** Inject the server-owned pool and an optional smaller quota for integration fixtures. */
   constructor(private pool: Pool, private quota = MAX_ACCOUNT_BYTES) {}
 
-  /** Provision an account and its starter snapshot atomically, once per project/UID; never reseed existing accounts. */
+  /** Provision accounts and starter snapshots atomically, once per verified project/UID; never reseed existing accounts. */
   async provision(identity: Identity): Promise<Account> {
     return transaction(this.pool, async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [identity.project + ':' + identity.uid]);
-      const deletion = await db.query('SELECT apple_pending FROM account_deletions WHERE firebase_project=$1 AND firebase_uid=$2', [identity.project, identity.uid]);
-      if (deletion.rowCount) {
-        if (deletion.rows[0].apple_pending) {
-          const pending = await db.query<Row>('SELECT * FROM accounts WHERE firebase_project=$1 AND firebase_uid=$2 AND deleting', [identity.project, identity.uid]);
-          if (pending.rows[0]) return publicAccount(pending.rows[0]);
-        }
-        throw new AccountError('This account is being deleted or has been deleted.', 410);
-      }
+      const deletion = await db.query('SELECT 1 FROM account_deletions WHERE firebase_project=$1 AND firebase_uid=$2', [identity.project, identity.uid]);
+      if (deletion.rowCount) throw new AccountError('This account is being deleted or has been deleted.', 410);
       const id = randomUUID();
       const result = await db.query<Row>(`INSERT INTO accounts(id,firebase_project,firebase_uid,email,display_name,email_verified,providers)
         VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(firebase_project,firebase_uid) DO UPDATE SET
@@ -60,7 +54,7 @@ export class Accounts {
   async find(identity: Identity, allowDeleting = false): Promise<Account> {
     const result = await this.pool.query<Row & { deleting: boolean }>('SELECT * FROM accounts WHERE firebase_project=$1 AND firebase_uid=$2', [identity.project, identity.uid]);
     if (!result.rows[0]) throw new AccountError('Sign in again. Your local boards are safe.', 401);
-    if (result.rows[0].deleting && !allowDeleting) throw new AccountError('Account deletion is pending. If Apple confirmation was interrupted, retry Delete account.', 410);
+    if (result.rows[0].deleting && !allowDeleting) throw new AccountError('Account deletion is pending.', 410);
     return { ...publicAccount(result.rows[0]), emailVerified: identity.emailVerified, providers: identity.providers };
   }
 
@@ -146,19 +140,14 @@ export class Accounts {
     });
   }
 
-  /** Durably block backups before external work; Apple-gated intents require fresh revocation before queueing. */
-  async requestDeletion(account: Account, identity: Identity, applePending = false) {
+  /** Atomically block backups and queue deletion after the caller verifies fresh proof of the same identity. */
+  async requestDeletion(account: Account, identity: Identity) {
     await transaction(this.pool, async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [identity.project + ':' + identity.uid]);
       if (!(await db.query('SELECT id FROM accounts WHERE id=$1 FOR UPDATE', [account.id])).rowCount) throw new AccountError('Account is already deleted.', 410);
       await db.query('UPDATE accounts SET deleting=true WHERE id=$1', [account.id]);
-      await db.query('INSERT INTO account_deletions(firebase_project,firebase_uid,account_id,apple_pending) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING', [identity.project, identity.uid, account.id, applePending]);
+      await db.query('INSERT INTO account_deletions(firebase_project,firebase_uid,account_id) VALUES($1,$2,$3) ON CONFLICT DO NOTHING', [identity.project, identity.uid, account.id]);
     });
-  }
-
-  /** Release durable deletion work only after Apple authorization has been revoked, if required. */
-  async confirmDeletion(identity: Identity) {
-    await this.pool.query('UPDATE account_deletions SET apple_pending=false WHERE firebase_project=$1 AND firebase_uid=$2', [identity.project, identity.uid]);
   }
 
   /** Retry a bounded batch of durable deletions; failures remain blocked and retry after one minute. */
@@ -168,7 +157,7 @@ export class Accounts {
     await this.pool.query('DELETE FROM browser_sessions WHERE expires<=now()');
     for (let count = 0; count < 10; count++) {
       const found = await transaction(this.pool, async db => {
-        const result = await db.query('SELECT * FROM account_deletions WHERE firebase_project=$1 AND NOT completed AND NOT apple_pending AND retry_after<=now() ORDER BY retry_after LIMIT 1 FOR UPDATE SKIP LOCKED', [project]);
+        const result = await db.query('SELECT * FROM account_deletions WHERE firebase_project=$1 AND NOT completed AND retry_after<=now() ORDER BY retry_after LIMIT 1 FOR UPDATE SKIP LOCKED', [project]);
         const row = result.rows[0]; if (!row) return false;
         try { await removeIdentity(row.firebase_uid); }
         catch { await db.query("UPDATE account_deletions SET retry_after=now()+interval '1 minute' WHERE firebase_project=$1 AND firebase_uid=$2", [project, row.firebase_uid]); return true; }

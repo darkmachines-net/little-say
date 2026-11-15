@@ -1,4 +1,4 @@
-/** @file Verifies Firebase sessions, immediate starter delivery before verification, guest rejection, CSRF, backups, and deletion. */
+/** @file Verifies Google/email Firebase sessions, unsupported-provider and guest rejection, starter delivery, CSRF, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -8,7 +8,7 @@ import { Accounts } from '../src/accounts/store';
 import { createServer } from '../src/app';
 import { testDatabase } from './postgres-fixture';
 import { initializeApp as clientApp, deleteApp as deleteClientApp } from 'firebase/app';
-import { initializeAuth, inMemoryPersistence, connectAuthEmulator, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider, linkWithCredential } from 'firebase/auth';
+import { initializeAuth, inMemoryPersistence, connectAuthEmulator, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider, OAuthProvider, linkWithCredential } from 'firebase/auth';
 
 const cleanup: (() => Promise<unknown>)[] = [];
 afterEach(async () => { for (const action of cleanup.splice(0).reverse()) await action(); });
@@ -180,4 +180,18 @@ it('links providers only to the authenticated UID and preserves both accounts on
   await expect(linkWithCredential(second.currentUser!, credential)).rejects.toMatchObject({ code: 'auth/credential-already-in-use' });
   expect(second.currentUser!.uid).toBe(other.uid);
   expect((await f.admin.getUser(f.uid)).providerData.map(value => value.providerId)).toContain('google.com');
+});
+
+it.each(['google.com', 'apple.com'])('accepts only supported provider tokens at the backend: %s', async provider => {
+  const f = await setup();
+  const app = clientApp({ projectId: project, apiKey: 'demo-key' }, randomUUID());
+  cleanup.push(() => deleteClientApp(app));
+  const auth = initializeAuth(app, { persistence: inMemoryPersistence });
+  connectAuthEmulator(auth, 'http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST, { disableWarnings: true });
+  const idToken = JSON.stringify({ sub: randomUUID(), email: randomUUID() + '@example.test', email_verified: true });
+  const credential = provider === 'google.com' ? GoogleAuthProvider.credential(idToken) : new OAuthProvider(provider).credential({ idToken });
+  const { user } = await signInWithCredential(auth, credential);
+  cleanup.push(() => f.admin.deleteUser(user.uid));
+  const token = await user.getIdToken();
+  expect((await native({ ...f, token })).statusCode).toBe(provider === 'google.com' ? 200 : 401);
 });

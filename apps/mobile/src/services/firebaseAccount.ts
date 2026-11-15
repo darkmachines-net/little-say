@@ -1,21 +1,17 @@
-/** @file Exchanges email or Google/Apple credentials for origin-bound Firebase sessions and starter snapshots, delegating browser CSRF to the shared helper. */
+/** @file Exchanges email or Google credentials for origin-bound Firebase sessions and starter snapshots, delegating browser CSRF to the shared helper. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, GoogleAuthProvider, OAuthProvider, EmailAuthProvider, linkWithCredential, linkWithPopup, type User, type Auth } from 'firebase/auth';
+import { initializeAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithCredential, signOut, sendEmailVerification, sendPasswordResetEmail, reload, getIdToken, GoogleAuthProvider, EmailAuthProvider, linkWithCredential, linkWithPopup, type User, type Auth } from 'firebase/auth';
 import { authConfigSchema, sessionSchema, type AuthConfig, type SyncSnapshot } from '@little-say/core';
 import { apiFetch } from './api';
 import { authDependencies } from './firebasePersistence';
-import { nativeCredential, socialAuthAvailable, type SocialProvider, type AppleGrant } from './firebaseProviders';
+import { nativeCredential, socialAuthAvailable, type SocialProvider } from './firebaseProviders';
 import { type AccountSession } from './accountSession';
 import { browserCsrfHeaders } from './browserCsrf';
 export type Provider = 'password' | SocialProvider;
 type Context = { auth: Auth; config: AuthConfig };
 const contexts = new Map<string, Promise<Context>>();
-const providerObject = (provider: SocialProvider) => {
-  if (provider === 'google.com') return new GoogleAuthProvider();
-  const apple = new OAuthProvider('apple.com'); apple.addScope('email'); apple.addScope('name'); return apple;
-};
 
 /** Resolve public identity settings lazily for AI use or an explicit account action. */
 export async function accountContext(server: string, savedConfig?: AuthConfig): Promise<Context> {
@@ -41,16 +37,14 @@ export async function csrfHeaders(server: string): Promise<Record<string, string
   return browserCsrfHeaders(server);
 }
 
-async function rawSignIn(context: Context, provider: Provider, email: string, password: string): Promise<{ user: User; apple?: AppleGrant }> {
-  if (!context.config.providers.includes(provider)) throw new Error('This sign-in method is not available in Little Say.');
+async function rawSignIn(context: Context, provider: Provider, email: string, password: string): Promise<{ user: User }> {
+  if (!['password', 'google.com'].includes(provider) || !context.config.providers.includes(provider)) throw new Error('This sign-in method is not available in Little Say.');
   if (provider === 'password') return signInWithEmailAndPassword(context.auth, email.trim(), password);
   if (Platform.OS !== 'web') {
     const credential = await nativeCredential(provider, context.config);
-    return { ...(await signInWithCredential(context.auth, credential.credential)), apple: credential.apple };
+    return signInWithCredential(context.auth, credential.credential);
   }
-  const result = await signInWithPopup(context.auth, providerObject(provider));
-  const accessToken = provider === 'apple.com' ? OAuthProvider.credentialFromResult(result)?.accessToken : undefined;
-  return { user: result.user, ...(accessToken ? { apple: { token: accessToken, type: 'ACCESS_TOKEN' as const } } : {}) };
+  return signInWithPopup(context.auth, new GoogleAuthProvider());
 }
 
 async function exchange(server: string, context: Context, user: User): Promise<AccountSession & { starterSnapshot?: SyncSnapshot }> {
@@ -64,7 +58,7 @@ async function exchange(server: string, context: Context, user: User): Promise<A
 
 /**
  * Sign in or register and return starter content for local installation; private backup waits for email verification.
- * Google/Apple use the same Firebase credential exchange in either mode, creating the identity on its first sign-in.
+ * Google uses the same Firebase credential exchange in either mode, creating the identity on its first sign-in.
  */
 export async function authenticateAccount(server: string, mode: 'login' | 'register', email: string, password: string, provider: Provider = 'password') {
   const context = await accountContext(server);
@@ -115,18 +109,18 @@ export async function verifyAccountEmail(session: AccountSession, password: stri
 export async function linkAccountProvider(session: AccountSession, target: Provider, email: string, newPassword: string, currentProvider: Provider, password: string) {
   const { context, user } = await reauthenticate(session, currentProvider, password);
   try {
-    if (!context.config.providers.includes(target)) throw new Error('This sign-in method is not available in Little Say.');
+    if (!['password', 'google.com'].includes(target) || !context.config.providers.includes(target)) throw new Error('This sign-in method is not available in Little Say.');
     if (target === 'password') await linkWithCredential(user, EmailAuthProvider.credential(email.trim(), newPassword));
-    else if (Platform.OS === 'web') await linkWithPopup(user, providerObject(target));
+    else if (Platform.OS === 'web') await linkWithPopup(user, new GoogleAuthProvider());
     else await linkWithCredential(user, (await nativeCredential(target, context.config)).credential);
     return await exchange(session.server, context, user);
   } finally { if (Platform.OS === 'web') await signOut(context.auth); }
 }
 
-/** Reauthenticate the exact identity and return short-lived proof for the backend deletion request. */
+/** Reauthenticate the exact Google/email identity and return fresh proof for account deletion. */
 export async function accountDeletionProof(session: AccountSession, provider: Provider, password: string) {
-  const { context, user, apple } = await reauthenticate(session, session.account.providers.includes('apple.com') ? 'apple.com' : provider, password);
-  try { return { idToken: await getIdToken(user, true), ...(apple ? { apple } : {}) }; }
+  const { context, user } = await reauthenticate(session, provider, password);
+  try { return { idToken: await getIdToken(user, true) }; }
   finally { if (Platform.OS === 'web') await signOut(context.auth); }
 }
 

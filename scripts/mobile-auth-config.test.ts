@@ -1,4 +1,4 @@
-/** @file Verifies release delivery of store/development Google callbacks and Apple entitlements matching each native identity. */
+/** @file Verifies release delivery of store/development Google callbacks while excluding Apple capability from both native identities. */
 import { createRequire } from 'node:module';
 import { afterEach, expect, it, vi } from 'vitest';
 
@@ -12,7 +12,7 @@ it('declares both Google callback settings for hosted build and preview delivery
   expect(release.mobile.publicVariables).toEqual(expect.arrayContaining(['LITTLE_SAY_GOOGLE_IOS_URL_SCHEME', 'LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME']));
 });
 
-it.each(['development', 'release'])('selects the %s Google iOS callback while preserving Apple capability', variant => {
+it.each(['development', 'release'])('selects the %s Google iOS callback without requesting Apple capability', variant => {
   vi.stubEnv('EXPO_RELEASE_VARIANT', variant); vi.stubEnv('LITTLE_SAY_CHANNEL', 'beta');
   vi.stubEnv('LITTLE_SAY_GOOGLE_IOS_URL_SCHEME', 'com.googleusercontent.apps.store-client');
   vi.stubEnv('LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME', 'com.googleusercontent.apps.dev-client');
@@ -21,8 +21,8 @@ it.each(['development', 'release'])('selects the %s Google iOS callback while pr
   expect(config.plugins).toContainEqual(['react-native-nitro-google-signin', { iosUrlScheme: scheme }]);
   expect(config.extra.googleIosUrlScheme).toBe(scheme);
   expect(config.ios.bundleIdentifier).toBe(`net.darkmachines.littlesay${variant === 'development' ? '.development' : ''}`);
-  expect(config.ios.usesAppleSignIn).toBe(true);
-  expect(config.ios.entitlements['com.apple.developer.applesignin']).toEqual(['Default']);
+  expect(config.ios.usesAppleSignIn).not.toBe(true);
+  expect(config.ios.entitlements?.['com.apple.developer.applesignin']).toBeUndefined();
 });
 
 it('does not reuse the store callback when development OAuth is unconfigured', () => {

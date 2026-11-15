@@ -1,13 +1,12 @@
-# Runs immutable API/worker revisions with bounded cold-start probes, federated worker AI and a privileged migration job.
+# Runs immutable API/worker revisions with bounded cold-start probes, Google/email auth, federated worker AI and a privileged migration job.
 locals {
   runtime_env = {
     NODE_ENV                      = "production", HOST = "0.0.0.0", PGHOST = "/cloudsql/${google_sql_database_instance.postgres.connection_name}", PGDATABASE = google_sql_database.app.name,
     PGUSER                        = google_sql_user.database["runtime"].name, PGPOOL_MAX = "3", PGSSLMODE = "disable", MEDIA_BUCKET = google_storage_bucket.media.name,
     FIREBASE_PROJECT_ID           = var.project_id, FIREBASE_API_KEY = data.google_firebase_web_app_config.client.api_key,
     FIREBASE_APP_ID               = google_firebase_web_app.client.app_id, FIREBASE_AUTH_DOMAIN = "${var.project_id}.firebaseapp.com",
-    FIREBASE_AUTH_PROVIDERS       = join(",", compact(["password", var.google_web_client_id != "" ? "google.com" : "", var.apple_service_id != "" ? "apple.com" : ""])),
+    FIREBASE_AUTH_PROVIDERS       = join(",", compact(["password", var.google_web_client_id != "" ? "google.com" : ""])),
     FIREBASE_GOOGLE_WEB_CLIENT_ID = var.google_web_client_id, FIREBASE_GOOGLE_IOS_CLIENT_ID = var.google_ios_client_id,
-    FIREBASE_APPLE_SERVICE_ID     = var.apple_service_id, FIREBASE_APPLE_REDIRECT_URI = "https://${var.project_id}.firebaseapp.com/__/auth/handler",
     ALLOWED_ORIGINS               = "https://littlesay.app,https://little-say.web.app,https://little-say.firebaseapp.com", AAC_AI_ENABLED = tostring(var.ai_enabled),
     TASKS_QUEUE                   = google_cloud_tasks_queue.ai.id, TASKS_INVOKER = google_service_account.service["tasks"].email
 

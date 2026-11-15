@@ -1,4 +1,4 @@
-/** @file Exercises atomic account seeding, real Postgres backups, concurrent quotas/revisions, isolation, and deletion retries. */
+/** @file Exercises atomic account registration and queued deletion, real Postgres backups, quotas, isolation, and deletion retries. */
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
@@ -103,20 +103,4 @@ it('revokes only the selected browser cookie and expires its revocation record',
   expect(await accounts.checkCookie(second)).toBe('identical-firebase-token');
   await pool.query("UPDATE web_sessions SET expires=now()-interval '1 second'");
   await expect(accounts.checkCookie(second)).rejects.toMatchObject({ statusCode: 401 });
-});
-
-it('persists Apple-gated deletion without allowing workers to delete before fresh confirmation', async () => {
-  const db = await fixture(), who = identity('apple-parent'), account = await db.accounts.provision(who);
-  await db.accounts.requestDeletion(account, who, true);
-  const remove = vi.fn().mockResolvedValue(undefined);
-  const restarted = new Accounts(db.pool);
-  await restarted.processDeletions(who.project, remove);
-  expect(remove).not.toHaveBeenCalled();
-  await expect(restarted.find(who)).rejects.toMatchObject({ statusCode: 410 });
-  expect((await restarted.find(who, true)).id).toBe(account.id);
-  expect(await restarted.provision(who)).toMatchObject({ id: account.id, deletionPending: true });
-  await restarted.requestDeletion(account, who, true);
-  await restarted.confirmDeletion(who);
-  await restarted.processDeletions(who.project, remove);
-  expect(remove).toHaveBeenCalledExactlyOnceWith(who.uid);
 });

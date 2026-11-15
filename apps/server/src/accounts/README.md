@@ -6,7 +6,9 @@
 
 `src/index.ts` requires Firebase and PostgreSQL, then checks schema compatibility before listening. The local launcher supplies both dependencies and applies [migrations](../../migrations/README.md). Hosted production rejects all emulator settings.
 
-Hosted identity needs public `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, and `FIREBASE_AUTH_DOMAIN`, plus operator-managed application default credentials for Admin verification. `FIREBASE_AUTH_PROVIDERS` selects enabled methods. Google uses `FIREBASE_GOOGLE_WEB_CLIENT_ID` / `FIREBASE_GOOGLE_IOS_CLIENT_ID`; Apple uses `FIREBASE_APPLE_SERVICE_ID` / `FIREBASE_APPLE_REDIRECT_URI`. Provision providers outside the application. `firebaseConfig` validates this contract and rejects emulator settings in production.
+Hosted identity needs public `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, and `FIREBASE_AUTH_DOMAIN`, plus operator-managed application default credentials for Admin verification. `FIREBASE_AUTH_PROVIDERS` selects Google/email methods and rejects unsupported providers. Google uses `FIREBASE_GOOGLE_WEB_CLIENT_ID` / `FIREBASE_GOOGLE_IOS_CLIENT_ID`. Provision Google outside the application. `firebaseConfig` validates this contract and rejects emulator settings in production.
+
+Only Google and email/password Firebase authentication can establish or refresh an app session. Provider configuration and ID-token verification both enforce this boundary.
 
 Accounts have internal UUIDs and unique Firebase project/UID mappings. Emails are contact/display data, never backup identity or merge keys. Linking a provider requires proof of the existing identity; a credential owned by another Firebase user must be resolved by signing into that account. Verification checks project, signature, expiry, disabled/deleted users, and revocation.
 
@@ -30,8 +32,8 @@ The account row is locked before revision, completeness, and quota checks. Stale
 
 ## Deletion
 
-Deleting requires fresh proof of the same Firebase UID within five minutes and Apple authorization revocation for linked Apple identities. It removes the Firebase login globally and this server's private backup; private job/batch records and cache metadata are removed too. The worker deletes unowned private media; [service-wide speech](../hosting/README.md#storage-and-deletion), approved public generic assets and downloaded device copies remain. GCS soft deletion retains a seven-day recovery window.
+Deleting requires fresh proof of the same Firebase UID within five minutes. It removes the Firebase login globally and this server's private backup; private job/batch records and cache metadata are removed too. The worker deletes unowned private media; [service-wide speech](../hosting/README.md#storage-and-deletion), approved public generic assets and downloaded device copies remain. GCS soft deletion retains a seven-day recovery window.
 
-Deletion intent commits before Apple revocation and blocks backup access immediately. Interrupted Apple confirmation must be resumed with fresh Apple authentication; short-lived grants are never stored. After confirmation, the shared worker retries Firebase/PostgreSQL/media cleanup through local polling or five-minute scheduled maintenance. A minimal project/UID tombstone with no email or media prevents a racing request from recreating the account. Signing in to resume confirmation does not restore backup access.
+Deletion intent commits atomically, blocks backup access immediately, and queues cleanup. The shared worker retries Firebase/PostgreSQL/media cleanup through local polling or five-minute scheduled maintenance. A minimal project/UID tombstone with no email or media prevents a racing request from recreating the account.
 
 See [service validation](../../../../tests/README.md#service-tests) for disposable PostgreSQL and Firebase-emulator checks. Emulator tests do not establish real provider consent or device SecureStore behavior.
