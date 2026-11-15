@@ -1,4 +1,4 @@
-/** @file Little Say metadata mirrors, input boundaries and application health assertions. */
+/** @file Maintains Little Say release metadata and input boundaries and validates the built application. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -40,23 +40,20 @@ export function stamp(root, plan) {
   });
 }
 
-/** Dispatch application operations only; no provider calls or lifecycle state live in this repository. */
+/** Return tracked input identities for inspection and an empty result after successful metadata stamping or validation. */
 export async function applicationHook({ root, action, config, source, plan, target, baseUrl }) {
   if (action === 'inspect') return { server: identity(root, source, config.server.inputs),
     js: Object.fromEntries(['android', 'ios'].map(p => [p, identity(root, source, config.mobile.inputs, p)])) };
-  if (action === 'prepare') { stamp(root, plan); return {}; }
-  if (action === 'validate') {
+  if (action === 'prepare') stamp(root, plan);
+  else if (action === 'validate') {
     execFileSync(process.execPath, [path.join(root, 'node_modules/typescript/bin/tsc'), '-p', 'scripts/tsconfig.json'], { cwd: root, env: process.env, stdio: ['ignore', 2, 2] });
-    return {};
-  }
-  if (action === 'verify' && target === 'server') {
+  } else if (action === 'verify' && target === 'server') {
     if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(baseUrl)) throw new Error('Expected isolated smoke container.');
     const response = await fetch(`${baseUrl}/api/health`, { signal: AbortSignal.timeout(5000), redirect: 'error' });
     const health = await response.json();
     if (!response.ok || health.status !== 'ok' || health.version !== plan.versions.server) throw new Error('Server health/version differs.');
-    return {};
-  }
-  throw new Error(`Unsupported application hook: ${action}`);
+  } else throw new Error(`Unsupported application hook: ${action}`);
+  return {};
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

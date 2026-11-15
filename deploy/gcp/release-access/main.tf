@@ -1,4 +1,4 @@
-# Provisions Little Say Terraform release identities in operator-owned state independent of application Terraform.
+# Manages project-scoped release federation and application state access in a separate operator-owned state.
 terraform {
   required_version = "= 1.13.5"
   backend "gcs" {
@@ -12,7 +12,6 @@ terraform {
 
 provider "google" {
   project = "little-say"
-  region  = "us-central1"
 }
 
 locals {
@@ -53,12 +52,10 @@ resource "google_service_account" "terraform" {
   account_id   = "little-say-tf-${each.key}"
   display_name = "Little Say Terraform ${each.key}"
 }
-
 resource "google_iam_workload_identity_pool" "terraform" {
   workload_identity_pool_id = "little-say-terraform"
   display_name              = "Little Say Terraform"
 }
-
 resource "google_iam_workload_identity_pool_provider" "terraform" {
   for_each                           = local.environments
   workload_identity_pool_id          = google_iam_workload_identity_pool.terraform.workload_identity_pool_id
@@ -67,7 +64,6 @@ resource "google_iam_workload_identity_pool_provider" "terraform" {
   attribute_condition                = "assertion.repository == 'darkmachines-net/little-say' && assertion.ref == 'refs/heads/master' && assertion.environment == '${each.value}' && assertion.sub == '${local.subject}${each.value}'"
   oidc { issuer_uri = "https://token.actions.githubusercontent.com" }
 }
-
 resource "google_service_account_iam_member" "terraform" {
   for_each           = local.environments
   service_account_id = google_service_account.terraform[each.key].name
@@ -80,20 +76,17 @@ resource "google_project_iam_custom_role" "read" {
   title       = "Little Say Terraform refresh"
   permissions = local.read_permissions
 }
-
 resource "google_project_iam_custom_role" "write" {
   role_id     = "littleSayTerraformWrite"
   title       = "Little Say Terraform operational changes"
   permissions = local.write_permissions
 }
-
 resource "google_project_iam_member" "read" {
   for_each = local.environments
   project  = "little-say"
   role     = google_project_iam_custom_role.read.name
   member   = google_service_account.terraform[each.key].member
 }
-
 resource "google_project_iam_member" "write" {
   project = "little-say"
   role    = google_project_iam_custom_role.write.name
@@ -105,13 +98,11 @@ resource "google_project_iam_custom_role" "state_read" {
   title       = "Little Say Terraform state read"
   permissions = ["storage.objects.get", "storage.objects.list"]
 }
-
 resource "google_project_iam_custom_role" "state_write" {
   role_id     = "littleSayTerraformStateWrite"
   title       = "Little Say Terraform state lock or write"
   permissions = ["storage.objects.create", "storage.objects.delete"]
 }
-
 resource "google_storage_bucket_iam_member" "state_read" {
   for_each = local.environments
   bucket   = local.state_bucket
@@ -122,7 +113,6 @@ resource "google_storage_bucket_iam_member" "state_read" {
     expression = "resource.name == '${local.state_resource}' || resource.name == '${local.state_file}' || resource.name == '${local.lock_file}'"
   }
 }
-
 resource "google_storage_bucket_iam_member" "state_write" {
   for_each = local.environments
   bucket   = local.state_bucket
