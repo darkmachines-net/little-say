@@ -34,10 +34,11 @@ jobs:
           terraform_version: '1.13.5'
           terraform_wrapper: false
       - name: Validate Terraform provider locks on Ubuntu
-        working-directory: deploy/gcp
         run: |
-          terraform init -backend=false -lockfile=readonly -input=false
-          terraform validate
+          for directory in deploy/gcp deploy/gcp/release-access; do
+            terraform -chdir="$directory" init -backend=false -lockfile=readonly -input=false
+            terraform -chdir="$directory" validate
+          done
       - run: npm run build
       - name: Pass production builds to Tests
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

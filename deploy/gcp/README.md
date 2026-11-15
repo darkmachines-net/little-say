@@ -48,7 +48,7 @@ Before enabling delivery, configure the `gcp-terraform-plan` and `gcp-terraform-
 
 Set `TERRAFORM_VARS_JSON` on the plan environment to the complete production inputs, including the current immutable `image`, `alert_email`, and the active authentication and AI settings in [variables.tf](variables.tf). Set `firebase_allow_anonymous` to the current Firebase policy when adopting the pipeline so the first rollout preserves existing sign-in behavior. The `image` input keeps the existing Cloud Run resources managed. Set the same `TERRAFORM_PLAN_KEY` on both environments to a base64-encoded 32-byte random key. Keep the key through all outstanding runs so the apply job can decrypt the reviewed plan. Refresh and review the full plan for unrelated drift before approving any changes. [Shared Terraform workflow contract](https://github.com/darkmachines-net/expo-release-template/blob/d4be3a84b1f53df4a5a906e0a1030dbcdee82856/src/README.md#terraform-before-delivery)
 
-When updating provider selections, run `terraform -chdir=deploy/gcp providers lock -platform=linux_amd64 -platform=windows_amd64` and commit the application lockfile. CI verifies the lock with a clean Ubuntu install and Terraform validation.
+When updating provider selections, run `terraform providers lock -platform=linux_amd64 -platform=windows_amd64` in the affected root and commit the lockfile. CI verifies both `deploy/gcp` and `deploy/gcp/release-access` with clean Ubuntu installs and Terraform validation.
 
 If Terraform fails, Release retains its encrypted diagnostic for three days. Use the shared toolkit's diagnostic reader with the matching release plan and the environment key. Keep decrypted provider diagnostics in operator-only access.
 
