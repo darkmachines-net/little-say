@@ -1,4 +1,4 @@
-/** @file Verifies parallel hosted board generation, shared image fairness, and capacity recovery with PostgreSQL. */
+/** @file Verifies two overlapping nine-image boards, per-account limits, and shared capacity recovery with PostgreSQL. */
 
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -41,7 +41,7 @@ function draft(name: string): GeneratedBoard {
     }) };
 }
 
-it('starts nine independent image calls for one board and gives a second board the remaining capacity while speech is active', async () => {
+it('starts all eighteen image calls from two accounts before either board finishes while speech is active', async () => {
   const f = await setup();
   const held = new Map<string, () => void>();
   let open = false, peak = 0;
@@ -87,16 +87,16 @@ it('starts nine independent image calls for one board and gives a second board t
     expect(paid).not.toHaveBeenCalled();
 
     const bob = await start(f.bob.id, 'Second', f.other);
-    await waitForImages(bob.done, 12);
+    await waitForImages(bob.done, 18);
     expect(await f.jobs.get(f.bob.id, bob.id)).toMatchObject({ state: 'working', result: { proposal: { title: 'Second board' } } });
-    expect(mocks.generate).toHaveBeenCalledTimes(12);
+    expect(mocks.generate).toHaveBeenCalledTimes(18);
     expect(await f.jobs.get(f.alice.id, speech.id)).toMatchObject({ state: 'working' });
 
     open = true; for (const release of held.values()) release();
     const results = await Promise.all(work);
     expect(results.every(result => (result as { preparation: { tiles: { state: string }[] } }).preparation.tiles.every(tile => tile.state === 'ready'))).toBe(true);
     expect(mocks.generate).toHaveBeenCalledTimes(18);
-    expect(peak).toBe(12);
+    expect(peak).toBe(18);
     expect((await f.pool.query('SELECT id FROM ai_image_work')).rowCount).toBe(0);
   } finally {
     controller.abort(); open = true; for (const release of held.values()) release();

@@ -8,7 +8,9 @@
 
 Admission locks each request and account and enforces immutable request content. A board proposal or refinement uses one board start. Its pictures are part of that job and consume no additional board starts. Speech and other standalone AI actions each have their own backlog and rate budget. Admission 429 responses include `Retry-After` in whole seconds. Cancellation arriving before submission leaves an owner-bound tombstone. A committed queued row is dispatch intent, and maintenance can recover a missed notification. Repeated delivery returns existing state and never repeats a provider call.
 
-PostgreSQL reserves independent foreground and speech worker slots. Pollers favor runnable board proposals. Cloud Tasks can reserve dispatch capacity for both categories with separate queues. An admitted job waits when its worker capacity is full. The account's active board cap gives other accounts a chance to start, while its outstanding cap also permits queuing. Board words publish before image work finishes.
+An admitted job starts in `queued` until a worker claims it. Delivery can take time, and a job waits for capacity if its service worker slots are full. A second board on the same account can also wait while the first is running, for example when two tabs submit or a previous request is still settling after cancellation. The outstanding cap includes both waiting and active board jobs.
+
+PostgreSQL reserves separate worker slots for foreground jobs (proposals, translations, picture analysis or review, and standalone picture jobs) and speech jobs (one clip each). Polling workers favor runnable board proposals, and Cloud Tasks can reserve delivery capacity with separate queues. A board keeps one foreground slot through image completion, while its individual image calls use the separate image budgets below.
 
 Independent image misses enter the board's scheduler together. Across boards, worker processes, and explicit single-card generation, `ImageCapacity` grants slots under a PostgreSQL lock. When capacity opens, it favors accounts with fewer active image calls and uses arrival order for ties. Account and service caps apply to paid image calls. Catalog lookups, reuse, and validation do not require a slot. An available account can run nine image calls at once with the defaults. Slots release when the call settles. Reconciliation removes abandoned tickets once their job claim is no longer active.
 
@@ -24,15 +26,15 @@ Set these server-only whole numbers consistently on the API and every worker. Th
 
 | Setting | Default | Range and meaning |
 | --- | ---: | --- |
-| `AAC_AI_ACCOUNT_BOARD_STARTS_PER_MINUTE` | 6 | 1–120 new proposals/refinements per account in a rolling minute |
+| `AAC_AI_ACCOUNT_BOARD_STARTS_PER_MINUTE` | 2 | 1–120 new proposals/refinements per account in a rolling minute |
 | `AAC_AI_ACCOUNT_BOARD_OUTSTANDING` | 2 | 1–24 queued and active board jobs combined per account |
 | `AAC_AI_ACCOUNT_BOARD_CONCURRENCY` | 1 | 1–8 active boards per account, at most the outstanding limit |
 | `AAC_AI_ACCOUNT_JOB_STARTS_PER_MINUTE` | 30 | 1–240 starts per account per rolling minute, counted separately for speech and other standalone AI actions |
 | `AAC_AI_ACCOUNT_JOB_OUTSTANDING` | 2 | 1–24 queued and active jobs per account, counted separately for speech and other standalone AI actions |
-| `AAC_AI_SERVICE_FOREGROUND_CONCURRENCY` | 2 | 1–8 executing foreground jobs across all workers |
-| `AAC_AI_SERVICE_SPEECH_CONCURRENCY` | 1 | 1–8 executing speech jobs across all workers |
+| `AAC_AI_SERVICE_FOREGROUND_CONCURRENCY` | 8 | 1–16 executing foreground jobs across all workers |
+| `AAC_AI_SERVICE_SPEECH_CONCURRENCY` | 4 | 1–8 executing speech jobs across all workers |
 | `AAC_AI_ACCOUNT_IMAGE_CONCURRENCY` | 9 | 1–24 paid image calls at once per account across its jobs |
-| `AAC_AI_SERVICE_IMAGE_CONCURRENCY` | 12 | 1–48 paid image calls at once across the service |
+| `AAC_AI_SERVICE_IMAGE_CONCURRENCY` | 50 | 1–100 paid image calls at once across the service |
 
 | Setting | Contract |
 | --- | --- |

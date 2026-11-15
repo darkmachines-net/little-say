@@ -1,15 +1,15 @@
-/** @file Validates hosted account admission and service execution settings before a runtime starts. */
+/** @file Defines and validates hosted board admission and service capacity defaults. */
 
 const settings = {
-  accountBoardStartsPerMinute: ['AAC_AI_ACCOUNT_BOARD_STARTS_PER_MINUTE', 6, 120],
+  accountBoardStartsPerMinute: ['AAC_AI_ACCOUNT_BOARD_STARTS_PER_MINUTE', 2, 120],
   accountBoardOutstanding: ['AAC_AI_ACCOUNT_BOARD_OUTSTANDING', 2, 24],
   accountBoardConcurrency: ['AAC_AI_ACCOUNT_BOARD_CONCURRENCY', 1, 8],
   accountJobStartsPerMinute: ['AAC_AI_ACCOUNT_JOB_STARTS_PER_MINUTE', 30, 240],
   accountJobOutstanding: ['AAC_AI_ACCOUNT_JOB_OUTSTANDING', 2, 24],
-  serviceForegroundConcurrency: ['AAC_AI_SERVICE_FOREGROUND_CONCURRENCY', 2, 8],
-  serviceSpeechConcurrency: ['AAC_AI_SERVICE_SPEECH_CONCURRENCY', 1, 8],
+  serviceForegroundConcurrency: ['AAC_AI_SERVICE_FOREGROUND_CONCURRENCY', 8, 16],
+  serviceSpeechConcurrency: ['AAC_AI_SERVICE_SPEECH_CONCURRENCY', 4, 8],
   accountImageConcurrency: ['AAC_AI_ACCOUNT_IMAGE_CONCURRENCY', 9, 24],
-  serviceImageConcurrency: ['AAC_AI_SERVICE_IMAGE_CONCURRENCY', 12, 48],
+  serviceImageConcurrency: ['AAC_AI_SERVICE_IMAGE_CONCURRENCY', 50, 100],
 } as const;
 
 export type AiLimits = Readonly<Record<keyof typeof settings, number>>;

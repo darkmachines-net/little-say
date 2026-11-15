@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation, and shared AI admission and concurrency controls.
+# Defines deployment identities, OpenAI federation, and shared limits for accounts, workers, and image calls.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -33,15 +33,15 @@ variable "ai_enabled" {
 variable "ai_limits" {
   description = "Hosted AI limits shared by the API, worker, and Cloud Tasks queues. See apps/server/src/hosting/README.md."
   type = object({
-    account_board_starts_per_minute = optional(number, 6)
+    account_board_starts_per_minute = optional(number, 2)
     account_board_outstanding       = optional(number, 2)
     account_board_concurrency       = optional(number, 1)
     account_job_starts_per_minute   = optional(number, 30)
     account_job_outstanding         = optional(number, 2)
-    service_foreground_concurrency  = optional(number, 2)
-    service_speech_concurrency      = optional(number, 1)
+    service_foreground_concurrency  = optional(number, 8)
+    service_speech_concurrency      = optional(number, 4)
     account_image_concurrency       = optional(number, 9)
-    service_image_concurrency       = optional(number, 12)
+    service_image_concurrency       = optional(number, 50)
   })
   default  = {}
   nullable = false
@@ -54,10 +54,10 @@ variable "ai_limits" {
         account_board_concurrency       = 8
         account_job_starts_per_minute   = 240
         account_job_outstanding         = 24
-        service_foreground_concurrency  = 8
+        service_foreground_concurrency  = 16
         service_speech_concurrency      = 8
         account_image_concurrency       = 24
-        service_image_concurrency       = 48
+        service_image_concurrency       = 100
       } : var.ai_limits[name] >= 1 && var.ai_limits[name] <= maximum && floor(var.ai_limits[name]) == var.ai_limits[name]])
     ])
     error_message = "AI limits must be whole numbers within their documented ranges. Board concurrency cannot exceed outstanding board work."
