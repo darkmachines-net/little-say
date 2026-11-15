@@ -1,4 +1,4 @@
-/** @file Authenticates cancellable requests and reports admission throttling and durable AI progress. */
+/** @file Authenticates cancellable requests and preserves retry timing for rejected AI submissions. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -23,16 +23,19 @@ export class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
 }
 
-/** A speech submission rejected before admission, distinct from errors for accepted work. */
-export class SpeechAdmissionError extends ApiError {
-  /** Preserve the server's requested delay in milliseconds when present and valid. */
-  constructor(message: string, readonly retryAfterMs?: number) { super(message, 429); }
+/** An AI submission rejected before admission, distinct from errors while polling accepted work. */
+export class AiAdmissionError extends ApiError {
+  /** Preserve the server's minimum wait in milliseconds and the reason it declined the submission. */
+  constructor(message: string, readonly retryAfterMs?: number, readonly reason?: 'rate-limit' | 'queue-full') { super(message, 429); }
 }
+
+/** A speech rejection that the audio queue may safely defer and submit later. */
+export class SpeechAdmissionError extends AiAdmissionError {}
 
 function retryAfterMilliseconds(value: string | null) {
   if (!value) return undefined;
   const delay = /^\d+$/.test(value) ? Number(value) * 1000 : Date.parse(value) - Date.now();
-  return Number.isFinite(delay) ? Math.max(0, delay) : undefined;
+  return Number.isSafeInteger(delay) ? Math.max(0, delay) : undefined;
 }
 
 /**
@@ -56,8 +59,15 @@ export async function apiFetch(configured: string, path: string, init: RequestIn
     const { response, data } = await requestJson(`${server}${path}`, { ...init, redirect: 'error', credentials: 'include', signal: abort.signal, headers: { 'X-Little-Say': '1', ...(init.method === 'POST' ? { 'X-Little-Say-Request': Crypto.randomUUID() } : {}), ...authentication, ...init.headers } });
     if (!response.ok) {
       const message = data.error || 'The server could not complete this request.';
-      if (path === '/api/speech' && response.status === 429 && init.method?.toUpperCase() === 'POST') {
-        throw new SpeechAdmissionError(message, retryAfterMilliseconds(response.headers.get('Retry-After')));
+      if (response.status === 429 && init.method?.toUpperCase() === 'POST') {
+        const reason = data.reason === 'rate-limit' || data.reason === 'queue-full' ? data.reason : undefined;
+        const seconds = data.retryAfterSeconds;
+        const fallback = typeof seconds === 'number' && Number.isSafeInteger(seconds * 1000) && Number.isInteger(seconds) && seconds >= 0 ? seconds * 1000 : undefined;
+        const delay = retryAfterMilliseconds(response.headers.get('Retry-After')) ?? fallback;
+        const wait = delay ? Math.ceil(delay / 1000) : 0;
+        const feedback = reason === 'rate-limit' && wait ? `You’ve reached the AI request limit. Try again in ${wait} ${wait === 1 ? 'second' : 'seconds'}.` : message;
+        if (path === '/api/speech') throw new SpeechAdmissionError(feedback, delay, reason);
+        if (path === '/api/boards/propose' || reason) throw new AiAdmissionError(feedback, delay, reason);
       }
       throw new ApiError(message, response.status);
     }
@@ -108,10 +118,10 @@ export async function proposeBoard(url: string, request: ProposalRequest, signal
   try {
     const drafting = request.board ? 'Updating words and translations…' : 'Choosing words and translations…';
     progress?.(drafting);
-    const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal, false, state => progress?.(state === 'queued' ? 'Waiting for AI to start…' : drafting));
+    const response = await apiFetch(url, '/api/boards/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) }, signal, false, state => progress?.(state === 'queued' ? 'Board request queued. It will start automatically.' : drafting));
     if (signal?.aborted) { cancel(); throw new Error('Request cancelled.'); }
     return proposalSchema.parse(response);
-  } catch (error) { cancel(); throw error; }
+  } catch (error) { if (!(error instanceof AiAdmissionError)) cancel(); throw error; }
   finally { signal?.removeEventListener('abort', cancel); }
 }
 

@@ -1,4 +1,4 @@
-/** @file Coordinates manual board edits, streamed AI previews, keyboard layout, and unfinished-draft retention. */
+/** @file Coordinates manual edits, streamed AI previews, background activity, and unfinished-draft retention. */
 
 import { useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View, useWindowDimensions, type ViewInstance } from 'react-native';
@@ -18,6 +18,8 @@ import type { BoardTranslationStatus } from '../services/useBoardTranslations';
 import { BoardPictures } from './BoardPictures';
 import { BoardTransition, type BoardGeometry, type BoardSnapshot } from './BoardTransition';
 import { BoardAssistant } from './BoardAssistant';
+import { AiActivityStatus } from './AiActivityStatus';
+import type { AiActivity } from '../services/aiActivity';
 import { useBoardAssistant } from '../services/useBoardAssistant';
 
 /**
@@ -26,10 +28,11 @@ import { useBoardAssistant } from '../services/useBoardAssistant';
  * onChange must reject an expectedRevision mismatch; onSaveDraft/onDiscardDraft must resolve only
  * after durable storage succeeds. Closing language choices starts app-owned translation work.
  * Accept opens play through onPlay; that callback must flush pending writes before leaving the editor.
+ * Keep background AI status separate from the current prompt’s progress and out of the keyboard layout.
  * The root supplies safe-area insets. Native keyboard padding accounts only for remaining overlap;
  * the toolbar and persistent composer stay outside scrolling content on both native and web.
  */
-export function BoardEditor({ board: savedBoard, settings, audio, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onRedo, canRedo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
+export function BoardEditor({ board: savedBoard, settings, audio, aiActivity, translationStatus, onPrepareTranslations, onCancelTranslations, onManageLanguages, draft, onDraft, onSaveDraft, onDiscardDraft, onBeforeClose, onAccept, onStopPreview, onBack, onChange: saveChanges, onPlay, onDelete, onDuplicate, onConsent, onUndo, canUndo, onRedo, canRedo, onPreview, saving, saveError, startingPlay, returnToPlay, transition, onTransitionDone }: { board: Board; settings: Settings; audio: SpeechLibrary; aiActivity?: AiActivity; translationStatus?: BoardTranslationStatus; draft?: CreationDraft;
   /** Prepare missing words for the saved board through the app-owned translation job. */
   onPrepareTranslations: () => void;
   /** Cancel only this board's translation job. */
@@ -154,6 +157,7 @@ export function BoardEditor({ board: savedBoard, settings, audio, translationSta
     </>} />
     <View style={[styles.container, { flex: 1, minHeight: 0, paddingTop: typing ? 8 : 14, paddingBottom: typing ? 8 : 16, gap: typing ? 8 : 14 }]}>
       {!typing && <View testID="editor-heading" style={{ gap: 4 }}><TextInput accessibilityLabel="Board title" editable={!blocked} value={title} maxLength={100} onChangeText={value => { setTitle(value); if (value.trim()) onChange({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(board.title); }} style={{ color: theme.ink, fontSize: width < 600 ? 24 : 30, fontWeight: '800', paddingVertical: 4 }} />{Boolean(saveStatus) && <Text testID="board-save-status" accessibilityLiveRegion="polite" style={styles.small}>{saveStatus}</Text>}</View>}
+      {!typing && <AiActivityStatus activity={aiActivity} audio={audio} hideBoards={assistant.busy === 'generate'} hideOther={translationStatus?.busy} />}
       {!typing && translationStatus?.busy && <View style={[styles.row, { justifyContent: 'space-between' }]}><Text accessibilityLiveRegion="polite" style={styles.body}>Adding missing translations…</Text><Button kind="ghost" compact onPress={onCancelTranslations}>Cancel translations</Button></View>}
       {!typing && translationStatus?.error && <Notice action={<Button kind="secondary" onPress={onPrepareTranslations}>Retry translations</Button>}>{translationStatus.error}</Notice>}
       {!typing && returnToPlay && untranslated > 0 && !translationStatus?.busy && <Notice>{untranslated} cards still use their original words. Close Languages in Board settings to fill missing translations, or review saved words in each card.</Notice>}

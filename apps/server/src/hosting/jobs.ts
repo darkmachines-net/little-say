@@ -1,4 +1,4 @@
-/** @file Enforces per-account admission, reserved worker capacity, and durable job claims. */
+/** @file Enforces per-account admission and worker capacity and reports durable job activity. */
 import { createHash, randomUUID } from 'node:crypto';
 import { type Pool } from 'pg';
 import { transaction } from '../database';
@@ -15,8 +15,8 @@ const view = ({ id, kind, state, result, error, input }: Job): JobView => ({ id,
 
 /** An admission rejection before any new job has been queued. */
 export class JobAdmissionError extends AccountError {
-  /** Describe the reason for rejection and the minimum recommended wait in whole seconds. */
-  constructor(message: string, readonly retryAfterSeconds: number) { super(message, 429); }
+  /** Distinguish a rolling rate limit from a full queue and provide the earliest useful retry in seconds. */
+  constructor(message: string, readonly retryAfterSeconds: number, readonly reason: 'rate-limit' | 'queue-full') { super(message, 429); }
 }
 
 /** Provides one execution protocol for polling workers and Cloud Tasks, with a caller-owned pool. */
@@ -54,18 +54,29 @@ export class Jobs {
       `, [account, category, rate])).rows[0];
       if (counts.retry_after_seconds !== null) {
         const label = kind === 'proposal' ? 'board requests' : 'AI requests';
-        throw new JobAdmissionError(`Too many ${label} in the last minute. Please try again shortly.`, counts.retry_after_seconds);
+        throw new JobAdmissionError(`Too many ${label} in the last minute. Please try again shortly.`, counts.retry_after_seconds, 'rate-limit');
       }
       if (Number(counts.outstanding) >= outstanding) {
         const message = kind === 'speech' ? 'Audio is still being prepared. Please try again shortly.'
           : kind === 'proposal' ? 'Your board requests are still in progress. Please try again shortly.'
           : 'AI work is busy. Wait for your current work to finish.';
-        throw new JobAdmissionError(message, 2);
+        throw new JobAdmissionError(message, 2, 'queue-full');
       }
       const cancelled = Boolean((await db.query('SELECT 1 FROM ai_cancellations WHERE id=$1 AND account_id=$2', [id, account])).rowCount);
       const inserted = await db.query<Job>('INSERT INTO ai_jobs(id,account_id,kind,fingerprint,input,state,cancel_requested) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *', [id, account, kind, fingerprint, JSON.stringify(input), cancelled ? 'cancelled' : 'queued', cancelled]);
       return view(inserted.rows[0]);
     });
+  }
+  /** Count queued and live working jobs for one account without returning content or request identifiers. */
+  async activity(account: string) {
+    const { rows } = await this.pool.query<{ category: 'boards' | 'speech' | 'other'; state: 'queued' | 'working'; count: number }>(`SELECT
+      CASE WHEN kind='proposal' THEN 'boards' WHEN kind='speech' THEN 'speech' ELSE 'other' END AS category,
+      state, count(*)::integer AS count
+      FROM ai_jobs WHERE account_id=$1 AND (state='queued' OR (state='working' AND heartbeat>=now()-make_interval(secs => $2)))
+      GROUP BY category,state`, [account, AI_CLAIM_EXPIRY_SECONDS]);
+    const activity = { boards: { queued: 0, working: 0 }, speech: { queued: 0, working: 0 }, other: { queued: 0, working: 0 } };
+    for (const row of rows) activity[row.category][row.state] = row.count;
+    return activity;
   }
   /** Read owner-only state, settling expired worker claims even when scheduled maintenance is delayed. */
   async get(account: string, id: string): Promise<JobView | null> {

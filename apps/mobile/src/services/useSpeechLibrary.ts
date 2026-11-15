@@ -1,4 +1,4 @@
-/** @file Plans automatic speech for effective languages and supplies the API's admission cooldown to the queue. */
+/** @file Plans audio for effective languages and refreshes queue feedback on cooldown and connectivity changes. */
 
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { AppState, Platform } from 'react-native';
@@ -40,8 +40,8 @@ export function useSpeechLibrary(library: Library | null) {
     const prepare = () => { void speech.prepare(library.boards.flatMap(board => boardAudioTiles(boardWithProfileLanguages(board, library.settings))).filter(tile => speechSource(library.settings, tile.language) === 'ai'), library.settings.backendUrl); };
     prepare();
     const subscription = AppState.addEventListener('change', state => { if (state === 'active') prepare(); });
-    if (Platform.OS === 'web') window.addEventListener('online', prepare);
-    return () => { subscription.remove(); if (Platform.OS === 'web') window.removeEventListener('online', prepare); };
+    if (Platform.OS === 'web') { window.addEventListener('online', prepare); window.addEventListener('offline', prepare); }
+    return () => { subscription.remove(); if (Platform.OS === 'web') { window.removeEventListener('online', prepare); window.removeEventListener('offline', prepare); } };
   }, [library, speech]);
   return speech;
 }

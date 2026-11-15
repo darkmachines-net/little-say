@@ -1,15 +1,16 @@
-/** @file Shows live word/picture progress and applies AI turns through cancellable previews and durable, recoverable board commits. */
+/** @file Manages cancellable board previews, retry timing for rejected prompts, and recoverable commits. */
 
 import { useEffect, useRef, useState } from 'react';
 import * as Crypto from 'expo-crypto';
 import { applyProposal, boardContext, defaultPicturePolicy, getLanguageProfile, MAX_AI_TURNS, mergeBoardSuggestion, proposalTranslationReplacements, reviseBoard, scopeBoardSuggestion, tileSource, type Board, type BoardChanges, type BoardProposal, type BoardSuggestion, type ConversationTurn, type CreationDraft, type Settings } from '@little-say/core';
-import { proposeBoard } from './api';
+import { AiAdmissionError, proposeBoard } from './api';
 import { prepareProposalPictures, type PictureTileState } from './pictures';
 
 /**
  * Show words before media, report observed stages, then commit the turn as one normal board Undo step.
  * Stopping or directly editing a preview saves its usable state and cancels remaining media work.
  * Only conflicting edits or a failed write pause application; their preview and retry text stay visible.
+ * A rejected submission keeps its prompt and waits for the server's retry window before enabling Send.
  */
 export function useBoardAssistant({ board, settings, draft, onConsent, onAccept, onDraft, onSpeechReady }: {
   board: Board; settings: Settings; draft?: CreationDraft;
@@ -28,6 +29,10 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   const [history, setHistory] = useState<ConversationTurn[]>(draft?.history ?? []);
   const [reply, setReply] = useState(draft?.reply ?? '');
   const [error, setError] = useState('');
+  const [admission, setAdmission] = useState<{ message: string; retryAt?: number; queueFull: boolean } | null>(null);
+  const [retryClock, setRetryClock] = useState(0);
+  const retryAt = admission?.retryAt ?? 0;
+  const retrySeconds = Math.max(0, Math.ceil((retryAt - retryClock) / 1000));
   const [busy, setBusy] = useState<'generate' | 'save' | null>(null);
   const [progress, setProgress] = useState('');
   const [states, setStates] = useState<Record<string, PictureTileState>>({});
@@ -38,6 +43,11 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   const live = useRef(true);
   const latest = useRef({ board, suggestion, onDraft, onAccept }); latest.current = { board, suggestion, onDraft, onAccept };
   useEffect(() => { live.current = true; return () => { live.current = false; request.current?.abort(); }; }, []);
+  useEffect(() => {
+    if (!retrySeconds) return;
+    const timer = setTimeout(() => setRetryClock(Date.now()), Math.min(1000, retryAt - retryClock));
+    return () => clearTimeout(timer);
+  }, [retryAt, retryClock, retrySeconds]);
   useEffect(() => {
     // A queued optimistic draft snapshot must not overwrite the durable AI commit in progress.
     if (!writing.current && busy !== 'save') latest.current.onDraft({ prompt, suggestion, history, reply });
@@ -78,7 +88,7 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
   };
   const generate = async () => {
     const message = prompt.trim();
-    if (!message || request.current || writing.current || suggestion) return;
+    if (!message || request.current || writing.current || suggestion || Date.now() < retryAt) return;
     const controller = new AbortController(); request.current = controller;
     const source = preview.tiles.length ? preview : undefined;
     const base = board;
@@ -97,7 +107,7 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
       pending = { base, board: candidate };
       setSuggestion(previous => ({ base, board: { ...candidate, revision: Math.max(candidate.revision, (previous?.board.revision ?? board.revision) + 1) } }));
     };
-    setBusy('generate'); setError(''); setReply(''); setProgress('Connecting to AI…'); setStates({}); setTranslations([]);
+    setBusy('generate'); setError(''); setAdmission(null); setReply(''); setProgress('Connecting to AI…'); setStates({}); setTranslations([]);
     try {
       if (!settings.aiConsent) await onConsent();
       if (controller.signal.aborted) return;
@@ -135,7 +145,15 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
       if (live.current && request.current === controller) {
         setProgress('');
         if (pending) await apply(pending);
-        setError((e as Error).message); setPrompt(value => value || message);
+        if (!pending && e instanceof AiAdmissionError) {
+          const now = Date.now();
+          const feedback = e.reason === 'rate-limit' ? 'You’ve reached the board request limit.'
+            : e.reason === 'queue-full' ? 'Your earlier board requests are still in progress.'
+              : 'The service is busy. Your prompt is still here.' + (e.retryAfterMs ? '' : ' Try again in a moment.');
+          setRetryClock(now);
+          setAdmission({ message: feedback, retryAt: e.retryAfterMs ? now + e.retryAfterMs : undefined, queueFull: e.reason === 'queue-full' });
+        } else setError((e as Error).message);
+        setPrompt(value => value || message);
       }
     }
     finally { if (live.current && request.current === controller) { request.current = null; setBusy(null); setStates({}); } }
@@ -152,5 +170,5 @@ export function useBoardAssistant({ board, settings, draft, onConsent, onAccept,
     const next = { ...current, tiles: current.tiles.map(tile => ({ ...tile, translations: replacements.has(tile.id) ? candidate.tiles.find(value => value.id === tile.id)?.translations ?? tile.translations : tile.translations })) };
     if (await apply({ base: current, board: next })) { setTranslations([]); translationCandidate.current = null; }
   };
-  return { prompt, setPrompt, suggestion, preview, scope, setScope, history, reply, error, mergeError, busy, progress, states, conflicts, translations, useTranslations, generate, accept, stop, clear, edit };
+  return { prompt, setPrompt, suggestion, preview, scope, setScope, history, reply, error, admission, retrySeconds, mergeError, busy, progress, states, conflicts, translations, useTranslations, generate, accept, stop, clear, edit };
 }

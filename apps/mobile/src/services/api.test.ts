@@ -1,4 +1,4 @@
-/** @file Verifies authenticated routing, AI progress and admission failures, transport retries, deadlines, and cancellation. */
+/** @file Verifies authenticated routing, AI progress, structured admission feedback, and transport recovery. */
 import { afterEach, expect, it, vi } from 'vitest';
 
 const platform = vi.hoisted(() => ({ OS: 'web' }));
@@ -22,7 +22,7 @@ it('reports queue and drafting states until a usable partial board is available'
   const { proposeBoard } = await import('./api'); const progress = vi.fn();
   const work = proposeBoard('https://app.example', { prompt: 'Animals', board: null }, undefined, progress);
   await vi.advanceTimersByTimeAsync(0);
-  expect(progress).toHaveBeenLastCalledWith('Waiting for AI to start…');
+  expect(progress).toHaveBeenLastCalledWith('Board request queued. It will start automatically.');
   await vi.advanceTimersByTimeAsync(500);
   expect(progress).toHaveBeenLastCalledWith('Choosing words and translations…');
   await vi.advanceTimersByTimeAsync(500);
@@ -85,6 +85,18 @@ it('does not classify a throttled status poll as rejection of the original submi
   expect(error).toBeInstanceOf(ApiError);
   expect(error).not.toBeInstanceOf(SpeechAdmissionError);
   expect(fetch.mock.calls.filter(([url]) => String(url).endsWith('/api/speech'))).toHaveLength(1);
+});
+
+it.each(['rate-limit', 'queue-full'] as const)('preserves %s board feedback when Retry-After is supplied in the body', async reason => {
+  vi.stubGlobal('window', { location: { origin: 'https://app.example' } });
+  const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: 'Wait', reason, retryAfterSeconds: 7 }), { status: 429 }));
+  vi.stubGlobal('fetch', fetch);
+  const { AiAdmissionError, proposeBoard } = await import('./api');
+  const error = await proposeBoard('', { prompt: 'Animals', board: null, preparationId: '10000000-0000-4000-8000-000000000001' }).catch(cause => cause);
+  expect(error).toBeInstanceOf(AiAdmissionError);
+  expect(error).toMatchObject({ reason, retryAfterMs: 7000 });
+  if (reason === 'rate-limit') expect(error.message).toContain('Try again in 7 seconds.');
+  expect(fetch).toHaveBeenCalledOnce();
 });
 
 it.each([false, true])('shows a readable Android connection error without replaying a submission (__DEV__=%s)', async development => {

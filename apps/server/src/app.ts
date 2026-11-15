@@ -1,5 +1,5 @@
 /**
- * @file Configures Fastify request guards and diagnostics, then mounts AI, account, media, and web routes.
+ * @file Configures Fastify request guards and structured admission feedback, then mounts AI, account, media, and web routes.
  */
 
 import Fastify, { LogController } from 'fastify';
@@ -23,6 +23,7 @@ import { accountRoutes } from './accounts/routes';
 import { type BoardPreparation } from './board-preparation';
 import { AccountError } from './accounts/store';
 import { hostingRoutes, type HostedServices } from './hosting/api';
+import { JobAdmissionError } from './hosting/jobs';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
   hosting?: HostedServices;
@@ -51,6 +52,7 @@ export async function createServer(options: ServerOptions) {
     if (request.method === 'POST' && request.headers['x-little-say'] !== '1') return reply.code(403).send({ error: 'Use the Little Say app to make this request.' });
   });
   app.setErrorHandler((error, request, reply) => {
+    if (error instanceof JobAdmissionError) return reply.code(429).send({ error: error.message, reason: error.reason, retryAfterSeconds: error.retryAfterSeconds });
     if (error instanceof AccountError) return reply.code(error.statusCode).send({ error: error.message });
     const status = (error as { statusCode?: number }).statusCode ?? 500;
     // Only log metadata, never prompt, board, or provider error bodies.

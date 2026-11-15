@@ -1,4 +1,4 @@
-/** @file Serves cached starter speech and authenticated jobs, dispatches by job kind, and returns quota retry timing. */
+/** @file Serves cached starter speech, dispatches authenticated jobs, and exposes owner-only activity counts. */
 import { type FastifyInstance } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
@@ -28,7 +28,7 @@ export function validateJobInput(kind: JobKind, input: unknown): unknown {
   return parsed.data;
 }
 
-/** Serve cached starter speech to guests and protect job admission, retry guidance, and private media with account checks. */
+/** Serve cached starter speech to guests and protect job admission, activity and private media with account checks. */
 export async function hostingRoutes(app: FastifyInstance, services: HostedServices, speechCache?: SpeechCache) {
   const { pool, jobs, access, objects } = services;
   const catalog = new PictureJobs(new DatabaseCache(pool, objects, 'pictures', undefined, true));
@@ -108,6 +108,10 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     const job = await jobs.submit(account.id, id, kind, input);
     if (job.state === 'queued') await services.dispatch?.(job.id, job.kind).catch(() => {});
     return reply.code(202).send(job);
+  });
+  app.get('/api/ai/activity', async request => {
+    const { account } = await access.verify(request);
+    return jobs.activity(account.id);
   });
   app.get<{ Params: { id: string } }>('/api/ai/jobs/:id', async (request, reply) => {
     const { account } = await access.verify(request);

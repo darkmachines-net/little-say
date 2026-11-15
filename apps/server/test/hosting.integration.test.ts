@@ -1,4 +1,4 @@
-/** @file Verifies default and configured job capacity, durable claim recovery, and authorized media access. */
+/** @file Verifies job limits, private activity summaries, durable recovery, and authorized media. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -215,6 +215,7 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s), expo
   const hosting = { pool: f.pool, jobs: f.jobs, objects: f.objects, enabled: true, access: new AccountAccess(f.accounts, auth) };
   const caches = apiCaches({ ...hosting, env: {} });
   const app = await createServer({ provider: null, ...caches, accounts: f.accounts, auth, hosting, secureCookies: true }); cleanup.push(() => app.close());
+  expect((await app.inject('/api/ai/activity')).statusCode).toBe(401);
   const csrf = await app.inject('/api/account/csrf'), initialCookie = String(csrf.headers['set-cookie']).split(';')[0];
   const login = await app.inject({ method: 'POST', url: '/api/account/session', headers: { cookie: initialCookie, 'x-little-say': '1', 'x-little-say-csrf': csrf.json().csrfToken }, payload: { idToken: 'fixture', guest: anonymous } });
   if (anonymous) {
@@ -237,9 +238,25 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s), expo
     expect(response.statusCode).toBe(429);
     expect(response.headers['retry-after']).toBe('2');
     expect(response.headers['access-control-expose-headers']).toBe('Retry-After');
-    expect(response.json()).toMatchObject({ error: 'Audio is still being prepared. Please try again shortly.' });
+    expect(response.json()).toMatchObject({ error: 'Audio is still being prepared. Please try again shortly.', reason: 'queue-full', retryAfterSeconds: 2 });
   }
   expect(await f.jobs.get(f.alice.id, rejected)).toBeNull();
+  await f.jobs.submit(f.bob.id, randomUUID(), 'proposal', { prompt: 'Another account’s board' });
+  const expired = randomUUID(), active = randomUUID();
+  await f.jobs.submit(f.alice.id, expired, 'proposal', {});
+  await f.jobs.claim(expired);
+  await f.pool.query("UPDATE ai_jobs SET heartbeat=now()-interval '2 minutes' WHERE id=$1", [expired]);
+  await f.jobs.submit(f.alice.id, active, 'proposal', {});
+  await f.jobs.claim(active);
+  // Include a stale-claim record without running admission or status reconciliation after it expires.
+  await f.pool.query("UPDATE ai_jobs SET state='working' WHERE id=$1", [expired]);
+  const summary = await app.inject({ url: '/api/ai/activity', headers });
+  expect(summary.headers['cache-control']).toBe('no-store');
+  expect(summary.json()).toEqual({ boards: { queued: 0, working: 1 }, speech: { queued: 2, working: 0 }, other: { queued: 0, working: 0 } });
+  const boardThrottle = await app.inject({ method: 'POST', url: '/api/boards/propose', headers: { ...headers, 'x-little-say-request': randomUUID() }, payload: { prompt: 'A new board', board: null } });
+  expect(boardThrottle.statusCode).toBe(429);
+  expect(boardThrottle.json()).toMatchObject({ reason: 'rate-limit', retryAfterSeconds: expect.any(Number) });
+  expect(Number(boardThrottle.headers['retry-after'])).toBe(boardThrottle.json().retryAfterSeconds);
   await f.jobs.cancel(f.alice.id, queued);
   expect((await app.inject(`/api/ai/jobs/${id}`)).statusCode).toBe(401);
   const job = (await f.jobs.claim(id))!;

@@ -1,4 +1,4 @@
-/** @file Tracks speech assets, preparation, and shared admission cooldowns independently of board revisions. */
+/** @file Tracks speech assets and reports background preparation, throttling, and connectivity waits. */
 
 import { speechKey } from '@little-say/core/speech';
 import type { SpeechInput, SpeechAsset, Tile } from '@little-say/core';
@@ -6,6 +6,7 @@ import type { SpeechInput, SpeechAsset, Tile } from '@little-say/core';
 /** Extract the spoken text and language used to identify a tile pronunciation. */
 export const tileSpeech = (tile: Pick<Tile, 'speech' | 'language'>): SpeechInput => ({ text: tile.speech, language: tile.language });
 export type SpeechState = { state: 'missing' | 'preparing' | 'ready' | 'error'; error?: string; asset?: SpeechAsset };
+export type SpeechActivity = { pending: number; state: 'preparing' | 'waiting' | 'offline' };
 type Dependencies = {
   /** Restore device clips indexed by pronunciation. */
   load(): Promise<Record<string, SpeechAsset>>;
@@ -54,6 +55,11 @@ export class SpeechLibrary {
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
   /** Return the revision token used by React external-store subscriptions. */
   snapshot = () => this.revision;
+  /** Summarize still-needed local clips, including pending downloads that the server may already have finished. */
+  backgroundWork(): SpeechActivity {
+    const pending = [...this.jobs.keys()].filter(key => this.automaticKeys.has(key)).length;
+    return { pending, state: this.active ? 'preparing' : this.dependencies.isOnline?.() === false ? 'offline' : 'waiting' };
+  }
   /** Refresh restored offline clips without discarding in-flight synthesis or changing board revisions. */
   async reload() { this.assets = { ...this.assets, ...await this.dependencies.load() }; this.changed(); }
   private changed() { this.revision++; this.listeners.forEach(listener => listener()); }
@@ -84,6 +90,7 @@ export class SpeechLibrary {
     this.waiting = this.waiting.filter(job => !obsolete.includes(job));
     obsolete.forEach(job => job.cancel());
     this.pump();
+    this.changed();
     await this.ready;
     if (preparation !== this.preparation) return;
     for (const tile of tiles) {
@@ -122,6 +129,7 @@ export class SpeechLibrary {
       key, server, automatic: !prioritize,
       run: async target => {
         this.active++;
+        this.changed();
         let deferred = false;
         try {
           const asset = await this.dependencies.generate(input, target, regenerate);

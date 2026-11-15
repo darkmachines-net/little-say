@@ -1,4 +1,4 @@
-/** @file Verifies sign-in and Home restoration, unified Settings routes, cached play, and shared Undo/Redo across edits, AI, translations, drafts, and navigation. */
+/** @file Verifies signed-in navigation, parent-only activity visibility, cached play, and shared editing history. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -7,7 +7,7 @@ import { boardWithProfileLanguages, newLibrary, type Board, type Library } from 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import App from './App';
 
-const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } }, audio: vi.fn(), commit: vi.fn(), change: vi.fn(), route: null as { boardId: string | null } | null, translated: null as null | ((board: Board) => void) }));
+const state = vi.hoisted(() => ({ OS: 'android', library: null as any, account: { ready: true, session: null as any, needsLogin: false, restoring: false, syncing: false, backup: { error: '' } }, audio: vi.fn(), activity: vi.fn(), commit: vi.fn(), change: vi.fn(), route: null as { boardId: string | null } | null, translated: null as null | ((board: Board) => void) }));
 vi.mock('react-native', () => ({ Platform: state, View: 'View', Text: 'Text', ActivityIndicator: 'ActivityIndicator', StyleSheet: { create: (value: unknown) => value }, AppState: { addEventListener: () => ({ remove() {} }) }, BackHandler: { addEventListener: () => ({ remove() {} }) } }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaProvider: 'SafeAreaProvider', SafeAreaView: 'SafeAreaView', initialWindowMetrics: null }));
 vi.mock('expo-status-bar', () => ({ StatusBar: 'StatusBar' }));
@@ -15,6 +15,7 @@ vi.mock('expo-crypto', () => ({ randomUUID: () => 'new-board' }));
 vi.mock('./data/useLibrary', () => ({ useLibrary: () => ({ library: state.library, current: { get current() { return state.library; } }, commit: state.commit, change: state.change, flush: async () => {} }) }));
 vi.mock('./services/useAccount', () => ({ useAccount: () => state.account }));
 vi.mock('./services/useSpeechLibrary', () => ({ useSpeechLibrary: (library: unknown) => { state.audio(library); return {}; } }));
+vi.mock('./services/aiActivity', () => ({ useAiActivity: state.activity }));
 vi.mock('./services/useBoardTranslations', () => ({ useBoardTranslations: (_store: unknown, applied: (board: Board) => void) => { state.translated = applied; return { status: {}, prepare: vi.fn(), cancel: vi.fn() }; } }));
 vi.mock('./services/speech', () => ({ getVoices: async () => [], speechQueue: () => ({ stop() {} }) }));
 vi.mock('./services/updates', () => ({ initializeUpdates: async () => () => {}, applyUpdate: vi.fn() }));
@@ -52,16 +53,19 @@ it.each(['android', 'ios', 'web'])('blocks former guests on %s even with an acti
   await render();
   expect(nodes('AccountScreen')).toHaveLength(1); expect(nodes('PlayBoard')).toHaveLength(0);
   expect(state.audio).toHaveBeenLastCalledWith(null);
+  expect(state.activity).toHaveBeenLastCalledWith(expect.any(String), undefined, false);
   expect(nodes('AccountScreen')[0].props.onClose).toBeUndefined();
   expect(nodes('AccountScreen')).toHaveLength(1); expect(state.commit).not.toHaveBeenCalled();
   state.account.session = { account: { id: 'family' } }; await render();
   expect(nodes('PlayBoard')).toHaveLength(1);
+  expect(state.activity).toHaveBeenLastCalledWith(expect.any(String), 'family', false);
 });
 
 it('keeps a persisted sign-in usable offline and returns to welcome after sign-out or expiry', async () => {
   const boards = structuredClone(state.library.boards);
   state.account.session = { account: { id: 'family' } }; await render();
   expect(nodes('Dashboard')).toHaveLength(1); expect(nodes('AccountScreen')).toHaveLength(0);
+  expect(state.activity).toHaveBeenLastCalledWith(expect.any(String), 'family', true);
   state.account.needsLogin = true; await render();
   expect(nodes('AccountScreen')).toHaveLength(1); expect(nodes('Dashboard')).toHaveLength(0);
   state.account.needsLogin = false; state.account.session = null; await render();

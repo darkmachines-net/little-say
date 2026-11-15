@@ -1,4 +1,4 @@
-/** @file Verifies live AI stages, centered placeholders and faded replacements, independent downloads, saved turns, Accept/play handoff, and offline fallbacks. */
+/** @file Verifies confirmed queue feedback, live picture stages, saved turns, play handoff, and offline fallbacks. */
 
 import { test, expect, type Page } from '@playwright/test';
 import { waitForAiTurn, openBoardPictures } from './boardEditor';
@@ -59,7 +59,7 @@ test('shows queue and word progress, then fills cards independently before savin
   await page.getByRole('textbox', { name: 'Message to AI', exact: true }).fill('Two construction vehicles');
   await page.getByRole('button', { name: 'Send message', exact: true }).click();
   const status = page.getByTestId('ai-working'), canvas = page.getByTestId('editor-preview');
-  await expect(status).toContainText('Waiting for AI to start');
+  await expect(status).toContainText('Board request queued. It will start automatically.');
   phase = 'working'; await expect(status).toContainText('Choosing words and translations');
   phase = 'words'; await expect(canvas.getByRole('button')).toHaveCount(2);
   await expect(canvas).toContainText('Dump truck'); await expect(canvas).toContainText('Concrete truck');
