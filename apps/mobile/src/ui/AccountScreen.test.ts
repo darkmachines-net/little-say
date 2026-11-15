@@ -1,4 +1,4 @@
-/** @file Verifies Google-only entry on the illustrated welcome, email-only forms, and Settings identity/navigation guards and legacy Apple guidance. */
+/** @file Verifies Google/email entry, Settings identity/navigation guards, and passive status for queued account deletion. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -29,7 +29,7 @@ const close = vi.fn(), back = vi.fn(), modeChange = vi.fn();
 const prepare = vi.fn(async () => {}), authenticate = vi.fn(async () => {});
 const account = { ready: true, session: null, needsLogin: false, busy: false, error: '', message: '', socialAvailable: true, prepare, authenticate,
   syncing: false, backup: { state: 'synced', pending: false, error: '', conflicts: false }, clearFeedback: vi.fn(),
-  config: { providers: ['password', 'google.com', 'apple.com'] } } as unknown as AccountController;
+  config: { providers: ['password', 'google.com'] } } as unknown as AccountController;
 function buttons() { return screen!.root.findAll(node => node.type === ('Button' as any) || node.type === ('ProviderSignInButton' as any)); }
 function buttonLabel(node: ReturnType<typeof buttons>[number]) { return node.type === ('ProviderSignInButton' as any) ? 'Sign in with Google' : node.props.accessibilityLabel || React.Children.toArray(node.props.children).join(''); }
 function button(label: string) { return buttons().find(node => buttonLabel(node) === label)!; }
@@ -44,7 +44,7 @@ async function mount(mode: AccountMode = null, controller = account) {
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
-it.each(['ios', 'android', 'web'])('keeps three actions on the %s welcome even when an older server advertises Apple', async platform => {
+it.each(['ios', 'android', 'web'])('keeps three actions on the %s welcome', async platform => {
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
@@ -93,13 +93,6 @@ it('keeps Google available on iOS while Apple is not configured', async () => {
   expect(authenticate).toHaveBeenCalledWith('login', '', '', 'google.com');
 });
 
-it.each(['ios', 'android', 'web'])('does not offer Apple linking on %s even with stale configuration', async platform => {
-  native.OS = platform;
-  const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
-  await mount('sign-in-methods', { ...account, session });
-  const labels = screen!.root.findAllByType('Pressable' as any).map(row => row.props.accessibilityLabel);
-  expect(labels).toContain('Link Google'); expect(labels).not.toContain('Link Apple');
-});
 
 it('returns from native forms to welcome without allowing dismissal', async () => {
   await mount('register');
@@ -200,16 +193,6 @@ it('requires verification credentials on the separate page and discards them whe
   expect(screen!.root.findByType('Field' as any).props.value).toBe('');
 });
 
-it.each(['ios', 'android', 'web'])('explains legacy Apple deletion on %s without bypassing revocation', async platform => {
-  native.OS = platform;
-  const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
-  const disconnect = vi.fn(async () => {});
-  await mount('delete', { ...account, session, disconnect });
-  expect(screen!.root.findAllByType('Field' as any)).toHaveLength(0);
-  expect(button('Permanently delete account').props.disabled).toBe(true);
-  expect(JSON.stringify(screen!.toJSON())).toContain('previous app version');
-  expect(disconnect).not.toHaveBeenCalled();
-});
 
 it('finishes verification by returning through history instead of adding another Settings overview', async () => {
   const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
@@ -278,4 +261,22 @@ it('keeps failed test sign-in on the form for retry and reflects the account bus
   expect(modeChange).not.toHaveBeenCalled();
   await act(async () => screen!.update(view('login', { ...localAccount, busy: true })));
   expect(button('Sign in with test account').props.busy).toBe(true);
+});
+
+it('shows queued deletion without another confirmation or provider recovery step', async () => {
+  const session = { account: { id: 'family', providers: ['google.com'], emailVerified: true, deletionPending: true } } as AccountController['session'];
+  const controller = { ...account, session, backup: { ...account.backup, state: 'deletion-pending' as const } };
+  await mount('delete', controller);
+  for (const mode of ['delete', 'sign-in-methods', 'verify-email'] as const) {
+    await act(async () => screen!.update(view(mode, controller)));
+    expect(button('Permanently delete account')).toBeUndefined();
+    expect(button('Finish deletion')).toBeUndefined();
+    expect(screen!.root.findAllByType('Field' as any)).toHaveLength(0);
+    expect(JSON.stringify(screen!.toJSON())).toContain('Your account is being deleted.');
+  }
+  await act(async () => button('Sign out').props.onPress());
+  expect(modeChange).toHaveBeenLastCalledWith('sign-out');
+  await act(async () => screen!.update(view('backup', controller)));
+  expect(button('Finish deletion')).toBeUndefined();
+  expect(JSON.stringify(screen!.toJSON())).toContain('Account deletion is pending');
 });

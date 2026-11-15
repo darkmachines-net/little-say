@@ -1,4 +1,4 @@
-/** @file Exercises atomic Google/email registration, legacy Apple access, real Postgres backups, quotas, isolation, and deletion retries. */
+/** @file Exercises atomic account registration and queued deletion, real Postgres backups, quotas, isolation, and deletion retries. */
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
@@ -46,20 +46,6 @@ it('never reseeds edited, emptied, or legacy accounts and never exposes private 
   await accounts.provision(identity('parent'));
   expect((await accounts.snapshot(account)).boards).toEqual([]);
   expect(await accounts.starterSnapshot(account)).toBeUndefined();
-});
-it('rejects new Apple-only accounts while preserving existing Apple identity, backup, and deletion recovery', async () => {
-  const { accounts, pool } = await fixture();
-  const fresh = { ...identity('new-apple'), providers: ['apple.com'] };
-  await expect(accounts.provision(fresh)).rejects.toMatchObject({ statusCode: 403 });
-  expect((await pool.query('SELECT count(*) FROM accounts')).rows[0].count).toBe('0');
-  const existing = await accounts.provision(identity('existing-apple'));
-  const legacy = { ...identity('existing-apple'), providers: ['apple.com'] };
-  await pool.query('UPDATE accounts SET providers=$1 WHERE id=$2', [JSON.stringify(legacy.providers), existing.id]);
-  const backup = await accounts.snapshot(existing);
-  expect(await accounts.provision(legacy)).toMatchObject({ id: existing.id, providers: ['apple.com'] });
-  expect(await accounts.snapshot(existing)).toEqual(backup);
-  await accounts.requestDeletion(existing, legacy, true);
-  expect(await accounts.provision(legacy)).toMatchObject({ id: existing.id, deletionPending: true });
 });
 it('persists complete owner-scoped backups across pool recreation and rejects missing/corrupt assets', async () => {
   const db = await fixture(), alice = await db.accounts.provision(identity('alice')), bob = await db.accounts.provision(identity('bob'));
@@ -117,20 +103,4 @@ it('revokes only the selected browser cookie and expires its revocation record',
   expect(await accounts.checkCookie(second)).toBe('identical-firebase-token');
   await pool.query("UPDATE web_sessions SET expires=now()-interval '1 second'");
   await expect(accounts.checkCookie(second)).rejects.toMatchObject({ statusCode: 401 });
-});
-
-it('persists Apple-gated deletion without allowing workers to delete before fresh confirmation', async () => {
-  const db = await fixture(), who = identity('apple-parent'), account = await db.accounts.provision(who);
-  await db.accounts.requestDeletion(account, who, true);
-  const remove = vi.fn().mockResolvedValue(undefined);
-  const restarted = new Accounts(db.pool);
-  await restarted.processDeletions(who.project, remove);
-  expect(remove).not.toHaveBeenCalled();
-  await expect(restarted.find(who)).rejects.toMatchObject({ statusCode: 410 });
-  expect((await restarted.find(who, true)).id).toBe(account.id);
-  expect(await restarted.provision(who)).toMatchObject({ id: account.id, deletionPending: true });
-  await restarted.requestDeletion(account, who, true);
-  await restarted.confirmDeletion(who);
-  await restarted.processDeletions(who.project, remove);
-  expect(remove).toHaveBeenCalledExactlyOnceWith(who.uid);
 });

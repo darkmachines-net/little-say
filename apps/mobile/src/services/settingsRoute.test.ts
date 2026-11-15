@@ -1,4 +1,4 @@
-/** @file Verifies unified Settings destinations, legacy account and retired Apple redirects, authentication boundaries, and logical parents. */
+/** @file Verifies unified Settings destinations, legacy account redirects, authentication boundaries, and logical parents. */
 
 import { expect, it } from 'vitest';
 import { readSettingsRoute, settingsParent, settingsPath } from './settingsRoute';
@@ -34,10 +34,4 @@ it('returns sensible parents when a direct link has no app-owned browser history
   expect(settingsParent({ page: 'account', mode: 'backup' })).toEqual({ page: 'overview' });
   expect(settingsParent({ page: 'account', mode: 'delete' })).toEqual({ page: 'overview' });
   expect(settingsParent({ page: 'account', mode: 'link-google' })).toEqual({ page: 'account', mode: 'sign-in-methods' });
-});
-
-it('redirects retired Apple linking to sign-in methods', () => {
-  for (const prefix of ['/app/account', '/app/settings/account']) {
-    expect(readSettingsRoute(prefix + '/link-apple')).toEqual({ page: 'account', mode: 'sign-in-methods' });
-  }
 });

@@ -7,11 +7,10 @@ import { speechKey } from './speech';
 
 export const accountSchema = z.object({ id: z.string().uuid(), email: z.string().nullable(), displayName: z.string().nullable(), emailVerified: z.boolean(), providers: z.array(z.string()), deletionPending: z.boolean().optional() });
 export const sessionSchema = z.object({ account: accountSchema, starterSnapshot: syncSnapshotSchema.optional() });
-// Apple fields remain readable for saved sessions and older clients; current clients offer only Google/email.
-export const authConfigSchema = z.object({ projectId: z.string(), apiKey: z.string(), appId: z.string(), authDomain: z.string(), providers: z.array(z.enum(['password', 'google.com', 'apple.com'])), emulatorUrl: z.string().optional(),
+export const authConfigSchema = z.object({ projectId: z.string(), apiKey: z.string(), appId: z.string(), authDomain: z.string(), providers: z.array(z.enum(['password', 'google.com'])), emulatorUrl: z.string().optional(),
   // Public fixture credentials, supplied only by a development server connected to the Auth emulator.
   developmentAccount: z.object({ email: z.string().email(), password: z.string() }).optional(),
-  googleWebClientId: z.string().optional(), googleIosClientId: z.string().optional(), appleServiceId: z.string().optional(), appleRedirectUri: z.string().optional() });
+  googleWebClientId: z.string().optional(), googleIosClientId: z.string().optional() });
 export type AuthConfig = z.infer<typeof authConfigSchema>;
 export type Account = z.infer<typeof accountSchema>;
 

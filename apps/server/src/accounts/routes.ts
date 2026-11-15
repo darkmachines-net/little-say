@@ -1,4 +1,4 @@
-/** @file Exchanges identities for sessions and untouched starter snapshots; private backups and deletion retain account verification. */
+/** @file Exchanges identities for sessions and untouched starter snapshots; private backups and queued deletion require verified account ownership. */
 import { type FastifyInstance, type FastifyRequest, type FastifyReply } from 'fastify';
 import { syncSnapshotSchema } from '@little-say/core';
 import { z } from 'zod';
@@ -51,18 +51,12 @@ export async function accountRoutes(app: FastifyInstance, accounts: Accounts, au
     });
     routes.post('/api/account/delete', { config: { rateLimit: { max: 10, timeWindow: '15 minutes', groupId: 'account-auth' } } }, async (request, reply) => {
       if (!bearer(request)) await csrf(request);
-      const parsed = z.object({ idToken: z.string().min(1).max(16000), apple: z.object({ token: z.string().min(1).max(16000), type: z.enum(['CODE', 'ACCESS_TOKEN']), redirectUri: z.string().optional() }).optional() }).safeParse(request.body);
+      const parsed = z.object({ idToken: z.string().min(1).max(16000) }).safeParse(request.body);
       if (!parsed.success) return reply.code(400).send({ error: 'Reauthenticate before deleting your account.' });
       const fresh = await auth.verify(parsed.data.idToken); recent(fresh.authTime);
       const account = await accounts.find(fresh, true);
       if (request.headers['x-little-say-account'] !== account.id) throw new AccountError('Reauthenticate with the same account before deleting it.', 403);
-      if (fresh.providers.includes('apple.com') && !parsed.data.apple) throw new AccountError('Reauthenticate with Apple to revoke its authorization before deleting.', 400);
-      await accounts.requestDeletion(account, fresh, fresh.providers.includes('apple.com'));
-      if (fresh.providers.includes('apple.com')) {
-        if (!parsed.data.apple) throw new AccountError('Reauthenticate with Apple to revoke its authorization before deleting.', 400);
-        await auth.revokeApple(parsed.data.idToken, parsed.data.apple);
-      }
-      await accounts.confirmDeletion(fresh);
+      await accounts.requestDeletion(account, fresh);
       setCookie(reply, '', secureCookies, 0);
       return reply.code(202).send({ ok: true, deletionPending: true });
     });

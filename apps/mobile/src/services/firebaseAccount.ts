@@ -117,9 +117,8 @@ export async function linkAccountProvider(session: AccountSession, target: Provi
   } finally { if (Platform.OS === 'web') await signOut(context.auth); }
 }
 
-/** Reauthenticate the exact identity for deletion; legacy Apple accounts still need revocation through an older client. */
+/** Reauthenticate the exact Google/email identity and return fresh proof for account deletion. */
 export async function accountDeletionProof(session: AccountSession, provider: Provider, password: string) {
-  if (session.account.providers.includes('apple.com')) throw new Error('This account is linked to Apple. Use the previous app version to revoke Apple access and delete it.');
   const { context, user } = await reauthenticate(session, provider, password);
   try { return { idToken: await getIdToken(user, true) }; }
   finally { if (Platform.OS === 'web') await signOut(context.auth); }

@@ -1,4 +1,4 @@
-/** @file Verifies durable jobs, shared speech download grants, private picture metadata, registered-account access, CSRF, and interruption. */
+/** @file Verifies durable jobs, shared speech download grants, private picture metadata, Google/email account access, CSRF, and interruption. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -122,7 +122,6 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s) and p
     /** No external identity exists for this fixture. */
     async deleteUser() {},
     /** No external Apple grant exists for this fixture. */
-    async revokeApple() {},
     /** This adapter owns no resources. */
     async close() {},
   };

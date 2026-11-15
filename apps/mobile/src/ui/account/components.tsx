@@ -9,7 +9,7 @@ import { styles, theme } from '../theme';
 
 export const providerNames: Record<Provider, string> = { password: 'Email & password', 'google.com': 'Google' };
 
-/** Accept only the current Google/email methods, including when older servers advertise Apple. */
+/** Recognize supported Google/email methods for account labels and actions. */
 export function supportsProvider(provider: string): provider is Provider {
   return provider === 'password' || provider === 'google.com';
 }

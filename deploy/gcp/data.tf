@@ -1,4 +1,4 @@
-# Owns PostgreSQL, private media, Secret Manager resources, Firebase authentication, and the image registry.
+# Owns PostgreSQL, private media, Secret Manager resources, Google/email Firebase authentication, and the image registry.
 resource "google_firebase_project" "app" {
   provider = google-beta
 }
@@ -106,7 +106,7 @@ resource "google_sql_user" "database" {
 }
 resource "google_secret_manager_secret" "secret" {
   # Retain the old AI secret so cutover does not destroy the credential of the serving worker revision.
-  for_each  = toset(["database-runtime", "database-migrator", "ai-provider-key", "google-client-secret", "apple-private-key"])
+  for_each  = toset(["database-runtime", "database-migrator", "ai-provider-key", "google-client-secret"])
   secret_id = each.key
   replication {
     auto {}

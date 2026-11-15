@@ -1,4 +1,4 @@
-/** @file Verifies entry and management URLs, logical parents, retired Apple redirects, and rejection of malformed account paths. */
+/** @file Verifies entry and management URLs, logical parents, legacy redirects, and rejection of malformed account paths. */
 import { expect, it } from 'vitest';
 import { accountParent, accountPath, isAccountEntryMode, readAccountRoute } from './accountRoute';
 
@@ -18,10 +18,4 @@ it('keeps direct management links inside account navigation', () => {
 });
 it('does not treat preferences or malformed URLs as account forms', () => {
   for (const path of ['/app', '/app/settings', '/app/settings/privacy', '/app/account-other', '/app/account/login/more']) expect(readAccountRoute(path)).toBeNull();
-});
-
-it('redirects retired Apple linking to sign-in methods', () => {
-  for (const prefix of ['/app/account', '/app/settings/account']) {
-    expect(readAccountRoute(prefix + '/link-apple')).toEqual({ mode: 'sign-in-methods' });
-  }
 });

@@ -1,4 +1,4 @@
-/** @file Verifies Google/email discovery, stale Apple configuration filtering, and retained legacy revocation settings. */
+/** @file Verifies Google/email discovery, explicit provider selection, and rejection of unsupported auth configuration. */
 import { expect, it } from 'vitest';
 import { firebaseConfig } from '../src/accounts/firebase';
 
@@ -8,12 +8,10 @@ it('advertises Google and email by default without Apple setup', () => {
   expect(firebaseConfig(hosted).providers).toEqual(['password', 'google.com']);
 });
 
-it('ignores Apple in older deployment settings while retaining the legacy callback for revocation', () => {
-  const config = firebaseConfig({ ...hosted, FIREBASE_AUTH_PROVIDERS: 'password, google.com, apple.com', FIREBASE_APPLE_SERVICE_ID: 'legacy.auth', FIREBASE_APPLE_REDIRECT_URI: 'https://hosted-little-say.firebaseapp.com/__/auth/handler' });
-  expect(config.providers).toEqual(['password', 'google.com']);
-  expect(config.appleRedirectUri).toBe('https://hosted-little-say.firebaseapp.com/__/auth/handler');
+it('rejects unsupported auth providers', () => {
+  expect(() => firebaseConfig({ ...hosted, FIREBASE_AUTH_PROVIDERS: 'password,apple.com' })).toThrow();
 });
 
 it('does not silently enable Google when the operator selects email only', () => {
-  expect(firebaseConfig({ ...hosted, FIREBASE_AUTH_PROVIDERS: 'password,apple.com' }).providers).toEqual(['password']);
+  expect(firebaseConfig({ ...hosted, FIREBASE_AUTH_PROVIDERS: 'password' }).providers).toEqual(['password']);
 });
