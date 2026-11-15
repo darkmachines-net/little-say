@@ -1,4 +1,4 @@
-/** @file Verifies automatic beta release routing, separate Dev/promotion environments, manual previews and immutable toolkit pins. */
+/** @file Verifies release routing, isolated preview and infrastructure environments, and immutable toolkit pins. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -36,6 +36,20 @@ test('manual release destinations and explicit rebuilds remain available', () =>
   assert.equal(development.on.push, undefined, 'Automatic preparation belongs to Release.');
   assert.deepEqual(development.on.workflow_dispatch.inputs.operation.options, ['build', 'update']);
   assert.equal(development.jobs.development.with.channel, undefined, 'Manual previews remain isolated.');
+});
+
+test('both delivery destinations review the same production Terraform workspace', () => {
+  const infrastructure = config.profiles.beta.terraform;
+  assert.deepEqual(config.profiles.production.terraform, infrastructure);
+  assert.equal(infrastructure.directory, 'deploy/gcp');
+  assert.ok(fs.existsSync(new URL(`${infrastructure.directory}/.terraform.lock.hcl`, root)));
+  const releaseEnvironments = new Set([
+    config.development.promotionEnvironment,
+    ...Object.values(config.profiles).flatMap(profile => [profile.approvalEnvironment, profile.deployEnvironment]),
+  ]);
+  assert.notEqual(infrastructure.planEnvironment, infrastructure.applyEnvironment);
+  assert.ok(!releaseEnvironments.has(infrastructure.planEnvironment));
+  assert.ok(!releaseEnvironments.has(infrastructure.applyEnvironment));
 });
 
 test('development, release, package and lock use the same immutable toolkit revision', () => {

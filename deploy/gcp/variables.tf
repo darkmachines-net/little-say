@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation, and shared limits for accounts, workers, and image calls.
+# Defines release inputs, authentication policy, confidential alerts, and shared AI capacity limits.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -23,7 +23,13 @@ variable "image" {
 }
 variable "alert_email" {
   type        = string
+  sensitive   = true
   description = "Operator email for readiness, SQL, job-failure and spending alerts."
+}
+variable "firebase_allow_anonymous" {
+  type        = bool
+  default     = false
+  description = "Match the deployment's Firebase anonymous sign-in policy at infrastructure adoption."
 }
 variable "ai_enabled" {
   type        = bool
