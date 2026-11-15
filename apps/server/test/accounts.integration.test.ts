@@ -1,4 +1,4 @@
-/** @file Exercises atomic account seeding, real Postgres backups, concurrent quotas/revisions, isolation, and deletion retries. */
+/** @file Exercises atomic Google/email registration, legacy Apple access, real Postgres backups, quotas, isolation, and deletion retries. */
 import { afterEach, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
@@ -46,6 +46,20 @@ it('never reseeds edited, emptied, or legacy accounts and never exposes private 
   await accounts.provision(identity('parent'));
   expect((await accounts.snapshot(account)).boards).toEqual([]);
   expect(await accounts.starterSnapshot(account)).toBeUndefined();
+});
+it('rejects new Apple-only accounts while preserving existing Apple identity, backup, and deletion recovery', async () => {
+  const { accounts, pool } = await fixture();
+  const fresh = { ...identity('new-apple'), providers: ['apple.com'] };
+  await expect(accounts.provision(fresh)).rejects.toMatchObject({ statusCode: 403 });
+  expect((await pool.query('SELECT count(*) FROM accounts')).rows[0].count).toBe('0');
+  const existing = await accounts.provision(identity('existing-apple'));
+  const legacy = { ...identity('existing-apple'), providers: ['apple.com'] };
+  await pool.query('UPDATE accounts SET providers=$1 WHERE id=$2', [JSON.stringify(legacy.providers), existing.id]);
+  const backup = await accounts.snapshot(existing);
+  expect(await accounts.provision(legacy)).toMatchObject({ id: existing.id, providers: ['apple.com'] });
+  expect(await accounts.snapshot(existing)).toEqual(backup);
+  await accounts.requestDeletion(existing, legacy, true);
+  expect(await accounts.provision(legacy)).toMatchObject({ id: existing.id, deletionPending: true });
 });
 it('persists complete owner-scoped backups across pool recreation and rejects missing/corrupt assets', async () => {
   const db = await fixture(), alice = await db.accounts.provision(identity('alice')), bob = await db.accounts.provision(identity('bob'));

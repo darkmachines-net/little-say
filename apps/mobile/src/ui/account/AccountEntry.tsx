@@ -1,17 +1,16 @@
-/** @file Keeps both configured providers on the illustrated welcome and email registration, sign-in, and reset on separate forms. */
+/** @file Keeps Google on the illustrated welcome and email registration, sign-in, and reset on separate forms. */
 import { useEffect, useRef, useState } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Mail } from 'lucide-react-native';
 import type { AccountController } from '../../services/useAccount';
 import type { Provider } from '../../services/firebaseAccount';
 import type { AccountEntryMode } from '../../services/accountRoute';
 import { Button, Field, Notice } from '../components';
 import { styles } from '../theme';
-import { supportsProvider } from './components';
 import { AccountWelcome } from './AccountWelcome';
 import { ProviderSignInButton } from './ProviderSignInButton';
 
-/** Keep both providers reachable on welcome, ordering Google first on Android and Apple first elsewhere. Email forms never repeat provider entry. */
+/** Offer Google, account creation, and email sign-in on every platform; email forms never repeat provider entry. */
 export function AccountEntry({ account, mode, setMode }: { account: AccountController; mode: AccountEntryMode; setMode: (mode: AccountEntryMode) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,8 +21,7 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
   useEffect(() => { void prepare.current().catch(() => {}); }, [mode]);
   const providers = account.config?.providers ?? ['password'];
   const developmentAccount = __DEV__ && account.config?.emulatorUrl && account.config.projectId.startsWith('demo-') && providers.includes('password') ? account.config.developmentAccount : undefined;
-  const providerOrder = Platform.OS === 'android' ? ['google.com', 'apple.com'] as const : ['apple.com', 'google.com'] as const;
-  const socialProviders = providerOrder.filter(provider => providers.includes(provider) && supportsProvider(provider));
+  const googleAvailable = providers.includes('google.com');
   const clear = () => { setPassword(''); setConfirmation(''); };
   const signIn = (provider: Provider, credentials = { email, password }) => void account.authenticate(mode === 'register' ? 'register' : 'login', credentials.email, credentials.password, provider).then(() => { if (mounted.current) clear(); }).catch(() => {});
   const feedback = <>
@@ -32,12 +30,12 @@ export function AccountEntry({ account, mode, setMode }: { account: AccountContr
     {!account.config && Boolean(account.error) && <Button kind="secondary" disabled={account.busy} onPress={() => void account.prepare().catch(() => {})}>Retry sign-in options</Button>}
   </>;
   const recovery = <>
-    {!account.socialAvailable && !mode && socialProviders.length > 0 && <Text style={styles.small}>Use a development build for Google and Apple sign-in. Email works in Expo Go.</Text>}
+    {!account.socialAvailable && !mode && googleAvailable && <Text style={styles.small}>Use a development build for Google sign-in. Email works in Expo Go.</Text>}
     {account.needsLogin && <Button kind="ghost" disabled={account.busy} onPress={() => void account.disconnect().then(clear).catch(() => {})}>Sign out and keep local boards</Button>}
   </>;
-  if (!mode) return <AccountWelcome actionCount={socialProviders.length + 2}>
+  if (!mode) return <AccountWelcome actionCount={googleAvailable ? 3 : 2}>
     {feedback}
-    {socialProviders.map(provider => <ProviderSignInButton key={provider} provider={provider} disabled={!account.ready || !account.socialAvailable} busy={account.busy} onPress={() => signIn(provider, { email: '', password: '' })} />)}
+    {googleAvailable && <ProviderSignInButton disabled={!account.ready || !account.socialAvailable} busy={account.busy} onPress={() => signIn('google.com', { email: '', password: '' })} />}
     <Button disabled={!account.ready || account.busy} onPress={() => setMode('register')}>Create Little Say account</Button>
     <Button kind="outline" icon={Mail} disabled={!account.ready || account.busy} onPress={() => setMode('login')}>Sign in with Email</Button>
     {recovery}

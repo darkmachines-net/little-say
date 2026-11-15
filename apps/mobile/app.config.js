@@ -1,5 +1,5 @@
 /**
- * @file Resolves Expo branding, native versions, iOS sign-in/export compliance, server origin, and OTA
+ * @file Resolves Expo branding, native versions, Google callbacks and iOS export compliance, server origin, and OTA
  * settings from the release contract.
  */
 
@@ -39,11 +39,9 @@ module.exports = ({ config }) => {
     ios: {
       ...config.ios,
       buildNumber: release.iosBuildNumber,
-      usesAppleSignIn: true,
       // iOS uses system HTTPS/Keychain; Expo Crypto supplies hashes and random IDs/nonces.
       // Reassess this declaration if the app or a linked SDK adds non-exempt encryption.
       config: { ...config.ios?.config, usesNonExemptEncryption: false },
-      entitlements: { ...config.ios?.entitlements, 'com.apple.developer.applesignin': ['Default'] },
     },
     web: { ...config.web, themeColor: colors.background, backgroundColor: colors.background, favicon: './assets/brand/favicon.png' },
     plugins: [...(config.plugins || []), 'expo-secure-store', googleIosPlugin, ['expo-splash-screen', { image: './assets/brand/splash.png', imageWidth: 180, resizeMode: 'contain', backgroundColor: colors.background }]],

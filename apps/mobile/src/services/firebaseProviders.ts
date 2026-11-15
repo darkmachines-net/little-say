@@ -1,44 +1,20 @@
-/** @file Obtains Google and Apple Firebase credentials through native dialogs or Android Apple web sign-in, with nonce/state checks and Expo Go isolation. */
+/** @file Obtains Google Firebase credentials through native dialogs while isolating Expo Go and clearing native account selection. */
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
-import * as Crypto from 'expo-crypto';
-import { GoogleAuthProvider, OAuthProvider, type AuthCredential } from 'firebase/auth';
+import { GoogleAuthProvider, type AuthCredential } from 'firebase/auth';
 import { type AuthConfig } from '@little-say/core';
-export type SocialProvider = 'google.com' | 'apple.com';
-export type AppleGrant = { token: string; type: 'CODE' | 'ACCESS_TOKEN'; redirectUri?: string };
-export type ProviderCredential = { credential: AuthCredential; apple?: AppleGrant };
-/** Expo Go supports email authentication; native social modules require a custom binary. */
+export type SocialProvider = 'google.com';
+export type ProviderCredential = { credential: AuthCredential };
+/** Expo Go supports email authentication; the native Google module requires a custom binary. */
 export function socialAuthAvailable() { return Constants.executionEnvironment !== ExecutionEnvironment.StoreClient; }
 /**
- * Obtain a credential for sign-in, registration, linking, or fresh identity confirmation without changing Firebase accounts.
- * Native SDKs load only in custom builds. Apple uses its native iOS dialog or the SDK's Android web dialog.
- * Both Apple SDK paths hash the raw nonce before authorization; Firebase verifies it on exchange.
- * Cancellation rejects with auth/user-cancelled; Apple authorization codes are returned only for immediate revocation use.
+ * Obtain a Google credential for sign-in, linking, or fresh identity confirmation without changing Firebase accounts.
+ * Native SDKs load only in custom builds; cancellation rejects with auth/user-cancelled.
  */
 export async function nativeCredential(provider: SocialProvider, config: AuthConfig): Promise<ProviderCredential> {
-  if (!socialAuthAvailable()) throw new Error('Google and Apple sign-in require a development build. Email sign-in works in Expo Go.');
-  return provider === 'google.com' ? googleCredential(config) : Platform.OS === 'android' ? androidAppleCredential(config) : appleCredential();
-}
-
-async function androidAppleCredential(config: AuthConfig): Promise<ProviderCredential> {
-  const clientId = config.appleServiceId?.trim(), redirectUri = config.appleRedirectUri;
-  if (!clientId || !redirectUri) throw new Error('Apple sign-in is not configured on this server. Please use another sign-in method.');
-  const callback = new URL(redirectUri);
-  if (callback.protocol !== 'https:' || callback.username || callback.password || callback.hash) throw new Error('Apple sign-in needs a valid HTTPS callback.');
-  const { appleAuthAndroid } = await import('@invertase/react-native-apple-authentication');
-  if (!appleAuthAndroid.isSupported) throw new Error('Apple sign-in is unavailable on this device.');
-  const nonce = Crypto.randomUUID(), state = Crypto.randomUUID();
-  try {
-    appleAuthAndroid.configure({ clientId, redirectUri, responseType: appleAuthAndroid.ResponseType.ALL,
-      scope: appleAuthAndroid.Scope.ALL, nonce, state });
-    const result = await appleAuthAndroid.signIn();
-    if (!result.id_token || result.state !== state) throw new Error('Apple sign-in could not be verified. Please try again.');
-    return { credential: new OAuthProvider('apple.com').credential({ idToken: result.id_token, rawNonce: nonce }),
-      ...(result.code ? { apple: { token: result.code, type: 'CODE' as const, redirectUri } } : {}) };
-  } catch (error) {
-    if ((error as { code?: string }).code === appleAuthAndroid.Error.SIGNIN_CANCELLED) throw cancelled();
-    throw error;
-  }
+  if (provider !== 'google.com') throw new Error('This sign-in method is not available in Little Say.');
+  if (!socialAuthAvailable()) throw new Error('Google sign-in requires a development build. Email sign-in works in Expo Go.');
+  return googleCredential(config);
 }
 
 function cancelled() { return Object.assign(new Error('Sign-in was cancelled. Your local boards are unchanged.'), { code: 'auth/user-cancelled' }); }
@@ -68,22 +44,5 @@ async function googleCredential(config: AuthConfig): Promise<ProviderCredential>
   } finally {
     // Firebase owns the persistent session. Native provider state must not select the next account.
     await GoogleOneTapSignIn.signOut().catch(() => {});
-  }
-}
-
-async function appleCredential(): Promise<ProviderCredential> {
-  if (Platform.OS !== 'ios') throw new Error('Use the iOS app or website to sign in with Apple.');
-  const { appleAuth } = await import('@invertase/react-native-apple-authentication');
-  const nonce = Crypto.randomUUID(), state = Crypto.randomUUID();
-  try {
-    if (!appleAuth.isSupported) throw new Error('Apple sign-in is unavailable on this device.');
-    const result = await appleAuth.performRequest({ requestedOperation: appleAuth.Operation.LOGIN, requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL], nonce, state });
-    if (!result.identityToken || result.state !== state) throw new Error('Apple sign-in could not be verified. Please try again.');
-    return { credential: new OAuthProvider('apple.com').credential({ idToken: result.identityToken, rawNonce: nonce }),
-      ...(result.authorizationCode ? { apple: { token: result.authorizationCode, type: 'CODE' as const } } : {}) };
-  } catch (error) {
-    const code = (error as { code?: string }).code;
-    if (code === appleAuth.Error.CANCELED) throw cancelled();
-    throw error;
   }
 }

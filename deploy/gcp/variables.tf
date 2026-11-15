@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation mapping IDs, and independent AI activation.
+# Defines deployment identities, OpenAI federation mapping IDs, Google sign-in, legacy Apple revocation inputs, and independent AI activation.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -54,8 +54,9 @@ variable "google_ios_client_id" {
   default = ""
 }
 variable "apple_service_id" {
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
+  description = "Legacy Apple configuration retained for older clients; never enables new Apple sign-in."
 }
 variable "apple_team_id" {
   type    = string

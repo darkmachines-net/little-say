@@ -1,4 +1,4 @@
-/** @file Verifies registered Firebase identities, exposes public client settings, and prepares a development-only emulator account. */
+/** @file Verifies registered Firebase identities, exposes Google/email client settings with legacy Apple revocation, and prepares a development-only emulator account. */
 import { initializeApp, applicationDefault, deleteApp } from 'firebase-admin/app';
 import { getAuth, type Auth, type DecodedIdToken } from 'firebase-admin/auth';
 import { authConfigSchema, type AuthConfig } from '@little-say/core';
@@ -19,14 +19,14 @@ export interface IdentityService {
   close(): Promise<void>;
 }
 
-/** Validate hosted auth settings; only development emulators advertise public test credentials, never production. */
+/** Validate hosted settings and omit retired Apple entry; only development emulators advertise public test credentials. */
 export function firebaseConfig(env: NodeJS.ProcessEnv): AuthConfig {
   const emulator = env.FIREBASE_AUTH_EMULATOR_HOST;
   if (env.NODE_ENV === 'production' && (emulator || env.FIREBASE_AUTH_EMULATOR_URL)) throw new Error('Firebase emulation is forbidden in production.');
   if (emulator && (!/^[a-zA-Z0-9.\-[\]:]+:\d+$/.test(emulator) || emulator.includes('://'))) throw new Error('FIREBASE_AUTH_EMULATOR_HOST must be host:port without a protocol.');
   const projectId = env.FIREBASE_PROJECT_ID || (emulator ? 'demo-little-say' : '');
   if (!projectId || (emulator && !projectId.startsWith('demo-')) || (!emulator && projectId.startsWith('demo-'))) throw new Error('Configure a hosted FIREBASE_PROJECT_ID or use a demo- project with the emulator.');
-  const providers = (env.FIREBASE_AUTH_PROVIDERS || (emulator ? 'password' : 'password,google.com,apple.com')).split(',').map((value: string) => value.trim());
+  const providers = (env.FIREBASE_AUTH_PROVIDERS || (emulator ? 'password' : 'password,google.com')).split(',').map((value: string) => value.trim()).filter(value => value !== 'apple.com');
   const config = authConfigSchema.parse({ projectId, apiKey: env.FIREBASE_API_KEY || (emulator ? 'demo-key' : ''), appId: env.FIREBASE_APP_ID || (emulator ? 'demo-app' : ''), authDomain: env.FIREBASE_AUTH_DOMAIN || projectId + '.firebaseapp.com', providers,
     ...(emulator ? { emulatorUrl: env.FIREBASE_AUTH_EMULATOR_URL || 'http://' + emulator } : {}),
     ...(emulator && env.NODE_ENV === 'development' && providers.includes('password') ? { developmentAccount: { email: 'tester@little-say.test', password: 'little-say-local-test-only' } } : {}),

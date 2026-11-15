@@ -1,4 +1,4 @@
-/** @file Verifies both providers on the illustrated welcome, email-only forms, and cross-platform Settings identity/navigation guards. */
+/** @file Verifies Google-only entry on the illustrated welcome, email-only forms, and Settings identity/navigation guards and legacy Apple guidance. */
 
 import React, { act } from 'react';
 import { create, type ReactTestRenderer } from 'react-test-renderer';
@@ -31,7 +31,7 @@ const account = { ready: true, session: null, needsLogin: false, busy: false, er
   syncing: false, backup: { state: 'synced', pending: false, error: '', conflicts: false }, clearFeedback: vi.fn(),
   config: { providers: ['password', 'google.com', 'apple.com'] } } as unknown as AccountController;
 function buttons() { return screen!.root.findAll(node => node.type === ('Button' as any) || node.type === ('ProviderSignInButton' as any)); }
-function buttonLabel(node: ReturnType<typeof buttons>[number]) { return node.props.provider ? `Sign in with ${node.props.provider === 'apple.com' ? 'Apple' : 'Google'}` : node.props.accessibilityLabel || React.Children.toArray(node.props.children).join(''); }
+function buttonLabel(node: ReturnType<typeof buttons>[number]) { return node.type === ('ProviderSignInButton' as any) ? 'Sign in with Google' : node.props.accessibilityLabel || React.Children.toArray(node.props.children).join(''); }
 function button(label: string) { return buttons().find(node => buttonLabel(node) === label)!; }
 function view(mode: AccountMode, controller: AccountController) {
   return controller.session && !controller.needsLogin
@@ -44,21 +44,18 @@ async function mount(mode: AccountMode = null, controller = account) {
 beforeEach(() => { vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true); vi.stubGlobal('__DEV__', false); vi.clearAllMocks(); native.OS = 'android'; });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.unstubAllGlobals(); });
 
-it.each(['ios', 'android'])('keeps both providers on the %s welcome for new and returning users, ordered by platform preference', async platform => {
+it.each(['ios', 'android', 'web'])('keeps three actions on the %s welcome even when an older server advertises Apple', async platform => {
   native.OS = platform; await mount();
   expect(button('Continue without an account')).toBeUndefined();
   expect(button('Back')).toBeUndefined();
-  const providers = platform === 'ios' ? ['Apple', 'Google'] : ['Google', 'Apple'];
-  expect(buttons().map(buttonLabel)).toEqual([...providers.map(provider => `Sign in with ${provider}`), 'Create Little Say account', 'Sign in with Email']);
+  expect(buttons().map(buttonLabel)).toEqual(['Sign in with Google', 'Create Little Say account', 'Sign in with Email']);
   expect(screen!.root.findAllByProps({ testID: 'app-header' })).toHaveLength(0);
   expect(screen!.root.findByProps({ accessibilityLabel: 'Little Say: Learn to Talk!' }).props.accessibilityRole).toBe('header');
   expect(prepare).toHaveBeenCalledOnce();
   await act(async () => screen!.root.findByType('Modal' as any).props.onRequestClose());
   expect(close).not.toHaveBeenCalled();
-  for (const provider of providers) {
-    await act(async () => button(`Sign in with ${provider}`).props.onPress());
-    expect(authenticate).toHaveBeenLastCalledWith('login', '', '', provider === 'Apple' ? 'apple.com' : 'google.com');
-  }
+  await act(async () => button('Sign in with Google').props.onPress());
+  expect(authenticate).toHaveBeenLastCalledWith('login', '', '', 'google.com');
   await act(async () => button('Create Little Say account').props.onPress());
   expect(modeChange).toHaveBeenLastCalledWith('register');
   await act(async () => button('Sign in with Email').props.onPress());
@@ -96,18 +93,12 @@ it('keeps Google available on iOS while Apple is not configured', async () => {
   expect(authenticate).toHaveBeenCalledWith('login', '', '', 'google.com');
 });
 
-it('allows Android Apple confirmation for deletion and linking', async () => {
-  const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
-  const disconnect = vi.fn(async () => {});
-  await mount('delete', { ...account, session, disconnect });
-  expect(button('Permanently delete account').props.disabled).toBe(false);
-  await act(async () => button('Permanently delete account').props.onPress());
-  expect(disconnect).toHaveBeenCalledWith(true, '', 'apple.com');
-  await act(async () => screen!.update(view('link-apple', { ...account, session: { ...session!, account: { ...session!.account, providers: ['password'] } } })));
-  expect(button('Link Apple')).toBeDefined();
-  expect(button('Link Apple').props.disabled).toBe(true);
-  await act(async () => screen!.root.findByType('Field' as any).props.onChangeText('current password'));
-  expect(button('Link Apple').props.disabled).toBe(false);
+it.each(['ios', 'android', 'web'])('does not offer Apple linking on %s even with stale configuration', async platform => {
+  native.OS = platform;
+  const session = { account: { id: 'family', providers: ['password'], emailVerified: true } } as AccountController['session'];
+  await mount('sign-in-methods', { ...account, session });
+  const labels = screen!.root.findAllByType('Pressable' as any).map(row => row.props.accessibilityLabel);
+  expect(labels).toContain('Link Google'); expect(labels).not.toContain('Link Apple');
 });
 
 it('returns from native forms to welcome without allowing dismissal', async () => {
@@ -134,9 +125,9 @@ it('allows returning Home from account settings while cloud restoration is runni
   await act(async () => button('Boards').props.onPress()); expect(close).toHaveBeenCalledOnce();
 });
 
-it('offers both configured providers on web welcome and retries unavailable sign-in options', async () => {
+it('offers Google on web welcome and retries unavailable sign-in options', async () => {
   native.OS = 'web'; await mount();
-  expect(button('Sign in with Apple')).toBeDefined(); expect(button('Sign in with Google')).toBeDefined();
+  expect(button('Sign in with Apple')).toBeUndefined(); expect(button('Sign in with Google')).toBeDefined();
   await act(async () => screen!.update(view(null, { ...account, config: undefined, error: 'Offline' })));
   await act(async () => button('Retry sign-in options').props.onPress());
   expect(prepare).toHaveBeenCalledTimes(2);
@@ -209,14 +200,15 @@ it('requires verification credentials on the separate page and discards them whe
   expect(screen!.root.findByType('Field' as any).props.value).toBe('');
 });
 
-it('requires Apple confirmation for deletion even when a password is also linked', async () => {
-  native.OS = 'ios';
+it.each(['ios', 'android', 'web'])('explains legacy Apple deletion on %s without bypassing revocation', async platform => {
+  native.OS = platform;
   const session = { account: { id: 'family', providers: ['password', 'apple.com'], emailVerified: true } } as AccountController['session'];
   const disconnect = vi.fn(async () => {});
   await mount('delete', { ...account, session, disconnect });
   expect(screen!.root.findAllByType('Field' as any)).toHaveLength(0);
-  await act(async () => button('Permanently delete account').props.onPress());
-  expect(disconnect).toHaveBeenCalledWith(true, '', 'apple.com');
+  expect(button('Permanently delete account').props.disabled).toBe(true);
+  expect(JSON.stringify(screen!.toJSON())).toContain('previous app version');
+  expect(disconnect).not.toHaveBeenCalled();
 });
 
 it('finishes verification by returning through history instead of adding another Settings overview', async () => {

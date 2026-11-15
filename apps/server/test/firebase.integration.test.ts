@@ -1,4 +1,4 @@
-/** @file Verifies Firebase sessions, immediate starter delivery before verification, guest rejection, CSRF, backups, and deletion. */
+/** @file Verifies Firebase sessions, immediate starter delivery, persisted legacy-guest rejection, CSRF, backups, and deletion. */
 import { afterEach, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { initializeApp, deleteApp } from 'firebase-admin/app';
@@ -25,7 +25,7 @@ async function setup(environment = 'test') {
   const registered = await rest('accounts:signUp', { email, password, returnSecureToken: true });
   const uid = registered.localId as string;
   cleanup.push(() => admin.deleteUser(uid).catch(() => {}));
-  return { app, auth, admin, accounts, uid, email, password, token: registered.idToken as string };
+  return { app, auth, admin, accounts, pool: db.pool, uid, email, password, token: registered.idToken as string };
 }
 async function rest(method: string, body: unknown) {
   const response = await fetch('http://' + process.env.FIREBASE_AUTH_EMULATOR_HOST + '/identitytoolkit.googleapis.com/v1/' + method + '?key=demo-key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -64,6 +64,7 @@ it('rejects anonymous tokens and legacy guest cookies before granting app access
   expect((await native({ ...f, token: guest.idToken })).statusCode).toBe(401);
   const identity = { project, uid: guest.localId, email: null, displayName: null, emailVerified: false, providers: [], authTime: Math.floor(Date.now() / 1000), expires: Math.floor(Date.now() / 1000) + 3600 };
   // Model a persisted guest cookie created by an older app release.
+  await f.pool.query('INSERT INTO accounts(id,firebase_project,firebase_uid) VALUES($1,$2,$3)', [randomUUID(), project, guest.localId]);
   const owner = await f.accounts.provision(identity);
   const cookie = await f.accounts.issueCookie(owner, await f.auth.cookie(guest.idToken), identity.expires);
   for (const access of [{ authorization: 'Bearer ' + guest.idToken }, { cookie: '__session=' + cookie }]) {

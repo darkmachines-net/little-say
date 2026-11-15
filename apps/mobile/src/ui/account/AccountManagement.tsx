@@ -1,4 +1,4 @@
-/** @file Provides Settings account actions with fresh native or Android web identity checks and Apple deletion recovery. */
+/** @file Provides Settings account actions with fresh Google/email identity checks and guidance for legacy Apple accounts. */
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Mail, KeyRound, UserRound } from 'lucide-react-native';
@@ -9,11 +9,11 @@ import { Button, Field, Notice } from '../components';
 import { styles, theme } from '../theme';
 import { AccountFeedback, AccountGroup, AccountRow, linkedProviders, providerNames, supportsProvider } from './components';
 
-const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-email', 'google.com': 'link-google', 'apple.com': 'link-apple' };
+const linkRoutes: Record<Provider, AccountManagementMode> = { password: 'link-email', 'google.com': 'link-google' };
 
 /**
  * Render one signed-in Settings action at a time. Route remounts discard credentials; reauthentication stays
- * bound to a supported existing provider, and deletion always uses Apple when linked, including Android's web flow. Verification returns to its caller.
+ * bound to a supported existing provider. Legacy Apple revocation requires an older client. Verification returns to its caller.
  */
 export function AccountManagement({ account, mode, onNavigate, onBack }: {
   account: AccountController; mode: Exclude<AccountManagementMode, 'backup'>; onNavigate: (mode: AccountMode) => void; onBack: () => void;
@@ -27,25 +27,25 @@ export function AccountManagement({ account, mode, onNavigate, onBack }: {
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const identity = account.session!.account;
-  const appleDeletion = mode === 'delete' && providers.includes('apple.com');
-  const current = appleDeletion ? 'apple.com' : chosen && providers.includes(chosen) ? chosen : providers.find(provider => supportsProvider(provider) && (provider === 'password' || account.socialAvailable)) ?? providers[0];
-  const canConfirm = Boolean(current && supportsProvider(current) && (current === 'password' ? password : account.socialAvailable));
+  const appleDeletion = mode === 'delete' && identity.providers.includes('apple.com');
+  const current = chosen && providers.includes(chosen) ? chosen : providers.find(provider => supportsProvider(provider) && (provider === 'password' || account.socialAvailable)) ?? providers[0];
+  const canConfirm = !appleDeletion && Boolean(current && supportsProvider(current) && (current === 'password' ? password : account.socialAvailable));
   const target = (Object.keys(linkRoutes) as Provider[]).find(provider => linkRoutes[provider] === mode);
   const perform = (action: () => Promise<void>, complete?: () => void) => {
     void action().then(() => { if (mounted.current) { setPassword(''); setNewPassword(''); complete?.(); } }).catch(() => {});
   };
   const confirmation = <View style={{ gap: 12 }}>
     {providers.length > 1 && !appleDeletion && <><Text style={styles.small}>Confirm your identity with a linked sign-in method.</Text>{providers.map(provider => <Button key={provider} kind={current === provider ? 'primary' : 'secondary'} disabled={account.busy || !supportsProvider(provider) || (provider !== 'password' && !account.socialAvailable)} onPress={() => { setChosen(provider); setPassword(''); }}>Use {providerNames[provider]}</Button>)}</>}
-    {current === 'password' && <Field label="Current password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="current-password" editable={!account.busy} />}
-    {current && current !== 'password' && <Text style={styles.small}>Continue with {providerNames[current]} to confirm your identity{appleDeletion ? ' and revoke its authorization' : ''}.</Text>}
-    {current && !supportsProvider(current) && <Notice>Use the Little Say website to confirm with Apple{appleDeletion ? ' and delete this account' : ''}.</Notice>}
-    {!account.socialAvailable && (current !== 'password' || target && target !== 'password') && <Notice>Google and Apple account actions require a development or installed app build. Email works in Expo Go.</Notice>}
+    {!appleDeletion && current === 'password' && <Field label="Current password" value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete="current-password" editable={!account.busy} />}
+    {!appleDeletion && current && current !== 'password' && <Text style={styles.small}>Continue with {providerNames[current]} to confirm your identity.</Text>}
+    {(appleDeletion || !providers.length) && <Notice>This account is linked to a sign-in method this version no longer supports. Use the previous app version to manage its sign-in methods or delete it.</Notice>}
+    {!account.socialAvailable && (current !== 'password' || target && target !== 'password') && <Notice>Google account actions require a development or installed app build. Email works in Expo Go.</Notice>}
   </View>;
   if (identity.deletionPending && mode !== 'delete' && mode !== 'sign-out') return <View style={{ gap: 16 }}><Notice>Account deletion is pending. Backup and sign-in changes are blocked.</Notice><Button onPress={() => onNavigate('delete')}>Finish deletion</Button></View>;
   if (mode === 'sign-in-methods') {
     const additions = available.filter(provider => !providers.includes(provider));
     return <View style={{ gap: 24 }}>
-      <Text style={styles.body}>Use any linked method to sign in to this account.</Text>
+      {providers.length ? <Text style={styles.body}>Use any linked method to sign in to this account.</Text> : <Notice>Use the previous app version to manage this account’s sign-in methods.</Notice>}
       <AccountGroup title="Linked">{providers.map((provider, index) => <AccountRow key={provider} label={providerNames[provider]} summary={provider === 'password' ? identity.email ?? undefined : 'Linked to this account'} icon={provider === 'password' ? Mail : UserRound} last={index === providers.length - 1} />)}</AccountGroup>
       {additions.length > 0 && <AccountGroup title="Add another method">{additions.map((provider, index) => <AccountRow key={provider} label={`Link ${providerNames[provider]}`} icon={provider === 'password' ? Mail : KeyRound} onPress={() => onNavigate(linkRoutes[provider])} last={index === additions.length - 1} />)}</AccountGroup>}
       <AccountFeedback account={account} />

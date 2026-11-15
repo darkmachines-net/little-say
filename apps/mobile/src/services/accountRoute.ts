@@ -1,7 +1,7 @@
-/** @file Defines authentication modes and recognizes account URLs for entry and migration into unified Settings. */
+/** @file Defines authentication modes and recognizes account URLs for entry and migration into unified Settings, including retired Apple links. */
 
 export type AccountEntryMode = 'login' | 'register' | 'reset' | null;
-export type AccountManagementMode = 'backup' | 'sign-in-methods' | 'verify-email' | 'sign-out' | 'delete' | 'link-email' | 'link-google' | 'link-apple';
+export type AccountManagementMode = 'backup' | 'sign-in-methods' | 'verify-email' | 'sign-out' | 'delete' | 'link-email' | 'link-google';
 export type AccountMode = AccountEntryMode | AccountManagementMode;
 export type AccountRoute = { mode: AccountMode };
 
@@ -18,7 +18,7 @@ export function accountParent(mode: AccountMode): AccountMode {
 /** Read exact current or legacy account URLs; unrelated app pages are not account destinations. */
 export function readAccountRoute(pathname: string): AccountRoute | null {
   const match = /^\/app\/(?:settings\/)?account(?:\/(login|register|reset|backup|sign-in-methods|verify-email|sign-out|delete|link-email|link-google|link-apple))?\/?$/.exec(pathname);
-  return match ? { mode: match[1] as AccountMode || null } : null;
+  return match ? { mode: match[1] === 'link-apple' ? 'sign-in-methods' : match[1] as AccountMode || null } : null;
 }
 
 /** Build an authentication or legacy account URL; signed-in navigation uses settingsPath instead. */

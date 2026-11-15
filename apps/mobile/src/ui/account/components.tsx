@@ -1,17 +1,17 @@
-/** @file Shares accessible account rows, provider labels, native/web platform support, and action feedback. */
+/** @file Shares accessible account rows, provider labels, supported sign-in methods, and action feedback. */
 import type { ReactNode } from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { ChevronRight, type LucideIcon } from 'lucide-react-native';
 import type { Provider } from '../../services/firebaseAccount';
 import type { AccountController } from '../../services/useAccount';
 import { Notice } from '../components';
 import { styles, theme } from '../theme';
 
-export const providerNames: Record<Provider, string> = { password: 'Email & password', 'google.com': 'Google', 'apple.com': 'Apple' };
+export const providerNames: Record<Provider, string> = { password: 'Email & password', 'google.com': 'Google' };
 
-/** Offer both providers on mobile and web; Apple uses the SDK's web sign-in dialog on Android. */
-export function supportsProvider(provider: Provider): boolean {
-  return provider !== 'apple.com' || ['ios', 'android', 'web'].includes(Platform.OS);
+/** Accept only the current Google/email methods, including when older servers advertise Apple. */
+export function supportsProvider(provider: string): provider is Provider {
+  return provider === 'password' || provider === 'google.com';
 }
 
 /** Filter server provider identifiers to supported sign-in methods without inventing a fallback credential. */

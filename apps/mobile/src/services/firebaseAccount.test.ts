@@ -1,4 +1,4 @@
-/** @file Verifies cross-platform provider exchange, identity-preserving linking/deletion grants, browser CSRF, and cancellation/conflict handling. */
+/** @file Verifies Google exchange, retired-provider rejection, identity-preserving linking/deletion, browser CSRF, and cancellation/conflict handling. */
 import { beforeEach, expect, it, vi } from 'vitest';
 import { authenticateAccount, accountError, accountDeletionProof, linkAccountProvider } from './firebaseAccount';
 import type { AccountSession } from './accountSession';
@@ -24,12 +24,12 @@ const config = { projectId: 'test', apiKey: 'key', appId: 'app', authDomain: 'te
 const user = { uid: 'firebase-uid', emailVerified: true };
 const auth = { authStateReady: vi.fn(async () => {}) };
 const credential = { providerId: 'provider' };
-const response = { account: { id: '00000000-0000-4000-8000-000000000001', email: 'private@privaterelay.appleid.com', displayName: null, emailVerified: true, providers: ['apple.com'] } };
+const response = { account: { id: '00000000-0000-4000-8000-000000000001', email: 'parent@example.test', displayName: null, emailVerified: true, providers: ['google.com'] } };
 let sequence = 0, server: string;
 beforeEach(() => {
   vi.clearAllMocks(); native.OS = 'ios'; server = `https://server-${++sequence}.test`;
   mocks.initialize.mockReturnValue(auth); mocks.nativeCredential.mockResolvedValue({ credential });
-  mocks.credential.mockResolvedValue({ user }); mocks.popup.mockResolvedValue({ user }); mocks.token.mockResolvedValue('firebase-id-token');
+  mocks.credential.mockResolvedValue({ user }); mocks.password.mockResolvedValue({ user }); mocks.popup.mockResolvedValue({ user }); mocks.token.mockResolvedValue('firebase-id-token');
   mocks.csrf.mockResolvedValue({ 'X-Little-Say-CSRF': 'csrf' });
   mocks.fetch.mockImplementation(async (_server: string, path: string) => {
     if (path === '/api/account/config') return config;
@@ -40,9 +40,7 @@ beforeEach(() => {
 
 it.each([
   { platform: 'ios', provider: 'google.com' as const },
-  { platform: 'ios', provider: 'apple.com' as const },
   { platform: 'android', provider: 'google.com' as const },
-  { platform: 'android', provider: 'apple.com' as const },
 ])('uses the same Firebase credential and session flow for new/returning $provider users on $platform', async ({ platform, provider }) => {
   native.OS = platform;
   for (const mode of ['register', 'login'] as const) {
@@ -60,7 +58,7 @@ it.each([
 it('does not exchange or create a session after native cancellation', async () => {
   const error = Object.assign(new Error('cancelled'), { code: 'auth/user-cancelled' });
   mocks.nativeCredential.mockRejectedValueOnce(error);
-  await expect(authenticateAccount(server, 'register', '', '', 'apple.com')).rejects.toBe(error);
+  await expect(authenticateAccount(server, 'register', '', '', 'google.com')).rejects.toBe(error);
   expect(mocks.credential).not.toHaveBeenCalled(); expect(mocks.fetch).toHaveBeenCalledTimes(1);
   expect(accountError(error)).toBe('Sign-in was cancelled. Your local boards are unchanged.');
 });
@@ -82,27 +80,35 @@ it('retains browser popup authentication and cookie exchange without loading nat
   expect(mocks.signOut).toHaveBeenCalledWith(auth);
 });
 
-it('links Google to an Android Apple account after fresh Apple confirmation, preserving the original identity', async () => {
+it('links Google after fresh email confirmation while preserving the original identity', async () => {
   native.OS = 'android';
   const session = { ...response, server, firebaseUid: user.uid } as AccountSession;
-  const googleCredential = { providerId: 'google.com' };
-  mocks.nativeCredential.mockResolvedValueOnce({ credential }).mockResolvedValueOnce({ credential: googleCredential });
-  const linked = await linkAccountProvider(session, 'google.com', '', '', 'apple.com', '');
-  expect(mocks.nativeCredential).toHaveBeenNthCalledWith(1, 'apple.com', config);
-  expect(mocks.nativeCredential).toHaveBeenNthCalledWith(2, 'google.com', config);
-  expect(mocks.link).toHaveBeenCalledWith(user, googleCredential);
-  expect(linked.firebaseUid).toBe(session.firebaseUid);
-  expect(linked.account.id).toBe(session.account.id);
+  const linked = await linkAccountProvider(session, 'google.com', '', '', 'password', 'current-password');
+  expect(mocks.password).toHaveBeenCalledWith(auth, 'parent@example.test', 'current-password');
+  expect(mocks.nativeCredential).toHaveBeenCalledWith('google.com', config);
+  expect(mocks.link).toHaveBeenCalledWith(user, credential);
+  expect(linked.firebaseUid).toBe(session.firebaseUid); expect(linked.account.id).toBe(session.account.id);
 });
 
-it('retains the Android Apple code and callback for account deletion after confirming the same UID', async () => {
-  native.OS = 'android';
+it('confirms the same Google UID for deletion and rejects a different account', async () => {
   const session = { ...response, server, firebaseUid: user.uid } as AccountSession;
-  const apple = { token: 'short-lived-code', type: 'CODE', redirectUri: 'https://test.firebaseapp.com/__/auth/handler' };
-  mocks.nativeCredential.mockResolvedValue({ credential, apple });
-  await expect(accountDeletionProof(session, 'google.com', '')).resolves.toEqual({ idToken: 'firebase-id-token', apple });
-  expect(mocks.nativeCredential).toHaveBeenLastCalledWith('apple.com', config);
+  await expect(accountDeletionProof(session, 'google.com', '')).resolves.toEqual({ idToken: 'firebase-id-token' });
+  expect(mocks.nativeCredential).toHaveBeenLastCalledWith('google.com', config);
   mocks.credential.mockResolvedValueOnce({ user: { ...user, uid: 'different-uid' } });
-  await expect(accountDeletionProof(session, 'apple.com', '')).rejects.toThrow('Use the same account');
+  await expect(accountDeletionProof(session, 'google.com', '')).rejects.toThrow('Use the same account');
   expect(mocks.signOut).toHaveBeenCalledWith(auth);
+});
+
+it.each(['ios', 'android', 'web'])('rejects retired Apple entry and linking on %s even with stale server settings', async platform => {
+  native.OS = platform;
+  await expect(authenticateAccount(server, 'login', '', '', 'apple.com' as 'google.com')).rejects.toThrow('not available');
+  const session = { ...response, server, firebaseUid: user.uid } as AccountSession;
+  await expect(linkAccountProvider(session, 'apple.com' as 'google.com', '', '', 'password', 'current-password')).rejects.toThrow('not available');
+  expect(mocks.nativeCredential).not.toHaveBeenCalled(); expect(mocks.popup).not.toHaveBeenCalled(); expect(mocks.link).not.toHaveBeenCalled();
+});
+
+it('keeps legacy Apple revocation mandatory instead of sending an incomplete deletion request', async () => {
+  const session = { ...response, account: { ...response.account, providers: ['google.com', 'apple.com'] }, server, firebaseUid: user.uid } as AccountSession;
+  await expect(accountDeletionProof(session, 'google.com', '')).rejects.toThrow('previous app version');
+  expect(mocks.nativeCredential).not.toHaveBeenCalled(); expect(mocks.fetch).not.toHaveBeenCalled();
 });

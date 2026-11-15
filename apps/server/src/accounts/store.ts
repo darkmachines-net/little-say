@@ -1,4 +1,4 @@
-/** @file Provisions account starter boards and stores Firebase owners, sessions, and backups with atomic quota and deletion boundaries. */
+/** @file Provisions Google/email account starter boards and preserves legacy owners, sessions, backups, and atomic deletion boundaries. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, createStarterBoards, mergeAssets, syncSnapshotSchema } from '@little-say/core';
@@ -22,7 +22,7 @@ export class Accounts {
   /** Inject the server-owned pool and an optional smaller quota for integration fixtures. */
   constructor(private pool: Pool, private quota = MAX_ACCOUNT_BYTES) {}
 
-  /** Provision an account and its starter snapshot atomically, once per project/UID; never reseed existing accounts. */
+  /** Provision Google/email accounts atomically, once per project/UID; retain existing Apple accounts without creating new ones or reseeding. */
   async provision(identity: Identity): Promise<Account> {
     return transaction(this.pool, async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [identity.project + ':' + identity.uid]);
@@ -33,6 +33,10 @@ export class Accounts {
           if (pending.rows[0]) return publicAccount(pending.rows[0]);
         }
         throw new AccountError('This account is being deleted or has been deleted.', 410);
+      }
+      if (!identity.providers.some(provider => provider === 'password' || provider === 'google.com')) {
+        const existing = await db.query('SELECT id FROM accounts WHERE firebase_project=$1 AND firebase_uid=$2', [identity.project, identity.uid]);
+        if (!existing.rowCount) throw new AccountError('Create your account with Google or email and password.', 403);
       }
       const id = randomUUID();
       const result = await db.query<Row>(`INSERT INTO accounts(id,firebase_project,firebase_uid,email,display_name,email_verified,providers)
