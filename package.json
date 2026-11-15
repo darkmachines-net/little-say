@@ -56,7 +56,7 @@
     "@eslint/js": "^10.0.1",
     "@expo/fingerprint": "0.21.6",
     "@expo/image-utils": "0.11.5",
-    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#0de52669cf7412021de933270c76fd1fa05e5f39",
+    "@mchartier/expo-release": "git+https://github.com/darkmachines-net/expo-release-template.git#38dc9773c2bcab80046583e21be0914737ca38fd",
     "@playwright/test": "1.63.0",
     "@types/node": "^24.0.0",
     "@types/pg": "^8.23.1",

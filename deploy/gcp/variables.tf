@@ -1,4 +1,4 @@
-# Defines deployment identities, OpenAI federation, and shared limits for accounts, workers, and image calls.
+# Defines release inputs, confidential alert routing, OpenAI federation, and shared AI capacity limits.
 variable "project_id" {
   type    = string
   default = "little-say"
@@ -23,6 +23,7 @@ variable "image" {
 }
 variable "alert_email" {
   type        = string
+  sensitive   = true
   description = "Operator email for readiness, SQL, job-failure and spending alerts."
 }
 variable "ai_enabled" {

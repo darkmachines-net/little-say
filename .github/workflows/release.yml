@@ -1,4 +1,4 @@
-# Prepares Dev candidates, approves the full beta rollout, then delegates parallel builds and ordered GCP/Expo delivery.
+# Prepares Dev candidates and delegates Terraform review, parallel builds, and ordered GCP/Expo delivery.
 name: Release
 run-name: ${{ inputs.destination == 'public-stores' && 'Public-store release (Expo production)' || 'Continuous delivery (Development → approval → beta)' }}
 on:
@@ -17,7 +17,7 @@ permissions: { contents: read }
 jobs:
   release:
     permissions: { contents: write, deployments: write, packages: write, id-token: write }
-    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@0de52669cf7412021de933270c76fd1fa05e5f39
+    uses: darkmachines-net/expo-release-template/.github/workflows/release.yml@38dc9773c2bcab80046583e21be0914737ca38fd
     with:
       profile: ${{ fromJSON('{"production":"beta","public-stores":"production"}')[inputs.destination || 'production'] }}
       rebuild: ${{ inputs.rebuild || false }}

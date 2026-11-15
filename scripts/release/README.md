@@ -4,7 +4,7 @@ The protected [Release workflow](../../.github/workflows/release.yml) invokes th
 
 `hooks.mjs` owns only application-specific behavior: `identity` hashes tracked inputs while excluding tests, Markdown, other-platform files, and allocated versions; `stamp` mirrors allocated versions into declared metadata; `applicationHook` dispatches inspection, stamping, script type validation, and isolated server health/version checks. Lifecycle, providers, approval, persistence, and uncertain-outcome handling belong to the shared toolkit.
 
-GCP deployment is selected for the shared `https://littlesay.app` backend. The toolkit runs migrations, verifies immutable API/worker revisions and publishes revision-pinned Firebase Hosting before native/OTA delivery. The branch-restricted `gcp-production` environment supplies federated deployment identity; [GCP operations](../../deploy/gcp/README.md#release-protection) owns approval and credential setup. The application owns no deployment wrapper.
+Beta and public-store releases use the shared `https://littlesay.app` backend. The toolkit checks Terraform and applies reviewed changes before running migrations, verifying immutable API and worker revisions, and publishing revision-pinned Firebase Hosting. [GCP operations](../../deploy/gcp/README.md#release-protection) describes the environments, approvals, and credentials.
 
 ## Preview and execution
 

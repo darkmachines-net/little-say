@@ -10,6 +10,12 @@
       "submit": true,
       "approvalEnvironment": "internal",
       "deployEnvironment": "gcp-production",
+      "terraform": {
+        "directory": "deploy/gcp",
+        "version": "1.13.5",
+        "planEnvironment": "gcp-terraform-plan",
+        "applyEnvironment": "gcp-terraform-apply"
+      },
       "publicEnvironment": {
         "LITTLE_SAY_CHANNEL": "beta"
       }
@@ -21,6 +27,12 @@
       "submit": true,
       "approvalEnvironment": "production",
       "deployEnvironment": "gcp-production",
+      "terraform": {
+        "directory": "deploy/gcp",
+        "version": "1.13.5",
+        "planEnvironment": "gcp-terraform-plan",
+        "applyEnvironment": "gcp-terraform-apply"
+      },
       "publicEnvironment": {
         "LITTLE_SAY_CHANNEL": "production"
       }
