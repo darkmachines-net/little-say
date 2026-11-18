@@ -1,4 +1,4 @@
-/** @file Exchanges email or Google/Apple credentials for origin-bound Firebase sessions and starter snapshots, delegating browser CSRF to the shared helper. */
+/** @file Exchanges email and provider credentials for origin-bound sessions and starter snapshots, including CSRF protection for browser mutations. */
 import { Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { initializeApp } from 'firebase/app';
@@ -36,7 +36,7 @@ export async function accountContext(server: string, savedConfig?: AuthConfig): 
 }
 
 /** Fetch the server-side CSRF token bound to the sole opaque browser session cookie. */
-export async function csrfHeaders(server: string): Promise<Record<string, string>> {
+async function csrfHeaders(server: string): Promise<Record<string, string>> {
   if (Platform.OS !== 'web') return {};
   return browserCsrfHeaders(server);
 }

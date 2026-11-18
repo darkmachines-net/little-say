@@ -1,4 +1,4 @@
-/** @file Enforces per-account admission and worker capacity and reports durable job activity. */
+/** @file Persists job state and enforces per-account admission and worker capacity. */
 import { createHash, randomUUID } from 'node:crypto';
 import { type Pool } from 'pg';
 import { transaction } from '../database';
@@ -7,7 +7,7 @@ import { AI_CLAIM_EXPIRY_SECONDS, readAiLimits, type AiLimits } from './limits';
 import { ImageCapacity } from './image-capacity';
 
 export type JobKind = 'proposal' | 'translation' | 'analysis' | 'review' | 'speech' | 'picture';
-export type JobState = 'queued' | 'working' | 'complete' | 'error' | 'cancelled' | 'interrupted';
+type JobState = 'queued' | 'working' | 'complete' | 'error' | 'cancelled' | 'interrupted';
 export type Job = { id: string; account_id: string; kind: JobKind; input: unknown; state: JobState; result: unknown; error: string | null; claim: string | null; cancel_requested: boolean };
 export type JobView = Pick<Job, 'id' | 'kind' | 'state' | 'result' | 'error'> & { draftId?: string; tileId?: string };
 const uuid = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;

@@ -34,7 +34,6 @@
     "expo-updates": "~58.0.18",
     "idb": "^8.0.0",
     "lucide-react-native": "^1.51.0",
-    "prop-types": "^15.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.0",
@@ -46,7 +45,8 @@
     "firebase": "^12.19.0",
     "react-native-nitro-google-signin": "^2.3.0",
     "react-native-nitro-modules": "^0.37.1",
-    "expo-dev-client": "~58.0.15"
+    "expo-dev-client": "~58.0.15",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

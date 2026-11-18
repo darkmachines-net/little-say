@@ -1,4 +1,4 @@
-/** @file Defines parent-facing filled, outlined, and text actions, fields, notices, and dialogs shared by the account app and public trial. */
+/** @file Defines shared parent-facing actions, fields, notices, and sheets with gesture-safe dismissal. */
 
 import { useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps, useWindowDimensions } from 'react-native';
@@ -35,7 +35,7 @@ export function Notice({ children, action }: { children: ReactNode; action?: Rea
  * cannot trigger dismissal; the dialog's close button remains the keyboard and screen-reader action.
  * Require a press to start here so the opening gesture's trailing browser click cannot close it.
  */
-export function ModalBackdrop({ onClose }: { onClose: () => void }) {
+function ModalBackdrop({ onClose }: { onClose: () => void }) {
   const pressed = useRef(false);
   return <Pressable testID="modal-backdrop" accessible={false} tabIndex={-1} importantForAccessibility="no" onPressIn={() => { pressed.current = true; }} onPress={() => { if (pressed.current) { pressed.current = false; onClose(); } }} style={StyleSheet.absoluteFill} />;
 }

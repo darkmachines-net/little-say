@@ -1,4 +1,4 @@
-/** @file Coordinates worktree port claims in common Git metadata and remembers checkout-local port preferences. */
+/** @file Coordinates port claims across worktrees and persists each checkout's selected development ports. */
 import { execFile } from 'node:child_process';
 import { randomUUID, createHash } from 'node:crypto';
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
@@ -11,7 +11,7 @@ import lockfile from 'proper-lockfile';
 const execute = promisify(execFile);
 const defaults = { expo: 8081, api: 8788, postgres: 15432, auth: 9099 };
 const variables = { expo: 'DEV_EXPO_PORT', api: 'DEV_API_PORT', postgres: 'DEV_PG_PORT', auth: 'DEV_AUTH_PORT' };
-export type DevelopmentPort = keyof typeof defaults;
+type DevelopmentPort = keyof typeof defaults;
 export type DevelopmentPorts = Record<DevelopmentPort, number>;
 type Claim = { id: string; root: string; pid: number; children: number[]; ports: Partial<DevelopmentPorts> };
 type Saved = { version: 1; ports: Partial<DevelopmentPorts> };

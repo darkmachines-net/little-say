@@ -1,4 +1,4 @@
-/** @file Stores immutable media, service-wide speech pointers, and owner-scoped private caches with independent download grants. */
+/** @file Stores immutable media and speech pointers with independent download grants, plus private caches backed by files or a database. */
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, writeFile, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -50,7 +50,7 @@ export class FileObjects implements ObjectStore {
 }
 
 /** Keeps isolated unit fixtures and older local cache directories usable without a database. */
-export class FileCache implements CacheStore {
+class FileCache implements CacheStore {
   readonly shared = false;
   private objects: FileObjects;
   /** Select the dedicated cache directory. */

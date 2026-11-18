@@ -1,7 +1,7 @@
-/** @file Defines backend URL validation and precedence independently of platform globals. */
+/** @file Validates backend URLs and resolves the configured, development, or service origin. */
 
 /** Trim trailing slashes and reject non-HTTP URLs, embedded credentials, queries, or fragments. */
-export function normalizeBackendUrl(value: string) {
+function normalizeBackendUrl(value: string) {
   const cleaned = value.trim().replace(/\/+$/, '');
   const parsed = new URL(cleaned);
   if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.search || parsed.hash) throw new Error('Enter an HTTP or HTTPS server address without a password, query, or fragment.');

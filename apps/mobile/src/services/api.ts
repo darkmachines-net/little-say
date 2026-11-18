@@ -1,4 +1,4 @@
-/** @file Authenticates cancellable requests and preserves retry timing for rejected AI submissions. */
+/** @file Resolves the API origin, authenticates cancellable requests, and preserves AI retry timing. */
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
@@ -9,7 +9,7 @@ import { applicationHeaders } from './requestAuth';
 import { requestJson } from './requestJson';
 
 // Expo inlines these exact property accesses. Remote web uses Metro's same-origin proxy; native goes directly.
-export const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
+const developmentApiUrl = typeof __DEV__ !== 'undefined' && __DEV__
   ? (Platform.OS === 'web' && process.env.EXPO_PUBLIC_WEB_API_URL ? window.location.origin : process.env.EXPO_PUBLIC_API_URL || '')
   : '';
 

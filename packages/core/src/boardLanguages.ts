@@ -1,4 +1,4 @@
-/** @file Resolves profile-based playback and prepares and applies revision-bound translations. */
+/** @file Resolves profile-based playback languages and prepares and applies revision-bound translations. */
 
 import { z } from 'zod';
 import { languageSchema, playLanguagesSchema, tileSource, translationSchema, type Board, type Tile, type Settings } from './schema';
@@ -22,7 +22,7 @@ export function boardPlayTiles(board: Board, settings: Settings) {
   return board.tiles.map(tile => tileInLanguage(tile, language, board.translateLabels !== false));
 }
 /** Find a translation for the requested language only when it still matches the card source text. */
-export function tileTranslation(tile: Tile, language: string) {
+function tileTranslation(tile: Tile, language: string) {
   const translation = storedTileTranslation(tile, language);
   return translation?.source === tileSource(tile) ? translation : undefined;
 }

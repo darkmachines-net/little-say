@@ -29,6 +29,7 @@
     "firebase-admin": "^14.5.0"
   },
   "devDependencies": {
+    "firebase": "^12.19.0",
     "tsup": "^8.5.0"
   }
 }

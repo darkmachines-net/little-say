@@ -1,4 +1,4 @@
-/** @file Streams development web API calls through Metro to one fixed backend without changing deployed CORS policy. */
+/** @file Streams Metro's development web API calls to a fixed backend using Node HTTP middleware. */
 
 const http = require('node:http');
 const https = require('node:https');
@@ -11,7 +11,7 @@ const https = require('node:https');
  * sanitized and redirects are rejected so a backend cannot turn this into an arbitrary URL proxy.
  * @param {string} backendUrl Backend origin, never a client-provided URL.
  * @param {string[]} origins Exact development browser origins allowed to call the proxy.
- * @returns {import('connect').NextHandleFunction} Middleware that leaves non-API requests to Metro.
+ * @returns {(request: import('node:http').IncomingMessage, response: import('node:http').ServerResponse, next: () => void) => void} Middleware that leaves non-API requests to Metro.
  */
 function createDevelopmentApiProxy(backendUrl, origins) {
   const backend = new URL(backendUrl);

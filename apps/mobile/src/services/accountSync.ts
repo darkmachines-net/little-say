@@ -1,4 +1,4 @@
-/** @file Exchanges complete account snapshots and content-addressed assets while keeping local edits and offline playback safe. */
+/** @file Exchanges account snapshots and verifies asset hashes to preserve local edits and offline playback. */
 
 import * as Crypto from 'expo-crypto';
 import { boardAssetKeys, mergeAssets, mergeBoards, syncSnapshotSchema, type Board, type Library, type SyncAsset, type SyncSnapshot } from '@little-say/core';
@@ -16,7 +16,7 @@ export async function accountRequest(session: AccountSession, path: string, body
   }, signal, true);
 }
 /** Compute the shared SHA-256 asset identity on both native and web. */
-export async function assetHash(bytes: Uint8Array) {
+async function assetHash(bytes: Uint8Array) {
   const hash = await Crypto.digest(Crypto.CryptoDigestAlgorithm.SHA256, bytes as Uint8Array<ArrayBuffer>);
   return Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('');
 }
