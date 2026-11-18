@@ -1,11 +1,11 @@
-/** @file Provisions account starter boards and stores Firebase owners, sessions, and backups with atomic quota and deletion boundaries. */
+/** @file Provisions account starter boards and persists Firebase owners, sessions, and quota-limited backups in PostgreSQL. */
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import { type Pool, type PoolClient } from 'pg';
 import { type Account, type SyncSnapshot, createStarterBoards, mergeAssets, syncSnapshotSchema } from '@little-say/core';
 import { transaction } from '../database';
 
 export const MAX_ASSET_BYTES = 10 * 1024 * 1024;
-export const MAX_ACCOUNT_BYTES = 256 * 1024 * 1024;
+const MAX_ACCOUNT_BYTES = 256 * 1024 * 1024;
 const digest = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 export type Identity = { project: string; uid: string; email: string | null; displayName: string | null; emailVerified: boolean; providers: string[]; authTime: number; expires: number };
 type Row = { id: string; email: string | null; display_name: string | null; email_verified: boolean; providers: string[]; deleting?: boolean };

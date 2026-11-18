@@ -1,4 +1,4 @@
-/** @file Defines durable library and AI payload schemas, bounded language profiles, compatible migrations, and revision-safe proposals. */
+/** @file Defines persisted library and AI payload schemas, including backward-compatible parsing and revision-safe proposals. */
 
 import { z } from 'zod';
 import { MAX_PHOTO_ZOOM } from './photo';
@@ -18,7 +18,7 @@ export const illustrationSchema = z.discriminatedUnion('kind', [
 ]);
 export const translationSchema = z.object({ language: languageSchema, label: z.string().trim().min(1).max(80), speech: z.string().trim().min(1).max(200) });
 // Older entries have unknown provenance and are protected like manual corrections.
-export const storedTranslationSchema = translationSchema.extend({ source: z.string().max(700), origin: z.enum(['generated', 'manual']).optional() });
+const storedTranslationSchema = translationSchema.extend({ source: z.string().max(700), origin: z.enum(['generated', 'manual']).optional() });
 // Keep historical board languages and saved translations readable independently of the profile cap.
 export const playLanguagesSchema = z.array(languageSchema).max(6).refine(tags => {
   try { return new Set(tags.map(tag => Intl.getCanonicalLocales(tag)[0])).size === tags.length; } catch { return false; }
@@ -52,9 +52,9 @@ const boardFields = z.object({
 export const boardSchema = boardFields.refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
 // Empty creation drafts are device-local and cannot enter playback or account snapshots.
 export const draftBoardSchema = boardFields.extend({ tiles: z.array(tileSchema).max(MAX_TILES) }).refine(board => new Set(board.tiles.map(t => t.id)).size === board.tiles.length, 'Tiles must have unique IDs.');
-export const boardSuggestionSchema = z.object({ base: draftBoardSchema, board: boardSchema });
+const boardSuggestionSchema = z.object({ base: draftBoardSchema, board: boardSchema });
 export type BoardSuggestion = z.infer<typeof boardSuggestionSchema>;
-export const settingsSchema = z.object({
+const settingsSchema = z.object({
   backendUrl: z.string().max(500), voices: z.record(z.string(), z.string()),
   activeBoardId: z.string().nullable(), aiConsent: z.boolean(),
   autoSpeech: z.boolean().default(true),
@@ -66,10 +66,10 @@ export const settingsSchema = z.object({
   boardLanguages: z.record(z.string(), languageSchema).optional(),
   languageProfile: languageProfileSchema.optional(),
 });
-export const starterTopicSchema = z.enum(['farm', 'everyday', 'family']);
+const starterTopicSchema = z.enum(['farm', 'everyday', 'family']);
 export type StarterTopic = z.infer<typeof starterTopicSchema>;
 export const starterTopicsSchema = z.array(starterTopicSchema).min(1).max(3).refine(topics => new Set(topics).size === topics.length);
-export const setupSchema = z.object({
+const setupSchema = z.object({
   stage: z.enum(['languages', 'boards']), topics: starterTopicsSchema,
   drafts: z.array(z.object({ topic: starterTopicSchema, board: boardSchema })).max(3).refine(drafts => new Set(drafts.map(draft => draft.topic)).size === drafts.length),
 });
@@ -99,7 +99,7 @@ export function tileSource(tile: Pick<Tile, 'label' | 'speech' | 'language'>) {
 }
 
 // Deliberately excludes local asset IDs, paths, and image bytes from network requests.
-export const boardContextSchema = z.object({
+const boardContextSchema = z.object({
   id: z.string().max(100), revision: z.number().int().nonnegative(), title: z.string().max(100),
   playLanguages: playLanguagesSchema.optional(), picturePolicy: picturePolicySchema.optional(),
   tiles: z.array(z.object({ id: z.string().max(100), label: z.string().max(80), speech: z.string().max(200), language: languageSchema, color: z.enum(colors), emoji: z.string().max(32).nullable(), hasPhoto: z.boolean(), hasPicture: z.boolean().optional(), pictureOptions: pictureOptionsSchema.optional(), languageMode: z.enum(['fixed', 'board']).optional(), translations: z.array(translationSchema).max(6).optional() })).min(1).max(MAX_TILES),
@@ -141,9 +141,9 @@ export const proposalSchema = z.object({
   timing: z.object({ draftMs: z.number().nonnegative(), resolveMs: z.number().nonnegative(), templateHit: z.boolean() }).optional(),
 });
 export const MAX_AI_TURNS = 20;
-export const conversationTurnSchema = z.object({ prompt: z.string().trim().min(1).max(4000), reply: z.string().trim().min(1).max(1000) });
+const conversationTurnSchema = z.object({ prompt: z.string().trim().min(1).max(4000), reply: z.string().trim().min(1).max(1000) });
 // Only explicit Save draft writes this local snapshot; no active provider operation is restored.
-export const creationDraftSchema = z.object({
+const creationDraftSchema = z.object({
   board: draftBoardSchema, prompt: z.string().max(4000), suggestion: boardSuggestionSchema.nullable(),
   history: z.array(conversationTurnSchema).max(MAX_AI_TURNS).optional(), reply: z.string().max(1000).optional(),
 });
@@ -162,7 +162,6 @@ export const boardCreationDraftSchema = z.object({
       validateGeneratedBoard(value.draft.proposal, null);
     } catch { ctx.addIssue({ code: 'custom', message: 'The saved creation draft is invalid.', path: ['draft'] }); }
   });
-export type BoardCreationDraft = z.infer<typeof boardCreationDraftSchema>;
 export const librarySchema = z.object({
   version: z.literal(2), boards: z.array(boardSchema), settings: settingsSchema, setup: setupSchema.optional(),
   boardCreationDraft: boardCreationDraftSchema.optional(),

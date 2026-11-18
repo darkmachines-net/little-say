@@ -1,4 +1,4 @@
-/** @file Resolves staged board pictures with bounded jobs, local download progress, cancellation, and revision-safe previews. */
+/** @file Resolves staged board pictures, tracks verified local downloads, and builds revision-safe proposal previews. */
 
 import * as Crypto from 'expo-crypto';
 import { z } from 'zod';
@@ -30,7 +30,7 @@ export interface PictureWorkOptions {
 }
 
 /** Download a resolved picture before its reference is eligible for a board save. */
-export async function storeResolvedPicture(server: string, picture: Tile['illustration'], signal?: AbortSignal): Promise<void> {
+async function storeResolvedPicture(server: string, picture: Tile['illustration'], signal?: AbortSignal): Promise<void> {
   if (picture.kind === 'library' || picture.kind === 'generated') await savePictureAsset(picture.assetId, `${backendUrl(server)}/api/pictures/assets/${picture.assetId}.png`, signal);
 }
 
@@ -158,7 +158,7 @@ export async function prepareBoardPictures(board: Board, settings: Settings, opt
  * Set replaceTranslations only after explicit parent review of this draft: it allows the returned
  * board to replace protected manual or legacy translations. Previewing does not persist the board.
  */
-export function proposalPreview(source: Board | undefined, proposal: BoardProposal, replaceTranslations = false): Board {
+function proposalPreview(source: Board | undefined, proposal: BoardProposal, replaceTranslations = false): Board {
   let index = 0; return applyProposal(source ?? null, proposal, () => `draft-${index++}`, undefined, replaceTranslations);
 }
 

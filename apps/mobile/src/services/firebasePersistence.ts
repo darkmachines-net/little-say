@@ -1,4 +1,4 @@
-/** @file Persists Firebase native credentials in chunked, atomically committed OS SecureStore records. */
+/** @file Adapts OS SecureStore to Firebase native persistence using chunked records and atomic manifest updates. */
 import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import { getReactNativePersistence } from 'firebase/auth';
@@ -52,7 +52,5 @@ export const secureAuthStorage = {
     await SecureStore.deleteItemAsync(name); await removeChunks(name, old);
   }); },
 };
-/** Supply the supported Firebase React Native persistence adapter. */
-export function authPersistence() { return getReactNativePersistence(secureAuthStorage); }
 /** Native Firebase needs secure persistence and never installs a browser popup resolver. */
-export function authDependencies() { return { persistence: authPersistence() }; }
+export function authDependencies() { return { persistence: getReactNativePersistence(secureAuthStorage) }; }

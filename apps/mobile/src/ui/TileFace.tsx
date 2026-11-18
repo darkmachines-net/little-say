@@ -1,4 +1,4 @@
-/** @file Shares card artwork and speech feedback across app and trial, including preparation placeholders and replacement overlays. */
+/** @file Renders card artwork, picture preparation states, and speech feedback for the app and public trial. */
 
 import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
@@ -12,7 +12,7 @@ import { type PictureTileState } from '../services/pictures';
 import { palettes, theme } from './theme';
 
 /** Render emoji, a full local illustration, or a cropped photo, with visible unresolved/missing states. */
-export function Illustration({ tile, size = 64 }: { tile: Tile; size?: number }) {
+function Illustration({ tile, size = 64 }: { tile: Tile; size?: number }) {
   const [frame, setFrame] = useState({ width: size, height: size });
   const assetId = tile.illustration.kind === 'photo' ? tile.illustration.assetId : null;
   const loaded = usePhotoSource(assetId);

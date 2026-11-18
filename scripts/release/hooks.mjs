@@ -1,4 +1,4 @@
-/** @file Maintains Little Say release metadata and input boundaries and validates the built application. */
+/** @file Runs the release toolkit's application hooks for input identity, version stamping, and validation. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { trackedIdentity } from '@mchartier/expo-release';
 
 /** Preserve every input byte except version fields allocated into the build commit. */
-export function identity(root, source, inputs, platform) {
+function identity(root, source, inputs, platform) {
   return trackedIdentity(root, source, {
     include: file => inputs.some(p => file === p || file.startsWith(`${p}/`))
       && !/(^|\/)(__tests__|tests|docs)(\/|$)|\.(test|spec)\.|\.md$/.test(file)
@@ -41,7 +41,7 @@ export function stamp(root, plan) {
 }
 
 /** Return tracked input identities for inspection and an empty result after successful metadata stamping or validation. */
-export async function applicationHook({ root, action, config, source, plan, target, baseUrl }) {
+async function applicationHook({ root, action, config, source, plan, target, baseUrl }) {
   if (action === 'inspect') return { server: identity(root, source, config.server.inputs),
     js: Object.fromEntries(['android', 'ios'].map(p => [p, identity(root, source, config.mobile.inputs, p)])) };
   if (action === 'prepare') stamp(root, plan);

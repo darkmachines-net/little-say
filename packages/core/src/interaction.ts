@@ -1,6 +1,6 @@
 /**
- * @file Defines platform-independent tile hit testing, bounded speech queuing, parent holds, and grid
- * sizing.
+ * @file Defines platform-independent tile hit testing, bounded speech queuing, and parent holds.
+ * Re-exports grid sizing for the play surface.
  */
 
 export type Point = { x: number; y: number };
@@ -125,4 +125,4 @@ export class ParentExitGesture {
   cancel() { this.contact = null; }
 }
 
-export { gridLayout, type CardRect, type GridLayout, type GridOptions } from './boardLayout';
+export { gridLayout } from './boardLayout';

@@ -1,4 +1,4 @@
-/** @file Defines picture preferences, safe catalog/job contracts, and board-wide visual selection rules. */
+/** @file Defines picture preference, catalog, and preparation schemas together with board-wide source selection. */
 
 import { z } from 'zod';
 
@@ -11,7 +11,7 @@ export const pictureOptionsSchema = z.object({ locked: z.boolean(), instruction:
 export const pictureConceptSchema = z.object({ description: z.string().min(1).max(300), features: z.array(z.string().min(1).max(100)).max(8), searchTerms: z.array(z.string().min(1).max(80)).min(1).max(6), emojiAccurate: z.boolean() });
 export type PictureConcept = z.infer<typeof pictureConceptSchema>;
 export const pictureAssetIdSchema = z.string().regex(/^[a-f0-9]{64}$/);
-export const pictureProvenanceSchema = z.object({ library: z.enum(['mulberry', 'openmoji']), sourceId: z.string().max(150), sourceUrl: z.string().url().max(500), author: z.string().max(200), license: z.literal('CC-BY-SA-4.0'), modified: z.string().max(200) });
+const pictureProvenanceSchema = z.object({ library: z.enum(['mulberry', 'openmoji']), sourceId: z.string().max(150), sourceUrl: z.string().url().max(500), author: z.string().max(200), license: z.literal('CC-BY-SA-4.0'), modified: z.string().max(200) });
 export const libraryPictureSchema = z.object({ kind: z.literal('library'), assetId: pictureAssetIdSchema, style: pictureStyleSchema, provenance: pictureProvenanceSchema });
 export const generatedPictureSchema = z.object({ kind: z.literal('generated'), assetId: pictureAssetIdSchema, style: pictureStyleSchema, description: z.string().max(800), model: z.string().max(100) });
 export const unresolvedPictureSchema = z.object({ kind: z.literal('unresolved'), reason: z.string().min(1).max(300) });
@@ -34,7 +34,7 @@ export const pictureJobSchema = z.object({ id: z.string().uuid(), draftId: z.str
 export type PictureJob = z.infer<typeof pictureJobSchema>;
 
 /** Per-card preparation distinguishes a suitable picture from a merely saveable fallback. */
-export const preparedTileSchema = z.object({
+const preparedTileSchema = z.object({
   index: z.number().int().min(0).max(23),
   state: z.enum(['queued', 'finding', 'generating', 'ready', 'fallback']),
   result: resolvedPictureSchema.optional(),
@@ -46,7 +46,7 @@ export const pictureBatchSchema = z.object({
 export type PictureBatch = z.infer<typeof pictureBatchSchema>;
 
 /** Normalize presentation selectors so visually identical emoji are compared together. */
-export function normalizedEmoji(value: string): string { return value.replace(/[\uFE0E\uFE0F]/g, '').normalize('NFC'); }
+function normalizedEmoji(value: string): string { return value.replace(/[\uFE0E\uFE0F]/g, '').normalize('NFC'); }
 
 /** Decide which unprotected cards need illustrations; Automatic fills only gaps, including for legacy consistent=true preferences. */
 export function pictureTargets(tiles: { id: string; emoji: string; concept: PictureConcept; locked: boolean; mode?: PicturePolicy['mode'] }[], policy: PicturePolicy): Set<string> {

@@ -1,10 +1,10 @@
-/** @file Defines the Android-only, session-free tile playback bridge and its request-scoped events. */
+/** @file Loads the optional Android tile playback bridge and defines its request-scoped events. */
 
 import { requireOptionalNativeModule } from 'expo';
 
 export type TileAudioStatus = { id: string; state: 'ready' | 'ended' | 'error' };
 
-export interface TileAudioModule {
+interface TileAudioModule {
   /** Replace the owned clip; resolve after preparing playback, not when the sound finishes. */
   play(id: string, uri: string): Promise<void>;
   /** Release only the matching clip. Repeated or stale cancellation is harmless. */

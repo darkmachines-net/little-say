@@ -1,4 +1,4 @@
-/** @file Searches pinned licensed symbol metadata and rasterizes only catalog-owned source URLs. */
+/** @file Searches licensed symbol metadata and bounds downloads before rasterizing catalog-owned images. */
 
 import sharp from 'sharp';
 import { catalogEntrySchema, type CatalogEntry, type PicturePolicy } from '@little-say/core';
@@ -19,7 +19,7 @@ export function searchPictures(query: string, style: PicturePolicy['style'], lim
 export function catalogPicture(id: string): CatalogEntry | undefined { return catalog.find(entry => entry.id === id); }
 
 /** Read an image response with a byte limit even when Content-Length is absent or inaccurate. */
-export async function imageBytes(response: Response, limit = 8 * 1024 * 1024): Promise<Buffer> {
+async function imageBytes(response: Response, limit = 8 * 1024 * 1024): Promise<Buffer> {
   if (!response.ok || !response.body) throw new Error('Picture download failed.');
   const reader = response.body.getReader(); const parts: Uint8Array[] = []; let size = 0;
   try {

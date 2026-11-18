@@ -1,7 +1,7 @@
-/** @file Fits ordered cards into balanced rows for playback and compact, optionally scrollable previews. */
+/** @file Computes balanced grid geometry for ordered playback cards and optionally scrollable previews. */
 
-export interface CardRect { x: number; y: number; width: number; height: number; }
-export interface GridOptions {
+interface CardRect { x: number; y: number; width: number; height: number; }
+interface GridOptions {
   minWidth?: number;
   minHeight?: number;
   maxWidth?: number;
@@ -9,7 +9,7 @@ export interface GridOptions {
   /** Permit taller content in a scrolling editor preview, never in the child play surface. */
   scroll?: boolean;
 }
-export interface GridLayout {
+interface GridLayout {
   /** Rectangles follow saved card order; callers attach stable card IDs without reordering. */
   rects: CardRect[];
   rowCounts: number[];
