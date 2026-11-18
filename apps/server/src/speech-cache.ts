@@ -39,7 +39,8 @@ export class SpeechCache {
   /**
    * Resolve speech by text, language, model, voice, format and instruction version. Same-instance
    * work is coalesced here; hosted job claims serialize matching speech across workers/accounts.
-   * Explicit regeneration replaces the shared take; disabled or saturated synthesis raises an error.
+   * Explicit regeneration replaces the shared take, unless matching work is already in flight, in
+   * which case its result is reused. Disabled or saturated synthesis raises an error.
    */
   get(raw: SpeechInput, regenerate = false) {
     const input = speechInputSchema.parse(raw);

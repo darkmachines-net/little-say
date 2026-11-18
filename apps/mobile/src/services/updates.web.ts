@@ -1,9 +1,10 @@
-/** @file Registers the production offline web shell, skips Metro on every port, and defers updates until parent approval. */
+/** @file Registers the production offline web shell, skips development builds, and defers updates until parent approval. */
 
 let waiting: ServiceWorker | null = null;
 /**
- * Register the service worker outside Metro, notify when an update waits, and return a callback that
- * removes the update-discovery listener.
+ * Register the service worker in production when the browser supports it, notify when an update
+ * waits, and return a callback that removes the update-discovery listener. Registration failures
+ * reject the returned promise.
  */
 export async function initializeUpdates(ready: () => void): Promise<() => void> {
   if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) return () => {};

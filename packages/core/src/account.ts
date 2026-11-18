@@ -16,7 +16,11 @@ export type Account = z.infer<typeof accountSchema>;
 
 function same(a: Board | undefined, b: Board | undefined) { return JSON.stringify(a) === JSON.stringify(b); }
 
-/** Merge against the last acknowledgement; retain concurrent edits as copies and rescue edits racing deletion. */
+/**
+ * Merge against the last acknowledgement, retaining remote changes and copying conflicting local
+ * edits, including edits racing deletion. The caller supplies a stable, unique ID for each copy;
+ * a copy whose ID already exists locally or remotely is omitted.
+ */
 export function mergeBoards(base: Board[], local: Board[], remote: Board[], id: (board: Board) => string): Board[] {
   const before = new Map(base.map(board => [board.id, board]));
   const here = new Map(local.map(board => [board.id, board]));
@@ -38,7 +42,11 @@ export function mergeBoards(base: Board[], local: Board[], remote: Board[], id: 
   return merged;
 }
 
-/** Retain image references and every current saved pronunciation, including languages excluded from play. */
+/**
+ * Collect referenced images and current pronunciations, including saved translations of
+ * board-following cards in languages excluded from play. Fixed-language cards contribute only
+ * their base pronunciation; stale translations are excluded.
+ */
 export function boardAssetKeys(boards: Board[]) {
   const images = new Set(boards.flatMap(board => board.tiles.flatMap(tile => {
     const picture = tile.illustration;
@@ -48,7 +56,11 @@ export function boardAssetKeys(boards: Board[]) {
   return { images, speech };
 }
 
-/** Merge immutable images and pronunciation selections; upload only assets referenced by retained boards. */
+/**
+ * Merge immutable images and pronunciation selections, retaining only assets referenced by the
+ * supplied boards. Throw if picture contents conflict or a referenced picture is missing; missing
+ * speech assets are allowed.
+ */
 export function mergeAssets(boards: Board[], base: SyncAsset[], local: SyncAsset[], remote: SyncAsset[]): SyncAsset[] {
   const identity = (asset: SyncAsset) => `${asset.kind}:${asset.key ?? asset.id}`;
   const result = new Map(remote.map(asset => [identity(asset), asset]));
