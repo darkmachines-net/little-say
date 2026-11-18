@@ -5,7 +5,11 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { trackedIdentity } from '@mchartier/expo-release';
 
-/** Preserve every input byte except version fields allocated into the build commit. */
+/**
+ * Hash tracked release inputs after excluding tests, documentation, and, when a platform is supplied,
+ * other platform variants. Normalize version-bearing JSON by parsing and serializing it without
+ * allocated version fields; other included files are identified by their Git blobs.
+ */
 function identity(root, source, inputs, platform) {
   return trackedIdentity(root, source, {
     include: file => inputs.some(p => file === p || file.startsWith(`${p}/`))
