@@ -2,6 +2,7 @@
   "expo": {
     "name": "Little Say",
     "slug": "little-say",
+    "owner": "dark-machines",
     "version": "0.1.4",
     "orientation": "default",
     "userInterfaceStyle": "light",

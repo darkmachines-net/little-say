@@ -1,6 +1,6 @@
 /**
- * @file Resolves Expo branding, native versions, iOS sign-in/export compliance, server origin, and OTA
- * settings from the release contract.
+ * @file Extends the base Expo project config with release versions, branding, iOS sign-in,
+ * export compliance, server origin, and OTA settings.
  */
 
 const { runtimeVersion, developmentConfig } = require('@mchartier/expo-release/expo');
@@ -8,8 +8,8 @@ const release = require('../../native-release.json');
 const colors = require('./assets/brand/colors.json');
 
 /**
- * Merge the base Expo config with release metadata, native sign-in setup, exempt iOS encryption usage, and the selected
- * update channel; reject unknown channels. Export compliance applies to every iOS build variant.
+ * Preserve the base Expo owner and slug while applying release metadata, native sign-in, and OTA settings.
+ * Reject unknown update channels. Export compliance applies to every iOS build variant.
  */
 module.exports = ({ config }) => {
   const channel = process.env.LITTLE_SAY_CHANNEL || 'beta';
@@ -30,7 +30,6 @@ module.exports = ({ config }) => {
     ...config,
     version: release.version,
     icon: './assets/brand/app-icon.png',
-    ...(release.expoOwner ? { owner: release.expoOwner } : {}),
     android: {
       ...config.android,
       versionCode: release.androidVersionCode,
