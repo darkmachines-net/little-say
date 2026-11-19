@@ -28,7 +28,7 @@
   "mobile": {
     "directory": "apps/mobile", "versionFloor": "0.1.4",
     "inputs": ["apps/mobile", "packages", "native-release.json", "package-lock.json"],
-    "builder": "eas", "projectId": "a0336055-a9d6-46b1-8eb4-120944304685", "owner": "matthewchartier", "slug": "little-say",
+    "builder": "eas", "projectId": "a0336055-a9d6-46b1-8eb4-120944304685", "owner": "dark-machines", "slug": "little-say",
     "publicVariables": ["LITTLE_SAY_GOOGLE_IOS_URL_SCHEME", "LITTLE_SAY_GOOGLE_IOS_DEVELOPMENT_URL_SCHEME"],
     "targets": [
       { "id": "android", "platform": "android", "applicationId": "net.darkmachines.littlesay", "buildNumberFloor": 5 },
