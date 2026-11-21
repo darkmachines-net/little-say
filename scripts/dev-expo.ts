@@ -1,7 +1,7 @@
-/** @file Prepares Expo Go or toolkit-owned native development launch settings for the selected local stack. */
+/** @file Prepares Expo Go settings or uses the toolkit's launcher for the selected local stack. */
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
-import { developmentServer } from '@mchartier/expo-release/development';
+import { developmentServer } from '@darkmachines-net/expo-release/development';
 import { expoEnvironment, type DevelopmentConfig } from './dev-config';
 const require = createRequire(import.meta.url);
 

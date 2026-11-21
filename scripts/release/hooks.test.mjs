@@ -1,4 +1,4 @@
-/** @file Release contract: metadata stamping, native compatibility and beta delivery through Play and TestFlight. */
+/** @file Verify metadata stamping, native compatibility, and beta delivery with the shared release engine. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { stamp } from './hooks.mjs';
-import { sourceEnvironment } from '@mchartier/expo-release';
-import { selectRelease } from '@mchartier/expo-release/engine';
+import { sourceEnvironment } from '@darkmachines-net/expo-release';
+import { selectRelease } from '@darkmachines-net/expo-release/engine';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const config=JSON.parse(fs.readFileSync(path.join(root,'release.config.json')));
 const allocation={server:true,native:true,bump:'major',versions:{server:'0.99.0',mobile:'1.0.0'},pair:[101,102]};

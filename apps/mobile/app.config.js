@@ -1,9 +1,9 @@
 /**
- * @file Extends the base Expo project config with release versions, branding, iOS sign-in,
+ * @file Extends the Expo config with shared release and development settings, branding, iOS sign-in,
  * export compliance, server origin, and OTA settings.
  */
 
-const { runtimeVersion, developmentConfig } = require('@mchartier/expo-release/expo');
+const { runtimeVersion, developmentConfig } = require('@darkmachines-net/expo-release/expo');
 const release = require('../../native-release.json');
 const colors = require('./assets/brand/colors.json');
 

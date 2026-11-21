@@ -1,4 +1,4 @@
-/** @file Verifies release routing, isolated preview and infrastructure environments, and immutable toolkit pins. */
+/** @file Verifies release routing, isolated preview and infrastructure environments, and matching package, lockfile, and workflow pins. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -55,10 +55,10 @@ test('both delivery destinations review the same production Terraform workspace'
 test('development, release, package and lock use the same immutable toolkit revision', () => {
   const pkg = JSON.parse(fs.readFileSync(new URL('package.json', root), 'utf8'));
   const lock = JSON.parse(fs.readFileSync(new URL('package-lock.json', root), 'utf8'));
-  const pin = pkg.devDependencies['@mchartier/expo-release'].split('#')[1];
+  const pin = pkg.devDependencies['@darkmachines-net/expo-release'].split('#')[1];
   assert.match(pin, /^[a-f0-9]{40}$/);
   for (const [name, job] of [['development', development.jobs.development], ['release', workflow.jobs.release]]) {
     assert.equal(job.uses, `darkmachines-net/expo-release-template/.github/workflows/${name}.yml@${pin}`);
   }
-  assert.ok(lock.packages['node_modules/@mchartier/expo-release'].resolved.endsWith('#' + pin));
+  assert.ok(lock.packages['node_modules/@darkmachines-net/expo-release'].resolved.endsWith('#' + pin));
 });
