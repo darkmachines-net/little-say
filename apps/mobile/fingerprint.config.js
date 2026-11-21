@@ -1,5 +1,5 @@
-/** @file Expo native compatibility excludes allocated versions and keeps native environment and profile inputs. */
-const { fingerprintTransform } = require('@mchartier/expo-release/expo');
+/** @file Fingerprint the native environment, build profile, and policy while excluding allocated versions. */
+const { fingerprintTransform } = require('@darkmachines-net/expo-release/expo');
 const release = { ...require('../../native-release.json') };
 for (const key of ['version', 'androidVersionCode', 'iosBuildNumber']) delete release[key];
 const profile = process.env.EAS_BUILD_PROFILE || process.env.LITTLE_SAY_CHANNEL || 'beta';

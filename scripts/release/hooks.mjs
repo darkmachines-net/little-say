@@ -1,9 +1,9 @@
-/** @file Runs the release toolkit's application hooks for input identity, version stamping, and validation. */
+/** @file Supplies application input identities, version stamping, and validation to the shared release toolkit. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { trackedIdentity } from '@mchartier/expo-release';
+import { trackedIdentity } from '@darkmachines-net/expo-release';
 
 /**
  * Hash tracked release inputs after excluding tests, documentation, and, when a platform is supplied,
