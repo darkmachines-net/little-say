@@ -1,15 +1,20 @@
 /**
- * @file Exercises API validation including the shared language cap, origins, concurrency, retired audio input, and static web
+ * @file Exercises API validation including the shared language cap, origins, concurrency, hosted media authorization, retired audio input, and static web
  * serving.
  */
 
 import { starterLibrary } from '../../../tests/fixtures/library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createHash } from 'node:crypto';
 import { createServer } from '../src/app';
 import release from '../../../release.json';
 import { type AiProvider } from '../src/provider';
 import { type GeneratedBoard, boardContext } from '@little-say/core';
 import { fileURLToPath } from 'node:url';
+import { AccountError } from '../src/accounts/store';
+import { type HostedServices } from '../src/hosting/api';
+import { type PictureJobs } from '../src/pictures/jobs';
+import { type SpeechCache } from '../src/speech-cache';
 const draft: GeneratedBoard = { title: 'Farm', explanation: 'A cow to start with.', needsClarification: false, tiles: [{ existingId: null, label: 'Cow', speech: 'Cow', language: 'en-US', emoji: '🐄', color: 'sage' }] };
 const headers = { 'X-Little-Say': '1', 'content-type': 'application/json' };
 const servers: Awaited<ReturnType<typeof createServer>>[] = [];
@@ -141,5 +146,76 @@ describe('private generation API', () => {
     expect(response.statusCode).toBe(404);
     expect(propose).not.toHaveBeenCalled();
     expect(transcribe).not.toHaveBeenCalled();
+  });
+  it('enforces hosted media authorization on decoded filenames including percent-encoded URLs', async () => {
+    const png = Buffer.from('private-png-bytes');
+    const wav = Buffer.from('private-wav-bytes');
+    const publicPng = Buffer.from('public-png-bytes');
+    const pictureId = createHash('sha256').update(png).digest('hex');
+    const speechId = createHash('sha256').update(wav).digest('hex');
+    const publicPictureId = createHash('sha256').update(publicPng).digest('hex');
+    const encodeFirstHex = (value: string) => `%${value.charCodeAt(0).toString(16)}${value.slice(1)}`;
+    const readPicture = vi.fn(async (id: string) => id === pictureId ? png : id === publicPictureId ? publicPng : null);
+    const readSpeech = vi.fn(async (id: string) => id === speechId ? wav : null);
+    const pool = {
+      /** Report public and owner grants matching the tested fixtures. */
+      async query(sql: string, params?: unknown[]) {
+        if (sql.includes('FROM service_records')) return { rows: [], rowCount: 0 };
+        const [namespace, key, account] = (params ?? []) as [string, string, string | null];
+        const granted = (namespace === 'pictures' && key === `${publicPictureId}.png`) ||
+          (account === 'alice' && ((namespace === 'pictures' && key === `${pictureId}.png`) || (namespace === 'speech' && key === `${speechId}.wav`)));
+        return { rows: granted ? [{ '?column?': 1 }] : [], rowCount: granted ? 1 : 0 };
+      },
+    };
+    const hosting = {
+      pool,
+      jobs: {},
+      objects: {},
+      enabled: true,
+      access: {
+        /** Authenticate fixture bearer tokens without contacting Firebase. */
+        async verify(request: { headers: { authorization?: string } }) {
+          if (request.headers.authorization === 'Bearer alice') return { account: { id: 'alice' } };
+          if (request.headers.authorization === 'Bearer bob') return { account: { id: 'bob' } };
+          throw new AccountError('Sign in to continue.', 401);
+        },
+      },
+    } as unknown as HostedServices;
+    const app = await createServer({
+      provider: null,
+      hosting,
+      pictures: { read: readPicture, close: vi.fn(), generationEnabled: false } as unknown as PictureJobs,
+      speechCache: { read: readSpeech } as unknown as SpeechCache,
+    });
+    servers.push(app);
+    await app.ready();
+
+    const privateUrls = [
+      `/api/pictures/assets/${pictureId}.png`,
+      `/api/pictures/assets/${encodeFirstHex(pictureId)}.png`,
+      `/api/pictures/assets/${pictureId}%2epng`,
+      `/api/speech/${speechId}.wav`,
+      `/api/speech/${encodeFirstHex(speechId)}.wav`,
+      `/api/speech/${speechId}%2ewav`,
+    ];
+    for (const url of privateUrls) {
+      const anonymous = await app.inject(url);
+      expect(anonymous.statusCode).toBe(401);
+      expect(String(anonymous.headers['cache-control'] ?? '')).not.toContain('immutable');
+      const other = await app.inject({ url, headers: { authorization: 'Bearer bob' } });
+      expect(other.statusCode).toBe(404);
+      expect(String(other.headers['cache-control'] ?? '')).not.toContain('immutable');
+    }
+    expect(readPicture).not.toHaveBeenCalled();
+    expect(readSpeech).not.toHaveBeenCalled();
+
+    for (const url of privateUrls) {
+      const owner = await app.inject({ url, headers: { authorization: 'Bearer alice' } });
+      expect(owner.statusCode).toBe(200);
+      expect(owner.headers['cache-control']).toBe('private, max-age=31536000, immutable');
+    }
+    const publicResponse = await app.inject(`/api/pictures/assets/${encodeFirstHex(publicPictureId)}%2epng`);
+    expect(publicResponse.statusCode).toBe(200);
+    expect(publicResponse.rawPayload).toEqual(publicPng);
   });
 });

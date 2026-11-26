@@ -22,7 +22,7 @@ import { checkDatabase } from './database';
 import { accountRoutes } from './accounts/routes';
 import { type BoardPreparation } from './board-preparation';
 import { AccountError } from './accounts/store';
-import { hostingRoutes, type HostedServices } from './hosting/api';
+import { authorizeMedia, hostingRoutes, type HostedServices } from './hosting/api';
 import { JobAdmissionError } from './hosting/jobs';
 
 export interface ServerOptions { provider: AiProvider | null; preparation?: BoardPreparation; accounts?: Accounts; auth?: IdentityService; database?: Pool; secureCookies?: boolean; speechCache?: SpeechCache; pictures?: PictureJobs; origins?: string[]; webRoot?: string; maxConcurrent?: number; logger?: boolean;
@@ -96,7 +96,9 @@ export async function createServer(options: ServerOptions) {
   });
   app.get<{ Params: { file: string } }>('/api/pictures/assets/:file', async (request, reply) => {
     const match = /^([a-f0-9]{64})\.png$/.exec(request.params.file);
-    const bytes = match && await options.pictures?.read(match[1]);
+    if (!match) return reply.code(404).send({ error: 'Picture unavailable.' });
+    if (options.hosting && !await authorizeMedia(options.hosting, request, 'pictures', request.params.file)) return reply.code(404).send({ error: 'Media unavailable.' });
+    const bytes = await options.pictures?.read(match[1]);
     if (!bytes) return reply.code(404).send({ error: 'Picture unavailable.' });
     return reply.header('Cache-Control', 'private, max-age=31536000, immutable').header('X-Content-Type-Options', 'nosniff').type('image/png').send(bytes);
   });
@@ -147,7 +149,9 @@ export async function createServer(options: ServerOptions) {
   });
   app.get<{ Params: { file: string } }>('/api/speech/:file', async (request, reply) => {
     const match = /^([a-f0-9]{64})\.wav$/.exec(request.params.file);
-    const audio = match && await options.speechCache?.read(match[1]);
+    if (!match) return reply.code(404).send({ error: 'Audio not found. Generate it again from the tile editor.' });
+    if (options.hosting && !await authorizeMedia(options.hosting, request, 'speech', request.params.file)) return reply.code(404).send({ error: 'Media unavailable.' });
+    const audio = await options.speechCache?.read(match[1]);
     if (!audio) return reply.code(404).send({ error: 'Audio not found. Generate it again from the tile editor.' });
     return reply.header('Cache-Control', 'private, max-age=31536000, immutable').header('X-Content-Type-Options', 'nosniff').type('audio/wav').send(audio);
   });

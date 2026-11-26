@@ -1,11 +1,11 @@
 /** @file Serves cached starter speech, dispatches authenticated jobs, and exposes owner-only activity counts. */
-import { type FastifyInstance } from 'fastify';
+import { type FastifyInstance, type FastifyRequest } from 'fastify';
 import { type Pool } from 'pg';
 import { z } from 'zod';
 import { proposalRequestSchema, translationRequestSchema, pictureAnalysisRequestSchema, pictureJobRequestSchema, pictureConceptSchema, speechRequestSchema, speechKey, createStarterBoards } from '@little-say/core';
 import { AccountError } from '../accounts/store';
 import { AccountAccess } from '../accounts/access';
-import { PictureJobs } from '../pictures/jobs';
+import { PictureJobs, PictureJobError } from '../pictures/jobs';
 import { JobAdmissionError, Jobs, type JobKind, type JobView } from './jobs';
 import { DatabaseCache, canReadMedia, type ObjectStore } from './storage';
 import type { SpeechCache } from '../speech-cache';
@@ -28,6 +28,13 @@ export function validateJobInput(kind: JobKind, input: unknown): unknown {
   return parsed.data;
 }
 
+/** Require a public grant or an authenticated owner grant for a decoded media filename. */
+export async function authorizeMedia(services: Pick<HostedServices, 'pool' | 'access'>, request: FastifyRequest, namespace: 'pictures' | 'speech', file: string) {
+  if (await canReadMedia(services.pool, namespace, file)) return true;
+  const { account } = await services.access.verify(request);
+  return canReadMedia(services.pool, namespace, file, account.id);
+}
+
 /** Serve cached starter speech to guests and protect job admission, activity and private media with account checks. */
 export async function hostingRoutes(app: FastifyInstance, services: HostedServices, speechCache?: SpeechCache) {
   const { pool, jobs, access, objects } = services;
@@ -37,23 +44,21 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
     if (error instanceof JobAdmissionError) reply.header('Retry-After', error.retryAfterSeconds);
   });
   app.addHook('onSend', async (request, reply, payload) => {
-    if (/^\/api\/(pictures\/assets|speech)\/[a-f0-9]{64}\.(png|wav)(\?|$)/.test(request.url)) reply.header('Cache-Control', 'private, max-age=31536000, immutable');
+    const route = request.routeOptions.url;
+    if (reply.statusCode === 200 && (route === '/api/pictures/assets/:file' || route === '/api/speech/:file')) {
+      reply.header('Cache-Control', 'private, max-age=31536000, immutable');
+    }
     return payload;
   });
   app.addHook('preHandler', async (request, reply) => {
-    const path = request.url.split('?')[0];
-    if (path.startsWith('/api/ai/') || aliases[path] || /\/api\/pictures\/(jobs|batches)\//.test(path)) reply.header('Cache-Control', 'no-store');
-    const asset = /^\/api\/(pictures\/assets|speech)\/([a-f0-9]{64}\.(?:png|wav))$/.exec(path);
-    if (asset) {
-      const namespace = asset[1] === 'speech' ? 'speech' : 'pictures';
-      if (await canReadMedia(pool, namespace, asset[2])) return;
-      const { account } = await access.verify(request);
-      if (!await canReadMedia(pool, namespace, asset[2], account.id)) return reply.code(404).send({ error: 'Media unavailable.' });
-      return;
+    const route = request.routeOptions.url ?? request.url.split('?')[0];
+    if (route.startsWith('/api/ai/') || aliases[route] || route.startsWith('/api/pictures/jobs/') || route.startsWith('/api/pictures/batches/')) reply.header('Cache-Control', 'no-store');
+    if (route === '/api/pictures/library/:id' && (request.method === 'GET' || request.method === 'HEAD')) {
+      const id = (request.params as { id?: string } | undefined)?.id ?? '';
+      try { return reply.send({ picture: (await catalog.library(id)).picture }); }
+      catch (error) { return reply.code(error instanceof PictureJobError ? error.statusCode : 502).send({ error: 'This library picture could not be downloaded.' }); }
     }
-    const library = /^\/api\/pictures\/library\/([^/]+)$/.exec(path);
-    if (library && request.method === 'GET') return reply.send({ picture: (await catalog.library(decodeURIComponent(library[1]))).picture });
-    const legacyKind = aliases[path];
+    const legacyKind = aliases[route];
     if (legacyKind && request.method === 'POST') {
       if (legacyKind === 'speech' && speechCache) {
         const input = speechRequestSchema.safeParse(request.body);
@@ -80,12 +85,12 @@ export async function hostingRoutes(app: FastifyInstance, services: HostedServic
       const original = input as { draftId: string; tileId: string };
       return reply.code(202).send(legacyKind === 'picture' ? { ...pictureState(job), draftId: original.draftId, tileId: original.tileId } : job);
     }
-    const legacy = /^\/api\/pictures\/(jobs|batches)\/([^/]+)(\/cancel)?$/.exec(path);
-    if (legacy) {
+    if (route === '/api/pictures/jobs/:id' || route === '/api/pictures/jobs/:id/cancel' || route === '/api/pictures/batches/:id' || route === '/api/pictures/batches/:id/cancel') {
       const { account } = await access.verify(request);
-      const job = legacy[3] && request.method === 'POST' ? await jobs.cancel(account.id, legacy[2]) : await jobs.get(account.id, legacy[2]);
+      const id = (request.params as { id?: string } | undefined)?.id ?? '';
+      const job = route.endsWith('/cancel') && request.method === 'POST' ? await jobs.cancel(account.id, id) : await jobs.get(account.id, id);
       if (!job) return reply.code(404).send({ error: 'Job unavailable.' });
-      if (legacy[1] === 'jobs') return reply.send(pictureState(job));
+      if (route.startsWith('/api/pictures/jobs/')) return reply.send(pictureState(job));
       try {
         const record = JSON.parse((await new DatabaseCache(pool, objects, `batches/${account.id}`).read(`batch-${job.id}.json`)).toString());
         if (['cancelled', 'interrupted', 'error'].includes(job.state)) record.batch.state = job.state === 'cancelled' ? 'cancelled' : 'error';
