@@ -1,19 +1,31 @@
-/** @file Verifies native asset saves wait for asynchronous file writes and never index failed writes. */
+/** @file Verifies native asset saves wait for asynchronous file writes, never index failed writes, and prune unreferenced speech assets. */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { savePictureAsset, saveSpeechAsset, writeSyncAsset } from './storage';
+import { pruneSpeech, savePictureAsset, saveSpeechAsset, writeSyncAsset } from './storage';
 
-const native = vi.hoisted(() => ({ write: vi.fn(), run: vi.fn(), audio: vi.fn(), picture: vi.fn() }));
-vi.mock('expo-sqlite', () => ({ openDatabaseAsync: async () => ({ execAsync: vi.fn(), runAsync: native.run }) }));
+const native = vi.hoisted(() => ({ write: vi.fn(), run: vi.fn(), getAll: vi.fn(), deleteFile: vi.fn(), files: [] as { name: string }[], audio: vi.fn(), picture: vi.fn() }));
+vi.mock('expo-sqlite', () => ({ openDatabaseAsync: async () => ({ execAsync: vi.fn(), runAsync: native.run, getAllAsync: native.getAll }) }));
 vi.mock('expo-file-system/legacy', () => ({ documentDirectory: 'file:///documents/' }));
-vi.mock('expo-file-system', () => ({
-  Paths: { document: 'file:///documents/' },
-  Directory: class {
-    /** Pretend the fixture directory already exists without touching the real filesystem. */
-    create() {}
-  },
-  File: class { exists = false; uri = 'file:///documents/asset'; write = native.write; },
-}));
+vi.mock('expo-file-system', () => {
+  class MockFile {
+    exists = false; uri = 'file:///documents/asset'; write = native.write; name = '';
+    /** Record the filename for directory-listing pruning assertions. */
+    constructor(...parts: unknown[]) { const last = parts.at(-1); if (typeof last === 'string') this.name = last; }
+    /** Forward file deletion to the hoisted spy with this file's name. */
+    delete() { native.deleteFile(this.name); }
+  }
+  return {
+    Paths: { document: 'file:///documents/' },
+    Directory: class {
+      exists = true;
+      /** Pretend the fixture directory already exists without touching the real filesystem. */
+      create() {}
+      /** Return mock File entries for pruning tests. */
+      list() { return native.files.map(entry => new MockFile(entry.name)); }
+    },
+    File: MockFile,
+  };
+});
 vi.mock('./audioDownload', () => ({ downloadAudio: native.audio }));
 vi.mock('./pictureDownload', () => ({ downloadPicture: native.picture }));
 
@@ -53,5 +65,15 @@ describe('native asset write completion', () => {
     native.write.mockRejectedValue(new Error('Disk full'));
     await expect(save()).rejects.toThrow('Disk full');
     expect(native.run).not.toHaveBeenCalled();
+  });
+
+  it('prunes speech index rows and wav files not retained by active boards', async () => {
+    const keepId = 'b'.repeat(64), dropId = 'c'.repeat(64);
+    native.getAll.mockResolvedValue([{ key: '["Keep","en"]', asset_id: keepId }, { key: '["Drop","en"]', asset_id: dropId }]);
+    native.files = [{ name: `${keepId}.wav` }, { name: `${dropId}.wav` }];
+    await pruneSpeech(new Set(['["Keep","en"]']));
+    expect(native.run).toHaveBeenCalledWith('DELETE FROM speech WHERE key = ?', '["Drop","en"]');
+    expect(native.deleteFile).toHaveBeenCalledTimes(1);
+    expect(native.deleteFile).toHaveBeenCalledWith(`${dropId}.wav`);
   });
 });

@@ -252,6 +252,7 @@ test('cross-tab account changes and legacy server overrides never silently redir
   }
   await page.goto('/app'); await signIn(page, emails[0]);
   await expect(page.getByRole('button', { name: 'Play Farm Animals', exact: true })).toBeVisible();
+  const firstAccountBoardIds = (await readLibrary(page)).boards.map((board: { id: string }) => board.id);
   // Starters appear before the background refresh; settle it before changing the shared cookie.
   const refresh = page.getByRole('button', { name: 'Refresh content', exact: true });
   await refresh.click(); await expect(refresh).toBeEnabled();
@@ -263,6 +264,9 @@ test('cross-tab account changes and legacy server overrides never silently redir
     await signOut(other);
     await signIn(other, emails[1]);
     await expect(other).toHaveURL(/\/app$/);
+    const secondAccountBoards = (await readLibrary(other)).boards;
+    expect(secondAccountBoards).toHaveLength(3);
+    expect(secondAccountBoards.some((board: { id: string }) => firstAccountBoardIds.includes(board.id))).toBe(false);
     await other.getByRole('button', { name: 'Settings', exact: true }).click();
     await other.goto('/app/settings/backup');
     await expect(other.getByText('Up to date', { exact: true })).toBeVisible();
