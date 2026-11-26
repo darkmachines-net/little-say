@@ -262,12 +262,16 @@ it.each([false, true])('requires registered accounts for AI (anonymous=%s), expo
   const job = (await f.jobs.claim(id))!;
   const result = await executeJob({ ...hosting, env: { AAC_AI_FIXTURES: 'true' } }, job, new AbortController().signal) as { id: string }; await f.jobs.finish(job, result);
   const media = '/api/speech/' + result.id + '.wav';
+  const encodedMedia = `/api/speech/%${result.id.charCodeAt(0).toString(16)}${result.id.slice(1)}%2ewav`;
   expect((await app.inject(media)).statusCode).toBe(401);
+  expect((await app.inject(encodedMedia)).statusCode).toBe(401);
   expect((await app.inject({ url: media, headers })).statusCode).toBe(200);
+  expect((await app.inject({ url: encodedMedia, headers })).statusCode).toBe(200);
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers })).json()).toMatchObject({ state: 'complete', result });
   const previous = f.identity.uid; f.identity.uid = randomUUID(); await f.accounts.provision(f.identity);
   expect((await app.inject({ url: `/api/ai/jobs/${id}`, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
   expect((await app.inject({ url: media, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
+  expect((await app.inject({ url: encodedMedia, headers: { authorization: 'Bearer other' } })).statusCode).toBe(404);
   const reusedId = randomUUID(), otherHeaders = { authorization: 'Bearer other', 'x-little-say': '1', 'x-little-say-request': reusedId };
   expect((await app.inject({ method: 'POST', url: '/api/speech', headers: otherHeaders, payload: payload.input })).statusCode).toBe(202);
   const reusedJob = (await f.jobs.claim(reusedId))!;
