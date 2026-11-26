@@ -79,6 +79,17 @@ function audioAsset(id: string, blob: Blob): SpeechAsset {
   if (!uri) { uri = URL.createObjectURL(blob); audioUrls.set(id, uri); }
   return { id, uri };
 }
+/** Delete unreferenced speech blobs and revoke unused object URLs. */
+export async function pruneSpeech(keep: Set<string>): Promise<void> {
+  const db = await getDatabase();
+  const keptIds = new Set<string>();
+  for (const key of await db.getAllKeys('speech')) {
+    const record = await db.get('speech', key) as { id?: string } | undefined;
+    if (keep.has(String(key))) { if (record?.id) keptIds.add(record.id); }
+    else await db.delete('speech', key);
+  }
+  for (const [id, uri] of [...audioUrls.entries()]) if (!keptIds.has(id)) { URL.revokeObjectURL(uri); audioUrls.delete(id); }
+}
 /** Restore valid cached speech blobs as playable object URLs indexed by speech key. */
 export async function loadSpeechAssets(): Promise<Record<string, SpeechAsset>> {
   const db = await getDatabase();

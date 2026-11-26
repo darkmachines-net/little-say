@@ -9,7 +9,7 @@ import { useAccount, type AccountController } from './useAccount';
 import { ApiError } from './api';
 
 const state = vi.hoisted(() => ({ server: 'https://example.test', foreground: 'active', OS: 'android', listeners: new Set<(state: string) => void>() }));
-const mocks = vi.hoisted(() => ({ load: vi.fn(), save: vi.fn(), authenticate: vi.fn(), verify: vi.fn(), sync: vi.fn(), request: vi.fn(), restored: vi.fn() }));
+const mocks = vi.hoisted(() => ({ load: vi.fn(), save: vi.fn(), authenticate: vi.fn(), verify: vi.fn(), sync: vi.fn(), request: vi.fn(), restored: vi.fn(), prune: vi.fn() }));
 vi.mock('react-native', () => ({ Platform: state, AppState: {
   /** Expose foreground state to the scheduler under test. */
   get currentState() { return state.foreground; },
@@ -25,7 +25,12 @@ vi.mock('./api', () => ({ backendUrl: () => state.server, ApiError: class extend
   constructor(message: string, readonly status: number) { super(message); }
 } }));
 vi.mock('./accountSession', () => ({ loadAccountSession: mocks.load, saveAccountSession: mocks.save }));
-vi.mock('./accountSync', () => ({ syncAccount: mocks.sync, accountRequest: mocks.request }));
+vi.mock('./accountSync', () => ({
+  syncAccount: mocks.sync,
+  accountRequest: mocks.request,
+  pruneLocalMedia: mocks.prune,
+  ownedByOtherAccount: (value: Library, accountId: string, server: string) => Boolean(value.sync && (value.sync.accountId !== accountId || value.sync.server !== server)),
+}));
 vi.mock('./firebaseAccount', () => ({ authenticateAccount: mocks.authenticate, verifyAccountEmail: mocks.verify, socialAuthAvailable: () => false,
   accountError: (error: Error) => error.message, signOutAccount: vi.fn(), accountContext: vi.fn(), resetAccountPassword: vi.fn(), accountDeletionProof: vi.fn(), linkAccountProvider: vi.fn(),
 }));
@@ -51,7 +56,7 @@ beforeEach(() => {
   state.server = session.server; state.foreground = 'active'; state.OS = 'android'; state.listeners.clear(); allowed = true;
   library = starterLibrary(); store.library = store.current.current = library;
   mocks.sync.mockResolvedValue({ revision: 0, boards: library.boards, assets: [] });
-  mocks.authenticate.mockResolvedValue(session); mocks.verify.mockResolvedValue(session); mocks.request.mockResolvedValue({});
+  mocks.authenticate.mockResolvedValue(session); mocks.verify.mockResolvedValue(session); mocks.request.mockResolvedValue({}); mocks.prune.mockResolvedValue(undefined); mocks.restored.mockResolvedValue(undefined);
 });
 afterEach(async () => { if (screen) await act(async () => screen!.unmount()); screen = undefined; vi.useRealTimers(); vi.unstubAllGlobals(); });
 
@@ -281,4 +286,102 @@ it('blocks automatic and manual sync after expiry until the account signs in aga
   await advance(16 * 60 * 1000); expect(mocks.sync).toHaveBeenCalledOnce();
   await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
   await advance(); expect(mocks.sync).toHaveBeenCalledTimes(2);
+});
+
+it('replaces another account’s local boards, drafts, and media when a new account registers on a shared device', async () => {
+  const accountA = session;
+  const accountB: AccountSession = { ...session, account: { ...session.account, id: '00000000-0000-4000-8000-000000000002', email: 'other@example.test', emailVerified: false }, firebaseUid: 'other' };
+  const privateBoard = { ...library.boards[0], id: 'private-a', title: 'Account A private family board' };
+  library = {
+    ...library,
+    boards: [privateBoard],
+    favoriteBoardIds: ['private-a'],
+    boardLastPlayedAt: { 'private-a': 12345 },
+    creationDraft: { board: { ...privateBoard, id: 'draft-a' }, prompt: 'Secret prompt', suggestion: null },
+    settings: { ...library.settings, activeBoardId: 'private-a', boardLanguages: { 'private-a': 'es-ES' } },
+    sync: { accountId: accountA.account.id, server: accountA.server, savedAt: new Date().toISOString(), snapshot: { revision: 2, boards: [privateBoard], assets: [] } },
+  };
+  store.library = store.current.current = library;
+  const starterSnapshot = { revision: 0, boards: createStarterBoards(() => crypto.randomUUID()), assets: [] };
+  mocks.authenticate.mockResolvedValue({ ...accountB, starterSnapshot });
+
+  await mount(null);
+  await act(async () => controller.authenticate('register', 'other@example.test', 'password'));
+
+  expect(library.boards).toEqual(starterSnapshot.boards);
+  expect(library.boards.some(board => board.id === 'private-a')).toBe(false);
+  expect(library.creationDraft).toBeUndefined();
+  expect(library.favoriteBoardIds).toEqual([]);
+  expect(library.boardLastPlayedAt).toEqual({});
+  expect(library.settings.activeBoardId).toBeNull();
+  expect(library.settings.boardLanguages).toEqual({});
+  expect(library.sync?.accountId).toBe(accountB.account.id);
+  expect(mocks.prune).toHaveBeenCalledWith(starterSnapshot.boards);
+  expect(mocks.restored).toHaveBeenCalledOnce();
+});
+
+it('clears another account’s local library before restoring a returning account on a shared device', async () => {
+  const accountA = session;
+  const accountB: AccountSession = { ...session, account: { ...session.account, id: '00000000-0000-4000-8000-000000000002', email: 'other@example.test' }, firebaseUid: 'other' };
+  const privateBoard = { ...library.boards[0], id: 'private-a', title: 'Account A board' };
+  library = {
+    ...library,
+    boards: [privateBoard],
+    favoriteBoardIds: ['private-a'],
+    sync: { accountId: accountA.account.id, server: accountA.server, savedAt: new Date().toISOString(), snapshot: { revision: 1, boards: [privateBoard], assets: [] } },
+  };
+  store.library = store.current.current = library;
+  const accountBBoard = { ...starterLibrary().boards[0], id: 'board-b', title: 'Account B board' };
+  mocks.authenticate.mockResolvedValue(accountB);
+  mocks.sync.mockResolvedValue({ revision: 4, boards: [accountBBoard], assets: [] });
+
+  await mount(null);
+  await act(async () => controller.authenticate('login', 'other@example.test', 'password'));
+
+  expect(library.boards).toEqual([]);
+  expect(library.sync).toBeUndefined();
+  expect(controller.restoring).toBe(true);
+  expect(mocks.prune).toHaveBeenCalledWith([]);
+
+  await advance();
+  expect(mocks.sync).toHaveBeenCalledOnce();
+  expect(mocks.sync.mock.calls[0][0].boards).toEqual([]);
+  expect(library.boards).toEqual([accountBBoard]);
+  expect(library.sync?.accountId).toBe(accountB.account.id);
+});
+
+it('preserves local offline edits when the same account signs out and signs back in', async () => {
+  const editedBoard = { ...library.boards[0], title: 'Offline edit before sign-out', revision: 2 };
+  library = {
+    ...library,
+    boards: [editedBoard],
+    sync: { accountId: session.account.id, server: session.server, savedAt: new Date().toISOString(), snapshot: { revision: 1, boards: [starterLibrary().boards[0]], assets: [] } },
+  };
+  store.library = store.current.current = library;
+  mocks.authenticate.mockResolvedValue(session);
+
+  await mount(null);
+  await act(async () => controller.authenticate('login', 'parent@example.test', 'password'));
+
+  expect(library.boards).toEqual([editedBoard]);
+  expect(mocks.prune).not.toHaveBeenCalled();
+});
+
+it('replaces foreign-owned local boards during mergeSync instead of merging them into the active account', async () => {
+  const foreignBoard = { ...library.boards[0], id: 'foreign-a', title: 'Foreign board' };
+  const remoteBoard = { ...starterLibrary().boards[0], id: 'remote-b', title: 'Active account board' };
+  library = {
+    ...library,
+    boards: [foreignBoard],
+    sync: { accountId: '00000000-0000-4000-8000-000000000099', server: session.server, savedAt: new Date().toISOString(), snapshot: { revision: 1, boards: [foreignBoard], assets: [] } },
+  };
+  store.library = store.current.current = library;
+  mocks.sync.mockResolvedValue({ revision: 2, boards: [remoteBoard], assets: [] });
+
+  await mount(session);
+  await advance();
+
+  expect(library.boards).toEqual([remoteBoard]);
+  expect(library.sync?.accountId).toBe(session.account.id);
+  expect(mocks.prune).toHaveBeenCalledWith([remoteBoard]);
 });

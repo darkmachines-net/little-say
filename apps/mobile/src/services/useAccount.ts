@@ -3,15 +3,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform } from 'react-native';
 import * as Crypto from 'expo-crypto';
-import { mergeBoards, type Library, type AuthConfig, type SyncSnapshot } from '@little-say/core';
+import { mergeBoards, type Board, type Library, type AuthConfig, type SyncSnapshot } from '@little-say/core';
 import { type useLibrary } from '../data/useLibrary';
 import { ApiError, backendUrl } from './api';
 import { accountContext, authenticateAccount, resetAccountPassword, signOutAccount, accountDeletionProof, verifyAccountEmail, linkAccountProvider, accountError, socialAuthAvailable, type Provider } from './firebaseAccount';
-import { accountRequest, syncAccount } from './accountSync';
+import { accountRequest, ownedByOtherAccount, pruneLocalMedia, syncAccount } from './accountSync';
 import { loadAccountSession, saveAccountSession, type AccountSession } from './accountSession';
 import { accountBackupState, backupConnectionFailure } from './accountBackup';
 
 const remoteRefreshInterval = 15 * 60 * 1000;
+
+function replaceAccountLibrary(local: Library, boards: Board[], sync?: Library['sync']): Library {
+  return {
+    ...local,
+    boards,
+    setup: undefined,
+    creationDraft: undefined,
+    boardCreationDraft: undefined,
+    boardLastPlayedAt: {},
+    favoriteBoardIds: [],
+    sync,
+    settings: { ...local.settings, activeBoardId: null, boardLanguages: {} },
+  };
+}
 
 /**
  * Durably install new-account starters before entering Home, restore sign-in and empty libraries,
@@ -73,12 +87,19 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
       // snapshot when they return, preserving any edits made since the request began.
       while (!current.current.canSync && !initialRestore && !controller.signal.aborted) await new Promise(resolve => setTimeout(resolve, 250));
       if (controller.signal.aborted) return;
+      let switched = false;
       await libraryStore.mergeSync((local: Library) => {
+        const nextSync = { accountId: account.account.id, server: account.server, snapshot, savedAt: new Date().toISOString() };
+        if (ownedByOtherAccount(local, account.account.id, account.server)) {
+          switched = true;
+          return replaceAccountLibrary(local, snapshot.boards, nextSync);
+        }
         const boards = mergeBoards(start.boards, local.boards, snapshot.boards, () => Crypto.randomUUID());
         return { ...local, boards, ...(boards.length ? { setup: undefined } : {}),
-          sync: { accountId: account.account.id, server: account.server, snapshot, savedAt: new Date().toISOString() },
+          sync: nextSync,
           settings: { ...local.settings, activeBoardId: boards.some(board => board.id === local.settings.activeBoardId) ? local.settings.activeBoardId : null } };
       });
+      if (switched) await pruneLocalMedia(snapshot.boards).catch(() => {});
       await current.current.onRestored();
       lastSync.current = { session: account, at: Date.now() };
       setNeedsLogin(false);
@@ -129,7 +150,20 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
     finally { running.current = false; setBusy(false); }
   };
   const remember = async ({ starterSnapshot, ...value }: AccountSession & { starterSnapshot?: SyncSnapshot }) => {
-    if (starterSnapshot) await store.commit(local => {
+    const switching = Boolean(store.current.current && ownedByOtherAccount(store.current.current, value.account.id, value.server));
+    let switched = false;
+    let retainedBoards: Board[] = [];
+    if (starterSnapshot || switching) await store.commit(local => {
+      if (ownedByOtherAccount(local, value.account.id, value.server)) {
+        switched = true;
+        if (starterSnapshot) {
+          retainedBoards = starterSnapshot.boards;
+          return replaceAccountLibrary(local, starterSnapshot.boards, { accountId: value.account.id, server: value.server, snapshot: starterSnapshot, savedAt: new Date().toISOString() });
+        }
+        retainedBoards = [];
+        return replaceAccountLibrary(local, [], undefined);
+      }
+      if (!starterSnapshot) return local;
       // This acknowledgement also remembers local deletions before email verification. A repeated
       // login must not reinstall starters or replace newer edits with the initial server snapshot.
       if (local.sync?.accountId === value.account.id && local.sync.server === value.server) return local;
@@ -137,6 +171,10 @@ export function useAccount(store: ReturnType<typeof useLibrary>, canSync: boolea
         boards: mergeBoards([], local.boards, starterSnapshot.boards, () => Crypto.randomUUID()),
         sync: { accountId: value.account.id, server: value.server, snapshot: starterSnapshot, savedAt: new Date().toISOString() } };
     });
+    if (switched) {
+      await pruneLocalMedia(retainedBoards).catch(() => {});
+      await current.current.onRestored().catch(() => {});
+    }
     await saveAccountSession(value); current.current.session = value; setSession(value); setNeedsLogin(false); setSyncFailure(null);
   };
   const prepare = async () => {

@@ -40,14 +40,37 @@ async function localAssets(boards: Board[]) {
   return assets;
 }
 
+/** Report whether a local library already carries an acknowledged backup belonging to a different account or server. */
+export function ownedByOtherAccount(library: Library, accountId: string, server: string) {
+  return Boolean(library.sync && (library.sync.accountId !== accountId || library.sync.server !== server));
+}
+/** Prune local photos, illustrations, and speech files not referenced by the retained boards. */
+export async function pruneLocalMedia(boards: Board[]) {
+  const required = boardAssetKeys(boards);
+  const photos = new Set<string>();
+  const pictures = new Set<string>();
+  for (const key of required.images) {
+    const [kind, id] = key.split(':');
+    if (kind === 'photo') photos.add(id);
+    else if (kind === 'picture') pictures.add(id);
+  }
+  await Promise.all([
+    storage.pruneAssets(photos).catch(() => {}),
+    storage.prunePictures(pictures).catch(() => {}),
+    storage.pruneSpeech(required.speech).catch(() => {}),
+  ]);
+}
 /** Upload missing local assets, restore missing remote files, and commit a revision-checked complete backup. */
 export async function syncAccount(library: Library, session: AccountSession, signal: AbortSignal): Promise<SyncSnapshot> {
   const remote = syncSnapshotSchema.parse(await accountRequest(session, '/backup', undefined, signal));
-  const baseline = library.sync?.accountId === session.account.id && library.sync.server === session.server ? library.sync.snapshot : { revision: 0, boards: [], assets: [] };
-  const local = await localAssets(library.boards);
+  // Never merge or upload local boards/media owned by another account on a shared device.
+  const foreign = ownedByOtherAccount(library, session.account.id, session.server);
+  const localBoards = foreign ? [] : library.boards;
+  const baseline = !foreign && library.sync ? library.sync.snapshot : { revision: 0, boards: [], assets: [] };
+  const local = foreign ? [] : await localAssets(localBoards);
   // Stable conflict IDs make retry after a lost commit response idempotent.
-  const conflictIds = new Map(await Promise.all(library.boards.map(async board => [board.id, `conflict_${await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, JSON.stringify(board))}`] as const)));
-  const boards = mergeBoards(baseline.boards, library.boards, remote.boards, board => conflictIds.get(board.id)!);
+  const conflictIds = new Map(await Promise.all(localBoards.map(async board => [board.id, `conflict_${await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, JSON.stringify(board))}`] as const)));
+  const boards = mergeBoards(baseline.boards, localBoards, remote.boards, board => conflictIds.get(board.id)!);
   const assets = mergeAssets(boards, baseline.assets, local, remote.assets);
   const available = new Set(remote.assets.map(asset => asset.hash));
   for (const asset of assets) {

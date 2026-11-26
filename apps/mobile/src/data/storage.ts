@@ -63,6 +63,18 @@ export async function pruneAssets(keep: Set<string>): Promise<void> {
     if (file.endsWith('.jpg') && !keep.has(file.slice(0, -4))) await FileSystem.deleteAsync(`${directory}${file}`, { idempotent: true });
   }
 }
+/** Delete unreferenced speech index entries and audio files not retained by active boards. */
+export async function pruneSpeech(keep: Set<string>): Promise<void> {
+  const db = await database;
+  const rows = await db.getAllAsync<{ key: string; asset_id: string }>('SELECT key, asset_id FROM speech');
+  const keptIds = new Set<string>();
+  for (const row of rows) {
+    if (keep.has(row.key)) keptIds.add(row.asset_id);
+    else await db.runAsync('DELETE FROM speech WHERE key = ?', row.key);
+  }
+  const folder = new Directory(Paths.document, 'tile-audio'); if (!folder.exists) return;
+  for (const file of folder.list()) if (file instanceof File && file.name.endsWith('.wav') && !keptIds.has(file.name.slice(0, -4))) file.delete();
+}
 /** Restore the speech-key index, skipping invalid IDs and audio files that no longer exist. */
 export async function loadSpeechAssets(): Promise<Record<string, SpeechAsset>> {
   const rows = await (await database).getAllAsync<{ key: string; asset_id: string }>('SELECT key, asset_id FROM speech');
